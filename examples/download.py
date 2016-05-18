@@ -37,7 +37,7 @@ except ImportError:
 
 OCCUPANCY = ('http://bit.ly/ddl-occupancy-dataset', 'occupancy.zip')
 CREDIT    = ('http://bit.ly/ddl-credit-dataset', 'credit.xls')
-CONCRETE  = ('http://bit.ly/ddl-concrete-dataset', 'concrete.xls')
+CONCRETE  = ('http://bit.ly/ddl-concrete-data', 'concrete.xls')
 
 
 def download_data(url, name, path='data'):
