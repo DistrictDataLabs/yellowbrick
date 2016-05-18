@@ -1,8 +1,9 @@
-# Yellowbrick
+# Welcome to Yellowbrick
 
-A suite of visual analysis and diagnostic tools to facilitate feature selection, model selection, and parameter tuning for machine learning.
+**A suite of visual analysis and diagnostic tools to facilitate feature selection, model selection, and parameter tuning for machine learning.**
 
 ## Tools for feature analysis and selection
+
 - boxplots (box-and-whisker plots)    
 - violinplots    
 - histograms    
@@ -14,15 +15,19 @@ A suite of visual analysis and diagnostic tools to facilitate feature selection,
 
 
 ## Tools for model evaluation
+
 ### Classification
+
 - ROC curves    
 - classification heatmaps    
 
 ### Regression
+
 - prediction error plots     
 - residual plots     
 
 
 ## Tools for parameter tuning
+
 - validation curves    
 - gridsearch heatmap    

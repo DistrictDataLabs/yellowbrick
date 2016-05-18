@@ -60,3 +60,7 @@ target/
 
 #Ipython Notebook
 .ipynb_checkpoints
+
+# Annoying stuff from contributors
+venv
+.DS_Store

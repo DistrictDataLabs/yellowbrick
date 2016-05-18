@@ -1,0 +1,22 @@
+language: python
+python:
+  - '2.7'
+  - '3.5'
+
+before_install:
+  - pip install coveralls
+
+install: pip install -r requirements.txt
+
+script: make test
+
+after_success: coveralls
+
+notifications:
+  email:
+    recipients:
+      - bbengfort@districtdatalabs.com
+      - tojeda@districtdatalabs.com
+      - rbilbro@districtdatalabs.com
+    on_success: change
+    on_failure: always
