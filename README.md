@@ -1,3 +1,4 @@
+[![Stories in Ready](https://badge.waffle.io/DistrictDataLabs/yellowbrick.png?label=ready&title=Ready)](https://waffle.io/DistrictDataLabs/yellowbrick)
 # Yellowbrick
 
 A suite of visual analysis and diagnostic tools to facilitate feature selection, model selection, and parameter tuning for machine learning.
