@@ -20,6 +20,8 @@ Visualizations related to evaluating Scikit-Learn classification models
 import numpy as np
 import matplotlib.pyplot as plt
 
+from sklearn.pipeline import Pipeline
+from sklearn.metrics import roc_curve, auc
 from sklearn.metrics import classification_report
 
 from .color import ddlheatmap
@@ -80,3 +82,49 @@ def crplot(model, y_true, y_pred, **kwargs):
     plt.xlabel('Measures')
 
     return ax
+
+
+##########################################################################
+## Receiver Operating Characteristics
+##########################################################################
+
+def rocplot_compare(models, y_true, y_pred, **kwargs):
+    """
+    Plots a side by size comparison of the ROC plot with AUC metric embedded.
+    """
+    if len(models) != len(y_true) and len(models) != len(y_pred):
+        raise ValueError(
+            "Pass in two models, two sets of target and predictions"
+        )
+
+    # Set up split subplots for the curve comparison.
+    # TODO: ensure that the number of models is only 2
+    fig, axes = plt.subplots(1, 2, sharey=True)
+
+    # Zip together each plot to generate them independently.
+    for model, y, yhat, ax in zip(models, y_true, y_pred, axes):
+
+        # Figure out the name of the model
+        if isinstance(model, Pipeline):
+            name = model.steps[-1][1].__class__.__name__
+        else:
+            name = model.__class__.__name__
+
+        fpr, tpr, thresholds = roc_curve(y, yhat)
+        roc_auc = auc(fpr, tpr)
+
+        # Plot the ROC Curve with the specified AUC label.
+        ax.plot(fpr, tpr, c='#2B94E9', label='AUC = {:0.2f}'.format(roc_auc))
+
+        # Plot the line of no discrimination to compare the curve to.
+        ax.plot([0,1],[0,1],'m--',c='#666666')
+
+        # Set the title and create the legend.
+        ax.set_title('ROC for {}'.format(name))
+        ax.legend(loc='lower right')
+
+    # Refactor the limits of the plot
+    plt.xlim([0,1])
+    plt.ylim([0,1.1])
+
+    return axes

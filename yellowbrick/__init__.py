@@ -20,7 +20,7 @@ selection, model selection, and parameter tuning for machine learning.
 
 from .version import get_version
 from .anscombe import anscombe
-from .classifier import crplot
+from .classifier import crplot, rocplot_compare
 
 ##########################################################################
 ## Package Version
