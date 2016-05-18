@@ -19,6 +19,7 @@ selection, model selection, and parameter tuning for machine learning.
 ##########################################################################
 
 from .version import get_version
+from .anscombe import anscombe
 
 ##########################################################################
 ## Package Version
