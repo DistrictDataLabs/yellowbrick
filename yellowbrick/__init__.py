@@ -21,7 +21,7 @@ selection, model selection, and parameter tuning for machine learning.
 from .version import get_version
 from .anscombe import anscombe
 from .classifier import crplot, rocplot_compare
-from .regressor import peplot
+from .regressor import peplot, residuals_plot
 
 ##########################################################################
 ## Package Version
