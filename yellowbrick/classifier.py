@@ -24,7 +24,7 @@ from sklearn.pipeline import Pipeline
 from sklearn.metrics import roc_curve, auc
 from sklearn.metrics import classification_report
 
-from .color import ddlheatmap
+from .color_utils import ddlheatmap
 
 
 ##########################################################################
