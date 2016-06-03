@@ -13,9 +13,13 @@ Utility functions for yellowbrick
 ##########################################################################
 ## Imports
 ##########################################################################
+
 from sklearn.pipeline import Pipeline
 from sklearn.base import BaseEstimator
 
+##########################################################################
+## Model detection utilities
+##########################################################################
 
 def get_model_name(model):
     """
@@ -28,3 +32,12 @@ def get_model_name(model):
             return model.steps[-1][-1].__class__.__name__
         else:
             return model.__class__.__name__
+
+def isestimator(model):
+    """
+    Determines if a model is an estimator using issubclass and isinstance.
+    """
+    if type(model) == type:
+        return issubclass(model, BaseEstimator)
+
+    return isinstance(model, BaseEstimator)

@@ -25,6 +25,15 @@ from sklearn.metrics import roc_curve, auc
 from sklearn.metrics import classification_report
 
 from .color_utils import ddlheatmap
+from .base import ModelVisualization
+
+
+##########################################################################
+## Classification Visualization Base Object
+##########################################################################
+
+class ClassifierVisualization(ModelVisualization):
+    pass
 
 
 ##########################################################################
