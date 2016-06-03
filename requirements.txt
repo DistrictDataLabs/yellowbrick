@@ -1,10 +1,11 @@
 # Dependencies
 matplotlib==1.5.1
+scipy==0.17.1
 scikit-learn==0.17.1
 numpy==1.11.0
+cycler==0.10.0
 
 ## Utilities
-#cycler==0.10.0
 #pyparsing==2.1.4
 #pytz==2016.4
 #python-dateutil==2.5.3
@@ -13,13 +14,13 @@ numpy==1.11.0
 
 ## Testing Requirements (uncomment for development)
 #nose==1.3.7
-#coverage==4.0.3
+#coverage==4.1
 
 ## Build Requirements (uncomment for deployment)
 #wheel==0.29.0
 
 ## Pip stuff (ignore)
-#Python==2.7.11
+#Python==3.5.1
 #pip==8.1.2
-#setuptools==21.0.0
+#setuptools==22.0.5
 #wsgiref==0.1.2
