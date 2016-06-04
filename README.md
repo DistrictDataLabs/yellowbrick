@@ -53,12 +53,10 @@ Yellowbrick is an open source tool designed to enable more informed machine lear
 This repository is set up in a typical production/release/development cycle as described in [A Successful Git Branching Model](http://nvie.com/posts/a-successful-git-branching-model/). A typical workflow is as follows:
 
 1. Select a card from the [dev board](https://waffle.io/districtdatalabs/yellowbrick) - preferably one that is "ready" then move it to "in-progress".    
-2. Create a branch off of develop called "feature-[feature name]", work and commit into that branch.
-```bash
+2. Create a branch off of develop called "feature-[feature name]", work and commit into that branch. ```bash
 ~$ git checkout -b feature-myfeature develop
 ```    
-3. Once you are done working (and everything is tested) merge your feature into develop.
-```bash
+3. Once you are done working (and everything is tested) merge your feature into develop.```bash
 ~$ git checkout develop
 ~$ git merge --no-ff feature-myfeature
 ~$ git branch -d feature-myfeature
