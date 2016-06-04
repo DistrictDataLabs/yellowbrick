@@ -42,6 +42,8 @@ class ClassifierVisualization(ModelVisualization):
 
 class ClassifierReport(ClassifierVisualization):
     """
+    Classification report that shows the precision, recall, and F1 scores
+    for the model. Integrates numerical scores as well color-coded heatmap.
     """
 
     def __init__(self, model, **kwargs):
@@ -75,7 +77,7 @@ class ClassifierReport(ClassifierVisualization):
 
     def score(self, y_true, y_pred, **kwargs):
         """
-        generates the Scikit-Learn classification_report
+        Generates the Scikit-Learn classification_report
         """
         # TODO: Do a better job of guessing defaults from the model
         cr_kwargs = {
@@ -89,6 +91,9 @@ class ClassifierReport(ClassifierVisualization):
 
 
     def render(self):
+        """
+        Renders the classification report across each axis.
+        """
         title  = '{} Classification Report'.format(self.name)
         matrix, classes = self.parse_report()
 
@@ -128,9 +133,12 @@ def crplot(model, y_true, y_pred, **kwargs):
 
 class ROCAUC(MultiModelMixin, ClassifierVisualization):
     """
+    Plot the ROC to visualize the tradeoff between the classifier's
+    sensitivity and specificity.
     """
     def __init__(self, models, **kwargs):
         """
+        Pass in a collection of models to generate ROC curves.
         """
         super(ROCAUC, self).__init__(models, **kwargs)
         self.colors = {
@@ -139,10 +147,15 @@ class ROCAUC(MultiModelMixin, ClassifierVisualization):
         }
 
     def fit(self, X, y):
+        """
+        Custom fit method
+        """
         self.models = list(map(lambda model: model.fit(X, y), self.models))
 
     def render(self, X, y):
-
+        """
+        Renders each ROC-AUC plot across each axis.
+        """
         for idx, axe in enumerate(self.generate_subplots()):
             # Get the information for this axis
             name  = self.names[idx]
@@ -167,7 +180,8 @@ class ROCAUC(MultiModelMixin, ClassifierVisualization):
 
 def rocplot(models, X, y, **kwargs):
     """
-    Plots a ROC plot with AUC metric embedded.
+    Take in the model, data and labels as input and generate a multi-plot of
+    the ROC plots with AUC metrics embedded.
     """
     viz = ROCAUC(models, **kwargs)
     viz.fit(X, y)

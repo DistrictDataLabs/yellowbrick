@@ -71,7 +71,10 @@ class PredictionError(MultiModelMixin, RegressorVisualization):
 
 
 def peplot(models, X, y, **kwargs):
-    # TODO: Docstring or this won't be understandable.
+    """
+    Take in the model, data and labels as input and generate a multi-plot of
+    the prediction error for each model.
+    """
     viz = PredictionError(models, **kwargs)
     return viz.render(X, y)
 
@@ -143,7 +146,10 @@ class ResidualsPlot(MultiModelMixin, RegressorVisualization):
 
 
 def residuals_plot(models, X, y, **kwargs):
-    # TODO: Docstring or this won't be understandable.
+    """
+    Take in the model, data and labels as input and generate a multi-plot of
+    the residuals for each.
+    """
     viz = ResidualsPlot(models, **kwargs)
     viz.fit(X, y)
     return viz.render()
