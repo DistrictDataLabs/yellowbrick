@@ -54,14 +54,16 @@ This repository is set up in a typical production/release/development cycle as d
 
 1. Select a card from the [dev board](https://waffle.io/districtdatalabs/yellowbrick) - preferably one that is "ready" then move it to "in-progress".    
 2. Create a branch off of develop called "feature-[feature name]", work and commit into that branch.
-```
-~$ git checkout -b feature-myfeature develop
-```    
+    ```
+    ~$ git checkout -b feature-myfeature develop
+    ```   
+
 3. Once you are done working (and everything is tested) merge your feature into develop.
-```
-~$ git checkout develop
-~$ git merge --no-ff feature-myfeature
-~$ git branch -d feature-myfeature
-~$ git push origin develop
-```    
+    ```
+    ~$ git checkout develop
+    ~$ git merge --no-ff feature-myfeature
+    ~$ git branch -d feature-myfeature
+    ~$ git push origin develop
+    ```
+       
 4. Repeat. Releases will be routinely pushed into master via release branches, then deployed to the server.
