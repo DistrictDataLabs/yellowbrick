@@ -9,6 +9,10 @@
 
 A suite of visual analysis and diagnostic tools to facilitate feature selection, model selection, and parameter tuning for machine learning.
 
+
+![Follow the yellow brick road](images/yellowbrickroad.jpg)
+Image by [Quatro Cinco](https://flic.kr/p/2Yj9mj), used with permission, Flickr Creative Commons.
+
 ## Tools for feature analysis and selection
 - boxplots (box-and-whisker plots)    
 - violinplots    
