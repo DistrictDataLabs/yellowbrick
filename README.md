@@ -13,8 +13,8 @@ A suite of visual analysis and diagnostic tools to facilitate feature selection,
 ![Follow the yellow brick road](images/yellowbrickroad.jpg)
 Image by [Quatro Cinco](https://flic.kr/p/2Yj9mj), used with permission, Flickr Creative Commons.
 
-# What is yellowbrick?
-`yellowbrick` is a suite of visual analysis and diagnostic tools to facilitate feature selection, model selection, and parameter tuning for machine learning. All visualizations are generated in Matplotlib. Custom `yellowbrick` visualization tools include:
+# What is Yellowbrick?
+Yellowbrick is a suite of visual analysis and diagnostic tools to facilitate feature selection, model selection, and parameter tuning for machine learning. All visualizations are generated in Matplotlib. Custom `yellowbrick` visualization tools include:
 
 ## Tools for feature analysis and selection
 - boxplots (box-and-whisker plots)    
@@ -39,10 +39,10 @@ Image by [Quatro Cinco](https://flic.kr/p/2Yj9mj), used with permission, Flickr 
 - validation curves    
 - gridsearch heatmap    
 
-## Using `yellowbrick`
+## Using Yellowbrick
 For information on getting started with Yellowbrick, check out our [quick start guide](https://github.com/DistrictDataLabs/yellowbrick/blob/develop/docs/setup.md).
 
-## Contributing to `yellowbrick`
+## Contributing to Yellowbrick
 
 Yellowbrick is an open source tool designed to enable more informed machine learning through visualizations. If you would like to contribute, you can do so in the following ways:
 
