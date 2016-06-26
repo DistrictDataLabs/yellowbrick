@@ -43,3 +43,10 @@ class YellowbrickTypeError(YellowbrickError, TypeError):
     There was an unexpected type or none for a property or input.
     """
     pass
+
+
+class YellowbrickValueError(YellowbrickError, ValueError):
+    """
+    A bad value was passed into a function.
+    """
+    pass
