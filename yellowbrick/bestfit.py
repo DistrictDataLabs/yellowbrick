@@ -130,7 +130,6 @@ def fit_select_best(X, y):
     """
     models = [fit(X,y) for fit in [fit_linear, fit_quadratic]]
     errors = map(lambda model: mse(y, model.predict(X)), models)
-    print(errors)
 
     return min(zip(models, errors), key=itemgetter(1))[0]
 
@@ -182,8 +181,6 @@ if __name__ == '__main__':
     xkey = 'Fine Aggregate (component 7)(kg in a m^3 mixture)'
     ykey = 'Coarse Aggregate  (component 6)(kg in a m^3 mixture)'
     data = pd.read_excel(path)
-
-    print data.columns
 
     fig, axe = plt.subplots()
     axe.scatter(data[xkey], data[ykey])
