@@ -17,9 +17,10 @@ Plots Anscombe's Quartet as an illustration of the importance of visualization.
 ## Imports
 ##########################################################################
 
-
 import numpy as np
 import matplotlib.pyplot as plt
+
+from yellowbrick.bestfit import draw_best_fit
 
 
 ##########################################################################
@@ -55,9 +56,19 @@ def anscombe():
         x = arr[0]
         y = arr[1]
 
+        # Set the X and Y limits
+        ax.set_xlim(0, 15)
+        ax.set_ylim(0, 15)
+
+        # Draw the points in the scatter plot
         ax.scatter(x, y, c='g')
-        m,b = np.polyfit(x, y, 1)
-        X = np.linspace(ax.get_xlim()[0], ax.get_xlim()[1], 100)
-        ax.plot(X, m*X+b, '-')
+
+        # Draw the linear best fit line on the plot
+        draw_best_fit(x, y, ax)
 
     return (axa, axb, axc, axd)
+
+
+if __name__ == '__main__':
+    anscombe()
+    plt.show()

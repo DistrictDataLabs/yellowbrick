@@ -20,6 +20,7 @@ Visualizations related to evaluating Scikit-Learn regressor models
 import matplotlib as mpl
 import matplotlib.pyplot as plt
 
+from .bestfit import draw_best_fit
 from .utils import get_model_name, isestimator
 from .base import ModelVisualization, MultiModelMixin
 from sklearn.cross_validation import train_test_split as tts
@@ -54,12 +55,15 @@ class PredictionError(MultiModelMixin, RegressorVisualization):
         Renders each of the scatter plots per matrix.
         """
         for idx, (axe, y_pred) in enumerate(zip(self.generate_subplots(), self.predict(X, y))):
+            # Set the x and y limits
+            axe.set_xlim(y.min()-1, y.max()+1)
+            axe.set_ylim(y_pred.min()-1, y_pred.max()+1)
+
             # Plot the correct values
             axe.scatter(y, y_pred, c=self.colors['point'])
 
-            # Draw the best fit line
-            # TODO: Add best fit line computation metric
-            axe.plot([y.min(), y.max()], [y.min(), y.max()], 'k--', lw=4, c=self.colors['line'])
+            # Draw the linear best fit line on the regression
+            draw_best_fit(y, y_pred, axe, 'linear', ls='--', lw=2, c=self.colors['line'])
 
             # Set the title and the y-axis label
             axe.set_title("Predicted vs. Actual Values for {}".format(self.names[idx]))
