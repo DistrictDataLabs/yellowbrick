@@ -86,40 +86,58 @@ class _ColorPalette(list):
 
 def color_palette(palette=None, n_colors=None, desat=None):
     """Return a list of colors defining a color palette.
-    Availible seaborn palette names:
-        accent, dark, paired, pastel, bold, muted
-    Availible seaborn palette names:
-        sns_deep, sns_muted, sns_bright, sns_pastel, sns_dark, sns_colorblind
-    Other options:
-        list of colors
     Calling this function with ``palette=None`` will return the current
     matplotlib color cycle.
     This function can also be used in a ``with`` statement to temporarily
     set the color cycle for a plot or set of plots.
-    Parameters
-    ----------
-    palette: None, string, or sequence, optional
+
+    :param palette:
         Name of palette or None to return current palette. If a sequence, input
         colors are used but possibly cycled and desaturated.
-    n_colors : int, optional
+
+        Available seaborn palette names from :py:mod:`seaborn.palettes` are:
+
+        .. hlist::
+            :columns: 3
+
+            * :py:const:`deep`
+            * :py:const:`dark`
+            * :py:const:`paired`
+            * :py:const:`pastel`
+            * :py:const:`bold`
+            * :py:const:`muted`
+            * :py:const:`sns_deep`
+            * :py:const:`sns_muted`
+            * :py:const:`sns_bright`
+            * :py:const:`sns_pastel`
+            * :py:const:`sns_dark`
+            * :py:const:`sns_colorblind`
+
+    :type palette: None or str or sequence
+    :param n_colors:
         Number of colors in the palette. If ``None``, the default will depend
         on how ``palette`` is specified. Named palettes default to 6 colors
         (except paired, which has 10),
         but grabbing the current palette or passing in a list of colors will
         not change the number of colors unless this is specified. Asking for
         more colors than exist in the palette will cause it to cycle.
+    :type n_colors: int or None
+    :param desat:
+    :type desat:
 
-    Returns
-    -------
-    palette : list of RGB tuples.
+    :rtype: list(tuple)
+    :return: list of RGB tuples.
         Color palette. Behaves like a list, but can be used as a context
-        manager and possesses an ``as_hex`` method to convert to hex color
+        manager and possesses an :py:meth:`as_hex` method to convert to hex color
         codes.
-    See Also
-    --------
-    set_palette : Set the default color cycle for all plots.
-    set_color_codes : Reassign color codes like ``"b"``, ``"g"``, etc. to
-                      colors from one of the yellowbrick palettes.
+
+    .. seealso::
+
+        :func:`.set_palette`
+            Set the default color cycle for all plots.
+        :func:`.set_color_codes`
+            Reassign color codes like ``"b"``, ``"g"``, etc. to
+            colors from one of the yellowbrick palettes.
     """
     if palette is None:
         palette = get_color_cycle()

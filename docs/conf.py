@@ -344,4 +344,5 @@ intersphinx_mapping = {'python': ('https://docs.python.org/3', None),
                        'matplotlib': ('http://matplotlib.org/', None),
                        'scipy': ('http://scipy.github.io/devdocs/', None),
                        'numpy': ('https://docs.scipy.org/doc/numpy-dev/', None),
-                       'cycler': ('http://matplotlib.org/cycler/', None)}
+                       'cycler': ('http://matplotlib.org/cycler/', None),
+                       'seaborn': ('https://web.stanford.edu/~mwaskom/software/seaborn/', None)}
