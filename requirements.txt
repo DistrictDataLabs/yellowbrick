@@ -24,3 +24,7 @@ cycler==0.10.0
 #pip==8.1.2
 #setuptools==22.0.5
 #wsgiref==0.1.2
+
+## Documentation (uncomment to build documentation)
+#Sphinx==1.4.4
+#sphinx-rtd-theme==0.1.9
