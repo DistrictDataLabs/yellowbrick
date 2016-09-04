@@ -7,7 +7,7 @@
 # Copyright (C) 2016 District Data Labs
 # For license information, see LICENSE.txt
 #
-# ID: test_bestfit.py [] benjamin@bengfort.com $
+# ID: test_bestfit.py [56236f3] benjamin@bengfort.com $
 
 """
 Tests for the bestfit module.

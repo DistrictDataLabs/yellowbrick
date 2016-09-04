@@ -7,7 +7,7 @@
 # Copyright (C) 2016 District Data Labs
 # For license information, see LICENSE.txt
 #
-# ID: test_regressor.py [] benjamin@bengfort.com $
+# ID: test_regressor.py [be63645] benjamin@bengfort.com $
 
 """
 Ensure that the regressor visualizations work.

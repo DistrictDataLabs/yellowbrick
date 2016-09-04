@@ -7,7 +7,7 @@
 # Copyright (C) 2016 District Data Labs
 # For license information, see LICENSE.txt
 #
-# ID: tests.py [] benjamin@bengfort.com $
+# ID: __init__.py [0c5ba04] benjamin@bengfort.com $
 
 """
 Testing package for the yellowbrick visualization library.
@@ -24,7 +24,7 @@ import unittest
 ## Test Constants
 ##########################################################################
 
-EXPECTED_VERSION = "0.1"
+EXPECTED_VERSION = "0.2"
 
 
 ##########################################################################

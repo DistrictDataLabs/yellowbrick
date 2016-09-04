@@ -7,7 +7,7 @@
 # Copyright (C) 2016 District Data Labs
 # For license information, see LICENSE.txt
 #
-# ID: classifier.py [] benjamin@bengfort.com $
+# ID: classifier.py [5eee25b] benjamin@bengfort.com $
 
 """
 Visualizations related to evaluating Scikit-Learn classification models

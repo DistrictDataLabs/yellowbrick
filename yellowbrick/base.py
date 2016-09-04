@@ -7,7 +7,7 @@
 # Copyright (C) 2016 District Data Labs
 # For license information, see LICENSE.txt
 #
-# ID: base.py [] benjamin@bengfort.com $
+# ID: base.py [4a59c49] benjamin@bengfort.com $
 
 """
 Abstract base classes and interface for Yellowbrick.

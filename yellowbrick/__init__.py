@@ -7,7 +7,7 @@
 # Copyright (C) 2016 District Data Labs
 # For license information, see LICENSE.txt
 #
-# ID: __init__.py [] benjamin@bengfort.com $
+# ID: __init__.py [0c5ba04] benjamin@bengfort.com $
 
 """
 A suite of visual analysis and diagnostic tools to facilitate feature

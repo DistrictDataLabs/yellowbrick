@@ -7,7 +7,7 @@
 # Copyright (C) 2016 District Data Labs
 # For license information, see LICENSE.txt
 #
-# ID: exceptions.py [] benjamin@bengfort.com $
+# ID: exceptions.py [cb75e0e] benjamin@bengfort.com $
 
 """
 Exceptions hierarchy for the yellowbrick library
