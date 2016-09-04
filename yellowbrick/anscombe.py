@@ -7,7 +7,7 @@
 # Copyright (C) 2016 District Data Labs
 # For license information, see LICENSE.txt
 #
-# ID: anscombe.py [] benjamin@bengfort.com $
+# ID: anscombe.py [0bfa366] benjamin@bengfort.com $
 
 """
 Plots Anscombe's Quartet as an illustration of the importance of visualization.

@@ -7,7 +7,7 @@
 # Copyright (C) 2016 District Data Labs
 # For license information, see LICENSE.txt
 #
-# ID: color.py [] benjamin@bengfort.com $
+# ID: color_utils.py [15f72bf] pvomelveny@gmail.com $
 
 """
 Defines color definitions and color maps specific to DDL and Yellowbrick.

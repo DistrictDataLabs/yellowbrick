@@ -7,7 +7,7 @@
 # Copyright (C) 2016 District Data Labs
 # For license information, see LICENSE.txt
 #
-# ID: regressor.py [] benjamin@bengfort.com $
+# ID: regressor.py [4a59c49] benjamin@bengfort.com $
 
 """
 Visualizations related to evaluating Scikit-Learn regressor models

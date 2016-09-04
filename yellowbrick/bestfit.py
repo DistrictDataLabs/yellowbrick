@@ -7,7 +7,7 @@
 # Copyright (C) 2016 District Data Labs
 # For license information, see LICENSE.txt
 #
-# ID: bestfit.py [] benjamin@bengfort.com $
+# ID: bestfit.py [56236f3] benjamin@bengfort.com $
 
 """
 Uses Scikit-Learn to compute a best fit function, then draws it in the plot.
