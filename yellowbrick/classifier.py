@@ -7,7 +7,7 @@
 # Copyright (C) 2016 District Data Labs
 # For license information, see LICENSE.txt
 #
-# ID: classifier.py [] benjamin@bengfort.com $
+# ID: classifier.py [5eee25b] benjamin@bengfort.com $
 
 """
 Visualizations related to evaluating Scikit-Learn classification models
@@ -24,107 +24,166 @@ from sklearn.pipeline import Pipeline
 from sklearn.metrics import roc_curve, auc
 from sklearn.metrics import classification_report
 
-from .color import ddlheatmap
+from .color_utils import ddlheatmap
+from .utils import get_model_name, isestimator
+from .base import ModelVisualization, MultiModelMixin
 
+
+##########################################################################
+## Classification Visualization Base Object
+##########################################################################
+
+class ClassifierVisualization(ModelVisualization):
+    pass
 
 ##########################################################################
 ## Classification Report
 ##########################################################################
 
+class ClassifierReport(ClassifierVisualization):
+    """
+    Classification report that shows the precision, recall, and F1 scores
+    for the model. Integrates numerical scores as well color-coded heatmap.
+    """
+
+    def __init__(self, model, **kwargs):
+        self.model = model
+        self.cmap = kwargs.pop('cmap', ddlheatmap)
+        self.name = kwargs.pop('name', get_model_name(model))
+        self.report = None
+
+
+    def parse_report(self):
+        """
+        Custom classification_report parsing utility
+        """
+
+        if self.report is None:
+            raise ModelError("Call score() before generating the model for parsing.")
+
+        # TODO: make a bit more robust, or look for the sklearn util that doesn't stringify
+        lines = self.report.split('\n')
+        classes = []
+        matrix = []
+
+        for line in lines[2:(len(lines)-3)]:
+            s = line.split()
+            classes.append(s[0])
+            value = [float(x) for x in s[1: len(s) - 1]]
+            matrix.append(value)
+
+        return matrix, classes
+
+
+    def score(self, y_true, y_pred, **kwargs):
+        """
+        Generates the Scikit-Learn classification_report
+        """
+        # TODO: Do a better job of guessing defaults from the model
+        cr_kwargs = {
+            'labels': kwargs.pop('labels', None),
+            'target_names': kwargs.pop('target_names', None),
+            'sample_weight': kwargs.pop('sample_weight', None),
+            'digits': kwargs.pop('digits', 2)
+        }
+
+        self.report = classification_report(y_true, y_pred, **cr_kwargs)
+
+
+    def render(self):
+        """
+        Renders the classification report across each axis.
+        """
+        title  = '{} Classification Report'.format(self.name)
+        matrix, classes = self.parse_report()
+
+        fig, ax = plt.subplots(1)
+
+        for column in range(len(matrix)+1):
+            for row in range(len(classes)):
+                txt = matrix[row][column]
+                ax.text(column,row,matrix[row][column],va='center',ha='center')
+
+        fig = plt.imshow(matrix, interpolation='nearest', cmap=self.cmap)
+        plt.title(title)
+        plt.colorbar()
+        x_tick_marks = np.arange(len(classes)+1)
+        y_tick_marks = np.arange(len(classes))
+        plt.xticks(x_tick_marks, ['precision', 'recall', 'f1-score'], rotation=45)
+        plt.yticks(y_tick_marks, classes)
+        plt.ylabel('Classes')
+        plt.xlabel('Measures')
+
+        return ax
+
+
 def crplot(model, y_true, y_pred, **kwargs):
     """
     Plots a classification report as a heatmap. (More to follow).
     """
+    viz = ClassifierReport(model, **kwargs)
+    viz.score(y_true, y_pred, **kwargs)
 
-    # Get classification report arguments
-    # TODO: Do a better job of guessing defaults from the model
-    cr_kwargs = {
-        'labels': kwargs.pop('labels', None),
-        'target_names': kwargs.pop('target_names', None),
-        'sample_weight': kwargs.pop('sample_weight', None),
-        'digits': kwargs.pop('digits', 2)
-    }
-
-    # Generate the classification report
-    report = classification_report(y_true, y_pred, **cr_kwargs)
-    cmap   = kwargs.pop('cmap', ddlheatmap)
-    title  = kwargs.pop('title', '{} Classification Report'.format(model.__class__.__name__))
-
-
-    # Parse classification report: move to it's own function
-    # TODO: make a bit more robust, or look for the sklearn util that doesn't stringify
-    lines = report.split('\n')
-    classes = []
-    matrix = []
-
-    for line in lines[2:(len(lines)-3)]:
-        s = line.split()
-        classes.append(s[0])
-        value = [float(x) for x in s[1: len(s) - 1]]
-        matrix.append(value)
-
-    # Generate plots and figure
-    fig, ax = plt.subplots(1)
-
-    for column in range(len(matrix)+1):
-        for row in range(len(classes)):
-            txt = matrix[row][column]
-            ax.text(column,row,matrix[row][column],va='center',ha='center')
-
-    fig = plt.imshow(matrix, interpolation='nearest', cmap=cmap)
-    plt.title(title)
-    plt.colorbar()
-    x_tick_marks = np.arange(len(classes)+1)
-    y_tick_marks = np.arange(len(classes))
-    plt.xticks(x_tick_marks, ['precision', 'recall', 'f1-score'], rotation=45)
-    plt.yticks(y_tick_marks, classes)
-    plt.ylabel('Classes')
-    plt.xlabel('Measures')
-
-    return ax
+    return viz.render()
 
 
 ##########################################################################
 ## Receiver Operating Characteristics
 ##########################################################################
 
-def rocplot_compare(models, y_true, y_pred, **kwargs):
+class ROCAUC(MultiModelMixin, ClassifierVisualization):
     """
-    Plots a side by size comparison of the ROC plot with AUC metric embedded.
+    Plot the ROC to visualize the tradeoff between the classifier's
+    sensitivity and specificity.
     """
-    if len(models) != len(y_true) and len(models) != len(y_pred):
-        raise ValueError(
-            "Pass in two models, two sets of target and predictions"
-        )
+    def __init__(self, models, **kwargs):
+        """
+        Pass in a collection of models to generate ROC curves.
+        """
+        super(ROCAUC, self).__init__(models, **kwargs)
+        self.colors = {
+            'roc': kwargs.pop('roc_color', '#2B94E9'),
+            'diagonal': kwargs.pop('diagonal_color', '#666666'),
+        }
 
-    # Set up split subplots for the curve comparison.
-    # TODO: ensure that the number of models is only 2
-    fig, axes = plt.subplots(1, 2, sharey=True)
+    def fit(self, X, y):
+        """
+        Custom fit method
+        """
+        self.models = list(map(lambda model: model.fit(X, y), self.models))
 
-    # Zip together each plot to generate them independently.
-    for model, y, yhat, ax in zip(models, y_true, y_pred, axes):
+    def render(self, X, y):
+        """
+        Renders each ROC-AUC plot across each axis.
+        """
+        for idx, axe in enumerate(self.generate_subplots()):
+            # Get the information for this axis
+            name  = self.names[idx]
+            model = self.models[idx]
+            y_pred = model.predict(X)
+            fpr, tpr, thresholds = roc_curve(y, y_pred)
+            roc_auc = auc(fpr, tpr)
 
-        # Figure out the name of the model
-        if isinstance(model, Pipeline):
-            name = model.steps[-1][1].__class__.__name__
-        else:
-            name = model.__class__.__name__
+            axe.plot(fpr, tpr, c=self.colors['roc'], label='AUC = {:0.2f}'.format(roc_auc))
 
-        fpr, tpr, thresholds = roc_curve(y, yhat)
-        roc_auc = auc(fpr, tpr)
+            # Plot the line of no discrimination to compare the curve to.
+            axe.plot([0,1],[0,1],'m--',c=self.colors['diagonal'])
 
-        # Plot the ROC Curve with the specified AUC label.
-        ax.plot(fpr, tpr, c='#2B94E9', label='AUC = {:0.2f}'.format(roc_auc))
+            axe.set_title('ROC for {}'.format(name))
+            axe.legend(loc='lower right')
 
-        # Plot the line of no discrimination to compare the curve to.
-        ax.plot([0,1],[0,1],'m--',c='#666666')
+        plt.xlim([0,1])
+        plt.ylim([0,1.1])
 
-        # Set the title and create the legend.
-        ax.set_title('ROC for {}'.format(name))
-        ax.legend(loc='lower right')
+        return axe
 
-    # Refactor the limits of the plot
-    plt.xlim([0,1])
-    plt.ylim([0,1.1])
 
-    return axes
+def rocplot(models, X, y, **kwargs):
+    """
+    Take in the model, data and labels as input and generate a multi-plot of
+    the ROC plots with AUC metrics embedded.
+    """
+    viz = ROCAUC(models, **kwargs)
+    viz.fit(X, y)
+
+    return viz.render(X, y)
