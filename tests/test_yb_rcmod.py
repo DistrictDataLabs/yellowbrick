@@ -23,6 +23,11 @@ from yellowbrick import yb_rcmod
 
 class RCParamTester(unittest.TestCase):
 
+    excluded_params = {
+        "backend",  # This cannot be changed by manipulating rc
+        "svg.embed_char_paths"  # This param causes test issues and is deprecated anyway
+    }
+
     def flatten_list(self, orig_list):
 
         iter_list = map(np.atleast_1d, orig_list)
@@ -32,8 +37,7 @@ class RCParamTester(unittest.TestCase):
     def assert_rc_params(self, params):
 
         for k, v in params.items():
-            if k == "svg.embed_char_paths":
-                # This param causes test issues and is deprecated anyway
+            if k in self.excluded_params:
                 continue
             elif isinstance(v, np.ndarray):
                 npt.assert_array_equal(mpl.rcParams[k], v)
