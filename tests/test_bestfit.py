@@ -19,6 +19,9 @@ Tests for the bestfit module.
 
 import unittest
 import numpy as np
+import matplotlib
+# set to use a non-interactive backend
+matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 
 from yellowbrick.bestfit import *
