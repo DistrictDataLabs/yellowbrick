@@ -22,14 +22,14 @@ import matplotlib.pyplot as plt
 
 from .bestfit import draw_best_fit
 from .utils import get_model_name, isestimator
-from .base import ModelVisualization, MultiModelMixin
+from .base import Visualizer, ScoreVisualizer, MultiModelMixin
 from sklearn.cross_validation import train_test_split as tts
 
 ##########################################################################
 ## Regression Visualization Base Object
 ##########################################################################
 
-class RegressorVisualization(ModelVisualization):
+class RegressorVisualization(ScoreVisualizer):
     pass
 
 
