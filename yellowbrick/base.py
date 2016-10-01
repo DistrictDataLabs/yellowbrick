@@ -50,7 +50,8 @@ class Visualizer(BaseEstimator):
 
     def poof(self, model=None):
         """
-        Primary entry point for producing the visualization
+        The user calls poof, which is the primary entry point
+        for producing a visualization.
 
         Visualizes either data features or fitted model scores
         """
@@ -89,6 +90,8 @@ class FeatureVisualizer(Visualizer, TransformerMixin):
 
     def poof(self, data=None):
         """
+        The user calls poof.
+
         Visualize data features individually or together
         """
         raise NotImplementedError(
@@ -121,15 +124,17 @@ class ScoreVisualizer(Visualizer):
         """
         Score will call draw to visualize model performance.
         If y_pred is None, call fit-predict on the model to get a y_pred.
+
+        Score calls _draw
         """
-        return self.draw(y,y_pred)
+        return self._draw(y,y_pred)
 
     def _draw(self, X, y):
         pass
 
     def poof(self, **kwargs):
         """
-        Poof calls _draw
+        The user calls poof
         """
         raise NotImplementedError(
             "Please specify how to render the feature visualization"
@@ -151,6 +156,8 @@ class ModelVisualizer(Visualizer):
 
     def poof(self, model=None):
         """
+        The user calls poof.
+
         A model visualization renders a model
         """
         raise NotImplementedError(
