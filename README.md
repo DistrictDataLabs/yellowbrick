@@ -40,7 +40,7 @@ Yellowbrick is a suite of visual analysis and diagnostic tools to facilitate fea
 - gridsearch heatmap    
 
 ## Using Yellowbrick
-For information on getting started with Yellowbrick, check out our [quick start guide](https://github.com/DistrictDataLabs/yellowbrick/blob/develop/docs/setup.md).
+For information on getting started with Yellowbrick, check out our [quick start guide](https://github.com/DistrictDataLabs/yellowbrick/blob/master/docs/setup.rst).
 
 ## Contributing to Yellowbrick
 
@@ -65,5 +65,5 @@ This repository is set up in a typical production/release/development cycle as d
     ~$ git branch -d feature-myfeature
     ~$ git push origin develop
     ```
-       
+
 4. Repeat. Releases will be routinely pushed into master via release branches, then deployed to the server.
