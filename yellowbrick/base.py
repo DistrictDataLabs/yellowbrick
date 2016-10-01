@@ -129,7 +129,7 @@ class ScoreVisualizer(Visualizer):
 
     def poof(self, **kwargs):
         """
-        Poof calls render
+        Poof calls _draw
         """
         raise NotImplementedError(
             "Please specify how to render the feature visualization"
