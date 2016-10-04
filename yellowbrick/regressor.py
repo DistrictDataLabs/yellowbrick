@@ -21,7 +21,8 @@ import matplotlib as mpl
 import matplotlib.pyplot as plt
 
 from .bestfit import draw_best_fit
-from .utils import get_model_name, isestimator
+from .exceptions import YellowbrickTypeError
+from .utils import get_model_name, isestimator, isregressor
 from .base import Visualizer, ScoreVisualizer, MultiModelMixin
 # from sklearn.cross_validation import train_test_split as tts
 
@@ -33,9 +34,12 @@ class RegressionScoreVisualizer(ScoreVisualizer):
     def __init__(self, model):
         """
         Check to see if model is an instance of a regressor.
-        Should return a metrics mismatch error if it isn't.
+        Should return an error if it isn't.
         """
-        pass
+        if not isregressor(model):
+            raise YellowbrickTypeError(
+                "This estimator is not a regressor; try a classifier or clustering score visualizer instead!"
+        )
 
 ##########################################################################
 ## Prediction Error Plots
