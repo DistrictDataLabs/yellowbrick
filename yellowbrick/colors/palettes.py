@@ -80,7 +80,7 @@ PALETTES = {
     "sns_dark":   ["#001C7F", "#017517", "#8C0900", "#7600A1", "#B8860B", "#006374"],
 
     # Other palettes
-    "flatui":   ["#34495e", "#2ecc71", "#e74c3c", "#9b59b6", "#F4D03F", "#3498db"],
+    "flatui":   ["#34495e", "#2ecc71", "#e74c3c", "#9b59b6", "#f4d03f", "#3498db"],
 
     # Longer palettes that do not map to bgrmyck color space.
     "ddl_heat": ['#DBDBDB', '#DCD5CC', '#DCCEBE', '#DDC8AF', '#DEC2A0', '#DEBB91',
