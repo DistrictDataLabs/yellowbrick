@@ -61,9 +61,10 @@ target/
 #Ipython Notebook
 .ipynb_checkpoints
 
-# Annoying stuff from contributors
+# Making sure the team plays well together
 venv
 .DS_Store
+spad.py 
 
 # Created by https://www.gitignore.io/api/pycharm
 

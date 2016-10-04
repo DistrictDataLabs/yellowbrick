@@ -20,8 +20,9 @@ from .utils import get_model_name, isestimator
 from sklearn.base import BaseEstimator, TransformerMixin
 from sklearn.cross_validation import cross_val_predict as cvp
 
+
 ##########################################################################
-## Base class hierarhcy
+## Base class hierarchy
 ##########################################################################
 
 class Visualizer(BaseEstimator):
@@ -48,7 +49,7 @@ class Visualizer(BaseEstimator):
     def _draw(self, **kwargs):
         pass
 
-    def poof(self, model=None):
+    def poof(self, **kwargs):
         """
         The user calls poof, which is the primary entry point
         for producing a visualization.
@@ -68,6 +69,10 @@ class Visualizer(BaseEstimator):
         pass
 
 
+##########################################################################
+## Feature Visualizers
+##########################################################################
+
 class FeatureVisualizer(Visualizer, TransformerMixin):
     """
     Base class for feature visualization to investigate features
@@ -82,15 +87,29 @@ class FeatureVisualizer(Visualizer, TransformerMixin):
     def __init__(self):
         pass
 
-    def fit(self, X, y=None, **kwargs):
-        pass
+    def fit(self, X, y=None, **fit_params):
+        """
+        This method performs preliminary computations in order to set up the
+        figure or perform other analyses. It can also call drawing methods in
+        order to set up various non-instance related figure elements.
+
+        This method must return self.
+        """
+        return self 
 
     def transform(self, X):
-        pass
-
-    def poof(self, data=None):
         """
-        The user calls poof.
+        Primarily a pass-through to ensure that the feature visualizer will
+        work in a pipeline setting. This method can also call drawing methods
+        in order to ensure that the visualization is constructed.
+
+        This method must return a numpy array with the same shape as X.
+        """
+        return X
+
+    def poof(self, **kwargs):
+        """
+        The user calls poof in order to draw the feature visualization.
 
         Visualize data features individually or together
         """
@@ -98,11 +117,22 @@ class FeatureVisualizer(Visualizer, TransformerMixin):
             "Please specify how to render the feature visualization"
         )
 
-    def fit_draw(self, X, data=None):
-        pass
+    def fit_transform_poof(self, X, y=None, **kwargs):
+        """
+        Fit to data, transform it, then visualize it.
 
-    def fit_transform(self, X, data=None):
-        pass
+        Fits the visualizer to X and y with opetional parameters by passing in
+        all of kwargs, then calls poof with the same kwargs. This method must
+        return the result of the transform method.
+        """
+        Xp = self.fit_transform(X, y, **kwargs)
+        self.poof(**kwargs)
+        return Xp
+
+
+##########################################################################
+## Score Visualizers
+##########################################################################
 
 class ScoreVisualizer(Visualizer):
     """
@@ -141,6 +171,10 @@ class ScoreVisualizer(Visualizer):
         )
 
 
+##########################################################################
+## Model Visualizers
+##########################################################################
+
 class ModelVisualizer(Visualizer):
     """
     A model visualization class accepts as input a Scikit-Learn estimator(s)
@@ -164,6 +198,10 @@ class ModelVisualizer(Visualizer):
             "Please specify how to render the model visualization"
         )
 
+
+##########################################################################
+## Multiple Models and Mixins
+##########################################################################
 
 class MultiModelMixin(object):
     """

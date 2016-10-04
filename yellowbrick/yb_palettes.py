@@ -12,6 +12,7 @@
 ##########################################################################
 ## Imports
 ##########################################################################
+
 from __future__ import division
 from itertools import cycle
 
@@ -25,11 +26,13 @@ from .color_utils import get_color_cycle
 ##########################################################################
 ## Exports
 ##########################################################################
+
 __all__ = ["color_palette", "set_color_codes"]
 
 ##########################################################################
 ## Default Yellowbrick Palettes (and Default Seaborn, just cause)
 ##########################################################################
+
 # Taken from Colorbrewer, qualitative color schemes
 YELLOWBRICK_PALETTES = dict(
     accent=['#7fc97f', '#beaed4', '#fdc086',
@@ -61,9 +64,11 @@ SEABORN_PALETTES = dict(
     sns_colorblind=["#0072B2", "#009E73", "#D55E00",
                 "#CC79A7", "#F0E442", "#56B4E9"]
     )
+
 ##########################################################################
 ## Palette Functions
 ##########################################################################
+
 class _ColorPalette(list):
     """Set the color palette in a with statement, otherwise be a list."""
     def __enter__(self):

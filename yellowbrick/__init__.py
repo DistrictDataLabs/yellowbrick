@@ -24,7 +24,7 @@ _orig_rc_params = mpl.rcParams.copy()
 from .version import get_version
 from .anscombe import anscombe
 # from .classifier import crplot, rocplot
-from .regressor import peplot, residuals_plot
+# from .regressor import peplot, residuals_plot
 from .yb_rcmod import *
 from .yb_palettes import *
 
