@@ -41,6 +41,10 @@ def get_model_name(model):
             return model.__class__.__name__
 
 
+##########################################################################
+## Type checking utilities
+##########################################################################
+
 def is_estimator(model):
     """
     Determines if a model is an estimator using issubclass and isinstance.
@@ -74,3 +78,19 @@ def is_regressor(estimator):
 
 # Alias for closer name to isinstance and issubclass
 isregressor = is_regressor
+
+
+def is_dataframe(obj):
+    """
+    Returns True if the given object is a Pandas Data Frame.
+    """
+    try:
+        # This is the best method of type checking
+        from pandas import DataFrame
+        return isinstance(obj, DataFrame)
+    except ImportError:
+        # Pandas is not a dependency, so this is scary
+        return obj.__class__.__name__ == "DataFrame"
+
+# Alias for closer name to isinstance and issubclass
+isdataframe = is_dataframe

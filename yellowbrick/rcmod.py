@@ -23,13 +23,14 @@ from six import string_types
 from distutils.version import LooseVersion
 mpl_ge_150 = LooseVersion(mpl.__version__) >= '1.5.0'
 
-from . import yb_palettes, _orig_rc_params
+from . import _orig_rc_params
+from .colors import color_palette, set_color_codes
 
 
 ##########################################################################
 ## Exports
 ##########################################################################
-__all__ = ["set", "reset_defaults", "reset_orig",
+__all__ = ["set_aesthetic", "reset_defaults", "reset_orig",
            "axes_style", "set_style", "plotting_context", "set_context",
            "set_palette"]
 
@@ -99,7 +100,7 @@ _context_keys = (
     )
 
 
-def set(context="notebook", style="darkgrid", palette="accent",
+def set_aesthetic(context="notebook", style="darkgrid", palette="accent",
         font="sans-serif", font_scale=1, color_codes=False, rc=None):
     """Set aesthetic parameters in one step.
     Each set of parameters can be set directly or temporarily, see the
@@ -482,7 +483,7 @@ def set_palette(palette, n_colors=None, color_codes=False):
         If ``True`` and ``palette`` is a seaborn palette, remap the shorthand
         color codes (e.g. "b", "g", "r", etc.) to the colors from this palette.
     """
-    colors = yb_palettes.color_palette(palette, n_colors)
+    colors = color_palette(palette, n_colors)
     if mpl_ge_150:
         from cycler import cycler
         cyl = cycler('color', colors)
@@ -491,4 +492,4 @@ def set_palette(palette, n_colors=None, color_codes=False):
         mpl.rcParams["axes.color_cycle"] = list(colors)
     mpl.rcParams["patch.facecolor"] = colors[0]
     if color_codes:
-        yb_palettes.set_color_codes(palette)
+        set_color_codes(palette)

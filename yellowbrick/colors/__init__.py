@@ -1,8 +1,8 @@
-# yellowbrick.features
-# Visualizers for feature analysis and diagnostics.
+# yellowbrick.colors
+# Manage the colors and palettes of the yellowbrick library.
 #
 # Author:   Benjamin Bengfort <bbengfort@districtdatalabs.com>
-# Created:  Mon Oct 03 21:30:18 2016 -0400
+# Created:  Tue Oct 04 15:09:48 2016 -0400
 #
 # Copyright (C) 2016 District Data Labs
 # For license information, see LICENSE.txt
@@ -10,13 +10,13 @@
 # ID: __init__.py [] benjamin@bengfort.com $
 
 """
-Visualizers for feature analysis and diagnostics.
+Manage the colors and palettes of the yellowbrick library.
 """
 
 ##########################################################################
 ## Imports
 ##########################################################################
 
-## Hoist visualizers into the features namespace
-from .pcoords import ParallelCoordinates
-from .radviz import RadialVisualizer
+from .base import *
+from .palettes import *
+from .utils import *

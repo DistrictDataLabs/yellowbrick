@@ -33,16 +33,6 @@ from distutils.version import LooseVersion
 mpl_ge_150 = LooseVersion(mpl.__version__) >= "1.5.0"
 
 
-# TODO: This block should probably be moved/removed soon
-##########################################################################
-## Compatability with old stuff for now
-##########################################################################
-
-ddl_heat = ['#DBDBDB', '#DCD5CC', '#DCCEBE', '#DDC8AF', '#DEC2A0', '#DEBB91',
-            '#DFB583','#DFAE74', '#E0A865', '#E1A256', '#E19B48', '#E29539']
-
-ddlheatmap = mplcol.ListedColormap(ddl_heat)
-
 ##########################################################################
 ## Color Utils
 ##########################################################################

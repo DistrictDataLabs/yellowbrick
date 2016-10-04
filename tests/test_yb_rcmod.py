@@ -18,7 +18,7 @@ import matplotlib as mpl
 from distutils.version import LooseVersion
 
 
-from yellowbrick import yb_rcmod
+import yellowbrick.rcmod as yb_rcmod
 
 
 class RCParamTester(unittest.TestCase):
@@ -102,9 +102,9 @@ class TestAxesStyle(RCParamTester):
 
     def test_set_rc(self):
 
-        yb_rcmod.set(rc={"lines.linewidth": 4})
+        yb_rcmod.set_aesthetic(rc={"lines.linewidth": 4})
         self.assertEqual(mpl.rcParams["lines.linewidth"], 4)
-        yb_rcmod.set()
+        yb_rcmod.set_aesthetic()
 
     def test_reset_defaults(self):
 
@@ -115,7 +115,7 @@ class TestAxesStyle(RCParamTester):
 
         yb_rcmod.reset_defaults()
         self.assert_rc_params(mpl.rcParamsDefault)
-        yb_rcmod.set()
+        yb_rcmod.set_aesthetic()
 
     def test_reset_orig(self):
 
@@ -126,7 +126,7 @@ class TestAxesStyle(RCParamTester):
 
         yb_rcmod.reset_orig()
         self.assert_rc_params(mpl.rcParamsOrig)
-        yb_rcmod.set()
+        yb_rcmod.set_aesthetic()
 
 
 class TestPlottingContext(RCParamTester):

@@ -17,22 +17,26 @@ selection, model selection, and parameter tuning for machine learning.
 ##########################################################################
 ## Imports
 ##########################################################################
+
 # Capture the original matplotlib rcParams
 import matplotlib as mpl
 _orig_rc_params = mpl.rcParams.copy()
+
+# Modify the mpl rcParams on import of the library
+from .rcmod import *
 
 from .version import get_version
 from .anscombe import anscombe
 # from .classifier import crplot, rocplot
 # from .regressor import peplot, residuals_plot
-from .yb_rcmod import *
-from .yb_palettes import *
+
+from .colors.palettes import *
 
 ##########################################################################
 ## Set default aesthetics
 ##########################################################################
 
-set()
+set_aesthetic()
 
 ##########################################################################
 ## Package Version

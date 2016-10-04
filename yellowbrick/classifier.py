@@ -24,9 +24,9 @@ from sklearn.pipeline import Pipeline
 from sklearn.metrics import auc, roc_auc_score, roc_curve
 from sklearn.metrics import precision_recall_fscore_support
 
-from .color_utils import ddlheatmap
+from .colors import ddlheatmap
 from .exceptions import YellowbrickTypeError
-from .yb_palettes import YELLOWBRICK_PALETTES
+from .colors.pal_out import PALETTES as YELLOWBRICK_PALETTES
 from .utils import get_model_name, isestimator
 from .base import Visualizer, ScoreVisualizer, MultiModelMixin
 

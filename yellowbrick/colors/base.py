@@ -21,28 +21,9 @@ See https://bl.ocks.org/mbostock/5577023
 import random
 
 from copy import copy
-from cloudscope.exceptions import BadValue
+from six import string_types
+from yellowbrick.exceptions import YellowbrickValueError
 
-##########################################################################
-## Color Palettes
-##########################################################################
-
-FLATUI = ["#9b59b6", "#3498db", "#95a5a6", "#e74c3c", "#34495e", "#2ecc71"]
-PAIRED = [
-    "#fdbf6f", "#ff7f00", "#cab2d6", "#6a3d9a", "#ffff99", "#b15928",
-    "#b2df8a", "#33a02c", "#fb9a99", "#e31a1c", "#a6cee3", "#1f78b4",
-]
-SET1   = [
-    "#e41a1c", "#377eb8", "#4daf4a",
-    "#984ea3", "#ff7f00", "#ffff33",
-    "#a65628", "#f781bf", "#999999"
-]
-
-PALETTES = {
-    'flatui': FLATUI,
-    'paired': PAIRED,
-    'set1': SET1,
-}
 
 ##########################################################################
 ## Color Utilities
@@ -73,9 +54,11 @@ class ColorMap(object):
         """
         Converts color strings into a color listing.
         """
-        if isinstance(value, basestring):
+        if isinstance(value, string_types):
             if value not in PALETTES:
-                raise BadValue("'{}' is not a registered color palette")
+                raise YellowbrickValueError(
+                    "'{}' is not a registered color palette".format(value)
+                )
             self._colors = copy(PALETTES[value])
         elif isinstance(value, list):
             self._colors = value
@@ -87,7 +70,7 @@ class ColorMap(object):
             if self.colors:
                 self.mapping[category] = self.colors.pop()
             else:
-                raise ValueError(
+                raise YellowbrickValueError(
                     "Not enough colors for this many categories!"
                 )
 
