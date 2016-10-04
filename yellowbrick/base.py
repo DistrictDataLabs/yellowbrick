@@ -37,8 +37,8 @@ class Visualizer(BaseEstimator):
     """
 
     def __init__(self, **kwargs):
-        self.size  = kwargs.pop('size')
-        self.color = kwargs.pop('color')
+        self.size  = kwargs.pop('size', None)
+        self.color = kwargs.pop('color', None)
 
     def fit(self, X, y=None, **kwargs):
         """
@@ -84,8 +84,8 @@ class FeatureVisualizer(Visualizer, TransformerMixin):
     Accepts as input a DataFrame or Numpy array.
     """
 
-    def __init__(self):
-        pass
+    def __init__(self, **kwargs):
+        super(FeatureVisualizer, self).__init__(**kwargs)
 
     def fit(self, X, y=None, **fit_params):
         """
@@ -95,7 +95,7 @@ class FeatureVisualizer(Visualizer, TransformerMixin):
 
         This method must return self.
         """
-        return self 
+        return self
 
     def transform(self, X):
         """
