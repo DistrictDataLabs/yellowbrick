@@ -25,6 +25,7 @@ from sklearn.metrics import auc, roc_auc_score, roc_curve
 from sklearn.metrics import precision_recall_fscore_support
 
 from .color_utils import ddlheatmap
+from .exceptions import YellowbrickTypeError
 from .yb_palettes import YELLOWBRICK_PALETTES
 from .utils import get_model_name, isestimator
 from .base import Visualizer, ScoreVisualizer, MultiModelMixin
@@ -38,9 +39,12 @@ class ClassificationScoreVisualizer(ScoreVisualizer):
     def __init__(self, model):
         """
         Check to see if model is an instance of a classifer.
-        Should return a metrics mismatch error if it isn't.
+        Should return an error if it isn't.
         """
-        pass
+        if not isclassifier(model):
+            raise YellowbrickTypeError(
+                "This estimator is not a classifier; try a regression or clustering score visualizer instead!"
+        )
 
 ##########################################################################
 ## Classification Report
