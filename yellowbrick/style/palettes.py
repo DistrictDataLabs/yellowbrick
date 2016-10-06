@@ -242,6 +242,8 @@ def color_palette(palette=None, n_colors=None):
         :func:`.set_color_codes`
             Reassign color codes like ``"b"``, ``"g"``, etc. to
             colors from one of the yellowbrick palettes.
+        :func:`..colors.resolve_colors`
+            Resolve a color map or listed sequence of colors.
 
     """
     if palette is None:

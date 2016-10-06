@@ -22,9 +22,10 @@ coordinates that optimize column order.
 import numpy as np
 import matplotlib.pyplot as plt
 
+from yellowbrick.utils import is_dataframe
 from yellowbrick.base import FeatureVisualizer
 from yellowbrick.exceptions import YellowbrickTypeError
-from yellowbrick.style.colors import resolve_colors
+from yellowbrick.style.colors import resolve_colors, get_color_cycle
 
 
 ##########################################################################
@@ -94,15 +95,30 @@ class ParallelCoordinates(FeatureVisualizer):
 
     def fit(self, X, y=None, **kwargs):
         """
-        The fit method is the primary drawing method for the parallel coords
+        The fit method is the primary drawing input for the parallel coords
         visualization since it has both the X and y data required for the
         viz and the transform method does not.
-        """
 
+        Parameters
+        ----------
+        X : ndarray or DataFrame of shape n x m
+            A matrix of n instances with m features
+
+        y : ndarray or Series of length n
+            An array or series of target or class values
+
+        kwargs : dict
+            Pass generic arguments to the drawing method
+
+        Returns
+        ------
+        self : instance
+            Returns the instance of the transformer/visualizer
+        """
         # Get the shape of the data
         nrows, ncols = X.shape
 
-        # Compute the classes for the legend if they're None.
+        # Store the classes for the legend if they're None.
         if self.classes_ is None:
             # TODO: Is this the most efficient method?
             self.classes_ = [str(label) for label in set(y)]
@@ -111,7 +127,7 @@ class ParallelCoordinates(FeatureVisualizer):
         if self.features_ is None:
 
             # If X is a data frame, get the columns off it.
-            if hasattr(X, 'columns'):
+            if is_dataframe(X):
                 self.features_ = X.columns
 
             # Otherwise create numeric labels for each column.
@@ -119,6 +135,20 @@ class ParallelCoordinates(FeatureVisualizer):
                 self.features_ = [
                     str(cdx) for cdx in range(ncols)
                 ]
+
+        # Draw the instances
+        self._draw(X, y, **kwargs)
+
+        # Fit always returns self.
+        return self
+
+    def _draw(self, X, y, **kwargs):
+        """
+        Called from the fit method, this method creates the parallel
+        coordinates canvas and draws each instance and vertical lines on it.
+        """
+        # Get the shape of the data
+        nrows, ncols = X.shape
 
         # Create the xticks for each column
         # TODO: Allow the user to specify this feature
@@ -128,17 +158,27 @@ class ParallelCoordinates(FeatureVisualizer):
         if self.ax is None: self.ax = plt.gca()
 
         # Create the colors
-        color_values = resolve_colors(
-            num_colors=len(self.classes_), colormap=self.colormap, color=self.color
-        )
+        # TODO: Allow both colormap, listed colors, and palette definition
+        # color_values = resolve_colors(
+        #     num_colors=len(self.classes_), colormap=self.colormap, color=self.color
+        # )
+        color_values = get_color_cycle()
         colors = dict(zip(self.classes_, color_values))
 
-        # Add the instances
+        # Track which labels are already in the legend
+        used_legends = set([])
+
+        # TODO: Make this function compatible with DataFrames!
         for idx, row in enumerate(X):
             # TODO: How to map classmap to labels?
             label = y[idx] # Get the label for the row
             label = self.classes_[label]
-            self.ax.plot(x, row, color=colors[label], label=label)
+
+            if label not in used_legends:
+                used_legends.add(label)
+                self.ax.plot(x, row, color=colors[label], label=label, **kwargs)
+            else:
+                self.ax.plot(x, row, color=colors[label], **kwargs)
 
         # Add the vertical lines
         if self.show_vlines:
@@ -150,13 +190,12 @@ class ParallelCoordinates(FeatureVisualizer):
         self.ax.set_xticklabels(self.features_)
         self.ax.set_xlim(x[0], x[-1])
 
-        # Fit always returns self.
-        return self
-
     def poof(self):
         """
         Display the parallel coordinates.
         """
+        if self.ax is None: return
+
         self.ax.legend(loc='best')
         self.ax.grid()
 

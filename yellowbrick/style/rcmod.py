@@ -116,8 +116,8 @@ _context_keys = (
 ## rcParams Keys
 ##########################################################################
 
-def set_aesthetic(palette="accent", font="sans-serif", font_scale=1,
-                  color_codes=False, rc=None):
+def set_aesthetic(palette="bold", font="sans-serif", font_scale=1,
+                  color_codes=True, rc=None):
     """
     Set aesthetic parameters in one step.
 

@@ -38,6 +38,9 @@ mpl_ge_150 = LooseVersion(mpl.__version__) >= "1.5.0"
 ##########################################################################
 
 def get_color_cycle():
+    """
+    Returns the current color cycle from matplotlib.
+    """
     if mpl_ge_150:
         cyl = mpl.rcParams['axes.prop_cycle']
         # matplotlib 1.5 verifies that axes.prop_cycle *is* a cycler
@@ -54,6 +57,18 @@ def resolve_colors(num_colors=None, colormap=None, color=None):
     """
     Resolves the colormap or the color list with the number of colors.
     See: https://github.com/pydata/pandas/blob/master/pandas/tools/plotting.py#L163
+
+    Parameters
+    ----------
+    num_colors : int or None
+        the number of colors in the cycle or colormap
+
+    colormap : str or None
+        the colormap used to create the sequence of colors
+
+    color : list or Non e
+        the list of colors to specifically use with the plot 
+
     """
 
     # Work with the colormap
