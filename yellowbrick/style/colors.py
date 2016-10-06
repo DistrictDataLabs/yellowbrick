@@ -19,15 +19,78 @@ See https://bl.ocks.org/mbostock/5577023
 ##########################################################################
 
 import random
+import warnings
+import numpy as np
+import matplotlib as mpl
+import matplotlib.cm as cm
 
 from copy import copy
 from six import string_types
 from yellowbrick.exceptions import YellowbrickValueError
 
+# Check to see if matplotlib is at least sorta up to date
+from distutils.version import LooseVersion
+mpl_ge_150 = LooseVersion(mpl.__version__) >= "1.5.0"
+
 
 ##########################################################################
 ## Color Utilities
 ##########################################################################
+
+def get_color_cycle():
+    if mpl_ge_150:
+        cyl = mpl.rcParams['axes.prop_cycle']
+        # matplotlib 1.5 verifies that axes.prop_cycle *is* a cycler
+        # but no garuantee that there's a `color` key.
+        # so users could have a custom rcParmas w/ no color...
+        try:
+            return [x['color'] for x in cyl]
+        except KeyError:
+            pass  # just return axes.color style below
+    return mpl.rcParams['axes.color_cycle']
+
+
+def resolve_colors(num_colors=None, colormap=None, color=None):
+    """
+    Resolves the colormap or the color list with the number of colors.
+    See: https://github.com/pydata/pandas/blob/master/pandas/tools/plotting.py#L163
+    """
+
+    # Work with the colormap
+    if color is None and colormap is None:
+        if isinstance(colormap, str):
+            cmap = colormap
+            colormap = cm.get_cmap(colormap)
+
+            if colormap is None:
+                raise YellowbrickValueError(
+                    "Colormap {0} is not a valid matploblib cmap".format(cmap)
+                )
+
+        colors = list(map(colormap, np.linspace(0, 1, num=num_colors)))
+
+    # Work with the color list
+    elif color is not None:
+
+        if colormap is not None:
+            warnings.warn(
+                "'color' and 'colormap' cannot be used simultaneously! Using 'color'."
+            )
+
+        colors = list(color) # Ensure colors is a list
+
+    # Get the default colors
+    else:
+        colors = get_color_cycle()
+
+    if len(colors) != num_colors:
+        multiple = num_colors // len(colors) - 1
+        mod = num_colors % len(colors)
+        colors += multiple * colors
+        colors += colors[:mod]
+
+    return colors
+
 
 class ColorMap(object):
     """

@@ -1,4 +1,4 @@
-# yellowbrick.colors.palettes
+# yellowbrick.style.palettes
 # Implements the variety of colors that yellowbrick allows access to by name.
 #
 # Author:   Patrick O'Melveny <pvomelveny@gmail.com>
@@ -33,7 +33,7 @@ import matplotlib.colors as mplcol
 from six import string_types
 from six.moves import range
 
-from .utils import get_color_cycle
+from .colors import get_color_cycle
 from yellowbrick.exceptions import YellowbrickValueError
 
 ##########################################################################
@@ -132,7 +132,7 @@ class ColorPalette(list):
         """
         Open the context and assign the pallete to the mpl.rcParams
         """
-        from yellowbrick.rcmod import set_palette
+        from .rcmod import set_palette
         self._orig_palette = color_palette()
         set_palette(self)
         return self
@@ -141,7 +141,7 @@ class ColorPalette(list):
         """
         Close the context and restore the original palette
         """
-        from yellowbrick.rcmod import set_palette
+        from .rcmod import set_palette
         set_palette(self._orig_palette)
 
     def as_hex(self):

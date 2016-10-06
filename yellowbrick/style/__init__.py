@@ -1,8 +1,8 @@
-# tests.test_style
-# Tests for the style handling module of yellowbrick.
+# yellowbrick.style
+# Manage the style and aesthetic of the yellowbrick library.
 #
 # Author:   Benjamin Bengfort <bbengfort@districtdatalabs.com>
-# Created:  Tue Oct 04 16:21:21 2016 -0400
+# Created:  Tue Oct 04 15:09:48 2016 -0400
 #
 # Copyright (C) 2016 District Data Labs
 # For license information, see LICENSE.txt
@@ -10,9 +10,13 @@
 # ID: __init__.py [] benjamin@bengfort.com $
 
 """
-Tests for the style handling module of yellowbrick.
+Manage the style and aesthetic of the yellowbrick library.
 """
 
 ##########################################################################
 ## Imports
 ##########################################################################
+
+from .colors import *
+from .palettes import *
+from .rcmod import *

@@ -24,7 +24,7 @@ import matplotlib.pyplot as plt
 
 from yellowbrick.base import FeatureVisualizer
 from yellowbrick.exceptions import YellowbrickTypeError
-from yellowbrick.color_utils import resolve_colors
+from yellowbrick.style.colors import resolve_colors
 
 
 ##########################################################################
@@ -132,8 +132,6 @@ class ParallelCoordinates(FeatureVisualizer):
             num_colors=len(self.classes_), colormap=self.colormap, color=self.color
         )
         colors = dict(zip(self.classes_, color_values))
-
-        print colors
 
         # Add the instances
         for idx, row in enumerate(X):
