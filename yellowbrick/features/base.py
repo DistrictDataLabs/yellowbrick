@@ -1,6 +1,7 @@
 # yellowbrick.features.base
 # Base classes for feature visualizers and feature selection tools.
 #
+# Author:   Rebecca Bilbro <rbilbro@districtdatalabs.com>
 # Author:   Benjamin Bengfort <bbengfort@districtdatalabs.com>
 # Created:  Fri Oct 07 13:41:24 2016 -0400
 #

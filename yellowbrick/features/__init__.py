@@ -20,3 +20,4 @@ Visualizers for feature analysis and diagnostics.
 ## Hoist visualizers into the features namespace
 from .pcoords import ParallelCoordinates
 from .radviz import RadialVisualizer, RadViz
+from .rankd import Rank2D

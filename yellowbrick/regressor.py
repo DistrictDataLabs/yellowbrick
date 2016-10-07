@@ -1,6 +1,7 @@
 # yellowbrick.regressor
 # Visualizations related to evaluating Scikit-Learn regressor models
 #
+# Author:   Rebecca Bilbro <rbilbro@districtdatalabs.com>
 # Author:   Benjamin Bengfort <bbengfort@districtdatalabs.com>
 # Created:  Fri Jun 03 10:30:36 2016 -0700
 #

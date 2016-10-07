@@ -1,6 +1,7 @@
 # yellowbrick.base
 # Abstract base classes and interface for Yellowbrick.
 #
+# Author:   Rebecca Bilbro <rbilbro@districtdatalabs.com>
 # Author:   Benjamin Bengfort <bbengfort@districtdatalabs.com>
 # Created:  Fri Jun 03 10:20:59 2016 -0700
 #

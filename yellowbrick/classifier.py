@@ -1,6 +1,7 @@
 # yellowbrick.classifier
 # Visualizations related to evaluating Scikit-Learn classification models
 #
+# Author:   Rebecca Bilbro <rbilbro@districtdatalabs.com>
 # Author:   Benjamin Bengfort <bbengfort@districtdatalabs.com>
 # Created:  Wed May 18 12:39:40 2016 -0400
 #
