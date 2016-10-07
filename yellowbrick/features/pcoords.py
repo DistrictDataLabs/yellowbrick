@@ -23,7 +23,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 from yellowbrick.utils import is_dataframe
-from yellowbrick.base import FeatureVisualizer
+from yellowbrick.features.base import FeatureVisualizer
 from yellowbrick.exceptions import YellowbrickTypeError
 from yellowbrick.style.colors import resolve_colors, get_color_cycle
 
