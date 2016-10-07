@@ -33,3 +33,7 @@ class RadialVisualizer(FeatureVisualizer):
     Implements radviz.
     """
     pass
+
+
+# Alias for RadViz
+RadViz = RadialVisualizer

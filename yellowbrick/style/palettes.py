@@ -58,15 +58,18 @@ YB_KEY = '#111111'  # The yellowbrick key (black) color is very dark grey
 
 PALETTES = {
     # "name": ['blue', 'green', 'red', 'maroon', 'yellow', 'cyan']
+    # The yellowbrick default palette
+    "yellowbrick": ['#0272a2', '#9fc377', '#ca0b03', '#a50258', '#d7c703', '#88cada'],
+
     # The following are from ColorBrewer
     "accent": ['#7fc97f', '#beaed4', '#fdc086', '#ffff99', '#386cb0', '#f0027f'],
     "dark":   ['#1b9e77', '#d95f02', '#7570b3', '#e7298a', '#66a61e', '#e6ab02'],
-    "pastel": ['#b3e2cd', '#fdcdac', '#cbd5e8', '#f4cae4', '#e6f5c9', '#fff2ae'],
-    "bold":   ['#e41a1c', '#377eb8', '#4daf4a', '#984ea3', '#ff7f00', '#ffff33'],
-    "muted":  ['#8dd3c7', '#ffffb3', '#bebada', '#fb8072', '#80b1d3', '#fdb462'],
+    "pastel": ['#cbd5e8', '#b3e2cd', '#fdcdac', '#f4cae4', '#fff2ae', '#e6f5c9'],
+    "bold":   ['#377eb8', '#4daf4a', '#e41a1c', '#984ea3', '#ffff33', '#ff7f00'],
+    "muted":  ['#80b1d3', '#8dd3c7', '#fb8072', '#bebada', '#ffffb3', '#fdb462'],
 
     # The reset colors back to the original mpl color codes
-    "reset":  ['#0000ff', '#008000', '#ff0000', '#bfbf00', '#bfbf00', '#00bfbf', '#000000'],
+    "reset":  ['#0000ff', '#008000', '#ff0000', '#bf00bf', '#bfbf00', '#00bfbf', '#000000'],
 
     # Colorblind colors
     "colorblind":     ["#0072B2", "#009E73", "#D55E00", "#CC79A7", "#F0E442", "#56B4E9"],
