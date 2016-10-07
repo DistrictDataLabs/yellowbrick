@@ -159,6 +159,7 @@ class ParallelCoordinates(FeatureVisualizer):
 
         # Create the colors
         # TODO: Allow both colormap, listed colors, and palette definition
+        # TODO: Make this an independent function or property for override!
         # color_values = resolve_colors(
         #     num_colors=len(self.classes_), colormap=self.colormap, color=self.color
         # )
@@ -169,6 +170,7 @@ class ParallelCoordinates(FeatureVisualizer):
         used_legends = set([])
 
         # TODO: Make this function compatible with DataFrames!
+        # TODO: Make an independent function to allow addition of instances!
         for idx, row in enumerate(X):
             # TODO: How to map classmap to labels?
             label = y[idx] # Get the label for the row
@@ -181,6 +183,7 @@ class ParallelCoordinates(FeatureVisualizer):
                 self.ax.plot(x, row, color=colors[label], **kwargs)
 
         # Add the vertical lines
+        # TODO: Make an independent function for override!
         if self.show_vlines:
             for idx in x:
                 self.ax.axvline(idx, **self.vlines_kwds)
@@ -190,13 +193,22 @@ class ParallelCoordinates(FeatureVisualizer):
         self.ax.set_xticklabels(self.features_)
         self.ax.set_xlim(x[0], x[-1])
 
-    def poof(self):
+    def poof(self, outpath=None, **kwargs):
         """
         Display the parallel coordinates.
+
+        Parameters
+        ----------
+        outpath: path or None
+            Save the figure to disk or if None show in a window
+
         """
         if self.ax is None: return
 
         self.ax.legend(loc='best')
         self.ax.grid()
 
-        plt.show()
+        if outpath is not None:
+            plt.savefig(outpath, **kwargs)
+        else:
+            plt.show()
