@@ -16,12 +16,8 @@ Testing for the Classification Score Visualizers
 ##########################################################################
 
 import unittest
-import numpy as np
 
-from yellowbrick.exceptions import *
 from yellowbrick.classifier import *
-from yellowbrick.colors import *
-from yellowbrick.utils import *
 
 from sklearn.svm import LinearSVC
 from sklearn.metrics import *
