@@ -17,6 +17,7 @@ Ensure that the regressor visualizations work.
 ##########################################################################
 
 import unittest
+import numpy as np
 
 from yellowbrick.regressor import *
 
@@ -57,10 +58,9 @@ class PredictionErrorTests(unittest.TestCase):
         Assert no errors occur during Prediction Error Plots integration
         """
         model = SVR()
-        model.fit(X,y)
+        model.fit(X, y)
         visualizer = PredictionError(model)
-        y_pred = cv.cross_val_predict(model, X, y, cv=3)
-        visualizer.score(y,y_pred)
+        visualizer.score(X, y)
 
 ##########################################################################
 ## Residuals Plots test case
@@ -74,8 +74,6 @@ class ResidualsPlotTests(unittest.TestCase):
         """
         model = SVR()
         X_train, X_test, y_train, y_test = tts(X, y, test_size=0.5)
-        model.fit(X_train,y_train)
-        y_train_pred = model.predict(X_train)
-        y_test_pred = model.predict(X_test)
+        model.fit(X_train, y_train)
         visualizer = ResidualsPlot(model)
-        visualizer.score(y_train, y_train_pred,y_test, y_test_pred)
+        visualizer.score(X_test, y_test)
