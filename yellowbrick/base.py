@@ -86,7 +86,7 @@ class ScoreVisualizer(Visualizer):
     """
 
     def __init__(self, model):
-        pass
+        super(ScoreVisualizer, self).__init__(**kwargs)
 
     def fit(self, X, y=None):
         return self
@@ -121,9 +121,9 @@ class ScoreVisualizer(Visualizer):
 
 class ModelVisualizer(Visualizer):
     """
-    A model visualization class accepts as input a Scikit-Learn estimator(s)
-    and is itself an estimator (to be included in a Pipeline) in order to
-    visualize the efficacy of a particular fitted model.
+    A model visualization accepts as input an unfitted Scikit-Learn estimator(s)
+    and enables the user to visualize the performance of models across a range
+    of hyperparameter values (e.g. using VisualGridsearch and ValidationCurve).
     """
 
     def fit(self, X, y=None, **kwargs):

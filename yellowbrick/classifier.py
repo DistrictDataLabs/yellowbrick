@@ -42,6 +42,8 @@ class ClassificationScoreVisualizer(ScoreVisualizer):
         Check to see if model is an instance of a classifer.
         Should return an error if it isn't.
         """
+        super(ClassificationScoreVisualizer, self).__init__(**kwargs)
+
         if not isclassifier(model):
             raise YellowbrickTypeError(
                 "This estimator is not a classifier; try a regression or clustering score visualizer instead!"
@@ -60,6 +62,8 @@ class ClassificationReport(ClassificationScoreVisualizer):
         """
         Pass in a fitted model to generate a ROC curve.
         """
+        super(ClassificationReport, self).__init__(**kwargs)
+
         self.estimator = model
         self.name = get_model_name(self.estimator)
         self.cmap = kwargs.pop('cmap', ddlheatmap)
@@ -124,6 +128,8 @@ class ROCAUC(ClassificationScoreVisualizer):
         """
         Pass in a model to generate a ROC curve.
         """
+        super(ROCAUC, self).__init__(**kwargs)
+
         self.estimator = model
         self.name = get_model_name(self.estimator)
         super(ROCAUC, self).__init__(model, **kwargs)
