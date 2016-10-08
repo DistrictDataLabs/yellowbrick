@@ -85,22 +85,25 @@ class ScoreVisualizer(Visualizer):
     Draws the score for the fitted model.
     """
 
-    def __init__(self, model):
+    def __init__(self, model, **kwargs):
+        self.estimator = model
         super(ScoreVisualizer, self).__init__(**kwargs)
 
-    def fit(self, X, y=None):
+    def fit(self, X, y=None, **kwargs):
+        self.estimator.fit(X, y, **kwargs)
         return self
 
     def predict(self, X):
-        pass
+        return self.estimator.predict(X)
 
-    def score(self, y, y_pred=None):
+    def score(self, X, y=None):
         """
         Score will call draw to visualize model performance.
         If y_pred is None, call fit-predict on the model to get a y_pred.
 
         Score calls draw
         """
+        y_pred = self.predict(X)
         return self.draw(y,y_pred)
 
     def draw(self, X, y):

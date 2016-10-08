@@ -74,6 +74,9 @@ def is_regressor(estimator):
     Returns True if the given estimator is (probably) a regressor.
     From: https://github.com/scikit-learn/scikit-learn/blob/master/sklearn/base.py#L531
     """
+    from yellowbrick.base import Visualizer
+    if isinstance(estimator, Visualizer):
+        return is_regressor(estimator.estimator)
     return getattr(estimator, "_estimator_type", None) == "regressor"
 
 # Alias for closer name to isinstance and issubclass
