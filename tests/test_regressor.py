@@ -36,10 +36,18 @@ X = np.array(
          [ 2.315, 2.724, 4.260, 7.135, 4.779,],
          [ 2.110, 3.609, 4.330, 7.985, 5.595,],
          [ 2.110, 3.626, 4.330, 8.203, 5.621,],
+         [ 2.110, 3.620, 4.470, 8.210, 5.612,],
+         [ 2.318, 2.727, 4.260, 7.212, 4.792,],
+         [ 2.315, 2.726, 4.295, 7.140, 4.783,],
+         [ 2.315, 2.724, 4.260, 7.135, 4.779,],
+         [ 2.110, 3.609, 4.330, 7.985, 5.595,],
+         [ 2.110, 3.626, 4.330, 8.203, 5.621,],
          [ 2.110, 3.620, 4.470, 8.210, 5.612,]]
     )
 
 y = np.array([0.23, .33, .31, .3, .24, .32])
+
+
 ##########################################################################
 ## Prediction error test case
 ##########################################################################
@@ -53,7 +61,7 @@ class PredictionErrorTests(unittest.TestCase):
         model = SVR()
         model.fit(X,y)
         visualizer = PredictionError(model)
-        y_pred = cv.cross_val_predict(model, X, y, cv=12)
+        y_pred = cv.cross_val_predict(model, X, y, cv=3)
         visualizer.score(y,y_pred)
 
 ##########################################################################
@@ -67,7 +75,7 @@ class ResidualsPlotTests(unittest.TestCase):
         Assert no errors occur during Residual Plots integration
         """
         model = SVR()
-        X_train, X_test, y_train, y_test = tts(X, y, test_size=0.2)
+        X_train, X_test, y_train, y_test = tts(X, y, test_size=0.5)
         model.fit(X_train,y_train)
         y_train_pred = model.predict(X_train)
         y_test_pred = model.predict(X_test)
