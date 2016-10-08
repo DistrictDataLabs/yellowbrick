@@ -1,13 +1,12 @@
 # tests.test_regressor
 # Ensure that the regressor visualizations work.
 #
-# Author:   Benjamin Bengfort <bbengfort@districtdatalabs.com>
-# Created:  Fri Jun 03 14:20:02 2016 -0700
+# Author:   Rebecca Bilbro <rbilbro@districtdatalabs.com>
+# Created:  Sat Oct 8 16:30:39 2016 -0400
 #
 # Copyright (C) 2016 District Data Labs
 # For license information, see LICENSE.txt
 #
-# ID: test_regressor.py [be63645] benjamin@bengfort.com $
 
 """
 Ensure that the regressor visualizations work.
@@ -20,10 +19,12 @@ Ensure that the regressor visualizations work.
 import unittest
 
 from yellowbrick.regressor import *
+from yellowbrick.bestfit import *
 from yellowbrick.utils import *
 
-from sklearn.ensemble import RandomForestRegressor
 from sklearn.svm import SVR
+from sklearn import cross_validation as cv
+from sklearn.cross_validation import train_test_split as tts
 
 ##########################################################################
 ## Prediction error test case
@@ -31,24 +32,30 @@ from sklearn.svm import SVR
 
 class PredictionErrorTests(unittest.TestCase):
 
-    @unittest.skip("Needs to be configured for the new API")
-    def test_init_pe_viz(self):
+    def test_pred_error(self):
         """
-        Ensure that both a single model and multiple models can be rendered
+        Assert no errors occur during Prediction Error Plots integration
         """
-        viz = PredictionError([RandomForestRegressor(), SVR()])
-        self.assertEqual(len(viz.models), 2)
+        model = SVR()
+        model.fit(X,y)
+        visualizer = PredictionError(model)
+        y_pred = cv.cross_val_predict(model, X, y, cv=12)
+        visualizer.score(y,y_pred)
 
-        viz = PredictionError(SVR())
-        self.assertEqual(len(viz.models), 1)
+##########################################################################
+## Residuals Plots test case
+##########################################################################
 
-    @unittest.skip("Needs to be configured for the new API")
-    def test_init_pe_names(self):
-        """
-        Ensure that model names are correctly extracted
-        """
-        viz = PredictionError([RandomForestRegressor(), SVR()])
-        self.assertEqual(viz.names, ["RandomForestRegressor", "SVR"])
+class ResidualsPlotTests(unittest.TestCase):
 
-        viz = PredictionError(SVR())
-        self.assertEqual(viz.names, ["SVR"])
+    def test_resid_plots(self):
+        """
+        Assert no errors occur during Residual Plots integration
+        """
+        model = SVR()
+        X_train, X_test, y_train, y_test = tts(X, y, test_size=0.2)
+        model.fit(X_train,y_train)
+        y_train_pred = model.predict(X_train)
+        y_test_pred = model.predict(X_test)
+        visualizer = ResidualsPlot(model)
+        visualizer.score(y_train, y_train_pred,y_test, y_test_pred)
