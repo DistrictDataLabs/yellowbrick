@@ -19,8 +19,6 @@ Ensure that the regressor visualizations work.
 import unittest
 
 from yellowbrick.regressor import *
-from yellowbrick.bestfit import *
-from yellowbrick.utils import *
 
 from sklearn.svm import SVR
 from sklearn import cross_validation as cv
