@@ -137,12 +137,12 @@ class ParallelCoordinates(FeatureVisualizer):
                 ]
 
         # Draw the instances
-        self._draw(X, y, **kwargs)
+        self.draw(X, y, **kwargs)
 
         # Fit always returns self.
         return self
 
-    def _draw(self, X, y, **kwargs):
+    def draw(self, X, y, **kwargs):
         """
         Called from the fit method, this method creates the parallel
         coordinates canvas and draws each instance and vertical lines on it.

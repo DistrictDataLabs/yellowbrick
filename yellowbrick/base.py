@@ -47,7 +47,7 @@ class Visualizer(BaseEstimator):
         """
         pass
 
-    def _draw(self, **kwargs):
+    def draw(self, **kwargs):
         pass
 
     def poof(self, **kwargs):
@@ -61,7 +61,7 @@ class Visualizer(BaseEstimator):
             "All visualizations must specify their own poof methodology"
         )
 
-    def fit_draw(self, X, y=None):
+    def fitdraw(self, X, y=None):
         """
         Fits a transformer to X and y then returns
         visualization of features or fitted model.
@@ -94,11 +94,11 @@ class ScoreVisualizer(Visualizer):
         Score will call draw to visualize model performance.
         If y_pred is None, call fit-predict on the model to get a y_pred.
 
-        Score calls _draw
+        Score calls draw
         """
-        return self._draw(y,y_pred)
+        return self.draw(y,y_pred)
 
-    def _draw(self, X, y):
+    def draw(self, X, y):
         pass
 
     def poof(self, **kwargs):

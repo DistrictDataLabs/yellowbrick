@@ -61,7 +61,7 @@ class BestFitTests(unittest.TestCase):
         with self.assertRaises(YellowbrickValueError):
             draw_best_fit(X[:,np.newaxis], y, axe, 'linear')
 
-    def test_draw_best_fit(self):
+    def testdraw_best_fit(self):
         """
         Test that drawing a best fit line works.
         """

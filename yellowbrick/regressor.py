@@ -71,11 +71,11 @@ class PredictionError(RegressionScoreVisualizer):
         With the new API, there's not much for score to do.
 
         """
-        self._draw(y,y_pred)
+        self.draw(y,y_pred)
 
-    def _draw(self, y, y_pred):
+    def draw(self, y, y_pred):
         """
-        If score is happening inside a loop, _draw would get called multiple times.
+        If score is happening inside a loop, draw would get called multiple times.
 
         But, ideally we'd want the best fit line to be drawn only once?
         """
@@ -110,12 +110,12 @@ class ResidualsPlot(RegressionScoreVisualizer):
         """
         Is there a better way to differentiate between train and test points?
 
-        We'd like to color them differently in _draw...
+        We'd like to color them differently in draw...
         Can the user pass those in as keyword arguments?
         """
-        self._draw(y, y_pred, y_test, y_test_pred)
+        self.draw(y, y_pred, y_test, y_test_pred)
 
-    def _draw(self, y, y_pred, y_test, y_test_pred):
+    def draw(self, y, y_pred, y_test, y_test_pred):
         """
         Originally residuals plot was conceived as generating the
         train and test sets (in the `fit` method),

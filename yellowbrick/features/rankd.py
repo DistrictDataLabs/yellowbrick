@@ -146,7 +146,7 @@ class Rank2D(FeatureVisualizer):
         """
         # Rank and draw the input matrix
         Xp = self.rank(X)
-        self._draw(Xp, **kwargs)
+        self.draw(Xp, **kwargs)
 
         # Return the X matrix, unchanged
         return X
@@ -178,7 +178,7 @@ class Rank2D(FeatureVisualizer):
 
         return self.ranking_methods[algorithm](X)
 
-    def _draw(self, X, **kwargs):
+    def draw(self, X, **kwargs):
         """
         Draws the heatmap of the ranking matrix of variables.
         """

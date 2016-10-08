@@ -74,10 +74,10 @@ class ClassificationReport(ClassificationScoreVisualizer):
         self.scores = precision_recall_fscore_support(y, y_pred, labels=self.classes)
         self.scores = map(lambda s: dict(zip(self.classes, s)), self.scores[0:3])
         self.scores = dict(zip(self.keys, self.scores))
-        self._draw(y, y_pred)
+        self.draw(y, y_pred)
 
 
-    def _draw(self, y, y_pred):
+    def draw(self, y, y_pred):
         """
         Renders the classification report across each axis.
         """
@@ -142,9 +142,9 @@ class ROCAUC(ClassificationScoreVisualizer):
     def score(self, y, y_pred=None):
         self.fpr, self.tpr, self.thresholds = roc_curve(y, y_pred)
         self.roc_auc = auc(self.fpr, self.tpr)
-        self._draw(y, y_pred)
+        self.draw(y, y_pred)
 
-    def _draw(self, y, y_pred):
+    def draw(self, y, y_pred):
         """
         Renders ROC-AUC plot.
         Called internally by score, possibly more than once
@@ -197,9 +197,9 @@ class ClassBalance(ClassificationScoreVisualizer):
         """
         self.scores  = precision_recall_fscore_support(y, y_pred, labels=self.classes)
         self.support = dict(zip(self.classes, self.scores[-1])  )
-        self._draw()
+        self.draw()
 
-    def _draw(self):
+    def draw(self):
         """
         Renders the class balance chart across the axis.
 
