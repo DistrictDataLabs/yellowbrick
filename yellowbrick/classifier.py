@@ -67,7 +67,7 @@ class ClassificationReport(ClassificationScoreVisualizer):
         self.estimator = model
         self.name = get_model_name(self.estimator)
         self.cmap = kwargs.pop('cmap', ddlheatmap)
-        self.classes = model.classes_
+        self.classes_ = model.classes_
 
 
     def score(self, y, y_pred=None, **kwargs):
@@ -75,8 +75,8 @@ class ClassificationReport(ClassificationScoreVisualizer):
         Generates the Scikit-Learn classification_report
         """
         self.keys = ('precision', 'recall', 'f1')
-        self.scores = precision_recall_fscore_support(y, y_pred, labels=self.classes)
-        self.scores = map(lambda s: dict(zip(self.classes, s)), self.scores[0:3])
+        self.scores = precision_recall_fscore_support(y, y_pred, labels=self.classes_)
+        self.scores = map(lambda s: dict(zip(self.classes_, s)), self.scores[0:3])
         self.scores = dict(zip(self.keys, self.scores))
         self.draw(y, y_pred)
 
@@ -88,11 +88,11 @@ class ClassificationReport(ClassificationScoreVisualizer):
         fig, ax = plt.subplots(1)
 
         self.matrix = []
-        for cls in self.classes:
+        for cls in self.classes_:
             self.matrix.append([self.scores['precision'][cls],self.scores['recall'][cls],self.scores['f1'][cls]])
 
         for column in range(len(self.matrix)+1):
-            for row in range(len(self.classes)):
+            for row in range(len(self.classes_)):
                 ax.text(column,row,self.matrix[row][column],va='center',ha='center')
 
         fig = plt.imshow(self.matrix, interpolation='nearest', cmap=self.cmap)
@@ -105,10 +105,10 @@ class ClassificationReport(ClassificationScoreVisualizer):
         """
         plt.title('{} Classification Report'.format(self.name))
         plt.colorbar()
-        x_tick_marks = np.arange(len(self.classes)+1)
-        y_tick_marks = np.arange(len(self.classes))
+        x_tick_marks = np.arange(len(self.classes_)+1)
+        y_tick_marks = np.arange(len(self.classes_))
         plt.xticks(x_tick_marks, ['precision', 'recall', 'f1-score'], rotation=45)
-        plt.yticks(y_tick_marks, self.classes)
+        plt.yticks(y_tick_marks, self.classes_)
         plt.ylabel('Classes')
         plt.xlabel('Measures')
 
@@ -195,14 +195,14 @@ class ClassBalance(ClassificationScoreVisualizer):
         self.estimator = model
         self.name      = get_model_name(self.estimator)
         self.colors    = kwargs.pop('colors', YELLOWBRICK_PALETTES['paired'])
-        self.classes   = model.classes_
+        self.classes_   = model.classes_
 
     def score(self, y, y_pred=None, **kwargs):
         """
         Generates the Scikit-Learn precision_recall_fscore_support
         """
-        self.scores  = precision_recall_fscore_support(y, y_pred, labels=self.classes)
-        self.support = dict(zip(self.classes, self.scores[-1])  )
+        self.scores  = precision_recall_fscore_support(y, y_pred, labels=self.classes_)
+        self.support = dict(zip(self.classes_, self.scores[-1])  )
         self.draw()
 
     def draw(self):
@@ -213,7 +213,7 @@ class ClassBalance(ClassificationScoreVisualizer):
         Refactor to make better use of yb_palettes module?
 
         """
-        colors = self.colors[0:len(self.classes)]
+        colors = self.colors[0:len(self.classes_)]
         plt.bar(np.arange(len(self.support)), self.support.values(), color=colors, align='center', width=0.5)
 
     def poof(self):
