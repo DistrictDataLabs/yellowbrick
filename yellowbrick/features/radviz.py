@@ -2,7 +2,7 @@
 # Implements radviz for feature analysis.
 #
 # Author:   Benjamin Bengfort <bbengfort@districtdatalabs.com>
-# Created:  codetime
+# Created:  Fri Oct 07 13:18:00 2016 -0400
 #
 # Copyright (C) 2016 District Data Labs
 # For license information, see LICENSE.txt

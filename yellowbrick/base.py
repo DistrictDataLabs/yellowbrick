@@ -45,7 +45,7 @@ class Visualizer(BaseEstimator):
         """
         Fits a transformer to X and y
         """
-        pass
+        return self
 
     def draw(self, **kwargs):
         pass
@@ -61,12 +61,17 @@ class Visualizer(BaseEstimator):
             "All visualizations must specify their own poof methodology"
         )
 
-    def fitdraw(self, X, y=None):
+    def fit_draw(self, X, y=None, **kwargs):
         """
         Fits a transformer to X and y then returns
         visualization of features or fitted model.
         """
-        pass
+        self.fit(X, y, **kwargs)
+        self.draw(**kwargs)
+
+    def fit_draw_poof(self, X, y=None, **kwargs):
+        self.fit_draw(X, y, **kwargs)
+        self.poof(**kwargs)
 
 
 ##########################################################################
@@ -84,7 +89,7 @@ class ScoreVisualizer(Visualizer):
         pass
 
     def fit(self, X, y=None):
-        pass
+        return self
 
     def predict(self, X):
         pass
