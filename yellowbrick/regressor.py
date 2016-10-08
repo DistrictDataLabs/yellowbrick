@@ -75,6 +75,14 @@ class PredictionError(RegressionScoreVisualizer):
 
         With the new API, there's not much for score to do.
 
+        Parameters
+        ----------
+        X : array-like
+            X (also X_test) are the dependent variables of test set to predict
+
+        y : array-like
+            y (also y_test) is the independent actual variables to score against
+
         """
         y_pred = self.predict(X)
         return self.draw(y, y_pred)
@@ -144,14 +152,7 @@ class ResidualsPlot(RegressionScoreVisualizer):
 
     def draw(self, y_pred, residuals, train=False, **kwargs):
         """
-        Originally residuals plot was conceived as generating the
-        train and test sets (in the `fit` method),
-        and then fitting and predicting on both in the `render` method:
 
-        With the new API, I think we want that to happen outside of yellowbrick.
-
-        However, I'm not keen on the fact that now the user has to pass
-        all four ys into `score` now to paint train and test different colors.
         """
         if self.ax is None:
             self.ax = plt.gca()
