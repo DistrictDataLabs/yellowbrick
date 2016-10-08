@@ -28,7 +28,7 @@ from sklearn.metrics import precision_recall_fscore_support
 from .style.palettes import ddlheatmap
 from .exceptions import YellowbrickTypeError
 from .style.palettes import PALETTES as YELLOWBRICK_PALETTES
-from .utils import get_model_name, isestimator
+from .utils import get_model_name, isestimator, isclassifier
 from .base import Visualizer, ScoreVisualizer, MultiModelMixin
 
 ##########################################################################
@@ -37,17 +37,17 @@ from .base import Visualizer, ScoreVisualizer, MultiModelMixin
 
 class ClassificationScoreVisualizer(ScoreVisualizer):
 
-    def __init__(self, model):
+    def __init__(self, model, **kwargs):
         """
         Check to see if model is an instance of a classifer.
         Should return an error if it isn't.
         """
-        super(ClassificationScoreVisualizer, self).__init__(**kwargs)
-
         if not isclassifier(model):
             raise YellowbrickTypeError(
                 "This estimator is not a classifier; try a regression or clustering score visualizer instead!"
         )
+
+        super(ClassificationScoreVisualizer, self).__init__(model, **kwargs)
 
 ##########################################################################
 ## Classification Report
@@ -62,9 +62,11 @@ class ClassificationReport(ClassificationScoreVisualizer):
         """
         Pass in a fitted model to generate a ROC curve.
         """
-        super(ClassificationReport, self).__init__(**kwargs)
+        super(ClassificationReport, self).__init__(model, **kwargs)
 
+        # TODO: hoist
         self.estimator = model
+
         self.name = get_model_name(self.estimator)
         self.cmap = kwargs.pop('cmap', ddlheatmap)
         self.classes_ = model.classes_
@@ -128,10 +130,11 @@ class ROCAUC(ClassificationScoreVisualizer):
         """
         Pass in a model to generate a ROC curve.
         """
-        super(ROCAUC, self).__init__(**kwargs)
+        super(ROCAUC, self).__init__(model, **kwargs)
 
-        self.estimator = model
+        # TODO hoist to main
         self.name = get_model_name(self.estimator)
+
         super(ROCAUC, self).__init__(model, **kwargs)
         self.colors = {
             'roc': kwargs.pop('roc_color', '#2B94E9'),
