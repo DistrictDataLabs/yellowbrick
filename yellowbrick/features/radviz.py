@@ -28,6 +28,60 @@ from yellowbrick.style.colors import resolve_colors, get_color_cycle
 
 
 ##########################################################################
+## Quick Methods
+##########################################################################
+
+def radviz(X, y=None, ax=None, features=None, classes=None,
+           color=None, colormap=None, **kwargs):
+    """Displays each feature as an axis around a circle surrounding a scatter
+    plot whose points are each individual instance.
+
+    This helper function is a quick wrapper to utilize the RadialVisualizer
+    (Transformer) for one-off analysis.
+
+    Parameters
+    ----------
+
+    X : ndarray or DataFrame of shape n x m
+        A matrix of n instances with m features
+
+    y : ndarray or Series of length n
+        An array or series of target or class values
+
+    ax : matplotlib axes
+        The axes to plot the figure on.
+
+    features : list of strings
+        The names of the features or columns
+
+    classes : list of strings
+        The names of the classes in the target
+
+    color : list or tuple of colors
+        Specify the colors for each individual class
+
+    colormap : string or matplotlib cmap
+        Sequential colormap for continuous target
+
+    Returns
+    -------
+    ax : matplotlib axes
+        Returns the axes that the parallel coordinates were drawn on.
+    """
+    # Instantiate the visualizer
+    visualizer = RadialVisualizer(
+        ax, features, classes, color, colormap, **kwargs
+    )
+
+    # Fit and transform the visualizer (calls draw)
+    visualizer.fit(X, y, **kwargs)
+    visualizer.transform(X)
+
+    # Return the axes object on the visualizer
+    return visualizer.ax
+
+
+##########################################################################
 ## Static RadViz Visualizer
 ##########################################################################
 

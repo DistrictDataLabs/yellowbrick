@@ -29,6 +29,65 @@ from yellowbrick.style.colors import resolve_colors, get_color_cycle
 
 
 ##########################################################################
+## Quick Methods
+##########################################################################
+
+def parallel_coordinates(X, y=None, ax=None, features=None, classes=None,
+                         color=None, colormap=None, vlines=True,
+                         vlines_kwds=None, **kwargs):
+    """Displays each feature as a vertical axis and each instance as a line.
+
+    This helper function is a quick wrapper to utilize the ParallelCoordinates
+    Visualizer (Transformer) for one-off analysis.
+
+    Parameters
+    ----------
+    X : ndarray or DataFrame of shape n x m
+        A matrix of n instances with m features
+
+    y : ndarray or Series of length n
+        An array or series of target or class values
+
+    ax : matplotlib axes
+        The axes to plot the figure on.
+
+    features : list of strings
+        The names of the features or columns
+
+    classes : list of strings
+        The names of the classes in the target
+
+    color : list or tuple of colors
+        Specify the colors for each individual class
+
+    colormap : string or matplotlib cmap
+        Sequential colormap for continuous target
+
+    vlines : bool
+        Display the vertical azis lines
+
+    vlines_kwds : dict
+        Keyword arguments to draw the vlines
+
+    Returns
+    -------
+    ax : matplotlib axes
+        Returns the axes that the parallel coordinates were drawn on.
+    """
+    # Insantiate the visualizer
+    visualizer = ParallelCoordinates(
+        ax, features, classes, color, colormap, vlines, vlines_kwds, **kwargs
+    )
+
+    # Fit and transform the visualizer (calls draw)
+    visualizer.fit(X, y, **kwargs)
+    visualizer.transform(X)
+
+    # Return the axes object on the visualizer
+    return visualizer.ax
+
+
+##########################################################################
 ## Static Parallel Coordinates Visualizer
 ##########################################################################
 

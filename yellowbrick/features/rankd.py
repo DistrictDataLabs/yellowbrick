@@ -27,6 +27,59 @@ from yellowbrick.style.colors import resolve_colors, get_color_cycle
 
 
 ##########################################################################
+## Quick Methods
+##########################################################################
+
+def rank2d(X, y=None, ax=None, algorithm='pearson', features=None,
+           colormap='RdBu_r', **kwargs):
+    """Displays pairwise comparisons of features with the algorithm and ranks
+    them in a lower-left triangle heatmap plot.
+
+    This helper function is a quick wrapper to utilize the Rank2D Visualizer
+    (Transformer) for one-off analysis.
+
+    Parameters
+    ----------
+    X : ndarray or DataFrame of shape n x m
+        A matrix of n instances with m features
+
+    y : ndarray or Series of length n
+        An array or series of target or class values
+
+    ax : matplotlib axes
+        the axis to plot the figure on.
+
+    algorithm : one of {pearson, covariance}
+        the ranking algorithm to use, default is Pearson correlation.
+
+    features : list
+        a list of feature names to use
+        If a DataFrame is passed to fit and features is None, feature
+        names are selected as the columns of the DataFrame.
+
+    colormap : string or cmap
+        optional string or matplotlib cmap to colorize lines
+        Use either color to colorize the lines on a per class basis or
+        colormap to color them on a continuous scale.
+
+    Returns
+    -------
+    ax : matplotlib axes
+        Returns the axes that the parallel coordinates were drawn on.
+
+    """
+    # Instantiate the visualizer
+    visualizer = Rank2D(ax, algorithm, features, colormap, **kwargs)
+
+    # Fit and transform the visualizer (calls draw)
+    visualizer.fit(X, y, **kwargs)
+    visualizer.transform(X)
+
+    # Return the axes object on the visualizer
+    return visualizer.ax
+
+
+##########################################################################
 ## Rank 2D Feature Visualizer
 ##########################################################################
 

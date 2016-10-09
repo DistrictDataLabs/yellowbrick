@@ -49,9 +49,8 @@ class ROCAUCTests(unittest.TestCase):
         """
         model = LinearSVC()
         model.fit(X,y)
-        y_pred = model.predict(X)
-        visualizer = ROCAUC(model)
-        visualizer.score(y,y_pred)
+        visualizer = ROCAUC(model, classes=["A", "B"])
+        visualizer.score(X,y)
 
 
 ##########################################################################
@@ -66,6 +65,5 @@ class ClassificationReportTests(unittest.TestCase):
         """
         model = LinearSVC()
         model.fit(X,y)
-        y_pred = model.predict(X)
-        visualizer = ClassificationReport(model)
-        visualizer.score(y,y_pred)
+        visualizer = ClassificationReport(model, classes=["A", "B"])
+        visualizer.score(X,y)
