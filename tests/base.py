@@ -27,5 +27,11 @@ import matplotlib as mpl
 
 class VisualTestCase(unittest.TestCase):
 
-    def beforeTestSuite(self):
+    @classmethod
+    def setUpClass(klass):
+        """
+        In order for tests to pass on Travis-CI we must use the 'Agg'
+        matplotlib backend. This setup function ensures that all tests
+        that do visual work setup the backend correctly. 
+        """
         mpl.use('Agg')
