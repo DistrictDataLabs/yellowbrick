@@ -74,7 +74,9 @@ visualizer.score(y,y_pred)
 visualizer.poof()
 ```
 
-For additional information on getting started with Yellowbrick, check out our [quick start guide](https://github.com/DistrictDataLabs/yellowbrick/blob/master/docs/setup.rst).
+For additional information on getting started with Yellowbrick, check out our [examples notebook](https://github.com/DistrictDataLabs/yellowbrick/blob/develop/examples/examples.ipynb).
+
+We also have a [quick start guide](https://github.com/DistrictDataLabs/yellowbrick/blob/master/docs/setup.rst).
 
 ## Contributing to Yellowbrick
 
