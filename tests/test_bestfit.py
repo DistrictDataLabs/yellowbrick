@@ -21,9 +21,12 @@ import unittest
 import numpy as np
 import matplotlib.pyplot as plt
 
+from tests.base import VisualTestCase
+
 from yellowbrick.bestfit import *
 from yellowbrick.anscombe import ANSCOMBE
 from yellowbrick.exceptions import YellowbrickValueError
+
 from sklearn.linear_model import LinearRegression
 from sklearn.pipeline import Pipeline
 
@@ -32,7 +35,7 @@ from sklearn.pipeline import Pipeline
 ## Best fit tests
 ##########################################################################
 
-class BestFitTests(unittest.TestCase):
+class BestFitTests(VisualTestCase):
 
     def test_bad_estimator(self):
         """
@@ -58,7 +61,7 @@ class BestFitTests(unittest.TestCase):
         with self.assertRaises(YellowbrickValueError):
             draw_best_fit(X[:,np.newaxis], y, axe, 'linear')
 
-    def test_draw_best_fit(self):
+    def testdraw_best_fit(self):
         """
         Test that drawing a best fit line works.
         """
@@ -73,7 +76,7 @@ class BestFitTests(unittest.TestCase):
 ## Estimator tests
 ##########################################################################
 
-class EstimatorTests(unittest.TestCase):
+class EstimatorTests(VisualTestCase):
     """
     Test the estimator functions for best fit lines.
     """

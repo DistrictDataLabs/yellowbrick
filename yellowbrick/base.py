@@ -1,6 +1,7 @@
 # yellowbrick.base
 # Abstract base classes and interface for Yellowbrick.
 #
+# Author:   Rebecca Bilbro <rbilbro@districtdatalabs.com>
 # Author:   Benjamin Bengfort <bbengfort@districtdatalabs.com>
 # Created:  Fri Jun 03 10:20:59 2016 -0700
 #
@@ -15,59 +16,117 @@ Abstract base classes and interface for Yellowbrick.
 
 import matplotlib.pyplot as plt
 
+from sklearn.base import BaseEstimator
 from .exceptions import YellowbrickTypeError
 from .utils import get_model_name, isestimator
-from sklearn.base import BaseEstimator, TransformerMixin
 from sklearn.cross_validation import cross_val_predict as cvp
 
+
 ##########################################################################
-## Base class hierarhcy
+## Base class hierarchy
 ##########################################################################
 
-class BaseVisualization(object):
+class Visualizer(BaseEstimator):
     """
     The root of the visual object hierarchy that defines how yellowbrick
-    creates, stores, and renders visual artifcats using matplotlib.
+    creates, stores, and renders visual artifacts using matplotlib.
+
+    Inherits from Scikit-Learn's BaseEstimator class.
+
+    The base class for feature visualization and model visualization
+    primarily ensures that styling arguments are passed in.
     """
 
-    def render(self):
-        """
-        Render is the primary entry point for producing the visualization.
-        """
-        raise NotImplementedError(
-            "All visualizations must specify their own render methodology"
-        )
-
-
-class FeatureVisualization(BaseVisualization, BaseEstimator, TransformerMixin):
-    """
-    A feature visualization class accepts as input a DataFrame or Numpy array
-    in order to investigate features individually or together.
-
-    FeatureVisualization is itself a transformer so that it can be used in
-    a Scikit-Learn Pipeline to perform automatic visual analysis during build.
-    """
+    def __init__(self, **kwargs):
+        self.size  = kwargs.pop('size', None)
+        self.color = kwargs.pop('color', None)
 
     def fit(self, X, y=None, **kwargs):
-        pass
-
-    def transform(self, X):
-        pass
-
-    def render(self, data=None):
         """
-        A feature visualization renders data.
+        Fits a transformer to X and y
+        """
+        return self
+
+    def draw(self, **kwargs):
+        pass
+
+    def poof(self, **kwargs):
+        """
+        The user calls poof, which is the primary entry point
+        for producing a visualization.
+
+        Visualizes either data features or fitted model scores
+        """
+        raise NotImplementedError(
+            "All visualizations must specify their own poof methodology"
+        )
+
+    def fit_draw(self, X, y=None, **kwargs):
+        """
+        Fits a transformer to X and y then returns
+        visualization of features or fitted model.
+        """
+        self.fit(X, y, **kwargs)
+        self.draw(**kwargs)
+
+    def fit_draw_poof(self, X, y=None, **kwargs):
+        self.fit_draw(X, y, **kwargs)
+        self.poof(**kwargs)
+
+
+##########################################################################
+## Score Visualizers
+##########################################################################
+
+class ScoreVisualizer(Visualizer):
+    """
+    Base class to follow an estimator in a visual pipeline.
+
+    Draws the score for the fitted model.
+    """
+
+    def __init__(self, model, **kwargs):
+        self.estimator = model
+        super(ScoreVisualizer, self).__init__(**kwargs)
+
+    def fit(self, X, y=None, **kwargs):
+        self.estimator.fit(X, y, **kwargs)
+        return self
+
+    def predict(self, X):
+        return self.estimator.predict(X)
+
+    def score(self, X, y=None):
+        """
+        Score will call draw to visualize model performance.
+        If y_pred is None, call fit-predict on the model to get a y_pred.
+
+        Score calls draw
+        """
+        y_pred = self.predict(X)
+        return self.draw(y,y_pred)
+
+    def draw(self, X, y):
+        pass
+
+    def poof(self, **kwargs):
+        """
+        The user calls poof
         """
         raise NotImplementedError(
             "Please specify how to render the feature visualization"
         )
 
 
-class ModelVisualization(BaseVisualization, BaseEstimator):
+##########################################################################
+## Model Visualizers
+##########################################################################
+
+class ModelVisualizer(Visualizer):
     """
-    A model visualization class accepts as input a Scikit-Learn estimator(s)
-    and is itself an estimator (to be included in a Pipeline) in order to
-    visualize the efficacy of a particular fitted model.
+    A model visualization accepts as input an unfitted Scikit-Learn estimator(s)
+    and enables the user to visualize the performance of models across a range
+    of hyperparameter values (e.g. using VisualGridsearch and ValidationCurve).
     """
 
     def fit(self, X, y=None, **kwargs):
@@ -76,14 +135,20 @@ class ModelVisualization(BaseVisualization, BaseEstimator):
     def predict(self, X):
         pass
 
-    def render(self, model=None):
+    def poof(self, model=None):
         """
+        The user calls poof.
+
         A model visualization renders a model
         """
         raise NotImplementedError(
             "Please specify how to render the model visualization"
         )
 
+
+##########################################################################
+## Multiple Models and Mixins
+##########################################################################
 
 class MultiModelMixin(object):
     """

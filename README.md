@@ -17,30 +17,66 @@ Image by [Quatro Cinco](https://flic.kr/p/2Yj9mj), used with permission, Flickr 
 Yellowbrick is a suite of visual analysis and diagnostic tools to facilitate feature selection, model selection, and parameter tuning for machine learning. All visualizations are generated in Matplotlib. Custom `yellowbrick` visualization tools include:
 
 ## Tools for feature analysis and selection
-- boxplots (box-and-whisker plots)    
-- violinplots    
-- histograms    
-- scatter plot matrices (sploms)    
-- radial visualizations (radviz)    
-- parallel coordinates    
-- jointplots    
-- diagonal correlation matrix    
+ - Boxplots (box-and-whisker plots)    
+ - Violinplots    
+ - Histograms    
+ - Scatter plot matrices (sploms)    
+ - Radial visualizations (radviz)    
+ - Parallel coordinates    
+ - Jointplots    
+ - Rank 1D    
+ - Rank 2D        
 
 ## Tools for model evaluation
 ### Classification
-- ROC curves    
-- classification heatmaps    
+ - ROC-AUC curves    
+ - Classification heatmaps
+ - Class balance chart     
 
 ### Regression
-- prediction error plots     
-- residual plots     
+ - Prediction error plots     
+ - Residual plots     
+ - Most informative features    
+
+### Clustering
+ - Silhouettes  
+ - Density measures     
 
 ## Tools for parameter tuning
-- validation curves    
-- gridsearch heatmap    
+ - Validation curves    
+ - Gridsearch heatmaps    
 
 ## Using Yellowbrick
-For information on getting started with Yellowbrick, check out our [quick start guide](https://github.com/DistrictDataLabs/yellowbrick/blob/develop/docs/setup.md).
+The Yellowbrick API is specifically designed to play nicely with Scikit-Learn. Here is an example of a typical workflow sequence with Scikit-Learn and Yellowbrick:
+
+### Feature Visualization
+In this example, we see how Rank2D performs pairwise comparisons of each feature in the data set with a specific metric or algorithm, then returns them ranked as a lower left triangle diagram.
+```python
+from yellowbrick.features import Rank2D
+
+visualizer = Rank2D(features=features, algorithm='covariance')
+visualizer.fit(X, y)                # Fit the data to the visualizer
+visualizer.transform(X)             # Transform the data
+visualizer.poof()                   # Draw/show/poof the data
+```
+
+### Model Visualization
+In this example, we instantiate a Scikit-Learn classifier, and then we use Yellowbrick's ROCAUC class to visualize the tradeoff between the classifier's sensitivity and specificity.
+```python
+from sklearn.svm import LinearSVC
+from yellowbrick import ROCAUC
+
+model = LinearSVC()
+model.fit(X,y)
+y_pred = model.predict(X)
+visualizer = ROCAUC(model)
+visualizer.score(y,y_pred)
+visualizer.poof()
+```
+
+For additional information on getting started with Yellowbrick, check out our [examples notebook](https://github.com/DistrictDataLabs/yellowbrick/blob/develop/examples/examples.ipynb).
+
+We also have a [quick start guide](https://github.com/DistrictDataLabs/yellowbrick/blob/master/docs/setup.rst).
 
 ## Contributing to Yellowbrick
 
@@ -65,5 +101,5 @@ This repository is set up in a typical production/release/development cycle as d
     ~$ git branch -d feature-myfeature
     ~$ git push origin develop
     ```
-       
+
 4. Repeat. Releases will be routinely pushed into master via release branches, then deployed to the server.

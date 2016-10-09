@@ -1,11 +1,11 @@
 # Dependencies
-matplotlib==1.5.1
-scipy==0.17.1
-scikit-learn==0.17.1
-numpy==1.11.0
-cycler==0.10.0
+matplotlib>=1.5.1
+scipy>=0.17.1
+scikit-learn>=0.17.1
+numpy>=1.11.0
+cycler>=0.10.0
 
-## Utilities
+## Utilities and Nested Dependencies (installed from above)
 #pyparsing==2.1.4
 #pytz==2016.4
 #python-dateutil==2.5.3

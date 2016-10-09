@@ -21,6 +21,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 from yellowbrick.bestfit import draw_best_fit
+from yellowbrick.style import get_color_cycle
 
 
 ##########################################################################
@@ -52,7 +53,8 @@ def anscombe():
     Creates 2x2 grid plot of the 4 anscombe datasets for illustration.
     """
     fig, ((axa, axb), (axc, axd)) =  plt.subplots(2, 2, sharex='col', sharey='row')
-    for arr, ax in zip(ANSCOMBE, (axa, axb, axc, axd)):
+    colors = get_color_cycle()
+    for arr, ax, color in zip(ANSCOMBE, (axa, axb, axc, axd), colors):
         x = arr[0]
         y = arr[1]
 
@@ -61,10 +63,10 @@ def anscombe():
         ax.set_ylim(0, 15)
 
         # Draw the points in the scatter plot
-        ax.scatter(x, y, c='g')
+        ax.scatter(x, y, c=color)
 
         # Draw the linear best fit line on the plot
-        draw_best_fit(x, y, ax)
+        draw_best_fit(x, y, ax, c=color)
 
     return (axa, axb, axc, axd)
 
