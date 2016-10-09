@@ -28,12 +28,13 @@ from yellowbrick.style.colors import get_color_cycle
 from yellowbrick.style.rcmod import set_aesthetic, set_palette
 from yellowbrick.style.palettes import ColorPalette, PALETTES
 
+from tests.base import VisualTestCase
 
 ##########################################################################
 ## Color Palette Tests
 ##########################################################################
 
-class ColorPaletteObjectTests(unittest.TestCase):
+class ColorPaletteObjectTests(VisualTestCase):
     """
     Tests the ColorPalette object
     """
@@ -114,7 +115,7 @@ class ColorPaletteObjectTests(unittest.TestCase):
         )
 
 
-class ColorPaletteFunctionTests(unittest.TestCase):
+class ColorPaletteFunctionTests(VisualTestCase):
     """
     Tests the color_palette function.
     """

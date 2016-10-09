@@ -22,13 +22,14 @@ import unittest
 
 from yellowbrick.style import *
 from yellowbrick.style.colors import *
+from tests.base import VisualTestCase
 
 
 ##########################################################################
 ## Color Tests
 ##########################################################################
 
-class ColorUtilitiesTests(unittest.TestCase):
+class ColorUtilitiesTests(VisualTestCase):
 
     def test_get_color_cycle(self):
         """

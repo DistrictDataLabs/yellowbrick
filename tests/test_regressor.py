@@ -19,6 +19,7 @@ Ensure that the regressor visualizations work.
 import unittest
 import numpy as np
 
+from tests.base import VisualTestCase
 from yellowbrick.regressor import *
 
 from sklearn.svm import SVR
@@ -51,7 +52,7 @@ y = np.array([0.23, .33, .31, .3, .24, .32, 0.23, .33, .31, .3, .24, .32])
 ## Prediction error test case
 ##########################################################################
 
-class PredictionErrorTests(unittest.TestCase):
+class PredictionErrorTests(VisualTestCase):
 
     def test_pred_error(self):
         """
@@ -66,7 +67,7 @@ class PredictionErrorTests(unittest.TestCase):
 ## Residuals Plots test case
 ##########################################################################
 
-class ResidualsPlotTests(unittest.TestCase):
+class ResidualsPlotTests(VisualTestCase):
 
     def test_resid_plots(self):
         """

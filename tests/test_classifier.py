@@ -17,6 +17,7 @@ Testing for the Classification Score Visualizers
 
 import unittest
 
+from tests.base import VisualTestCase
 from yellowbrick.classifier import *
 
 from sklearn.svm import LinearSVC
@@ -41,7 +42,7 @@ y = np.array([1, 1, 0, 1, 0, 0])
 ##  Test for ROC-AUC Curve
 ##########################################################################
 
-class ROCAUCTests(unittest.TestCase):
+class ROCAUCTests(VisualTestCase):
 
     def test_roc_auc(self):
         """
@@ -57,7 +58,7 @@ class ROCAUCTests(unittest.TestCase):
 ##  Test for Classification Report
 ##########################################################################
 
-class ClassificationReportTests(unittest.TestCase):
+class ClassificationReportTests(VisualTestCase):
 
     def test_class_report(self):
         """

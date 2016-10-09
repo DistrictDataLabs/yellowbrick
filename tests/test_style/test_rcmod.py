@@ -25,13 +25,14 @@ import numpy.testing as npt
 import yellowbrick.style.rcmod as yb_rcmod
 
 from distutils.version import LooseVersion
+from tests.base import VisualTestCase
 
 
 ##########################################################################
 ## Parameter Tests
 ##########################################################################
 
-class RCParamTester(unittest.TestCase):
+class RCParamTester(VisualTestCase):
     """
     Base class for asserting parameters have been correctly changed.
     """
