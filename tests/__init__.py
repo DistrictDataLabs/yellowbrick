@@ -18,13 +18,17 @@ Testing package for the yellowbrick visualization library.
 ##########################################################################
 
 import unittest
+import matplotlib
+
+## IMPORTANT! Set matplotlib to use the Agg backend before imported anywhere!
+matplotlib.use('Agg')
 
 
 ##########################################################################
 ## Test Constants
 ##########################################################################
 
-EXPECTED_VERSION = "0.3a1"
+EXPECTED_VERSION = "0.3.1"
 
 
 ##########################################################################

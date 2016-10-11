@@ -10,7 +10,7 @@
 A suite of visual analysis and diagnostic tools to facilitate feature selection, model selection, and parameter tuning for machine learning.
 
 
-![Follow the yellow brick road](images/yellowbrickroad.jpg)
+![Follow the yellow brick road](docs/images/yellowbrickroad.jpg)
 Image by [Quatro Cinco](https://flic.kr/p/2Yj9mj), used with permission, Flickr Creative Commons.
 
 # What is Yellowbrick?
