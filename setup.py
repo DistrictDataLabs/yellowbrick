@@ -90,7 +90,7 @@ def get_version(path=VERSION_PATH):
     """
     namespace = {}
     exec(read(path), namespace)
-    return namespace['get_version']()
+    return namespace['get_version'](short=True)
 
 
 def get_requires(path=REQUIRE_PATH):

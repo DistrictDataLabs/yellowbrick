@@ -44,4 +44,4 @@ set_aesthetic() # modifies mpl.rcParams
 ## Package Version
 ##########################################################################
 
-__version__ = get_version()
+__version__ = get_version(short=True)
