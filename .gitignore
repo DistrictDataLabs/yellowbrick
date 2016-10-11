@@ -62,9 +62,9 @@ target/
 .ipynb_checkpoints
 
 # Making sure the team plays well together
-venv
+venv*
 .DS_Store
-spad.py 
+spad.py
 
 # Created by https://www.gitignore.io/api/pycharm
 

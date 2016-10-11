@@ -20,9 +20,9 @@ Maintains version and package information for deployment.
 __version_info__ = {
     'major': 0,
     'minor': 3,
-    'micro': 0,
+    'micro': 1,
     'releaselevel': 'alpha',
-    'serial': 1,
+    'serial': 2,
 }
 
 ##########################################################################
