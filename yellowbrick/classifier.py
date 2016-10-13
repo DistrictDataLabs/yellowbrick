@@ -124,7 +124,7 @@ class ClassificationReport(ClassificationScoreVisualizer):
         plt.ylabel('Classes')
         plt.xlabel('Measures')
 
-        return self.ax
+        plt.show()
 
 
 ##########################################################################
@@ -189,7 +189,7 @@ class ROCAUC(ClassificationScoreVisualizer):
         plt.xlim([-0.02,1])
         plt.ylim([0,1.1])
 
-        return self.ax
+        plt.show()
 
 ##########################################################################
 ## Class Balance Chart
@@ -256,6 +256,5 @@ class ClassBalance(ClassificationScoreVisualizer):
         ceiling = cmax + cmax*0.1
         span = cmax - cmin
         plt.ylim(0, ceiling)
+        
         plt.show()
-
-        return self.ax

@@ -108,7 +108,7 @@ class PredictionError(RegressionScoreVisualizer):
         self.ax.set_title('Prediction Error for {}'.format(self.name))
         self.ax.set_ylabel('Predicted')
         plt.xlabel('Measured')
-        return self.ax
+        plt.show()
 
 ##########################################################################
 ## Residuals Plots
@@ -175,4 +175,4 @@ class ResidualsPlot(RegressionScoreVisualizer):
         self.ax.set_ylabel('Residuals')
         plt.xlabel("Predicted Value")
 
-        return self.ax
+        plt.show()

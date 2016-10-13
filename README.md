@@ -64,13 +64,12 @@ visualizer.poof()                   # Draw/show/poof the data
 In this example, we instantiate a Scikit-Learn classifier, and then we use Yellowbrick's ROCAUC class to visualize the tradeoff between the classifier's sensitivity and specificity.
 ```python
 from sklearn.svm import LinearSVC
-from yellowbrick import ROCAUC
+from yellowbrick.classifier import ROCAUC
 
 model = LinearSVC()
 model.fit(X,y)
-y_pred = model.predict(X)
 visualizer = ROCAUC(model)
-visualizer.score(y,y_pred)
+visualizer.score(X,y)
 visualizer.poof()
 ```
 
