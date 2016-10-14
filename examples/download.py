@@ -3,6 +3,7 @@
 # Downloads the example datasets for running the examples.
 #
 # Author:   Rebecca Bilbro <rbilbro@districtdatalabs.com>
+# Author:   Benjamin Bengfort <bbengfort@districtdatalabs.com>
 # Created:  Wed May 18 11:54:45 2016 -0400
 #
 # Copyright (C) 2016 District Data Labs
