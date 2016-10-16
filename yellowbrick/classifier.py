@@ -57,10 +57,32 @@ class ClassificationReport(ClassificationScoreVisualizer):
     """
     Classification report that shows the precision, recall, and F1 scores
     for the model. Integrates numerical scores as well color-coded heatmap.
+
     """
     def __init__(self, model, classes=None, **kwargs):
         """
-        Pass in a fitted model to generate a ROC curve.
+        Pass in a fitted model to generate a classification report.
+
+        Parameters
+        ----------
+
+        :param ax: the axis to plot the figure on.
+
+        :param estimator: the Scikit-Learn estimator
+            Should be an instance of a classifier, else the __init__ will
+            return an error.
+
+        :param classes: a list of class names for the legend
+            If classes is None and a y value is passed to fit then the classes
+            are selected from the target vector.
+
+        :param colormap: optional string or matplotlib cmap to colorize lines
+            Use sequential heatmap.
+
+        :param kwargs: keyword arguments passed to the super class.
+
+        These parameters can be influenced later on in the visualization
+        process, but can and should be set as early as possible.
         """
         super(ClassificationReport, self).__init__(model, **kwargs)
 
@@ -73,6 +95,18 @@ class ClassificationReport(ClassificationScoreVisualizer):
         self.classes_ = classes
 
     def fit(self, X, y=None, **kwargs):
+        """
+        Parameters
+        ----------
+
+        X : ndarray or DataFrame of shape n x m
+            A matrix of n instances with m features
+
+        y : ndarray or Series of length n
+            An array or series of target or class values
+
+        kwargs: keyword arguments passed to Scikit-Learn API.
+        """
         super(ClassificationReport, self).fit(X, y, **kwargs)
         if self.classes_ is None:
             self.classes_ = self.estimator.classes_
@@ -81,6 +115,16 @@ class ClassificationReport(ClassificationScoreVisualizer):
     def score(self, X, y=None, **kwargs):
         """
         Generates the Scikit-Learn classification_report
+
+        Parameters
+        ----------
+
+        X : ndarray or DataFrame of shape n x m
+            A matrix of n instances with m features
+
+        y : ndarray or Series of length n
+            An array or series of target or class values
+
         """
         y_pred = self.predict(X)
         keys   = ('precision', 'recall', 'f1')
@@ -92,6 +136,15 @@ class ClassificationReport(ClassificationScoreVisualizer):
     def draw(self, y, y_pred):
         """
         Renders the classification report across each axis.
+
+        Parameters
+        ----------
+
+        y : ndarray or Series of length n
+            An array or series of target or class values
+
+        y_pred : ndarray or Series of length n
+            An array or series of predicted target values
         """
         if self.ax is None:
             self.ax = plt.gca()
@@ -112,6 +165,12 @@ class ClassificationReport(ClassificationScoreVisualizer):
     def poof(self):
         """
         Plots a classification report as a heatmap.
+
+        Returns
+        ----------
+
+        ax : the axis with the plotted figure
+
         """
         if self.ax is None: return
 
@@ -126,6 +185,7 @@ class ClassificationReport(ClassificationScoreVisualizer):
 
         plt.show()
 
+        return self.ax
 
 ##########################################################################
 ## Receiver Operating Characteristics
@@ -138,7 +198,25 @@ class ROCAUC(ClassificationScoreVisualizer):
     """
     def __init__(self, model, **kwargs):
         """
-        Pass in a model to generate a ROC curve.
+        Pass in a fitted model to generate a ROC curve.
+
+        Parameters
+        ----------
+
+        :param ax: the axis to plot the figure on.
+
+        :param estimator: the Scikit-Learn estimator
+            Should be an instance of a classifier, else the __init__ will
+            return an error.
+
+        :param kwargs: keyword arguments passed to the super class.
+            Currently passing in hard-coded colors for the Receiver Operating
+            Characteristic curve and the diagonal.
+            These will be refactored to a default Yellowbrick style.
+
+        These parameters can be influenced later on in the visualization
+        process, but can and should be set as early as possible.
+
         """
         super(ROCAUC, self).__init__(model, **kwargs)
 
@@ -146,13 +224,32 @@ class ROCAUC(ClassificationScoreVisualizer):
         self.name = get_model_name(self.estimator)
         self.ax = None
 
-        super(ROCAUC, self).__init__(model, **kwargs)
+        # TODO refactor to use new Yellowbrick color utils
         self.colors = {
             'roc': kwargs.pop('roc_color', '#2B94E9'),
             'diagonal': kwargs.pop('diagonal_color', '#666666'),
         }
 
     def score(self, X, y=None, **kwargs):
+        """
+        Generates the predicted target values using the Scikit-Learn
+        estimator.
+
+        Parameters
+        ----------
+
+        X : ndarray or DataFrame of shape n x m
+            A matrix of n instances with m features
+
+        y : ndarray or Series of length n
+            An array or series of target or class values
+
+        Returns
+        ------
+
+        ax : the axis with the plotted figure
+
+        """
         y_pred = self.predict(X)
         self.fpr, self.tpr, self.thresholds = roc_curve(y, y_pred)
         self.roc_auc = auc(self.fpr, self.tpr)
@@ -162,6 +259,21 @@ class ROCAUC(ClassificationScoreVisualizer):
         """
         Renders ROC-AUC plot.
         Called internally by score, possibly more than once
+
+        Parameters
+        ----------
+
+        y : ndarray or Series of length n
+            An array or series of target or class values
+
+        y_pred : ndarray or Series of length n
+            An array or series of predicted target values
+
+        Returns
+        ------
+
+        ax : the axis with the plotted figure
+
         """
         if self.ax is None:
             self.ax = plt.gca()
@@ -174,12 +286,14 @@ class ROCAUC(ClassificationScoreVisualizer):
 
     def poof(self, **kwargs):
         """
-        Called by user.
-
-        Only takes self.
-
-        Take in the model as input and generates a plot of
+        Called by user. Take in the model as input and generates a plot of
         the ROC plots with AUC metrics embedded.
+
+        Returns
+        ------
+
+        ax : the axis with the plotted figure
+
         """
         if self.ax is None: return
 
@@ -191,6 +305,9 @@ class ROCAUC(ClassificationScoreVisualizer):
 
         plt.show()
 
+        return self.ax
+
+
 ##########################################################################
 ## Class Balance Chart
 ##########################################################################
@@ -198,23 +315,61 @@ class ROCAUC(ClassificationScoreVisualizer):
 class ClassBalance(ClassificationScoreVisualizer):
     """
     Class balance chart that shows the support for each class in the
-    fitted classification model.
+    fitted classification model displayed as a bar plot.
     """
     def __init__(self, model, classes=None, **kwargs):
         """
         Pass in a fitted model to generate a class balance chart.
+
+        Parameters
+        ----------
+
+        :param ax: the axis to plot the figure on.
+
+        :param estimator: the Scikit-Learn estimator
+            Should be an instance of a classifier, else the __init__ will
+            return an error.
+
+        :param classes: a list of class names for the legend
+            If classes is None and a y value is passed to fit then the classes
+            are selected from the target vector.
+
+        :param kwargs: keyword arguments passed to the super class. Here, used
+            to colorize the bars in the histogram.
+
+        These parameters can be influenced later on in the visualization
+        process, but can and should be set as early as possible.
+
         """
+        super(ClassBalance, self).__init__(model, **kwargs)
 
         # TODO: hoist
         self.estimator = model
         self.ax = None
-
 
         self.name      = get_model_name(self.estimator)
         self.colors    = kwargs.pop('colors', YELLOWBRICK_PALETTES['paired'])
         self.classes_  = classes
 
     def fit(self, X, y=None, **kwargs):
+        """
+        Parameters
+        ----------
+
+        X : ndarray or DataFrame of shape n x m
+            A matrix of n instances with m features
+
+        y : ndarray or Series of length n
+            An array or series of target or class values
+
+        kwargs: keyword arguments passed to Scikit-Learn API.
+
+        Returns
+        ------
+        self : instance
+            Returns the instance of the classification score visualizer
+
+        """
         super(ClassBalance, self).fit(X, y, **kwargs)
         if self.classes_ is None:
             self.classes_ = self.estimator.classes_
@@ -223,6 +378,20 @@ class ClassBalance(ClassificationScoreVisualizer):
     def score(self, X, y=None, **kwargs):
         """
         Generates the Scikit-Learn precision_recall_fscore_support
+
+        Parameters
+        ----------
+
+        X : ndarray or DataFrame of shape n x m
+            A matrix of n instances with m features
+
+        y : ndarray or Series of length n
+            An array or series of target or class values
+            
+        Returns
+        ------
+
+        ax : the axis with the plotted figure
         """
         y_pred = self.predict(X)
         self.scores  = precision_recall_fscore_support(y, y_pred)
@@ -233,12 +402,17 @@ class ClassBalance(ClassificationScoreVisualizer):
         """
         Renders the class balance chart across the axis.
 
-        TODO: Would rather not have to set the colors with this method.
-        Refactor to make better use of yb_palettes module?
+        Returns
+        ------
+
+        ax : the axis with the plotted figure
 
         """
         if self.ax is None:
             self.ax = plt.gca()
+
+        #TODO: Would rather not have to set the colors with this method.
+        # Refactor to make better use of yb_palettes module?
 
         colors = self.colors[0:len(self.classes_)]
         plt.bar(np.arange(len(self.support)), self.support.values(), color=colors, align='center', width=0.5)
@@ -248,6 +422,11 @@ class ClassBalance(ClassificationScoreVisualizer):
     def poof(self):
         """
         Plots a class balance chart
+
+        Returns
+        ------
+
+        ax : the axis with the plotted figure
         """
         if self.ax is None: return
 
@@ -256,5 +435,7 @@ class ClassBalance(ClassificationScoreVisualizer):
         ceiling = cmax + cmax*0.1
         span = cmax - cmin
         plt.ylim(0, ceiling)
-        
+
         plt.show()
+
+        return self.ax
