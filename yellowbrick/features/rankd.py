@@ -122,11 +122,7 @@ class Rank2D(FeatureVisualizer):
         kwargs : dict
             keyword arguments passed to the super class.
         """
-        super(Rank2D, self).__init__(**kwargs)
-
-        # The figure params
-        # TODO: hoist to a higher level base class
-        self.ax = ax
+        super(Rank2D, self).__init__(ax=ax, **kwargs)
 
         # Data Parameters
         self.ranking_  = algorithm

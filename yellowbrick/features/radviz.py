@@ -21,8 +21,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.patches as patches
 
-from yellowbrick.utils import is_dataframe
-from yellowbrick.features.base import FeatureVisualizer
+from yellowbrick.features.base import DataVisualizer
 from yellowbrick.exceptions import YellowbrickTypeError
 from yellowbrick.style.colors import resolve_colors, get_color_cycle
 
@@ -85,7 +84,7 @@ def radviz(X, y=None, ax=None, features=None, classes=None,
 ## Static RadViz Visualizer
 ##########################################################################
 
-class RadialVisualizer(FeatureVisualizer):
+class RadialVisualizer(DataVisualizer):
     """
     RadViz is a multivariate data visualization algorithm that plots each
     axis uniformely around the circumference of a circle then plots points on
@@ -125,19 +124,9 @@ class RadialVisualizer(FeatureVisualizer):
         These parameters can be influenced later on in the visualization
         process, but can and should be set as early as possible.
         """
-        super(RadialVisualizer, self).__init__(**kwargs)
-
-        # The figure params
-        # TODO: hoist to a higher level base class
-        self.ax = ax
-
-        # Data Parameters
-        self.features_ = features
-        self.classes_  = classes
-
-        # Visual Parameters
-        self.color = color
-        self.colormap = colormap
+        super(RadialVisualizer, self).__init__(
+            ax, features, classes, color, colormap, **kwargs
+        )
 
     @staticmethod
     def normalize(X):
@@ -147,59 +136,6 @@ class RadialVisualizer(FeatureVisualizer):
         a = X.min(axis=0)
         b = X.max(axis=0)
         return (X - a[np.newaxis, :]) / ((b - a)[np.newaxis, :])
-
-    def fit(self, X, y=None, **kwargs):
-        """
-        The fit method is the primary drawing input for the parallel coords
-        visualization since it has both the X and y data required for the
-        viz and the transform method does not.
-
-        Parameters
-        ----------
-        X : ndarray or DataFrame of shape n x m
-            A matrix of n instances with m features
-
-        y : ndarray or Series of length n
-            An array or series of target or class values
-
-        kwargs : dict
-            Pass generic arguments to the drawing method
-
-        Returns
-        ------
-        self : instance
-            Returns the instance of the transformer/visualizer
-        """
-        # TODO: This class is identical to the Parallel Coordinates version,
-        # so hoist this functionality to a higher level class that is extended
-        # by both RadViz and ParallelCoordinates.
-
-        # Get the shape of the data
-        nrows, ncols = X.shape
-
-        # Store the classes for the legend if they're None.
-        if self.classes_ is None:
-            # TODO: Is this the most efficient method?
-            self.classes_ = [str(label) for label in set(y)]
-
-        # Handle the feature names if they're None.
-        if self.features_ is None:
-
-            # If X is a data frame, get the columns off it.
-            if is_dataframe(X):
-                self.features_ = X.columns
-
-            # Otherwise create numeric labels for each column.
-            else:
-                self.features_ = [
-                    str(cdx) for cdx in range(ncols)
-                ]
-
-        # Draw the instances
-        self.draw(X, y, **kwargs)
-
-        # Fit always returns self.
-        return self
 
     def draw(self, X, y, **kwargs):
         """
