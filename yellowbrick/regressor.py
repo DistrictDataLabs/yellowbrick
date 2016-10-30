@@ -77,8 +77,12 @@ class PredictionError(RegressionScoreVisualizer):
 
         super(PredictionError, self).__init__(model, **kwargs)
 
-        self.ax = None
-        self.name = get_model_name(self.estimator)
+        ## hoisted to Visualizer base class
+        # self.ax = None
+
+        ## hoisted to ScoreVisualizer
+        # self.name = get_model_name(self.estimator)
+
         self.colors = {
             'point': kwargs.pop('point_color', '#F2BE2C'),
             'line': kwargs.pop('line_color', '#2B94E9'),
@@ -193,8 +197,11 @@ class ResidualsPlot(RegressionScoreVisualizer):
 
         super(ResidualsPlot, self).__init__(model, **kwargs)
 
-        self.ax = None
-        self.name = get_model_name(self.estimator)
+        ## hoisted to Visualizer base class
+        # self.ax = None
+
+        ## hoisted to ScoreVisualizer
+        # self.name = get_model_name(self.estimator)
 
         # TODO Is there a better way to differentiate between train and test points?
         # We'd like to color them differently in draw...
@@ -284,7 +291,7 @@ class ResidualsPlot(RegressionScoreVisualizer):
 
     def poof(self):
         """
-        
+
         Returns
         ------
 

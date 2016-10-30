@@ -49,6 +49,7 @@ class ClassificationScoreVisualizer(ScoreVisualizer):
 
         super(ClassificationScoreVisualizer, self).__init__(model, **kwargs)
 
+
 ##########################################################################
 ## Classification Report
 ##########################################################################
@@ -86,11 +87,13 @@ class ClassificationReport(ClassificationScoreVisualizer):
         """
         super(ClassificationReport, self).__init__(model, **kwargs)
 
-        # TODO: hoist
-        self.estimator = model
-        self.ax = None
+        ## hoisted to Visualizer base class
+        # self.ax = None
 
-        self.name = get_model_name(self.estimator)
+        ## hoisted to ScoreVisualizer base class
+        # self.estimator = model
+        # self.name = get_model_name(self.estimator)
+
         self.cmap = kwargs.pop('cmap', ddlheatmap)
         self.classes_ = classes
 
@@ -220,9 +223,11 @@ class ROCAUC(ClassificationScoreVisualizer):
         """
         super(ROCAUC, self).__init__(model, **kwargs)
 
-        # TODO hoist to main
-        self.name = get_model_name(self.estimator)
-        self.ax = None
+        ## hoisted to Visualizer base class
+        # self.ax = None
+
+        ## hoisted to ScoreVisualizer base class
+        # self.name = get_model_name(self.estimator)
 
         # TODO refactor to use new Yellowbrick color utils
         self.colors = {
@@ -343,11 +348,13 @@ class ClassBalance(ClassificationScoreVisualizer):
         """
         super(ClassBalance, self).__init__(model, **kwargs)
 
-        # TODO: hoist
-        self.estimator = model
-        self.ax = None
+        ## hoisted to Visualizer base class
+        # self.ax = None
 
-        self.name      = get_model_name(self.estimator)
+        ## hoisted to ScoreVisualizer base class
+        # self.estimator = model
+        # self.name      = get_model_name(self.estimator)
+
         self.colors    = kwargs.pop('colors', YELLOWBRICK_PALETTES['paired'])
         self.classes_  = classes
 
@@ -387,7 +394,7 @@ class ClassBalance(ClassificationScoreVisualizer):
 
         y : ndarray or Series of length n
             An array or series of target or class values
-            
+
         Returns
         ------
 

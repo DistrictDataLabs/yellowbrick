@@ -38,6 +38,7 @@ class Visualizer(BaseEstimator):
     """
 
     def __init__(self, **kwargs):
+        self.ax = None
         self.size  = kwargs.pop('size', None)
         self.color = kwargs.pop('color', None)
 
@@ -88,6 +89,8 @@ class ScoreVisualizer(Visualizer):
     def __init__(self, model, **kwargs):
         self.estimator = model
         super(ScoreVisualizer, self).__init__(**kwargs)
+
+        self.name = get_model_name(self.estimator)
 
     def fit(self, X, y=None, **kwargs):
         self.estimator.fit(X, y, **kwargs)

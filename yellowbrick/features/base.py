@@ -42,8 +42,9 @@ class FeatureVisualizer(Visualizer, TransformerMixin):
         super(FeatureVisualizer, self).__init__(**kwargs)
 
         # The figure params
-        # TODO: hoist to a higher level base class
-        self.ax = ax
+
+        ## hoisted to Visualizer base class
+        # self.ax = ax
 
     def fit(self, X, y=None, **fit_params):
         """
