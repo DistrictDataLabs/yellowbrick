@@ -177,6 +177,26 @@ class ClassificationReport(ClassificationScoreVisualizer):
         """
         if self.ax is None: return
 
+        self.finalize()
+        plt.show()
+
+        return self.ax
+
+
+    def finalize(self, **kwargs):
+        """
+        Finalize executes any subclass-specific axes finalization steps.
+        The user calls poof and poof calls finalize.
+
+        Parameters
+        ----------
+        kwargs: generic keyword arguments.
+
+        Returns
+        ----------
+        ax : the axis with the plotted figure
+
+        """
         plt.title('{} Classification Report'.format(self.name))
         plt.colorbar()
         x_tick_marks = np.arange(len(self.classes_)+1)
@@ -186,10 +206,7 @@ class ClassificationReport(ClassificationScoreVisualizer):
         plt.ylabel('Classes')
         plt.xlabel('Measures')
 
-        plt.show()
-
         return self.ax
-
 ##########################################################################
 ## Receiver Operating Characteristics
 ##########################################################################
