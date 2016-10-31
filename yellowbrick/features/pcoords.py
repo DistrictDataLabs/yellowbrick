@@ -134,7 +134,7 @@ class ParallelCoordinates(DataVisualizer):
         process, but can and should be set as early as possible.
         """
         super(ParallelCoordinates, self).__init__(
-            ax, features, classes, color, colormap, **kwargs
+            ax=ax, features, classes, color, colormap, **kwargs
         )
 
         # Visual Parameters

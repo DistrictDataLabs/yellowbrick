@@ -37,8 +37,8 @@ class Visualizer(BaseEstimator):
     primarily ensures that styling arguments are passed in.
     """
 
-    def __init__(self, **kwargs):
-        self.ax = None
+    def __init__(self, ax=None, **kwargs):
+        self.ax = ax
         self.size  = kwargs.pop('size', None)
         self.color = kwargs.pop('color', None)
 
@@ -86,9 +86,9 @@ class ScoreVisualizer(Visualizer):
     Draws the score for the fitted model.
     """
 
-    def __init__(self, model, **kwargs):
+    def __init__(self, model, ax=None, **kwargs):
         self.estimator = model
-        super(ScoreVisualizer, self).__init__(**kwargs)
+        super(ScoreVisualizer, self).__init__(ax=ax, **kwargs)
 
         self.name = get_model_name(self.estimator)
 
@@ -131,6 +131,8 @@ class ModelVisualizer(Visualizer):
     and enables the user to visualize the performance of models across a range
     of hyperparameter values (e.g. using VisualGridsearch and ValidationCurve).
     """
+    def __init__(self, ax=None, **kwargs):
+        super(ModelVisualizer, self).__init__(ax=ax, **kwargs)
 
     def fit(self, X, y=None, **kwargs):
         pass

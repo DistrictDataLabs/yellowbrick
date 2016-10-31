@@ -39,7 +39,7 @@ class FeatureVisualizer(Visualizer, TransformerMixin):
     """
 
     def __init__(self, ax=None, **kwargs):
-        super(FeatureVisualizer, self).__init__(**kwargs)
+        super(FeatureVisualizer, self).__init__(ax=ax, **kwargs)
 
         # The figure params
 

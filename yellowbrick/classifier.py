@@ -37,7 +37,7 @@ from .base import Visualizer, ScoreVisualizer, MultiModelMixin
 
 class ClassificationScoreVisualizer(ScoreVisualizer):
 
-    def __init__(self, model, **kwargs):
+    def __init__(self, model, ax=None, **kwargs):
         """
         Check to see if model is an instance of a classifer.
         Should return an error if it isn't.
@@ -47,7 +47,7 @@ class ClassificationScoreVisualizer(ScoreVisualizer):
                 "This estimator is not a classifier; try a regression or clustering score visualizer instead!"
         )
 
-        super(ClassificationScoreVisualizer, self).__init__(model, **kwargs)
+        super(ClassificationScoreVisualizer, self).__init__(model, ax=ax, **kwargs)
 
 
 ##########################################################################
@@ -60,7 +60,7 @@ class ClassificationReport(ClassificationScoreVisualizer):
     for the model. Integrates numerical scores as well color-coded heatmap.
 
     """
-    def __init__(self, model, classes=None, **kwargs):
+    def __init__(self, model, ax=None, classes=None, **kwargs):
         """
         Pass in a fitted model to generate a classification report.
 
@@ -85,7 +85,7 @@ class ClassificationReport(ClassificationScoreVisualizer):
         These parameters can be influenced later on in the visualization
         process, but can and should be set as early as possible.
         """
-        super(ClassificationReport, self).__init__(model, **kwargs)
+        super(ClassificationReport, self).__init__(model, ax=ax, **kwargs)
 
         ## hoisted to Visualizer base class
         # self.ax = None
@@ -216,7 +216,7 @@ class ROCAUC(ClassificationScoreVisualizer):
     Plot the ROC to visualize the tradeoff between the classifier's
     sensitivity and specificity.
     """
-    def __init__(self, model, **kwargs):
+    def __init__(self, model, ax=None, **kwargs):
         """
         Pass in a fitted model to generate a ROC curve.
 
@@ -238,7 +238,7 @@ class ROCAUC(ClassificationScoreVisualizer):
         process, but can and should be set as early as possible.
 
         """
-        super(ROCAUC, self).__init__(model, **kwargs)
+        super(ROCAUC, self).__init__(model, ax=ax, **kwargs)
 
         ## hoisted to Visualizer base class
         # self.ax = None
@@ -339,7 +339,7 @@ class ClassBalance(ClassificationScoreVisualizer):
     Class balance chart that shows the support for each class in the
     fitted classification model displayed as a bar plot.
     """
-    def __init__(self, model, classes=None, **kwargs):
+    def __init__(self, model, ax=None, classes=None, **kwargs):
         """
         Pass in a fitted model to generate a class balance chart.
 
@@ -363,7 +363,7 @@ class ClassBalance(ClassificationScoreVisualizer):
         process, but can and should be set as early as possible.
 
         """
-        super(ClassBalance, self).__init__(model, **kwargs)
+        super(ClassBalance, self).__init__(model, ax=ax, **kwargs)
 
         ## hoisted to Visualizer base class
         # self.ax = None
