@@ -48,7 +48,7 @@ class ClassificationScoreVisualizer(ScoreVisualizer):
         )
 
         super(ClassificationScoreVisualizer, self).__init__(model, ax=ax, **kwargs)
-        self.ax = ax
+
 
 ##########################################################################
 ## Classification Report
@@ -88,7 +88,7 @@ class ClassificationReport(ClassificationScoreVisualizer):
         super(ClassificationReport, self).__init__(model, ax=ax, **kwargs)
 
         ## hoisted to Visualizer base class
-        self.ax = ax
+        # self.ax = ax
 
         ## hoisted to ScoreVisualizer base class
         self.estimator = model
@@ -149,6 +149,7 @@ class ClassificationReport(ClassificationScoreVisualizer):
         y_pred : ndarray or Series of length n
             An array or series of predicted target values
         """
+        # Create the axis if it doesn't exist
         if self.ax is None:
             self.ax = plt.gca()
 
@@ -241,7 +242,7 @@ class ROCAUC(ClassificationScoreVisualizer):
         super(ROCAUC, self).__init__(model, ax=ax, **kwargs)
 
         ## hoisted to Visualizer base class
-        self.ax = ax
+        # self.ax = ax
 
         ## hoisted to ScoreVisualizer base class
         self.name = get_model_name(self.estimator)
@@ -297,8 +298,10 @@ class ROCAUC(ClassificationScoreVisualizer):
         ax : the axis with the plotted figure
 
         """
+        # Create the axis if it doesn't exist
         if self.ax is None:
             self.ax = plt.gca()
+
         plt.plot(self.fpr, self.tpr, c=self.colors['roc'], label='AUC = {:0.2f}'.format(self.roc_auc))
 
         # Plot the line of no discrimination to compare the curve to.
@@ -366,7 +369,7 @@ class ClassBalance(ClassificationScoreVisualizer):
         super(ClassBalance, self).__init__(model, ax=ax, **kwargs)
 
         ## hoisted to Visualizer base class
-        self.ax = ax
+        # self.ax = ax
 
         ## hoisted to ScoreVisualizer base class
         self.estimator = model
@@ -432,6 +435,7 @@ class ClassBalance(ClassificationScoreVisualizer):
         ax : the axis with the plotted figure
 
         """
+        # Create the axis if it doesn't exist
         if self.ax is None:
             self.ax = plt.gca()
 

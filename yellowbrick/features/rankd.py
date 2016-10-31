@@ -124,8 +124,6 @@ class Rank2D(FeatureVisualizer):
         """
         super(Rank2D, self).__init__(ax=ax, **kwargs)
 
-        self.ax = ax
-
         # Data Parameters
         self.ranking_  = algorithm
         self.features_ = features

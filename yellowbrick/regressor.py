@@ -44,8 +44,7 @@ class RegressionScoreVisualizer(ScoreVisualizer):
         )
 
         super(RegressionScoreVisualizer, self).__init__(model, ax=ax, **kwargs)
-
-        self.ax = ax
+        # self.ax = ax
 
 ##########################################################################
 ## Prediction Error Plots
@@ -80,7 +79,7 @@ class PredictionError(RegressionScoreVisualizer):
         super(PredictionError, self).__init__(model, ax=ax, **kwargs)
 
         ## hoisted to Visualizer base class
-        self.ax = ax
+        # self.ax = ax
 
         ## hoisted to ScoreVisualizer
         self.name = get_model_name(self.estimator)
@@ -134,6 +133,7 @@ class PredictionError(RegressionScoreVisualizer):
 
         ax : the axis with the plotted figure
         """
+        # Create the axis if it doesn't exist
         if self.ax is None:
             self.ax = plt.gca()
 
@@ -200,7 +200,7 @@ class ResidualsPlot(RegressionScoreVisualizer):
         super(ResidualsPlot, self).__init__(model, ax=ax, **kwargs)
 
         ## hoisted to Visualizer base class
-        self.ax = ax
+        # self.ax = ax
 
         ## hoisted to ScoreVisualizer
         self.name = get_model_name(self.estimator)
@@ -281,6 +281,7 @@ class ResidualsPlot(RegressionScoreVisualizer):
         ax : the axis with the plotted figure
 
         """
+        # Create the axis if it doesn't exist
         if self.ax is None:
             self.ax = plt.gca()
 

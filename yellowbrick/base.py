@@ -48,8 +48,13 @@ class Visualizer(BaseEstimator):
         """
         return self
 
+    def gca(self):
+        if self.ax is None:
+            self.ax = plt.gca()
+        return self.ax
+
     def draw(self, **kwargs):
-        pass
+        ax = self.gca() 
 
     def poof(self, **kwargs):
         """
@@ -90,7 +95,6 @@ class ScoreVisualizer(Visualizer):
         self.estimator = model
         super(ScoreVisualizer, self).__init__(ax=ax, **kwargs)
 
-        self.ax = ax
         self.name = get_model_name(self.estimator)
 
     def fit(self, X, y=None, **kwargs):
@@ -133,9 +137,9 @@ class ModelVisualizer(Visualizer):
     of hyperparameter values (e.g. using VisualGridsearch and ValidationCurve).
     """
     def __init__(self, ax=None, **kwargs):
-        super(ModelVisualizer, self).__init__(ax=ax, **kwargs)
-        self.ax = ax
-        
+        self.estimator = model
+        super(ScoreVisualizer, self).__init__(ax=ax, **kwargs)
+
     def fit(self, X, y=None, **kwargs):
         pass
 
