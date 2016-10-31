@@ -90,6 +90,7 @@ class ScoreVisualizer(Visualizer):
         self.estimator = model
         super(ScoreVisualizer, self).__init__(ax=ax, **kwargs)
 
+        self.ax = ax
         self.name = get_model_name(self.estimator)
 
     def fit(self, X, y=None, **kwargs):
@@ -133,7 +134,8 @@ class ModelVisualizer(Visualizer):
     """
     def __init__(self, ax=None, **kwargs):
         super(ModelVisualizer, self).__init__(ax=ax, **kwargs)
-
+        self.ax = ax
+        
     def fit(self, X, y=None, **kwargs):
         pass
 

@@ -48,7 +48,7 @@ class ClassificationScoreVisualizer(ScoreVisualizer):
         )
 
         super(ClassificationScoreVisualizer, self).__init__(model, ax=ax, **kwargs)
-
+        self.ax = ax
 
 ##########################################################################
 ## Classification Report
@@ -88,11 +88,11 @@ class ClassificationReport(ClassificationScoreVisualizer):
         super(ClassificationReport, self).__init__(model, ax=ax, **kwargs)
 
         ## hoisted to Visualizer base class
-        # self.ax = None
+        self.ax = ax
 
         ## hoisted to ScoreVisualizer base class
-        # self.estimator = model
-        # self.name = get_model_name(self.estimator)
+        self.estimator = model
+        self.name = get_model_name(self.estimator)
 
         self.cmap = kwargs.pop('cmap', ddlheatmap)
         self.classes_ = classes
@@ -241,10 +241,10 @@ class ROCAUC(ClassificationScoreVisualizer):
         super(ROCAUC, self).__init__(model, ax=ax, **kwargs)
 
         ## hoisted to Visualizer base class
-        # self.ax = None
+        self.ax = ax
 
         ## hoisted to ScoreVisualizer base class
-        # self.name = get_model_name(self.estimator)
+        self.name = get_model_name(self.estimator)
 
         # TODO refactor to use new Yellowbrick color utils
         self.colors = {
@@ -366,11 +366,11 @@ class ClassBalance(ClassificationScoreVisualizer):
         super(ClassBalance, self).__init__(model, ax=ax, **kwargs)
 
         ## hoisted to Visualizer base class
-        # self.ax = None
+        self.ax = ax
 
         ## hoisted to ScoreVisualizer base class
-        # self.estimator = model
-        # self.name      = get_model_name(self.estimator)
+        self.estimator = model
+        self.name      = get_model_name(self.estimator)
 
         self.colors    = kwargs.pop('colors', YELLOWBRICK_PALETTES['paired'])
         self.classes_  = classes

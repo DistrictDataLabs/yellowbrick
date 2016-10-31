@@ -137,6 +137,8 @@ class ParallelCoordinates(DataVisualizer):
             ax=ax, features, classes, color, colormap, **kwargs
         )
 
+        self.ax = ax
+
         # Visual Parameters
         self.show_vlines = vlines
         self.vlines_kwds = vlines_kwds or {

@@ -44,7 +44,7 @@ class FeatureVisualizer(Visualizer, TransformerMixin):
         # The figure params
 
         ## hoisted to Visualizer base class
-        # self.ax = ax
+        self.ax = ax
 
     def fit(self, X, y=None, **fit_params):
         """
@@ -142,6 +142,8 @@ class DataVisualizer(FeatureVisualizer):
         process, but can and should be set as early as possible.
         """
         super(DataVisualizer, self).__init__(ax=ax, **kwargs)
+
+        self.ax = ax
 
         # Data Parameters
         self.features_ = features
