@@ -38,6 +38,16 @@ class Visualizer(BaseEstimator):
     """
 
     def __init__(self, ax=None, **kwargs):
+        """
+        Parameters
+        ----------
+        :param ax: the axis to plot the figure on.
+
+        :param kwargs: keyword arguments passed to the super class.
+
+        These parameters can be influenced later on in the visualization
+        process, but can and should be set as early as possible.
+        """
         self.ax = ax
         self.size  = kwargs.pop('size', None)
         self.color = kwargs.pop('color', None)
@@ -45,15 +55,32 @@ class Visualizer(BaseEstimator):
     def fit(self, X, y=None, **kwargs):
         """
         Fits a transformer to X and y
+
+        Parameters
+        ----------
+
+        X : ndarray or DataFrame of shape n x m
+            A matrix of n instances with m features
+
+        y : ndarray or Series of length n
+            An array or series of target or class values
+
+        kwargs: keyword arguments passed to Scikit-Learn API.
         """
         return self
 
     def gca(self):
+        """
+        Creates axes if they don't already exist
+        """
         if self.ax is None:
             self.ax = plt.gca()
         return self.ax
 
     def draw(self, **kwargs):
+        """
+        Rendering function
+        """
         ax = self.gca()
 
     def poof(self, outpath=None, **kwargs):
@@ -115,12 +142,36 @@ class ScoreVisualizer(Visualizer):
     """
 
     def __init__(self, model, ax=None, **kwargs):
+        """
+        Parameters
+        ----------
+        :param models: the Scikit-Learn models being compared with each other.
+
+        :param ax: the axis to plot the figure on.
+
+        :param kwargs: keyword arguments.
+
+        These parameters can be influenced later on in the visualization
+        process, but can and should be set as early as possible.
+        """
         self.estimator = model
         super(ScoreVisualizer, self).__init__(ax=ax, **kwargs)
 
         self.name = get_model_name(self.estimator)
 
     def fit(self, X, y=None, **kwargs):
+        """
+        Parameters
+        ----------
+
+        X : ndarray or DataFrame of shape n x m
+            A matrix of n instances with m features
+
+        y : ndarray or Series of length n
+            An array or series of target or class values
+
+        kwargs: keyword arguments passed to Scikit-Learn API.
+        """
         self.estimator.fit(X, y, **kwargs)
         return self
 
@@ -128,6 +179,16 @@ class ScoreVisualizer(Visualizer):
         return self.estimator.predict(X)
 
     def draw(self, X, y):
+        """
+        Parameters
+        ----------
+
+        X : ndarray or DataFrame of shape n x m
+            A matrix of n instances with m features
+
+        y : ndarray or Series of length n
+            An array or series of target or class values
+        """
         pass
 
 
@@ -142,10 +203,32 @@ class ModelVisualizer(Visualizer):
     of hyperparameter values (e.g. using VisualGridsearch and ValidationCurve).
     """
     def __init__(self, ax=None, **kwargs):
+        """
+        Parameters
+        ----------
+        :param ax: the axis to plot the figure on.
+
+        :param kwargs: keyword arguments for Scikit-Learn model
+
+        These parameters can be influenced later on in the visualization
+        process, but can and should be set as early as possible.
+        """
         self.estimator = model
         super(ScoreVisualizer, self).__init__(ax=ax, **kwargs)
 
     def fit(self, X, y=None, **kwargs):
+        """
+        Parameters
+        ----------
+
+        X : ndarray or DataFrame of shape n x m
+            A matrix of n instances with m features
+
+        y : ndarray or Series of length n
+            An array or series of target or class values
+
+        kwargs: keyword arguments passed to Scikit-Learn API.
+        """
         pass
 
     def predict(self, X):
@@ -163,6 +246,16 @@ class MultiModelMixin(object):
     def __init__(self, models, **kwargs):
         # Ensure models is a collection, if it's a single estimator then we
         # wrap it in a list so that the API doesn't break during render.
+        """
+        Parameters
+        ----------
+        :param models: the Scikit-Learn models being compared with each other.
+
+        :param kwargs: keyword arguments.
+
+        These parameters can be influenced later on in the visualization
+        process, but can and should be set as early as possible.
+        """
         if isestimator(models):
             models = [models]
 

@@ -165,7 +165,6 @@ class ClassificationReport(ClassificationScoreVisualizer):
 
         return self.ax
 
-
     def poof(self):
         """
         Plots a classification report as a heatmap.
@@ -182,7 +181,6 @@ class ClassificationReport(ClassificationScoreVisualizer):
         plt.show()
 
         return self.ax
-
 
     def finalize(self, **kwargs):
         """
