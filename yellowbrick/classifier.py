@@ -193,10 +193,6 @@ class ClassificationReport(ClassificationScoreVisualizer):
         ----------
         kwargs: generic keyword arguments.
 
-        Returns
-        ----------
-        ax : the axis with the plotted figure
-
         """
         plt.title('{} Classification Report'.format(self.name))
         plt.colorbar()
@@ -207,7 +203,7 @@ class ClassificationReport(ClassificationScoreVisualizer):
         plt.ylabel('Classes')
         plt.xlabel('Measures')
 
-        return self.ax
+
 ##########################################################################
 ## Receiver Operating Characteristics
 ##########################################################################
@@ -309,28 +305,21 @@ class ROCAUC(ClassificationScoreVisualizer):
 
         return self.ax
 
-    def poof(self, **kwargs):
+    def finalize(self, **kwargs):
         """
-        Called by user. Take in the model as input and generates a plot of
-        the ROC plots with AUC metrics embedded.
+        Finalize executes any subclass-specific axes finalization steps.
+        The user calls poof and poof calls finalize.
 
-        Returns
-        ------
-
-        ax : the axis with the plotted figure
+        Parameters
+        ----------
+        kwargs: generic keyword arguments.
 
         """
-        if self.ax is None: return
-
         plt.title('ROC for {}'.format(self.name))
         plt.legend(loc='lower right')
 
         plt.xlim([-0.02,1])
         plt.ylim([0,1.1])
-
-        plt.show()
-
-        return self.ax
 
 
 ##########################################################################
@@ -447,23 +436,18 @@ class ClassBalance(ClassificationScoreVisualizer):
 
         return self.ax
 
-    def poof(self):
+    def finalize(self, **kwargs):
         """
-        Plots a class balance chart
+        Finalize executes any subclass-specific axes finalization steps.
+        The user calls poof and poof calls finalize.
 
-        Returns
-        ------
+        Parameters
+        ----------
+        kwargs: generic keyword arguments.
 
-        ax : the axis with the plotted figure
         """
-        if self.ax is None: return
-
         plt.xticks(np.arange(len(self.support)), self.support.keys())
         cmax, cmin = max(self.support.values()), min(self.support.values())
         ceiling = cmax + cmax*0.1
         span = cmax - cmin
         plt.ylim(0, ceiling)
-
-        plt.show()
-
-        return self.ax

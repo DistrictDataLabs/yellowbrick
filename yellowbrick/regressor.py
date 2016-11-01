@@ -148,20 +148,20 @@ class PredictionError(RegressionScoreVisualizer):
 
         return self.ax
 
-    def poof(self):
+    def finalize(self, **kwargs):
         """
-        Returns
-        ------
+        Finalize executes any subclass-specific axes finalization steps.
+        The user calls poof and poof calls finalize.
 
-        ax : the axis with the plotted, labelled and formatted figure
+        Parameters
+        ----------
+        kwargs: generic keyword arguments.
 
         """
         self.ax.set_title('Prediction Error for {}'.format(self.name))
         self.ax.set_ylabel('Predicted')
         plt.xlabel('Measured')
-        plt.show()
 
-        return self.ax
 
 ##########################################################################
 ## Residuals Plots
@@ -292,22 +292,18 @@ class ResidualsPlot(RegressionScoreVisualizer):
 
         return self.ax
 
-    def poof(self):
+
+    def finalize(self, **kwargs):
         """
+        Finalize executes any subclass-specific axes finalization steps.
+        The user calls poof and poof calls finalize.
 
-        Returns
-        ------
-
-        ax : the axis with the plotted, labelled and formatted figure
+        Parameters
+        ----------
+        kwargs: generic keyword arguments.
 
         """
-        if self.ax is None: return
-
         self.ax.hlines(y=0, xmin=0, xmax=100)
         self.ax.set_title('Residuals for {} Model'.format(self.name))
         self.ax.set_ylabel('Residuals')
         plt.xlabel("Predicted Value")
-
-        plt.show()
-
-        return self.ax

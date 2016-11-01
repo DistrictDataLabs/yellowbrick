@@ -194,22 +194,15 @@ class ParallelCoordinates(DataVisualizer):
         self.ax.set_xticklabels(self.features_)
         self.ax.set_xlim(x[0], x[-1])
 
-    def poof(self, outpath=None, **kwargs):
+    def finalize(self, **kwargs):
         """
-        Display the parallel coordinates.
+        Finalize executes any subclass-specific axes finalization steps.
+        The user calls poof and poof calls finalize.
 
         Parameters
         ----------
-        outpath: path or None
-            Save the figure to disk or if None show in a window
+        kwargs: generic keyword arguments.
 
         """
-        if self.ax is None: return
-
         self.ax.legend(loc='best')
         self.ax.grid()
-
-        if outpath is not None:
-            plt.savefig(outpath, **kwargs)
-        else:
-            plt.show()

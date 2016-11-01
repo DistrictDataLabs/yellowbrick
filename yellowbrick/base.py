@@ -54,18 +54,41 @@ class Visualizer(BaseEstimator):
         return self.ax
 
     def draw(self, **kwargs):
-        ax = self.gca() 
+        ax = self.gca()
 
-    def poof(self, **kwargs):
+    def poof(self, outpath=None, **kwargs):
         """
         The user calls poof, which is the primary entry point
         for producing a visualization.
 
         Visualizes either data features or fitted model scores
+
+        Parameters
+        ----------
+        outpath: path or None
+            Save the figure to disk or if None show in a window
+
+        kwargs: generic keyword arguments.
         """
-        raise NotImplementedError(
-            "All visualizations must specify their own poof methodology"
-        )
+        if self.ax is None: return
+
+        self.finalize()
+
+        if outpath is not None:
+            plt.savefig(outpath, **kwargs)
+        else:
+            plt.show()
+
+    def finalize(self, **kwargs):
+        """
+        Finalize executes any subclass-specific axes finalization steps.
+        The user calls poof and poof calls finalize.
+
+        Parameters
+        ----------
+        kwargs: generic keyword arguments.
+        """
+        pass
 
     def fit_draw(self, X, y=None, **kwargs):
         """
@@ -104,26 +127,8 @@ class ScoreVisualizer(Visualizer):
     def predict(self, X):
         return self.estimator.predict(X)
 
-    def score(self, X, y=None):
-        """
-        Score will call draw to visualize model performance.
-        If y_pred is None, call fit-predict on the model to get a y_pred.
-
-        Score calls draw
-        """
-        y_pred = self.predict(X)
-        return self.draw(y,y_pred)
-
     def draw(self, X, y):
         pass
-
-    def poof(self, **kwargs):
-        """
-        The user calls poof
-        """
-        raise NotImplementedError(
-            "Please specify how to render the feature visualization"
-        )
 
 
 ##########################################################################
@@ -145,17 +150,6 @@ class ModelVisualizer(Visualizer):
 
     def predict(self, X):
         pass
-
-    def poof(self, model=None):
-        """
-        The user calls poof.
-
-        A model visualization renders a model
-        """
-        raise NotImplementedError(
-            "Please specify how to render the model visualization"
-        )
-
 
 ##########################################################################
 ## Multiple Models and Mixins

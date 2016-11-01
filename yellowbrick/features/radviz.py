@@ -211,22 +211,18 @@ class RadialVisualizer(DataVisualizer):
 
         self.ax.axis('equal')
 
-    def poof(self, outpath=None, **kwargs):
+    def finalize(self, **kwargs):
         """
-        Display the radial visualization
+        Finalize executes any subclass-specific axes finalization steps.
+        The user calls poof and poof calls finalize.
 
         Parameters
         ----------
-        outpath: path or None
-            Save the figure to disk or if None show in a window
-        """
-        if self.ax is None: return
-        self.ax.legend(loc='best')
+        kwargs: generic keyword arguments.
 
-        if outpath is not None:
-            plt.savefig(outpath, **kwargs)
-        else:
-            plt.show()
+        """
+        self.ax.legend(loc='best')
+                
 
 # Alias for RadViz
 RadViz = RadialVisualizer

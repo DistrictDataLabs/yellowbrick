@@ -257,26 +257,19 @@ class Rank2D(FeatureVisualizer):
         cb = self.ax.figure.colorbar(mesh, None, self.ax)
         cb.outline.set_linewidth(0)
 
-
-    def poof(self, outpath=None, **kwargs):
+    def finalize(self, **kwargs):
         """
-        Display the Rank2D visualization
+        Finalize executes any subclass-specific axes finalization steps.
+        The user calls poof and poof calls finalize.
 
         Parameters
         ----------
-        outpath: path or None
-            Save the figure to disk or if None show in a window
-        """
-        if self.ax is None: return
+        kwargs: generic keyword arguments.
 
+        """
         # Set the title
         self.ax.set_title(
             "{} Ranking of {} Features".format(
                 self.ranking_.title(), len(self.features_)
             )
         )
-
-        if outpath is not None:
-            plt.savefig(outpath, **kwargs)
-        else:
-            plt.show()

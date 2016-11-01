@@ -66,16 +66,6 @@ class FeatureVisualizer(Visualizer, TransformerMixin):
         """
         return X
 
-    def poof(self, **kwargs):
-        """
-        The user calls poof in order to draw the feature visualization.
-
-        Visualize data features individually or together
-        """
-        raise NotImplementedError(
-            "Please specify how to render the feature visualization"
-        )
-
     def fit_transform_poof(self, X, y=None, **kwargs):
         """
         Fit to data, transform it, then visualize it.
