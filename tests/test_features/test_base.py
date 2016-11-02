@@ -39,11 +39,11 @@ class FeatureVisualizerBaseTests(unittest.TestCase):
         self.assertIsInstance(visualizer, BaseEstimator)
         self.assertIsInstance(visualizer, Visualizer)
 
-    def test_interface(self):
-        """
-        Test the feature visualizer interface
-        """
-
-        visualizer = FeatureVisualizer()
-        with self.assertRaises(NotImplementedError):
-            visualizer.poof()
+    # def test_interface(self):
+    #     """
+    #     Test the feature visualizer interface
+    #     """
+    #
+    #     visualizer = FeatureVisualizer()
+    #     with self.assertRaises(NotImplementedError):
+    #         visualizer.poof()
