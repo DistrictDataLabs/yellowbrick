@@ -213,7 +213,7 @@ def classification_report(model, X, y=None, ax=None, classes=None, **kwargs):
     ax : matplotlib axes
         The axes to plot the figure on.
 
-    model : the Scikit-Learn estimator
+    model : the Scikit-Learn estimator (should be a classifier)
 
     classes : list of strings
         The names of the classes in the target
@@ -373,7 +373,7 @@ def roc_auc(model, X, y=None, ax=None, **kwargs):
     ax : matplotlib axes
         The axes to plot the figure on.
 
-    model : the Scikit-Learn estimator
+    model : the Scikit-Learn estimator (should be a classifier)
 
     Returns
     -------
@@ -543,7 +543,7 @@ def class_balance(model, X, y=None, ax=None, classes=None, **kwargs):
     ax : matplotlib axes
         The axes to plot the figure on.
 
-    model : the Scikit-Learn estimator
+    model : the Scikit-Learn estimator (should be a classifier)
 
     classes : list of strings
         The names of the classes in the target
