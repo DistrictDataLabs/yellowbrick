@@ -353,6 +353,47 @@ class ROCAUC(ClassificationScoreVisualizer):
         self.ax.set_ylim([ 0.00, 1.1])
 
 
+def roc_auc(model, X, y=None, ax=None, **kwargs):
+    """Quick method:
+
+    Displays the tradeoff between the classifier's
+    sensitivity and specificity.
+
+    This helper function is a quick wrapper to utilize the ROCAUC
+    ScoreVisualizer for one-off analysis.
+
+    Parameters
+    ----------
+    X  : ndarray or DataFrame of shape n x m
+        A matrix of n instances with m features.
+
+    y  : ndarray or Series of length n
+        An array or series of target or class values.
+
+    ax : matplotlib axes
+        The axes to plot the figure on.
+
+    model : the Scikit-Learn estimator
+
+    Returns
+    -------
+    ax : matplotlib axes
+        Returns the axes that the roc-auc curve was drawn on.
+    """
+    # Instantiate the visualizer
+    visualizer = ROCAUC(model, ax, **kwargs)
+
+    # Create the train and test splits
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2)
+
+    # Fit and transform the visualizer (calls draw)
+    visualizer.fit(X_train, y_train, **kwargs)
+    visualizer.score(X_test, y_test)
+
+    # Return the axes object on the visualizer
+    return visualizer.ax
+
+
 ##########################################################################
 ## Class Balance Chart
 ##########################################################################
