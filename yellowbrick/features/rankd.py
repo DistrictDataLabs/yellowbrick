@@ -245,6 +245,7 @@ class Rank2D(FeatureVisualizer):
         mask = mask[::-1]
 
         # Draw the heatmap
+        # TODO: Move mesh to a property so the colorbar can be finalized
         data = np.ma.masked_where(mask, X)
         mesh = self.ax.pcolormesh(data, cmap=self.colormap, vmin=-1, vmax=1)
 

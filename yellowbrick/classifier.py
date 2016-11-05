@@ -165,23 +165,6 @@ class ClassificationReport(ClassificationScoreVisualizer):
 
         return self.ax
 
-    def poof(self):
-        """
-        Plots a classification report as a heatmap.
-
-        Returns
-        ----------
-
-        ax : the axis with the plotted figure
-
-        """
-        if self.ax is None: return
-
-        self.finalize()
-        plt.show()
-
-        return self.ax
-
     def finalize(self, **kwargs):
         """
         Finalize executes any subclass-specific axes finalization steps.
@@ -192,14 +175,24 @@ class ClassificationReport(ClassificationScoreVisualizer):
         kwargs: generic keyword arguments.
 
         """
-        plt.title('{} Classification Report'.format(self.name))
+        # Set the title of the classifiation report
+        self.set_title('{} Classification Report'.format(self.name))
+
+        # Add the color bar
         plt.colorbar()
+
+        # Compute the tick marks for both x and y
         x_tick_marks = np.arange(len(self.classes_)+1)
         y_tick_marks = np.arange(len(self.classes_))
+
+        # Set the tick marks appropriately
+        # TODO: make sure this goes through self.ax not plt
         plt.xticks(x_tick_marks, ['precision', 'recall', 'f1-score'], rotation=45)
         plt.yticks(y_tick_marks, self.classes_)
-        plt.ylabel('Classes')
-        plt.xlabel('Measures')
+
+        # Set the labels for the two axes
+        self.ax.set_ylabel('Classes')
+        self.ax.set_xlabel('Measures')
 
 
 ##########################################################################
@@ -313,11 +306,13 @@ class ROCAUC(ClassificationScoreVisualizer):
         kwargs: generic keyword arguments.
 
         """
-        plt.title('ROC for {}'.format(self.name))
-        plt.legend(loc='lower right')
+        # Set the title and add the legend
+        self.set_title('ROC for {}'.format(self.name))
+        self.ax.legend(loc='lower right')
 
-        plt.xlim([-0.02,1])
-        plt.ylim([0,1.1])
+        # Set the limits for the ROC/AUC (always between 0 and 1)
+        self.ax.set_xlim([-0.02, 1.0])
+        self.ax.set_ylim([ 0.00, 1.1])
 
 
 ##########################################################################
@@ -354,9 +349,6 @@ class ClassBalance(ClassificationScoreVisualizer):
 
         """
         super(ClassBalance, self).__init__(model, ax=ax, **kwargs)
-
-        ## hoisted to Visualizer base class
-        # self.ax = ax
 
         ## hoisted to ScoreVisualizer base class
         self.estimator = model
@@ -444,8 +436,14 @@ class ClassBalance(ClassificationScoreVisualizer):
         kwargs: generic keyword arguments.
 
         """
+
+        # Set the title
+        self.set_title('Class Balance for {}'.format(self.name))
+
+        # Set the x ticks with the class names
+        # TODO: change to the self.ax method rather than plt.xticks
         plt.xticks(np.arange(len(self.support)), self.support.keys())
+
+        # Compute the ceiling for the y limit
         cmax, cmin = max(self.support.values()), min(self.support.values())
-        ceiling = cmax + cmax*0.1
-        span = cmax - cmin
-        plt.ylim(0, ceiling)
+        self.ax.set_ylim(0, cmax + cmax* 0.1)

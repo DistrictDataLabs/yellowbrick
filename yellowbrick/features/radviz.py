@@ -221,8 +221,14 @@ class RadialVisualizer(DataVisualizer):
         kwargs: generic keyword arguments.
 
         """
+        # Set the title
+        self.set_title(
+            'RadViz for {} Features'.format(len(self.features_))
+        )
+
+        # Add the legend
         self.ax.legend(loc='best')
-                
+
 
 # Alias for RadViz
 RadViz = RadialVisualizer

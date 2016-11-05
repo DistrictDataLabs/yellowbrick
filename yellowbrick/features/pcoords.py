@@ -189,7 +189,7 @@ class ParallelCoordinates(DataVisualizer):
             for idx in x:
                 self.ax.axvline(idx, **self.vlines_kwds)
 
-        # Finalize the plot
+        # Set the limits
         self.ax.set_xticks(x)
         self.ax.set_xticklabels(self.features_)
         self.ax.set_xlim(x[0], x[-1])
@@ -204,5 +204,11 @@ class ParallelCoordinates(DataVisualizer):
         kwargs: generic keyword arguments.
 
         """
+        # Set the title
+        self.set_title(
+            'Parallel Coordinates for {} Features'.format(len(self.features_))
+        )
+
+        # Set the legend and the grid
         self.ax.legend(loc='best')
         self.ax.grid()

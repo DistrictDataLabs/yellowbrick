@@ -44,7 +44,7 @@ class RegressionScoreVisualizer(ScoreVisualizer):
         )
 
         super(RegressionScoreVisualizer, self).__init__(model, ax=ax, **kwargs)
-        # self.ax = ax
+
 
 ##########################################################################
 ## Prediction Error Plots
@@ -78,17 +78,11 @@ class PredictionError(RegressionScoreVisualizer):
 
         super(PredictionError, self).__init__(model, ax=ax, **kwargs)
 
-        ## hoisted to Visualizer base class
-        # self.ax = ax
-
-        ## hoisted to ScoreVisualizer
-        self.name = get_model_name(self.estimator)
-
         self.colors = {
             'point': kwargs.pop('point_color', '#F2BE2C'),
             'line': kwargs.pop('line_color', '#2B94E9'),
         }
-        # self.fig, self.ax = plt.subplots()
+
 
     def score(self, X, y=None, **kwargs):
         """
@@ -158,9 +152,12 @@ class PredictionError(RegressionScoreVisualizer):
         kwargs: generic keyword arguments.
 
         """
-        self.ax.set_title('Prediction Error for {}'.format(self.name))
+        # Set the title on the plot
+        self.set_title('Prediction Error for {}'.format(self.name))
+
+        # Set the axes labels
         self.ax.set_ylabel('Predicted')
-        plt.xlabel('Measured')
+        self.ax.set_xlabel('Measured')
 
 
 ##########################################################################
@@ -198,12 +195,6 @@ class ResidualsPlot(RegressionScoreVisualizer):
         """
 
         super(ResidualsPlot, self).__init__(model, ax=ax, **kwargs)
-
-        ## hoisted to Visualizer base class
-        # self.ax = ax
-
-        ## hoisted to ScoreVisualizer
-        self.name = get_model_name(self.estimator)
 
         # TODO Is there a better way to differentiate between train and test points?
         # We'd like to color them differently in draw...
@@ -303,7 +294,12 @@ class ResidualsPlot(RegressionScoreVisualizer):
         kwargs: generic keyword arguments.
 
         """
+        # Add the title to the plot
+        self.set_title('Residuals for {} Model'.format(self.name))
+
+        # Create horizontal lines
         self.ax.hlines(y=0, xmin=0, xmax=100)
-        self.ax.set_title('Residuals for {} Model'.format(self.name))
+
+        # Set the axes labels
         self.ax.set_ylabel('Residuals')
-        plt.xlabel("Predicted Value")
+        self.ax.set_xlabel("Predicted Value")

@@ -51,6 +51,7 @@ class Visualizer(BaseEstimator):
         self.ax = ax
         self.size  = kwargs.pop('size', None)
         self.color = kwargs.pop('color', None)
+        self.title = kwargs.pop('title', None)
 
     def fit(self, X, y=None, **kwargs):
         """
@@ -105,6 +106,14 @@ class Visualizer(BaseEstimator):
             plt.savefig(outpath, **kwargs)
         else:
             plt.show()
+
+    def set_title(self, title=None):
+        """
+        Sets the title on the current axes.
+        """
+        title = self.title or title
+        if title is not None:
+            self.ax.set_title(title)
 
     def finalize(self, **kwargs):
         """
