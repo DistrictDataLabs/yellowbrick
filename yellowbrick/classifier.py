@@ -522,3 +522,46 @@ class ClassBalance(ClassificationScoreVisualizer):
         # Compute the ceiling for the y limit
         cmax, cmin = max(self.support.values()), min(self.support.values())
         self.ax.set_ylim(0, cmax + cmax* 0.1)
+
+def class_balance(model, X, y=None, ax=None, classes=None, **kwargs):
+    """Quick method:
+
+    Displays the support for each class in the
+    fitted classification model displayed as a bar plot.
+
+    This helper function is a quick wrapper to utilize the ClassBalance
+    ScoreVisualizer for one-off analysis.
+
+    Parameters
+    ----------
+    X  : ndarray or DataFrame of shape n x m
+        A matrix of n instances with m features.
+
+    y  : ndarray or Series of length n
+        An array or series of target or class values.
+
+    ax : matplotlib axes
+        The axes to plot the figure on.
+
+    model : the Scikit-Learn estimator
+
+    classes : list of strings
+        The names of the classes in the target
+
+    Returns
+    -------
+    ax : matplotlib axes
+        Returns the axes that the class balance plot was drawn on.
+    """
+    # Instantiate the visualizer
+    visualizer = ClassBalance(model, ax, classes, **kwargs)
+
+    # Create the train and test splits
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2)
+
+    # Fit and transform the visualizer (calls draw)
+    visualizer.fit(X_train, y_train, **kwargs)
+    visualizer.score(X_test, y_test)
+
+    # Return the axes object on the visualizer
+    return visualizer.ax
