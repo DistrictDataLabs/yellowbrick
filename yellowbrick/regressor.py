@@ -303,3 +303,8 @@ class ResidualsPlot(RegressionScoreVisualizer):
         # Set the axes labels
         self.ax.set_ylabel('Residuals')
         self.ax.set_xlabel("Predicted Value")
+
+        # Set the legend
+        # Assumes that the first set of points are training data, and the next are test
+        # Assumes that you want a box around legend
+        self.ax.legend(['Training Data', 'Test Data'], loc = 'best', frameon = True)
