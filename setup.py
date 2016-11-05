@@ -8,7 +8,7 @@
 # Copyright (C) 2016 District Data Labs
 # For license information, see LICENSE.txt and NOTICE.md
 #
-# ID: setup.py [] benjamin@bengfort.com $
+# ID: setup.py [c4f3ba7] benjamin@bengfort.com $
 
 """
 Setup script for installing yellowbrick.
@@ -90,7 +90,7 @@ def get_version(path=VERSION_PATH):
     """
     namespace = {}
     exec(read(path), namespace)
-    return namespace['get_version']()
+    return namespace['get_version'](short=True)
 
 
 def get_requires(path=REQUIRE_PATH):

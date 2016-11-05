@@ -8,7 +8,7 @@
 # Copyright (C) 2016 District Data Labs
 # For license information, see LICENSE.txt
 #
-# ID: download.py [] benjamin@bengfort.com $
+# ID: download.py [1f73d2b] benjamin@bengfort.com $
 
 """
 Downloads the example datasets for running the examples.

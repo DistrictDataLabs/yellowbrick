@@ -7,7 +7,7 @@
 # Copyright (C) 2016 District Data Labs
 # For license information, see LICENSE.txt
 #
-# ID: version.py [] benjamin@bengfort.com $
+# ID: version.py [0c5ba04] benjamin@bengfort.com $
 
 """
 Maintains version and package information for deployment.
@@ -19,10 +19,10 @@ Maintains version and package information for deployment.
 
 __version_info__ = {
     'major': 0,
-    'minor': 1,
-    'micro': 0,
-    'releaselevel': 'final',
-    'serial': 0,
+    'minor': 3,
+    'micro': 1,
+    'releaselevel': 'alpha',
+    'serial': 2,
 }
 
 ##########################################################################

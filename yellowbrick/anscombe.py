@@ -7,7 +7,7 @@
 # Copyright (C) 2016 District Data Labs
 # For license information, see LICENSE.txt
 #
-# ID: anscombe.py [] benjamin@bengfort.com $
+# ID: anscombe.py [0bfa366] benjamin@bengfort.com $
 
 """
 Plots Anscombe's Quartet as an illustration of the importance of visualization.
@@ -17,9 +17,11 @@ Plots Anscombe's Quartet as an illustration of the importance of visualization.
 ## Imports
 ##########################################################################
 
-
 import numpy as np
 import matplotlib.pyplot as plt
+
+from yellowbrick.bestfit import draw_best_fit
+from yellowbrick.style import get_color_cycle
 
 
 ##########################################################################
@@ -51,13 +53,24 @@ def anscombe():
     Creates 2x2 grid plot of the 4 anscombe datasets for illustration.
     """
     fig, ((axa, axb), (axc, axd)) =  plt.subplots(2, 2, sharex='col', sharey='row')
-    for arr, ax in zip(ANSCOMBE, (axa, axb, axc, axd)):
+    colors = get_color_cycle()
+    for arr, ax, color in zip(ANSCOMBE, (axa, axb, axc, axd), colors):
         x = arr[0]
         y = arr[1]
 
-        ax.scatter(x, y, c='g')
-        m,b = np.polyfit(x, y, 1)
-        X = np.linspace(ax.get_xlim()[0], ax.get_xlim()[1], 100)
-        ax.plot(X, m*X+b, '-')
+        # Set the X and Y limits
+        ax.set_xlim(0, 15)
+        ax.set_ylim(0, 15)
+
+        # Draw the points in the scatter plot
+        ax.scatter(x, y, c=color)
+
+        # Draw the linear best fit line on the plot
+        draw_best_fit(x, y, ax, c=color)
 
     return (axa, axb, axc, axd)
+
+
+if __name__ == '__main__':
+    anscombe()
+    plt.show()
