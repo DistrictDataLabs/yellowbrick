@@ -163,9 +163,9 @@ class ScoreVisualizer(Visualizer):
         These parameters can be influenced later on in the visualization
         process, but can and should be set as early as possible.
         """
-        self.estimator = model
         super(ScoreVisualizer, self).__init__(ax=ax, **kwargs)
 
+        self.estimator = model
         self.name = get_model_name(self.estimator)
 
     def fit(self, X, y=None, **kwargs):
@@ -222,8 +222,9 @@ class ModelVisualizer(Visualizer):
         These parameters can be influenced later on in the visualization
         process, but can and should be set as early as possible.
         """
-        self.estimator = model
         super(ScoreVisualizer, self).__init__(ax=ax, **kwargs)
+        self.estimator = model
+
 
     def fit(self, X, y=None, **kwargs):
         """
@@ -252,7 +253,7 @@ class MultiModelMixin(object):
     Does predict for each of the models and generates subplots.
     """
 
-    def __init__(self, models, **kwargs):
+    def __init__(self, models, ax=None, **kwargs):
         # Ensure models is a collection, if it's a single estimator then we
         # wrap it in a list so that the API doesn't break during render.
         """
@@ -265,7 +266,10 @@ class MultiModelMixin(object):
         These parameters can be influenced later on in the visualization
         process, but can and should be set as early as possible.
         """
-        if isestimator(models):
+        # TODO: How to handle the axes in this mixin?
+        self.ax = ax
+
+        if all(isestimator, models):
             models = [models]
 
         # Keep track of the models

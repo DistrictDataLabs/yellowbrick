@@ -87,9 +87,6 @@ class ClassificationReport(ClassificationScoreVisualizer):
         """
         super(ClassificationReport, self).__init__(model, ax=ax, **kwargs)
 
-        ## hoisted to Visualizer base class
-        # self.ax = ax
-
         ## hoisted to ScoreVisualizer base class
         self.estimator = model
         self.name = get_model_name(self.estimator)
@@ -228,9 +225,6 @@ class ROCAUC(ClassificationScoreVisualizer):
         """
         super(ROCAUC, self).__init__(model, ax=ax, **kwargs)
 
-        ## hoisted to Visualizer base class
-        # self.ax = ax
-
         ## hoisted to ScoreVisualizer base class
         self.name = get_model_name(self.estimator)
 
@@ -349,10 +343,6 @@ class ClassBalance(ClassificationScoreVisualizer):
 
         """
         super(ClassBalance, self).__init__(model, ax=ax, **kwargs)
-
-        ## hoisted to ScoreVisualizer base class
-        self.estimator = model
-        self.name      = get_model_name(self.estimator)
 
         self.colors    = kwargs.pop('colors', YELLOWBRICK_PALETTES['paired'])
         self.classes_  = classes
