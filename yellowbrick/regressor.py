@@ -62,7 +62,7 @@ class PredictionError(RegressionScoreVisualizer):
 
         :param ax: the axis to plot the figure on.
 
-        :param estimator: the Scikit-Learn estimator
+        :param model: the Scikit-Learn estimator
             Should be an instance of a regressor, else the __init__ will
             return an error.
 
@@ -180,7 +180,7 @@ class ResidualsPlot(RegressionScoreVisualizer):
 
         :param ax: the axis to plot the figure on.
 
-        :param estimator: the Scikit-Learn estimator
+        :param model: the Scikit-Learn estimator
             Should be an instance of a regressor, else the __init__ will
             return an error.
 

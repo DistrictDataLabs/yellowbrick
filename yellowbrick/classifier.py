@@ -22,6 +22,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 from sklearn.pipeline import Pipeline
+from sklearn.cross_validation import train_test_split
 from sklearn.metrics import auc, roc_auc_score, roc_curve
 from sklearn.metrics import precision_recall_fscore_support
 
@@ -69,7 +70,7 @@ class ClassificationReport(ClassificationScoreVisualizer):
 
         :param ax: the axis to plot the figure on.
 
-        :param estimator: the Scikit-Learn estimator
+        :param model: the Scikit-Learn estimator
             Should be an instance of a classifier, else the __init__ will
             return an error.
 
@@ -192,6 +193,49 @@ class ClassificationReport(ClassificationScoreVisualizer):
         self.ax.set_xlabel('Measures')
 
 
+def classification_report(model, X, y=None, ax=None, classes=None, **kwargs):
+    """Quick method:
+
+    Displays precision, recall, and F1 scores for the model.
+    Integrates numerical scores as well color-coded heatmap.
+
+    This helper function is a quick wrapper to utilize the ClassificationReport
+    ScoreVisualizer for one-off analysis.
+
+    Parameters
+    ----------
+    X  : ndarray or DataFrame of shape n x m
+        A matrix of n instances with m features.
+
+    y  : ndarray or Series of length n
+        An array or series of target or class values.
+
+    ax : matplotlib axes
+        The axes to plot the figure on.
+
+    model : the Scikit-Learn estimator
+
+    classes : list of strings
+        The names of the classes in the target
+
+    Returns
+    -------
+    ax : matplotlib axes
+        Returns the axes that the classification report was drawn on.
+    """
+    # Instantiate the visualizer
+    visualizer = ClassificationReport(model, ax, classes, **kwargs)
+
+    # Create the train and test splits
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2)
+
+    # Fit and transform the visualizer (calls draw)
+    visualizer.fit(X_train, y_train, **kwargs)
+    visualizer.score(X_test, y_test)
+
+    # Return the axes object on the visualizer
+    return visualizer.ax
+
 ##########################################################################
 ## Receiver Operating Characteristics
 ##########################################################################
@@ -210,7 +254,7 @@ class ROCAUC(ClassificationScoreVisualizer):
 
         :param ax: the axis to plot the figure on.
 
-        :param estimator: the Scikit-Learn estimator
+        :param model: the Scikit-Learn estimator
             Should be an instance of a classifier, else the __init__ will
             return an error.
 
@@ -327,7 +371,7 @@ class ClassBalance(ClassificationScoreVisualizer):
 
         :param ax: the axis to plot the figure on.
 
-        :param estimator: the Scikit-Learn estimator
+        :param model: the Scikit-Learn estimator
             Should be an instance of a classifier, else the __init__ will
             return an error.
 

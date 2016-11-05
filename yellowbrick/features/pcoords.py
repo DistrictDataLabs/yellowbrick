@@ -73,7 +73,7 @@ def parallel_coordinates(X, y=None, ax=None, features=None, classes=None,
     ax : matplotlib axes
         Returns the axes that the parallel coordinates were drawn on.
     """
-    # Insantiate the visualizer
+    # Instantiate the visualizer
     visualizer = ParallelCoordinates(
         ax, features, classes, color, colormap, vlines, vlines_kwds, **kwargs
     )
