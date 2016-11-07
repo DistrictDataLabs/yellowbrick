@@ -211,7 +211,7 @@ class ModelVisualizer(Visualizer):
     and enables the user to visualize the performance of models across a range
     of hyperparameter values (e.g. using VisualGridsearch and ValidationCurve).
     """
-    def __init__(self, ax=None, **kwargs):
+    def __init__(self, model, ax=None, **kwargs):
         """
         Parameters
         ----------
@@ -222,7 +222,7 @@ class ModelVisualizer(Visualizer):
         These parameters can be influenced later on in the visualization
         process, but can and should be set as early as possible.
         """
-        super(ScoreVisualizer, self).__init__(ax=ax, **kwargs)
+        super(ModelVisualizer, self).__init__(ax=ax, **kwargs)
         self.estimator = model
 
 

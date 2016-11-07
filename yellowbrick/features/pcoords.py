@@ -26,7 +26,6 @@ from yellowbrick.features.base import DataVisualizer
 from yellowbrick.exceptions import YellowbrickTypeError
 from yellowbrick.style.colors import resolve_colors, get_color_cycle
 
-
 ##########################################################################
 ## Quick Methods
 ##########################################################################
