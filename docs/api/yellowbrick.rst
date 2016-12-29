@@ -20,18 +20,18 @@ yellowbrick.base module
     :undoc-members:
     :show-inheritance:
 
-yellowbrick.classifier module
------------------------------
+yellowbrick.bestfit module
+-----------------------
 
-.. automodule:: yellowbrick.classifier
+.. automodule:: yellowbrick.bestfit
     :members:
     :undoc-members:
     :show-inheritance:
 
-yellowbrick.color_utils module
-------------------------------
+yellowbrick.classifier module
+-----------------------------
 
-.. automodule:: yellowbrick.color_utils
+.. automodule:: yellowbrick.classifier
     :members:
     :undoc-members:
     :show-inheritance:
@@ -44,10 +44,35 @@ yellowbrick.exceptions module
     :undoc-members:
     :show-inheritance:
 
+yellowbrick.features module 
+---------------------------
+
+.. automodule:: yellowbrick.features
+    :members:
+    :undoc-members:
+    :show-inheritance:
+ 
+
+yellowbrick.pipeline module 
+---------------------------
+
+.. automodule:: yellowbrick.pipeline
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 yellowbrick.regressor module
 ----------------------------
 
 .. automodule:: yellowbrick.regressor
+    :members:
+    :undoc-members:
+    :show-inheritance:
+    
+yellowbrick.style module
+---------------------------
+
+.. automodule:: yellowbrick.style
     :members:
     :undoc-members:
     :show-inheritance:
@@ -64,22 +89,6 @@ yellowbrick.version module
 --------------------------
 
 .. automodule:: yellowbrick.version
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-yellowbrick.yb_palettes module
-------------------------------
-
-.. automodule:: yellowbrick.yb_palettes
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-yellowbrick.yb_rcmod module
----------------------------
-
-.. automodule:: yellowbrick.yb_rcmod
     :members:
     :undoc-members:
     :show-inheritance:

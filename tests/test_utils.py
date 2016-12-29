@@ -1,16 +1,18 @@
 # tests.test_utils
-# Test the export module - to generate a corpus for machine learning.
+# Test the yellowbrick utilities module.
 #
 # Author:   Jason Keung <jason.s.keung@gmail.com>
-#           Patrick O'Melveny <pvomelveny@gmail.com>
-# Created:  Thurs Jun 2 15:33:18 2016 -0500
+# Author:   Patrick O'Melveny <pvomelveny@gmail.com>
+# Author:   Benjamin Bengfort <bbengfort@districtdatalabs.com>
+# Created:  Thu Jun 02 15:33:18 2016 -0500
 #
+# Copyright (C) 2016 District Data LAbs
 # For license information, see LICENSE.txt
 #
-
+# ID: test_utils.py [] jason.s.keung@gmail.com $
 
 """
-Test the utils module - to generate a corpus for machine learning.
+Test the yellowbrick utilities module.
 """
 
 ##########################################################################
