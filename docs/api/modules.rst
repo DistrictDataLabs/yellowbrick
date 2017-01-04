@@ -5,3 +5,5 @@ API Reference
    :maxdepth: 4
 
    yellowbrick
+   yellowbrick.style
+   yellowbrick.features

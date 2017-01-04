@@ -52,7 +52,7 @@ Contents:
 ==========
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 4
 
    setup
    api/modules
@@ -65,4 +65,3 @@ Indices and tables
 * :ref:`genindex`
 * :ref:`modindex`
 * :ref:`search`
-
