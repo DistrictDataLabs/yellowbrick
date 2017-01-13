@@ -26,7 +26,8 @@ from yellowbrick.exceptions import *
 from yellowbrick.style.palettes import *
 from yellowbrick.style.colors import get_color_cycle
 from yellowbrick.style.rcmod import set_aesthetic, set_palette
-from yellowbrick.style.palettes import ColorPalette, PALETTES
+from yellowbrick.style.palettes import color_sequence, color_palette
+from yellowbrick.style.palettes import ColorPalette, PALETTES, SEQUENCES
 
 from tests.base import VisualTestCase
 
@@ -278,6 +279,36 @@ class ColorPaletteFunctionTests(VisualTestCase):
         pal_out = color_palette(pal_in)
         self.assertEqual(pal_in, pal_out)
 
+    def test_color_sequence(self):
+        """
+        Ensure the color sequence returns listed colors.
+        """
+        for name, ncols in SEQUENCES.items():
+            for n in ncols.keys():
+                cmap = color_sequence(name, n)
+
+    def test_color_sequence_default(self):
+        """
+        Assert the default color sequence is RdBu
+        """
+        cmap = color_sequence()
+
+    def test_color_sequence_unrecocognized(self):
+        """
+        Test value errors for unrecognized sequences
+        """
+        with self.assertRaises(YellowbrickValueError):
+            cmap = color_sequence('PepperBucks', 3)
+
+    def test_color_sequence_bounds(self):
+        """
+        Test color sequence out of bounds value error
+        """
+        with self.assertRaises(YellowbrickValueError):
+            cmap = color_sequence('RdBu', 18)
+
+        with self.assertRaises(YellowbrickValueError):
+            cmap = color_sequence('RdBu', 2)
 
 if __name__ == "__main__":
     unittest.main()
