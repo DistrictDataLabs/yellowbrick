@@ -26,11 +26,11 @@ from sklearn.cross_validation import train_test_split
 from sklearn.metrics import auc, roc_auc_score, roc_curve
 from sklearn.metrics import precision_recall_fscore_support
 
-from .style.palettes import ddlheatmap
 from .exceptions import YellowbrickTypeError
-from .style.palettes import PALETTES as YELLOWBRICK_PALETTES
 from .utils import get_model_name, isestimator, isclassifier
 from .base import Visualizer, ScoreVisualizer, MultiModelMixin
+from .style.palettes import color_sequence, color_palette, LINE_COLOR
+
 
 ##########################################################################
 ## Classification Visualization Base Object
@@ -92,7 +92,7 @@ class ClassificationReport(ClassificationScoreVisualizer):
         self.estimator = model
         self.name = get_model_name(self.estimator)
 
-        self.cmap = kwargs.pop('cmap', ddlheatmap)
+        self.cmap = color_sequence(kwargs.pop('cmap', 'YlOrRd'))
         self.classes_ = classes
 
     def fit(self, X, y=None, **kwargs):
@@ -258,6 +258,15 @@ class ROCAUC(ClassificationScoreVisualizer):
             Should be an instance of a classifier, else the __init__ will
             return an error.
 
+        :param roc_color: color of the ROC curve
+            Specify the color as a matplotlib color: you can specify colors in
+            many weird and wonderful ways, including full names ('green'), hex
+            strings ('#008000'), RGB or RGBA tuples ((0,1,0,1)) or grayscale
+            intensities as a string ('0.8').
+
+        :param diagonal_color: color of the diagonal
+            Specify the color as a matplotlib color.
+
         :param kwargs: keyword arguments passed to the super class.
             Currently passing in hard-coded colors for the Receiver Operating
             Characteristic curve and the diagonal.
@@ -272,10 +281,12 @@ class ROCAUC(ClassificationScoreVisualizer):
         ## hoisted to ScoreVisualizer base class
         self.name = get_model_name(self.estimator)
 
-        # TODO refactor to use new Yellowbrick color utils
+        # Color map defaults as follows:
+        # ROC color is the current color in the cycle
+        # Diagonal color is the default LINE_COLOR
         self.colors = {
-            'roc': kwargs.pop('roc_color', '#2B94E9'),
-            'diagonal': kwargs.pop('diagonal_color', '#666666'),
+            'roc': kwargs.pop('roc_color', None),
+            'diagonal': kwargs.pop('diagonal_color', LINE_COLOR),
         }
 
     def score(self, X, y=None, **kwargs):
@@ -429,7 +440,7 @@ class ClassBalance(ClassificationScoreVisualizer):
         """
         super(ClassBalance, self).__init__(model, ax=ax, **kwargs)
 
-        self.colors    = kwargs.pop('colors', YELLOWBRICK_PALETTES['paired'])
+        self.colors    = color_palette(kwargs.pop('colors', None))
         self.classes_  = classes
 
     def fit(self, X, y=None, **kwargs):
