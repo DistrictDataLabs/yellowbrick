@@ -216,6 +216,9 @@ just too much noise?
 .. image:: images/examples_15_0.png
 
 
+For regression, the RadViz visualizer should use a color sequence to
+display the target information, as opposed to discrete colors.
+
 Parallel Coordinates
 ~~~~~~~~~~~~~~~~~~~~
 
@@ -253,7 +256,7 @@ different distributions.
 
 
 
-.. image:: images/examples_18_0.png
+.. image:: images/examples_19_0.png
 
 
 Regressor Evaluation
@@ -318,7 +321,7 @@ appropriate.
 
 
 
-.. image:: images/examples_23_0.png
+.. image:: images/examples_24_0.png
 
 
 Prediction Error Plot
@@ -355,7 +358,7 @@ the model. Data scientists diagnose this plot by comparing against the
 
 
 
-.. image:: images/examples_26_0.png
+.. image:: images/examples_27_0.png
 
 
 Classifier Evaluation
@@ -426,7 +429,7 @@ heatmap in order for easy interpretation and detection.
 
 
 
-.. image:: images/examples_31_0.png
+.. image:: images/examples_32_0.png
 
 
 ROCAUC
@@ -463,7 +466,7 @@ sensitivity and specificity.
 
 
 
-.. image:: images/examples_34_0.png
+.. image:: images/examples_35_0.png
 
 
 ClassBalance
@@ -500,4 +503,4 @@ classification model.
 
 
 
-.. image:: images/examples_37_0.png
+.. image:: images/examples_38_0.png

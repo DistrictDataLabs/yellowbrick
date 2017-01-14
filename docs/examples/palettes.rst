@@ -97,13 +97,6 @@ Yellowbrick includes custom palettes as well as familiar ones from Matplotlib an
             plt.title("{} - {}".format(name, num), loc='left')
 
 
-.. parsed-literal::
-
-    /usr/local/lib/python2.7/site-packages/matplotlib/pyplot.py:524: RuntimeWarning: More than 20 figures have been opened. Figures created through the pyplot interface (`matplotlib.pyplot.figure`) are retained until explicitly closed and may consume too much memory. (To control this warning, see the rcParam `figure.max_open_warning`).
-      max_open_warning, RuntimeWarning)
-
-
-
 .. image:: images/palettes_3_1.png
 
 
