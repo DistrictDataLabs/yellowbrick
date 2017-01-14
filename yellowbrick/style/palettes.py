@@ -27,6 +27,7 @@ __all__ = ["color_palette", "set_color_codes"]
 ##########################################################################
 
 YB_KEY = '#111111'  # The yellowbrick key (black) color is very dark grey
+LINE_COLOR = YB_KEY # Colors for best fit lines, diagonals, etc.
 
 
 ##########################################################################
@@ -341,7 +342,7 @@ SEQUENCES = {
 }
 
 ## Special, backward compatible color map.
-ddlheatmap = mplcol.ListedColormap(SEQUENCES["ddl_heat"])
+ddlheatmap = mplcol.ListedColormap(SEQUENCES["ddl_heat"][12], "DDL Heat", 12)
 
 ## Default Color Sequence
 DEFAULT_SEQUENCE = "RdBu"
@@ -669,4 +670,4 @@ def color_sequence(palette=None, n_colors=None):
             )
 
     # Return the color map from the sequence
-    return mplcol.ListedColormap(n_palettes[n_colors])
+    return mplcol.ListedColormap(n_palettes[n_colors], name=palette, N=n_colors)

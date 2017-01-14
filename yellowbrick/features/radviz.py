@@ -139,8 +139,9 @@ class RadialVisualizer(DataVisualizer):
 
     def draw(self, X, y, **kwargs):
         """
-        Called from the fit method, this method creates the parallel
-        coordinates canvas and draws each instance and vertical lines on it.
+        Called from the fit method, this method creates the radviz canvas and
+        draws each instance as a class or target colored point, whose location
+        is determined by the feature data set.
         """
 
         # Get the shape of the data

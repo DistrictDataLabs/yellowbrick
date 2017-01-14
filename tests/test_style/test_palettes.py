@@ -286,12 +286,16 @@ class ColorPaletteFunctionTests(VisualTestCase):
         for name, ncols in SEQUENCES.items():
             for n in ncols.keys():
                 cmap = color_sequence(name, n)
+                self.assertEqual(name, cmap.name)
+                self.assertEqual(n, cmap.N)
 
     def test_color_sequence_default(self):
         """
         Assert the default color sequence is RdBu
         """
         cmap = color_sequence()
+        self.assertEqual(cmap.name, "RdBu")
+        self.assertEqual(cmap.N, 11)
 
     def test_color_sequence_unrecocognized(self):
         """

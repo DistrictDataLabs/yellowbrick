@@ -24,9 +24,11 @@ import matplotlib.pyplot as plt
 from sklearn.cross_validation import train_test_split
 
 from .bestfit import draw_best_fit
+from .style.palettes import LINE_COLOR
 from .exceptions import YellowbrickTypeError
 from .utils import get_model_name, isestimator, isregressor
 from .base import Visualizer, ScoreVisualizer, MultiModelMixin
+
 
 ##########################################################################
 ## Regression Visualization Base Object
@@ -68,6 +70,12 @@ class PredictionError(RegressionScoreVisualizer):
             Should be an instance of a regressor, else the __init__ will
             return an error.
 
+        :param point_color: color of the error points
+            Any matplotlib color
+
+        :param line_color: color of the best fit line
+            Any matplotlib color
+
         :param kwargs: keyword arguments passed to the super class.
             Currently passing in hard-coded colors for the prediction error
             points and the line of best fit.
@@ -81,8 +89,8 @@ class PredictionError(RegressionScoreVisualizer):
         super(PredictionError, self).__init__(model, ax=ax, **kwargs)
 
         self.colors = {
-            'point': kwargs.pop('point_color', '#F2BE2C'),
-            'line': kwargs.pop('line_color', '#2B94E9'),
+            'point': kwargs.pop('point_color', None),
+            'line': kwargs.pop('line_color', LINE_COLOR),
         }
 
     def score(self, X, y=None, **kwargs):
@@ -132,7 +140,7 @@ class PredictionError(RegressionScoreVisualizer):
         if self.ax is None:
             self.ax = plt.gca()
 
-        self.ax.scatter(y, y_pred, c='#F2BE2C')
+        self.ax.scatter(y, y_pred, c=self.colors['point'])
 
         # TODO If score is happening inside a loop, draw would get called multiple times.
         # Ideally we'd want the best fit line to be drawn only once
@@ -220,11 +228,25 @@ class ResidualsPlot(RegressionScoreVisualizer):
         Parameters
         ----------
 
-        :param ax: the axis to plot the figure on.
-
         :param model: the Scikit-Learn estimator
             Should be an instance of a regressor, else the __init__ will
             return an error.
+
+        :param ax: the axis to plot the figure on.
+
+        :param train_color: color of the training data residuals
+            Residuals for training data are ploted with this color but also
+            given an opacity of 0.5 to ensure that the test data residuals
+            are more visible. Default color is 'b' for training data.
+
+        :param test_color: color of test data residuals
+            Residuals for test data are plotted with this color. In order to
+            create generalizable models, reserved test data residuals are of
+            the most analytical interest, so these points are highlighted by
+            hvaing full opacity. Default color is 'g' for test data.
+
+        :param line_color: color of the zero error line
+            Any matplotlib color. Default is a dark grey.
 
         :param kwargs: keyword arguments passed to the super class.
             Currently passing in hard-coded colors for the residual train and
@@ -242,9 +264,9 @@ class ResidualsPlot(RegressionScoreVisualizer):
         # We'd like to color them differently in draw...
         # Can the user pass those in as keyword arguments?
         self.colors = {
-            'train_point': kwargs.pop('train_point_color', '#2B94E9'),
-            'test_point': kwargs.pop('test_point_color', '#94BA65'),
-            'line': kwargs.pop('line_color', '#333333'),
+            'train_point': kwargs.pop('train_color', 'b'),
+            'test_point': kwargs.pop('test_color', 'g'),
+            'line': kwargs.pop('line_color', LINE_COLOR),
         }
 
     def fit(self, X, y=None, **kwargs):
@@ -337,17 +359,17 @@ class ResidualsPlot(RegressionScoreVisualizer):
         # Add the title to the plot
         self.set_title('Residuals for {} Model'.format(self.name))
 
-        # Create horizontal lines
-        self.ax.hlines(y=0, xmin=0, xmax=100)
-
-        # Set the axes labels
-        self.ax.set_ylabel('Residuals')
-        self.ax.set_xlabel("Predicted Value")
-
         # Set the legend
         # Assumes that the first set of points are training data, and the next are test
         # Assumes that you want a box around legend
         self.ax.legend(['Training Data', 'Test Data'], loc = 'best', frameon = True)
+
+        # Create a full line across the figure at zero error.
+        self.ax.axhline(y=0, c=self.colors['line'])
+
+        # Set the axes labels
+        self.ax.set_ylabel('Residuals')
+        self.ax.set_xlabel("Predicted Value")
 
 
 def residuals_plot(model, X, y=None, ax=None, **kwargs):
