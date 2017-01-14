@@ -3,62 +3,70 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
+=======================================
 Welcome to yellowbrick's documentation!
 =======================================
 
-**Yellowbrick is a suite of visual analysis and diagnostic tools to facilitate feature selection, model selection, and parameter tuning for machine learning.**
+Yellowbrick is a suite of visual analysis and diagnostic tools to facilitate feature selection, model selection, and parameter tuning for machine learning. All visualizations are generated in Matplotlib.
+
+Custom ``yellowbrick`` visualization tools include:
 
 Tools for feature analysis and selection
-------------------------------------------
+----------------------------------------
 
-- boxplots (box-and-whisker plots)
-- violinplots
-- histograms
-- scatter plot matrices (sploms)
-- radial visualizations (radviz)
-- parallel coordinates
-- jointplots
-- diagonal correlation matrix
+ - Boxplots ("box-and-whisker" plots)
+ - Violinplots
+ - Histograms
+ - Scatter plot matrices ("sploms")
+ - Radial visualizations ("radviz")
+ - Parallel coordinates
+ - Jointplots
+ - Rank 1D
+ - Rank 2D
 
 
 Tools for model evaluation
-----------------------------
+--------------------------
 
 Classification
-^^^^^^^^^^^^^^^
-
-- ROC curves
-- classification heatmaps
+^^^^^^^^^^^^^^
+ - ROC-AUC curves
+ - Classification heatmaps
+ - Class balance charts
 
 Regression
-^^^^^^^^^^^^
+^^^^^^^^^^
+ - Prediction error plots
+ - Residual plots
+ - Most informative features
 
-- prediction error plots
-- residual plots
+Clustering
+^^^^^^^^^^
+ - Silhouettes
+ - Density measures
 
 
 Tools for parameter tuning
-----------------------------
+--------------------------
 
-- validation curves
-- gridsearch heatmap
-
-
+- Validation curves
+- Gridsearch heatmap
 
 
-
-
+=========
 Contents:
-==========
+=========
 
 .. toctree::
    :maxdepth: 4
 
+   introduction
    setup
+   examples/examples
    api/modules
+   about
 
-
-
+==================
 Indices and tables
 ==================
 

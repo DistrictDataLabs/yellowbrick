@@ -44,16 +44,8 @@ yellowbrick.exceptions module
     :undoc-members:
     :show-inheritance:
 
-yellowbrick.features module 
----------------------------
 
-.. automodule:: yellowbrick.features
-    :members:
-    :undoc-members:
-    :show-inheritance:
- 
-
-yellowbrick.pipeline module 
+yellowbrick.pipeline module
 ---------------------------
 
 .. automodule:: yellowbrick.pipeline
@@ -69,14 +61,6 @@ yellowbrick.regressor module
     :undoc-members:
     :show-inheritance:
     
-yellowbrick.style module
----------------------------
-
-.. automodule:: yellowbrick.style
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
 yellowbrick.utils module
 ------------------------
 
