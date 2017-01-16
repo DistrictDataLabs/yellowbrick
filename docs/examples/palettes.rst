@@ -8,8 +8,6 @@ Yellowbrick includes custom palettes as well as familiar ones from Matplotlib an
 
 .. code:: python
 
-    %matplotlib inline
-
     import matplotlib.pyplot as plt
     from yellowbrick.style.palettes import PALETTES, SEQUENCES, color_palette
 
