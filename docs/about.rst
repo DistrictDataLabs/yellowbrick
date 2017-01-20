@@ -83,12 +83,33 @@ From Wikipedia_:
 
 Changelog
 ---------
+Hardened the Yellowbrick API to elevate the idea of a Visualizer to a first principle. This included reconciling shifts in the development of the preliminary versions to the new API, formalizing Visualizer methods like `draw()` and `finalize()`, and adding utilities that revolve around Scikit-Learn. To that end we also performed administrative tasks like refreshing the documentation and preparing the repository for more and varied open source contributions.
+
+Version 0.3.2
+^^^^^^^^^^^^^
+
+* Tag: v0.3.2_
+* Deployed: Friday, January 20, 2017
+* Contributors: Benjamin Bengfort, Rebecca Bilbro
+
+Changes:
+   - Converted Mkdocs documentation to Sphinx documentation
+   - Updated docstrings for all Visualizers and functions
+   - Created a DataVisualizer base class for dataset visualization
+   - Single call functions for simple visualizer interaction
+   - Added yellowbrick specific color sequences and palettes and env handling
+   - More robust examples with downloader from DDL host
+   - Better axes handling in visualizer, matplotlib/sklearn integration
+   - Added a finalize method to complete drawing before render
+   - Improved testing on real data sets from examples
+   - Bugfix: score visualizer renders in notebook but not in Python scripts.
+   - Bugfix: tests updated to support new API
 
 Hotfix 0.3.1
 ^^^^^^^^^^^^
 Hotfix to solve pip install issues with Yellowbrick.
 
-* Tag: v0.3.1
+* Tag: v0.3.1_
 * Deployed: Monday, October 10, 2016
 * Contributors: Benjamin Bengfort
 
@@ -103,7 +124,7 @@ This release marks a major change from the previous MVP releases as Yellowbrick 
 
 In this release specifically we focused on visualizers in the data space for feature analysis and visualizers in the model space for scoring and evaluating models. Future releases will extend these base classes and add more functionality.
 
-* Tag: v0.3
+* Tag: v0.3_
 * Deployed: Sunday, October 9, 2016
 * Contributors: Benjamin Bengfort, Rebecca Bilbro, Marius van Niekerk
 
@@ -134,7 +155,7 @@ Version 0.2
 ^^^^^^^^^^^
 Intermediate steps towards a complete API for visualization. Preparatory stages for Scikit-Learn visual pipelines.
 
-* Tag: v0.2
+* Tag: v0.2_
 * Deployed: Sunday, September 4, 2016
 * Contributors: Benjamin Bengfort, Rebecca Bilbro, Patrick O'Melveny, Ellen Lowy, Laura Lorenz
 
@@ -157,7 +178,7 @@ Version 0.1
 ^^^^^^^^^^^
 Created the yellowbrick library MVP with two primary operations: a classification report heat map and a ROC/AUC curve model analysis for classifiers. This is the base package deployment for continuing yellowbrick development.
 
-* Tag: v0.1
+* Tag: v0.1_
 * Deployed: Wednesday, May 18, 2016
 * Contributors: Benjamin Bengfort, Rebecca Bilbro
 
@@ -169,10 +190,12 @@ Created the yellowbrick library MVP with two primary operations: a classificatio
    - Stub tests/stub documentation
 
 
-
-
-
 .. _SIGMOD: http://cseweb.ucsd.edu/~arunkk/vision/SIGMODRecord15.pdf
 .. _cycle: http://nvie.com/posts/a-successful-git-branching-model/
 .. _board: https://waffle.io/districtdatalabs/yellowbrick
 .. _Wikipedia: https://en.wikipedia.org/wiki/Yellow_brick_road
+.. _v0.3.2: https://github.com/DistrictDataLabs/yellowbrick/releases/tag/v0.3.2
+.. _v0.3.1: https://github.com/DistrictDataLabs/yellowbrick/releases/tag/v0.3.1a2
+.. _v0.3: https://github.com/DistrictDataLabs/yellowbrick/releases/tag/v0.3
+.. _v0.2: https://github.com/DistrictDataLabs/yellowbrick/releases/tag/v0.2
+.. _v0.1: https://github.com/DistrictDataLabs/yellowbrick/releases/tag/v0.1

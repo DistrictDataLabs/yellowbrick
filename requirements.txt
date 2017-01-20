@@ -25,6 +25,7 @@ cycler>=0.10.0
 ## Documentation (uncomment to build documentation)
 #Sphinx>=1.4.4
 #sphinx-rtd-theme>=0.1.9
+#numpydoc>=0.6.0
 
 ## Documentation Dependencies (installed from above)
 #alabaster==0.7.9

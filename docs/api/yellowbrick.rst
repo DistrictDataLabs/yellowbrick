@@ -21,7 +21,7 @@ yellowbrick.base module
     :show-inheritance:
 
 yellowbrick.bestfit module
------------------------
+--------------------------
 
 .. automodule:: yellowbrick.bestfit
     :members:
@@ -60,7 +60,7 @@ yellowbrick.regressor module
     :members:
     :undoc-members:
     :show-inheritance:
-    
+
 yellowbrick.utils module
 ------------------------
 
