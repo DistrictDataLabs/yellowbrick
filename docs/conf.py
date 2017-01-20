@@ -34,10 +34,13 @@ import yellowbrick as yb
 # ones.
 extensions = [
     'sphinx.ext.autodoc',
+    'sphinx.ext.autosummary',
     'sphinx.ext.intersphinx',
     'sphinx.ext.coverage',
     'sphinx.ext.mathjax',
     'sphinx.ext.viewcode',
+    'sphinx.ext.todo',
+    'numpydoc',
 ]
 
 # Add any paths that contain templates here, relative to this directory.
@@ -340,6 +343,10 @@ texinfo_documents = [
 #
 # texinfo_no_detailmenu = False
 
+# Autodoc requires numpy to skip class members otherwise we get an exception:
+# toctree contains reference to nonexisting document
+# See: https://github.com/phn/pytpm/issues/3#issuecomment-12133978
+numpydoc_show_class_members = False
 
 # Locations of objects.inv files for intersphinx extension that auto links to external api docs.
 intersphinx_mapping = {'python': ('https://docs.python.org/3', None),
@@ -347,4 +354,4 @@ intersphinx_mapping = {'python': ('https://docs.python.org/3', None),
                        'scipy': ('http://scipy.github.io/devdocs/', None),
                        'numpy': ('https://docs.scipy.org/doc/numpy-dev/', None),
                        'cycler': ('http://matplotlib.org/cycler/', None),
-                       'seaborn': ('http://seaborn.pydata.org/index.html', None)}
+                       'sklearn': ('http://scikit-learn.org/stable/', None)}

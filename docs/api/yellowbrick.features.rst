@@ -1,11 +1,11 @@
 yellowbrick.features package
-===================
+============================
 
 Submodules
 ----------
 
 yellowbrick.features.base module
----------------------------
+--------------------------------
 
 .. automodule:: yellowbrick.features.base
     :members:
@@ -13,7 +13,7 @@ yellowbrick.features.base module
     :show-inheritance:
 
 yellowbrick.features.pcoords module
----------------------------
+-----------------------------------
 
 .. automodule:: yellowbrick.features.pcoords
     :members:
@@ -21,7 +21,7 @@ yellowbrick.features.pcoords module
     :show-inheritance:
 
 yellowbrick.features.radviz module
----------------------------
+----------------------------------
 
 .. automodule:: yellowbrick.features.radviz
     :members:
@@ -29,7 +29,7 @@ yellowbrick.features.radviz module
     :show-inheritance:
 
 yellowbrick.features.rankd module
----------------------------
+---------------------------------
 
 .. automodule:: yellowbrick.features.rankd
     :members:

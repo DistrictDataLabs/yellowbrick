@@ -2,8 +2,8 @@ API Reference
 ==============
 
 .. toctree::
-   :maxdepth: 4
+    :maxdepth: 4
 
-   yellowbrick
-   yellowbrick.style
-   yellowbrick.features
+    yellowbrick
+    yellowbrick.style
+    yellowbrick.features

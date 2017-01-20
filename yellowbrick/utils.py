@@ -87,8 +87,10 @@ def is_classifier(estimator):
     estimator: class or instance
         The object to test whether or not is a Scikit-Learn classifier.
 
-    See Also:
-    https://github.com/scikit-learn/scikit-learn/blob/master/sklearn/base.py#L526
+    See also
+    --------
+    is_classifier
+        `sklearn.is_classifier() <https://github.com/scikit-learn/scikit-learn/blob/master/sklearn/base.py#L518>`_
     """
     # TODO: once we make ScoreVisualizer and ModelVisualizer pass through
     # wrappers as in Issue #90, these three lines become unnecessary.
@@ -113,8 +115,10 @@ def is_regressor(estimator):
     model: class or instance
         The object to test whether or not is a Scikit-Learn regressor.
 
-    See Also:
-    https://github.com/scikit-learn/scikit-learn/blob/master/sklearn/base.py#L531
+    See also
+    --------
+    is_regressor
+        `sklearn.is_regressor() <https://github.com/scikit-learn/scikit-learn/blob/master/sklearn/base.py#L531>`_
     """
     # TODO: once we make ScoreVisualizer and ModelVisualizer pass through
     # wrappers as in Issue #90, these three lines become unnecessary.
@@ -161,13 +165,15 @@ def memoized(fget):
     getter on the first access. The result is stored and on subsequent
     accesses is returned, preventing the need to call the getter any more.
 
-    See Also:
-    https://github.com/estebistec/python-memoized-property
-
     Parameters
     ----------
     fget: function
         The getter method to memoize for subsequent access.
+
+    See also
+    --------
+    python-memoized-property
+        `python-memoized-property <https://github.com/estebistec/python-memoized-property>`_
     """
     attr_name = '_{0}'.format(fget.__name__)
 
@@ -189,7 +195,7 @@ class docutil(object):
     single call wrapper should be identical, this decorator ensures that we
     only have to edit one doc string.
 
-    Usage:
+    Usage::
 
         @docutil(Visualizer.__init__)
         def visualize(*args, **kwargs):
