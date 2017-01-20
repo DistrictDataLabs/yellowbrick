@@ -1,0 +1,11 @@
+# Library Dependencies
+matplotlib>=1.5.1
+scipy>=0.17.1
+scikit-learn>=0.17.1
+numpy>=1.11.0
+cycler>=0.10.0
+
+# Documentation (uncomment to build documentation)
+Sphinx>=1.4.4
+sphinx-rtd-theme>=0.1.9
+numpydoc>=0.6.0
