@@ -1,22 +1,40 @@
+===========
 Quick Start
-==============
+===========
 
-This quick start is intended to get you setup with Yellowbrick in development
-mode (since the project is still under development).
+Installation
+------------
 
-1. Fork and clone the repository. After clicking fork in the upper right corner
-for your own copy of yellowbrick to your github account. Clone it in a directory
-of your choice.::
+To install the Yellowbrick library, the simplest thing to do is use ``pip`` as follows.::
 
-        $ git clone https://github.com/[YOURUSERNAME]/yellowbrick
-        $ cd yellowbrick
+    $ pip install yellowbrick
 
-2. Create virtualenv and create the dependencies::
+Using Yellowbrick
+-----------------
+The Yellowbrick API is specifically designed to play nicely with Scikit-Learn. Here is an example of a typical workflow sequence with Scikit-Learn and Yellowbrick:
 
-        $ virtualenv venv
-        $ pip install -r requirements.txt
+Feature Visualization
+^^^^^^^^^^^^^^^^^^^^^
+In this example, we see how Rank2D performs pairwise comparisons of each feature in the data set with a specific metric or algorithm, then returns them ranked as a lower left triangle diagram.::
 
-3. Fetch and switch to development.::
+    from yellowbrick.features import Rank2D
+    visualizer = Rank2D(features=features, algorithm='covariance')
+    visualizer.fit(X, y)                # Fit the data to the visualizer
+    visualizer.transform(X)             # Transform the data
+    visualizer.poof()                   # Draw/show/poof the data
 
-        $ git fetch
-        $ git checkout develop
+
+Model Visualization
+^^^^^^^^^^^^^^^^^^^
+In this example, we instantiate a Scikit-Learn classifier, and then we use Yellowbrick's ROCAUC class to visualize the tradeoff between the classifier's sensitivity and specificity.::
+
+    from sklearn.svm import LinearSVC
+    from yellowbrick.classifier import ROCAUC
+    model = LinearSVC()
+    model.fit(X,y)
+    visualizer = ROCAUC(model)
+    visualizer.score(X,y)
+    visualizer.poof()
+
+
+For additional information on getting started with Yellowbrick, check out our :ref:`examples <examples/yellowbrick-examples>`.

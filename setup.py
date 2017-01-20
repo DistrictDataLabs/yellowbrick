@@ -45,9 +45,10 @@ KEYWORDS     = ('visualization', 'machine learning', 'scikit-learn', 'matplotlib
 ## Define the classifiers
 ## See https://pypi.python.org/pypi?%3Aaction=list_classifiers
 CLASSIFIERS  = (
-    'Development Status :: 4 - Beta',
-    'Environment :: Console',
+    'Development Status :: 3 - Alpha',
+    'Environment :: Other Environment',
     'Intended Audience :: Developers',
+    'Intended Audience :: Science/Research',
     'License :: OSI Approved :: Apache Software License',
     'Natural Language :: English',
     'Operating System :: OS Independent',

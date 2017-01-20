@@ -37,29 +37,94 @@ class Visualizer(BaseEstimator):
     primarily ensures that styling arguments are passed in.
     """
 
-    def __init__(self, **kwargs):
+    def __init__(self, ax=None, **kwargs):
+        """
+        Parameters
+        ----------
+        :param ax: the axis to plot the figure on.
+
+        :param kwargs: keyword arguments passed to the super class.
+
+        These parameters can be influenced later on in the visualization
+        process, but can and should be set as early as possible.
+        """
+        self.ax = ax
         self.size  = kwargs.pop('size', None)
         self.color = kwargs.pop('color', None)
+        self.title = kwargs.pop('title', None)
 
     def fit(self, X, y=None, **kwargs):
         """
         Fits a transformer to X and y
+
+        Parameters
+        ----------
+
+        X : ndarray or DataFrame of shape n x m
+            A matrix of n instances with m features
+
+        y : ndarray or Series of length n
+            An array or series of target or class values
+
+        kwargs: keyword arguments passed to Scikit-Learn API.
         """
         return self
 
-    def draw(self, **kwargs):
-        pass
+    def gca(self):
+        """
+        Creates axes if they don't already exist
+        """
+        if self.ax is None:
+            self.ax = plt.gca()
+        return self.ax
 
-    def poof(self, **kwargs):
+    def draw(self, **kwargs):
+        """
+        Rendering function
+        """
+        ax = self.gca()
+
+    def poof(self, outpath=None, **kwargs):
         """
         The user calls poof, which is the primary entry point
         for producing a visualization.
 
         Visualizes either data features or fitted model scores
+
+        Parameters
+        ----------
+        outpath: path or None
+            Save the figure to disk or if None show in a window
+
+        kwargs: generic keyword arguments.
         """
-        raise NotImplementedError(
-            "All visualizations must specify their own poof methodology"
-        )
+        if self.ax is None: return
+
+        self.finalize()
+
+        if outpath is not None:
+            plt.savefig(outpath, **kwargs)
+        else:
+            plt.show()
+
+    def set_title(self, title=None):
+        """
+        Sets the title on the current axes.
+        """
+        title = self.title or title
+        if title is not None:
+            self.ax.set_title(title)
+
+    def finalize(self, **kwargs):
+        """
+        Finalize executes any subclass-specific axes finalization steps.
+        The user calls poof and poof calls finalize.
+
+        Parameters
+        ----------
+        kwargs: generic keyword arguments.
+        """
+        pass
 
     def fit_draw(self, X, y=None, **kwargs):
         """
@@ -85,37 +150,55 @@ class ScoreVisualizer(Visualizer):
     Draws the score for the fitted model.
     """
 
-    def __init__(self, model, **kwargs):
+    def __init__(self, model, ax=None, **kwargs):
+        """
+        Parameters
+        ----------
+        :param models: the Scikit-Learn models being compared with each other.
+
+        :param ax: the axis to plot the figure on.
+
+        :param kwargs: keyword arguments.
+
+        These parameters can be influenced later on in the visualization
+        process, but can and should be set as early as possible.
+        """
+        super(ScoreVisualizer, self).__init__(ax=ax, **kwargs)
+
         self.estimator = model
-        super(ScoreVisualizer, self).__init__(**kwargs)
+        self.name = get_model_name(self.estimator)
 
     def fit(self, X, y=None, **kwargs):
+        """
+        Parameters
+        ----------
+
+        X : ndarray or DataFrame of shape n x m
+            A matrix of n instances with m features
+
+        y : ndarray or Series of length n
+            An array or series of target or class values
+
+        kwargs: keyword arguments passed to Scikit-Learn API.
+        """
         self.estimator.fit(X, y, **kwargs)
         return self
 
     def predict(self, X):
         return self.estimator.predict(X)
 
-    def score(self, X, y=None):
-        """
-        Score will call draw to visualize model performance.
-        If y_pred is None, call fit-predict on the model to get a y_pred.
-
-        Score calls draw
-        """
-        y_pred = self.predict(X)
-        return self.draw(y,y_pred)
-
     def draw(self, X, y):
-        pass
+        """
+        Parameters
+        ----------
 
-    def poof(self, **kwargs):
+        X : ndarray or DataFrame of shape n x m
+            A matrix of n instances with m features
+
+        y : ndarray or Series of length n
+            An array or series of target or class values
         """
-        The user calls poof
-        """
-        raise NotImplementedError(
-            "Please specify how to render the feature visualization"
-        )
+        pass
 
 
 ##########################################################################
@@ -128,23 +211,38 @@ class ModelVisualizer(Visualizer):
     and enables the user to visualize the performance of models across a range
     of hyperparameter values (e.g. using VisualGridsearch and ValidationCurve).
     """
+    def __init__(self, model, ax=None, **kwargs):
+        """
+        Parameters
+        ----------
+        :param ax: the axis to plot the figure on.
+
+        :param kwargs: keyword arguments for Scikit-Learn model
+
+        These parameters can be influenced later on in the visualization
+        process, but can and should be set as early as possible.
+        """
+        super(ModelVisualizer, self).__init__(ax=ax, **kwargs)
+        self.estimator = model
+
 
     def fit(self, X, y=None, **kwargs):
+        """
+        Parameters
+        ----------
+
+        X : ndarray or DataFrame of shape n x m
+            A matrix of n instances with m features
+
+        y : ndarray or Series of length n
+            An array or series of target or class values
+
+        kwargs: keyword arguments passed to Scikit-Learn API.
+        """
         pass
 
     def predict(self, X):
         pass
-
-    def poof(self, model=None):
-        """
-        The user calls poof.
-
-        A model visualization renders a model
-        """
-        raise NotImplementedError(
-            "Please specify how to render the model visualization"
-        )
-
 
 ##########################################################################
 ## Multiple Models and Mixins
@@ -155,10 +253,23 @@ class MultiModelMixin(object):
     Does predict for each of the models and generates subplots.
     """
 
-    def __init__(self, models, **kwargs):
+    def __init__(self, models, ax=None, **kwargs):
         # Ensure models is a collection, if it's a single estimator then we
         # wrap it in a list so that the API doesn't break during render.
-        if isestimator(models):
+        """
+        Parameters
+        ----------
+        :param models: the Scikit-Learn models being compared with each other.
+
+        :param kwargs: keyword arguments.
+
+        These parameters can be influenced later on in the visualization
+        process, but can and should be set as early as possible.
+        """
+        # TODO: How to handle the axes in this mixin?
+        self.ax = ax
+
+        if all(isestimator, models):
             models = [models]
 
         # Keep track of the models

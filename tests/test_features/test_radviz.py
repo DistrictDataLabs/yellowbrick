@@ -21,13 +21,14 @@ import unittest
 import numpy as np
 import numpy.testing as npt
 
+from tests.dataset import DatasetMixin
 from yellowbrick.features.radviz import *
 
 ##########################################################################
 ## RadViz Base Tests
 ##########################################################################
 
-class RadVizTests(unittest.TestCase):
+class RadVizTests(unittest.TestCase, DatasetMixin):
 
     X = np.array(
             [[ 2.318, 2.727, 4.260, 7.212, 4.792],
@@ -39,6 +40,12 @@ class RadVizTests(unittest.TestCase):
         )
 
     y = np.array([1, 1, 0, 1, 0, 0])
+
+    def setUp(self):
+        self.occupancy = self.load_data('occupancy')
+
+    def tearDown(self):
+        self.occupancy = None
 
     def test_normalize_x(self):
         """
@@ -62,3 +69,21 @@ class RadVizTests(unittest.TestCase):
         """
         visualizer = RadViz()
         visualizer.fit_transform(self.X, self.y)
+
+    def test_integrated_radviz(self):
+        """
+        Test radviz on the real, occupancy data set
+        """
+
+        # Load the data from the fixture
+        X = self.occupancy[[
+            "temperature", "relative_humidity", "light", "C02", "humidity"
+        ]]
+        y = self.occupancy['occupancy'].astype(int)
+
+        # Convert X to an ndarray
+        X = X.view((float, len(X.dtype.names)))
+
+        # Test the visualizer
+        visualizer = RadViz()
+        visualizer.fit_transform(X, y)
