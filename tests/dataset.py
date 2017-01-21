@@ -38,14 +38,22 @@ DATASETS = {
     'concrete': {
         'url': 'https://s3.amazonaws.com/ddl-data-lake/yellowbrick/concrete.zip',
         'signature': 'b9ea5f26a7bb272a040e2f1a993b26babbf8dc4a04ab8198bb315ca66d71f10d',
+        'type': 'numpy',
     },
     'credit': {
         'url': 'https://s3.amazonaws.com/ddl-data-lake/yellowbrick/credit.zip',
         'signature': '4a91339c69f55e18f3f48004328fbcb7868070b618208fed099920427b084e5e',
+        'type': 'numpy',
     },
     'occupancy': {
         'url': 'https://s3.amazonaws.com/ddl-data-lake/yellowbrick/occupancy.zip',
         'signature': '429cfe376dc9929a1fa528da89f0e1626e34e19695f3f555d8954025bbc522b8',
+        'type': 'numpy',
+    },
+    'hobbies': {
+        'url': 'https://s3.amazonaws.com/ddl-data-lake/yellowbrick/hobbies.zip',
+        'signature': '415c8f68df1486d5d84a1d1757a5aa3035aef5ad63ede5013c261d622fbd29d8',
+        'type': 'corpus',
     }
 }
 
@@ -89,7 +97,7 @@ class DatasetMixin(object):
                 "The requests module is required to download data --\n"
                 "please install it with pip install requests."
             )
-        
+
         # Create the output directory if it does not exist
         if not os.path.exists(path):
             os.mkdir(path)
