@@ -84,9 +84,9 @@ class DataVisualizer(FeatureVisualizer):
     instances in feature space (also called data space, hence the name of the
     visualizer). Feature space is a multi-dimensional space defined by the
     columns of the instance dependent vector input, X which is passed to
-    `fit()` and `transform()`. Instances can also be labeled by the target
-    independent vector input, y which is only passed to `fit()`. For that
-    reason most Data Visualizers perform their drawing in `fit()`.
+    ``fit()`` and ``transform()``. Instances can also be labeled by the target
+    independent vector input, y which is only passed to ``fit()``. For that
+    reason most Data Visualizers perform their drawing in ``fit()``.
 
     This class provides helper functionality related to target identification:
     whether or not the target is sequential or categorical, and mapping a
@@ -100,31 +100,32 @@ class DataVisualizer(FeatureVisualizer):
         Initialize the data visualization with many of the options required
         in order to make most visualizations work.
 
+        These parameters can be influenced later on in the visualization
+        process, but can and should be set as early as possible.
+
         Parameters
         ----------
 
-        :param ax: the axis to plot the figure on.
+        ax: the axis to plot the figure on.
 
-        :param features: a list of feature names to use
+        features: a list of feature names to use
             If a DataFrame is passed to fit and features is None, feature
             names are selected as the columns of the DataFrame.
 
-        :param classes: a list of class names for the legend
+        classes: a list of class names for the legend
             If classes is None and a y value is passed to fit then the classes
             are selected from the target vector.
 
-        :param color: optional list or tuple of colors to colorize lines
+        color: optional list or tuple of colors to colorize lines
             Use either color to colorize the lines on a per class basis or
             colormap to color them on a continuous scale.
 
-        :param colormap: optional string or matplotlib cmap to colorize lines
+        colormap: optional string or matplotlib cmap to colorize lines
             Use either color to colorize the lines on a per class basis or
             colormap to color them on a continuous scale.
 
-        :param kwargs: keyword arguments passed to the super class.
+        kwargs: keyword arguments passed to the super class.
 
-        These parameters can be influenced later on in the visualization
-        process, but can and should be set as early as possible.
         """
         super(DataVisualizer, self).__init__(ax=ax, **kwargs)
 
@@ -154,7 +155,7 @@ class DataVisualizer(FeatureVisualizer):
             Pass generic arguments to the drawing method
 
         Returns
-        ------
+        -------
         self : instance
             Returns the instance of the transformer/visualizer
         """
