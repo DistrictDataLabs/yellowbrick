@@ -1,11 +1,11 @@
 yellowbrick.style package
-===================
+=========================
 
 Submodules
 ----------
 
 yellowbrick.style.colors module
----------------------------
+-------------------------------
 
 .. automodule:: yellowbrick.style.colors
     :members:
@@ -13,7 +13,7 @@ yellowbrick.style.colors module
     :show-inheritance:
 
 yellowbrick.style.palettes module
----------------------------
+---------------------------------
 
 .. automodule:: yellowbrick.style.palettes
     :members:
@@ -21,7 +21,7 @@ yellowbrick.style.palettes module
     :show-inheritance:
 
 yellowbrick.style.rcmod module
----------------------------
+------------------------------
 
 .. automodule:: yellowbrick.style.rcmod
     :members:
