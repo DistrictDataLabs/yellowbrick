@@ -50,6 +50,10 @@ DATASETS = {
     'occupancy': {
         'url': 'https://s3.amazonaws.com/ddl-data-lake/yellowbrick/occupancy.zip',
         'signature': '429cfe376dc9929a1fa528da89f0e1626e34e19695f3f555d8954025bbc522b8',
+    },
+    'hobbies': {
+        'url': 'https://s3.amazonaws.com/ddl-data-lake/yellowbrick/hobbies.zip',
+        'signature': '415c8f68df1486d5d84a1d1757a5aa3035aef5ad63ede5013c261d622fbd29d8',
     }
 }
 
