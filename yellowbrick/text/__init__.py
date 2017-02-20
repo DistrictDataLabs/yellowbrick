@@ -17,4 +17,5 @@ Visualizers for text feature analysis and diagnostics.
 ## Imports
 ##########################################################################
 
+from .tsne import TSNEVisualizer, tsne
 from .freqdist import FreqDistVisualizer, freqdist
