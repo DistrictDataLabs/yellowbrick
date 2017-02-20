@@ -24,6 +24,8 @@ import hashlib
 import zipfile
 import numpy as np
 
+from sklearn.datasets.base import Bunch
+
 try:
     import requests
 except ImportError:
@@ -154,9 +156,49 @@ class DatasetMixin(object):
         Loads the numpy matrix from the specified data set, downloads it if
         it hasn't already been downloaded.
         """
+        # Just in case this is a corpus data set, then do that instead.
+        if DATASETS[name]['type'] == 'corpus':
+            return DatasetMixin.load_corpus(name, fixtures)
 
         path = os.path.join(fixtures, name, "{}.csv".format(name))
         if not os.path.exists(path):
             DatasetMixin.download_all(path=fixtures)
 
         return np.genfromtxt(path, dtype=float, delimiter=',', names=True)
+
+    @staticmethod
+    def load_corpus(name, fixtures=FIXTURES):
+        """
+        Loads a sklearn Bunch with the corpus and downloads it if it hasn't
+        already been downloaded. Used to test text visualizers.
+        """
+        path = os.path.join(fixtures, name)
+        if not os.path.exists(path):
+            DatasetMixin.download_all(path=fixtures)
+
+        # Read the directories in the directory as the categories.
+        categories = [
+            cat for cat in os.listdir(path)
+            if os.path.isdir(os.path.join(path, cat))
+        ]
+
+        files  = [] # holds the file names relative to the root
+        data   = [] # holds the text read from the file
+        target = [] # holds the string of the category
+
+        # Load the data from the files in the corpus
+        for cat in categories:
+            for name in os.listdir(os.path.join(path, cat)):
+                files.append(os.path.join(path, cat, name))
+                target.append(cat)
+
+                with open(os.path.join(path, cat, name), 'r') as f:
+                    data.append(f.read())
+
+        # Return the data bunch for use similar to the newsgroups example
+        return Bunch(
+            categories=categories,
+            files=files,
+            data=data,
+            target=target,
+        )

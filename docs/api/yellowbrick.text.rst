@@ -11,3 +11,8 @@ yellowbrick.text.base module
     :members:
     :undoc-members:
     :show-inheritance:
+
+.. automodule:: yellowbrick.text.tsne
+    :members:
+    :undoc-members:
+    :show-inheritance:
