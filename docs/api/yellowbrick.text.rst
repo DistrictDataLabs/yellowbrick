@@ -16,3 +16,8 @@ yellowbrick.text.base module
     :members:
     :undoc-members:
     :show-inheritance:
+
+.. automodule:: yellowbrick.text.freqdist
+    :members:
+    :undoc-members:
+    :show-inheritance:
