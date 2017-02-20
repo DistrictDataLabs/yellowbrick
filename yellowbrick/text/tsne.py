@@ -120,7 +120,7 @@ class TSNEVisualizer(TextVisualizer):
 
     TSNE can be used with either clustering or classification; by specifying
     the ``classes`` argument, points will be colored based on their similar
-    traits. For example, by passing cluster.labels_ as ``y`` in ``fit()``, all
+    traits. For example, by passing ``cluster.labels_`` as ``y`` in ``fit()``, all
     points in the same cluster will be grouped together. This extends the
     neighbor embedding with more information about similarity, and can allow
     better interpretation of both clusters and classes.
