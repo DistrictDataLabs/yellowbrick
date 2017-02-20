@@ -20,6 +20,8 @@ Implementations of frequency distributions for text visualization
 import numpy as np
 import matplotlib.pyplot as plt
 
+from operator import itemgetter
+
 from yellowbrick.text.base import TextVisualizer
 from yellowbrick.exceptions import YellowbrickTypeError
 from yellowbrick.style.colors import resolve_colors, get_color_cycle
@@ -84,66 +86,80 @@ def freqdist(X, y=None, ax=None, color=None, cumulative=False,
     return visualizer.ax
 
 
-class FreqDist(TextVisualizer):
+class FreqDistVisualizer(TextVisualizer):
     """
     A frequency distribution tells us the frequency of each vocabulary
     item in the text. In general, it could count any kind of observable
     event. It is a distribution because it tells us how the total
     number of word tokens in the text are distributed across the
     vocabulary items.
+
+
+    Parameters
+    ----------
+    ax : matplotlib axes
+        The axes to plot the figure on.
+    color : list or tuple of colors
+        Specify color for bars
+    N: integer
+        Top N tokens to be plotted.
+    kwargs : dict
+        Pass any additional keyword arguments to the super class.
+
+    These parameters can be influenced later on in the visualization
+    process, but can and should be set as early as possible.
     """
-    def __init__(self, ax=None, color=None, cumulative=False,
-                 N=50, **kwargs):
+    def __init__(self, ax=None, color=None, N=50, **kwargs):
         """
         Initialize the base frequency distributions with many of the options
         required in order to make the visualization work.
-
-        Parameters
-        ----------
-
-        :param ax: the axis to plot the figure on.
-
-        :param color: optional list or tuple of colors to colorize lines
-
-        :param cumulative: Boolean
-            If True, plots the cumulative frequency distribution
-
-        :param N: integer
-            Top N tokens to be plotted.
-
-        :param kwargs: dictionary
-            Keyword arguments passed to the super class.
-
-        These parameters can be influenced later on in the visualization
-        process, but can and should be set as early as possible.
         """
-        super(FreqDist, self).__init__(
-            ax, color, cumulative, N, **kwargs
-        )
+        super(FreqDistVisualizer, self).__init__(ax=ax, **kwargs)
 
-    # @staticmethod
-    # def normalize(X):
-    #     """
-    #     Normalize the text (lower case, remove stopwords and punctuation)
-    #     """
-    #     # TODO: implement me
-    #     pass
-    #
-    # @staticmethod
-    # def get_interesting_words(X, N=50):
-    #     """
-    #     Call normalize and get the top 50 most interesting words
-    #     """
-    #     # TODO: implement me
-    #     pass
+        # Visualizer parameters
+        self.N = 50
 
-    def draw(self, X, y, **kwargs):
+        # Visual Parameters
+        self.color = color
+
+    def freq_dist(self):
+        # Get the word frequencies
+        counts = np.asarray(self.docs.sum(axis=0)).ravel().tolist()
+        self.word_freq = list(zip(self.features, counts))
+
+    def get_counts(self):
+        # take freq_dist as input
+        # Output self.words and self.counts
+        # self.words are the features (e.g. words)
+        # self.counts are the occurrence counts of each feature
+        sorted_word_freq = sorted(self.word_freq,
+                                  key=itemgetter(1), reverse=True)
+        self.words, self.counts = list(zip(*sorted_word_freq))
+
+    def fit(self, docs, features):
+        self.docs     = docs
+        self.features = features
+
+        self.freq_dist()
+        self.get_counts()
+        self.draw()
+
+    def draw(self, **kwargs):
         """
         Called from the fit method, this method creates the canvas and
         draws the distribution plot on it.
         """
-        # TODO: implement me
-        pass
+        # input features and occurrence counts of each feature
+
+        # Create the axis if it doesn't exist
+        if self.ax is None: self.ax = plt.gca()
+
+        # Plot the top 50 most frequent words
+        y_pos = np.arange(self.N)
+        self.ax.bar(y_pos, self.counts[:self.N], align='center', alpha=0.5)
+
+        # Set the tick marks
+        self.ax.set_xticks(y_pos)
 
     def finalize(self, **kwargs):
         """
@@ -159,6 +175,9 @@ class FreqDist(TextVisualizer):
         self.set_title(
             'Frequency distribution for top {} tokens'.format(self.N)
         )
+
+        # Rotate tick marks to make words legible
+        self.ax.set_xticklabels(self.words[:self.N], rotation=90)
 
         # Set the legend and the grid
         self.ax.legend(loc='best')

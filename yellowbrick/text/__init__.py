@@ -17,4 +17,4 @@ Visualizers for text feature analysis and diagnostics.
 ## Imports
 ##########################################################################
 
-# TODO: add import * statements for textviz modules
+from .freqdist import FreqDistVisualizer, freqdist
