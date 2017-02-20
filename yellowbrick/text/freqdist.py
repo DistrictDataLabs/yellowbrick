@@ -31,8 +31,7 @@ from yellowbrick.style.colors import resolve_colors, get_color_cycle
 ## Quick Method
 ##########################################################################
 
-def freqdist(X, y=None, ax=None, color=None, cumulative=False,
-             N=50, **kwargs):
+def freqdist(X, y=None, ax=None, color=None, N=50, **kwargs):
     """Displays frequency distribution plot for text.
 
     This helper function is a quick wrapper to utilize the FreqDist
@@ -40,42 +39,34 @@ def freqdist(X, y=None, ax=None, color=None, cumulative=False,
 
     Parameters
     ----------
-    :param X: ndarray or DataFrame of shape n x m
+
+    X: ndarray or DataFrame of shape n x m
         A matrix of n instances with m features. In the case of text,
         X is a list of list of already preprocessed words
 
-    :param y: ndarray or Series of length n
+    y: ndarray or Series of length n
         An array or series of target or class values
 
-    :param ax: matplotlib axes
+    ax: matplotlib axes
         The axes to plot the figure on.
 
-    :param features: list of strings
-        The names of the features or columns
+    color: string
+        Specify color for barchart
 
-    :param classes: list of strings
-        The names of the classes in the target
-
-    :param color: list or tuple of colors
-        Specify the colors for each individual class
-
-    :param N: integer
+    N: integer
         Top N tokens to be plotted.
 
-    :param cumulative: Boolean
-        If True, plots the cumulative frequency distribution
-
-    :param kwargs: dictionary
+    kwargs: dict
         Keyword arguments passed to the super class.
 
     Returns
     -------
-    :param ax: matplotlib axes
-        Returns the axes that the parallel coordinates were drawn on.
+    ax: matplotlib axes
+        Returns the axes that the plot was drawn on.
     """
     # Instantiate the visualizer
-    visualizer = FreqDist(
-        ax, X, classes, color, cumulative, N, **kwargs
+    visualizer = FreqDistVisualizer(
+        ax, X, color, **kwargs
     )
 
     # Fit and transform the visualizer (calls draw)
@@ -111,8 +102,9 @@ class FreqDistVisualizer(TextVisualizer):
     """
     def __init__(self, ax=None, color=None, N=50, **kwargs):
         """
-        Initialize the base frequency distributions with many of the options
-        required in order to make the visualization work.
+        Initializes the base frequency distributions with many
+        of the options required in order to make this
+        visualization work.
         """
         super(FreqDistVisualizer, self).__init__(ax=ax, **kwargs)
 
@@ -123,20 +115,53 @@ class FreqDistVisualizer(TextVisualizer):
         self.color = color
 
     def freq_dist(self):
-        # Get the word frequencies
+        """
+        Called from the fit method, this method gets all the
+        words from the corpus and their corresponding frequency
+        counts.
+
+        Parameters
+        ----------
+        kwargs: generic keyword arguments.
+
+        """
         counts = np.asarray(self.docs.sum(axis=0)).ravel().tolist()
         self.word_freq = list(zip(self.features, counts))
 
     def get_counts(self):
-        # take freq_dist as input
-        # Output self.words and self.counts
-        # self.words are the features (e.g. words)
-        # self.counts are the occurrence counts of each feature
+        """
+        Called from the fit method, this method sorts the words
+        from the corpus with their corresponding frequency
+        counts in reverse order.
+
+        Parameters
+        ----------
+        kwargs: generic keyword arguments.
+
+        """
         sorted_word_freq = sorted(self.word_freq,
                                   key=itemgetter(1), reverse=True)
         self.words, self.counts = list(zip(*sorted_word_freq))
 
     def fit(self, docs, features):
+        """
+        The fit method is the primary drawing input for the frequency
+        distribution visualization. It requires vectorized lists of
+        documents and a list of features, which are the actual words
+        from the original corpus (needed to label the x-axis ticks).
+
+        Parameters
+        ----------
+        docs : ndarray or DataFrame of shape n x m
+            A matrix of n instances with m features representing the corpus of
+            vectorized documents.
+
+        features : list
+            List of corpus vocabulary words
+
+        Text documents must be vectorized before passing to fit()
+        """
+
         self.docs     = docs
         self.features = features
 
@@ -148,9 +173,12 @@ class FreqDistVisualizer(TextVisualizer):
         """
         Called from the fit method, this method creates the canvas and
         draws the distribution plot on it.
-        """
-        # input features and occurrence counts of each feature
 
+        Parameters
+        ----------
+        kwargs: generic keyword arguments.
+
+        """
         # Create the axis if it doesn't exist
         if self.ax is None: self.ax = plt.gca()
 
@@ -163,8 +191,8 @@ class FreqDistVisualizer(TextVisualizer):
 
     def finalize(self, **kwargs):
         """
-        Finalize executes any subclass-specific axes finalization steps.
-        The user calls poof and poof calls finalize.
+        The finalize method executes any subclass-specific axes
+        finalization steps. The user calls poof & poof calls finalize.
 
         Parameters
         ----------
