@@ -84,6 +84,29 @@ From Wikipedia_:
 Changelog
 ---------
 
+Version 0.3.3
+^^^^^^^^^^^^^
+Intermediate sprint to demonstrate prototype implementations of text visualizers for NLP models. Primary contributions were the ``FreqDistVisualizer`` and the ``TSNEVisualizer``.
+
+The ``TSNEVisualizer`` displays a projection of a vectorized corpus in two dimensions using TSNE, a nonlinear dimensionality reduction method that is particularly well suited to embedding in two or three dimensions for visualization as a scatter plot. TSNE is widely used in text analysis to show clusters or groups of documents or utterances and their relative proximities.
+
+The ``FreqDistVisualizer`` implements frequency distribution plot that tells us the frequency of each vocabulary item in the text. In general, it could count any kind of observable event. It is a distribution because it tells us how the total number of word tokens in the text are distributed across the vocabulary items.
+
+* Tag: v0.3.3_
+* Deployed: Wednesday, February 22, 2017
+* Contributors: Rebecca Bilbro, Benjamin Bengfort
+
+Changes:
+   - TSNEVisualizer for 2D projections of vectorized documents
+   - FreqDistVisualizer for token frequency of text in a corpus
+   - Added the user testing evaluation to the documentation
+   - Created scikit-yb.org and host documentation there with RFD
+   - Created a sample corpus and text examples notebook
+   - Created a base class for text, ``TextVisualizer``
+   - Model selection tutorial using Mushroom Dataset
+   - Created a text examples notebook but have not added to documentation.
+
+
 Version 0.3.2
 ^^^^^^^^^^^^^
 Hardened the Yellowbrick API to elevate the idea of a Visualizer to a first principle. This included reconciling shifts in the development of the preliminary versions to the new API, formalizing Visualizer methods like `draw()` and `finalize()`, and adding utilities that revolve around Scikit-Learn. To that end we also performed administrative tasks like refreshing the documentation and preparing the repository for more and varied open source contributions.
@@ -194,6 +217,7 @@ Created the yellowbrick library MVP with two primary operations: a classificatio
 .. _cycle: http://nvie.com/posts/a-successful-git-branching-model/
 .. _board: https://waffle.io/districtdatalabs/yellowbrick
 .. _Wikipedia: https://en.wikipedia.org/wiki/Yellow_brick_road
+.. _v0.3.3: https://github.com/DistrictDataLabs/yellowbrick/releases/tag/v0.3.3
 .. _v0.3.2: https://github.com/DistrictDataLabs/yellowbrick/releases/tag/v0.3.2
 .. _v0.3.1: https://github.com/DistrictDataLabs/yellowbrick/releases/tag/v0.3.1a2
 .. _v0.3: https://github.com/DistrictDataLabs/yellowbrick/releases/tag/v0.3
