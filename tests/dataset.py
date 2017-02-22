@@ -24,6 +24,8 @@ import hashlib
 import zipfile
 import numpy as np
 
+from sklearn.datasets.base import Bunch
+
 try:
     import requests
 except ImportError:
@@ -38,14 +40,22 @@ DATASETS = {
     'concrete': {
         'url': 'https://s3.amazonaws.com/ddl-data-lake/yellowbrick/concrete.zip',
         'signature': 'b9ea5f26a7bb272a040e2f1a993b26babbf8dc4a04ab8198bb315ca66d71f10d',
+        'type': 'numpy',
     },
     'credit': {
         'url': 'https://s3.amazonaws.com/ddl-data-lake/yellowbrick/credit.zip',
         'signature': '4a91339c69f55e18f3f48004328fbcb7868070b618208fed099920427b084e5e',
+        'type': 'numpy',
     },
     'occupancy': {
         'url': 'https://s3.amazonaws.com/ddl-data-lake/yellowbrick/occupancy.zip',
         'signature': '429cfe376dc9929a1fa528da89f0e1626e34e19695f3f555d8954025bbc522b8',
+        'type': 'numpy',
+    },
+    'hobbies': {
+        'url': 'https://s3.amazonaws.com/ddl-data-lake/yellowbrick/hobbies.zip',
+        'signature': '415c8f68df1486d5d84a1d1757a5aa3035aef5ad63ede5013c261d622fbd29d8',
+        'type': 'corpus',
     }
 }
 
@@ -89,7 +99,7 @@ class DatasetMixin(object):
                 "The requests module is required to download data --\n"
                 "please install it with pip install requests."
             )
-        
+
         # Create the output directory if it does not exist
         if not os.path.exists(path):
             os.mkdir(path)
@@ -146,9 +156,49 @@ class DatasetMixin(object):
         Loads the numpy matrix from the specified data set, downloads it if
         it hasn't already been downloaded.
         """
+        # Just in case this is a corpus data set, then do that instead.
+        if DATASETS[name]['type'] == 'corpus':
+            return DatasetMixin.load_corpus(name, fixtures)
 
         path = os.path.join(fixtures, name, "{}.csv".format(name))
         if not os.path.exists(path):
             DatasetMixin.download_all(path=fixtures)
 
         return np.genfromtxt(path, dtype=float, delimiter=',', names=True)
+
+    @staticmethod
+    def load_corpus(name, fixtures=FIXTURES):
+        """
+        Loads a sklearn Bunch with the corpus and downloads it if it hasn't
+        already been downloaded. Used to test text visualizers.
+        """
+        path = os.path.join(fixtures, name)
+        if not os.path.exists(path):
+            DatasetMixin.download_all(path=fixtures)
+
+        # Read the directories in the directory as the categories.
+        categories = [
+            cat for cat in os.listdir(path)
+            if os.path.isdir(os.path.join(path, cat))
+        ]
+
+        files  = [] # holds the file names relative to the root
+        data   = [] # holds the text read from the file
+        target = [] # holds the string of the category
+
+        # Load the data from the files in the corpus
+        for cat in categories:
+            for name in os.listdir(os.path.join(path, cat)):
+                files.append(os.path.join(path, cat, name))
+                target.append(cat)
+
+                with open(os.path.join(path, cat, name), 'r') as f:
+                    data.append(f.read())
+
+        # Return the data bunch for use similar to the newsgroups example
+        return Bunch(
+            categories=categories,
+            files=files,
+            data=data,
+            target=target,
+        )

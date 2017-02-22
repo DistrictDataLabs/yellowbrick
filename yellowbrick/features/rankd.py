@@ -147,7 +147,7 @@ class Rank2D(FeatureVisualizer):
             Pass generic arguments to the drawing method
 
         Returns
-        ------
+        -------
         self : instance
             Returns the instance of the transformer/visualizer
         """
@@ -265,7 +265,8 @@ class Rank2D(FeatureVisualizer):
 
         Parameters
         ----------
-        kwargs: generic keyword arguments.
+        kwargs: dict
+            generic keyword arguments
 
         """
         # Set the title

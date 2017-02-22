@@ -39,14 +39,16 @@ class Visualizer(BaseEstimator):
 
     def __init__(self, ax=None, **kwargs):
         """
-        Parameters
-        ----------
-        :param ax: the axis to plot the figure on.
-
-        :param kwargs: keyword arguments passed to the super class.
-
         These parameters can be influenced later on in the visualization
         process, but can and should be set as early as possible.
+
+        Parameters
+        ----------
+        ax: matplotlib axes
+            the axis to plot the figure on.
+
+        kwargs: dict
+            keyword arguments passed to the super class.
         """
         self.ax = ax
         self.size  = kwargs.pop('size', None)
@@ -66,7 +68,8 @@ class Visualizer(BaseEstimator):
         y : ndarray or Series of length n
             An array or series of target or class values
 
-        kwargs: keyword arguments passed to Scikit-Learn API.
+        kwargs: dict
+            keyword arguments passed to Scikit-Learn API.
         """
         return self
 
@@ -93,8 +96,8 @@ class Visualizer(BaseEstimator):
 
         Parameters
         ----------
-        outpath: path or None
-            Save the figure to disk or if None show in a window
+        outpath: string
+            path or None. Save  figure to disk or if None show in window
 
         kwargs: generic keyword arguments.
         """
@@ -122,7 +125,8 @@ class Visualizer(BaseEstimator):
 
         Parameters
         ----------
-        kwargs: generic keyword arguments.
+        kwargs: dict
+            generic keyword arguments.
         """
         pass
 
@@ -152,16 +156,19 @@ class ScoreVisualizer(Visualizer):
 
     def __init__(self, model, ax=None, **kwargs):
         """
-        Parameters
-        ----------
-        :param models: the Scikit-Learn models being compared with each other.
-
-        :param ax: the axis to plot the figure on.
-
-        :param kwargs: keyword arguments.
-
         These parameters can be influenced later on in the visualization
         process, but can and should be set as early as possible.
+
+        Parameters
+        ----------
+        models: object
+            the Scikit-Learn models being compared with each other.
+
+        ax: matplotlib axes
+            the axis to plot the figure on.
+
+        kwargs: dict
+            keyword arguments.
         """
         super(ScoreVisualizer, self).__init__(ax=ax, **kwargs)
 
@@ -179,7 +186,8 @@ class ScoreVisualizer(Visualizer):
         y : ndarray or Series of length n
             An array or series of target or class values
 
-        kwargs: keyword arguments passed to Scikit-Learn API.
+        kwargs: dict
+            keyword arguments passed to Scikit-Learn API.
         """
         self.estimator.fit(X, y, **kwargs)
         return self
@@ -215,9 +223,11 @@ class ModelVisualizer(Visualizer):
         """
         Parameters
         ----------
-        :param ax: the axis to plot the figure on.
+        ax: matplotlib axes
+            the axis to plot the figure on.
 
-        :param kwargs: keyword arguments for Scikit-Learn model
+        kwargs: dict
+            keyword arguments for Scikit-Learn model
 
         These parameters can be influenced later on in the visualization
         process, but can and should be set as early as possible.
@@ -237,7 +247,8 @@ class ModelVisualizer(Visualizer):
         y : ndarray or Series of length n
             An array or series of target or class values
 
-        kwargs: keyword arguments passed to Scikit-Learn API.
+        kwargs: dict
+            keyword arguments passed to Scikit-Learn API.
         """
         pass
 
@@ -257,14 +268,15 @@ class MultiModelMixin(object):
         # Ensure models is a collection, if it's a single estimator then we
         # wrap it in a list so that the API doesn't break during render.
         """
-        Parameters
-        ----------
-        :param models: the Scikit-Learn models being compared with each other.
-
-        :param kwargs: keyword arguments.
-
         These parameters can be influenced later on in the visualization
         process, but can and should be set as early as possible.
+
+        Parameters
+        ----------
+        models: the Scikit-Learn models being compared with each other.
+
+        kwargs: dict
+            keyword arguments.
         """
         # TODO: How to handle the axes in this mixin?
         self.ax = ax

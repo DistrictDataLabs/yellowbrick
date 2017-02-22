@@ -64,6 +64,7 @@ Contents:
    setup
    examples/examples
    api/modules
+   evaluation
    about
 
 ==================
