@@ -168,7 +168,7 @@ pairs of features can be easily discerned for downstream analysis.
 
     visualizer.fit(X, y)                # Fit the data to the visualizer
     visualizer.transform(X)             # Transform the data
-    visualizer.poof()    # Draw/show/poof the data
+    visualizer.poof()                   # Draw/show/poof the data
 
 
 
@@ -205,7 +205,7 @@ just too much noise?
 .. code:: python
 
     # Instantiate the visualizer
-    visualizer = visualizer = RadViz(classes=classes, features=features)
+    visualizer = RadViz(classes=classes, features=features)
 
     visualizer.fit(X, y)      # Fit the data to the visualizer
     visualizer.transform(X)   # Transform the data
@@ -248,7 +248,7 @@ different distributions.
 .. code:: python
 
     # Instantiate the visualizer
-    visualizer = visualizer = ParallelCoordinates(classes=classes, features=features)
+    visualizer = ParallelCoordinates(classes=classes, features=features)
 
     visualizer.fit(X, y)      # Fit the data to the visualizer
     visualizer.transform(X)   # Transform the data
