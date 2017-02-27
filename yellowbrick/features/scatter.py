@@ -232,7 +232,7 @@ class ScatterVisualizer(DataVisualizer):
 
         # Set the title
         self.set_title(
-            'Scatter Plot for Features: {0} & {1}'.format(feature_one, feature_two)
+            'Scatter Plot: {0} vs {1}'.format(feature_one, feature_two)
         )
         # Add the legend
         self.ax.legend(loc='best')
