@@ -21,6 +21,7 @@ Utility functions and helpers for the Yellowbrick library.
 ##########################################################################
 
 import inspect
+import numpy as np
 
 from functools import wraps
 from sklearn.pipeline import Pipeline
@@ -154,6 +155,17 @@ def is_dataframe(obj):
 # Alias for closer name to isinstance and issubclass
 isdataframe = is_dataframe
 
+
+#From here: http://stackoverflow.com/questions/26248654/numpy-return-0-with-divide-by-zero
+def numpy_div0( a, b ):
+    """
+    Ufunc-extension that returns 0 instead of nan when dividing numpy arrays
+    example: >> div0( [-1, 0, 1], 0 ) -> [0, 0, 0]
+    """
+    with np.errstate(divide='ignore', invalid='ignore'):
+        c = np.true_divide( a, b )
+        c[ ~ np.isfinite( c )] = 0  # -inf inf NaN
+    return c
 
 ##########################################################################
 ## Decorators
