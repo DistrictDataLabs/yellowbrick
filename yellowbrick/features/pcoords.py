@@ -22,11 +22,9 @@ coordinates that optimize column order.
 import numpy as np
 import matplotlib.pyplot as plt
 
-from yellowbrick.utils import is_dataframe
-from yellowbrick.features.base import FeatureVisualizer
+from yellowbrick.features.base import DataVisualizer
 from yellowbrick.exceptions import YellowbrickTypeError
 from yellowbrick.style.colors import resolve_colors, get_color_cycle
-
 
 ##########################################################################
 ## Quick Methods
@@ -74,7 +72,7 @@ def parallel_coordinates(X, y=None, ax=None, features=None, classes=None,
     ax : matplotlib axes
         Returns the axes that the parallel coordinates were drawn on.
     """
-    # Insantiate the visualizer
+    # Instantiate the visualizer
     visualizer = ParallelCoordinates(
         ax, features, classes, color, colormap, vlines, vlines_kwds, **kwargs
     )
@@ -91,7 +89,7 @@ def parallel_coordinates(X, y=None, ax=None, features=None, classes=None,
 ## Static Parallel Coordinates Visualizer
 ##########################################################################
 
-class ParallelCoordinates(FeatureVisualizer):
+class ParallelCoordinates(DataVisualizer):
     """
     Parallel coordinates displays each feature as a vertical axis spaced
     evenly along the horizontal, and each instance as a line drawn between
@@ -134,72 +132,15 @@ class ParallelCoordinates(FeatureVisualizer):
         These parameters can be influenced later on in the visualization
         process, but can and should be set as early as possible.
         """
-        super(ParallelCoordinates, self).__init__(**kwargs)
-
-        # The figure params
-        # TODO: hoist to a higher level base class
-        self.ax = ax
-
-        # Data Parameters
-        self.features_ = features
-        self.classes_  = classes
+        super(ParallelCoordinates, self).__init__(
+            ax, features, classes, color, colormap, **kwargs
+        )
 
         # Visual Parameters
-        self.color = color
-        self.colormap = colormap
         self.show_vlines = vlines
         self.vlines_kwds = vlines_kwds or {
             'linewidth': 1, 'color': 'black'
         }
-
-    def fit(self, X, y=None, **kwargs):
-        """
-        The fit method is the primary drawing input for the parallel coords
-        visualization since it has both the X and y data required for the
-        viz and the transform method does not.
-
-        Parameters
-        ----------
-        X : ndarray or DataFrame of shape n x m
-            A matrix of n instances with m features
-
-        y : ndarray or Series of length n
-            An array or series of target or class values
-
-        kwargs : dict
-            Pass generic arguments to the drawing method
-
-        Returns
-        ------
-        self : instance
-            Returns the instance of the transformer/visualizer
-        """
-        # Get the shape of the data
-        nrows, ncols = X.shape
-
-        # Store the classes for the legend if they're None.
-        if self.classes_ is None:
-            # TODO: Is this the most efficient method?
-            self.classes_ = [str(label) for label in set(y)]
-
-        # Handle the feature names if they're None.
-        if self.features_ is None:
-
-            # If X is a data frame, get the columns off it.
-            if is_dataframe(X):
-                self.features_ = X.columns
-
-            # Otherwise create numeric labels for each column.
-            else:
-                self.features_ = [
-                    str(cdx) for cdx in range(ncols)
-                ]
-
-        # Draw the instances
-        self.draw(X, y, **kwargs)
-
-        # Fit always returns self.
-        return self
 
     def draw(self, X, y, **kwargs):
         """
@@ -247,27 +188,26 @@ class ParallelCoordinates(FeatureVisualizer):
             for idx in x:
                 self.ax.axvline(idx, **self.vlines_kwds)
 
-        # Finalize the plot
+        # Set the limits
         self.ax.set_xticks(x)
         self.ax.set_xticklabels(self.features_)
         self.ax.set_xlim(x[0], x[-1])
 
-    def poof(self, outpath=None, **kwargs):
+    def finalize(self, **kwargs):
         """
-        Display the parallel coordinates.
+        Finalize executes any subclass-specific axes finalization steps.
+        The user calls poof and poof calls finalize.
 
         Parameters
         ----------
-        outpath: path or None
-            Save the figure to disk or if None show in a window
+        kwargs: generic keyword arguments.
 
         """
-        if self.ax is None: return
+        # Set the title
+        self.set_title(
+            'Parallel Coordinates for {} Features'.format(len(self.features_))
+        )
 
+        # Set the legend and the grid
         self.ax.legend(loc='best')
         self.ax.grid()
-
-        if outpath is not None:
-            plt.savefig(outpath, **kwargs)
-        else:
-            plt.show()
