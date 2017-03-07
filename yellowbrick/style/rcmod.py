@@ -420,7 +420,7 @@ def set_palette(palette, n_colors=None, color_codes=False):
 
     Parameters
     ----------
-    palette : yellowbrick color palette | seaborn color palette (with sns_ prepended)
+    palette : yellowbrick color palette | seaborn color palette (with ``sns_`` prepended)
         Palette definition. Should be something that :func:`color_palette`
         can process.
     n_colors : int
