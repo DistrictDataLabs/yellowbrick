@@ -42,6 +42,11 @@ DATASETS = {
         'signature': 'b9ea5f26a7bb272a040e2f1a993b26babbf8dc4a04ab8198bb315ca66d71f10d',
         'type': 'numpy',
     },
+    'energy': {
+        'url': 'https://s3.amazonaws.com/ddl-data-lake/yellowbrick/energy.zip',
+        'signature': '19fb86f3bcdde208eed46944172cb643ef6a7d58da103fb568fae43205ed89d3',
+        'type': 'numpy',
+    },
     'credit': {
         'url': 'https://s3.amazonaws.com/ddl-data-lake/yellowbrick/credit.zip',
         'signature': '4a91339c69f55e18f3f48004328fbcb7868070b618208fed099920427b084e5e',
