@@ -1,10 +1,10 @@
 # tests.test_regressor.test_alphas
 # Tests for the alpha selection visualizations.
 #
-# Author:   Benjamin Bengfort <benjamin@bengfort.com>
-# Created:  codetime
+# Author:   Benjamin Bengfort <bbengfort@districtdatalabs.com>
+# Created:  Tue Mar 07 12:13:04 2017 -0500
 #
-# Copyright (C) 2016 Bengfort.com
+# Copyright (C) 2016 District Data Labs
 # For license information, see LICENSE.txt
 #
 # ID: tests.test_regressor.test_alphas.py [] benjamin@bengfort.com $
@@ -30,28 +30,7 @@ from sklearn.linear_model import Ridge, RidgeCV
 from sklearn.linear_model import Lasso, LassoCV
 from sklearn.linear_model import LassoLars, LassoLarsCV
 from sklearn.linear_model import ElasticNet, ElasticNetCV
-
-
-##########################################################################
-## Data
-##########################################################################
-
-X = np.array(
-        [[ 2.318, 2.727, 4.260, 7.212, 4.792],
-         [ 2.315, 2.726, 4.295, 7.140, 4.783,],
-         [ 2.315, 2.724, 4.260, 7.135, 4.779,],
-         [ 2.110, 3.609, 4.330, 7.985, 5.595,],
-         [ 2.110, 3.626, 4.330, 8.203, 5.621,],
-         [ 2.110, 3.620, 4.470, 8.210, 5.612,],
-         [ 2.318, 2.727, 4.260, 7.212, 4.792,],
-         [ 2.315, 2.726, 4.295, 7.140, 4.783,],
-         [ 2.315, 2.724, 4.260, 7.135, 4.779,],
-         [ 2.110, 3.609, 4.330, 7.985, 5.595,],
-         [ 2.110, 3.626, 4.330, 8.203, 5.621,],
-         [ 2.110, 3.620, 4.470, 8.210, 5.612,]]
-    )
-
-y = np.array([0.23, .33, .31, .3, .24, .32, 0.23, .33, .31, .3, .24, .32])
+from sklearn.datasets import make_regression
 
 
 ##########################################################################
@@ -98,7 +77,7 @@ class AlphaSelectionTests(VisualTestCase):
 
     def test_get_alphas_param(self):
         """
-        Assert that on known models we can get the alphas
+        Assert that we can get the alphas from ridge, lasso, and elasticnet
         """
         alphas = np.logspace(-10, -2, 100)
 
@@ -111,7 +90,11 @@ class AlphaSelectionTests(VisualTestCase):
             except YellowbrickValueError:
                 self.fail("could not find alphas on {}".format(model.name))
 
-        # Test LassoLars
+    def test_get_alphas_param_lassolars(self):
+        """
+        Assert that we can get alphas from lasso lars.
+        """
+        X, y = make_regression()
         model = AlphaSelection(LassoLarsCV())
         model.fit(X, y)
         try:
@@ -122,14 +105,17 @@ class AlphaSelectionTests(VisualTestCase):
 
     def test_get_errors_param(self):
         """
-        Assert that on known models we can get the errors
+        Test known models we can get the cv errors for alpha selection
         """
 
         # Test original CV models
         for model in (RidgeCV, LassoCV, LassoLarsCV, ElasticNetCV):
             try:
                 model = AlphaSelection(model())
+
+                X, y = make_regression()
                 model.fit(X, y)
+
                 errors = model._find_errors_param()
                 self.assertTrue(len(errors) > 0)
             except YellowbrickValueError:
