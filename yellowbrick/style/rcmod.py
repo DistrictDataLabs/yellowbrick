@@ -323,7 +323,7 @@ def _plotting_context(context=None, font_scale=1, rc=None):
         }
 
         # Scale all the parameters by the same factor depending on the context
-        scaling = dict(paper=.8, notebook=1, talk=1.3, poster=1.6)['talk']
+        scaling = dict(paper=.8, notebook=1, talk=1.3, poster=1.6)['notebook']
         context_dict = {k: v * scaling for k, v in base_context.items()}
 
         # Now independently scale the fonts
@@ -420,7 +420,7 @@ def set_palette(palette, n_colors=None, color_codes=False):
 
     Parameters
     ----------
-    palette : yellowbrick color palette | seaborn color palette (with sns_ prepended)
+    palette : yellowbrick color palette | seaborn color palette (with ``sns_`` prepended)
         Palette definition. Should be something that :func:`color_palette`
         can process.
     n_colors : int

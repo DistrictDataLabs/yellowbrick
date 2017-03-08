@@ -8,3 +8,4 @@ Examples and Tutorials
 
    methods
    palettes
+   modelselect
