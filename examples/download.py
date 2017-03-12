@@ -43,6 +43,10 @@ DATASETS = {
         'url': 'https://s3.amazonaws.com/ddl-data-lake/yellowbrick/concrete.zip',
         'signature': 'b9ea5f26a7bb272a040e2f1a993b26babbf8dc4a04ab8198bb315ca66d71f10d',
     },
+    'energy': {
+        'url': 'https://s3.amazonaws.com/ddl-data-lake/yellowbrick/energy.zip',
+        'signature': '19fb86f3bcdde208eed46944172cb643ef6a7d58da103fb568fae43205ed89d3',
+    },
     'credit': {
         'url': 'https://s3.amazonaws.com/ddl-data-lake/yellowbrick/credit.zip',
         'signature': '4a91339c69f55e18f3f48004328fbcb7868070b618208fed099920427b084e5e',
@@ -50,6 +54,10 @@ DATASETS = {
     'occupancy': {
         'url': 'https://s3.amazonaws.com/ddl-data-lake/yellowbrick/occupancy.zip',
         'signature': '429cfe376dc9929a1fa528da89f0e1626e34e19695f3f555d8954025bbc522b8',
+    },
+    'mushroom': {
+        'url': 'https://s3.amazonaws.com/ddl-data-lake/yellowbrick/mushroom.zip',
+        'signature': '884c43cb70db35d211c67b1cf6a3683b2b4569393d2789d5c07840da4dc85ba8',
     },
     'hobbies': {
         'url': 'https://s3.amazonaws.com/ddl-data-lake/yellowbrick/hobbies.zip',
