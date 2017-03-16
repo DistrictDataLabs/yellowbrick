@@ -31,7 +31,7 @@ from .exceptions import YellowbrickTypeError
 from .utils import get_model_name, isestimator, isclassifier
 from .base import Visualizer, ScoreVisualizer, MultiModelMixin
 from .style.palettes import color_sequence, color_palette, LINE_COLOR
-
+from .utils import find_text_color
 from .utils import numpy_div0
 
 
@@ -214,6 +214,8 @@ class ConfusionMatrix(ClassificationScoreVisualizer):
         #Y axis should be sorted top to bottom in pcolormesh
         self._confusion_matrix_plottable = self._confusion_matrix_display[::-1,::]
 
+        self.max = self._confusion_matrix_plottable.max()
+
         #Set up the dimensions of the pcolormesh
         X = np.linspace(start=0, stop=len(self.classes), num=len(self.classes)+1)
         Y = np.linspace(start=0, stop=len(self.classes), num=len(self.classes)+1)
@@ -250,14 +252,22 @@ class ConfusionMatrix(ClassificationScoreVisualizer):
                 text_x = x + 0.5
                 text_y = y + 0.5
 
+                #extract the value
+                grid_val = self._confusion_matrix_plottable[x_int,y_int]
+                
+                #Determine text color
+                scaled_grid_val = grid_val / self.max
+                base_color = self.cmap(scaled_grid_val)
+                text_color= find_text_color(base_color)
+
                 #make zero values more subtle
-                #TODO also add the background color-based logic from .util as in ticket #154
-                text_color = "0.75" if self._confusion_matrix_plottable[x_int,y_int] == 0 else "black"
+                if self._confusion_matrix_plottable[x_int,y_int] == 0:
+                    text_color = "0.75"
 
                 #Put the data labels in the middle of the heatmap square
                 self.ax.text(text_y,
                             text_x,
-                            "{:.0f}{}".format(self._confusion_matrix_plottable[x_int,y_int],"%" if percent==True else ""),
+                            "{:.0f}{}".format(grid_val,"%" if percent==True else ""),
                             va='center',
                             ha='center',
                             fontsize=8,
