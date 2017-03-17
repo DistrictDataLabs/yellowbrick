@@ -184,9 +184,11 @@ class ClassificationReport(ClassificationScoreVisualizer):
         y_tick_marks = np.arange(len(self.classes_))
 
         # Set the tick marks appropriately
-        # TODO: make sure this goes through self.ax not plt
-        plt.xticks(x_tick_marks, ['precision', 'recall', 'f1-score'], rotation=45)
-        plt.yticks(y_tick_marks, self.classes_)
+        self.ax.set_xticks(x_tick_marks)
+        self.ax.set_yticks(y_tick_marks)
+
+        self.ax.set_xticklabels(['precision', 'recall', 'f1-score'], rotation=45)
+        self.ax.set_yticklabels(self.classes_)
 
         # Set the labels for the two axes
         self.ax.set_ylabel('Classes')
