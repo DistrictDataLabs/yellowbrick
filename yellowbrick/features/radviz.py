@@ -227,6 +227,10 @@ class RadialVisualizer(DataVisualizer):
             'RadViz for {} Features'.format(len(self.features_))
         )
 
+        # Remove the ticks from the graph
+        self.ax.set_yticks([])
+        self.ax.set_xticks([])
+
         # Add the legend
         self.ax.legend(loc='best')
 
