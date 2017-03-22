@@ -31,7 +31,7 @@ from .exceptions import YellowbrickTypeError
 from .utils import get_model_name, isestimator, isclassifier
 from .base import Visualizer, ScoreVisualizer, MultiModelMixin
 from .style.palettes import color_sequence, color_palette, LINE_COLOR
-from .utils import find_text_color
+from .style import find_text_color
 from .utils import numpy_div0
 
 

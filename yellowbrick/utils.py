@@ -169,32 +169,7 @@ def numpy_div0( a, b ):
     return c
 
 
-def find_text_color(base_color, text_colors=("black","white")):
-    '''
-    Takes a background color and returns the appropriate light or dark text color.
-    Users can specify the dark and light text color, or accept the defaults of 'black' and 'white'
 
-    # baseColor: the color of the background, in any valid color specification format
-    # textColors: a tuple of (dark, light) text format. 
-    '''
-
-    #matplotlib cmap exports rgba colors scaled 0-1 instead of standard 255
-    rgb=[]
-    for idx,val in enumerate(base_color):
-        rgb.append(val*255)
-    
-    #Calculate brightness relative to the color type
-    base_brightness = math.sqrt( .241*rgb[0]*rgb[0]+
-                                 .691*rgb[1]*rgb[1]+ 
-                                 .068*rgb[2]*rgb[2] 
-                                ) 
-
-    if base_brightness > 130:
-        #base is light
-        return text_colors[0]
-    else:
-        #base is dark
-        return text_colors[1]
 
 ##########################################################################
 ## Decorators
