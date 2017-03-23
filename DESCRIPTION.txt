@@ -1,15 +1,20 @@
-Yellowbrick is a suite of visual analysis and diagnostic tools designed to facilitate machine learning with Scikit-Learn. The package includes visualizations that can help users navigate the feature selection process, build intuition around model selection, diagnose common problems like bias, heteroscedasticity, underfit, and overtraining, and support hyperparameter tuning to steer predictive models toward more successful results.
+Yellowbrick is a suite of visual analysis and diagnostic tools designed to facilitate machine learning with Scikit-Learn. The library implements a new core API object, the "Visualizer" that is an Scikit-Learn estimator: an object that learns from data. Like transformers or models, visualizers learn from data by creating a visual representation of the model selection workflow.
+
+Visualizers allow users to steer the model selection process, building intuition around feature engineering, algorithm selection, and hyperparameter tuning. For example, visualizers can help diagnose common problems surrounding model complexity and bias, heteroscedasticity, underfit and overtraining, or class balance issues. By applying visualizers to the model selection workflow, Yellowbrick allows you to steer predictive models to more successful results, faster.
 
 Some of the available tools include:
 
-- histograms
-- scatter plot matrices
+- pairwise feature ranking
 - parallel coordinates
-- jointplots
+- radial visualization
 - ROC curves
 - classification heatmaps
 - residual plots
+- prediction error plots
+- alpha selection plots
 - validation curves
 - gridsearch heatmaps
+- text frequency distributions
+- tsne corpus visualization
 
-For more, please see the full documentation at: http://yellowbrick.readthedocs.org/en/latest/
+And much more! Please see the full documentation at: http://scikit-yb.org/
