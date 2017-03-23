@@ -20,3 +20,4 @@ Manage the style and aesthetic of the yellowbrick library.
 from .colors import *
 from .palettes import *
 from .rcmod import *
+from .utils import *
