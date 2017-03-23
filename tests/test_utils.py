@@ -326,6 +326,32 @@ class ModelUtilityTests(unittest.TestCase):
         model = ScoreVisualizer(RandomForestClassifier())
         self.assertTrue(is_classifier(model))
 
+
+class DivSafeTests(unittest.TestCase):
+
+    def test_div_1d_by_scalar(self):
+        result = div_safe( [-1, 0, 1], 0 )
+        self.assertTrue(result.all() == 0)
+        
+    def test_div_1d_by_1d(self):
+        result =div_safe( [-1, 0 , 1], [0,0,0])
+        self.assertTrue(result.all() == 0)
+
+    def test_div_2d_by_1d(self):
+        numerator = np.array([[-1,0,1,2],[1,-1,0,3]])
+        denominator = [0,0,0,0]
+        result = div_safe(numerator, denominator)
+    
+    def test_invalid_dimensions(self):
+            numerator = np.array([[-1,0,1,2],[1,-1,0,3]])
+            denominator = [0,0]
+            with self.assertRaises(ValueError):
+                result = div_safe(numerator, denominator)
+
+    def test_div_scalar_by_scalar(self):
+        with self.assertRaises(ValueError):
+            result = div_safe(5, 0)
+
 ##########################################################################
 ## Decorator Tests
 ##########################################################################
