@@ -32,8 +32,6 @@ from .utils import get_model_name, isestimator, isclassifier
 from .base import Visualizer, ScoreVisualizer, MultiModelMixin
 from .style.palettes import color_sequence, color_palette, LINE_COLOR
 from .style import find_text_color
-from .utils import numpy_div0
-
 from .utils import div_safe
 
 
