@@ -32,7 +32,7 @@ from .utils import get_model_name, isestimator, isclassifier
 from .base import Visualizer, ScoreVisualizer, MultiModelMixin
 from .style.palettes import color_sequence, color_palette, LINE_COLOR
 from .style import find_text_color
-from .utils import numpy_div0
+from .utils import div_safe
 
 
 ##########################################################################
@@ -202,8 +202,8 @@ class ConfusionMatrix(ClassificationScoreVisualizer):
 
         if percent == True:
             #Convert confusion matrix to percent of each row, i.e. the predicted as a percent of true in each class
-            #numpy_div0 function returns 0 instead of NAN.
-            self._confusion_matrix_display = numpy_div0(
+            #div_safe function returns 0 instead of NAN.
+            self._confusion_matrix_display = div_safe(
                     self.confusion_matrix,
                     self.selected_class_counts
                     )
