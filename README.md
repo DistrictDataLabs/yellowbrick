@@ -7,50 +7,56 @@
 [![Stories in Ready](https://badge.waffle.io/DistrictDataLabs/yellowbrick.png?label=ready&title=Ready)](https://waffle.io/DistrictDataLabs/yellowbrick)
 
 
-A suite of visual analysis and diagnostic tools to facilitate feature selection, model selection, and parameter tuning for machine learning.
-
+**Visual analysis and diagnostic tools to facilitate machine learning model selection.**
 
 ![Follow the yellow brick road](docs/images/yellowbrickroad.jpg)
 Image by [Quatro Cinco](https://flic.kr/p/2Yj9mj), used with permission, Flickr Creative Commons.
 
-# What is Yellowbrick?
-Yellowbrick is a suite of visual analysis and diagnostic tools to facilitate feature selection, model selection, and parameter tuning for machine learning. All visualizations are generated in Matplotlib. Custom `yellowbrick` visualization tools include:
+This README is a guide for developers, if you're new to Yellowbrick, get started at our [documentation](http://www.scikit-yb.org/).
 
-## Tools for feature analysis and selection
- - Boxplots (box-and-whisker plots)    
- - Violinplots    
- - Histograms    
- - Scatter plot matrices (sploms)    
- - Radial visualizations (radviz)    
- - Parallel coordinates    
- - Jointplots    
- - Rank 1D    
- - Rank 2D        
+## What is Yellowbrick?
 
-## Tools for model evaluation
-### Classification
- - ROC-AUC curves    
- - Classification heatmaps
- - Class balance chart     
+Yellowbrick is a suite of visual diagnostic tools called "Visualizers" that extend the Scikit-Learn API to allow human steering of the model selection process. In a nutshell, Yellowbrick combines Scikit-Learn with Matplotlib in the best tradition of the Scikit-Learn documentation, but to produce visualizations for _your_ models!
 
-### Regression
- - Prediction error plots     
- - Residual plots     
- - Most informative features    
+![Visualizers](docs/images/visualizers.png)
 
-### Clustering
- - Silhouettes  
- - Density measures     
+### Visualizers
 
-## Tools for parameter tuning
- - Validation curves    
- - Gridsearch heatmaps    
+Visualizers are estimators (objects that learn from data) whose primary objective is to create visualizations that allow insight into the model selection process. In Scikit-Learn terms, they can be similar to transformers when visualizing the data space or wrap an model estimator similar to how the "ModelCV" (e.g. RidgeCV, LassoCV) methods work. The primary goal of Yellowbrick is to create a sensical API similar to Scikit-Learn. Some of our most popular visualizers include:
+
+#### Feature Visualization
+
+- Rank2D: pairwise ranking of features to detect relationships
+- Parallel Coordinates: horizontal visualization of instances
+- Radial Visualization: separation of instances around a circular plot
+
+#### Classification Visualization
+
+- Class Balance: see how the distribution of classes affects the model
+- Classification Report: visual representation of precision, recall, and F1
+- ROC/AUC Curves: receiver operator characteristics and area under the curve
+
+#### Regression Visualization
+
+- Prediction Error Plots: find model breakdowns along the domain of the target
+- Residuals Plot: show the difference in residuals of training and test data
+- Alpha Selection: show how the choice of alpha influences regularization
+
+#### Text Visualization
+
+- Term Frequency: visualize the frequency distribution of terms in the corpus
+- TSNE: use stochastic neighbor embedding to project documents.
+
+And more! Visualizers are being added all the time, be sure to check the examples (or even the develop branch) and feel free to contribute your ideas for Visualizers!
 
 ## Using Yellowbrick
+
 The Yellowbrick API is specifically designed to play nicely with Scikit-Learn. Here is an example of a typical workflow sequence with Scikit-Learn and Yellowbrick:
 
 ### Feature Visualization
+
 In this example, we see how Rank2D performs pairwise comparisons of each feature in the data set with a specific metric or algorithm, then returns them ranked as a lower left triangle diagram.
+
 ```python
 from yellowbrick.features import Rank2D
 
@@ -61,7 +67,9 @@ visualizer.poof()                   # Draw/show/poof the data
 ```
 
 ### Model Visualization
+
 In this example, we instantiate a Scikit-Learn classifier, and then we use Yellowbrick's ROCAUC class to visualize the tradeoff between the classifier's sensitivity and specificity.
+
 ```python
 from sklearn.svm import LinearSVC
 from yellowbrick.classifier import ROCAUC
