@@ -158,18 +158,32 @@ isdataframe = is_dataframe
 
 
 #From here: http://stackoverflow.com/questions/26248654/numpy-return-0-with-divide-by-zero
-def numpy_div0( a, b ):
+def div_safe( numerator, denominator ):
     """
     Ufunc-extension that returns 0 instead of nan when dividing numpy arrays
-    example: >> div0( [-1, 0, 1], 0 ) -> [0, 0, 0]
+    
+    Parameters
+    ----------
+    numerator: array-like 
+
+    denominator: scalar or array-like that can be validly divided by the numerator
+
+    returns a numpy array
+
+    example: div_safe( [-1, 0, 1], 0 ) == [0, 0, 0]
     """
-    with np.errstate(divide='ignore', invalid='ignore'):
-        c = np.true_divide( a, b )
-        c[ ~ np.isfinite( c )] = 0  # -inf inf NaN
-    return c
+    #First handle scalars
+    if np.isscalar(numerator):
+        raise ValueError("div_safe should only be used with an array-like numerator")
 
-
-
+    #Then numpy arrays
+    try:
+        with np.errstate(divide='ignore', invalid='ignore'):
+            result = np.true_divide( numerator, denominator )
+            result[ ~ np.isfinite( result )] = 0  # -inf inf NaN
+        return result
+    except ValueError as e:
+        raise e
 
 ##########################################################################
 ## Decorators
