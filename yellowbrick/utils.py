@@ -21,6 +21,7 @@ Utility functions and helpers for the Yellowbrick library.
 ##########################################################################
 
 import inspect
+import math
 import numpy as np
 
 from functools import wraps
