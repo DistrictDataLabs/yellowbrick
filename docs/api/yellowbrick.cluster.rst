@@ -11,3 +11,8 @@ yellowbrick.cluster.base module
     :members:
     :undoc-members:
     :show-inheritance:
+
+.. automodule:: yellowbrick.cluster.elbow
+    :members:
+    :undoc-members:
+    :show-inheritance:

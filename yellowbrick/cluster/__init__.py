@@ -19,3 +19,5 @@ related to evaluating Scikit-Learn clustering models.
 ##########################################################################
 
 ## Hoist visualizers into the cluster namespace
+from .base import *
+from .elbow import *
