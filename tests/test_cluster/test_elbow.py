@@ -21,6 +21,7 @@ from ..base import VisualTestCase
 from ..dataset import DatasetMixin
 
 from sklearn.cluster import KMeans
+from sklearn.datasets import make_blobs
 from yellowbrick.cluster.elbow import KElbowVisualizer
 from yellowbrick.exceptions import YellowbrickValueError
 
@@ -34,23 +35,21 @@ class KElbowVisualizerTests(VisualTestCase, DatasetMixin):
     def test_integrated_elbow(self):
         """
         Test that no errors occur on k-elbow on real dataset
+
+        See #182: cannot use occupancy dataset because of memory usage
         """
 
-        # Load the data from the fixture
-        data = self.load_data('occupancy')
-        X = data[[
-            "temperature", "relative_humidity", "light", "C02", "humidity"
-        ]]
+        # Generate a blobs data set
+        X,y = make_blobs(
+            n_samples=200, n_features=4, centers=6, shuffle=True
+        )
 
-        # Convert X to an ndarray
-        X = X.view((float, len(X.dtype.names)))
-
-        # try:
-        visualizer = KElbowVisualizer(KMeans(), k=4)
-        visualizer.fit(X)
-        visualizer.poof()
-        # except Exception as e:
-        #     self.fail("error during k-elbow: {}".format(e))
+        try:
+            visualizer = KElbowVisualizer(KMeans(), k=4)
+            visualizer.fit(X)
+            visualizer.poof()
+        except Exception as e:
+            self.fail("error during k-elbow: {}".format(e))
 
     def test_invalid_k(self):
         """
