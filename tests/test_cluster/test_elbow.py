@@ -45,12 +45,12 @@ class KElbowVisualizerTests(VisualTestCase, DatasetMixin):
         # Convert X to an ndarray
         X = X.view((float, len(X.dtype.names)))
 
-        try:
-            visualizer = KElbowVisualizer(KMeans(), k=4)
-            visualizer.fit(X)
-            visualizer.poof()
-        except Exception as e:
-            self.fail("error during k-elbow: {}".format(e))
+        # try:
+        visualizer = KElbowVisualizer(KMeans(), k=4)
+        visualizer.fit(X)
+        visualizer.poof()
+        # except Exception as e:
+        #     self.fail("error during k-elbow: {}".format(e))
 
     def test_invalid_k(self):
         """
