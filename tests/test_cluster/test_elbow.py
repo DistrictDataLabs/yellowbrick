@@ -36,20 +36,19 @@ class KElbowVisualizerTests(VisualTestCase, DatasetMixin):
         Test that no errors occur on k-elbow on real dataset
         """
 
+        # Load the data from the fixture
+        data = self.load_data('occupancy')
+        X = data[[
+            "temperature", "relative_humidity", "light", "C02", "humidity"
+        ]]
+
+        # Convert X to an ndarray
+        X = X.view((float, len(X.dtype.names)))
+
         try:
-            # Load the data from the fixture
-            data = self.load_data('occupancy')
-            X = data[[
-                "temperature", "relative_humidity", "light", "C02", "humidity"
-            ]]
-
-            # Convert X to an ndarray
-            X = X.view((float, len(X.dtype.names)))
-
             visualizer = KElbowVisualizer(KMeans(), k=4)
             visualizer.fit(X)
             visualizer.poof()
-
         except Exception as e:
             self.fail("error during k-elbow: {}".format(e))
 
