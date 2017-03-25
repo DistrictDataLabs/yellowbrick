@@ -28,7 +28,7 @@ class BivariateFeatureMixin(object):
         if features_ is not None:
             if len(features_) != 2:
                  raise YellowbrickValueError('{} only accepts two features'.format(self.__class__.__name__))
-        super(BivariateFeatureMixin, self).__init__(*args, *kwargs)
+        super(object, self).__init__()
 
     def fit(self, *args, **kwargs):
         """
@@ -47,3 +47,4 @@ class BivariateFeatureMixin(object):
             nrows, ncols = X_.shape
             if ncols != 2:
                  raise YellowbrickValueError('{} only accepts two features columns'.format(self.__class__.__name__))
+        super(object, self).fit()

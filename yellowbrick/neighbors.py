@@ -12,21 +12,22 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 from yellowbrick.exceptions import YellowbrickTypeError
-from yellowbrick.neighbors.base import NeighborsVisualizer
+from yellowbrick.base import ModelVisualizer, Visualizer
 from yellowbrick.mixins import BivariateFeatureMixin
 from yellowbrick.utils import get_model_name, isestimator, isclassifier
 from yellowbrick.style.palettes import color_sequence, color_palette, LINE_COLOR
 from yellowbrick.style.colors import resolve_colors, get_color_cycle
 from matplotlib.colors import ListedColormap
 from yellowbrick.utils import is_dataframe
+from yellowbrick.style.palettes import PALETTES
 
 
-class KnnDecisionBoundariesVisualizer(BivariateFeatureMixin, NeighborsVisualizer):
+class KnnDecisionBoundariesVisualizer(ModelVisualizer, BivariateFeatureMixin):
     """
     KnnDecisionBoundariesVisualizer is a bivariate data visualization algorithm that plots
     the decision boundaries of each class.
     """
-    def __init__(self, model, ax=None, cmap_point=None, cmap_border=None, classes=None, features=None, **kwargs):
+    def __init__(self, model, colormap=None, classes=None, features=None, **kwargs):
         """
         Pass in a fitted neighbors model to generate decision boundaries.
 
@@ -34,10 +35,6 @@ class KnnDecisionBoundariesVisualizer(BivariateFeatureMixin, NeighborsVisualizer
         ----------
 
         :param ax: the axis to plot the figure on.
-
-        :param model: the Scikit-Learn estimator
-            Should be an instance of a classifier, else the __init__ will
-            return an error.
 
         :param model: the Scikit-Learn estimator
             Should be an instance of a classifier, else the __init__ will
@@ -51,21 +48,18 @@ class KnnDecisionBoundariesVisualizer(BivariateFeatureMixin, NeighborsVisualizer
         These parameters can be influenced later on in the visualization
         process, but can and should be set as early as possible.
         """
+        super(KnnDecisionBoundariesVisualizer, self).__init__(self)
 
-        self.estimator = model
-        self.name = get_model_name(model)
-        self.ax = ax
-        self.cmap_point = cmap_point #kwargs.pop('cmap')#, 'YlOrRd')
-        self.cmap_border = cmap_border # kwargs.pop('cmap_bold')#, 'YlOrRd')
+        self.colormap = kwargs.pop('colormap', None)
         self.classes_ = classes
         self.features_ = features
+        self.estimator = model
+        self.name = get_model_name(self.estimator)
 
-        # set later
+        # these are set later
         self.Z = None
         self.xx = None
         self.yy = None
-        super(KnnDecisionBoundariesVisualizer, self).__init__()
-
 
     def fit(self, X, y=None, **kwargs):
         """
@@ -89,6 +83,7 @@ class KnnDecisionBoundariesVisualizer(BivariateFeatureMixin, NeighborsVisualizer
         self : instance
             Returns the instance of the transformer/visualizer
         """
+
         nrows, ncols = X.shape
 
         # Store the classes for the legend if they're None.
@@ -124,6 +119,7 @@ class KnnDecisionBoundariesVisualizer(BivariateFeatureMixin, NeighborsVisualizer
         return self
 
 
+
     def draw(self, X, y, **kwargs):
         """
         Called from the fit method, this method creates a scatter plot that draws
@@ -135,18 +131,21 @@ class KnnDecisionBoundariesVisualizer(BivariateFeatureMixin, NeighborsVisualizer
 
         # Create the axes if they don't exist
         if self.ax is None:
-                self.ax = plt.gca(xlim=[-1,1], ylim=[-1,1])
+            self.ax = plt.gca(xlim=[-1,1], ylim=[-1,1])
 
-        # if not self.cmap:
-        #     color_values = get_color_cycle()
-        #     print(color_values)
+        if not self.color or not self.colormap:
+            n_colors = 2 * len(self.classes_)
+            color_values = color_sequence(palette=PALETTES['paired'], n_colors=n_colors)
 
-        color_values = color_sequence(palette=self.cmap, n_colors=len(self.classes_))
-        bold_colors = color_sequence(palette=self.cmap_bold, n_colors=len(self.classes_))
+        point_color = {}
+        boundary_color = {}
+        color_iter = iter(color_values.colors)
+        for class_ in self.classes_:
+            point_color[class_] = next(color_iter)
+            boundary_color[class_] = next(color_iter)
 
-        colors = dict(zip(self.classes_, color_values.colors))
 
-        self.ax.pcolormesh(self.xx, self.yy, self.Z_shape, cmap=bold_colors)
+        self.ax.pcolormesh(self.xx, self.yy, self.Z_shape, cmap=boundary_color.values())
 
         # Create a data structure to hold the scatter plot representations
         to_plot = {}
@@ -167,7 +166,7 @@ class KnnDecisionBoundariesVisualizer(BivariateFeatureMixin, NeighborsVisualizer
         # TODO: store these plots to add more instances to later
         # TODO: make this a separate function
         for i, kls in enumerate(self.classes_):
-            self.ax.scatter(to_plot[kls][0], to_plot[kls][1], color=colors[kls], label=str(kls), **kwargs)
+            self.ax.scatter(to_plot[kls][0], to_plot[kls][1], color=point_color[kls], label=str(kls), **kwargs)
 
         self.ax.axis('equal')
 
