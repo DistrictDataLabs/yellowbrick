@@ -1,12 +1,12 @@
 .. yellowbrick documentation master file, created by
-   sphinx-quickstart on Tue Jul  5 19:45:43 2016.
-   You can adapt this file completely to your liking, but it should at least
-   contain the root `toctree` directive.
+    sphinx-quickstart on Tue Jul  5 19:45:43 2016.
+    You can adapt this file completely to your liking, but it should at least
+    contain the root `toctree` directive.
+
 
 ===========================================
 Yellowbrick: Machine Learning Visualization
 ===========================================
-
 .. image:: images/visualizers.png
 
 Yellowbrick is a suite of visual diagnostic tools called "Visualizers" that extend the Scikit-Learn API to allow human steering of the model selection process. In a nutshell, Yellowbrick combines Scikit-Learn with Matplotlib in the best tradition of the Scikit-Learn documentation, but to produce visualizations for *your* models! For more on Yellowbrick, please see the :doc:`introduction`.
@@ -31,6 +31,7 @@ Classification Visualization
 - Class Balance: see how the distribution of classes affects the model
 - Classification Report: visual representation of precision, recall, and F1
 - ROC/AUC Curves: receiver operator characteristics and area under the curve
+- Confusion Matrices: visual description of class decision making
 
 Regression Visualization
 ~~~~~~~~~~~~~~~~~~~~~~~~
@@ -38,6 +39,12 @@ Regression Visualization
 - Prediction Error Plots: find model breakdowns along the domain of the target
 - Residuals Plot: show the difference in residuals of training and test data
 - Alpha Selection: show how the choice of alpha influences regularization
+
+Clustering Visualization
+~~~~~~~~~~~~~~~~~~~~~~~~
+
+- K-Elbow Plot: select k using the elbow method and various metrics
+- Silhouette Plot: select k by visualizing silhouette coefficient values
 
 Text Visualization
 ~~~~~~~~~~~~~~~~~~
@@ -59,7 +66,7 @@ Open Source
 
 The Yellowbrick `license <https://github.com/DistrictDataLabs/yellowbrick/blob/master/LICENSE.txt>`_ is an open source `Apache 2.0 <http://www.apache.org/licenses/LICENSE-2.0>`_ license. Yellowbrick enjoys a very active developer community, join them and please consider `contributing <https://github.com/DistrictDataLabs/yellowbrick/blob/develop/CONTRIBUTING.md>`_!
 
-Yellowbrick is hosted on `GitHub <https://github.com/DistrictDataLabs/yellowbrick/>`_. `Issues <https://github.com/DistrictDataLabs/yellowbrick/issues/>`_ and `Pull Requests <https://github.com/DistrictDataLabs/yellowbrick/pulls>`_ are tracked there.  
+Yellowbrick is hosted on `GitHub <https://github.com/DistrictDataLabs/yellowbrick/>`_. `Issues <https://github.com/DistrictDataLabs/yellowbrick/issues/>`_ and `Pull Requests <https://github.com/DistrictDataLabs/yellowbrick/pulls>`_ are tracked there.
 
 
 =================
@@ -72,11 +79,13 @@ The following is a complete listing of the Yellowbrick documentation for this ve
    :maxdepth: 2
 
    introduction
+   about
    setup
    examples/examples
    api/modules
    evaluation
-   about
+   contributing
+   changelog
 
 ==================
 Indices and tables
