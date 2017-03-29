@@ -5,7 +5,6 @@ API Reference
     :maxdepth: 4
 
     yellowbrick
-    yellowbrick.features
-    yellowbrick.regressor
     yellowbrick.text
     yellowbrick.style
+    yellowbrick.features
