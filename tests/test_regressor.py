@@ -1,5 +1,5 @@
-# tests.test_regressor.test_residuals
-# Ensure that the regressor residuals visualizations work.
+# tests.test_regressor
+# Ensure that the regressor visualizations work.
 #
 # Author:   Rebecca Bilbro <rbilbro@districtdatalabs.com>
 # Created:  Sat Oct 8 16:30:39 2016 -0400
@@ -7,10 +7,9 @@
 # Copyright (C) 2016 District Data Labs
 # For license information, see LICENSE.txt
 #
-# ID: test_residuals.py [] benjamin@bengfort.com $
 
 """
-Ensure that the regressor residuals visualizations work.
+Ensure that the regressor visualizations work.
 """
 
 ##########################################################################
@@ -21,7 +20,7 @@ import unittest
 import numpy as np
 
 from tests.base import VisualTestCase
-from yellowbrick.regressor.residuals import *
+from yellowbrick.regressor import *
 
 from sklearn.svm import SVR
 from sklearn import cross_validation as cv
