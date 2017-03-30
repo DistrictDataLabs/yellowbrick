@@ -22,14 +22,15 @@ Test the yellowbrick utilities module.
 import inspect
 import unittest
 
-from sklearn.cluster import KMeans
 from sklearn.pipeline import Pipeline
 from sklearn.decomposition import PCA
 from sklearn.neighbors import LSHForest
-from sklearn.linear_model import LassoCV
+from sklearn.linear_model import RidgeCV, LassoCV
 from sklearn.linear_model import LinearRegression
 from sklearn.linear_model import LogisticRegression
 from sklearn.ensemble import RandomForestClassifier
+from sklearn.cluster import KMeans, MiniBatchKMeans
+from sklearn.cluster import AffinityPropagation, Birch
 
 from yellowbrick.utils import *
 from yellowbrick.base import Visualizer, ScoreVisualizer, ModelVisualizer
@@ -52,9 +53,11 @@ class ModelUtilityTests(unittest.TestCase):
         model1 = LassoCV()
         model2 = LSHForest()
         model3 = KMeans()
+        model4 = RandomForestClassifier()
         self.assertEqual(get_model_name(model1), 'LassoCV')
         self.assertEqual(get_model_name(model2), 'LSHForest')
         self.assertEqual(get_model_name(model3), 'KMeans')
+        self.assertEqual(get_model_name(model4), 'RandomForestClassifier')
 
     def test_pipeline(self):
         """
@@ -99,6 +102,7 @@ class ModelUtilityTests(unittest.TestCase):
             KMeans(),
             LSHForest(),
             PCA(),
+            RidgeCV(),
             LassoCV(),
             RandomForestClassifier(),
         )
@@ -127,6 +131,7 @@ class ModelUtilityTests(unittest.TestCase):
             KMeans,
             LSHForest,
             PCA,
+            RidgeCV,
             LassoCV,
             RandomForestClassifier,
         )
@@ -174,6 +179,7 @@ class ModelUtilityTests(unittest.TestCase):
 
         # Test regressors are identified correctly
         regressors = (
+            RidgeCV,
             LassoCV,
             LinearRegression,
         )
@@ -202,6 +208,7 @@ class ModelUtilityTests(unittest.TestCase):
 
         # Test regressors are identified correctly
         regressors = (
+            RidgeCV,
             LassoCV,
             LinearRegression,
         )
@@ -273,6 +280,7 @@ class ModelUtilityTests(unittest.TestCase):
             PCA,
             LSHForest,
             LinearRegression,
+            RidgeCV,
             LassoCV,
         )
 
@@ -300,6 +308,7 @@ class ModelUtilityTests(unittest.TestCase):
             KMeans,
             PCA,
             LSHForest,
+            RidgeCV,
             LassoCV,
             LinearRegression,
         )
@@ -325,6 +334,124 @@ class ModelUtilityTests(unittest.TestCase):
         """
         model = ScoreVisualizer(RandomForestClassifier())
         self.assertTrue(is_classifier(model))
+
+    ##////////////////////////////////////////////////////////////////////
+    ## isclusterer testing
+    ##////////////////////////////////////////////////////////////////////
+
+    def test_clusterer_alias(self):
+        """
+        Assert is_clusterer aliases isclusterer
+        """
+        instance = KMeans()
+        self.assertEqual(is_clusterer(instance), isclusterer(instance))
+
+    def test_clusterer_instance(self):
+        """
+        Test that is_clusterer works for instances
+        """
+
+        # Test clusterers are identified correctly
+        clusterers = (
+            KMeans,
+            MiniBatchKMeans,
+            AffinityPropagation,
+            Birch
+        )
+
+        for model in clusterers:
+            instance = model()
+            self.assertTrue(is_clusterer(instance))
+
+        # Test that non-clusterers are identified correctly
+        notclusterers = (
+            RidgeCV,
+            LassoCV,
+            LinearRegression,
+            PCA,
+            LSHForest,
+            LogisticRegression,
+            RandomForestClassifier,
+        )
+
+        for model in notclusterers:
+            instance = model()
+            self.assertFalse(is_clusterer(instance))
+
+    def test_clusterer_class(self):
+        """
+        Test that is_clusterer works for classes
+        """
+
+        # Test clusterers are identified correctly
+        clusterers = (
+            KMeans,
+            MiniBatchKMeans,
+            AffinityPropagation,
+            Birch
+        )
+
+        for klass in clusterers:
+            self.assertTrue(inspect.isclass(klass))
+            self.assertTrue(is_clusterer(klass))
+
+        # Test that non-clusterers are identified correctly
+        notclusterers = (
+            RidgeCV,
+            LassoCV,
+            LinearRegression,
+            PCA,
+            LSHForest,
+            LogisticRegression,
+            RandomForestClassifier,
+        )
+
+        for klass in notclusterers:
+            self.assertTrue(inspect.isclass(klass))
+            self.assertFalse(is_clusterer(klass))
+
+    def test_clusterer_pipeline(self):
+        """
+        Test that is_clusterer works for pipelines
+        """
+        model = Pipeline([
+            ('reduce_dim', PCA()),
+            ('kmeans', KMeans())
+        ])
+
+        self.assertTrue(is_clusterer(model))
+
+    def test_clusterer_visualizer(self):
+        """
+        Test that is_clusterer works on visualizers
+        """
+        model = ScoreVisualizer(KMeans())
+        self.assertTrue(is_clusterer(model))
+
+class DivSafeTests(unittest.TestCase):
+
+    def test_div_1d_by_scalar(self):
+        result = div_safe( [-1, 0, 1], 0 )
+        self.assertTrue(result.all() == 0)
+
+    def test_div_1d_by_1d(self):
+        result =div_safe( [-1, 0 , 1], [0,0,0])
+        self.assertTrue(result.all() == 0)
+
+    def test_div_2d_by_1d(self):
+        numerator = np.array([[-1,0,1,2],[1,-1,0,3]])
+        denominator = [0,0,0,0]
+        result = div_safe(numerator, denominator)
+
+    def test_invalid_dimensions(self):
+            numerator = np.array([[-1,0,1,2],[1,-1,0,3]])
+            denominator = [0,0]
+            with self.assertRaises(ValueError):
+                result = div_safe(numerator, denominator)
+
+    def test_div_scalar_by_scalar(self):
+        with self.assertRaises(ValueError):
+            result = div_safe(5, 0)
 
 ##########################################################################
 ## Decorator Tests

@@ -21,6 +21,8 @@ Utility functions and helpers for the Yellowbrick library.
 ##########################################################################
 
 import inspect
+import math
+import numpy as np
 
 from functools import wraps
 from sklearn.pipeline import Pipeline
@@ -66,8 +68,9 @@ def is_estimator(model):
 
     Parameters
     ----------
-    model: class or instance
-        The object to test whether or not is a Scikit-Learn estimator.
+    estimator : class or instance
+        The object to test if it is a Scikit-Learn clusterer, especially a
+        Scikit-Learn estimator or Yellowbrick visualizer
     """
     if inspect.isclass(model):
         return issubclass(model, BaseEstimator)
@@ -84,8 +87,9 @@ def is_classifier(estimator):
 
     Parameters
     ----------
-    estimator: class or instance
-        The object to test whether or not is a Scikit-Learn classifier.
+    estimator : class or instance
+        The object to test if it is a Scikit-Learn clusterer, especially a
+        Scikit-Learn estimator or Yellowbrick visualizer
 
     See also
     --------
@@ -112,8 +116,9 @@ def is_regressor(estimator):
 
     Parameters
     ----------
-    model: class or instance
-        The object to test whether or not is a Scikit-Learn regressor.
+    estimator : class or instance
+        The object to test if it is a Scikit-Learn clusterer, especially a
+        Scikit-Learn estimator or Yellowbrick visualizer
 
     See also
     --------
@@ -132,6 +137,30 @@ def is_regressor(estimator):
 
 # Alias for closer name to isinstance and issubclass
 isregressor = is_regressor
+
+
+def is_clusterer(estimator):
+    """
+    Returns True if the given estimator is a clusterer.
+
+    Parameters
+    ----------
+    estimator : class or instance
+        The object to test if it is a Scikit-Learn clusterer, especially a
+        Scikit-Learn estimator or Yellowbrick visualizer
+    """
+    # TODO: once we make ScoreVisualizer and ModelVisualizer pass through
+    # wrappers as in Issue #90, these three lines become unnecessary.
+    # NOTE: This must be imported here to avoid recursive import.
+    from yellowbrick.base import Visualizer
+    if isinstance(estimator, Visualizer):
+        return is_clusterer(estimator.estimator)
+
+    # Test the _estimator_type property
+    return getattr(estimator, "_estimator_type", None) == "clusterer"
+
+# Alias for closer name to isinstance and issubclass
+isclusterer = is_clusterer
 
 
 def is_dataframe(obj):
@@ -154,6 +183,34 @@ def is_dataframe(obj):
 # Alias for closer name to isinstance and issubclass
 isdataframe = is_dataframe
 
+
+#From here: http://stackoverflow.com/questions/26248654/numpy-return-0-with-divide-by-zero
+def div_safe( numerator, denominator ):
+    """
+    Ufunc-extension that returns 0 instead of nan when dividing numpy arrays
+
+    Parameters
+    ----------
+    numerator: array-like
+
+    denominator: scalar or array-like that can be validly divided by the numerator
+
+    returns a numpy array
+
+    example: div_safe( [-1, 0, 1], 0 ) == [0, 0, 0]
+    """
+    #First handle scalars
+    if np.isscalar(numerator):
+        raise ValueError("div_safe should only be used with an array-like numerator")
+
+    #Then numpy arrays
+    try:
+        with np.errstate(divide='ignore', invalid='ignore'):
+            result = np.true_divide( numerator, denominator )
+            result[ ~ np.isfinite( result )] = 0  # -inf inf NaN
+        return result
+    except ValueError as e:
+        raise e
 
 ##########################################################################
 ## Decorators

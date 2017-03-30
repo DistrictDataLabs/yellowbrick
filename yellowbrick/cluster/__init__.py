@@ -1,8 +1,8 @@
-# yellowbrick.style
-# Manage the style and aesthetic of the yellowbrick library.
+# yellowbrick.cluster
+# Visualizers for Cluster analysis and diagnostics
 #
 # Author:   Benjamin Bengfort <bbengfort@districtdatalabs.com>
-# Created:  Tue Oct 04 15:09:48 2016 -0400
+# Created:  Thu Mar 23 17:26:57 2017 -0400
 #
 # Copyright (C) 2016 District Data Labs
 # For license information, see LICENSE.txt
@@ -10,14 +10,15 @@
 # ID: __init__.py [] benjamin@bengfort.com $
 
 """
-Manage the style and aesthetic of the yellowbrick library.
+Visualizers for Cluster analysis and diagnostics, particularly visualizations
+related to evaluating Scikit-Learn clustering models.
 """
 
 ##########################################################################
 ## Imports
 ##########################################################################
 
-from .colors import *
-from .palettes import *
-from .rcmod import *
-from .utils import *
+## Hoist visualizers into the cluster namespace
+from .base import *
+from .elbow import *
+from .silhouette import *
