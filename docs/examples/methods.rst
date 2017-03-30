@@ -487,7 +487,7 @@ sklearn.metrics.confusion\_matrix documentation.
 
 
 
-.. image:: images%5CconfusionMatrix_3_0.png
+.. image:: images/confusionMatrix_3_0.png
 
 
 
