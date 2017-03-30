@@ -20,8 +20,8 @@ Tests for the KElbowVisualizer
 from ..base import VisualTestCase
 from ..dataset import DatasetMixin
 
-from sklearn.cluster import KMeans
 from sklearn.datasets import make_blobs
+from sklearn.cluster import KMeans, MiniBatchKMeans
 from yellowbrick.cluster.elbow import KElbowVisualizer
 from yellowbrick.exceptions import YellowbrickValueError
 
@@ -32,20 +32,39 @@ from yellowbrick.exceptions import YellowbrickValueError
 
 class KElbowVisualizerTests(VisualTestCase, DatasetMixin):
 
-    def test_integrated_elbow(self):
+    def test_integrated_kmeans_elbow(self):
         """
-        Test that no errors occur on k-elbow on real dataset
+        Test no exceptions for kmeans k-elbow visualizer on blobs dataset
 
         See #182: cannot use occupancy dataset because of memory usage
         """
 
         # Generate a blobs data set
         X,y = make_blobs(
-            n_samples=200, n_features=4, centers=6, shuffle=True
+            n_samples=1000, n_features=12, centers=6, shuffle=True
         )
 
         try:
             visualizer = KElbowVisualizer(KMeans(), k=4)
+            visualizer.fit(X)
+            visualizer.poof()
+        except Exception as e:
+            self.fail("error during k-elbow: {}".format(e))
+
+    def test_integrated_mini_batch_kmeans_elbow(self):
+        """
+        Test no exceptions for mini-batch kmeans k-elbow visualizer
+
+        See #182: cannot use occupancy dataset because of memory usage
+        """
+
+        # Generate a blobs data set
+        X,y = make_blobs(
+            n_samples=1000, n_features=12, centers=6, shuffle=True
+        )
+
+        try:
+            visualizer = KElbowVisualizer(MiniBatchKMeans(), k=4)
             visualizer.fit(X)
             visualizer.poof()
         except Exception as e:
