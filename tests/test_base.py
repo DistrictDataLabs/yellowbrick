@@ -44,13 +44,13 @@ class BaseTests(unittest.TestCase):
         visualizer = Visualizer()
         self.assertIs(visualizer.fit([]), visualizer)
 
-    def test_base_poof(self):
-        """
-        Assert that the base visualizer implements poof interface
-        """
-        with self.assertRaises(NotImplementedError):
-            visualizer = Visualizer()
-            visualizer.poof()
+    # def test_base_poof(self):
+    #     """
+    #     Assert that the base visualizer implements poof interface
+    #     """
+    #     with self.assertRaises(NotImplementedError):
+    #         visualizer = Visualizer()
+    #         visualizer.poof()
 
     def test_fit_draw(self):
         """

@@ -21,14 +21,14 @@ import unittest
 import numpy as np
 
 from yellowbrick.features.pcoords import *
-
+from tests.dataset import DatasetMixin
 
 ##########################################################################
 ## Parallel Coordinates Tests
 ##########################################################################
 
 
-class ParallelCoordinatesTests(unittest.TestCase):
+class ParallelCoordinatesTests(unittest.TestCase, DatasetMixin):
 
     X = np.array(
             [[ 2.318, 2.727, 4.260, 7.212, 4.792],
@@ -47,3 +47,22 @@ class ParallelCoordinatesTests(unittest.TestCase):
         """
         visualizer = ParallelCoordinates()
         visualizer.fit_transform(self.X, self.y)
+
+    def test_integrated_pcoords(self):
+        """
+        Test parallel coordinates on a real, occupancy data set
+        """
+        occupancy = self.load_data('occupancy')
+
+        X = occupancy[[
+            "temperature", "relative_humidity", "light", "C02", "humidity"
+        ]]
+
+        y = occupancy['occupancy'].astype(int)
+
+        # Convert X to an ndarray
+        X = X.view((float, len(X.dtype.names)))
+
+        # Test the visualizer
+        visualizer = ParallelCoordinates()
+        visualizer.fit_transform(X, y)

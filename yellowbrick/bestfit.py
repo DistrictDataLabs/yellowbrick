@@ -25,6 +25,7 @@ from sklearn.pipeline import make_pipeline
 from sklearn.metrics import mean_squared_error as mse
 
 from operator import itemgetter
+from yellowbrick.style.palettes import LINE_COLOR
 from yellowbrick.exceptions import YellowbrickValueError
 
 
@@ -112,8 +113,12 @@ def draw_best_fit(X, y, ax, estimator='linear', **kwargs):
     # Uses the estimator to fit the data and get the model back.
     model = estimator(X, y)
 
+    # Set the color if not passed in.
+    if 'c' not in kwargs and 'color' not in kwargs:
+        kwargs['color'] = LINE_COLOR
+
     # Plot line of best fit onto the axes that were passed in.
-    # TODO: determin if xlim or X.min(), X.max() are better params
+    # TODO: determine if xlim or X.min(), X.max() are better params
     xr = np.linspace(*ax.get_xlim(), num=100)
     ax.plot(xr, model.predict(xr[:,np.newaxis]), **kwargs)
     return ax

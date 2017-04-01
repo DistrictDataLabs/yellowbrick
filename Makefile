@@ -22,6 +22,7 @@ clean:
 	-rm -rf site
 	-rm -rf classes_$(PROJECT).png
 	-rm -rf packages_$(PROJECT).png
+	-rm -rf docs/_build
 
 # Targets for testing
 test:

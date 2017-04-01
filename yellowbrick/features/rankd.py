@@ -122,11 +122,7 @@ class Rank2D(FeatureVisualizer):
         kwargs : dict
             keyword arguments passed to the super class.
         """
-        super(Rank2D, self).__init__(**kwargs)
-
-        # The figure params
-        # TODO: hoist to a higher level base class
-        self.ax = ax
+        super(Rank2D, self).__init__(ax=ax, **kwargs)
 
         # Data Parameters
         self.ranking_  = algorithm
@@ -151,7 +147,7 @@ class Rank2D(FeatureVisualizer):
             Pass generic arguments to the drawing method
 
         Returns
-        ------
+        -------
         self : instance
             Returns the instance of the transformer/visualizer
         """
@@ -249,6 +245,7 @@ class Rank2D(FeatureVisualizer):
         mask = mask[::-1]
 
         # Draw the heatmap
+        # TODO: Move mesh to a property so the colorbar can be finalized
         data = np.ma.masked_where(mask, X)
         mesh = self.ax.pcolormesh(data, cmap=self.colormap, vmin=-1, vmax=1)
 
@@ -261,26 +258,20 @@ class Rank2D(FeatureVisualizer):
         cb = self.ax.figure.colorbar(mesh, None, self.ax)
         cb.outline.set_linewidth(0)
 
-
-    def poof(self, outpath=None, **kwargs):
+    def finalize(self, **kwargs):
         """
-        Display the Rank2D visualization
+        Finalize executes any subclass-specific axes finalization steps.
+        The user calls poof and poof calls finalize.
 
         Parameters
         ----------
-        outpath: path or None
-            Save the figure to disk or if None show in a window
-        """
-        if self.ax is None: return
+        kwargs: dict
+            generic keyword arguments
 
+        """
         # Set the title
         self.ax.set_title(
             "{} Ranking of {} Features".format(
                 self.ranking_.title(), len(self.features_)
             )
         )
-
-        if outpath is not None:
-            plt.savefig(outpath, **kwargs)
-        else:
-            plt.show()
