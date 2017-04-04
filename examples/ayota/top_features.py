@@ -9,7 +9,7 @@ TODO:
 """
 
 ##########################################################################
-## Imports
+## Top Features Visualizer
 ##########################################################################
 
 import numpy as np
@@ -23,31 +23,45 @@ from yellowbrick.style import color_palette
 
 class TopFeaturesVisualizer(ClassificationScoreVisualizer):
     """
-    This takes the result of a classifier and visualizes 
-    the top N positive and negative coefficients for each target class in the corpus. 
-    (I think this is a score visualizer?)
+    This takes the result of a text classifier and visualizes 
+    the top N positive and negative coefficients for each 
+    target class in the corpus.
 
     Parameters
     ----------
-    ax : matplotlib axes
+    ax : matplotlib axes, default: None
+        The axes to plot the figure on. If None is passed in, the
+        current axes will be used (or generated if required).
 
-    color :
 
-    N : integer
+    N : int
+        The number of features to visualize among the positive and
+        negative coefficients.
 
     kwargs : dict
+        Keyword arguments that are passed to the base class and may influence
+        the visualization as defined in other Visualizers.
+
+    Examples
+    --------
+    >>> from sklearn.svm import LinearSVC
+    >>> from yellowbrick.classifier import TopFeaturesVisualizer
+    >>> visualizer = TopFeaturesVisualizer(LinearSVC())
+    >>> visualizer.fit()
+    >>> visualizer.poof()
+
+
+    Notes
+    -----
+    This visualizer requires a text corpus. 
 
     """
 
-    def __init__(self, model, ax=None, classes=None, N=20, **kwargs):
-        """
-        Initialization for visualization.
-        """
+    def __init__(self, model, ax=None, class=None, N=20, **kwargs):
 
         super(TopFeaturesVisualizer, self).__init__(model=model, ax=ax, **kwargs)
 
         self.N = N
-        self.classes_  = classes
         self.model = model
 
     def get_top_coefs(self, classifier, class_label, features):
@@ -74,8 +88,7 @@ class TopFeaturesVisualizer(ClassificationScoreVisualizer):
         """
 
         super(TopFeaturesVisualizer, self).fit(X_train, y, **kwargs)
-        if self.classes_ is None:
-            self.classes_ = self.estimator.classes_
+        self.classes_ = self.estimator.classes_
 
         return self
 
@@ -86,10 +99,12 @@ class TopFeaturesVisualizer(ClassificationScoreVisualizer):
         Then, make plots for desired classes.
         """
         
+        self.class_label = class_label
+        # can get features from estimator?
         self.get_top_coefs(self.estimator, class_label, features)
-        self.draw(class_label)
+        self.draw()
 
-    def draw(self, class_label, **kwargs):
+    def draw(self, **kwargs):
         """
         Draw basic plot here, with all finishing for each individual subplot called here.
         """
@@ -102,15 +117,14 @@ class TopFeaturesVisualizer(ClassificationScoreVisualizer):
         self.ax.bar(np.arange(2 * self.N), self.top_coefficients, color=colors)
         self.ax.set_xticks(np.arange(1, 1 + 2 * self.N))
 
-        # Add a title
-        self.set_title('Top {N} features for {class_label}'.format(N=self.N, class_label=class_label))
-        
-        # Add tick labels
-        self.ax.set_xticklabels(self.top_features, rotation=90, ha='right')
-
 
     def finalize(self, **kwargs):
         """
-        This should be styling for whole subplot object, since individual subplots need to be set in draw.
+        Add final touches: tick labels and title.
         """
 
+        # Add a title
+        self.set_title('Top {N} features for {class_label}'.format(N=self.N, class_label=self.class_label))
+        
+        # Add tick labels
+        self.ax.set_xticklabels(self.top_features, rotation=90, ha='right')
