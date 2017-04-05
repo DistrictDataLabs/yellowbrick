@@ -57,7 +57,7 @@ Create a notebook in a GitHub repository. We suggest the following:
 1. Fork the Yellowbrick repository
 2. Under the ``examples`` directory, create a directory named with your
    GitHub username
-3. Create the notebook in examples/USERNAME/testing.ipynb
+3. Create a notebook named ``testing``, i.e. examples/USERNAME/testing.ipynb
 
 Alternatively, you could just send us a notebook via Gist or your own
 repository. However, if you fork Yellowbrick, you can initiate a pull
@@ -84,7 +84,7 @@ an end-to-end model from data loading to estimator(s) with visualizers
 along the way.
 
 **IMPORTANT**: please make sure you record all errors that you get and
-any tracebacks you receive for step four!
+any tracebacks you receive for step three!
 
 Step Five: Feedback
 ~~~~~~~~~~~~~~~~~~~
