@@ -9,7 +9,16 @@ options and customize as much as possible. After you've exercised the
 code with your examples, respond to our `alpha testing
 survey <https://goo.gl/forms/naoPUMFa1xNcafY83>`__!
 
-Step One: Dataset
+Step One: Questionaire
+~~~~~~~~~~~~~~~~~~~~~~
+Please open the quesionaire, in order to familiarize yourself with the
+feedback that we are looking to receive. We are very interested in 
+identifying any bugs in Yellowbrick. Please keep include cells in your
+jupyter notebook that produce errors so that we may reproduce the 
+problem.
+
+
+Step Two: Dataset
 ~~~~~~~~~~~~~~~~~
 
 Select a multivariate dataset of your own; the more (e.g. different)
@@ -40,8 +49,8 @@ publicly available for us to review. If the data is also public (or
 you're willing to share it with the primary contributors) that will help
 us figure out bugs and required features much more easily!
 
-Step Two: Notebook
-~~~~~~~~~~~~~~~~~~
+Step Three: Notebook
+~~~~~~~~~~~~~~~~~~~~
 
 Create a notebook in a GitHub repository. We suggest the following:
 
@@ -54,8 +63,8 @@ Alternatively, you could just send us a notebook via Gist or your own
 repository. However, if you fork Yellowbrick, you can initiate a pull
 request to have your example added to our gallery!
 
-Step Three: Model with Yellowbrick and Scikit-Learn
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Step Four: Model with Yellowbrick and Scikit-Learn
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Add the following to the notebook:
 
@@ -77,7 +86,7 @@ along the way.
 **IMPORTANT**: please make sure you record all errors that you get and
 any tracebacks you receive for step four!
 
-Step Four: Feedback
+Step Five: Feedback
 ~~~~~~~~~~~~~~~~~~~
 
 Finally, submit feedback via the Google Form we have created:
@@ -90,8 +99,8 @@ the first to report a bug or feature request, we will make sure you're
 notified (we'll tag you using your Github username) about the created
 issue!
 
-Step Five: Thanks!
-~~~~~~~~~~~~~~~~~~
+Step Six: Thanks!
+~~~~~~~~~~~~~~~~~
 
 Thank you for helping us make Yellowbrick better! We'd love to see pull
 requests for features you think would be extend the library. We'll also
