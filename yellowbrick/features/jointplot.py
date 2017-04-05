@@ -16,6 +16,7 @@
 
 import numpy as np
 import pandas as pd
+import matplotlib as mpl
 import matplotlib.pyplot as plt
 
 from yellowbrick.features.base import FeatureVisualizer
@@ -24,6 +25,13 @@ from yellowbrick.bestfit import draw_best_fit
 from yellowbrick.utils import is_dataframe
 
 class JointPlotVisualizer(FeatureVisualizer):
+	"""
+	JointPlotVisualizer allows for a simultaneous visualization of the relationship
+	between two variables and the distrbution of each individual variable.  The 
+	relationship is plotted along the joint axis and univariate distributions
+	are plotted on top of the x axis and to the right of the y axis.	
+	"""
+	
 	def __init__(self, ax=None, feature=None, target=None, 
 				 joint_plot='scatter', joint_args=None, 
 				 xy_plot='hist', xy_args=None,
@@ -43,7 +51,7 @@ class JointPlotVisualizer(FeatureVisualizer):
 			JointPlotVisualizer since there are three axes objects.
 
 		feature: The name of the X variable
-			If a DataFrame is passed to fit and feature is None, featur
+			If a DataFrame is passed to fit and feature is None, feature
 			is selected as the column of the DataFrame.  There must be only
 			one column in the DataFrame.
 
@@ -52,7 +60,8 @@ class JointPlotVisualizer(FeatureVisualizer):
 			is selected from the target vector.
 
 		joint_plot: The type of plot to render in the joint axis.  Currently,
-			the choices are scatter and hex.
+			the choices are scatter and hex.  Use scatter for small datasets
+			and hex for large datasets
 
 		joint_args: Keyword arguments used for customizing the joint plot.
 				Property        Description
@@ -93,6 +102,12 @@ class JointPlotVisualizer(FeatureVisualizer):
 		kwargs: Keyword arguments passed to the super class.
 
 		"""
+		
+		#check matplotlib version - needs to be version 2.0.0	
+		if mpl.__version__ == '2.0.0':
+			pass 
+		else:
+			print('This Visualizer requires Matplotlib version 2.0.0. Please upgrade to  continue.')
 			
 		super(JointPlotVisualizer, self).__init__(ax, **kwargs)
 		
@@ -134,13 +149,13 @@ class JointPlotVisualizer(FeatureVisualizer):
 			nrows, ncols = X.shape
 			if ncols > 1:
 				raise YellowbrickValueError(
-				"X cannot have more than 1 column"
+				"X needs to be an ndarray or DataFrame with one feature, please select one feature from the DataFrame"
 				)   
 			
 		#throw an error is y is None
 		if y is None:
 			raise YellowbrickValueError(
-				"y cannot be null")
+				"Joint plots are useful for classification and regression problems, which            require a target variable")
 		
 
 		# Handle the feature name if it is None.
