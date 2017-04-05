@@ -29,9 +29,9 @@ class PosTagVisualizer(TextVisualizer):
     """
     A part-of-speech tag visualizer colorizes text to enable
     the user to visualize the proportions of nouns, verbs, etc.
-    and to use this information to make decisions about text
-    normalization (e.g. stemming vs lemmatization) and
-    vectorization.
+    and to use this information to make decisions about
+    part-of-speech tagging, text normalization (e.g. stemming
+    vs lemmatization) and vectorization.
 
     Parameters
     ----------
@@ -140,6 +140,6 @@ class PosTagVisualizer(TextVisualizer):
         self.tagged = [
             (self.TAGS.get(tag),tok) for tok, tag in tagged_tuples
         ]
-
-        print(' '.join((colorize(token, color) for color, token in self.tagged)))
-        print('\n')
+        # 
+        # print(' '.join((colorize(token, color) for color, token in self.tagged)))
+        # print('\n')

@@ -1,8 +1,8 @@
-# yellowbrick.style
-# Manage the style and aesthetic of the yellowbrick library.
+# tests.test_cluster
+# Tests for the cluster visualizers.
 #
 # Author:   Benjamin Bengfort <bbengfort@districtdatalabs.com>
-# Created:  Tue Oct 04 15:09:48 2016 -0400
+# Created:  Thu Mar 23 17:37:57 2017 -0400
 #
 # Copyright (C) 2016 District Data Labs
 # For license information, see LICENSE.txt
@@ -10,14 +10,9 @@
 # ID: __init__.py [] benjamin@bengfort.com $
 
 """
-Manage the style and aesthetic of the yellowbrick library.
+Tests for the cluster visualizers.
 """
 
 ##########################################################################
 ## Imports
 ##########################################################################
-
-from .colors import *
-from .palettes import *
-from .rcmod import *
-from .utils import *
