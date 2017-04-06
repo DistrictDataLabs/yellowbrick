@@ -1,0 +1,52 @@
+Notes for user feedback testing:
+
+User Research Process:
+* Very vague instructions
+* Don't know what feedback to collect before taking the survey, and survey won't let me see questions due to mandatory fields. I recommend changing to a one-page survey (multi-page is better when you want to encourage people to start a longish survey they might abandon. Our testers will have already invested several hours in testing)
+
+
+Bugs etc.:
+* Had to add the classifier.py classes into the __init__ to get them to load in the namespace
+* Need label rotation to angled text when there are too many categorical labels on an axis (example: ClassBalance report)
+* Don't we want consistent x/y min and max values for the prediction error plot? That would make the 45 degree line actually 45 degrees. 
+* ROCAUC needs x / y axis labels
+
+
+# Usability:
+ 
+## General notes
+* Many visualizers don't play well with KFold. I started out using KFold validation, but then abandoned it in favor of train_test_split to better make use of the visualizers functionality. 
+
+
+## Methods and the YellowBrick API
+Overall my biggest difficulty in learning YellowBrick is understanding how the sklearn API is being used in the context of a visualizer. The use of some of the methods feel like a square peg in a round hole. 
+
+### Feature analysis:
+* fit() makes sense. Get the data you need. 
+* transform() - doesn't make sense. in sklearn, you use transform when you want data back that's been altered in some way. Here, it's not necessary to alter the data - and behind the scenes, transform() is doing stuff to the visualizer rather than to the data. In all the feature analysis examples, transform() is called immediately after fit() with the exact same data. Should the transform() functionality be rolled into fit()? For example, calculating Pearson correlations feels like 'fitting' the visualizer to the data. 
+* score() - isn't included in this type of analyzer. for Rank2D, 'transform()' could logically be called 'score()'. But probably don't want to do that since you don't need to pass it the X_test and y_test the way you do in the ScoreVisualizers that use the score() method. 
+
+### ScoreVisualizer
+* score() makes sense. You need the test data to be able to evaluate the score. One question is whether I'd want multiple types of visualizers to use the same predict() results in calculating their scores (for instance, prediction error plot and residuals plot). But, why isn't score() method included in the base class?
+* fit() as a pass-through of fitting the associated model makes sense. But, the way the tutorials are set up don't fit with the workflow I'd expect to use. I would expect to use model.fit(), and then instantiate the visualizer with the *fitted* model, then use score() on the visualizer to get the results. After digging into the source code I can see this technically works (since all visualizer.fit() does is run the fit() method of the associated model). I would expect fitting the model outside of the visualizer to be the more common use case - many reasons e.g. you want to run multiple visualizations evaluating the fitted 
+
+### ModelVisualizer
+Not fully implemented I know - but thinking about how to create consistent methodology:
+* fit() -  Interesting question. Will this re-run self.model.predict() for every permutation of the model needed, saving each fitted model for later use? Or, will it save the data and let the predict() method fit the models (thus allowing it to throw away the model after it calculates the scores)? Should look into the sklearn source code to inform performance tradeoffs. 
+* predict() - makes sense that this would create predictions based on test data. But when we're predicting across multiple items (e.g. multiple k's), what will this return? Should it be a generator like the MultiModelMixin? 
+* score() - currently not included in the skeleton class. Would it make more sense for this class to behave the same as the ScoreVisualizer and be able to operate just via fit() and score() by doing predict() implicitly? This would be my suggestion. 
+
+
+## Rank2D
+* the name 'features' is not immediately obvious what it means - what about feature_names?
+* documentation on what Rank2D does is not clear. Took me a few times (albeit skimming quickly) to realize what it was doing.
+
+## ClassBalance visualizer
+I would expect a standalone ClassBalance report to be based on the ClassBalance of the training data, not the test data. After digging into the source code, I saw that you were pulling this out of the precision_recall_fscore_support report; having a graph of support makes sense but I think would be more useful side-by-side with the other 3 scores. It also seems unnecessary to require a fitted model to create this report - you can calculate support from y alone. 
+
+
+# 'examples' documentation notes:
+Per my usability comments, the example documentation showing how each visualizer work would be much clearer if the comment next to each of the visualizer methods was more explanatory. Examples:
+* FeatureVisualizer: Instead of `#Transform the data` (this just repeats the method name), say `#for a visualizer, transform() calculates and places the data on the chart` - but I still advocate for ditching transform() altogether. 
+* ScoreVisualizer: Instead of `#fit the data to the visualizer`, say `#fit the sklearn model associated with the visualizer to the training data. Omit this step if your model was fit before creating the visualizer` 
+* Early examples have good explanations e.g. "Data scientists use this for..." but these fall off by the later sections (e.g. ROCAUC is not explained at all). 
