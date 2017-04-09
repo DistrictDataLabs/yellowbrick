@@ -12,7 +12,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib as mpl
 from cycler import cycler
-from collections import OrderedDict
+from collections import OrderedDict, defaultdict
 
 
 from yellowbrick.exceptions import YellowbrickTypeError
@@ -95,6 +95,7 @@ class KnnDecisionBoundariesVisualizer(ModelVisualizer, BivariateFeatureMixin):
             # TODO: Is this the most efficient method?
             self.classes_ = [str(label) for label in set(y)]
 
+        print(self.classes_)
         # Handle the feature names if they're None.
         if self.features_ is None:
                 # If X is a data frame, get the columns off it.
@@ -108,18 +109,20 @@ class KnnDecisionBoundariesVisualizer(ModelVisualizer, BivariateFeatureMixin):
                     ]
 
         self.estimator.fit(X, y)
-
-        h = .02
+        print('fitted')
+        h = .2
         # Plot the decision boundary. For that, we will assign a color to each
         # point in the mesh [x_min, x_max]x[y_min, y_max].
         x_min, x_max = X[:, 0].min() - 1, X[:, 0].max() + 1
         y_min, y_max = X[:, 1].min() - 1, X[:, 1].max() + 1
+        print(np.arange(x_min, x_max, h))
         self.xx, self.yy = np.meshgrid(np.arange(x_min, x_max, h),
                              np.arange(y_min, y_max, h))
-
+        print('meshgrid')
         Z = self.estimator.predict(np.c_[self.xx.ravel(), self.yy.ravel()])
+        print('predicted')
         self.Z_shape = Z.reshape(self.xx.shape)
-
+        print('shaped')
         return self
 
 
@@ -137,14 +140,14 @@ class KnnDecisionBoundariesVisualizer(ModelVisualizer, BivariateFeatureMixin):
         if self.ax is None:
             self.ax = plt.gca(xlim=[-1,1], ylim=[-1,1])
 
-        color_cycle = cycler(color=self.colors)
+        color_cycle = iter(cycler(c=self.colors))
 
-        iter_color_cycle = iter(color_cycle)
+        iter_color_cycle = defaultdict(lambda : next(color_cycle))
         point_color = OrderedDict()
         boundary_color = OrderedDict()
         for class_ in self.classes_:
-            point_color[class_] = next(iter_color_cycle)['color']
-            boundary_color[class_] = next(iter_color_cycle)['color']
+            point_color[class_] = iter_color_cycle['color']
+            boundary_color[class_] = iter_color_cycle['color']
 
         self.ax.pcolormesh(self.xx, self.yy, self.Z_shape, cmap=ListedColormap(boundary_color.values()) )
 
@@ -158,7 +161,10 @@ class KnnDecisionBoundariesVisualizer(ModelVisualizer, BivariateFeatureMixin):
         for i, row in enumerate(X):
             row_ = np.repeat(np.expand_dims(row, axis=1), 2, axis=1)
             x_, y_   = row_[0], row_[1]
-            kls = self.classes_[y[i]]
+            print(y)
+            print(y_)
+            print(i)
+            kls = self.classes_[y_[i]]
 
             to_plot[kls][0].append(x_)
             to_plot[kls][1].append(y_)
@@ -182,12 +188,17 @@ class KnnDecisionBoundariesVisualizer(ModelVisualizer, BivariateFeatureMixin):
 
         """
         # Divide out the two features
-        feature_one, feature_two = self.features_
-
-        # Set the title
+        if self.features_ is not None:
+            print(self.features_)
+            feature_one, feature_two = self.features_
+            # Set the title
+            self.set_title(
+                title='Decisions Boundaries: {feature_one} vs {feature_two}'.format(**locals())
+            )
         self.set_title(
-            title='Decisions Boundaries: {feature_one} vs {feature_two}'.format(**locals())
+            title='Decisions Boundaries'
         )
+
         # Add the legend
         self.ax.legend(loc='best')
         self.ax.set_xlabel(feature_one)
