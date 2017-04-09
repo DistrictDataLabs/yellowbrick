@@ -30,6 +30,9 @@ from yellowbrick.features.jointplot import *
 
 class JointPlotTests(unittest.TestCase, DatasetMixin):
 
+	X = np.array([1, 2, 3, 5, 8, 10])
+
+	y = np.array([1, 3, 6, 2, 9, 2])
 	
 	def setUp(self):
 		self.concrete = self.load_data('concrete')
@@ -39,25 +42,22 @@ class JointPlotTests(unittest.TestCase, DatasetMixin):
 
 	def test_jointplot(self):
 		"""
-		Test that if X has more than 1 column 
-		a value error would be raised
+		Assert no errors occur during jointplot visualizer integration
 		"""
-		X = np.array([1, 2, 3, 5, 8, 10, 2],
-			  		 [2, 3, 5, 6, 7, 8, 9])
-		y = np.array([1, 3, 6, 2, 9, 2, 3])
 		
-		with self.assertRaises(YellowbrickValueError):
-			visualizer = JointPlotVisualizer()
-			visualizer.fit(self.X, self.y)
-
-	def test_jointplot(self):
+		visualizer = JointPlotVisualizer()
+		visualizer.fit(self.X, self.y)
+		
+	def test_jointplot_integrated(self):
 		"""
 		Test jointplot on the concrete data set
 		"""
 
 		# Load the data from the fixture
-		X = self.concrete['cement'].as_matrix()
-		y = self.concrete['strength'].as_matrix()
+		X = self.concrete['cement']
+		y = self.concrete['strength']
+		feature = 'cement'
+		target = 'strength'
 
 		# Test the visualizer
 		visualizer = JointPlotVisualizer(feature=feature, target=target, joint_plot="hex")
