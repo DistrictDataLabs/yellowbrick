@@ -13,7 +13,7 @@ Step One: Questionaire
 ~~~~~~~~~~~~~~~~~~~~~~
 Please open the quesionaire, in order to familiarize yourself with the
 feedback that we are looking to receive. We are very interested in 
-identifying any bugs in Yellowbrick. Please keep include cells in your
+identifying any bugs in Yellowbrick. Please include al cells in your
 jupyter notebook that produce errors so that we may reproduce the 
 problem.
 
