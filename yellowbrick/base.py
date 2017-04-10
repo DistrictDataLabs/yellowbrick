@@ -84,6 +84,13 @@ class Visualizer(BaseEstimator):
     def draw(self, **kwargs):
         """
         Rendering function
+
+        Parameters
+        ----------
+
+        kwargs: dict
+            generic keyword arguments.
+
         """
         ax = self.gca()
 
@@ -99,7 +106,8 @@ class Visualizer(BaseEstimator):
         outpath: string
             path or None. Save  figure to disk or if None show in window
 
-        kwargs: generic keyword arguments.
+        kwargs: dict
+            generic keyword arguments.
         """
         if self.ax is None: return
 
@@ -113,6 +121,11 @@ class Visualizer(BaseEstimator):
     def set_title(self, title=None):
         """
         Sets the title on the current axes.
+
+        Parameters
+        ----------
+        title: string or None
+            Add title to figure or if None leave untitled.
         """
         title = self.title or title
         if title is not None:
@@ -134,11 +147,39 @@ class Visualizer(BaseEstimator):
         """
         Fits a transformer to X and y then returns
         visualization of features or fitted model.
+
+        Parameters
+        ----------
+
+        X : ndarray or DataFrame of shape n x m
+            A matrix of n instances with m features
+
+        y : ndarray or Series of length n
+            An array or series of target or class values
+
+        kwargs: dict
+            Generic keyword arguments.
         """
         self.fit(X, y, **kwargs)
         self.draw(**kwargs)
 
     def fit_draw_poof(self, X, y=None, **kwargs):
+        """
+        Fits a transformer to X and y then shows
+        the visualization of features or fitted model.
+
+        Parameters
+        ----------
+
+        X : ndarray or DataFrame of shape n x m
+            A matrix of n instances with m features
+
+        y : ndarray or Series of length n
+            An array or series of target or class values
+
+        kwargs: dict
+            Generic keyword arguments.
+        """
         self.fit_draw(X, y, **kwargs)
         self.poof(**kwargs)
 
@@ -193,6 +234,14 @@ class ScoreVisualizer(Visualizer):
         return self
 
     def predict(self, X):
+        """
+        Parameters
+        ----------
+
+        X : ndarray or DataFrame of shape n x m
+            A matrix of n instances with m features
+
+        """
         return self.estimator.predict(X)
 
     def draw(self, X, y):
@@ -253,6 +302,14 @@ class ModelVisualizer(Visualizer):
         pass
 
     def predict(self, X):
+        """
+        Parameters
+        ----------
+
+        X : ndarray or DataFrame of shape n x m
+            A matrix of n instances with m features
+
+        """
         pass
 
 ##########################################################################
@@ -273,7 +330,8 @@ class MultiModelMixin(object):
 
         Parameters
         ----------
-        models: the Scikit-Learn models being compared with each other.
+        models: Scikit-Learn estimator
+            the Scikit-Learn models being compared with each other.
 
         kwargs: dict
             keyword arguments.
@@ -299,6 +357,19 @@ class MultiModelMixin(object):
         """
         Returns a generator containing the predictions for each of the
         internal models (using cross_val_predict and a CV=12).
+
+        Parameters
+        ----------
+
+        X : ndarray or DataFrame of shape n x m
+            A matrix of n instances with m features
+
+        y : ndarray or Series of length n
+            An array or series of target or class values
+
+        kwargs: dict
+            keyword arguments passed to Scikit-Learn API.
+
         """
         for model in self.models:
             yield cvp(model, X, y, cv=12)

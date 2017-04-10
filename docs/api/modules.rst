@@ -7,5 +7,6 @@ API Reference
     yellowbrick
     yellowbrick.features
     yellowbrick.regressor
+    yellowbrick.cluster
     yellowbrick.text
     yellowbrick.style
