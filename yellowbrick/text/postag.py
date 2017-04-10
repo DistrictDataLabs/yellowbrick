@@ -140,7 +140,6 @@ class PosTagVisualizer(TextVisualizer):
         self.tagged = [
             (self.TAGS.get(tag),tok) for tok, tag in tagged_tuples
         ]
-
-        print(' '.join((colorize(token, color) for color, token in self.tagged)))
-        print('\n')
-        
+        # 
+        # print(' '.join((colorize(token, color) for color, token in self.tagged)))
+        # print('\n')
