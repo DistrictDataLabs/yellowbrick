@@ -3,12 +3,12 @@
 # Implementations of joint plots for univariate and bivariate analysis.
 #
 # Author:   Prema Damodaran Roman 
-# Created:  
+# Created:  Mon Apr 10 21:00:54 2017 -0400
 #
 # Copyright (C) 2017 District Data Labs
 # For license information, see LICENSE.txt
 #
-# ID: jointplot.py
+# ID: jointplot.py [] pdamo24@gmail.com $
 
 ##########################################################################
 ## Imports

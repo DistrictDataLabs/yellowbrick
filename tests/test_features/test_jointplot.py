@@ -2,12 +2,12 @@
 # Test the JointPlotVisualizer
 #
 # Author:   Prema Damodaran Roman
-# Created:  
+# Created:  Mon Apr 10 21:00:54 2017 -0400
 #
 # Copyright (C) 2017 District Data Labs
 # For license information, see LICENSE.txt
-#
-# ID: test_jointplot.py
+# 
+# ID: test_jointplot.py [] pdamo24@gmail.com $
 
 """
 Test the JointPlotVisualizer
@@ -47,6 +47,7 @@ class JointPlotTests(unittest.TestCase, DatasetMixin):
 		
 		visualizer = JointPlotVisualizer()
 		visualizer.fit(self.X, self.y)
+		visualizer.poof()
 		
 	def test_jointplot_integrated(self):
 		"""
