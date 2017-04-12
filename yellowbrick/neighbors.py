@@ -90,12 +90,13 @@ class KnnDecisionBoundariesVisualizer(ModelVisualizer, BivariateFeatureMixin):
 
         nrows, ncols = X.shape
 
-        # Store the classes for the legend if they're None.
+        # Assign each class a unique number for drawing
         if self.classes_ is None:
-            # TODO: Is this the most efficient method?
-            self.classes_ = [str(label) for label in set(y)]
-
-        print(self.classes_)
+            self.classes_ = {label:str(kls_num) for kls_num, label in enumerate(set(y))}
+        elif len(set(y)) == len(self.classes_):
+            self.classes_ = {label:str(kls_num) for kls_num, label in enumerate(self.classes_)}
+        else:
+            raise Exception("Number of classes must be the same length of number of target y")
         # Handle the feature names if they're None.
         if self.features_ is None:
                 # If X is a data frame, get the columns off it.
@@ -109,23 +110,24 @@ class KnnDecisionBoundariesVisualizer(ModelVisualizer, BivariateFeatureMixin):
                     ]
 
         self.estimator.fit(X, y)
-        print('fitted')
-        h = .2
+
         # Plot the decision boundary. For that, we will assign a color to each
         # point in the mesh [x_min, x_max]x[y_min, y_max].
         x_min, x_max = X[:, 0].min() - 1, X[:, 0].max() + 1
         y_min, y_max = X[:, 1].min() - 1, X[:, 1].max() + 1
-        print(np.arange(x_min, x_max, h))
-        self.xx, self.yy = np.meshgrid(np.arange(x_min, x_max, h),
-                             np.arange(y_min, y_max, h))
-        print('meshgrid')
+
+        # Create the axes if they don't exist
+        if self.ax is None:
+            self.ax = plt.gca(xlim=[x_min, x_max ], ylim=[y_min, y_max ])
+
+        x_step = (x_max - x_min) * 0.0025
+        y_step = (y_max - y_min) * 0.0025
+
+        self.xx, self.yy = np.meshgrid(np.arange(x_min, x_max, x_step),
+                             np.arange(y_min, y_max, y_step))
         Z = self.estimator.predict(np.c_[self.xx.ravel(), self.yy.ravel()])
-        print('predicted')
         self.Z_shape = Z.reshape(self.xx.shape)
-        print('shaped')
         return self
-
-
 
     def draw(self, X, y, **kwargs):
         """
@@ -136,46 +138,37 @@ class KnnDecisionBoundariesVisualizer(ModelVisualizer, BivariateFeatureMixin):
         # Get the shape of the data
         nrows, ncols = X.shape
 
-        # Create the axes if they don't exist
-        if self.ax is None:
-            self.ax = plt.gca(xlim=[-1,1], ylim=[-1,1])
-
-        color_cycle = iter(cycler(c=self.colors))
-
-        iter_color_cycle = defaultdict(lambda : next(color_cycle))
+        num_colors = len(self.classes_) * 2
+        color_cycle = iter(resolve_colors(color=self.colors, num_colors=num_colors))
         point_color = OrderedDict()
         boundary_color = OrderedDict()
-        for class_ in self.classes_:
-            point_color[class_] = iter_color_cycle['color']
-            boundary_color[class_] = iter_color_cycle['color']
+        for class_ in self.classes_.keys():
+            point_color[class_] = next(color_cycle)
+            boundary_color[class_] = next(color_cycle)
 
         self.ax.pcolormesh(self.xx, self.yy, self.Z_shape, cmap=ListedColormap(boundary_color.values()) )
 
         # Create a data structure to hold the scatter plot representations
-        to_plot = {}
-        for kls in self.classes_:
-            to_plot[kls] = [[], []]
+        to_plot = OrderedDict()
+        for index in self.classes_.values():
+            to_plot[index] = [[], []]
 
         # Add each row of the data set to to_plot for plotting
         # TODO: make this an independent function for override
         for i, row in enumerate(X):
             row_ = np.repeat(np.expand_dims(row, axis=1), 2, axis=1)
             x_, y_   = row_[0], row_[1]
-            print(y)
-            print(y_)
-            print(i)
-            kls = self.classes_[y_[i]]
-
-            to_plot[kls][0].append(x_)
-            to_plot[kls][1].append(y_)
+            index = self.classes_[y[i]]
+            to_plot[index][0].append(x_)
+            to_plot[index][1].append(y_)
 
         # Add the scatter plots from the to_plot function
         # TODO: store these plots to add more instances to later
         # TODO: make this a separate function
-        for i, kls in enumerate(self.classes_):
-            self.ax.scatter(to_plot[kls][0], to_plot[kls][1], color=point_color[kls], label=str(kls), **kwargs)
+        for kls, index in self.classes_.items():
+            self.ax.scatter(to_plot[index][0], to_plot[index][1], color=point_color[kls], label=str(kls), **kwargs)
 
-        self.ax.axis('equal')
+        self.ax.axis('auto')
 
     def finalize(self, **kwargs):
         """
@@ -188,18 +181,14 @@ class KnnDecisionBoundariesVisualizer(ModelVisualizer, BivariateFeatureMixin):
 
         """
         # Divide out the two features
+        title='Decisions Boundaries'
+
         if self.features_ is not None:
-            print(self.features_)
             feature_one, feature_two = self.features_
-            # Set the title
-            self.set_title(
-                title='Decisions Boundaries: {feature_one} vs {feature_two}'.format(**locals())
-            )
-        self.set_title(
-            title='Decisions Boundaries'
-        )
+            title='Decisions Boundaries: {feature_one} vs {feature_two}'.format(**locals())
 
         # Add the legend
+        self.set_title(title)
         self.ax.legend(loc='best')
         self.ax.set_xlabel(feature_one)
         self.ax.set_ylabel(feature_two)
