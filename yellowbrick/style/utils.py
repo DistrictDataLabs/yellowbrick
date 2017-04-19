@@ -12,7 +12,7 @@ import numpy as np
 from yellowbrick.exceptions import YellowbrickTypeError
 
 def find_text_color(base_color, dark_color="black", light_color="white", coef_choice=0):
-    '''
+    """
     Takes a background color and returns the appropriate light or dark text color.
     Users can specify the dark and light text color, or accept the defaults of 'black' and 'white'
 
@@ -30,7 +30,7 @@ def find_text_color(base_color, dark_color="black", light_color="white", coef_ch
 
     coef_choice: slightly different approaches to calculating brightness. Currently two options in
         a list, user can enter 0 or 1 as list index. 0 is default. 
-    '''
+    """
 
     #Coefficients: 
         # option 0: http://www.nbdtech.com/Blog/archive/2008/04/27/Calculating-the-Perceived-Brightness-of-a-Color.aspx
