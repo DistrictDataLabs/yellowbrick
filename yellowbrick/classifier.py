@@ -50,6 +50,8 @@ class ClassificationScoreVisualizer(ScoreVisualizer):
     """
 
     def __init__(self, model, ax=None, **kwargs):
+        # Check to see if model is an instance of a classifier.
+        # Should return an error if it isn't.
         if not isclassifier(model):
             raise YellowbrickTypeError(
                 "This estimator is not a classifier; try a regression or clustering score visualizer instead!"
@@ -183,7 +185,7 @@ class ConfusionMatrix(ClassificationScoreVisualizer):
             An array or series of target or class values
 
         sample_weight: float, default: None
-            passed to the confusion_matrix
+            optional, passed to the confusion_matrix
 
         percent: bool, default: True 
             Determines whether or not the confusion_matrix
