@@ -23,12 +23,97 @@ from yellowbrick.exceptions import YellowbrickValueError
 from yellowbrick.bestfit import draw_best_fit
 from yellowbrick.utils import is_dataframe
 
+##########################################################################
+## Joint Plot Visualizer
+##########################################################################
+
+
 class JointPlotVisualizer(FeatureVisualizer):
 	"""
 	JointPlotVisualizer allows for a simultaneous visualization of the relationship
 	between two variables and the distrbution of each individual variable.  The 
 	relationship is plotted along the joint axis and univariate distributions
-	are plotted on top of the x axis and to the right of the y axis.	
+	are plotted on top of the x axis and to the right of the y axis.
+
+	Parameters
+	----------
+
+	ax: matplotlib Axes, default: None
+		This is inherited from FeatureVisualizer but is defined within
+		JointPlotVisualizer since there are three axes objects.
+
+	feature: string, default: None
+		The name of the X variable
+		If a DataFrame is passed to fit and feature is None, feature
+		is selected as the column of the DataFrame.  There must be only
+		one column in the DataFrame.
+
+	target: string, default: None
+		The name of the Y variable
+		If target is None and a y value is passed to fit then the target
+		is selected from the target vector.
+
+	joint_plot: one of {'scatter', 'hex'}, default: 'scatter'
+		The type of plot to render in the joint axis
+		Currently, the choices are scatter and hex.  
+		Use scatter for small datasets and hex for large datasets
+
+	joint_args: dict, default: None
+		Keyword arguments used for customizing the joint plot 
+			Property        Description
+			alpha           transparency
+			facecolor       background color of the joint axis
+			aspect          aspect ratio
+			fit             used if scatter is selected for joint_plot to draw a 
+							best fit line - values can be True or False.
+							Uses Yellowbrick.bestfit
+			estimator       used if scatter is selected for joint_plot to determine
+							the type of best fit line to use.  Refer to 
+							Yellowbrick.bestfit for types of estimators that can be used.
+			x_bins          used if hex is selected to set the number of bins for the x value
+			y_bins          used if hex is selected to set the number of bins for the y value
+			cmap            string or matplotlib cmap to colorize lines
+							Use either color to colorize the lines on a per class basis or
+							colormap to color them on a continuous scale.
+			
+	xy_plot: one of {'hist'}, default: 'hist'
+		The type of plot to render along the x and y axes
+		Currently, the choice is hist
+		
+	xy_args: dict, default: None
+		Keyword arguments used for customizing the x and y plots
+			Property        Description
+			alpha           transparency
+			facecolor_x     background color of the x axis
+			facecolor_y     background color of the y axis
+			bins            used to set up the number of bins for the hist plot
+			histcolor_x     used to set the color for the histogram on the x axis
+			histcolor_y     used to set the color for the histogram on the y axis
+			
+	size: float, default: 6
+		Size of each side of the figure in inches
+	
+	ratio: float, default: 5
+		Ratio of joint axis size to the x and y axes height
+	
+	space: float, default: .2
+		Space between the joint axis and the x and y axes
+
+    kwargs : dict
+        Keyword arguments that are passed to the base class and may influence
+        the visualization as defined in other Visualizers.
+
+	Examples
+	--------
+
+	>>> visualizer = JointPlotVisualizer()
+	>>> visualizer.fit(X,y)
+	>>> visualizer.poof()
+
+	Notes
+	-----
+	These parameters can be influenced later on in the visualization
+	process, but can and should be set as early as possible.
 	"""
 	
 	def __init__(self, ax=None, feature=None, target=None, 
@@ -36,77 +121,11 @@ class JointPlotVisualizer(FeatureVisualizer):
 				 xy_plot='hist', xy_args=None,
 				 size=6, ratio=5, space=.2, **kwargs):
 		
-		"""
-		Initialize the visualization with many of the options required
-		in order to make most visualizations work.
-
-		These parameters can be influenced later on in the visualization
-		process, but can and should be set as early as possible.
-
-		Parameters
-		----------
-
-		ax: This is inherited from FeatureVisualizer but is defined within
-			JointPlotVisualizer since there are three axes objects.
-
-		feature: The name of the X variable
-			If a DataFrame is passed to fit and feature is None, feature
-			is selected as the column of the DataFrame.  There must be only
-			one column in the DataFrame.
-
-		target: The name of the Y variable
-			If target is None and a y value is passed to fit then the target
-			is selected from the target vector.
-
-		joint_plot: The type of plot to render in the joint axis.  Currently,
-			the choices are scatter and hex.  Use scatter for small datasets
-			and hex for large datasets
-
-		joint_args: Keyword arguments used for customizing the joint plot.
-				Property        Description
-				alpha           transparency
-				facecolor       background color of the joint axis
-				aspect          aspect ratio
-				fit             used if scatter is selected for joint_plot to draw a 
-								best fit line - values can be True or False.
-								Uses Yellowbrick.bestfit
-				estimator       used if scatter is selected for joint_plot to determine
-								the type of best fit line to use.  Refer to 
-								Yellowbrick.bestfit for types of estimators that can be used.
-				x_bins          used if hex is selected to set the number of bins for the x value
-				y_bins          used if hex is selected to set the number of bins for the y value
-				cmap            string or matplotlib cmap to colorize lines
-								Use either color to colorize the lines on a per class basis or
-								colormap to color them on a continuous scale.
-				
-				
-		xy_plot: The type of plot to render along the x and y axes.
-			Currently, the choice is hist
-			
-		xy_args: Keyword arguments used for customizing the x and y plots.
-				Property        Description
-				alpha           transparency
-				facecolor_x     background color of the x axis
-				facecolor_y     background color of the y axis
-				bins            used to set up the number of bins for the hist plot
-				histcolor_x     used to set the color for the histogram on the x axis
-				histcolor_y     used to set the color for the histogram on the y axis
-				
-		size: Size of each side of the figure in inches.
-		
-		ratio: Ratio of joint axis size to the x and y axes height.
-		
-		space: Space between the joint axis and the x and y axes.
-
-		kwargs: Keyword arguments passed to the super class.
-
-		"""
-		
 		#check matplotlib version - needs to be version 2.0.0	
 		if mpl.__version__ == '2.0.0':
 			pass 
 		else:
-			print('This Visualizer requires Matplotlib version 2.0.0. Please upgrade to  continue.')
+			print('This Visualizer requires Matplotlib version 2.0.0. Please upgrade to continue.')
 			
 		super(JointPlotVisualizer, self).__init__(ax, **kwargs)
 		
@@ -273,7 +292,6 @@ class JointPlotVisualizer(FeatureVisualizer):
 		
 		"""       
 		Creates the labels for the feature and target variables
-		
 		"""
 			
 		self.joint_ax.set_xlabel(self.feature)

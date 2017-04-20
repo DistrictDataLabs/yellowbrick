@@ -35,21 +35,25 @@ class Visualizer(BaseEstimator):
 
     The base class for feature visualization and model visualization
     primarily ensures that styling arguments are passed in.
-    """
 
-    def __init__(self, ax=None, **kwargs):
-        """
+    Parameters
+    ----------
+    ax : matplotlib Axes, default: None
+        The axis to plot the figure on. If None is passed in the current axes
+        will be used (or generated if required).
+
+    kwargs : dict
+        Keyword arguments that are passed to the base class and may influence
+        the visualization as defined in other Visualizers.
+
+    Notes
+    -----
         These parameters can be influenced later on in the visualization
         process, but can and should be set as early as possible.
 
-        Parameters
-        ----------
-        ax: matplotlib axes
-            the axis to plot the figure on.
+    """
 
-        kwargs: dict
-            keyword arguments passed to the super class.
-        """
+    def __init__(self, ax=None, **kwargs):
         self.ax = ax
         self.size  = kwargs.pop('size', None)
         self.color = kwargs.pop('color', None)
@@ -103,7 +107,7 @@ class Visualizer(BaseEstimator):
 
         Parameters
         ----------
-        outpath: string
+        outpath: string, default: None
             path or None. Save  figure to disk or if None show in window
 
         kwargs: dict
@@ -124,7 +128,7 @@ class Visualizer(BaseEstimator):
 
         Parameters
         ----------
-        title: string or None
+        title: string, default: None
             Add title to figure or if None leave untitled.
         """
         title = self.title or title
@@ -205,8 +209,8 @@ class ScoreVisualizer(Visualizer):
         models: object
             the Scikit-Learn models being compared with each other.
 
-        ax: matplotlib axes
-            the axis to plot the figure on.
+        ax : matplotlib Axes, default: None
+            The axes to plot the figure on.
 
         kwargs: dict
             keyword arguments.
