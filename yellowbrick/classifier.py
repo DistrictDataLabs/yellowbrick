@@ -41,11 +41,17 @@ from .utils import div_safe
 
 class ClassificationScoreVisualizer(ScoreVisualizer):
 
+    """
+    Base class for all ScoreVisualizers that evaluate a classification estimator.
+
+    The primary functionality of this class is to perform a check to ensure
+    the passed in estimator is a classifier, otherwise it raises a
+    ``YellowbrickTypeError``.
+    """
+
     def __init__(self, model, ax=None, **kwargs):
-        """
-        Check to see if model is an instance of a classifer.
-        Should return an error if it isn't.
-        """
+        # Check to see if model is an instance of a classifier.
+        # Should return an error if it isn't.
         if not isclassifier(model):
             raise YellowbrickTypeError(
                 "This estimator is not a classifier; try a regression or clustering score visualizer instead!"
@@ -66,25 +72,44 @@ class ConfusionMatrix(ClassificationScoreVisualizer):
     """
     Creates a heatmap visualization of the sklearn.metrics.confusion_matrix().
     Initialization: Requires a classification model
+
+    Parameters
+    ----------
+
+    model : a Scikit-Learn classifier
+        Should be an instance of a classifier otherwise a will raise a 
+        YellowbrickTypeError exception on instantiation.
+
+    ax : matplotlib Axes, default: None
+        The axes to plot the figure on. If None is passed in the current axes
+        will be used (or generated if required).
+
+    classes : list, default: None
+        a list of class names for the legend
+        If classes is None and a y value is passed to fit then the classes
+        are selected from the target vector.
+
+    kwargs : dict
+        Keyword arguments that are passed to the base class and may influence
+        the visualization as defined in other Visualizers.
+
+    Examples
+    --------
+
+    >>> from sklearn.linear_model import LogisticRegression
+    >>> model = LogisticRegression()
+    >>> cm = ConfusionMatrix(model)
+    >>> cm.fit(X_train, y_train)
+    >>> cm.score(X_test, y_test)
+    >>> cm.poof()
+
+    Notes
+    -----
+    These parameters can be influenced later on in the visualization
+    process, but can and should be set as early as possible.
     """
+
     def __init__(self, model, ax=None, classes=None, **kwargs):
-        """
-        Provide a classifier model
-
-        Parameters
-        ----------
-        :param model: the Scikit-Learn estimator
-            Should be an instance of a classifier, else the __init__ will
-            return an error.
-
-        :param ax: the matplotlib axis to plot the figure on (if None, a new axis will be created)
-
-        :param classes: a list of class names to use in the confusion_matrix.
-            This is passed to the 'labels' parameter of sklearn.metrics.confusion_matrix(), and follows the behaviour
-            indicated by that function. It may be used to reorder or select a subset of labels.
-            If None, values that appear at least once in y_true or y_pred are used in sorted order.
-            Default: None
-        """
         super(ConfusionMatrix, self).__init__(model, ax=ax, classes=None,**kwargs)
         #Parameters provided by super (for reference during development only):
         #self.ax
@@ -109,11 +134,11 @@ class ConfusionMatrix(ClassificationScoreVisualizer):
     #TODO hoist this to shared confusion matrix / classification report heatmap class
     @property
     def classes(self):
-        '''
+        """
         Returns a numpy array of the classes in y
         Matches the user provided list if provided by the user in __init__
         If no list provided, tries to obtain it from the fitted estimator
-        '''
+        """
         if self._classes is None:
             try:
                 print("trying")
@@ -138,7 +163,8 @@ class ConfusionMatrix(ClassificationScoreVisualizer):
         y : ndarray or Series of length n
             An array or series of target or class values
 
-        kwargs: keyword arguments passed to Scikit-Learn API.
+        kwargs: dict
+            keyword arguments passed to Scikit-Learn API.
         """
         super(ConfusionMatrix, self).fit(X, y, **kwargs)
         if self._classes is None:
@@ -158,12 +184,14 @@ class ConfusionMatrix(ClassificationScoreVisualizer):
         y : ndarray or Series of length n
             An array or series of target or class values
 
-        sample_weight: optional, passed to the confusion_matrix
+        sample_weight: float, default: None
+            optional, passed to the confusion_matrix
 
-        percent: optional, Boolean. Determines whether or not the confusion_matrix
-                should be displayed as raw numbers or as a percent of the true
-                predictions. Note, if using a subset of classes in __init__, percent should
-                be set to False or inaccurate percents will be displayed.
+        percent: bool, default: True 
+            Determines whether or not the confusion_matrix
+            should be displayed as raw numbers or as a percent of the true
+            predictions. Note, if using a subset of classes in __init__, percent should
+            be set to False or inaccurate percents will be displayed.
         """
         y_pred = self.predict(X)
 
@@ -192,8 +220,8 @@ class ConfusionMatrix(ClassificationScoreVisualizer):
         Parameters
         ----------
 
-        percent:    Boolean
-                    Whether the heatmap should represent "% of True" or raw counts
+        percent:    bool
+            Whether the heatmap should represent "% of True" or raw counts
 
         """
         # Create the axis if it doesn't exist
@@ -308,32 +336,48 @@ class ClassificationReport(ClassificationScoreVisualizer):
     Classification report that shows the precision, recall, and F1 scores
     for the model. Integrates numerical scores as well color-coded heatmap.
 
+    Parameters
+    ----------
+
+    model : a Scikit-Learn classifier
+        Should be an instance of a classifier otherwise a will raise a 
+        YellowbrickTypeError exception on instantiation.
+
+    ax : matplotlib Axes, default: None
+        The axes to plot the figure on. If None is passed in the current axes
+        will be used (or generated if required).
+
+    classes : list, default: None
+        a list of class names for the legend
+        If classes is None and a y value is passed to fit then the classes
+        are selected from the target vector.
+
+    colormap : string or cmap, default: None
+        optional string or matplotlib cmap to colorize lines
+        Use either color to colorize the lines on a per class basis or
+        colormap to color them on a continuous scale.
+
+    kwargs : dict
+        Keyword arguments that are passed to the base class and may influence
+        the visualization as defined in other Visualizers.
+
+    Examples
+    --------
+
+    >>> from sklearn.naive_bayes import GaussianNB
+    >>> model = GaussianNB()
+    >>> cm = ClassificationReport(model)
+    >>> cm.fit(X_train, y_train)
+    >>> cm.score(X_test, y_test)
+    >>> cm.poof()
+
+    Notes
+    -----
+    These parameters can be influenced later on in the visualization
+    process, but can and should be set as early as possible.
     """
+
     def __init__(self, model, ax=None, classes=None, **kwargs):
-        """
-        Pass in a fitted model to generate a classification report.
-
-        Parameters
-        ----------
-
-        :param ax: the axis to plot the figure on.
-
-        :param model: the Scikit-Learn estimator
-            Should be an instance of a classifier, else the __init__ will
-            return an error.
-
-        :param classes: a list of class names for the legend
-            If classes is None and a y value is passed to fit then the classes
-            are selected from the target vector.
-
-        :param colormap: optional string or matplotlib cmap to colorize lines
-            Use sequential heatmap.
-
-        :param kwargs: keyword arguments passed to the super class.
-
-        These parameters can be influenced later on in the visualization
-        process, but can and should be set as early as possible.
-        """
         super(ClassificationReport, self).__init__(model, ax=ax, **kwargs)
 
         ## hoisted to ScoreVisualizer base class
@@ -354,7 +398,8 @@ class ClassificationReport(ClassificationScoreVisualizer):
         y : ndarray or Series of length n
             An array or series of target or class values
 
-        kwargs: keyword arguments passed to Scikit-Learn API.
+        kwargs: dict
+            keyword arguments passed to Scikit-Learn API.
         """
         super(ClassificationReport, self).fit(X, y, **kwargs)
         if self.classes_ is None:
@@ -443,6 +488,10 @@ class ClassificationReport(ClassificationScoreVisualizer):
         self.ax.set_xlabel('Measures')
 
 
+##########################################################################
+## Quick Methods
+##########################################################################
+
 def classification_report(model, X, y=None, ax=None, classes=None, **kwargs):
     """Quick method:
 
@@ -460,12 +509,14 @@ def classification_report(model, X, y=None, ax=None, classes=None, **kwargs):
     y  : ndarray or Series of length n
         An array or series of target or class values.
 
-    ax : matplotlib axes
+    ax : matplotlib Axes, default: None
         The axes to plot the figure on.
 
-    model : the Scikit-Learn estimator (should be a classifier)
+    model : a Scikit-Learn classifier
+        Should be an instance of a classifier otherwise a will raise a 
+        YellowbrickTypeError exception on instantiation.
 
-    classes : list of strings
+    classes : list of strings, default: None
         The names of the classes in the target
 
     Returns
@@ -494,38 +545,63 @@ class ROCAUC(ClassificationScoreVisualizer):
     """
     Plot the ROC to visualize the tradeoff between the classifier's
     sensitivity and specificity.
+
+    Parameters
+    ----------
+
+    model : a Scikit-Learn classifier
+        Should be an instance of a classifier otherwise a will raise a 
+        YellowbrickTypeError exception on instantiation.
+
+    ax : matplotlib Axes, default: None
+        The axes to plot the figure on. If None is passed in the current axes
+        will be used (or generated if required).
+
+    roc_color : color
+        color of the ROC curve
+        Specify the color as a matplotlib color: you can specify colors in
+        many weird and wonderful ways, including full names ('green'), hex
+        strings ('#008000'), RGB or RGBA tuples ((0,1,0,1)) or grayscale
+        intensities as a string ('0.8').
+
+    diagonal_color : color
+        color of the diagonal
+        Specify the color as a matplotlib color.
+
+    classes : list, default: None
+        a list of class names for the legend
+        If classes is None and a y value is passed to fit then the classes
+        are selected from the target vector.
+
+    colormap : string or cmap, default: None
+        optional string or matplotlib cmap to colorize lines
+        Use either color to colorize the lines on a per class basis or
+        colormap to color them on a continuous scale.
+
+    kwargs : dict
+        Keyword arguments that are passed to the base class and may influence
+        the visualization as defined in other Visualizers.
+        Currently passing in hard-coded colors for the Receiver Operating
+        Characteristic curve and the diagonal.
+        These will be refactored to a default Yellowbrick style.
+
+    Examples
+    --------
+
+    >>> from sklearn.naive_bayes import GaussianNB
+    >>> model = GaussianNB()
+    >>> cm = ClassificationReport(model)
+    >>> cm.fit(X_train, y_train)
+    >>> cm.score(X_test, y_test)
+    >>> cm.poof()
+
+    Notes
+    -----
+    These parameters can be influenced later on in the visualization
+    process, but can and should be set as early as possible.
     """
     def __init__(self, model, ax=None, **kwargs):
-        """
-        Pass in a fitted model to generate a ROC curve.
 
-        Parameters
-        ----------
-
-        :param ax: the axis to plot the figure on.
-
-        :param model: the Scikit-Learn estimator
-            Should be an instance of a classifier, else the __init__ will
-            return an error.
-
-        :param roc_color: color of the ROC curve
-            Specify the color as a matplotlib color: you can specify colors in
-            many weird and wonderful ways, including full names ('green'), hex
-            strings ('#008000'), RGB or RGBA tuples ((0,1,0,1)) or grayscale
-            intensities as a string ('0.8').
-
-        :param diagonal_color: color of the diagonal
-            Specify the color as a matplotlib color.
-
-        :param kwargs: keyword arguments passed to the super class.
-            Currently passing in hard-coded colors for the Receiver Operating
-            Characteristic curve and the diagonal.
-            These will be refactored to a default Yellowbrick style.
-
-        These parameters can be influenced later on in the visualization
-        process, but can and should be set as early as possible.
-
-        """
         super(ROCAUC, self).__init__(model, ax=ax, **kwargs)
 
         ## hoisted to ScoreVisualizer base class
@@ -614,6 +690,10 @@ class ROCAUC(ClassificationScoreVisualizer):
         self.ax.set_ylim([ 0.00, 1.1])
 
 
+##########################################################################
+## Quick Methods
+##########################################################################
+
 def roc_auc(model, X, y=None, ax=None, **kwargs):
     """Quick method:
 
@@ -631,7 +711,7 @@ def roc_auc(model, X, y=None, ax=None, **kwargs):
     y  : ndarray or Series of length n
         An array or series of target or class values.
 
-    ax : matplotlib axes
+    ax : matplotlib Axes, default: None
         The axes to plot the figure on.
 
     model : the Scikit-Learn estimator (should be a classifier)
@@ -668,20 +748,35 @@ class ClassBalance(ClassificationScoreVisualizer):
     Parameters
     ----------
 
-    ax: axes
-        the axis to plot the figure on.
+    model : a Scikit-Learn classifier
+        Should be an instance of a classifier otherwise a will raise a 
+        YellowbrickTypeError exception on instantiation.
 
-    model: estimator
-        Scikit-Learn estimator object. Should be an instance of a classifier,
-        else ``__init__()`` will raise an exception.
+    ax : matplotlib Axes, default: None
+        The axis to plot the figure on. If None is passed in the current axes
+        will be used (or generated if required).
 
-    classes: list
-        A list of class names for the legend. If classes is None and a y value
-        is passed to fit then the classes are selected from the target vector.
+    classes : list, default: None
+        a list of class names for the legend
+        If classes is None and a y value is passed to fit then the classes
+        are selected from the target vector.
 
     kwargs: dict
         Keyword arguments passed to the super class. Here, used
         to colorize the bars in the histogram.
+
+    Examples
+    --------
+
+    >>> from sklearn.ensemble import RandomForestClassifier
+    >>> model = RandomForestClassifier()
+    >>> visualizer = ClassBalance(model)
+    >>> visualizer.fit(X_train, y_train)
+    >>> visualizer.score(X_test, y_test)
+    >>> visuazlier.poof()
+
+    Notes
+    -----
 
     These parameters can be influenced later on in the visualization
     process, but can and should be set as early as possible.
@@ -783,6 +878,10 @@ class ClassBalance(ClassificationScoreVisualizer):
         # Compute the ceiling for the y limit
         cmax, cmin = max(self.support.values()), min(self.support.values())
         self.ax.set_ylim(0, cmax + cmax* 0.1)
+
+##########################################################################
+## Quick Methods
+##########################################################################
 
 def class_balance(model, X, y=None, ax=None, classes=None, **kwargs):
     """Quick method:
