@@ -30,7 +30,7 @@ class DecisionBoundariesVisualizer(ModelVisualizer):
     DecisionBoundariesVisualizer is a bivariate data visualization algorithm that plots
     the decision boundaries of each class.
     """
-    def __init__(self, model, colors=None, classes=None, features=None, show_scatter=True, step_size=0.0025, markers=None, **kwargs):
+    def __init__(self, model, colors=None, classes=None, features=None, show_scatter=True, step_size=0.0025, markers=None, scatter_alpha=0.6, **kwargs):
         """
         Pass in a unfitted model to generate a decision boundaries visualization.
 
@@ -65,6 +65,9 @@ class DecisionBoundariesVisualizer(ModelVisualizer):
         :param markers: iterable of strings
             Matplotlib style markers for points on the scatter plot points
 
+        :param scatter_alpha: float
+            Sets the alpha transparency for the scatter plot points
+
         :param kwargs: keyword arguments passed to the super class.
 
         These parameters can be influenced later on in the visualization
@@ -83,6 +86,7 @@ class DecisionBoundariesVisualizer(ModelVisualizer):
         self.show_scatter = show_scatter
         self.step_size = step_size
         self.markers = itertools.cycle(kwargs.pop('markers', (',', '+', 'o', '*', 'v', 'h', 'd') ))
+        self.scatter_alpha = scatter_alpha
 
         # these are set later
         self.Z = None
@@ -197,7 +201,7 @@ class DecisionBoundariesVisualizer(ModelVisualizer):
 
         if self.show_scatter:
             for kls, index in self.classes_.items():
-                self.ax.scatter(to_plot[index][0], to_plot[index][1], marker=next(self.markers), color=colors[kls], alpha=.6, s=30, edgecolors='black', label=str(kls), **kwargs)
+                self.ax.scatter(to_plot[index][0], to_plot[index][1], marker=next(self.markers), color=colors[kls], alpha=self.scatter_alpha, s=30, edgecolors='black', label=str(kls), **kwargs)
         else:
             labels = [Patch(color=colors[kls], label=kls) for kls in self.classes_.keys() ]
             self.ax.legend(handles=labels)
@@ -236,5 +240,13 @@ class DecisionBoundariesVisualizer(ModelVisualizer):
         self.draw(X, y, **kwargs)
 
     def fit_draw_poof(self, X, y=None, **kwargs):
+        """
+        Fits a transformer to X and y then returns
+        visualization of features or fitted model.
+
+        Then calls poof to finalize.
+        """
+
+
         self.fit_draw(X, y, **kwargs)
         self.poof(**kwargs)

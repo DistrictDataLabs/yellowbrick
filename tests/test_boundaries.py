@@ -80,6 +80,7 @@ class DecisionBoundariesVisualizerTest(VisualTestCase):
         self.assertIsNone(viz.classes_)
         self.assertIsNone(viz.features_)
         self.assertIsNotNone(viz.markers)
+        self.assertIsNotNone(viz.scatter_alpha)
         self.assertTrue(viz.show_scatter)
 
         self.assertIsNone(viz.Z)
