@@ -6,15 +6,15 @@ numpy>=1.11.0
 cycler>=0.10.0
 
 ## Utilities and Nested Dependencies (installed from above)
-#pyparsing==2.1.10
-#pytz==2016.7
-#python-dateutil==2.5.3
-#six==1.10.0
+pyparsing==2.1.10
+pytz==2016.7
+python-dateutil==2.5.3
+six==1.10.0
 
 ## Testing Requirements (uncomment for development)
-#nose>=1.3.7
-#coverage>=4.1
-#requests>=2.10.0
+nose>=1.3.7
+coverage>=4.1
+requests>=2.10.0
 
 ## Python 2 Testing Requirements
 #mock>=2.0.0
