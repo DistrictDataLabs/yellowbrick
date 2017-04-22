@@ -64,9 +64,9 @@ Parameters
 		:y_bins:          used if hex is selected to set the number of bins for the y value
 		:camp:            string or matplotlib cmap to colorize lines.  Use either color to colorize the lines on a per class basis or colormap to color them on a continuous scale.
 
-      xy_plot: one of {'hist'}, default: 'hist'
+    xy_plot: one of {'hist'}, default: 'hist'
               The type of plot to render along the x and y axes.  Currently, the choice is hist
-                :xy_args: dict, default: None
+    xy_args: dict, default: None
 		Keyword arguments used for customizing the x and y plots
 
 		:Property: Description
@@ -77,13 +77,13 @@ Parameters
 		:histcolor_x: used to set the color for the histogram on the x axis
 		:histcolor_y:    used to set the color for the histogram on the y axis
 
-     size: float, default: 6
+    size: float, default: 6
 		Size of each side of the figure in inches
-     ratio: float, default: 5
+    ratio: float, default: 5
 		Ratio of joint axis size to the x and y axes height
-     space: float, default: .2
+    space: float, default: .2
 		Space between the joint axis and the x and y axes
-     kwargs : dict
+    kwargs : dict
         Keyword arguments that are passed to the base class and may influence
         the visualization as defined in other Visualizers.
 
