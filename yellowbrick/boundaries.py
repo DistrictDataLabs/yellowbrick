@@ -1,7 +1,7 @@
-# yellowbrick.neighbors.knn
-# KNN neighbors classifier visualizers for Yellowbrick.
+# yellowbrick.boundaries
+# Decision boundaries classifier visualizer for Yellowbrick.
 #
-# Author:   Nathan Danielsen <rbilbro@gmail.com.com>
+# Author:   Nathan Danielsen <ndanielsen@gmail.com.com>
 # Created:  Sat Mar 12 14:17:29 2017 -0700
 #
 # Copyright (C) 2017 District Data Labs
@@ -11,38 +11,57 @@
 import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib as mpl
+from matplotlib import patches
 from cycler import cycler
 from collections import OrderedDict, defaultdict
 
-
 from yellowbrick.exceptions import YellowbrickTypeError
-from yellowbrick.base import ModelVisualizer, Visualizer
-from yellowbrick.mixins import BivariateFeatureMixin
-from yellowbrick.utils import get_model_name, isestimator, isclassifier
-from yellowbrick.style.palettes import color_sequence, color_palette, LINE_COLOR
-from yellowbrick.style.colors import resolve_colors, get_color_cycle
+from yellowbrick.base import ModelVisualizer
+from yellowbrick.utils import get_model_name
+from yellowbrick.style.palettes import color_sequence
+from yellowbrick.style.colors import resolve_colors
 from matplotlib.colors import ListedColormap
 from yellowbrick.utils import is_dataframe
 from yellowbrick.style.palettes import PALETTES
 
 
-class KnnDecisionBoundariesVisualizer(ModelVisualizer, BivariateFeatureMixin):
+class DecisionBoundariesVisualizer(ModelVisualizer):
     """
-    KnnDecisionBoundariesVisualizer is a bivariate data visualization algorithm that plots
+    DecisionBoundariesVisualizer is a bivariate data visualization algorithm that plots
     the decision boundaries of each class.
     """
-    def __init__(self, model, colors=None, classes=None, features=None, **kwargs):
+    def __init__(self, model, colors=None, classes=None, features=None, show_scatter=True, step_size=0.0025, **kwargs):
         """
-        Pass in a fitted neighbors model to generate decision boundaries.
+        Pass in a unfitted model to generate a decision boundaries visualization.
 
         Parameters
         ----------
 
-        :param ax: the axis to plot the figure on.
-
         :param model: the Scikit-Learn estimator
             Should be an instance of a classifier, else the __init__ will
             return an error.
+
+        :param colors: string or matplotlib cmap
+            Sequential paired colormap with a light/ dark parking for each class.
+            By default, uses the yellowbrick 'paired' color palette
+
+        :param classes: a list of class names for the legend
+            If classes is None and a y value is passed to fit then the classes
+            are selected from the target vector.
+
+        :param features: list of strings
+            The names of the features or columns
+
+        :param show_scatter: boolean
+            If boolean is True, then a scatter plot with points will be drawn
+            on top of the decision boundary graph
+
+        :param step_size: float percentage
+            Determines the step size for creating the numpy meshgrid that will later
+            become the foundation of the decision boundary graph. The default value
+            of 0.0025 means that the step size for constructing the meshgrid
+            will be 0.25%% of differenes of the max and min of x and y for each
+            feature.
 
         :param kwargs: keyword arguments passed to the super class.
 
@@ -52,22 +71,25 @@ class KnnDecisionBoundariesVisualizer(ModelVisualizer, BivariateFeatureMixin):
         These parameters can be influenced later on in the visualization
         process, but can and should be set as early as possible.
         """
-        super(KnnDecisionBoundariesVisualizer, self).__init__(self)
+        super(DecisionBoundariesVisualizer, self).__init__(self)
 
         self.colors = kwargs.pop('colors', PALETTES['paired'])
         self.classes_ = classes
         self.features_ = features
         self.estimator = model
         self.name = get_model_name(self.estimator)
+        self.show_scatter = show_scatter
+        self.step_size = step_size
 
         # these are set later
         self.Z = None
         self.xx = None
         self.yy = None
+        self.class_labels = None
 
     def fit(self, X, y=None, **kwargs):
         """
-        The fit method is the primary drawing input for the parallel coords
+        The fit method is the primary drawing input for the decision boundaries
         visualization since it has both the X and y data required for the
         viz and the transform method does not.
 
@@ -85,7 +107,7 @@ class KnnDecisionBoundariesVisualizer(ModelVisualizer, BivariateFeatureMixin):
         Returns
         -------
         self : instance
-            Returns the instance of the transformer/visualizer
+            Returns the instance of the visualizer
         """
 
         nrows, ncols = X.shape
@@ -93,10 +115,12 @@ class KnnDecisionBoundariesVisualizer(ModelVisualizer, BivariateFeatureMixin):
         # Assign each class a unique number for drawing
         if self.classes_ is None:
             self.classes_ = {label:str(kls_num) for kls_num, label in enumerate(set(y))}
+            self.class_labels = None
         elif len(set(y)) == len(self.classes_):
             self.classes_ = {label:str(kls_num) for kls_num, label in enumerate(self.classes_)}
+            self.class_labels = dict(zip(set(y), self.classes_))
         else:
-            raise Exception("Number of classes must be the same length of number of target y")
+            raise YellowbrickTypeError("Number of classes must be the same length of number of target y")
         # Handle the feature names if they're None.
         if self.features_ is None:
                 # If X is a data frame, get the columns off it.
@@ -120,8 +144,9 @@ class KnnDecisionBoundariesVisualizer(ModelVisualizer, BivariateFeatureMixin):
         if self.ax is None:
             self.ax = plt.gca(xlim=[x_min, x_max ], ylim=[y_min, y_max ])
 
-        x_step = (x_max - x_min) * 0.0025
-        y_step = (y_max - y_min) * 0.0025
+        # set the step increment for drawing the boundary graph
+        x_step = (x_max - x_min) * self.step_size
+        y_step = (y_max - y_min) * self.step_size
 
         self.xx, self.yy = np.meshgrid(np.arange(x_min, x_max, x_step),
                              np.arange(y_min, y_max, y_step))
@@ -131,7 +156,8 @@ class KnnDecisionBoundariesVisualizer(ModelVisualizer, BivariateFeatureMixin):
 
     def draw(self, X, y, **kwargs):
         """
-        Called from the fit method, this method creates a scatter plot that draws
+        Called from the fit method, this method creates a decision boundary plot,
+        and if self.scatter is True, it will scatter plot that draws
         each instance as a class or target colored point, whose location
         is determined by the feature data set.
         """
@@ -158,15 +184,23 @@ class KnnDecisionBoundariesVisualizer(ModelVisualizer, BivariateFeatureMixin):
         for i, row in enumerate(X):
             row_ = np.repeat(np.expand_dims(row, axis=1), 2, axis=1)
             x_, y_   = row_[0], row_[1]
-            index = self.classes_[y[i]]
+            if self.class_labels is not None:
+                target = self.class_labels[y[i]]
+            else:
+                target = y[i]
+            index = self.classes_[target]
             to_plot[index][0].append(x_)
             to_plot[index][1].append(y_)
 
         # Add the scatter plots from the to_plot function
         # TODO: store these plots to add more instances to later
         # TODO: make this a separate function
-        for kls, index in self.classes_.items():
-            self.ax.scatter(to_plot[index][0], to_plot[index][1], color=point_color[kls], label=str(kls), **kwargs)
+        if self.show_scatter:
+            for kls, index in self.classes_.items():
+                self.ax.scatter(to_plot[index][0], to_plot[index][1], color=point_color[kls], s=20, label=str(kls), **kwargs)
+        else:
+            labels = [patches.Patch(color=point_color[kls], label=kls) for kls in self.classes_.keys() ]
+            self.ax.legend(fancybox=True, facecolor='white', handles=labels)
 
         self.ax.axis('auto')
 
@@ -192,6 +226,8 @@ class KnnDecisionBoundariesVisualizer(ModelVisualizer, BivariateFeatureMixin):
         self.ax.legend(loc='best')
         self.ax.set_xlabel(feature_one)
         self.ax.set_ylabel(feature_two)
+
+        plt.tight_layout(pad=0.4, w_pad=0.5, h_pad=1.0)
 
     def fit_draw(self, X, y=None, **kwargs):
         """
