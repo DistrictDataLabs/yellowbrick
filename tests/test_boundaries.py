@@ -10,13 +10,14 @@
 # ID: test_knn.py [] nathan.danielsen@gmail.com $
 
 """
-Ensure that the KNN boundary visualizations work.
+Ensure that the Decision Boundary visualizations work.
 """
 
 ##########################################################################
 ## Imports
 ##########################################################################
 
+from collections import OrderedDict
 from unittest import mock
 import unittest
 import numpy as np
@@ -78,6 +79,7 @@ class DecisionBoundariesVisualizerTest(VisualTestCase):
 
         self.assertIsNone(viz.classes_)
         self.assertIsNone(viz.features_)
+        self.assertIsNotNone(viz.markers)
         self.assertTrue(viz.show_scatter)
 
         self.assertIsNone(viz.Z)
@@ -85,6 +87,7 @@ class DecisionBoundariesVisualizerTest(VisualTestCase):
         self.assertIsNone(viz.yy)
         self.assertIsNone(viz.ax)
         self.assertIsNone(viz.class_labels)
+
 
     def test_fit(self):
         """
@@ -135,3 +138,98 @@ class DecisionBoundariesVisualizerTest(VisualTestCase):
         viz = DecisionBoundariesVisualizer(model, features=['one', 'two'])
         fitted_viz = viz.fit(X_two_cols, y=y)
         self.assertEquals(fitted_viz.features_, ['one', 'two'])
+
+
+    @mock.patch("yellowbrick.boundaries.OrderedDict")
+    def test_draw_ordereddict_calls(self, mock_odict):
+        mock_odict.return_value = {}
+        model = neighbors.KNeighborsClassifier(3)
+        viz = DecisionBoundariesVisualizer(model, features=['one', 'two'])
+        self.assertRaises(KeyError, viz.fit_draw, X_two_cols, y=y)
+        self.assertEquals(len(mock_odict.mock_calls), 2)
+
+
+    @mock.patch("yellowbrick.boundaries.resolve_colors")
+    def test_draw_ordereddict_calls(self, mock_resolve_colors):
+        mock_resolve_colors.return_value = []
+        model = neighbors.KNeighborsClassifier(3)
+        viz = DecisionBoundariesVisualizer(model, features=['one', 'two'])
+        self.assertRaises(StopIteration, viz.fit_draw, X_two_cols, y=y)
+        self.assertEquals(len(mock_resolve_colors.mock_calls), 1)
+
+    def test_draw_ax_show_scatter_true(self):
+        """Test that the matplotlib functions are being called """
+        model = neighbors.KNeighborsClassifier(3)
+        viz = DecisionBoundariesVisualizer(model, features=['one', 'two'])
+        fitted_viz = viz.fit(X_two_cols, y=y)
+        fitted_viz.ax = mock.Mock()
+        fitted_viz.ax.pcolormesh = mock.MagicMock()
+        fitted_viz.ax.scatter = mock.MagicMock()
+        fitted_viz.ax.legend = mock.MagicMock()
+
+        fitted_viz.draw(X_two_cols, y=y)
+        self.assertEquals(len(fitted_viz.ax.pcolormesh.mock_calls), 1)
+        self.assertEquals(len(fitted_viz.ax.scatter.mock_calls), 4)
+        self.assertEquals(len(fitted_viz.ax.legend.mock_calls), 0)
+
+    def test_draw_ax_show_scatter_False(self):
+        """Test that the matplotlib functions are being called when the scatter plot isn't drawn """
+        model = neighbors.KNeighborsClassifier(3)
+        viz = DecisionBoundariesVisualizer(model, features=['one', 'two'], show_scatter=False)
+        fitted_viz = viz.fit(X_two_cols, y=y)
+        fitted_viz.ax = mock.Mock()
+        fitted_viz.ax.pcolormesh = mock.MagicMock()
+        fitted_viz.ax.scatter = mock.MagicMock()
+        fitted_viz.ax.legend = mock.MagicMock()
+        fitted_viz.ax.axis = mock.MagicMock()
+
+        fitted_viz.draw(X_two_cols, y=y)
+        self.assertEquals(len(fitted_viz.ax.pcolormesh.mock_calls), 1)
+        self.assertEquals(len(fitted_viz.ax.scatter.mock_calls), 0)
+        self.assertEquals(len(fitted_viz.ax.legend.mock_calls), 1)
+        fitted_viz.ax.axis.assert_called_once_with('auto')
+
+    def test_finalize(self):
+        model = neighbors.KNeighborsClassifier(3)
+        viz = DecisionBoundariesVisualizer(model, features=['one', 'two'], show_scatter=False)
+        fitted_viz = viz.fit(X_two_cols, y=y)
+        fitted_viz.draw(X_two_cols, y=y)
+
+        fitted_viz.ax = mock.Mock()
+        fitted_viz.ax.set_title = mock.MagicMock()
+        fitted_viz.ax.legend = mock.MagicMock()
+        fitted_viz.ax.set_xlabel = mock.MagicMock()
+        fitted_viz.ax.set_ylabel = mock.MagicMock()
+
+        fitted_viz.poof()
+
+        fitted_viz.ax.set_title.assert_called_once_with('Decisions Boundaries: one vs two')
+        fitted_viz.ax.legend.assert_called_once_with(loc='best')
+        fitted_viz.ax.set_xlabel.assert_called_once_with('one')
+        fitted_viz.ax.set_ylabel.assert_called_once_with('two')
+
+    def test_fit_draw(self):
+        model = neighbors.KNeighborsClassifier(3)
+        viz = DecisionBoundariesVisualizer(model, features=['one', 'two'], show_scatter=False)
+
+        viz.fit = mock.Mock()
+        viz.draw = mock.Mock()
+
+        viz.fit_draw(X_two_cols, y=y)
+
+        viz.fit.assert_called_once_with(X_two_cols, y)
+        viz.draw.assert_called_once_with(X_two_cols, y)
+
+    def test_fit_draw_poof(self):
+        model = neighbors.KNeighborsClassifier(3)
+        viz = DecisionBoundariesVisualizer(model, features=['one', 'two'], show_scatter=False)
+
+        viz.fit = mock.Mock()
+        viz.draw = mock.Mock()
+        viz.poof = mock.Mock()
+
+        viz.fit_draw_poof(X_two_cols, y=y)
+
+        viz.fit.assert_called_once_with(X_two_cols, y)
+        viz.draw.assert_called_once_with(X_two_cols, y)
+        viz.poof.assert_called_once_with()

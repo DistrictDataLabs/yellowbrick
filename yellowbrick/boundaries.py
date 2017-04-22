@@ -11,9 +11,8 @@
 import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib as mpl
-from matplotlib import patches
-from cycler import cycler
-from collections import OrderedDict, defaultdict
+from matplotlib.patches import Patch
+from collections import OrderedDict
 
 from yellowbrick.exceptions import YellowbrickTypeError
 from yellowbrick.base import ModelVisualizer
@@ -23,6 +22,7 @@ from yellowbrick.style.colors import resolve_colors
 from matplotlib.colors import ListedColormap
 from yellowbrick.utils import is_dataframe
 from yellowbrick.style.palettes import PALETTES
+import itertools
 
 
 class DecisionBoundariesVisualizer(ModelVisualizer):
@@ -30,7 +30,7 @@ class DecisionBoundariesVisualizer(ModelVisualizer):
     DecisionBoundariesVisualizer is a bivariate data visualization algorithm that plots
     the decision boundaries of each class.
     """
-    def __init__(self, model, colors=None, classes=None, features=None, show_scatter=True, step_size=0.0025, **kwargs):
+    def __init__(self, model, colors=None, classes=None, features=None, show_scatter=True, step_size=0.0025, markers=None, **kwargs):
         """
         Pass in a unfitted model to generate a decision boundaries visualization.
 
@@ -42,8 +42,7 @@ class DecisionBoundariesVisualizer(ModelVisualizer):
             return an error.
 
         :param colors: string or matplotlib cmap
-            Sequential paired colormap with a light/ dark parking for each class.
-            By default, uses the yellowbrick 'paired' color palette
+            By default, uses the yellowbrick 'set1' color palette
 
         :param classes: a list of class names for the legend
             If classes is None and a y value is passed to fit then the classes
@@ -63,6 +62,9 @@ class DecisionBoundariesVisualizer(ModelVisualizer):
             will be 0.25%% of differenes of the max and min of x and y for each
             feature.
 
+        :param markers: iterable of strings
+            Matplotlib style markers for points on the scatter plot points
+
         :param kwargs: keyword arguments passed to the super class.
 
         These parameters can be influenced later on in the visualization
@@ -73,13 +75,14 @@ class DecisionBoundariesVisualizer(ModelVisualizer):
         """
         super(DecisionBoundariesVisualizer, self).__init__(self)
 
-        self.colors = kwargs.pop('colors', PALETTES['paired'])
+        self.colors = kwargs.pop('colors', PALETTES['set1'])
         self.classes_ = classes
         self.features_ = features
         self.estimator = model
         self.name = get_model_name(self.estimator)
         self.show_scatter = show_scatter
         self.step_size = step_size
+        self.markers = itertools.cycle(kwargs.pop('markers', (',', '+', 'o', '*', 'v', 'h', 'd') ))
 
         # these are set later
         self.Z = None
@@ -166,13 +169,9 @@ class DecisionBoundariesVisualizer(ModelVisualizer):
 
         num_colors = len(self.classes_) * 2
         color_cycle = iter(resolve_colors(color=self.colors, num_colors=num_colors))
-        point_color = OrderedDict()
-        boundary_color = OrderedDict()
-        for class_ in self.classes_.keys():
-            point_color[class_] = next(color_cycle)
-            boundary_color[class_] = next(color_cycle)
+        colors = OrderedDict([(c, next(color_cycle)) for c in self.classes_.keys() ] )
 
-        self.ax.pcolormesh(self.xx, self.yy, self.Z_shape, cmap=ListedColormap(boundary_color.values()) )
+        self.ax.pcolormesh(self.xx, self.yy, self.Z_shape, cmap=ListedColormap(colors.values()) )
 
         # Create a data structure to hold the scatter plot representations
         to_plot = OrderedDict()
@@ -180,10 +179,10 @@ class DecisionBoundariesVisualizer(ModelVisualizer):
             to_plot[index] = [[], []]
 
         # Add each row of the data set to to_plot for plotting
-        # TODO: make this an independent function for override
         for i, row in enumerate(X):
             row_ = np.repeat(np.expand_dims(row, axis=1), 2, axis=1)
             x_, y_   = row_[0], row_[1]
+            # look up the y class name if given in init
             if self.class_labels is not None:
                 target = self.class_labels[y[i]]
             else:
@@ -195,12 +194,13 @@ class DecisionBoundariesVisualizer(ModelVisualizer):
         # Add the scatter plots from the to_plot function
         # TODO: store these plots to add more instances to later
         # TODO: make this a separate function
+
         if self.show_scatter:
             for kls, index in self.classes_.items():
-                self.ax.scatter(to_plot[index][0], to_plot[index][1], color=point_color[kls], s=20, label=str(kls), **kwargs)
+                self.ax.scatter(to_plot[index][0], to_plot[index][1], marker=next(self.markers), color=colors[kls], alpha=.6, s=30, edgecolors='black', label=str(kls), **kwargs)
         else:
-            labels = [patches.Patch(color=point_color[kls], label=kls) for kls in self.classes_.keys() ]
-            self.ax.legend(fancybox=True, facecolor='white', handles=labels)
+            labels = [Patch(color=colors[kls], label=kls) for kls in self.classes_.keys() ]
+            self.ax.legend(handles=labels)
 
         self.ax.axis('auto')
 
@@ -215,19 +215,17 @@ class DecisionBoundariesVisualizer(ModelVisualizer):
 
         """
         # Divide out the two features
-        title='Decisions Boundaries'
+        title = 'Decisions Boundaries'
 
-        if self.features_ is not None:
-            feature_one, feature_two = self.features_
-            title='Decisions Boundaries: {feature_one} vs {feature_two}'.format(**locals())
+        feature_one, feature_two = self.features_
+        title = 'Decisions Boundaries: {feature_one} vs {feature_two}'.format(**locals())
 
-        # Add the legend
         self.set_title(title)
+        # Add the legend
         self.ax.legend(loc='best')
         self.ax.set_xlabel(feature_one)
         self.ax.set_ylabel(feature_two)
 
-        plt.tight_layout(pad=0.4, w_pad=0.5, h_pad=1.0)
 
     def fit_draw(self, X, y=None, **kwargs):
         """
