@@ -39,7 +39,7 @@ class RegressionScoreVisualizer(ScoreVisualizer):
 
     The primary functionality of this class is to perform a check to ensure
     the passed in estimator is a regressor, otherwise it raises a
-    ``YellowbrickTypeError``. 
+    ``YellowbrickTypeError``.
     """
 
     def __init__(self, model, ax=None, **kwargs):
