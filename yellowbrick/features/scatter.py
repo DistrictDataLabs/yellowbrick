@@ -15,6 +15,7 @@ Implements a 2D scatter plot for feature analysis.
 ##########################################################################
 ## Imports
 ##########################################################################
+import itertools
 
 import numpy as np
 import matplotlib.pyplot as plt
@@ -50,7 +51,8 @@ def scatterviz(X, y=None, ax=None, features=None, classes=None,
         The axes to plot the figure on.
 
     features : list of strings
-        The names of the features or columns
+        The names of two features or columns.
+        More than that will raise an error.
 
     classes : list of strings
         The names of the classes in the target
@@ -85,8 +87,8 @@ def scatterviz(X, y=None, ax=None, features=None, classes=None,
 
 class ScatterVisualizer(DataVisualizer):
     """
-    ScatterVisualizer is a bivariate data visualization algorithm that plots
-    using the Cartesian coordinates of each point.
+    ScatterVisualizer is a bivariate feature data visualization algorithm that
+    plots using the Cartesian coordinates of each point.
     """
 
     def __init__(self, ax=None, features=None, classes=None, color=None,
@@ -101,7 +103,9 @@ class ScatterVisualizer(DataVisualizer):
         :param ax: the axis to plot the figure on.
 
         :param features: a list of feature names to use
-            If a DataFrame is passed to fit and features is None, feature
+            List of features that correspond to the columns in the array.
+            More than two feature names or coloumns will raise an error. If
+            a DataFrame is passed to fit and features is None, feature
             names are selected as the columns of the DataFrame.
 
         :param classes: a list of class names for the legend
@@ -116,6 +120,9 @@ class ScatterVisualizer(DataVisualizer):
             Use either color to colorize the lines on a per class basis or
             colormap to color them on a continuous scale.
 
+        :param markers: iterable of strings
+            Matplotlib style markers for points on the scatter plot points
+
         :param kwargs: keyword arguments passed to the super class.
 
         These parameters can be influenced later on in the visualization
@@ -124,6 +131,8 @@ class ScatterVisualizer(DataVisualizer):
         super(ScatterVisualizer, self).__init__(
             ax, features, classes, color, colormap, **kwargs
         )
+        self.markers = itertools.cycle(kwargs.pop('markers', (',', '+', 'o', '*', 'v', 'h', 'd') ))
+
         # Ensure with init that features doesn't have more than two features
         if features is not None:
             if len(features) != 2:
@@ -138,7 +147,7 @@ class ScatterVisualizer(DataVisualizer):
         Parameters
         ----------
         X : ndarray or DataFrame of shape n x m
-            A matrix of n instances with m features
+            A matrix of n instances with 2 features
 
         y : ndarray or Series of length n
             An array or series of target or class values
@@ -153,27 +162,33 @@ class ScatterVisualizer(DataVisualizer):
         """
         nrows, ncols = X.shape
 
+        if ncols == 2:
+            X_two_cols = X
+            if self.features_ is None:
+                self.features_ = [0, 1]
+
+        # Handle the feature names if they're None.
+        elif self.features_ is not None and ncols > 2:
+            # If X is a data frame, get the columns off it.
+            if is_dataframe(X):
+                X_two_cols = X[self.features_].as_matrix()
+            # Otherwise create numeric labels for each column.
+            else:
+                X_two_cols = X[:, self.features_]
+        else:
+            raise YellowbrickValueError("""
+                ScatterVisualizer only accepts two features, please
+                explicitly set these two features in the init kwargs or
+                pass a matrix/ dataframe in with only two columns."""
+            )
+
         # Store the classes for the legend if they're None.
         if self.classes_ is None:
             # TODO: Is this the most efficient method?
             self.classes_ = [str(label) for label in set(y)]
 
-        # Handle the feature names if they're None.
-        if self.features_ is None:
-                # If X is a data frame, get the columns off it.
-                if is_dataframe(X) and X.columns == 2:
-                    self.features_ = X.columns
-
-                # Otherwise create numeric labels for each column.
-                elif ncols == 2:
-                    self.features_ = [
-                        str(cdx) for cdx in range(ncols)
-                    ]
-                else:
-                    raise YellowbrickValueError('ScatterVisualizer only accepts two features, please explicted set the features key argument or only pass a matrix/ dataframe with only two columns')
-
         # Draw the instances
-        self.draw(X, y, **kwargs)
+        self.draw(X_two_cols, y, **kwargs)
 
         # Fit always returns self.
         return self
@@ -213,7 +228,7 @@ class ScatterVisualizer(DataVisualizer):
         # TODO: store these plots to add more instances to later
         # TODO: make this a separate function
         for i, kls in enumerate(self.classes_):
-            self.ax.scatter(to_plot[kls][0], to_plot[kls][1], color=colors[kls], label=str(kls), **kwargs)
+            self.ax.scatter(to_plot[kls][0], to_plot[kls][1], marker=next(self.markers), color=colors[kls], label=str(kls), **kwargs)
 
         self.ax.axis('equal')
 
@@ -232,12 +247,12 @@ class ScatterVisualizer(DataVisualizer):
 
         # Set the title
         self.set_title(
-            'Scatter Plot: {0} vs {1}'.format(feature_one, feature_two)
+            'Scatter Plot: {0} vs {1}'.format(str(feature_one), str(feature_two))
         )
         # Add the legend
         self.ax.legend(loc='best')
-        self.ax.set_xlabel(feature_one)
-        self.ax.set_ylabel(feature_two)
+        self.ax.set_xlabel(str(feature_one))
+        self.ax.set_ylabel(str(feature_two))
 
 
 # Alias for ScatterViz
