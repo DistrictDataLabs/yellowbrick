@@ -75,6 +75,15 @@ class ScatterVizTests(unittest.TestCase, DatasetMixin):
         visualizer = ScatterViz(features=features)
         visualizer.fit_transform(X_two_cols, self.y)
 
+    def test_scatter_no_features(self):
+        """
+        Assert no errors occur during scatter visualizer integration with no featues
+        """
+        X_two_cols = self.X[:,:2]
+        visualizer = ScatterViz()
+        visualizer.fit_transform_poof(X_two_cols, self.y)
+        self.assertEquals(visualizer.features_, [0, 1])
+
     def test_scatter_only_two_features_allowed_init(self):
         """
         Assert that only two features are allowed for this visualizer in init
