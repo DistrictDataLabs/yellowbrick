@@ -92,6 +92,42 @@ class DataVisualizer(FeatureVisualizer):
     whether or not the target is sequential or categorical, and mapping a
     color sequence or color set to the targets as appropriate. It also uses
     the fit method to call the drawing utilities.
+
+    Parameters
+    ----------
+
+    ax: matplotlib Axes, default: None
+        The axis to plot the figure on. If None is passed in the current axes
+        will be used (or generated if required).
+
+    features: list, default: None
+        a list of feature names to use
+        If a DataFrame is passed to fit and features is None, feature
+        names are selected as the columns of the DataFrame.
+
+    classes: list, default: None
+        a list of class names for the legend
+        If classes is None and a y value is passed to fit then the classes
+        are selected from the target vector.
+
+    color: list or tuple, default: None
+        optional list or tuple of colors to colorize lines
+        Use either color to colorize the lines on a per class basis or
+        colormap to color them on a continuous scale.
+
+    colormap: string or cmap, default: None
+        optional string or matplotlib cmap to colorize lines
+        Use either color to colorize the lines on a per class basis or
+        colormap to color them on a continuous scale.
+
+    kwargs : dict
+        Keyword arguments that are passed to the base class and may influence
+        the visualization as defined in other Visualizers.
+
+    Notes
+    -----
+        These parameters can be influenced later on in the visualization
+        process, but can and should be set as early as possible.
     """
 
     def __init__(self, ax=None, features=None, classes=None, color=None,
@@ -99,33 +135,6 @@ class DataVisualizer(FeatureVisualizer):
         """
         Initialize the data visualization with many of the options required
         in order to make most visualizations work.
-
-        These parameters can be influenced later on in the visualization
-        process, but can and should be set as early as possible.
-
-        Parameters
-        ----------
-
-        ax: the axis to plot the figure on.
-
-        features: a list of feature names to use
-            If a DataFrame is passed to fit and features is None, feature
-            names are selected as the columns of the DataFrame.
-
-        classes: a list of class names for the legend
-            If classes is None and a y value is passed to fit then the classes
-            are selected from the target vector.
-
-        color: optional list or tuple of colors to colorize lines
-            Use either color to colorize the lines on a per class basis or
-            colormap to color them on a continuous scale.
-
-        colormap: optional string or matplotlib cmap to colorize lines
-            Use either color to colorize the lines on a per class basis or
-            colormap to color them on a continuous scale.
-
-        kwargs: keyword arguments passed to the super class.
-
         """
         super(DataVisualizer, self).__init__(ax=ax, **kwargs)
 

@@ -37,7 +37,7 @@ __all__ = [
 
 class SilhouetteVisualizer(ClusteringScoreVisualizer):
     """
-
+    TODO: Document this class!
     """
 
     def __init__(self, model, ax=None, **kwargs):
