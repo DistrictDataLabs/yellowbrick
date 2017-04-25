@@ -20,10 +20,18 @@ Test the ScatterViz feature analysis visualizers
 import unittest
 import numpy as np
 import numpy.testing as npt
+import matplotlib as mptl
 
 from tests.dataset import DatasetMixin
 from yellowbrick.features.scatter import *
 from yellowbrick.exceptions import YellowbrickValueError
+
+
+try:
+    import pandas
+except ImportError:
+    pandas = None
+
 
 ##########################################################################
 ## ScatterViz Base Tests
@@ -48,13 +56,24 @@ class ScatterVizTests(unittest.TestCase, DatasetMixin):
     def tearDown(self):
         self.occupancy = None
 
+    def test_init_alias(self):
+        features = ["temperature", "relative_humidity"]
+        visualizer = ScatterVisualizer(features=features, markers=['*'])
+        self.assertIsNotNone(visualizer.markers)
+
+    def test_init_alias(self):
+        features = ["temperature", "relative_humidity"]
+        visualizer = ScatterViz(features=features, markers=['*'])
+        self.assertIsNotNone(visualizer.markers)
+
     def test_scatter(self):
         """
         Assert no errors occur during scatter visualizer integration
         """
+        X_two_cols = self.X[:,:2]
         features = ["temperature", "relative_humidity"]
         visualizer = ScatterViz(features=features)
-        visualizer.fit_transform(self.X, self.y)
+        visualizer.fit_transform(X_two_cols, self.y)
 
     def test_scatter_only_two_features_allowed_init(self):
         """
@@ -80,7 +99,6 @@ class ScatterVizTests(unittest.TestCase, DatasetMixin):
         """
         Test scatter on the real, occupancy data set
         """
-
         # Load the data from the fixture
         X = self.occupancy[[
             "temperature", "relative_humidity", "light", "C02", "humidity"
@@ -93,4 +111,45 @@ class ScatterVizTests(unittest.TestCase, DatasetMixin):
         # Test the visualizer
         features = ["temperature", "relative_humidity"]
         visualizer = ScatterViz(features=features)
-        visualizer.fit_transform(X, y)
+        visualizer.fit_transform_poof(X[:,:2], y)
+
+
+    def test_scatter_quick_method(self):
+        """
+        Test scatter on the real, occupancy data set
+        """
+        # Load the data from the fixture
+        X = self.occupancy[[
+            "temperature", "relative_humidity", "light", "C02", "humidity"
+        ]]
+        y = self.occupancy['occupancy'].astype(int)
+
+        # Convert X to an ndarray
+        X = X.view((float, len(X.dtype.names)))
+
+        # Test the visualizer
+        features = ["temperature", "relative_humidity"]
+        ax = scatterviz(X[:,:2], y=y, ax=None, features=features)
+
+        #test that is returns a matplotlib obj with axes
+        self.assertIn('Axes', str(ax.properties()['axes']))
+
+    @unittest.skipUnless(pandas is not None, "Pandas is not installed, could not run test.")
+    def test_integrated_scatter_with_pandas(self):
+        """
+        Test scatter on the real, occupancy data set with a pandas dataframe
+        """
+        # Load the data from the fixture
+        X = self.occupancy[[
+            "temperature", "relative_humidity", "light", "C02", "humidity"
+        ]]
+        y = self.occupancy['occupancy'].astype(int)
+
+        # Convert X to a pandas dataframe
+        X = pandas.DataFrame(X)
+        X.columns = ["temperature", "relative_humidity", "light", "C02", "humidity"]
+
+        # Test the visualizer
+        features = ["temperature", "relative_humidity"]
+        visualizer = ScatterViz(features=features)
+        visualizer.fit_transform_poof(X, y)

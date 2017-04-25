@@ -32,7 +32,7 @@ from yellowbrick.style.colors import resolve_colors, get_color_cycle
 ##########################################################################
 
 def scatterviz(X, y=None, ax=None, features=None, classes=None,
-           color=None, colormap=None, **kwargs):
+           color=None, colormap=None, markers=None, **kwargs):
     """Displays a bivariate scatter plot.
 
     This helper function is a quick wrapper to utilize the ScatterVisualizer
@@ -63,6 +63,9 @@ def scatterviz(X, y=None, ax=None, features=None, classes=None,
     colormap : string or matplotlib cmap
         Sequential colormap for continuous target
 
+    :param markers: iterable of strings
+        Matplotlib style markers for points on the scatter plot points
+
     Returns
     -------
     ax : matplotlib axes
@@ -70,7 +73,7 @@ def scatterviz(X, y=None, ax=None, features=None, classes=None,
     """
     # Instantiate the visualizer
     visualizer = ScatterVisualizer(
-        ax, features, classes, color, colormap, **kwargs
+        ax, features, classes, color, colormap, markers, **kwargs
     )
 
     # Fit and transform the visualizer (calls draw)
@@ -92,7 +95,7 @@ class ScatterVisualizer(DataVisualizer):
     """
 
     def __init__(self, ax=None, features=None, classes=None, color=None,
-                 colormap=None, **kwargs):
+                 colormap=None, markers=None, **kwargs):
         """
         Initialize the base scatter with many of the options required in order
         to make the visualization work.
@@ -168,13 +171,8 @@ class ScatterVisualizer(DataVisualizer):
                 self.features_ = [0, 1]
 
         # Handle the feature names if they're None.
-        elif self.features_ is not None and ncols > 2:
-            # If X is a data frame, get the columns off it.
-            if is_dataframe(X):
-                X_two_cols = X[self.features_].as_matrix()
-            # Otherwise create numeric labels for each column.
-            else:
-                X_two_cols = X[:, self.features_]
+        elif self.features_ is not None and is_dataframe(X):
+            X_two_cols = X[self.features_].as_matrix()
         else:
             raise YellowbrickValueError("""
                 ScatterVisualizer only accepts two features, please
