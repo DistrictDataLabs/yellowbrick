@@ -925,3 +925,71 @@ def class_balance(model, X, y=None, ax=None, classes=None, **kwargs):
 
     # Return the axes object on the visualizer
     return visualizer.ax
+
+
+##############################################################################
+## Feature Importance
+##############################################################################
+
+class ImportanceVisualizer(Visualizer):
+    """Visualize the importance of features in tree-based models:
+
+    The importance of each feature is shown in a bar plot.
+    Parameters
+    ----------
+    X  : ndarray or DataFrame of shape n x m
+        A matrix of n instances with m features.
+
+    y  :(optional) ndarray or Series of length n
+        An array or series of target or class values.
+
+    ax : matplotlib axes
+        The axes to plot the figure on.
+
+    model : the Scikit-Learn estimator (should be a tree-based classifier)
+
+    feature_names : list of strings
+        The names of the features in X.
+
+    Returns
+    -------
+    ax : matplotlib axes
+        Returns the axes that the importance bar plot was drawn on.
+    """
+
+    def __init__(self, model, feature_names=None, ax=None):
+        self.model = model
+        self.feature_names = feature_names
+        self.ax = ax
+
+    def fit(self, X, y=None):
+        '''
+        Extract the importances from the model.__name__
+        '''
+        # TODO: check if model type is right
+        self.importances = self.model.feature_importances_
+        self.std = np.std([tree.feature_importances_ for tree in self.model.estimators_], axis=0)
+        self.indices = np.argsort(self.importances)[::-1]
+        self.X = X
+        return self
+
+    def draw(self):
+        """
+        Renders the feature importance barplot across the axis.
+
+        Returns
+        -------
+
+        ax : the axis with the plotted figure
+
+        """
+        # Create the axis if it doesn't exist
+        if self.ax is None:
+            self.ax = plt.gca()
+
+        plt.title("Feature importances")
+        plt.bar(range(self.X.shape[1]), self.importances[self.indices],
+                color="r", yerr=self.std[self.indices], align="center")
+        plt.xticks(range(self.X.shape[1]), self.indices)
+        plt.xlim([-1, self.X.shape[1]])
+        return self.ax
