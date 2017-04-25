@@ -25,7 +25,7 @@ import matplotlib as mptl
 from tests.dataset import DatasetMixin
 from yellowbrick.features.scatter import *
 from yellowbrick.exceptions import YellowbrickValueError
-
+from yellowbrick.style import palettes
 
 try:
     import pandas
@@ -75,6 +75,17 @@ class ScatterVizTests(unittest.TestCase, DatasetMixin):
         visualizer = ScatterViz(features=features)
         visualizer.fit_transform(X_two_cols, self.y)
 
+    def test_color_builds(self):
+        """
+        Assert no errors occur during scatter visualizer integration
+        """
+        colors = palettes.PALETTES['pastel']
+        X_two_cols = self.X[:,:2]
+        features = ["temperature", "relative_humidity"]
+        visualizer = ScatterViz(features=features, color=colors)
+        visualizer.fit_transform(X_two_cols, self.y)
+
+
     def test_scatter_no_features(self):
         """
         Assert no errors occur during scatter visualizer integration with no featues
@@ -103,7 +114,6 @@ class ScatterVizTests(unittest.TestCase, DatasetMixin):
             visualizer.fit_transform(self.X, self.y)
             self.assertTrue('only accepts two features' in str(context.exception))
 
-
     def test_integrated_scatter(self):
         """
         Test scatter on the real, occupancy data set
@@ -121,7 +131,6 @@ class ScatterVizTests(unittest.TestCase, DatasetMixin):
         features = ["temperature", "relative_humidity"]
         visualizer = ScatterViz(features=features)
         visualizer.fit_transform_poof(X[:,:2], y)
-
 
     def test_scatter_quick_method(self):
         """
@@ -142,6 +151,7 @@ class ScatterVizTests(unittest.TestCase, DatasetMixin):
 
         #test that is returns a matplotlib obj with axes
         self.assertIn('Axes', str(ax.properties()['axes']))
+
 
     @unittest.skipUnless(pandas is not None, "Pandas is not installed, could not run test.")
     def test_integrated_scatter_with_pandas(self):

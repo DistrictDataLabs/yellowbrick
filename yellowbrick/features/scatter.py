@@ -107,20 +107,20 @@ class ScatterVisualizer(DataVisualizer):
 
         :param features: a list of feature names to use
             List of features that correspond to the columns in the array.
-            More than two feature names or coloumns will raise an error. If
+            More than two feature names or columns will raise an error. If
             a DataFrame is passed to fit and features is None, feature
-            names are selected as the columns of the DataFrame.
+            names are selected that are the columns of the DataFrame.
 
         :param classes: a list of class names for the legend
             If classes is None and a y value is passed to fit then the classes
             are selected from the target vector.
 
-        :param color: optional list or tuple of colors to colorize lines
-            Use either color to colorize the lines on a per class basis or
+        :param color: optional list or tuple of colors to colorize points
+            Use either color to colorize the points on a per class basis or
             colormap to color them on a continuous scale.
 
-        :param colormap: optional string or matplotlib cmap to colorize lines
-            Use either color to colorize the lines on a per class basis or
+        :param colormap: optional string or matplotlib cmap to colorize points
+            Use either color to colorize the points on a per class basis or
             colormap to color them on a continuous scale.
 
         :param markers: iterable of strings
@@ -204,7 +204,13 @@ class ScatterVisualizer(DataVisualizer):
         if self.ax is None:
                 self.ax = plt.gca(xlim=[-1,1], ylim=[-1,1])
 
-        color_values = get_color_cycle()
+        # set the colors
+        if self.colormap is not None or self.color is not None:
+            color_values = resolve_colors(num_colors=len(self.classes_), colormap=self.colormap, color=self.color)
+        else:
+            color_values = get_color_cycle()
+
+
         colors = dict(zip(self.classes_, color_values))
 
         # Create a data structure to hold the scatter plot representations
