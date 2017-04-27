@@ -115,9 +115,6 @@ class ClassificationReport(ClassificationScoreVisualizer):
         for cls in self.classes_:
             self.matrix.append([self.scores['precision'][cls],self.scores['recall'][cls],self.scores['f1'][cls]])
 
-        print(self.matrix)
-        self.matrix = np.array(self.matrix)
-        print(self.matrix)
         for column in range(0,3): #3 columns - prec,rec,f1
             for row in range(len(self.classes_)):
                 current_score = self.matrix[row][column]
