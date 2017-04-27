@@ -18,7 +18,7 @@ Testing for the Classification Score Visualizers
 import unittest
 
 from tests.base import VisualTestCase
-from yellowbrick.classifier import *
+from yellowbrick.classifier_old import *
 
 from sklearn.svm import LinearSVC
 from sklearn.metrics import *
