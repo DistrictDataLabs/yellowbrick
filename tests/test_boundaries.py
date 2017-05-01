@@ -17,9 +17,12 @@ Ensure that the Decision Boundary visualizations work.
 ## Imports
 ##########################################################################
 
+try:
+    from unittest import mock
+except ImportError:
+    import mock
+
 from collections import OrderedDict
-from unittest import mock
-import unittest
 import numpy as np
 
 from tests.base import VisualTestCase
