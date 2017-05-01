@@ -30,7 +30,7 @@ class DecisionBoundariesVisualizer(ModelVisualizer):
 
     def __init__(self,
                  model,
-                 colors=None,
+                 colors=PALETTES['set1'],
                  classes=None,
                  features=None,
                  show_scatter=True,
