@@ -7,13 +7,12 @@
 # For license information, see LICENSE.txt
 #
 # ID: scatter.py [] nathan.danielsen@gmail.com $
-
 """
 Implements a 2D scatter plot for feature analysis.
 """
 
 ##########################################################################
-## Imports
+# Imports
 ##########################################################################
 import itertools
 
@@ -26,13 +25,20 @@ from yellowbrick.utils import is_dataframe
 from yellowbrick.exceptions import YellowbrickValueError
 from yellowbrick.style.colors import resolve_colors, get_color_cycle
 
-
 ##########################################################################
-## Quick Methods
+# Quick Methods
 ##########################################################################
 
-def scatterviz(X, y=None, ax=None, features=None, classes=None,
-           color=None, colormap=None, markers=None, **kwargs):
+
+def scatterviz(X,
+               y=None,
+               ax=None,
+               features=None,
+               classes=None,
+               color=None,
+               colormap=None,
+               markers=None,
+               **kwargs):
     """Displays a bivariate scatter plot.
 
     This helper function is a quick wrapper to utilize the ScatterVisualizer
@@ -72,9 +78,8 @@ def scatterviz(X, y=None, ax=None, features=None, classes=None,
         Returns the axes that the parallel coordinates were drawn on.
     """
     # Instantiate the visualizer
-    visualizer = ScatterVisualizer(
-        ax, features, classes, color, colormap, markers, **kwargs
-    )
+    visualizer = ScatterVisualizer(ax, features, classes, color, colormap,
+                                   markers, **kwargs)
 
     # Fit and transform the visualizer (calls draw)
     visualizer.fit(X, y, **kwargs)
@@ -85,8 +90,9 @@ def scatterviz(X, y=None, ax=None, features=None, classes=None,
 
 
 ##########################################################################
-## Static ScatterVisualizer Visualizer
+# Static ScatterVisualizer Visualizer
 ##########################################################################
+
 
 class ScatterVisualizer(DataVisualizer):
     """
@@ -94,8 +100,14 @@ class ScatterVisualizer(DataVisualizer):
     plots using the Cartesian coordinates of each point.
     """
 
-    def __init__(self, ax=None, features=None, classes=None, color=None,
-                 colormap=None, markers=None, **kwargs):
+    def __init__(self,
+                 ax=None,
+                 features=None,
+                 classes=None,
+                 color=None,
+                 colormap=None,
+                 markers=None,
+                 **kwargs):
         """
         Initialize the base scatter with many of the options required in order
         to make the visualization work.
@@ -131,15 +143,16 @@ class ScatterVisualizer(DataVisualizer):
         These parameters can be influenced later on in the visualization
         process, but can and should be set as early as possible.
         """
-        super(ScatterVisualizer, self).__init__(
-            ax, features, classes, color, colormap, **kwargs
-        )
-        self.markers = itertools.cycle(kwargs.pop('markers', (',', '+', 'o', '*', 'v', 'h', 'd') ))
+        super(ScatterVisualizer, self).__init__(ax, features, classes, color,
+                                                colormap, **kwargs)
+        self.markers = itertools.cycle(
+            kwargs.pop('markers', (',', '+', 'o', '*', 'v', 'h', 'd')))
 
         # Ensure with init that features doesn't have more than two features
         if features is not None:
             if len(features) != 2:
-                raise YellowbrickValueError('ScatterVisualizer only accepts two features')
+                raise YellowbrickValueError(
+                    'ScatterVisualizer only accepts two features')
 
     def fit(self, X, y=None, **kwargs):
         """
@@ -163,7 +176,7 @@ class ScatterVisualizer(DataVisualizer):
         self : instance
             Returns the instance of the transformer/visualizer
         """
-        nrows, ncols = X.shape
+        _, ncols = X.shape
 
         if ncols == 2:
             X_two_cols = X
@@ -177,8 +190,7 @@ class ScatterVisualizer(DataVisualizer):
             raise YellowbrickValueError("""
                 ScatterVisualizer only accepts two features, please
                 explicitly set these two features in the init kwargs or
-                pass a matrix/ dataframe in with only two columns."""
-            )
+                pass a matrix/ dataframe in with only two columns.""")
 
         # Store the classes for the legend if they're None.
         if self.classes_ is None:
@@ -192,24 +204,22 @@ class ScatterVisualizer(DataVisualizer):
         return self
 
     def draw(self, X, y, **kwargs):
-        """
-        Called from the fit method, this method creates a scatter plot that draws
-        each instance as a class or target colored point, whose location
+        """Called from the fit method, this method creates a scatter plot that
+        draws each instance as a class or target colored point, whose location
         is determined by the feature data set.
         """
-        # Get the shape of the data
-        nrows, ncols = X.shape
-
         # Create the axes if they don't exist
         if self.ax is None:
-                self.ax = plt.gca(xlim=[-1,1], ylim=[-1,1])
+            self.ax = plt.gca(xlim=[-1, 1], ylim=[-1, 1])
 
         # set the colors
         if self.colormap is not None or self.color is not None:
-            color_values = resolve_colors(num_colors=len(self.classes_), colormap=self.colormap, color=self.color)
+            color_values = resolve_colors(
+                num_colors=len(self.classes_),
+                colormap=self.colormap,
+                color=self.color)
         else:
             color_values = get_color_cycle()
-
 
         colors = dict(zip(self.classes_, color_values))
 
@@ -222,7 +232,7 @@ class ScatterVisualizer(DataVisualizer):
         # TODO: make this an independent function for override
         for i, row in enumerate(X):
             row_ = np.repeat(np.expand_dims(row, axis=1), 2, axis=1)
-            x_, y_   = row_[0], row_[1]
+            x_, y_ = row_[0], row_[1]
             kls = self.classes_[y[i]]
 
             to_plot[kls][0].append(x_)
@@ -232,7 +242,13 @@ class ScatterVisualizer(DataVisualizer):
         # TODO: store these plots to add more instances to later
         # TODO: make this a separate function
         for i, kls in enumerate(self.classes_):
-            self.ax.scatter(to_plot[kls][0], to_plot[kls][1], marker=next(self.markers), color=colors[kls], label=str(kls), **kwargs)
+            self.ax.scatter(
+                to_plot[kls][0],
+                to_plot[kls][1],
+                marker=next(self.markers),
+                color=colors[kls],
+                label=str(kls),
+                **kwargs)
 
         self.ax.axis('equal')
 
@@ -250,9 +266,8 @@ class ScatterVisualizer(DataVisualizer):
         feature_one, feature_two = self.features_
 
         # Set the title
-        self.set_title(
-            'Scatter Plot: {0} vs {1}'.format(str(feature_one), str(feature_two))
-        )
+        self.set_title('Scatter Plot: {0} vs {1}'.format(
+            str(feature_one), str(feature_two)))
         # Add the legend
         self.ax.legend(loc='best')
         self.ax.set_xlabel(str(feature_one))

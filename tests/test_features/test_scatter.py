@@ -8,13 +8,12 @@
 # For license information, see LICENSE.txt
 #
 # ID: test_scatter.py [] nathan.danielsen@gmail.com $
-
 """
 Test the ScatterViz feature analysis visualizers
 """
 
 ##########################################################################
-## Imports
+# Imports
 ##########################################################################
 
 import unittest
@@ -32,22 +31,23 @@ try:
 except ImportError:
     pandas = None
 
+##########################################################################
+# ScatterViz Base Tests
+##########################################################################
 
-##########################################################################
-## ScatterViz Base Tests
-##########################################################################
 
 class ScatterVizTests(unittest.TestCase, DatasetMixin):
 
-    X = np.array(
-            [[ 2.318, 2.727, 4.260, 7.212, 4.792],
-             [ 2.315, 2.726, 4.295, 7.140, 4.783,],
-             [ 2.315, 2.724, 4.260, 7.135, 4.779,],
-             [ 2.110, 3.609, 4.330, 7.985, 5.595,],
-             [ 2.110, 3.626, 4.330, 8.203, 5.621,],
-             [ 2.110, 3.620, 4.470, 8.210, 5.612,]]
-        )
-
+    # yapf: disable
+    X = np.array([
+        [2.318, 2.727, 4.260, 7.212, 4.792],
+        [2.315, 2.726, 4.295, 7.140, 4.783, ],
+        [2.315, 2.724, 4.260, 7.135, 4.779, ],
+        [2.110, 3.609, 4.330, 7.985, 5.595, ],
+        [2.110, 3.626, 4.330, 8.203, 5.621, ],
+        [2.110, 3.620, 4.470, 8.210, 5.612, ]
+        ])
+    # yapf: enable
     y = np.array([1, 1, 0, 1, 0, 0])
 
     def setUp(self):
@@ -61,16 +61,11 @@ class ScatterVizTests(unittest.TestCase, DatasetMixin):
         visualizer = ScatterVisualizer(features=features, markers=['*'])
         self.assertIsNotNone(visualizer.markers)
 
-    def test_init_alias(self):
-        features = ["temperature", "relative_humidity"]
-        visualizer = ScatterViz(features=features, markers=['*'])
-        self.assertIsNotNone(visualizer.markers)
-
     def test_scatter(self):
         """
         Assert no errors occur during scatter visualizer integration
         """
-        X_two_cols = self.X[:,:2]
+        X_two_cols = self.X[:, :2]
         features = ["temperature", "relative_humidity"]
         visualizer = ScatterViz(features=features)
         visualizer.fit_transform(X_two_cols, self.y)
@@ -80,17 +75,16 @@ class ScatterVizTests(unittest.TestCase, DatasetMixin):
         Assert no errors occur during scatter visualizer integration
         """
         colors = palettes.PALETTES['pastel']
-        X_two_cols = self.X[:,:2]
+        X_two_cols = self.X[:, :2]
         features = ["temperature", "relative_humidity"]
         visualizer = ScatterViz(features=features, color=colors)
         visualizer.fit_transform(X_two_cols, self.y)
 
-
     def test_scatter_no_features(self):
+        """Assert no errors occur during scatter visualizer integration
+        with no featues
         """
-        Assert no errors occur during scatter visualizer integration with no featues
-        """
-        X_two_cols = self.X[:,:2]
+        X_two_cols = self.X[:, :2]
         visualizer = ScatterViz()
         visualizer.fit_transform_poof(X_two_cols, self.y)
         self.assertEquals(visualizer.features_, [0, 1])
@@ -112,7 +106,8 @@ class ScatterVizTests(unittest.TestCase, DatasetMixin):
         visualizer = ScatterViz()
         with self.assertRaises(YellowbrickValueError) as context:
             visualizer.fit_transform(self.X, self.y)
-            self.assertTrue('only accepts two features' in str(context.exception))
+            self.assertTrue(
+                'only accepts two features' in str(context.exception))
 
     def test_integrated_scatter(self):
         """
@@ -130,7 +125,7 @@ class ScatterVizTests(unittest.TestCase, DatasetMixin):
         # Test the visualizer
         features = ["temperature", "relative_humidity"]
         visualizer = ScatterViz(features=features)
-        visualizer.fit_transform_poof(X[:,:2], y)
+        visualizer.fit_transform_poof(X[:, :2], y)
 
     def test_scatter_quick_method(self):
         """
@@ -147,13 +142,13 @@ class ScatterVizTests(unittest.TestCase, DatasetMixin):
 
         # Test the visualizer
         features = ["temperature", "relative_humidity"]
-        ax = scatterviz(X[:,:2], y=y, ax=None, features=features)
+        ax = scatterviz(X[:, :2], y=y, ax=None, features=features)
 
-        #test that is returns a matplotlib obj with axes
+        # test that is returns a matplotlib obj with axes
         self.assertIn('Axes', str(ax.properties()['axes']))
 
-
-    @unittest.skipUnless(pandas is not None, "Pandas is not installed, could not run test.")
+    @unittest.skipUnless(pandas is not None,
+                         "Pandas is not installed, could not run test.")
     def test_integrated_scatter_with_pandas(self):
         """
         Test scatter on the real, occupancy data set with a pandas dataframe
@@ -166,7 +161,9 @@ class ScatterVizTests(unittest.TestCase, DatasetMixin):
 
         # Convert X to a pandas dataframe
         X = pandas.DataFrame(X)
-        X.columns = ["temperature", "relative_humidity", "light", "C02", "humidity"]
+        X.columns = [
+            "temperature", "relative_humidity", "light", "C02", "humidity"
+        ]
 
         # Test the visualizer
         features = ["temperature", "relative_humidity"]
