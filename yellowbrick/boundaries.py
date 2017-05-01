@@ -37,6 +37,7 @@ class DecisionBoundariesVisualizer(ModelVisualizer):
                  step_size=0.0025,
                  markers=None,
                  scatter_alpha=0.6,
+                 title=None,
                  **kwargs):
         """
         Pass in a unfitted model to generate a decision boundaries
@@ -94,8 +95,9 @@ class DecisionBoundariesVisualizer(ModelVisualizer):
         self.show_scatter = show_scatter
         self.step_size = step_size
         self.markers = itertools.cycle(
-            kwargs.pop('markers', (',', '+', 'o', '*', 'v', 'h', 'd')))
+            kwargs.pop('markers', (',', 'o', 'd', '*', 'v', 'h', '+')))
         self.scatter_alpha = scatter_alpha
+        self.title = title
 
         # these are set later
         self.Z = None
@@ -251,15 +253,16 @@ class DecisionBoundariesVisualizer(ModelVisualizer):
 
         """
         # Divide out the two features
-        title = 'Decisions Boundaries'
-
         feature_one, feature_two = self.features_
-        title = 'Decisions Boundaries: {feature_one} vs {feature_two}'.format(
-            **locals())
 
-        self.set_title(title)
+        if self.title is None:
+
+            self.title = 'Decisions Boundaries: {feature_one} vs {feature_two}'.format(
+                **locals())
+
+        self.set_title(self.title)
         # Add the legend
-        self.ax.legend(loc='best')
+        self.ax.legend(loc='best', frameon=True)
         self.ax.set_xlabel(feature_one)
         self.ax.set_ylabel(feature_two)
 
@@ -279,6 +282,5 @@ class DecisionBoundariesVisualizer(ModelVisualizer):
         """
         self.fit_draw(X, y, **kwargs)
         self.poof(**kwargs)
-
 
 DecisionViz = DecisionBoundariesVisualizer

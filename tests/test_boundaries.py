@@ -91,6 +91,7 @@ class DecisionBoundariesVisualizerTest(VisualTestCase):
         self.assertIsNone(viz.yy)
         self.assertIsNone(viz.ax)
         self.assertIsNone(viz.class_labels)
+        self.assertIsNone(viz.title)
 
     def test_fit(self):
         """
