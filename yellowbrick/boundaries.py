@@ -87,7 +87,7 @@ class DecisionBoundariesVisualizer(ModelVisualizer):
         """
         super(DecisionBoundariesVisualizer, self).__init__(self)
 
-        self.colors = kwargs.pop('colors', PALETTES['set1'])
+        self.colors = colors
         self.classes_ = classes
         self.features_ = features
         self.estimator = model
