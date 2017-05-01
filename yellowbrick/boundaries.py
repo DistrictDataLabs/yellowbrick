@@ -279,3 +279,6 @@ class DecisionBoundariesVisualizer(ModelVisualizer):
         """
         self.fit_draw(X, y, **kwargs)
         self.poof(**kwargs)
+
+
+DecisionViz = DecisionBoundariesVisualizer

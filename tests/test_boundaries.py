@@ -65,7 +65,7 @@ class DecisionBoundariesVisualizerTest(VisualTestCase):
         integration
         """
         model = neighbors.KNeighborsClassifier(3)
-        viz = DecisionBoundariesVisualizer(model)
+        viz = DecisionViz(model)
         viz.fit_draw_poof(X_two_cols, y=y)
 
     def test_init(self):
