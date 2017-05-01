@@ -6,33 +6,41 @@
 #
 # Copyright (C) 2017 District Data Labs
 # For license information, see LICENSE.txt
-
-
-import numpy as np
-import matplotlib.pyplot as plt
-import matplotlib as mpl
-from matplotlib.patches import Patch
 from collections import OrderedDict
+import itertools
+import numpy as np
+
+import matplotlib.pyplot as plt
+from matplotlib.colors import ListedColormap
+from matplotlib.patches import Patch
 
 from yellowbrick.exceptions import YellowbrickTypeError
 from yellowbrick.base import ModelVisualizer
 from yellowbrick.utils import get_model_name
-from yellowbrick.style.palettes import color_sequence
 from yellowbrick.style.colors import resolve_colors
-from matplotlib.colors import ListedColormap
 from yellowbrick.utils import is_dataframe
 from yellowbrick.style.palettes import PALETTES
-import itertools
 
 
 class DecisionBoundariesVisualizer(ModelVisualizer):
     """
-    DecisionBoundariesVisualizer is a bivariate data visualization algorithm that plots
-    the decision boundaries of each class.
+    DecisionBoundariesVisualizer is a bivariate data visualization algorithm
+    that plots the decision boundaries of each class.
     """
-    def __init__(self, model, colors=None, classes=None, features=None, show_scatter=True, step_size=0.0025, markers=None, scatter_alpha=0.6, **kwargs):
+
+    def __init__(self,
+                 model,
+                 colors=None,
+                 classes=None,
+                 features=None,
+                 show_scatter=True,
+                 step_size=0.0025,
+                 markers=None,
+                 scatter_alpha=0.6,
+                 **kwargs):
         """
-        Pass in a unfitted model to generate a decision boundaries visualization.
+        Pass in a unfitted model to generate a decision boundaries
+        visualization.
 
         Parameters
         ----------
@@ -56,11 +64,11 @@ class DecisionBoundariesVisualizer(ModelVisualizer):
             on top of the decision boundary graph
 
         :param step_size: float percentage
-            Determines the step size for creating the numpy meshgrid that will later
-            become the foundation of the decision boundary graph. The default value
-            of 0.0025 means that the step size for constructing the meshgrid
-            will be 0.25%% of differenes of the max and min of x and y for each
-            feature.
+            Determines the step size for creating the numpy meshgrid that will
+            later become the foundation of the decision boundary graph. The
+            default value of 0.0025 means that the step size for constructing
+            the meshgrid will be 0.25%% of differenes of the max and min of x
+            and y for each feature.
 
         :param markers: iterable of strings
             Matplotlib style markers for points on the scatter plot points
@@ -85,11 +93,13 @@ class DecisionBoundariesVisualizer(ModelVisualizer):
         self.name = get_model_name(self.estimator)
         self.show_scatter = show_scatter
         self.step_size = step_size
-        self.markers = itertools.cycle(kwargs.pop('markers', (',', '+', 'o', '*', 'v', 'h', 'd') ))
+        self.markers = itertools.cycle(
+            kwargs.pop('markers', (',', '+', 'o', '*', 'v', 'h', 'd')))
         self.scatter_alpha = scatter_alpha
 
         # these are set later
         self.Z = None
+        self.Z_shape = None
         self.xx = None
         self.yy = None
         self.class_labels = None
@@ -117,28 +127,35 @@ class DecisionBoundariesVisualizer(ModelVisualizer):
             Returns the instance of the visualizer
         """
 
-        nrows, ncols = X.shape
+        _, ncols = X.shape
 
         # Assign each class a unique number for drawing
         if self.classes_ is None:
-            self.classes_ = {label:str(kls_num) for kls_num, label in enumerate(set(y))}
+            self.classes_ = {
+                label: str(kls_num)
+                for kls_num, label in enumerate(set(y))
+            }
             self.class_labels = None
         elif len(set(y)) == len(self.classes_):
-            self.classes_ = {label:str(kls_num) for kls_num, label in enumerate(self.classes_)}
+            self.classes_ = {
+                label: str(kls_num)
+                for kls_num, label in enumerate(self.classes_)
+            }
             self.class_labels = dict(zip(set(y), self.classes_))
         else:
-            raise YellowbrickTypeError("Number of classes must be the same length of number of target y")
+            raise YellowbrickTypeError(
+                """Number of classes must be the same length of number of
+                target y"""
+            )
         # Handle the feature names if they're None.
         if self.features_ is None:
-                # If X is a data frame, get the columns off it.
-                if is_dataframe(X):
-                    self.features_ = X.columns
+            # If X is a data frame, get the columns off it.
+            if is_dataframe(X):
+                self.features_ = X.columns
 
-                # Otherwise create numeric labels for each column.
-                else:
-                    self.features_ = [
-                        str(cdx) for cdx in range(ncols)
-                    ]
+            # Otherwise create numeric labels for each column.
+            else:
+                self.features_ = [str(cdx) for cdx in range(ncols)]
 
         self.estimator.fit(X, y)
 
@@ -149,33 +166,36 @@ class DecisionBoundariesVisualizer(ModelVisualizer):
 
         # Create the axes if they don't exist
         if self.ax is None:
-            self.ax = plt.gca(xlim=[x_min, x_max ], ylim=[y_min, y_max ])
+            self.ax = plt.gca(xlim=[x_min, x_max], ylim=[y_min, y_max])
 
         # set the step increment for drawing the boundary graph
         x_step = (x_max - x_min) * self.step_size
         y_step = (y_max - y_min) * self.step_size
 
-        self.xx, self.yy = np.meshgrid(np.arange(x_min, x_max, x_step),
-                             np.arange(y_min, y_max, y_step))
+        self.xx, self.yy = np.meshgrid(
+            np.arange(x_min, x_max, x_step), np.arange(y_min, y_max, y_step))
         Z = self.estimator.predict(np.c_[self.xx.ravel(), self.yy.ravel()])
         self.Z_shape = Z.reshape(self.xx.shape)
         return self
 
-    def draw(self, X, y, **kwargs):
+    def draw(self, X, y=None, **kwargs):
         """
-        Called from the fit method, this method creates a decision boundary plot,
-        and if self.scatter is True, it will scatter plot that draws
+        Called from the fit method, this method creates a decision boundary
+        plot, and if self.scatter is True, it will scatter plot that draws
         each instance as a class or target colored point, whose location
         is determined by the feature data set.
         """
-        # Get the shape of the data
-        nrows, ncols = X.shape
-
         num_colors = len(self.classes_) * 2
-        color_cycle = iter(resolve_colors(color=self.colors, num_colors=num_colors))
-        colors = OrderedDict([(c, next(color_cycle)) for c in self.classes_.keys() ] )
+        color_cycle = iter(
+            resolve_colors(color=self.colors, num_colors=num_colors))
+        colors = OrderedDict([(c, next(color_cycle))
+                              for c in self.classes_.keys()])
 
-        self.ax.pcolormesh(self.xx, self.yy, self.Z_shape, cmap=ListedColormap(colors.values()) )
+        self.ax.pcolormesh(
+            self.xx,
+            self.yy,
+            self.Z_shape,
+            cmap=ListedColormap(colors.values()))
 
         # Create a data structure to hold the scatter plot representations
         to_plot = OrderedDict()
@@ -185,7 +205,7 @@ class DecisionBoundariesVisualizer(ModelVisualizer):
         # Add each row of the data set to to_plot for plotting
         for i, row in enumerate(X):
             row_ = np.repeat(np.expand_dims(row, axis=1), 2, axis=1)
-            x_, y_   = row_[0], row_[1]
+            x_, y_ = row_[0], row_[1]
             # look up the y class name if given in init
             if self.class_labels is not None:
                 target = self.class_labels[y[i]]
@@ -201,9 +221,21 @@ class DecisionBoundariesVisualizer(ModelVisualizer):
 
         if self.show_scatter:
             for kls, index in self.classes_.items():
-                self.ax.scatter(to_plot[index][0], to_plot[index][1], marker=next(self.markers), color=colors[kls], alpha=self.scatter_alpha, s=30, edgecolors='black', label=str(kls), **kwargs)
+                self.ax.scatter(
+                    to_plot[index][0],
+                    to_plot[index][1],
+                    marker=next(self.markers),
+                    color=colors[kls],
+                    alpha=self.scatter_alpha,
+                    s=30,
+                    edgecolors='black',
+                    label=str(kls),
+                    **kwargs)
         else:
-            labels = [Patch(color=colors[kls], label=kls) for kls in self.classes_.keys() ]
+            labels = [
+                Patch(color=colors[kls], label=kls)
+                for kls in self.classes_.keys()
+            ]
             self.ax.legend(handles=labels)
 
         self.ax.axis('auto')
@@ -222,14 +254,14 @@ class DecisionBoundariesVisualizer(ModelVisualizer):
         title = 'Decisions Boundaries'
 
         feature_one, feature_two = self.features_
-        title = 'Decisions Boundaries: {feature_one} vs {feature_two}'.format(**locals())
+        title = 'Decisions Boundaries: {feature_one} vs {feature_two}'.format(
+            **locals())
 
         self.set_title(title)
         # Add the legend
         self.ax.legend(loc='best')
         self.ax.set_xlabel(feature_one)
         self.ax.set_ylabel(feature_two)
-
 
     def fit_draw(self, X, y=None, **kwargs):
         """
@@ -243,10 +275,7 @@ class DecisionBoundariesVisualizer(ModelVisualizer):
         """
         Fits a transformer to X and y then returns
         visualization of features or fitted model.
-
         Then calls poof to finalize.
         """
-
-
         self.fit_draw(X, y, **kwargs)
         self.poof(**kwargs)
