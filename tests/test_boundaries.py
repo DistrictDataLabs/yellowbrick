@@ -216,7 +216,7 @@ class DecisionBoundariesVisualizerTest(VisualTestCase):
 
         fitted_viz.ax.set_title.assert_called_once_with(
             'Decisions Boundaries: one vs two')
-        fitted_viz.ax.legend.assert_called_once_with(loc='best')
+        fitted_viz.ax.legend.assert_called_once_with(loc='best', frameon=True)
         fitted_viz.ax.set_xlabel.assert_called_once_with('one')
         fitted_viz.ax.set_ylabel.assert_called_once_with('two')
 
