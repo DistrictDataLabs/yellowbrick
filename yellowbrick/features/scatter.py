@@ -21,7 +21,7 @@ import matplotlib.pyplot as plt
 import matplotlib.patches as patches
 
 from yellowbrick.features.base import DataVisualizer
-from yellowbrick.utils import is_dataframe
+from yellowbrick.utils import is_dataframe, is_structured_array
 from yellowbrick.exceptions import YellowbrickValueError
 from yellowbrick.style.colors import resolve_colors, get_color_cycle
 
@@ -105,11 +105,12 @@ class ScatterVisualizer(DataVisualizer):
         ax : a matplotlib plot, default: None
             The axis to plot the figure on.
 
-        features : a list of feature names to use, default: None
-            List of features that correspond to the columns in the array.
-            More than two feature names or columns will raise an error. If
-            a DataFrame is passed to fit and features is None, feature
-            names are selected that are the columns of the DataFrame.
+        features : a list of two feature names to use, default: None
+            List of two features that correspond to the columns in the array.
+            The order of the two features correspond to X and Y axises on the
+            graph. More than two feature names or columns will raise an error.
+            If a DataFrame is passed to fit and features is None, feature names
+            are selected that are the columns of the DataFrame.
 
         classes : a list of class names for the legend, default: None
             If classes is None and a y value is passed to fit then the classes
@@ -182,11 +183,17 @@ class ScatterVisualizer(DataVisualizer):
         if ncols == 2:
             X_two_cols = X
             if self.features_ is None:
-                self.features_ = [0, 1]
+                self.features_ = ["Feature One", "Feature Two"]
 
         # Handle the feature names if they're None.
         elif self.features_ is not None and is_dataframe(X):
             X_two_cols = X[self.features_].as_matrix()
+
+        # TODO handle numpy named arrays
+        # handle numpy named/ structured array
+        # elif self.features_ is not None and is_structured_array(X):
+        #     X_two_cols = X[self.features_]
+
         else:
             raise YellowbrickValueError("""
                 ScatterVisualizer only accepts two features, please
@@ -196,7 +203,7 @@ class ScatterVisualizer(DataVisualizer):
         # Store the classes for the legend if they're None.
         if self.classes_ is None:
             # TODO: Is this the most efficient method?
-            self.classes_ = [str(label) for label in set(y)]
+            self.classes_ = [str(label) for label in np.unique(y)]
 
         # Draw the instances
         self.draw(X_two_cols, y, **kwargs)

@@ -87,7 +87,7 @@ class ScatterVizTests(unittest.TestCase, DatasetMixin):
         X_two_cols = self.X[:, :2]
         visualizer = ScatterViz()
         visualizer.fit_transform_poof(X_two_cols, self.y)
-        self.assertEquals(visualizer.features_, [0, 1])
+        self.assertEquals(visualizer.features_, ['Feature One', 'Feature Two'])
 
     def test_scatter_only_two_features_allowed_init(self):
         """
@@ -169,3 +169,20 @@ class ScatterVizTests(unittest.TestCase, DatasetMixin):
         features = ["temperature", "relative_humidity"]
         visualizer = ScatterViz(features=features)
         visualizer.fit_transform_poof(X, y)
+
+    # def test_integrated_scatter_numpy_named_arrays(self):
+    #     dt = np.dtype({
+    #         'names': ['one', 'two', 'three', 'four', "five"],
+    #         'formats': [
+    #             np.float64,
+    #             np.float64,
+    #             np.float64,
+    #             np.float64,
+    #             np.float64,
+    #         ]
+    #     })
+    #
+    #     X_named = self.X.astype(dt, casting='unsafe')
+    #     visualizer = ScatterViz(features=['one', 'two'])
+    #     visualizer.fit_transform_poof(X_named, self.y)
+    #     self.assertEquals(visualizer.features_, ['one', 'two'])
