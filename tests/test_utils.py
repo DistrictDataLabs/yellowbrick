@@ -453,6 +453,21 @@ class DivSafeTests(unittest.TestCase):
         with self.assertRaises(ValueError):
             result = div_safe(5, 0)
 
+class StructuredArrayTests(unittest.TestCase):
+
+    def test_isstructuredarray_true(self):
+        x = np.array([(1,2.,'Hello'), (2,3.,"World")], dtype=[('foo', 'i4'),('bar', 'f4'), ('baz', 'S10')])
+        self.assertTrue(isstructuredarray(x))
+
+    def test_isstructuredarray_false(self):
+        x = np.array([[1,2,3], [1,2,3]])
+        self.assertFalse(isstructuredarray(x))
+
+    def test_isstructuredarray_list(self):
+        x = [[1,2,3], [1,2,3]]
+        self.assertFalse(isstructuredarray(x))
+
+
 ##########################################################################
 ## Decorator Tests
 ##########################################################################

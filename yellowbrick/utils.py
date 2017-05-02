@@ -184,6 +184,28 @@ def is_dataframe(obj):
 isdataframe = is_dataframe
 
 
+def is_structured_array(obj):
+    """
+    Returns True if the given object is a Numpy Structured Array.
+
+    Parameters
+    ----------
+    obj: instance
+        The object to test whether or not is a Numpy Structured Array.
+    """
+    if isinstance(obj, np.ndarray) and hasattr(obj, 'dtype'):
+        if obj.dtype.names is not None:
+            return True
+    return False
+
+
+# Alias for closer name to isinstance and issubclass
+isstructuredarray = is_structured_array
+
+
+
+
+
 #From here: http://stackoverflow.com/questions/26248654/numpy-return-0-with-divide-by-zero
 def div_safe( numerator, denominator ):
     """
