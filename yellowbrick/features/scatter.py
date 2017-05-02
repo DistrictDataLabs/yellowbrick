@@ -50,26 +50,26 @@ def scatterviz(X,
     X : ndarray or DataFrame of shape n x m
         A matrix of n instances with m features
 
-    y : ndarray or Series of length n
+    y : ndarray or Series of length n, default: None
         An array or series of target or class values
 
-    ax : matplotlib axes
+    ax : matplotlib axes, default: None
         The axes to plot the figure on.
 
-    features : list of strings
+    features : list of strings, default: None
         The names of two features or columns.
         More than that will raise an error.
 
-    classes : list of strings
+    classes : list of strings, default: None
         The names of the classes in the target
 
-    color : list or tuple of colors
+    color : list or tuple of colors, default: None
         Specify the colors for each individual class
 
-    colormap : string or matplotlib cmap
+    colormap : string or matplotlib cmap, default: None
         Sequential colormap for continuous target
 
-    :param markers: iterable of strings
+    markers : iterable of strings, default: ,+o*vhd
         Matplotlib style markers for points on the scatter plot points
 
     Returns
@@ -98,6 +98,38 @@ class ScatterVisualizer(DataVisualizer):
     """
     ScatterVisualizer is a bivariate feature data visualization algorithm that
     plots using the Cartesian coordinates of each point.
+
+        Parameters
+        ----------
+
+        ax : a matplotlib plot, default: None
+            The axis to plot the figure on.
+
+        features : a list of feature names to use, default: None
+            List of features that correspond to the columns in the array.
+            More than two feature names or columns will raise an error. If
+            a DataFrame is passed to fit and features is None, feature
+            names are selected that are the columns of the DataFrame.
+
+        classes : a list of class names for the legend, default: None
+            If classes is None and a y value is passed to fit then the classes
+            are selected from the target vector.
+
+        color : optional list or tuple of colors to colorize points, default: None
+            Use either color to colorize the points on a per class basis or
+            colormap to color them on a continuous scale.
+
+        colormap : optional string or matplotlib cmap to colorize points, default: None
+            Use either color to colorize the points on a per class basis or
+            colormap to color them on a continuous scale.
+
+        markers : iterable of strings, default: ,+o*vhd
+            Matplotlib style markers for points on the scatter plot points
+
+        kwargs : keyword arguments passed to the super class.
+
+        These parameters can be influenced later on in the visualization
+        process, but can and should be set as early as possible.
     """
 
     def __init__(self,
@@ -111,37 +143,6 @@ class ScatterVisualizer(DataVisualizer):
         """
         Initialize the base scatter with many of the options required in order
         to make the visualization work.
-
-        Parameters
-        ----------
-
-        :param ax: the axis to plot the figure on.
-
-        :param features: a list of feature names to use
-            List of features that correspond to the columns in the array.
-            More than two feature names or columns will raise an error. If
-            a DataFrame is passed to fit and features is None, feature
-            names are selected that are the columns of the DataFrame.
-
-        :param classes: a list of class names for the legend
-            If classes is None and a y value is passed to fit then the classes
-            are selected from the target vector.
-
-        :param color: optional list or tuple of colors to colorize points
-            Use either color to colorize the points on a per class basis or
-            colormap to color them on a continuous scale.
-
-        :param colormap: optional string or matplotlib cmap to colorize points
-            Use either color to colorize the points on a per class basis or
-            colormap to color them on a continuous scale.
-
-        :param markers: iterable of strings
-            Matplotlib style markers for points on the scatter plot points
-
-        :param kwargs: keyword arguments passed to the super class.
-
-        These parameters can be influenced later on in the visualization
-        process, but can and should be set as early as possible.
         """
         super(ScatterVisualizer, self).__init__(ax, features, classes, color,
                                                 colormap, **kwargs)
