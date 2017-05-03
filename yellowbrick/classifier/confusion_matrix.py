@@ -16,27 +16,42 @@ from ..utils import div_safe
 
 class ConfusionMatrix(ClassificationScoreVisualizer):
     """
-    Creates a heatmap visualization of the sklearn.metrics.confusion_matrix().
-    Initialization: Requires a classification model
+    Creates a heatmap visualization of the sklearn.metrics.confusion_matrix(). A confusion
+    matrix shows each combination of the true and predicted classes for a test data set. 
+
+    The default color map uses a yellow/orange/red color scale. The user can choose between
+    displaying values as the percent of true (cell value divided by sum of row) or as direct
+    counts. If percent of true mode is selected, 100% accurate predictions are highlighted in green.
+    
+    Requires a classification model
+
+    Parameters
+    ----------
+    model : the Scikit-Learn estimator
+        Should be an instance of a classifier or __init__ will return an error.
+
+    ax : the matplotlib axis to plot the figure on (if None, a new axis will be created)
+
+    classes : a list of class names to use in the confusion_matrix.
+        This is passed to the 'labels' parameter of sklearn.metrics.confusion_matrix(), and follows the behaviour
+        indicated by that function. It may be used to reorder or select a subset of labels.
+        If None, values that appear at least once in y_true or y_pred are used in sorted order.
+        Default: None
+    
+    Examples
+    --------
+
+    >>> from yellowbrick.classifier import ConfusionMatrix
+    >>> from sklearn.linear_model import LogisticRegression
+    >>> viz = ConfusionMatrix(LogisticRegression())
+    >>> viz.fit(X_train, y_train)
+    >>> viz.score(X_test, y_test)
+    >>> viz.poof()
     """
+    
+        
     def __init__(self, model, ax=None, classes=None, **kwargs):
-        """
-        Provide a classifier model
 
-        Parameters
-        ----------
-        :param model: the Scikit-Learn estimator
-            Should be an instance of a classifier, else the __init__ will
-            return an error.
-
-        :param ax: the matplotlib axis to plot the figure on (if None, a new axis will be created)
-
-        :param classes: a list of class names to use in the confusion_matrix.
-            This is passed to the 'labels' parameter of sklearn.metrics.confusion_matrix(), and follows the behaviour
-            indicated by that function. It may be used to reorder or select a subset of labels.
-            If None, values that appear at least once in y_true or y_pred are used in sorted order.
-            Default: None
-        """
         super(ConfusionMatrix, self).__init__(model, ax=ax, classes=None,**kwargs)
         #Parameters provided by super (for reference during development only):
         #self.ax

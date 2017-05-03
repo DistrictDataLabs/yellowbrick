@@ -18,34 +18,39 @@ from ..style import find_text_color
 class ClassificationReport(ClassificationScoreVisualizer):
     """
     Classification report that shows the precision, recall, and F1 scores
-    for the model. Integrates numerical scores as well color-coded heatmap.
+    for the model. Integrates numerical scores as well as a color-coded heatmap.
+    
+    Parameters
+    ----------
+
+    ax : The axis to plot the figure on.
+
+    model : the Scikit-Learn estimator
+        Should be an instance of a classifier, else the __init__ will
+        return an error.
+
+    classes : a list of class names for the legend
+        If classes is None and a y value is passed to fit then the classes
+        are selected from the target vector.
+
+    colormap : optional string or matplotlib cmap to colorize lines
+        Use sequential heatmap.
+
+    kwargs : keyword arguments passed to the super class.
+    
+    Examples
+    --------
+
+    >>> from yellowbrick.classifier import ClassificationReport
+    >>> from sklearn.linear_model import LogisticRegression
+    >>> viz = ClassificationReport(LogisticRegression())
+    >>> viz.fit(X_train, y_train)
+    >>> viz.score(X_test, y_test)
+    >>> viz.poof()
 
     """
     def __init__(self, model, ax=None, classes=None, **kwargs):
-        """
-        Pass in a fitted model to generate a classification report.
 
-        Parameters
-        ----------
-
-        :param ax: the axis to plot the figure on.
-
-        :param model: the Scikit-Learn estimator
-            Should be an instance of a classifier, else the __init__ will
-            return an error.
-
-        :param classes: a list of class names for the legend
-            If classes is None and a y value is passed to fit then the classes
-            are selected from the target vector.
-
-        :param colormap: optional string or matplotlib cmap to colorize lines
-            Use sequential heatmap.
-
-        :param kwargs: keyword arguments passed to the super class.
-
-        These parameters can be influenced later on in the visualization
-        process, but can and should be set as early as possible.
-        """
         super(ClassificationReport, self).__init__(model, ax=ax, **kwargs)
 
         ## hoisted to ScoreVisualizer base class

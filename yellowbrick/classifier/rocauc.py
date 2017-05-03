@@ -19,38 +19,48 @@ class ROCAUC(ClassificationScoreVisualizer):
     """
     Plot the ROC to visualize the tradeoff between the classifier's
     sensitivity and specificity.
+
+    Parameters
+    ----------
+
+    ax : the axis to plot the figure on.
+
+    model : the Scikit-Learn estimator
+        Should be an instance of a classifier, else the __init__ will
+        return an error.
+
+    roc_color : color of the ROC curve
+        Specify the color as a matplotlib color: you can specify colors in
+        many weird and wonderful ways, including full names ('green'), hex
+        strings ('#008000'), RGB or RGBA tuples ((0,1,0,1)) or grayscale
+        intensities as a string ('0.8').
+
+    diagonal_color : color of the diagonal
+        Specify the color as a matplotlib color.
+
+    kwargs : keyword arguments passed to the super class.
+        Currently passing in hard-coded colors for the Receiver Operating
+        Characteristic curve and the diagonal.
+        These will be refactored to a default Yellowbrick style.
+
+    These parameters can be influenced later on in the visualization
+    process, but can and should be set as early as possible.
+
+
+    Examples
+    --------
+
+    >>> from yellowbrick.classifier import ROCAUC
+    >>> from sklearn.linear_model import LogisticRegression
+    >>> logistic = LogisticRegression()
+    >>> viz = ROCAUC(logistic)
+    >>> viz.fit(X_train, y_train)
+    >>> viz.score(X_test, y_test)
+    >>> viz.poof()
+    
     """
     def __init__(self, model, ax=None, **kwargs):
-        """
-        Pass in a fitted model to generate a ROC curve.
-
-        Parameters
-        ----------
-
-        :param ax: the axis to plot the figure on.
-
-        :param model: the Scikit-Learn estimator
-            Should be an instance of a classifier, else the __init__ will
-            return an error.
-
-        :param roc_color: color of the ROC curve
-            Specify the color as a matplotlib color: you can specify colors in
-            many weird and wonderful ways, including full names ('green'), hex
-            strings ('#008000'), RGB or RGBA tuples ((0,1,0,1)) or grayscale
-            intensities as a string ('0.8').
-
-        :param diagonal_color: color of the diagonal
-            Specify the color as a matplotlib color.
-
-        :param kwargs: keyword arguments passed to the super class.
-            Currently passing in hard-coded colors for the Receiver Operating
-            Characteristic curve and the diagonal.
-            These will be refactored to a default Yellowbrick style.
-
-        These parameters can be influenced later on in the visualization
-        process, but can and should be set as early as possible.
-
-        """
+        
         super(ROCAUC, self).__init__(model, ax=ax, **kwargs)
 
         ## hoisted to ScoreVisualizer base class
