@@ -98,6 +98,23 @@ class ScatterVizTests(unittest.TestCase, DatasetMixin):
         with self.assertRaises(YellowbrickValueError) as context:
             visualizer = ScatterViz(features=features)
 
+
+    def test_scatter_xy_and_features_raise_error(self):
+        """
+        Assert that x,y and features will raise error
+        """
+        features = ["temperature", "relative_humidity", "light"]
+
+        with self.assertRaises(YellowbrickValueError) as context:
+            visualizer = ScatterViz(features=features, x='one', y='two')
+
+    def test_scatter_xy_changes_to_features(self):
+        """
+        Assert that x,y and features will raise error
+        """
+        visualizer = ScatterViz(x='one', y='two')
+        self.assertEquals(visualizer.features_, ['one', 'two'])
+
     def test_scatter_requires_two_features_in_numpy_matrix(self):
         """
         Assert that only two features are allowed for this visualizer if not
@@ -170,19 +187,25 @@ class ScatterVizTests(unittest.TestCase, DatasetMixin):
         visualizer = ScatterViz(features=features)
         visualizer.fit_transform_poof(X, y)
 
-    # def test_integrated_scatter_numpy_named_arrays(self):
-    #     dt = np.dtype({
-    #         'names': ['one', 'two', 'three', 'four', "five"],
-    #         'formats': [
-    #             np.float64,
-    #             np.float64,
-    #             np.float64,
-    #             np.float64,
-    #             np.float64,
-    #         ]
-    #     })
-    #
-    #     X_named = self.X.astype(dt, casting='unsafe')
-    #     visualizer = ScatterViz(features=['one', 'two'])
-    #     visualizer.fit_transform_poof(X_named, self.y)
-    #     self.assertEquals(visualizer.features_, ['one', 'two'])
+    def test_integrated_scatter_numpy_named_arrays(self):
+        dt = np.dtype({
+            'names': ['one', 'two', 'three', 'four', "five"],
+            'formats': [
+                np.float64,
+                np.float64,
+                np.float64,
+                np.float64,
+                np.float64,
+            ]
+        })
+
+        X_named = self.X.astype(dt, casting='unsafe')
+        visualizer = ScatterViz(features=['one', 'two'])
+        visualizer.fit_transform_poof(X_named, self.y)
+        self.assertEquals(visualizer.features_, ['one', 'two'])
+
+
+    def test_integrated_scatter_numpy_arrays_no_names(self):
+        visualizer = ScatterViz(features=[1, 2])
+        visualizer.fit_transform_poof(self.X, self.y)
+        self.assertEquals(visualizer.features_, [1, 2])

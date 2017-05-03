@@ -21,7 +21,7 @@ import matplotlib.pyplot as plt
 import matplotlib.patches as patches
 
 from yellowbrick.features.base import DataVisualizer
-from yellowbrick.utils import is_dataframe, is_structured_array
+from yellowbrick.utils import is_dataframe, is_structured_array, has_ndarray_int_columns
 from yellowbrick.exceptions import YellowbrickValueError
 from yellowbrick.style.colors import resolve_colors, get_color_cycle
 
@@ -105,6 +105,14 @@ class ScatterVisualizer(DataVisualizer):
         ax : a matplotlib plot, default: None
             The axis to plot the figure on.
 
+        x : string, default: None
+            The feature name that corresponds to a column name or index postion
+            in the matrix that will be plotted against the x-axis
+
+        y : string, default: None
+            The feature name that corresponds to a column name or index postion
+            in the matrix that will be plotted against the y-axis
+
         features : a list of two feature names to use, default: None
             List of two features that correspond to the columns in the array.
             The order of the two features correspond to X and Y axises on the
@@ -135,6 +143,8 @@ class ScatterVisualizer(DataVisualizer):
 
     def __init__(self,
                  ax=None,
+                 x=None,
+                 y=None,
                  features=None,
                  classes=None,
                  color=None,
@@ -147,14 +157,26 @@ class ScatterVisualizer(DataVisualizer):
         """
         super(ScatterVisualizer, self).__init__(ax, features, classes, color,
                                                 colormap, **kwargs)
+
+        self.x = x
+        self.y = y
         self.markers = itertools.cycle(
             kwargs.pop('markers', (',', '+', 'o', '*', 'v', 'h', 'd')))
+
+
+
+        if self.x is not None and self.y is not None and self.features_ is not None:
+            raise YellowbrickValueError(
+                'Please specify x,y or features, not both.')
+
+        if self.x is not None and self.y is not None and self.features_ is None:
+            self.features_ = [self.x, self.y]
 
         # Ensure with init that features doesn't have more than two features
         if features is not None:
             if len(features) != 2:
                 raise YellowbrickValueError(
-                    'ScatterVisualizer only accepts two features')
+                    'ScatterVisualizer only accepts two features.')
 
     def fit(self, X, y=None, **kwargs):
         """
@@ -189,10 +211,15 @@ class ScatterVisualizer(DataVisualizer):
         elif self.features_ is not None and is_dataframe(X):
             X_two_cols = X[self.features_].as_matrix()
 
-        # TODO handle numpy named arrays
         # handle numpy named/ structured array
-        # elif self.features_ is not None and is_structured_array(X):
-        #     X_two_cols = X[self.features_]
+        elif self.features_ is not None and is_structured_array(X):
+            X_selected = X[self.features_]
+            X_two_cols = X_selected.view((np.float64, len(X_selected.dtype.names)))
+
+        # handle features that are numeric columns in ndarray matrix
+        elif self.features_ is not None and has_ndarray_int_columns(self.features_, X):
+            f_one, f_two = self.features_
+            X_two_cols = X[:, [int(f_one), int(f_two)]]
 
         else:
             raise YellowbrickValueError("""

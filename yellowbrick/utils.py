@@ -203,7 +203,17 @@ def is_structured_array(obj):
 isstructuredarray = is_structured_array
 
 
+def has_ndarray_int_columns(features, X):
+    """ Checks if numeric feature columns exist in ndarray """
+    _, ncols = X.shape
+    if not all(d.isdigit() for d in features if isinstance(d, str)) or not isinstance(X, np.ndarray):
+        return False
+    ndarray_columns = np.arange(0, ncols)
+    feature_cols = np.unique([int(d) for d in features])
+    return all(np.in1d(feature_cols, ndarray_columns))
 
+# Alias for closer name to isinstance and issubclass
+hasndarrayintcolumns = has_ndarray_int_columns
 
 
 #From here: http://stackoverflow.com/questions/26248654/numpy-return-0-with-divide-by-zero
