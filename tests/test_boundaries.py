@@ -92,6 +92,28 @@ class DecisionBoundariesVisualizerTest(VisualTestCase):
         self.assertIsNone(viz.ax)
         self.assertIsNone(viz.class_labels)
         self.assertIsNone(viz.title)
+        self.assertIsNone(viz.x)
+        self.assertIsNone(viz.y)
+
+
+    def test_scatter_xy_and_features_raise_error(self):
+        """
+        Assert that x,y and features will raise error
+        """
+        model = neighbors.KNeighborsClassifier(3)
+        features = ["temperature", "relative_humidity", "light"]
+
+        with self.assertRaises(YellowbrickValueError) as context:
+            visualizer = DecisionBoundariesVisualizer(model, features=features, x='one', y='two')
+
+    def test_scatter_xy_changes_to_features(self):
+        """
+        Assert that x,y and features will raise error
+        """
+        model = neighbors.KNeighborsClassifier(3)
+        visualizer = DecisionBoundariesVisualizer(model, x='one', y='two')
+        self.assertEquals(visualizer.features_, ['one', 'two'])
+
 
     def test_fit(self):
         """
@@ -106,7 +128,7 @@ class DecisionBoundariesVisualizerTest(VisualTestCase):
 
         # assert that classes and labels are established
         self.assertEqual(fitted_viz.classes_, {0: '0', 1: '1', 2: '2', 3: '3'})
-        self.assertEqual(fitted_viz.features_, ['0', '1'])
+        self.assertEqual(fitted_viz.features_, ['Feature One', 'Feature Two'])
 
         # assert that the fit method is called
         model.fit.assert_called_once_with(X_two_cols, y)
@@ -140,7 +162,7 @@ class DecisionBoundariesVisualizerTest(VisualTestCase):
         viz = DecisionBoundariesVisualizer(model)
         self.assertIsNone(viz.features_)
         fitted_viz = viz.fit(X_two_cols, y=y)
-        self.assertEquals(fitted_viz.features_, ['0', '1'])
+        self.assertEquals(fitted_viz.features_, ['Feature One', 'Feature Two'])
 
     def test_fit_features_assignment(self):
         model = neighbors.KNeighborsClassifier(3)

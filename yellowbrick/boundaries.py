@@ -15,10 +15,11 @@ from matplotlib.colors import ListedColormap
 from matplotlib.patches import Patch
 
 from yellowbrick.exceptions import YellowbrickTypeError
+from yellowbrick.exceptions import YellowbrickValueError
 from yellowbrick.base import ModelVisualizer
 from yellowbrick.utils import get_model_name
 from yellowbrick.style.colors import resolve_colors
-from yellowbrick.utils import is_dataframe
+from yellowbrick.utils import is_dataframe, is_structured_array, has_ndarray_int_columns
 from yellowbrick.style.palettes import PALETTES
 
 
@@ -26,11 +27,64 @@ class DecisionBoundariesVisualizer(ModelVisualizer):
     """
     DecisionBoundariesVisualizer is a bivariate data visualization algorithm
     that plots the decision boundaries of each class.
+
+    Parameters
+    ----------
+
+        model : the Scikit-Learn estimator
+            Should be an instance of a classifier, else the __init__ will
+            return an error.
+
+        x : string, default: None
+            The feature name that corresponds to a column name or index postion
+            in the matrix that will be plotted against the x-axis
+
+        y : string, default: None
+            The feature name that corresponds to a column name or index postion
+            in the matrix that will be plotted against the y-axis
+
+        colors : string or matplotlib cmap, default: yellowbrick palette 'set1'
+            Sets the color palette of the visualizer
+
+        classes : a list of class names for the legend, default: None
+            If classes is None and a y value is passed to fit then the classes
+            are selected from the target vector.
+
+        features : list of strings, default: None
+            The names of the features or columns
+
+        show_scatter : boolean, default: True
+            If boolean is True, then a scatter plot with points will be drawn
+            on top of the decision boundary graph
+
+        step_size : float percentage, default: 0.0025
+            Determines the step size for creating the numpy meshgrid that will
+            later become the foundation of the decision boundary graph. The
+            default value of 0.0025 means that the step size for constructing
+            the meshgrid will be 0.25%% of differenes of the max and min of x
+            and y for each feature.
+
+        markers : iterable of strings, default: ,od*vh+
+            Matplotlib style markers for points on the scatter plot points
+
+        scatter_alpha : float, default: 0.6
+            Sets the alpha transparency for the scatter plot points
+
+        title : string, default: stringified feature_one and feature_two
+            Sets the title of the visualization
+
+        kwargs : keyword arguments passed to the super class.
+
+        These parameters can be influenced later on in the visualization
+        process, but can and should be set as early as possible.
+
     """
 
     def __init__(self,
                  model,
-                 colors=PALETTES['set1'],
+                 x=None,
+                 y=None,
+                 colors=None,
                  classes=None,
                  features=None,
                  show_scatter=True,
@@ -42,52 +96,12 @@ class DecisionBoundariesVisualizer(ModelVisualizer):
         """
         Pass in a unfitted model to generate a decision boundaries
         visualization.
-
-        Parameters
-        ----------
-
-        :param model: the Scikit-Learn estimator
-            Should be an instance of a classifier, else the __init__ will
-            return an error.
-
-        :param colors: string or matplotlib cmap
-            By default, uses the yellowbrick 'set1' color palette
-
-        :param classes: a list of class names for the legend
-            If classes is None and a y value is passed to fit then the classes
-            are selected from the target vector.
-
-        :param features: list of strings
-            The names of the features or columns
-
-        :param show_scatter: boolean
-            If boolean is True, then a scatter plot with points will be drawn
-            on top of the decision boundary graph
-
-        :param step_size: float percentage
-            Determines the step size for creating the numpy meshgrid that will
-            later become the foundation of the decision boundary graph. The
-            default value of 0.0025 means that the step size for constructing
-            the meshgrid will be 0.25%% of differenes of the max and min of x
-            and y for each feature.
-
-        :param markers: iterable of strings
-            Matplotlib style markers for points on the scatter plot points
-
-        :param scatter_alpha: float
-            Sets the alpha transparency for the scatter plot points
-
-        :param kwargs: keyword arguments passed to the super class.
-
-        These parameters can be influenced later on in the visualization
-        process, but can and should be set as early as possible.
-
-        These parameters can be influenced later on in the visualization
-        process, but can and should be set as early as possible.
         """
         super(DecisionBoundariesVisualizer, self).__init__(self)
 
-        self.colors = colors
+        self.x = x
+        self.y = y
+        self.colors = colors if colors is not None else PALETTES['set1']
         self.classes_ = classes
         self.features_ = features
         self.estimator = model
@@ -105,6 +119,50 @@ class DecisionBoundariesVisualizer(ModelVisualizer):
         self.xx = None
         self.yy = None
         self.class_labels = None
+
+        if self.x is not None and self.y is not None and self.features_ is not None:
+            raise YellowbrickValueError(
+                'Please specify x,y or features, not both.')
+
+        if self.x is not None and self.y is not None and self.features_ is None:
+            self.features_ = [self.x, self.y]
+
+        # Ensure with init that features doesn't have more than two features
+        if features is not None:
+            if len(features) != 2:
+                raise YellowbrickValueError(
+                    'DecisionBoundariesVisualizer only accepts two features.')
+
+    def select_feature_columns(self, X):
+        """ """
+        _, ncols = X.shape
+
+        if ncols == 2:
+            X_two_cols = X
+            if self.features_ is None:
+                self.features_ = ["Feature One", "Feature Two"]
+
+        # Handle the feature names if they're None.
+        elif self.features_ is not None and is_dataframe(X):
+            X_two_cols = X[self.features_].as_matrix()
+
+        # handle numpy named/ structured array
+        elif self.features_ is not None and is_structured_array(X):
+            X_selected = X[self.features_]
+            X_two_cols = X_selected.view((np.float64, len(X_selected.dtype.names)))
+
+        # handle features that are numeric columns in ndarray matrix
+        elif self.features_ is not None and has_ndarray_int_columns(self.features_, X):
+            f_one, f_two = self.features_
+            X_two_cols = X[:, [int(f_one), int(f_two)]]
+
+        else:
+            raise YellowbrickValueError("""
+                ScatterVisualizer only accepts two features, please
+                explicitly set these two features in the init kwargs or
+                pass a matrix/ dataframe in with only two columns.""")
+
+        return X_two_cols
 
     def fit(self, X, y=None, **kwargs):
         """
@@ -135,7 +193,7 @@ class DecisionBoundariesVisualizer(ModelVisualizer):
         if self.classes_ is None:
             self.classes_ = {
                 label: str(kls_num)
-                for kls_num, label in enumerate(set(y))
+                for kls_num, label in enumerate(np.unique(y))
             }
             self.class_labels = None
         elif len(set(y)) == len(self.classes_):
@@ -149,15 +207,9 @@ class DecisionBoundariesVisualizer(ModelVisualizer):
                 """Number of classes must be the same length of number of
                 target y"""
             )
-        # Handle the feature names if they're None.
-        if self.features_ is None:
-            # If X is a data frame, get the columns off it.
-            if is_dataframe(X):
-                self.features_ = X.columns
 
-            # Otherwise create numeric labels for each column.
-            else:
-                self.features_ = [str(cdx) for cdx in range(ncols)]
+        # ensure that only
+        X = self.select_feature_columns(X)
 
         self.estimator.fit(X, y)
 
@@ -187,6 +239,10 @@ class DecisionBoundariesVisualizer(ModelVisualizer):
         each instance as a class or target colored point, whose location
         is determined by the feature data set.
         """
+        # ensure that if someone is passing in another X such as X_test, that
+        # features will be properly handled
+        X = self.select_feature_columns(X)
+
         num_colors = len(self.classes_) * 2
         color_cycle = iter(
             resolve_colors(color=self.colors, num_colors=num_colors))
@@ -282,5 +338,6 @@ class DecisionBoundariesVisualizer(ModelVisualizer):
         """
         self.fit_draw(X, y, **kwargs)
         self.poof(**kwargs)
+
 
 DecisionViz = DecisionBoundariesVisualizer
