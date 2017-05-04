@@ -453,6 +453,43 @@ class DivSafeTests(unittest.TestCase):
         with self.assertRaises(ValueError):
             result = div_safe(5, 0)
 
+class StructuredArrayTests(unittest.TestCase):
+
+    def test_isstructuredarray_true(self):
+        x = np.array([(1,2.,'Hello'), (2,3.,"World")], dtype=[('foo', 'i4'),('bar', 'f4'), ('baz', 'S10')])
+        self.assertTrue(isstructuredarray(x))
+
+    def test_isstructuredarray_false(self):
+        x = np.array([[1,2,3], [1,2,3]])
+        self.assertFalse(isstructuredarray(x))
+
+    def test_isstructuredarray_list(self):
+        x = [[1,2,3], [1,2,3]]
+        self.assertFalse(isstructuredarray(x))
+
+class NarrayIntColumnsTests(unittest.TestCase):
+
+    def test_has_ndarray_int_columns_true_int_features(self):
+        x = np.random.rand(3,5)
+        features = [0, 1]
+        self.assertTrue(has_ndarray_int_columns(features, x))
+
+    def test_has_ndarray_int_columns_true_int_strings(self):
+        x = np.random.rand(3,5)
+        features = ['0', '1']
+        self.assertTrue(has_ndarray_int_columns(features, x))
+
+    def test_has_ndarray_int_columns_false_not_numeric(self):
+        x = np.random.rand(3,5)
+        features = ['a', '1']
+        self.assertFalse(has_ndarray_int_columns(features, x))
+
+    def test_has_ndarray_int_columns_false_outside_column_range(self):
+        x = np.random.rand(3,5)
+        features = ['0', '10']
+        self.assertFalse(has_ndarray_int_columns(features, x))
+
+
 ##########################################################################
 ## Decorator Tests
 ##########################################################################
