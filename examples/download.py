@@ -65,8 +65,12 @@ DATASETS = {
     },
     'game': {
         'url': 'https://s3.amazonaws.com/ddl-data-lake/yellowbrick/game.zip',
-        'signature': 'b1bd85789a014a898daa34cb5f89ceab6d2cd6488a2e572187e34aa4ec21a43b', 
-    }
+        'signature': 'b1bd85789a014a898daa34cb5f89ceab6d2cd6488a2e572187e34aa4ec21a43b',
+    },
+    'bikeshare': {
+        'url': 'https://s3.amazonaws.com/ddl-data-lake/yellowbrick/bikeshare.zip',
+        'signature': '7eb79d0be41f9d9f6373b1fa3f4789e7a9ef880720dc8ea29ec752b914d4b525',
+    },
 }
 
 
