@@ -62,6 +62,10 @@ DATASETS = {
     'hobbies': {
         'url': 'https://s3.amazonaws.com/ddl-data-lake/yellowbrick/hobbies.zip',
         'signature': '415c8f68df1486d5d84a1d1757a5aa3035aef5ad63ede5013c261d622fbd29d8',
+    },
+    'game': {
+        'url': 'https://s3.amazonaws.com/ddl-data-lake/yellowbrick/game.zip',
+        'signature': 'b1bd85789a014a898daa34cb5f89ceab6d2cd6488a2e572187e34aa4ec21a43b', 
     }
 }
 
