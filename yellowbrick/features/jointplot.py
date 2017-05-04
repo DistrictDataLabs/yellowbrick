@@ -174,11 +174,12 @@ class JointPlotVisualizer(FeatureVisualizer):
         #throw an error if X has more than 1 column
         if is_dataframe(X):
             nrows, ncols = X.shape
-        if ncols > 1:
-            raise YellowbrickValueError((
-                "X needs to be an ndarray or DataFrame with one feature, "
-                "please select one feature from the DataFrame"
-            ))
+
+            if ncols > 1:
+                raise YellowbrickValueError((
+                    "X needs to be an ndarray or DataFrame with one feature, "
+                    "please select one feature from the DataFrame"
+                ))
 
         #throw an error is y is None
         if y is None:
