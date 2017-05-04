@@ -35,21 +35,25 @@ class Visualizer(BaseEstimator):
 
     The base class for feature visualization and model visualization
     primarily ensures that styling arguments are passed in.
-    """
 
-    def __init__(self, ax=None, **kwargs):
-        """
+    Parameters
+    ----------
+    ax : matplotlib Axes, default: None
+        The axis to plot the figure on. If None is passed in the current axes
+        will be used (or generated if required).
+
+    kwargs : dict
+        Keyword arguments that are passed to the base class and may influence
+        the visualization as defined in other Visualizers.
+
+    Notes
+    -----
         These parameters can be influenced later on in the visualization
         process, but can and should be set as early as possible.
 
-        Parameters
-        ----------
-        ax: matplotlib axes
-            the axis to plot the figure on.
+    """
 
-        kwargs: dict
-            keyword arguments passed to the super class.
-        """
+    def __init__(self, ax=None, **kwargs):
         self.ax = ax
         self.size  = kwargs.pop('size', None)
         self.color = kwargs.pop('color', None)
@@ -84,6 +88,13 @@ class Visualizer(BaseEstimator):
     def draw(self, **kwargs):
         """
         Rendering function
+
+        Parameters
+        ----------
+
+        kwargs: dict
+            generic keyword arguments.
+
         """
         ax = self.gca()
 
@@ -96,10 +107,11 @@ class Visualizer(BaseEstimator):
 
         Parameters
         ----------
-        outpath: string
+        outpath: string, default: None
             path or None. Save  figure to disk or if None show in window
 
-        kwargs: generic keyword arguments.
+        kwargs: dict
+            generic keyword arguments.
         """
         if self.ax is None: return
 
@@ -113,6 +125,11 @@ class Visualizer(BaseEstimator):
     def set_title(self, title=None):
         """
         Sets the title on the current axes.
+
+        Parameters
+        ----------
+        title: string, default: None
+            Add title to figure or if None leave untitled.
         """
         title = self.title or title
         if title is not None:
@@ -134,11 +151,39 @@ class Visualizer(BaseEstimator):
         """
         Fits a transformer to X and y then returns
         visualization of features or fitted model.
+
+        Parameters
+        ----------
+
+        X : ndarray or DataFrame of shape n x m
+            A matrix of n instances with m features
+
+        y : ndarray or Series of length n
+            An array or series of target or class values
+
+        kwargs: dict
+            Generic keyword arguments.
         """
         self.fit(X, y, **kwargs)
         self.draw(**kwargs)
 
     def fit_draw_poof(self, X, y=None, **kwargs):
+        """
+        Fits a transformer to X and y then shows
+        the visualization of features or fitted model.
+
+        Parameters
+        ----------
+
+        X : ndarray or DataFrame of shape n x m
+            A matrix of n instances with m features
+
+        y : ndarray or Series of length n
+            An array or series of target or class values
+
+        kwargs: dict
+            Generic keyword arguments.
+        """
         self.fit_draw(X, y, **kwargs)
         self.poof(**kwargs)
 
@@ -164,8 +209,8 @@ class ScoreVisualizer(Visualizer):
         models: object
             the Scikit-Learn models being compared with each other.
 
-        ax: matplotlib axes
-            the axis to plot the figure on.
+        ax : matplotlib Axes, default: None
+            The axes to plot the figure on.
 
         kwargs: dict
             keyword arguments.
@@ -193,6 +238,14 @@ class ScoreVisualizer(Visualizer):
         return self
 
     def predict(self, X):
+        """
+        Parameters
+        ----------
+
+        X : ndarray or DataFrame of shape n x m
+            A matrix of n instances with m features
+
+        """
         return self.estimator.predict(X)
 
     def draw(self, X, y):
@@ -253,6 +306,14 @@ class ModelVisualizer(Visualizer):
         pass
 
     def predict(self, X):
+        """
+        Parameters
+        ----------
+
+        X : ndarray or DataFrame of shape n x m
+            A matrix of n instances with m features
+
+        """
         pass
 
 ##########################################################################
@@ -273,7 +334,8 @@ class MultiModelMixin(object):
 
         Parameters
         ----------
-        models: the Scikit-Learn models being compared with each other.
+        models: Scikit-Learn estimator
+            the Scikit-Learn models being compared with each other.
 
         kwargs: dict
             keyword arguments.
@@ -299,6 +361,19 @@ class MultiModelMixin(object):
         """
         Returns a generator containing the predictions for each of the
         internal models (using cross_val_predict and a CV=12).
+
+        Parameters
+        ----------
+
+        X : ndarray or DataFrame of shape n x m
+            A matrix of n instances with m features
+
+        y : ndarray or Series of length n
+            An array or series of target or class values
+
+        kwargs: dict
+            keyword arguments passed to Scikit-Learn API.
+
         """
         for model in self.models:
             yield cvp(model, X, y, cv=12)

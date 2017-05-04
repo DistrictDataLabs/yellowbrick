@@ -40,32 +40,37 @@ def parallel_coordinates(X, y=None, ax=None, features=None, classes=None,
 
     Parameters
     ----------
+
     X : ndarray or DataFrame of shape n x m
         A matrix of n instances with m features
 
     y : ndarray or Series of length n
         An array or series of target or class values
 
-    ax : matplotlib axes
+    ax : matplotlib Axes, default: None
         The axes to plot the figure on.
 
-    features : list of strings
+    features : list of strings, default: None
         The names of the features or columns
 
-    classes : list of strings
+    classes : list of strings, default: None
         The names of the classes in the target
 
-    color : list or tuple of colors
+    color : list or tuple of colors, default: None
         Specify the colors for each individual class
 
-    colormap : string or matplotlib cmap
+    colormap : string or matplotlib cmap, default: None
         Sequential colormap for continuous target
 
-    vlines : bool
+    vlines : bool, default: True
         Display the vertical azis lines
 
-    vlines_kwds : dict
+    vlines_kwds : dict, default: None
         Keyword arguments to draw the vlines
+
+    kwargs : dict
+        Keyword arguments that are passed to the base class and may influence
+        the visualization as defined in other Visualizers.
 
     Returns
     -------
@@ -94,44 +99,61 @@ class ParallelCoordinates(DataVisualizer):
     Parallel coordinates displays each feature as a vertical axis spaced
     evenly along the horizontal, and each instance as a line drawn between
     each individual axis.
+
+    Parameters
+    ----------
+    
+    ax : matplotlib Axes, default: None
+        The axis to plot the figure on. If None is passed in the current axes
+        will be used (or generated if required).
+
+    features : list, default: None
+        a list of feature names to use
+        If a DataFrame is passed to fit and features is None, feature
+        names are selected as the columns of the DataFrame.
+
+    classes : list, default: None
+        a list of class names for the legend
+        If classes is None and a y value is passed to fit then the classes
+        are selected from the target vector.
+
+    color : list or tuple, default: None
+        optional list or tuple of colors to colorize lines
+        Use either color to colorize the lines on a per class basis or
+        colormap to color them on a continuous scale.
+
+    colormap : string or cmap, default: None
+        optional string or matplotlib cmap to colorize lines
+        Use either color to colorize the lines on a per class basis or
+        colormap to color them on a continuous scale.
+
+    vlines : boolean, default: True
+        flag to determine vertical line display
+
+    vlines_kwds : dict, default: None
+        options to style or display the vertical lines, default: None
+
+    kwargs : dict
+        Keyword arguments that are passed to the base class and may influence
+        the visualization as defined in other Visualizers.
+
+    Examples
+    --------
+
+    >>> visualizer = ParallelCoordinates()
+    >>> visualizer.fit(X, y)
+    >>> visualizer.transform(X)
+    >>> visualizer.poof()
+
+    Notes
+    -----
+
+    These parameters can be influenced later on in the visualization
+    process, but can and should be set as early as possible.
     """
 
     def __init__(self, ax=None, features=None, classes=None, color=None,
                  colormap=None, vlines=True, vlines_kwds=None, **kwargs):
-        """
-        Initialize the base parallel coordinates with many of the options
-        required in order to make the visualization work.
-
-        Parameters
-        ----------
-
-        :param ax: the axis to plot the figure on.
-
-        :param features: a list of feature names to use
-            If a DataFrame is passed to fit and features is None, feature
-            names are selected as the columns of the DataFrame.
-
-        :param classes: a list of class names for the legend
-            If classes is None and a y value is passed to fit then the classes
-            are selected from the target vector.
-
-        :param color: optional list or tuple of colors to colorize lines
-            Use either color to colorize the lines on a per class basis or
-            colormap to color them on a continuous scale.
-
-        :param colormap: optional string or matplotlib cmap to colorize lines
-            Use either color to colorize the lines on a per class basis or
-            colormap to color them on a continuous scale.
-
-        :param vlines: flag to determine vertical line display, default True
-
-        :param vlines_kwds: options to style or display the vertical lines
-
-        :param kwargs: keyword arguments passed to the super class.
-
-        These parameters can be influenced later on in the visualization
-        process, but can and should be set as early as possible.
-        """
         super(ParallelCoordinates, self).__init__(
             ax, features, classes, color, colormap, **kwargs
         )
@@ -147,6 +169,7 @@ class ParallelCoordinates(DataVisualizer):
         Called from the fit method, this method creates the parallel
         coordinates canvas and draws each instance and vertical lines on it.
         """
+
         # Get the shape of the data
         nrows, ncols = X.shape
 
