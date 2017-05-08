@@ -133,7 +133,7 @@ class DecisionBoundariesVisualizer(ModelVisualizer):
                 raise YellowbrickValueError(
                     'DecisionBoundariesVisualizer only accepts two features.')
 
-    def select_feature_columns(self, X):
+    def select_feature_columns(self, X, y=None):
         """ """
         _, ncols = X.shape
 
@@ -148,8 +148,10 @@ class DecisionBoundariesVisualizer(ModelVisualizer):
 
         # handle numpy named/ structured array
         elif self.features_ is not None and is_structured_array(X):
+            # raise Exception(X.shape)
             X_selected = X[self.features_]
-            X_two_cols = X_selected.view((np.float64, len(X_selected.dtype.names)))
+            # raise Exception(X_selected.shape)
+            X_two_cols = X_selected.view(np.float64).reshape(len(X_selected), -1)
 
         # handle features that are numeric columns in ndarray matrix
         elif self.features_ is not None and has_ndarray_int_columns(self.features_, X):
@@ -162,7 +164,7 @@ class DecisionBoundariesVisualizer(ModelVisualizer):
                 explicitly set these two features in the init kwargs or
                 pass a matrix/ dataframe in with only two columns.""")
 
-        return X_two_cols
+        return X_two_cols, y
 
     def fit(self, X, y=None, **kwargs):
         """
@@ -209,7 +211,7 @@ class DecisionBoundariesVisualizer(ModelVisualizer):
             )
 
         # ensure that only
-        X = self.select_feature_columns(X)
+        X, y = self.select_feature_columns(X, y=y)
 
         self.estimator.fit(X, y)
 
@@ -228,6 +230,8 @@ class DecisionBoundariesVisualizer(ModelVisualizer):
 
         self.xx, self.yy = np.meshgrid(
             np.arange(x_min, x_max, x_step), np.arange(y_min, y_max, y_step))
+
+        # raise Exception(self.yy.ravel().shape)
         Z = self.estimator.predict(np.c_[self.xx.ravel(), self.yy.ravel()])
         self.Z_shape = Z.reshape(self.xx.shape)
         return self
