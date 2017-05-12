@@ -285,7 +285,7 @@ class Rank2D(FeatureVisualizer):
 
         """
         # Set the title
-        self.ax.set_title(
+        self.set_title(
             "{} Ranking of {} Features".format(
                 self.ranking_.title(), len(self.features_)
             )
