@@ -4,7 +4,7 @@ from .base import ClassificationScoreVisualizer
 import numpy as np
 import matplotlib.pyplot as plt
 
-from sklearn.cross_validation import train_test_split
+from sklearn.model_selection import train_test_split
 from sklearn.metrics import precision_recall_fscore_support
 
 from ..utils import get_model_name

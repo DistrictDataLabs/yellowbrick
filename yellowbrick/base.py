@@ -19,7 +19,7 @@ import matplotlib.pyplot as plt
 from sklearn.base import BaseEstimator
 from .exceptions import YellowbrickTypeError
 from .utils import get_model_name, isestimator
-from sklearn.cross_validation import cross_val_predict as cvp
+from sklearn.model_selection import cross_val_predict as cvp
 
 
 ##########################################################################

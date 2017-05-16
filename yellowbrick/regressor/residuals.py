@@ -20,7 +20,7 @@ Regressor visualizers that score residuals: prediction vs. actual data.
 
 import matplotlib.pyplot as plt
 
-from sklearn.cross_validation import train_test_split
+from sklearn.model_selection import train_test_split
 
 from ..bestfit import draw_best_fit
 from ..style.palettes import LINE_COLOR
