@@ -19,7 +19,7 @@ class ClassificationReport(ClassificationScoreVisualizer):
     """
     Classification report that shows the precision, recall, and F1 scores
     for the model. Integrates numerical scores as well as a color-coded heatmap.
-    
+
     Parameters
     ----------
 
@@ -37,7 +37,7 @@ class ClassificationReport(ClassificationScoreVisualizer):
         Use sequential heatmap.
 
     kwargs : keyword arguments passed to the super class.
-    
+
     Examples
     --------
 
@@ -97,6 +97,7 @@ class ClassificationReport(ClassificationScoreVisualizer):
         self.scores = precision_recall_fscore_support(y, y_pred)
         self.scores = map(lambda s: dict(zip(self.classes_, s)), self.scores[0:3])
         self.scores = dict(zip(keys, self.scores))
+
         return self.draw(y, y_pred)
 
     def draw(self, y, y_pred):
@@ -126,9 +127,15 @@ class ClassificationReport(ClassificationScoreVisualizer):
                 base_color = self.cmap(current_score)
                 text_color= find_text_color(base_color)
 
+                # Limit the current score to a precision of 3
+                current_score = "{:0.3f}".format(current_score)
+
                 self.ax.text(column,row,current_score,va='center',ha='center', color=text_color)
 
-        fig = plt.imshow(self.matrix, interpolation='nearest', cmap=self.cmap, vmin=0, vmax=1,aspect='auto')
+        fig = plt.imshow(self.matrix, interpolation='nearest', cmap=self.cmap, vmin=0, vmax=1, aspect='auto')
+
+        # Add the color bar
+        plt.colorbar()
 
         return self.ax
 
@@ -144,9 +151,6 @@ class ClassificationReport(ClassificationScoreVisualizer):
         """
         # Set the title of the classifiation report
         self.set_title('{} Classification Report'.format(self.name))
-
-        # Add the color bar
-        plt.colorbar()
 
         # Compute the tick marks for both x and y
         x_tick_marks = np.arange(len(self.classes_)+1)
