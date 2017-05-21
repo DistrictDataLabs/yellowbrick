@@ -119,14 +119,13 @@ class ROCAUC(ClassificationScoreVisualizer):
         ax : the axis with the plotted figure
 
         """
-        # Create the axis if it doesn't exist
-        if self.ax is None:
-            self.ax = plt.gca()
-
-        plt.plot(self.fpr, self.tpr, c=self.colors['roc'], label='AUC = {:0.2f}'.format(self.roc_auc))
+        self.ax.plot(
+            self.fpr, self.tpr, c=self.colors['roc'],
+            label='AUC = {:0.2f}'.format(self.roc_auc)
+        )
 
         # Plot the line of no discrimination to compare the curve to.
-        plt.plot([0,1],[0,1],'m--',c=self.colors['diagonal'])
+        self.ax.plot([0,1],[0,1],'m--',c=self.colors['diagonal'])
 
         return self.ax
 

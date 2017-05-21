@@ -129,10 +129,6 @@ class PredictionError(RegressionScoreVisualizer):
         ------
         ax : the axis with the plotted figure
         """
-        # Create the axis if it doesn't exist
-        if self.ax is None:
-            self.ax = plt.gca()
-
         self.ax.scatter(y, y_pred, c=self.colors['point'])
 
         # TODO If score is happening inside a loop, draw would get called multiple times.
@@ -339,10 +335,6 @@ class ResidualsPlot(RegressionScoreVisualizer):
         ax : the axis with the plotted figure
 
         """
-        # Create the axis if it doesn't exist
-        if self.ax is None:
-            self.ax = plt.gca()
-
         color = self.colors['train_point'] if train else self.colors['test_point']
         alpha = 0.5 if train else 1.0
 

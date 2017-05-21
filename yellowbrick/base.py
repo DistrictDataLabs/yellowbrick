@@ -48,8 +48,6 @@ class Visualizer(BaseEstimator):
 
     Notes
     -----
-        These parameters can be influenced later on in the visualization
-        process, but can and should be set as early as possible.
 
     """
 
@@ -59,9 +57,31 @@ class Visualizer(BaseEstimator):
         self.color = kwargs.pop('color', None)
         self.title = kwargs.pop('title', None)
 
+    ##////////////////////////////////////////////////////////////////////
+    ## Primary Visualizer Properties
+    ##////////////////////////////////////////////////////////////////////
+
+    @property
+    def ax(self):
+        if not hasattr(self, "_ax") or self._ax is None:
+            self._ax = plt.gca()
+        return self._ax
+
+    @ax.setter
+    def ax(self, ax):
+        self._ax = ax
+
+    ##////////////////////////////////////////////////////////////////////
+    ## Estimator interface
+    ##////////////////////////////////////////////////////////////////////
+
     def fit(self, X, y=None, **kwargs):
         """
-        Fits a transformer to X and y
+        Fits a visualizer to data and is the primary entry point for producing
+        a visualization. Visualizers are Scikit-Learn Estimator objects, which
+        learn from data in order to produce a visual analysis or diagnostic.
+        They can do this either by fitting features related data or by fitting
+        an underlying model (or models) and visualizing their results.
 
         Parameters
         ----------
@@ -77,17 +97,16 @@ class Visualizer(BaseEstimator):
         """
         return self
 
-    def gca(self):
-        """
-        Creates axes if they don't already exist
-        """
-        if self.ax is None:
-            self.ax = plt.gca()
-        return self.ax
+    ##////////////////////////////////////////////////////////////////////
+    ## Visualizer interface
+    ##////////////////////////////////////////////////////////////////////
 
     def draw(self, **kwargs):
         """
-        Rendering function
+        The fitting or transformation process usually calls draw (not the
+        user). This function is implemented for developers to hook into the
+        matplotlib interface and to create an internal representation of the
+        data the visualizer was trained on in the form of a figure or axes.
 
         Parameters
         ----------
@@ -96,14 +115,33 @@ class Visualizer(BaseEstimator):
             generic keyword arguments.
 
         """
-        ax = self.gca()
+        raise NotImplementedError(
+            "Visualizers must implement a drawing interface."
+        )
+
+    def finalize(self, **kwargs):
+        """
+        Finalize executes any subclass-specific axes finalization steps.
+
+        Parameters
+        ----------
+        kwargs: dict
+            generic keyword arguments.
+
+        Notes
+        -----
+        The user calls poof and poof calls finalize. Developers should
+        implement visualizer-specific finalization methods like setting titles
+        or axes labels, etc.
+        """
+        return self.ax
 
     def poof(self, outpath=None, **kwargs):
         """
-        The user calls poof, which is the primary entry point
-        for producing a visualization.
-
-        Visualizes either data features or fitted model scores
+        Poof makes the magic happen and a visualizer appear! You can pass in
+        a path to save the figure to disk with various backends, or you can
+        call it with no arguments to show the figure either in a notebook or
+        in a GUI window that pops up on screen.
 
         Parameters
         ----------
@@ -112,15 +150,26 @@ class Visualizer(BaseEstimator):
 
         kwargs: dict
             generic keyword arguments.
-        """
-        if self.ax is None: return
 
+        Notes
+        -----
+        Developers of visualizers don't usually override poof, as it is
+        primarily called by the user to render the visualization.
+        """
+        # Ensure that draw has been called
+        if self._ax is None: return
+
+        # Finalize the figure
         self.finalize()
 
         if outpath is not None:
             plt.savefig(outpath, **kwargs)
         else:
             plt.show()
+
+    ##////////////////////////////////////////////////////////////////////
+    ## Helper Functions
+    ##////////////////////////////////////////////////////////////////////
 
     def set_title(self, title=None):
         """
@@ -134,58 +183,6 @@ class Visualizer(BaseEstimator):
         title = self.title or title
         if title is not None:
             self.ax.set_title(title)
-
-    def finalize(self, **kwargs):
-        """
-        Finalize executes any subclass-specific axes finalization steps.
-        The user calls poof and poof calls finalize.
-
-        Parameters
-        ----------
-        kwargs: dict
-            generic keyword arguments.
-        """
-        pass
-
-    def fit_draw(self, X, y=None, **kwargs):
-        """
-        Fits a transformer to X and y then returns
-        visualization of features or fitted model.
-
-        Parameters
-        ----------
-
-        X : ndarray or DataFrame of shape n x m
-            A matrix of n instances with m features
-
-        y : ndarray or Series of length n
-            An array or series of target or class values
-
-        kwargs: dict
-            Generic keyword arguments.
-        """
-        self.fit(X, y, **kwargs)
-        self.draw(**kwargs)
-
-    def fit_draw_poof(self, X, y=None, **kwargs):
-        """
-        Fits a transformer to X and y then shows
-        the visualization of features or fitted model.
-
-        Parameters
-        ----------
-
-        X : ndarray or DataFrame of shape n x m
-            A matrix of n instances with m features
-
-        y : ndarray or Series of length n
-            An array or series of target or class values
-
-        kwargs: dict
-            Generic keyword arguments.
-        """
-        self.fit_draw(X, y, **kwargs)
-        self.poof(**kwargs)
 
 
 ##########################################################################

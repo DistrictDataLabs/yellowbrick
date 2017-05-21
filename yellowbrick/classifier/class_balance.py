@@ -100,19 +100,17 @@ class ClassBalance(ClassificationScoreVisualizer):
 
         Returns
         -------
-
         ax : the axis with the plotted figure
 
         """
-        # Create the axis if it doesn't exist
-        if self.ax is None:
-            self.ax = plt.gca()
-
         #TODO: Would rather not have to set the colors with this method.
         # Refactor to make better use of yb_palettes module?
 
         colors = self.colors[0:len(self.classes_)]
-        plt.bar(np.arange(len(self.support)), self.support.values(), color=colors, align='center', width=0.5)
+        self.ax.bar(
+            np.arange(len(self.support)), self.support.values(),
+            color=colors, align='center', width=0.5
+        )
 
         return self.ax
 

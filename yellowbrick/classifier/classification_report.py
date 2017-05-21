@@ -113,10 +113,6 @@ class ClassificationReport(ClassificationScoreVisualizer):
         y_pred : ndarray or Series of length n
             An array or series of predicted target values
         """
-        # Create the axis if it doesn't exist
-        if self.ax is None:
-            self.ax = plt.gca()
-
         self.matrix = []
         for cls in self.classes_:
             self.matrix.append([self.scores['precision'][cls],self.scores['recall'][cls],self.scores['f1'][cls]])

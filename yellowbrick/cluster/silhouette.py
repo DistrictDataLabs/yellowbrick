@@ -93,9 +93,6 @@ class SilhouetteVisualizer(ClusteringScoreVisualizer):
             visualizer so that the figure can be redrawn with new data.
         """
 
-        if self.ax is None:
-            self.ax = self.gca()
-
         # Track the positions of the lines being drawn
         y_upper = 10 # the top of the silhouette
         y_lower = 10 # The bottom of the silhouette

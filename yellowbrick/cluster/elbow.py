@@ -252,11 +252,6 @@ class KElbowVisualizer(ClusteringScoreVisualizer):
         """
         Draw the elbow curve for the specified scores and values of K.
         """
-
-        if self.ax is None:
-            # This is the primary axes
-            self.ax = self.gca()
-
         # Plot the silhouette score against k
         self.ax.plot(self.k_values_, self.k_scores_, marker="D", label="score")
 
