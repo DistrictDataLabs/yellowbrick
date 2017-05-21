@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 # tests.test_utils.test_helpers
 # Tests for the stand alone helper functions in Yellowbrick utils.
 #
@@ -133,6 +134,26 @@ class NarrayIntColumnsTests(unittest.TestCase):
         x = np.random.rand(3,5)
         features = ['0', '10']
         self.assertFalse(has_ndarray_int_columns(features, x))
+
+
+##########################################################################
+## String Helpers Tests
+##########################################################################
+
+class StringHelpersTests(unittest.TestCase):
+
+    def test_slugifiy(self):
+        """
+        Test the slugify helper utility
+        """
+
+        cases = (
+            ("This is a test ---", "this-is-a-test"),
+            ("This -- is a ## test ---" , "this-is-a-test"),
+        )
+
+        for case, expected in cases:
+            self.assertEqual(expected, slugify(case))
 
 
 ##########################################################################

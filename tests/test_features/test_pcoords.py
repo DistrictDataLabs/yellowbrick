@@ -63,6 +63,9 @@ class ParallelCoordinatesTests(unittest.TestCase, DatasetMixin):
         # Convert X to an ndarray
         X = np.array(X.tolist())
 
+        import time
+        start = time.time()
         # Test the visualizer
         visualizer = ParallelCoordinates()
         visualizer.fit_transform(X, y)
+        raise Exception("X conversion to {:0.3f} seconds".format(time.time()-start))

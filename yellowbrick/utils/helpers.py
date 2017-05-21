@@ -17,6 +17,8 @@ Helper functions and generic utilities for use in Yellowbrick code.
 ## Imports
 ##########################################################################
 
+import re
+import unicodedata
 import numpy as np
 
 from sklearn.pipeline import Pipeline
@@ -103,3 +105,29 @@ def div_safe( numerator, denominator ):
         return result
     except ValueError as e:
         raise e
+
+
+##########################################################################
+## String Computations
+##########################################################################
+
+def slugify(text):
+    """
+    Returns a slug of given text, normalizing unicode data for file-safe
+    strings. Used for deciding where to write images to disk.
+
+    Parameters
+    ----------
+    text : string
+        The string to slugify
+
+    Returns
+    -------
+    slug : string
+        A normalized slug representation of the text
+
+    .. seealso:: http://yashchandra.com/2014/05/08/how-to-generate-clean-url-or-a-slug-in-python/
+    """
+    slug = re.sub(r'[^\w]+', ' ', text)
+    slug = "-".join(slug.lower().strip().split())
+    return slug
