@@ -2,6 +2,18 @@
 Changelog
 =========
 
+Hotfix 0.4.2
+------------
+
+Update to the deployment docs and package on both Anaconda and PyPI.
+
+* Tag: v0.4.2_
+* Deployed: Monday, May 22, 2017
+* Contributors: Benjamin Bengfort, Jason Keung
+
+.. _v0.4.2: https://github.com/DistrictDataLabs/yellowbrick/releases/tag/v0.4.2
+
+
 Version 0.4.1
 -------------
 This release is an intermediate version bump in anticipation of the PyCon 2017 sprints.
