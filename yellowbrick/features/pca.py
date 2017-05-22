@@ -1,3 +1,6 @@
+##########################################################################
+## Imports
+##########################################################################
 import matplotlib.pyplot as plt
 
 from yellowbrick.features.base import DataVisualizer
@@ -6,10 +9,58 @@ from sklearn.pipeline import Pipeline
 from sklearn.decomposition import PCA
 from sklearn.preprocessing import StandardScaler
 ##########################################################################
-## Rank 2D PCA Visualizer
+##2D PCA Visualizer
 ##########################################################################
 class PCA2D(DataVisualizer):
+    """
+    Two dimensional principal component (PC) plot of data projected onto the first and
+    second principal components. It is best practices to center and scale the inputted
+    data set before applying a PC decomposition. There are scale and center arguments
+    that can be used to control centering anc scaling of an inputted data set. Therefore 
+    this class is a one stop shop for easily getting a 2 dimensional PC plot.
 
+    Parameters
+    ----------
+
+    ax : matplotlib Axes, default: None
+        The axes to plot the figure on. If None is passed in the current axes
+        will be used (or generated if required).
+    
+    scale : bool, default: True
+    
+    center : bool, default: True
+    
+    col : list or tuple, default: None
+        optional list or tuple of colors that distinguish separate classes in
+        int the data set.
+
+    colormap : string or cmap, default: None
+        optional string or matplotlib cmap to colorize lines
+        Use either color to colorize the lines on a per class basis or
+        colormap to color them on a continuous scale.
+    
+    kwargs : dict
+        Keyword arguments that are passed to the base class and may influence
+        the visualization as defined in other Visualizers.
+
+    Examples
+    --------
+    >>> from sklearn import datasets
+    >>> iris = datasets.load_iris()
+    >>> X = iris.data
+    >>> y = iris.target
+    >>> params = {'scale': True, 'center': False, 'col': y}
+    >>> visualizer = PCA2D(**params)
+    >>> visualizer.fit(X)
+    >>> visualizer.transform(X)
+    >>> visualizer.poof()
+
+
+    Notes
+    -----
+    
+    
+    """
     def __init__(self, ax=None, scale=True, center=True, col=None,
                  colormap='RdBu_r', **kwargs):
         super(PCA2D, self).__init__(ax=ax, **kwargs)
@@ -50,15 +101,3 @@ class PCA2D(DataVisualizer):
         self.ax.set_ylabel('Principal Component 2')
         self.ax.set_xlabel('Principal Component 1')
 
-
-if __name__ == "__main__":
-    from sklearn import datasets
-    iris = datasets.load_iris()
-    X = iris.data
-    y = iris.target
-
-    params = {'scale': True, 'center': False, 'col': y}
-    visualizer = PCA2D(**params)
-    visualizer.fit(X)
-    visualizer.transform(X)
-    visualizer.poof()
