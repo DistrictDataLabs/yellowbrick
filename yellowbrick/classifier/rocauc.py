@@ -6,7 +6,7 @@ from ..style.palettes import LINE_COLOR
 import numpy as np
 import matplotlib.pyplot as plt
 
-from sklearn.cross_validation import train_test_split
+from sklearn.model_selection import train_test_split
 from sklearn.metrics import auc, roc_auc_score, roc_curve
 
 
@@ -57,10 +57,10 @@ class ROCAUC(ClassificationScoreVisualizer):
     >>> viz.fit(X_train, y_train)
     >>> viz.score(X_test, y_test)
     >>> viz.poof()
-    
+
     """
     def __init__(self, model, ax=None, **kwargs):
-        
+
         super(ROCAUC, self).__init__(model, ax=ax, **kwargs)
 
         ## hoisted to ScoreVisualizer base class
@@ -119,14 +119,13 @@ class ROCAUC(ClassificationScoreVisualizer):
         ax : the axis with the plotted figure
 
         """
-        # Create the axis if it doesn't exist
-        if self.ax is None:
-            self.ax = plt.gca()
-
-        plt.plot(self.fpr, self.tpr, c=self.colors['roc'], label='AUC = {:0.2f}'.format(self.roc_auc))
+        self.ax.plot(
+            self.fpr, self.tpr, c=self.colors['roc'],
+            label='AUC = {:0.2f}'.format(self.roc_auc)
+        )
 
         # Plot the line of no discrimination to compare the curve to.
-        plt.plot([0,1],[0,1],'m--',c=self.colors['diagonal'])
+        self.ax.plot([0,1],[0,1],'m--',c=self.colors['diagonal'])
 
         return self.ax
 
