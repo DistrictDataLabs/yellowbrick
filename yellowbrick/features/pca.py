@@ -10,7 +10,7 @@ from sklearn.preprocessing import StandardScaler
 ##########################################################################
 class PCA2D(DataVisualizer):
 
-    def __init__(self, ax=None, scale=True, center=False, col=None,
+    def __init__(self, ax=None, scale=True, center=True, col=None,
                  colormap='RdBu_r', **kwargs):
         super(PCA2D, self).__init__(ax=ax, **kwargs)
         # Data Parameters
@@ -18,7 +18,7 @@ class PCA2D(DataVisualizer):
         self.pca_features_ = None
         self.scale = scale
         self.center = center
-        self.pca_transformer = Pipeline([('scale', StandardScaler(with_mean=self.scale, 
+        self.pca_transformer = Pipeline([('scale', StandardScaler(with_mean=self.center,
                                                                   with_std=self.scale)),
                                          ('pca', PCA(2))])
         # Visual Parameters
