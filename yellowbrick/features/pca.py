@@ -18,6 +18,7 @@ class PCA2D(DataVisualizer):
         self.pca_features_ = None
         self.scale = scale
         self.center = center
+
         self.pca_transformer = Pipeline([('scale', StandardScaler(with_mean=self.center,
                                                                   with_std=self.scale)),
                                          ('pca', PCA(2))])
