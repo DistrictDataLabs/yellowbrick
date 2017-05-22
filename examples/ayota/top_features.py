@@ -1,31 +1,53 @@
-
 """
-Implementations of visualization of top N features of text classifier
+Implementations of visualization of top N features of classifier.
 
 TODO:
 -Docstrings
 -Add tick labels
--Resolve issue with multiple plots (only produces one of five plots at the moment)
+-Make quick method for producing plots for all classes using multiclass visualizer
+-Add support for estimators with _feature_importance attributes
+-Implement one-sided version that takes absolute value of coefs/features
 """
 
 ##########################################################################
-## Top Features Visualizer
+# Imports
 ##########################################################################
 
 import numpy as np
 import matplotlib.pyplot as plt
 
-from operator import itemgetter
-
 from yellowbrick.classifier import ClassificationScoreVisualizer
-from yellowbrick.exceptions import YellowbrickTypeError
+from yellowbrick.exceptions import YellowbrickValueError
 from yellowbrick.style import color_palette
+
+##########################################################################
+## Top Features Visualizer Quick Function
+##########################################################################
+
+# It would be nice if there were a function here that used the top features
+# visualizer to grab the top features for each class and output them
+# using multiplot visualizer.
+
+
+##########################################################################
+## Top Features Visualizer
+##########################################################################
 
 class TopFeaturesVisualizer(ClassificationScoreVisualizer):
     """
-    This takes the result of a text classifier and visualizes 
-    the top N positive and negative coefficients for each 
-    target class in the corpus.
+    This takes the result of a classifier and visualizes
+    the top N positive and negative coefficients for a target class.
+    
+    Scikit-learn estimators store this information in two attributes:
+    coef_ and feature_importances_.
+    
+    Any classifier given to this visualizer must have coef_, 
+    otherwise we'll throw a "Estimator Not Implemented" warning.
+    
+    TODO:
+    * Implement visualizer for feature_importances_
+    * Add funcitonality for "one sided" visualizer that takes absolute values
+    and ranks those.
 
     Parameters
     ----------
@@ -44,35 +66,68 @@ class TopFeaturesVisualizer(ClassificationScoreVisualizer):
 
     Examples
     --------
+    # Text Example
     >>> from sklearn.svm import LinearSVC
     >>> from yellowbrick.classifier import TopFeaturesVisualizer
     >>> visualizer = TopFeaturesVisualizer(LinearSVC())
     >>> visualizer.fit()
     >>> visualizer.poof()
+    
+    # Numeric Example
+    >>> # numeric example here!!!!
 
 
     Notes
     -----
-    This visualizer requires a text corpus. 
+    Text corpora need to be formatted as a vectorizer and 
+    the top features extracted before using the visualizer.
+    
+    data = corpus.data
+    target = corpus.target
+    vectorizer = CountVectorizer(stop_words='english')
+    vectorizer.fit(data)
+    X_train = vectorizer.transform(data)
+    features = vectorizer.get_feature_names()
 
     """
 
-    def __init__(self, model, ax=None, class=None, N=20, **kwargs):
+    def __init__(self, model, ax=None, N=20, **kwargs):
+        # TODO: Make sure model is a classifier; otherwise throw an error.
 
         super(TopFeaturesVisualizer, self).__init__(model=model, ax=ax, **kwargs)
 
         self.N = N
         self.model = model
 
-    def get_top_coefs(self, classifier, class_label, features):
+    def _find_top_param(self):
         """
-        Fetch top N positive and negative coefficients.
-
-        Returns a list.
+        Searches for the parameter on the estimator that contains the array of
+        coefficients or features with the most "importance".
+        
+        Right now, this only checks for the coef_ attribute; feature_importance TK. 
+        If the estimator has neither of these, raise YellowbrickValueError.
         """
 
-        # get top n features based on class_label
-        coefs = classifier.coef_[self.classes_.index(class_label)]
+        # NOTE: The order of the search is very important!
+        for attr in ("coef_"):
+            try:
+                return getattr(self.estimator, attr)
+            except AttributeError:
+                continue
+
+        raise YellowbrickValueError(
+            "could not find coef_ param on {} estimator".format(
+                self.estimator.__class__.__name__
+            )
+        )
+
+    def get_top_features(self, class_label, features):
+        """
+        Fetch top N positive and negative coefficients for given class label.
+        """
+
+        values = self._find_top_param()
+        coefs = values[np.where(self.classes_ == class_label)[0][0]]
         top_positive_coefficients = np.argsort(coefs)[-self.N:]
         top_negative_coefficients = np.argsort(coefs)[:self.N]
         top_index = np.hstack([top_negative_coefficients, top_positive_coefficients])
@@ -83,8 +138,6 @@ class TopFeaturesVisualizer(ClassificationScoreVisualizer):
     def fit(self, X_train, y, **kwargs):
         """
         Pull in all data transform methods and apply to data here.
-
-        Then, make plots for desired classes.
         """
 
         super(TopFeaturesVisualizer, self).fit(X_train, y, **kwargs)
@@ -94,23 +147,20 @@ class TopFeaturesVisualizer(ClassificationScoreVisualizer):
 
     def score(self, features, class_label, **kwargs):
         """
-        Pull in all data transform methods and apply to data here.
-
-        Then, make plots for desired classes.
-        """
+        Extract top N features for desired class label.
         
+        Call draw().
+        """
+
         self.class_label = class_label
-        # can get features from estimator?
-        self.get_top_coefs(self.estimator, class_label, features)
+        self.get_top_features(self.estimator, class_label, features)
         self.draw()
+
 
     def draw(self, **kwargs):
         """
         Draw basic plot here, with all finishing for each individual subplot called here.
         """
-        # Create the axis if it doesn't exist
-        if self.ax is None:
-            self.ax = plt.gca()
 
         palette = color_palette(n_colors=2)
         colors = [palette[0] if c < 0 else palette[1] for c in self.top_coefficients]
@@ -123,8 +173,5 @@ class TopFeaturesVisualizer(ClassificationScoreVisualizer):
         Add final touches: tick labels and title.
         """
 
-        # Add a title
         self.set_title('Top {N} features for {class_label}'.format(N=self.N, class_label=self.class_label))
-        
-        # Add tick labels
         self.ax.set_xticklabels(self.top_features, rotation=90, ha='right')
