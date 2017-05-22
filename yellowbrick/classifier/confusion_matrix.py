@@ -17,12 +17,12 @@ from ..utils import div_safe
 class ConfusionMatrix(ClassificationScoreVisualizer):
     """
     Creates a heatmap visualization of the sklearn.metrics.confusion_matrix(). A confusion
-    matrix shows each combination of the true and predicted classes for a test data set. 
+    matrix shows each combination of the true and predicted classes for a test data set.
 
     The default color map uses a yellow/orange/red color scale. The user can choose between
     displaying values as the percent of true (cell value divided by sum of row) or as direct
     counts. If percent of true mode is selected, 100% accurate predictions are highlighted in green.
-    
+
     Requires a classification model
 
     Parameters
@@ -37,7 +37,7 @@ class ConfusionMatrix(ClassificationScoreVisualizer):
         indicated by that function. It may be used to reorder or select a subset of labels.
         If None, values that appear at least once in y_true or y_pred are used in sorted order.
         Default: None
-    
+
     Examples
     --------
 
@@ -48,8 +48,8 @@ class ConfusionMatrix(ClassificationScoreVisualizer):
     >>> viz.score(X_test, y_test)
     >>> viz.poof()
     """
-    
-        
+
+
     def __init__(self, model, ax=None, classes=None, **kwargs):
 
         super(ConfusionMatrix, self).__init__(model, ax=ax, classes=None,**kwargs)
@@ -69,7 +69,7 @@ class ConfusionMatrix(ClassificationScoreVisualizer):
         self.cmap.set_over(color='#2a7d4f')
         self.edgecolors=[] #used to draw diagonal line for predicted class = true class
 
-        
+
         #Convert list to array if necessary, since estimator.classes_ returns nparray
         self._classes = None if classes == None else np.array(classes)
 
@@ -136,8 +136,8 @@ class ConfusionMatrix(ClassificationScoreVisualizer):
 
         self.confusion_matrix = confusion_matrix(y_true = y, y_pred = y_pred, labels=self.classes, sample_weight=sample_weight)
         self._class_counts = self.class_counts(y)
-        
-        #Make array of only the classes actually being used. 
+
+        #Make array of only the classes actually being used.
         #Needed because sklearn confusion_matrix only returns counts for selected classes
             #but percent should be calculated based on all classes
         selected_class_counts = []
@@ -163,10 +163,6 @@ class ConfusionMatrix(ClassificationScoreVisualizer):
                     Whether the heatmap should represent "% of True" or raw counts
 
         """
-        # Create the axis if it doesn't exist
-        if self.ax is None:
-            self.ax = plt.gca()
-
         if percent == True:
             #Convert confusion matrix to percent of each row, i.e. the predicted as a percent of true in each class
             #div_safe function returns 0 instead of NAN.
@@ -221,7 +217,7 @@ class ConfusionMatrix(ClassificationScoreVisualizer):
 
                 #extract the value
                 grid_val = self._confusion_matrix_plottable[x_int,y_int]
-                
+
                 #Determine text color
                 scaled_grid_val = grid_val / self.max
                 base_color = self.cmap(scaled_grid_val)

@@ -282,7 +282,7 @@ the final step in a ``Pipeline`` or ``VisualPipeline``.
     # Regression Evaluation Imports
 
     from sklearn.linear_model import Ridge, Lasso
-    from sklearn.cross_validation import train_test_split
+    from sklearn.model_selection import train_test_split
 
     from yellowbrick.regressor import PredictionError, ResidualsPlot
 
@@ -392,7 +392,7 @@ a Pipeline or VisualPipeline.
     from sklearn.naive_bayes import GaussianNB
     from sklearn.linear_model import LogisticRegression
     from sklearn.ensemble import RandomForestClassifier
-    from sklearn.cross_validation import train_test_split
+    from sklearn.model_selection import train_test_split
 
     from yellowbrick.classifier import ClassificationReport, ROCAUC, ClassBalance
 
@@ -456,7 +456,7 @@ Scikit-Learn documentation on `confusion matrices <http://scikit-learn.org/stabl
     import yellowbrick
 
     from sklearn.datasets import load_digits
-    from sklearn.cross_validation import train_test_split
+    from sklearn.model_selection import train_test_split
     from sklearn.linear_model import LogisticRegression
 
     from yellowbrick.classifier import ConfusionMatrix

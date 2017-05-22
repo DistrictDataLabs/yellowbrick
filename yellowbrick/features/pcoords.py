@@ -102,7 +102,7 @@ class ParallelCoordinates(DataVisualizer):
 
     Parameters
     ----------
-    
+
     ax : matplotlib Axes, default: None
         The axis to plot the figure on. If None is passed in the current axes
         will be used (or generated if required).
@@ -176,9 +176,6 @@ class ParallelCoordinates(DataVisualizer):
         # Create the xticks for each column
         # TODO: Allow the user to specify this feature
         x = list(range(ncols))
-
-        # Create the axis if it doesn't exist
-        if self.ax is None: self.ax = plt.gca()
 
         # Create the colors
         # TODO: Allow both colormap, listed colors, and palette definition

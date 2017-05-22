@@ -139,9 +139,6 @@ class AlphaSelection(RegressionScoreVisualizer):
         """
         Draws the alpha plot based on the values on the estimator.
         """
-        if self.ax is None:
-            self.ax = plt.gca()
-
         # Search for the correct parameters on the estimator.
         alphas = self._find_alphas_param()
         errors = self._find_errors_param()
@@ -338,9 +335,6 @@ class ManualAlphaSelection(AlphaSelection):
         Draws the alphas values against their associated error in a similar
         fashion to the AlphaSelection visualizer.
         """
-        if self.ax is None:
-            self.ax = plt.gca()
-
         # Plot the alpha against the error
         self.ax.plot(self.alphas, self.errors, label=self.name.lower())
 
