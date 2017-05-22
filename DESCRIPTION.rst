@@ -3,6 +3,7 @@
 |Visualizers|_
 
 .. |Visualizers| image:: http://www.scikit-yb.org/en/latest/_images/visualizers.png
+    :width: 800 px
 .. _Visualizers: http://scikit-yb.org/
 
 Yellowbrick
