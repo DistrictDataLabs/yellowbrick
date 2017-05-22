@@ -179,9 +179,6 @@ class FreqDistVisualizer(TextVisualizer):
         kwargs: generic keyword arguments.
 
         """
-        # Create the axis if it doesn't exist
-        if self.ax is None: self.ax = plt.gca()
-
         # Plot the top 50 most frequent words
         y_pos = np.arange(self.N)
         self.ax.bar(y_pos, self.counts[:self.N], align='center', alpha=0.5)

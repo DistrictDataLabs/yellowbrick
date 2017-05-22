@@ -6,6 +6,8 @@ When creating a pull request, your contribution will be reviewed by one or proba
 
 For more about how to develop visualizers and contribute features to Yellowbrick, see our [contributor's guide](CONTRIBUTING.md) and the documentation.
 
+For everyone who has [contributed](https://github.com/DistrictDataLabs/yellowbrick/graphs/contributors) in big and in small ways, **thank you!**. Yellowbrick is intended to be a community project, welcoming to new and experienced developers alike. If you would like to become a core contributor you must simply submit a pull request that shows core knowledge of the Yellowbrick library. Usually new Visualizers meet this standard; let the maintainers know you'd like to join the team, and they'll help you work toward it!
+
 ## Maintainers
 
 This is a list of the primary project maintainers. Feel free to @ message them in issues and converse with them directly.
@@ -13,6 +15,7 @@ This is a list of the primary project maintainers. Feel free to @ message them i
 - [bbengfort](https://github.com/bbengfort)
 - [NealHumphrey](https://github.com/NealHumphrey)
 - [jkeung](https://github.com/jkeung)
+- [ndanielsen](https://github.com/ndanielsen)
 
 ## Core Contributors
 
@@ -21,7 +24,6 @@ This is a list of the core-contributors of the project. Core contributors set th
 - [rebeccabilbro](https://github.com/rebeccabilbro)
 - [mattandahalfew](https://github.com/mattandahalfew)
 - [pdamodaran](https://github.com/pdamodaran)
-- [ndanielsen](https://github.com/ndanielsen)
 - [tuulihill](https://github.com/tuulihill)
 - [balavenkatesan](https://github.com/balavenkatesan)
 - [morganmendis](https://github.com/morganmendis)

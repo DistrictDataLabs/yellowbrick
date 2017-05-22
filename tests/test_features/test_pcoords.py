@@ -61,8 +61,11 @@ class ParallelCoordinatesTests(unittest.TestCase, DatasetMixin):
         y = occupancy['occupancy'].astype(int)
 
         # Convert X to an ndarray
-        X = X.view((float, len(X.dtype.names)))
+        X = np.array(X.tolist())
 
+        import time
+        start = time.time()
         # Test the visualizer
         visualizer = ParallelCoordinates()
         visualizer.fit_transform(X, y)
+        raise Exception("X conversion to {:0.3f} seconds".format(time.time()-start))

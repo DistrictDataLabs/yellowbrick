@@ -243,9 +243,9 @@ class ScatterVisualizer(DataVisualizer):
         draws each instance as a class or target colored point, whose location
         is determined by the feature data set.
         """
-        # Create the axes if they don't exist
-        if self.ax is None:
-            self.ax = plt.gca(xlim=[-1, 1], ylim=[-1, 1])
+        # Set the axes limits
+        self.ax.set_xlim([-1,1])
+        self.ax.set_ylim([-1,1])
 
         # set the colors
         if self.colormap is not None or self.color is not None:
