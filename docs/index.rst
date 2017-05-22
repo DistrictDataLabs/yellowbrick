@@ -79,10 +79,10 @@ The following is a complete listing of the Yellowbrick documentation for this ve
    :maxdepth: 2
 
    introduction
-   about
    setup
    examples/examples
    api/modules
+   about
    evaluation
    contributing
    changelog
