@@ -18,20 +18,92 @@ https://bl.ocks.org/rpgove/0060ff3b656618e9136b
 ## Imports
 ##########################################################################
 
+import time
+import numpy as np
+
 from .base import ClusteringScoreVisualizer
 from ..exceptions import YellowbrickValueError
 
 from sklearn.metrics import silhouette_score
+from sklearn.metrics import calinski_harabaz_score
+from sklearn.metrics.pairwise import pairwise_distances
+from sklearn.preprocessing import LabelEncoder
+
 
 ## Packages for export
 __all__ = [
-    "KElbowVisualizer",
+    "KElbowVisualizer", "distortion_score"
 ]
+
+
+##########################################################################
+## Metrics
+##########################################################################
+
+def distortion_score(X, labels, metric='euclidean'):
+    """
+    Compute the mean distortion of all samples.
+
+    The distortion is computed as the the sum of the squared distances between
+    each observation and its closest centroid. Logically, this is the metric
+    that K-Means attempts to minimize as it is fitting the model.
+
+    .. seealso:: http://kldavenport.com/the-cost-function-of-k-means/
+
+    Parameters
+    ----------
+    X : array, shape = [n_samples, n_features] or [n_samples_a, n_samples_a]
+        Array of pairwise distances between samples if metric == "precomputed"
+        or a feature array for computing distances against the labels.
+
+    labels : array, shape = [n_samples]
+        Predicted labels for each sample
+
+    metric : string
+        The metric to use when calculating distance between instances in a
+        feature array. If metric is a string, it must be one of the options
+        allowed by `sklearn.metrics.pairwise.pairwise_distances
+        <http://scikit-learn.org/stable/modules/generated/sklearn.metrics.pairwise.pairwise_distances.html#sklearn.metrics.pairwise.pairwise_distances>`_
+
+    .. todo:: add sample_size and random_state kwds similar to silhouette_score
+    """
+    # Encode labels to get unique centers and groups
+    le = LabelEncoder()
+    labels = le.fit_transform(labels)
+    unique_labels = le.classes_
+
+    # Sum of the distortions
+    distortion = 0
+
+    # Loop through each label (center) to compute the centroid
+    for current_label in unique_labels:
+        # Mask the instances that belong to the current label
+        mask = labels == current_label
+        instances = X[mask]
+
+        # Compute the center of these instances
+        center = instances.mean(axis=0)
+
+        # Compute the square distances from the instances to the center
+        distances = pairwise_distances(instances, [center], metric=metric)
+        distances = distances ** 2
+
+        # Add the mean square distance to the distortion
+        distortion += distances.mean()
+
+    return distortion
 
 
 ##########################################################################
 ## Elbow Method
 ##########################################################################
+
+KELBOW_SCOREMAP = {
+    "distortion": distortion_score,
+    "silhouette": silhouette_score,
+    "calinski_harabaz": calinski_harabaz_score,
+}
+
 
 class KElbowVisualizer(ClusteringScoreVisualizer):
     """
@@ -43,20 +115,20 @@ class KElbowVisualizer(ClusteringScoreVisualizer):
     clusters even if that is not the right k for the dataset.
 
     The elbow method runs k-means clustering on the dataset for a range of
-    values for k (say from 1-10) and then for each value of k computes the
-    ``silhouette_score``, the mean silhouette coefficient for all samples.
-    The silhouette coefficient of a cluster is computed by comparing the mean
-    intra-cluster distance (a) and the mean nearest-cluster distance (b) for
-    each sample in the dataset; the silhouette is then computed as
-    ``(b-a) / max(a,b)``. The score is a value between -1 and 1, values near
-    zero indicate overlapping clusters. Negative values imply that samples
-    have been assigned to the wrong cluster, and positive values mean that
-    there are discrete clusters.
+    values for k (say from 1-10) and then for each value of k computes an
+    average score for all clusters. By default, the ``distortion_score`` is
+    computed, the sum of square distances from each point to its assigned
+    center. Other metrics can also be used such as the ``silhouette_score``,
+    the mean silhouette  coefficient for all samples or the
+    ``calinski_harabaz_score``, which computes the ratio of dispersion between
+    and within clusters.
 
-    Finally, the silhouette score for each k is plotted. If the line chart
-    looks like an arm, then the "elbow" (the point of inflection on the curve)
-    is the best value of k. The idea is that we want as small a k as possible
-    such that the clusters do not overlap.
+    When these overall metrics for each model are plotted, it is possible to
+    visually determine the best value for K. If the line chart looks like an
+    arm, then the "elbow" (the point of inflection on the curve) is the best
+    value of k. The "arm" can be either up or down, but if there is a strong
+    inflection point, it is a good indication that the underlying model fits
+    best at that point.
 
     Parameters
     ----------
@@ -73,6 +145,19 @@ class KElbowVisualizer(ClusteringScoreVisualizer):
         The range of k to compute silhouette scores for. If a single integer
         is specified, then will compute the range (2,k) otherwise the
         specified range in the tuple is used.
+
+    metric : string, default: ``"distortion"``
+        Select the scoring metric to evaluate the clusters. The default is the
+        mean distortion, defined by the sum of squared distances between each
+        observation and its closest centroid. Other metrics include:
+
+        - **distortion**: mean sum of squared distances to centers
+        - **silhouette**: mean ratio of intra-cluster and nearest-cluster distance
+        - **calinski_harabaz**: ratio of within to between cluster dispersion
+
+    timings : bool, default: True
+        Display the fitting time per k to evaluate the amount of time required
+        to train the clustering model.
 
     kwargs : dict
         Keyword arguments that are passed to the base class and may influence
@@ -99,17 +184,29 @@ class KElbowVisualizer(ClusteringScoreVisualizer):
     For a discussion on the Elbow method, read more at
     `Robert Gove's Block <https://bl.ocks.org/rpgove/0060ff3b656618e9136b>`_.
 
-    .. todo:: add parallelization ooption for performance
+    .. todo:: add parallelization option for performance
     .. todo:: add different metrics for scores and silhoutte
     .. todo:: add timing information about how long its taking
     """
 
-    def __init__(self, model, ax=None, k=10, **kwargs):
+    def __init__(self, model, ax=None, k=10,
+                 metric="distortion", timings=True, **kwargs):
         super(KElbowVisualizer, self).__init__(model, ax=ax, **kwargs)
+
+        # Get the scoring method
+        if metric not in KELBOW_SCOREMAP:
+            raise YellowbrickValueError(
+                "'{}' is not a defined metric "
+                "use one of distortion, silhouette, or calinski_harabaz"
+            )
+
+        # Store the arguments
+        self.scoring_metric = KELBOW_SCOREMAP[metric]
+        self.timings = timings
 
         # Convert K into a tuple argument if an integer
         if isinstance(k, int):
-            k = (2, k)
+            k = (2, k+1)
 
         # Expand k in to the values we will use, capturing exceptions
         try:
@@ -133,12 +230,20 @@ class KElbowVisualizer(ClusteringScoreVisualizer):
         """
 
         self.k_scores_ = []
+        self.k_timers_ = []
 
         for k in self.k_values_:
+            # Compute the start time for each  model
+            start = time.time()
+
+            # Set the k value and fit the model
             self.estimator.set_params(n_clusters=k)
             self.estimator.fit(X)
+
+            # Append the time and score to our plottable metrics
+            self.k_timers_.append(time.time() - start)
             self.k_scores_.append(
-                silhouette_score(X, self.estimator.labels_, metric='euclidean')
+                self.scoring_metric(X, self.estimator.labels_)
             )
 
         self.draw()
@@ -147,12 +252,16 @@ class KElbowVisualizer(ClusteringScoreVisualizer):
         """
         Draw the elbow curve for the specified scores and values of K.
         """
-
-        if self.ax is None:
-            self.ax = self.gca()
-
         # Plot the silhouette score against k
-        self.ax.plot(self.k_values_, self.k_scores_)
+        self.ax.plot(self.k_values_, self.k_scores_, marker="D", label="score")
+
+        # If we're going to plot the timings, create a twinx axis
+        if self.timings:
+            self.axes = [self.ax, self.ax.twinx()]
+            self.axes[1].plot(
+                self.k_values_, self.k_timers_, label="fit time",
+                c='g', marker="o", linestyle="--", alpha=0.75,
+            )
 
         return self.ax
 
@@ -161,12 +270,20 @@ class KElbowVisualizer(ClusteringScoreVisualizer):
         Prepare the figure for rendering by setting the title as well as the
         X and Y axis labels and adding the legend.
         """
+        # Get the metric name
+        metric = self.scoring_metric.__name__.replace("_", " ").title()
 
         # Set the title
         self.set_title(
-            'Silhoutte for {} Clustering Behavior'.format(self.name)
+            '{} Elbow for {} Clustering'.format(metric, self.name)
         )
 
         # Set the x and y labels
         self.ax.set_xlabel('k')
-        self.ax.set_ylabel('silhouette')
+        self.ax.set_ylabel(metric.lower())
+
+        # Set the second y axis labels
+        if self.timings:
+            self.axes[1].grid(False)
+            self.axes[1].set_ylabel("fit time (seconds)", color='g')
+            self.axes[1].tick_params('y', colors='g')

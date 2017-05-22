@@ -37,7 +37,7 @@ __all__ = [
 
 class SilhouetteVisualizer(ClusteringScoreVisualizer):
     """
-
+    TODO: Document this class!
     """
 
     def __init__(self, model, ax=None, **kwargs):
@@ -92,9 +92,6 @@ class SilhouetteVisualizer(ClusteringScoreVisualizer):
             usually computed with ``predict()``. Labels are not stored on the
             visualizer so that the figure can be redrawn with new data.
         """
-
-        if self.ax is None:
-            self.ax = self.gca()
 
         # Track the positions of the lines being drawn
         y_upper = 10 # the top of the silhouette

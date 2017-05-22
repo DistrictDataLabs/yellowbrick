@@ -61,7 +61,7 @@ class ParallelCoordinatesTests(unittest.TestCase, DatasetMixin):
         y = occupancy['occupancy'].astype(int)
 
         # Convert X to an ndarray
-        X = X.view((float, len(X.dtype.names)))
+        X = np.array(X.tolist())
 
         # Test the visualizer
         visualizer = ParallelCoordinates()
