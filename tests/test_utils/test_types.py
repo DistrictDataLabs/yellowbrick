@@ -1,18 +1,16 @@
-# tests.test_utils
-# Test the yellowbrick utilities module.
+# tests.test_utils.test_types
+# Very difficult test library for type detection and flexibility.
 #
-# Author:   Jason Keung <jason.s.keung@gmail.com>
-# Author:   Patrick O'Melveny <pvomelveny@gmail.com>
 # Author:   Benjamin Bengfort <bbengfort@districtdatalabs.com>
-# Created:  Thu Jun 02 15:33:18 2016 -0500
+# Created:  Fri May 19 10:58:32 2017 -0700
 #
-# Copyright (C) 2016 District Data LAbs
+# Copyright (C) 2017 District Data Labs
 # For license information, see LICENSE.txt
 #
-# ID: test_utils.py [] jason.s.keung@gmail.com $
+# ID: test_types.py [] benjamin@bengfort.com $
 
 """
-Test the yellowbrick utilities module.
+Very difficult test library for type detection and flexibility.
 """
 
 ##########################################################################
@@ -32,7 +30,7 @@ from sklearn.ensemble import RandomForestClassifier
 from sklearn.cluster import KMeans, MiniBatchKMeans
 from sklearn.cluster import AffinityPropagation, Birch
 
-from yellowbrick.utils import *
+from yellowbrick.utils.types import *
 from yellowbrick.base import Visualizer, ScoreVisualizer, ModelVisualizer
 
 
@@ -41,43 +39,6 @@ from yellowbrick.base import Visualizer, ScoreVisualizer, ModelVisualizer
 ##########################################################################
 
 class ModelUtilityTests(unittest.TestCase):
-
-    ##////////////////////////////////////////////////////////////////////
-    ## get_model_name testing
-    ##////////////////////////////////////////////////////////////////////
-
-    def test_real_model(self):
-        """
-        Test that model name works for sklearn estimators
-        """
-        model1 = LassoCV()
-        model2 = LSHForest()
-        model3 = KMeans()
-        model4 = RandomForestClassifier()
-        self.assertEqual(get_model_name(model1), 'LassoCV')
-        self.assertEqual(get_model_name(model2), 'LSHForest')
-        self.assertEqual(get_model_name(model3), 'KMeans')
-        self.assertEqual(get_model_name(model4), 'RandomForestClassifier')
-
-    def test_pipeline(self):
-        """
-        Test that model name works for sklearn pipelines
-        """
-        pipeline = Pipeline([('reduce_dim', PCA()),
-                             ('linreg', LinearRegression())])
-        self.assertEqual(get_model_name(pipeline), 'LinearRegression')
-
-    def test_int_input(self):
-        """
-        Assert a type error is raised when an int is passed to model name.
-        """
-        self.assertRaises(TypeError, get_model_name, 1)
-
-    def test_str_input(self):
-        """
-        Assert a type error is raised when a str is passed to model name.
-        """
-        self.assertRaises(TypeError, get_model_name, 'helloworld')
 
     ##////////////////////////////////////////////////////////////////////
     ## isestimator testing
@@ -428,30 +389,6 @@ class ModelUtilityTests(unittest.TestCase):
         model = ScoreVisualizer(KMeans())
         self.assertTrue(is_clusterer(model))
 
-class DivSafeTests(unittest.TestCase):
-
-    def test_div_1d_by_scalar(self):
-        result = div_safe( [-1, 0, 1], 0 )
-        self.assertTrue(result.all() == 0)
-
-    def test_div_1d_by_1d(self):
-        result =div_safe( [-1, 0 , 1], [0,0,0])
-        self.assertTrue(result.all() == 0)
-
-    def test_div_2d_by_1d(self):
-        numerator = np.array([[-1,0,1,2],[1,-1,0,3]])
-        denominator = [0,0,0,0]
-        result = div_safe(numerator, denominator)
-
-    def test_invalid_dimensions(self):
-            numerator = np.array([[-1,0,1,2],[1,-1,0,3]])
-            denominator = [0,0]
-            with self.assertRaises(ValueError):
-                result = div_safe(numerator, denominator)
-
-    def test_div_scalar_by_scalar(self):
-        with self.assertRaises(ValueError):
-            result = div_safe(5, 0)
 
 class StructuredArrayTests(unittest.TestCase):
 
@@ -466,84 +403,6 @@ class StructuredArrayTests(unittest.TestCase):
     def test_isstructuredarray_list(self):
         x = [[1,2,3], [1,2,3]]
         self.assertFalse(isstructuredarray(x))
-
-class NarrayIntColumnsTests(unittest.TestCase):
-
-    def test_has_ndarray_int_columns_true_int_features(self):
-        x = np.random.rand(3,5)
-        features = [0, 1]
-        self.assertTrue(has_ndarray_int_columns(features, x))
-
-    def test_has_ndarray_int_columns_true_int_strings(self):
-        x = np.random.rand(3,5)
-        features = ['0', '1']
-        self.assertTrue(has_ndarray_int_columns(features, x))
-
-    def test_has_ndarray_int_columns_false_not_numeric(self):
-        x = np.random.rand(3,5)
-        features = ['a', '1']
-        self.assertFalse(has_ndarray_int_columns(features, x))
-
-    def test_has_ndarray_int_columns_false_outside_column_range(self):
-        x = np.random.rand(3,5)
-        features = ['0', '10']
-        self.assertFalse(has_ndarray_int_columns(features, x))
-
-
-##########################################################################
-## Decorator Tests
-##########################################################################
-
-class DecoratorTests(unittest.TestCase):
-    """
-    Tests for the decorator utilities.
-    """
-
-    def test_docutil(self):
-        """
-        Test the docutil docstring copying methodology.
-        """
-
-        class Visualizer(object):
-
-            def __init__(self):
-                """
-                This is the correct docstring.
-                """
-                pass
-
-
-        def undecorated(*args, **kwargs):
-            """
-            This is an undecorated function string.
-            """
-            pass
-
-        # Test the undecorated string to protect from magic
-        self.assertEqual(
-            undecorated.__doc__.strip(), "This is an undecorated function string."
-        )
-
-        # Decorate manually and test the newly decorated return function.
-        decorated = docutil(Visualizer.__init__)(undecorated)
-        self.assertEqual(
-            decorated.__doc__.strip(), "This is the correct docstring."
-        )
-
-        # Assert that decoration modifies the original function.
-        self.assertEqual(
-            undecorated.__doc__.strip(), "This is the correct docstring."
-        )
-
-        @docutil(Visualizer.__init__)
-        def sugar(*args, **kwargs):
-            pass
-
-        # Assert that syntactic sugar works as expected.
-        self.assertEqual(
-            sugar.__doc__.strip(), "This is the correct docstring."
-        )
-
 
 ##########################################################################
 ## Execute Tests

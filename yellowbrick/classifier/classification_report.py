@@ -4,7 +4,7 @@ from .base import ClassificationScoreVisualizer
 import numpy as np
 import matplotlib.pyplot as plt
 
-from sklearn.cross_validation import train_test_split
+from sklearn.model_selection import train_test_split
 from sklearn.metrics import precision_recall_fscore_support
 
 from ..utils import get_model_name
@@ -19,7 +19,7 @@ class ClassificationReport(ClassificationScoreVisualizer):
     """
     Classification report that shows the precision, recall, and F1 scores
     for the model. Integrates numerical scores as well as a color-coded heatmap.
-    
+
     Parameters
     ----------
 
@@ -37,7 +37,7 @@ class ClassificationReport(ClassificationScoreVisualizer):
         Use sequential heatmap.
 
     kwargs : keyword arguments passed to the super class.
-    
+
     Examples
     --------
 
@@ -97,6 +97,7 @@ class ClassificationReport(ClassificationScoreVisualizer):
         self.scores = precision_recall_fscore_support(y, y_pred)
         self.scores = map(lambda s: dict(zip(self.classes_, s)), self.scores[0:3])
         self.scores = dict(zip(keys, self.scores))
+
         return self.draw(y, y_pred)
 
     def draw(self, y, y_pred):
@@ -112,10 +113,6 @@ class ClassificationReport(ClassificationScoreVisualizer):
         y_pred : ndarray or Series of length n
             An array or series of predicted target values
         """
-        # Create the axis if it doesn't exist
-        if self.ax is None:
-            self.ax = plt.gca()
-
         self.matrix = []
         for cls in self.classes_:
             self.matrix.append([self.scores['precision'][cls],self.scores['recall'][cls],self.scores['f1'][cls]])
@@ -126,9 +123,15 @@ class ClassificationReport(ClassificationScoreVisualizer):
                 base_color = self.cmap(current_score)
                 text_color= find_text_color(base_color)
 
+                # Limit the current score to a precision of 3
+                current_score = "{:0.3f}".format(current_score)
+
                 self.ax.text(column,row,current_score,va='center',ha='center', color=text_color)
 
-        fig = plt.imshow(self.matrix, interpolation='nearest', cmap=self.cmap, vmin=0, vmax=1,aspect='auto')
+        fig = plt.imshow(self.matrix, interpolation='nearest', cmap=self.cmap, vmin=0, vmax=1, aspect='auto')
+
+        # Add the color bar
+        plt.colorbar()
 
         return self.ax
 
@@ -144,9 +147,6 @@ class ClassificationReport(ClassificationScoreVisualizer):
         """
         # Set the title of the classifiation report
         self.set_title('{} Classification Report'.format(self.name))
-
-        # Add the color bar
-        plt.colorbar()
 
         # Compute the tick marks for both x and y
         x_tick_marks = np.arange(len(self.classes_)+1)

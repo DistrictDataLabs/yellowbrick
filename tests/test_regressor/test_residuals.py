@@ -25,7 +25,7 @@ from yellowbrick.regressor.residuals import *
 
 from sklearn.svm import SVR
 from sklearn import cross_validation as cv
-from sklearn.cross_validation import train_test_split as tts
+from sklearn.model_selection import train_test_split as tts
 
 ##########################################################################
 ## Data

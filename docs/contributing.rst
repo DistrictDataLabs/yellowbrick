@@ -4,7 +4,7 @@ Contributing
 
 Yellowbrick is an open source project that is supported by a community who will gratefully and humbly accept any contributions you might make to the project. Large or small, any contribution makes a big difference; and if you've never contributed to an open source project before, we hope you will start with Yellowbrick!
 
-Principally, Yellowbrick development is about the addition and creation of *visualizers* --- objects that learn from data and create a visual representation of the data or model. Visualizers integrate with Scikit-Learn estimators, transformers, and pipelines for specific purposes and as a result, can be simple to build and deploy. The most common contribution is therefore a new visualizer for a specific model or model family. We'll discuss in detail how to build visualizers later.
+Principally, Yellowbrick development is about the addition and creation of *visualizers* --- objects that learn from data and create a visual representation of the data or model. Visualizers integrate with Scikit-Learn estimators, transformers, and pipelines for specific purposes and as a result, can be simple to build and deploy. The most common contribution is a new visualizer for a specific model or model family. We'll discuss in detail how to build visualizers later.
 
 Beyond creating visualizers, there are many ways to contribute:
 
@@ -28,15 +28,15 @@ Yellowbrick is hosted on GitHub at https://github.com/DistrictDataLabs/yellowbri
 The typical workflow for a contributor to the codebase is as follows:
 
 1. **Discover** a bug or a feature by using Yellowbrick.
-2. **Discuss** with the core contributes by `adding an issue <https://github.com/DistrictDataLabs/yellowbrick/issues>`_.
+2. **Discuss** with the core contributors by `adding an issue <https://github.com/DistrictDataLabs/yellowbrick/issues>`_.
 3. **Assign** yourself the task by pulling a card from our `Waffle Kanban <https://waffle.io/DistrictDataLabs/yellowbrick>`_
 4. **Fork** the repository into your own GitHub account.
 5. Create a **Pull Request** first thing to `connect with us <https://github.com/DistrictDataLabs/yellowbrick/pulls>`_ about your task.
-6. **Code** the feature, write the documentation, add your contribution.
+6. **Code** the feature, write the tests and documentation, add your contribution.
 7. **Review** the code with core contributors who will guide you to a high quality submission.
 8. **Merge** your contribution into the Yellowbrick codebase.
 
-.. note:: Create a pull request as soon as possible, even before you've started coding. This will allow the core contributors to give you advice about where to add your code or utilities and discuss other style choices and implementation details as you go. Don't wait!
+.. note:: Please create a pull request as soon as possible, even before you've started coding. This will allow the core contributors to give you advice about where to add your code or utilities and discuss other style choices and implementation details as you go. Don't wait!
 
 We believe that *contribution is collaboration* and therefore emphasize *communication* throughout the open source process. We rely heavily on GitHub's social coding tools to allow us to do this.
 
@@ -66,7 +66,7 @@ Once forked, use the following steps to get your development environment set up 
 
         $ pip install -r requirements.txt
 
-    Note that there may be other dependencies required for development and testing, you can simply install them with ``pip``.
+    Note that there may be other dependencies required for development and testing; you can simply install them with ``pip``.
 
 4. Switch to the develop branch.
 
@@ -131,12 +131,12 @@ Tag the release in GitHub::
     $ git tag -a vx.x
     $ git push origin vx.x
 
-You'll have to go to the release_ page to edit the release with similar information as added to the changelog. Once done, push the release to PyPI:
+You'll have to go to the release_ page to edit the release with similar information as added to the changelog. Once done, push the release to PyPI::
 
     $ make build
     $ make deploy
 
-Check that the PyPI page is updated with the correct version and that ``pip install -U yellowbrick`` updates the version and works correctly. Also check the documentation on PyHosted, ReadTheDocs, and on our website to make sure that it was correctly updated. Finally merge the release into develop and clean up:
+Check that the PyPI page is updated with the correct version and that ``pip install -U yellowbrick`` updates the version and works correctly. Also check the documentation on PyHosted, ReadTheDocs, and on our website to make sure that it was correctly updated. Finally merge the release into develop and clean up::
 
     $ git checkout develop
     $ git merge --no-ff --no-edit release-x.x
