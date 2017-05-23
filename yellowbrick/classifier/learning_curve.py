@@ -23,11 +23,6 @@ from sklearn.model_selection import ShuffleSplit
 
 from yellowbrick.base import ModelVisualizer
 
-## Packages for export
-__all__ = [
-    "LearningCurveVisualizer", 
-]
-
 ##########################################################################
 ## LearningCurveVisualizer Visualizer
 ##########################################################################
@@ -38,8 +33,8 @@ class LearningCurveVisualizer(ModelVisualizer):
     Learning curves demonstrate is a plot of proxy measures for implied
     learning with experience. 
 
-    The X axis represents experience, or the number of training samples. 
-    The Y axis represents learning, or the train and cross validation scores.
+    * The X axis represents experience, or the number of training samples. 
+    * The Y axis represents learning, or the train and cross validation scores.
 
     Parameters
     ----------
@@ -58,13 +53,9 @@ class LearningCurveVisualizer(ModelVisualizer):
           - An object to be used as a cross-validation generator.
           - An iterable yielding train/test splits.
 
-        For integer/None inputs, if ``y`` is binary or multiclass,
-        :class:`StratifiedKFold` used. If the estimator is not a classifier
-        or if ``y`` is neither binary nor multiclass, :class:`KFold` is used.
-
-        Refer :ref:`User Guide <cross_validation>` for the various
-        cross-validators that can be used here.
-
+    see scikit-learn `cross-validation guide <http://scikit-learn.org/stable/modules/cross_validation.html>`_ 
+    for more information
+    
     n_jobs : integer, optional
         Number of jobs to run in parallel (default 1).
 
@@ -130,6 +121,8 @@ class LearningCurveVisualizer(ModelVisualizer):
         self.test_scores_std = np.std(self.test_scores, axis=1)
         
         self.draw(**kwargs)
+
+        return self
         
     def draw(self, **kwargs):
         """

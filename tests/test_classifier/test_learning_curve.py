@@ -27,81 +27,86 @@ from sklearn.datasets import load_digits
 from sklearn.model_selection import ShuffleSplit
 from yellowbrick.classifier.learning_curve import LearningCurveVisualizer
 from yellowbrick.classifier.learning_curve import learning_curve_plot
+from tests.dataset import DatasetMixin
 
 ##########################################################################
 ## LearningCurveTests Test Cases
 ##########################################################################
 
-class LearningCurveTests(VisualTestCase):
+class LearningCurveTests(VisualTestCase, DatasetMixin):
 
-    def __init__(self, *args, **kwargs):
-        super(LearningCurveTests, self).__init__(*args, **kwargs)
-        #Use the same data for all the tests
-        self.digits = load_digits()
+    def setUp(self):
+        self.occupancy = self.load_data('occupancy')
+        X = self.occupancy[[
+            "temperature", "relative_humidity", "light", "C02", "humidity"
+        ]]
 
-        X = self.digits.data
-        y = self.digits.target
+        y = self.occupancy['occupancy'].astype(int)
+
+        X = X.view((float, len(X.dtype.names)))
+        
+    def tearDown(self):
+        self.occupancy = None
+        X = None
+        y = None
 
     def test_learning_curve_comprehensive(self):
         """
-        Assert no errors occur during learning curve integration
+        Test learning curve with all parameters.
         """
         try:
             visualizer = LearningCurveVisualizer(LinearSVC(), train_sizes=np.linspace(.1, 1.0, 5), 
             	cv=ShuffleSplit(n_splits=100, test_size=0.2, random_state=0), 
             	n_jobs=4)
-            visualizer.fit(self.X, self.y)
+            visualizer.fit(X, y)
             visualizer.poof()
         except Exception as e:
             self.fail("error during learning curve: {}".format(e))
 
     def test_learning_curve_model_only(self):
         """
-        Assert no errors occur during learning curve integration
+        Test learning curve with inputting model only.
         """
         try:
             visualizer = LearningCurveVisualizer(LinearSVC())
-            visualizer.fit(self.X, self.y)
+            visualizer.fit(X, y)
             visualizer.poof()
         except Exception as e:
             self.fail("error during learning curve: {}".format(e))
 
     def test_learning_curve_model_cv_only(self):
         """
-        Assert no errors occur during learning curve integration
+        Test learning curve with inputting model and cv only.
         """
         try:
             visualizer = LearningCurveVisualizer(LinearSVC(),
             	cv=ShuffleSplit(n_splits=100, test_size=0.2, random_state=0))
-            visualizer.fit(self.X, self.y)
+            visualizer.fit(X, y)
             visualizer.poof()
         except Exception as e:
             self.fail("error during learning curve: {}".format(e))
 
     def test_learning_curve_model_trainsize_cv_only(self):
         """
-        Assert no errors occur during learning curve integration
+        Test learning curve with inputting model, training size, and cv only.
         """
         try:
             visualizer = LearningCurveVisualizer(LinearSVC(), 
             	train_sizes=np.linspace(.1, 1.0, 5),
             	cv=ShuffleSplit(n_splits=100, test_size=0.2, random_state=0))
-            visualizer.fit(self.X, self.y)
+            visualizer.fit(X, y)
             visualizer.poof()
         except Exception as e:
             self.fail("error during learning curve: {}".format(e))
 
     def test_learning_curve_bad_trainsize(self):
         """
-        Assert no errors occur during learning curve integration
+        Test learning curve with bad input for training size.
         """
-        try:
+        with self.assertRaises(YellowbrickTypeError):
             visualizer = LearningCurveVisualizer(LinearSVC(), 
             	train_sizes=10000,
             	cv=ShuffleSplit(n_splits=100, test_size=0.2, random_state=0))
-            visualizer.fit(self.X, self.y)
+            visualizer.fit(X, y)
             visualizer.poof()
-        except Exception as e:
-            self.fail("error during learning curve: {}".format(e))
-
- 
+        
