@@ -24,6 +24,7 @@ import unittest
 import matplotlib as mpl
 import matplotlib.pyplot as plt
 from matplotlib import ticker
+from matplotlib import rcParams
 
 from matplotlib.testing.compare import compare_images
 from matplotlib.testing.exceptions import ImageComparisonFailure
@@ -51,21 +52,25 @@ class VisualTestCase(unittest.TestCase):
         """
         Assert tthat the backend is 'Agg' and close all previous plots
         """
-        plt.close("all")
-        from matplotlib import rcParams
-        rcParams['font.family'] = 'DejaVu Sans'
-
+        plt.close("all") # close all existing plots
+        rcParams['font.family'] = 'DejaVu Sans' # Travis-CI does not have san-sarif
         self.assertEqual(self._backend, 'agg')
         super(VisualTestCase, self).setUp()
 
     def _setup_imagetest(self, inspect_obj=None):
+        """Parses the module path and test function name from an inspect call obj
+        that is triggered in the unittest specific "assert_images_similar"
+        """
         if inspect_obj is not None:
             full_path = inspect_obj[1][1][:-3]
             self._module_path =  full_path.split('yellowbrick')[1].split('/')[2:]
             self._test_func_name = inspect_obj[1][3]
         return self._module_path, self._test_func_name
 
-    def img_outpath(self, extension='.png'):
+    def _img_outpath(self, extension='.png'):
+        """Determines the correct outpath for drawing a matplotlib image that
+        corresponds to the unittest module path.
+        """
         module_path, test_func_name = self._setup_imagetest()
         module_path = os.path.join(*module_path)
         actual_images = os.path.join('tests', 'actual_images', module_path)
@@ -77,32 +82,68 @@ class VisualTestCase(unittest.TestCase):
         return self._test_img_outpath
 
     def _get_base_img(self, extension='.png'):
-        module_path, test_func_name = self._setup_imagetest()
+        """Gets the baseline_image path for comparison that corresponds to the
+        unittest module path.
+        """
 
+        module_path, test_func_name = self._setup_imagetest()
         module_path = os.path.join(*module_path)
         base_results = os.path.join('tests', 'baseline_images', module_path)
-
         if not os.path.exists(base_results):
             mpl.cbook.mkdirs(base_results)
-
         base_img = os.path.join(base_results, test_func_name + extension)
-
         return base_img
 
-    def assert_images_similar(self, visualizer, tolerance=0.01):
+    def assert_images_similar(self, visualizer, tol=0.01):
+        """Accessible testing method for testing generation of a Visualizer.
+
+        Requires the placement of a baseline image for comparison the
+        tests/baseline_images folder that corresponds to the module path of the
+        VisualTestCase. The name of the image corresponds to the unittest function
+        where "self.assert_images_similar" is called.
+
+        For example, calling "assert_images_similar" in the unittest
+        "test_class_report" in tests.test_classifier.test_class_balance would
+        require placement a baseline image at:
+
+        baseline_images/test_classifier/test_class_balance/test_class_report.png
+
+        The easiest way to generate a baseline image is to first run the test that
+        calls "assert_images_similar", and then copy the actual test generated
+        image from:
+
+        actual_images/
+
+        visualizer : yellowbrick visualizer
+            An instantiated yellowbrick visualizer that has been fitted,
+            transformed and had all operations except for poof called on it.
+
+        tol : float
+            The tolerance (a color value difference, where 255 is the
+            maximal difference).  The test fails if the average pixel
+            difference is greater than this value.
+
+        """
+        # inspect is used to locate and organize the baseline images and actual
+        # test generated images for comparison
         inspect_obj = inspect.stack()
         module_path, test_func_name = self._setup_imagetest(inspect_obj=inspect_obj)
+
+        # clean and remove the textual/ formatting elements from the visualizer
         remove_ticks_and_titles(visualizer.ax)
-        plt.savefig(self.img_outpath())
+
+        plt.savefig(self._img_outpath())
         base_image = self._get_base_img()
-        test_img = self.img_outpath()
-        yb_compare_images(base_image, test_img, tolerance)
+        test_img = self._img_outpath()
+        yb_compare_images(base_image, test_img, tol)
 
 
 def remove_ticks_and_titles(ax):
-    # figure.suptitle("")
+    """Removes tickets and formatting on sub ax object that is useful for the
+    assert_images_similar as different OS having varying font styles and other
+    system level differences
+    """
     null_formatter = ticker.NullFormatter()
-    # for ax in figure.get_axes():
     ax.set_title("")
     ax.xaxis.set_major_formatter(null_formatter)
     ax.xaxis.set_minor_formatter(null_formatter)
@@ -114,19 +155,30 @@ def remove_ticks_and_titles(ax):
     except AttributeError:
         pass
 
-
-
 def yb_compare_images(expected, actual, tol):
+    """ Compares a baseline image and test generated actual image
+    using a matplotlib's built-in imagine comparison function
+
+    expected : string, imagepath
+        The image filepath to the baseline image
+
+    actual : string, imagepath
+        The image filepath to the actual test generated image
+
+    tol : float
+        The tolerance (a color value difference, where 255 is the
+        maximal difference).  The test fails if the average pixel
+        difference is greater than this value.
+    """
     __tracebackhide__ = True
 
     if not os.path.exists(expected):
         raise ImageComparisonFailure('image does not exist: %s' % expected)
 
+    # method from matplotlib.testing.compare
     err = compare_images(expected, actual, tol, in_decorator=True)
 
     if err:
-        for key in ["actual", "expected"]:
-            err[key] = os.path.relpath(err[key])
         raise ImageComparisonFailure(
             'images not close (RMS %(rms).3f):\n\t%(actual)s\n\t%(expected)s '
              % err)
