@@ -7,7 +7,7 @@
 # Copyright (C) 2017 District Data Labs
 # For license information, see LICENSE.txt
 #
-# ID: postag.py [] rbilbro@districtdatalabs.com $
+# ID: postag.py [849f5a8] rebecca.bilbro@bytecubed.com $
 
 """
 Implementation of part-of-speech visualization for text,

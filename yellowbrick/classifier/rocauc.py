@@ -1,14 +1,33 @@
+# yellowbrick.classifier.rocauc
+# Implements visual ROC/AUC curves for classification evaluation.
+#
+# Author:   Rebecca Bilbro <rbilbro@districtdatalabs.com>
+# Author:   Benjamin Bengfort <bbengfort@districtdatalabs.com>
+# Author:   Neal Humphrey
+# Created:  Wed May 18 12:39:40 2016 -0400
+#
+# Copyright (C) 2017 District Data Labs
+# For license information, see LICENSE.txt
+#
+# ID: rocauc.py [5388065] neal@nhumphrey.com $
+
+"""
+Implements visual ROC/AUC curves for classification evaluation.
+"""
+
+##########################################################################
+## Imports
+##########################################################################
+
+import numpy as np
+import matplotlib.pyplot as plt
 
 from .base import ClassificationScoreVisualizer
 from ..utils import get_model_name
 from ..style.palettes import LINE_COLOR
 
-import numpy as np
-import matplotlib.pyplot as plt
-
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import auc, roc_auc_score, roc_curve
-
 
 
 ##########################################################################

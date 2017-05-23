@@ -7,7 +7,7 @@
 # Copyright (C) 2016 District Data Labs
 # For license information, see LICENSE.txt
 #
-# ID: colors.py [] benjamin@bengfort.com $
+# ID: colors.py [c6aff34] benjamin@bengfort.com $
 
 """
 Colors and color helpers brought in from an alternate library.

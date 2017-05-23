@@ -7,7 +7,7 @@
 # Copyright (C) 2016 District Data Labs
 # For license information, see LICENSE.txt
 #
-# ID: base.py [] benjamin@bengfort.com $
+# ID: base.py [b8e3318] benjamin@bengfort.com $
 
 """
 Helper functions and cases for making assertions on visualizations.

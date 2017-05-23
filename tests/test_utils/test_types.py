@@ -7,7 +7,7 @@
 # Copyright (C) 2017 District Data Labs
 # For license information, see LICENSE.txt
 #
-# ID: test_types.py [] benjamin@bengfort.com $
+# ID: test_types.py [79cd8cf] benjamin@bengfort.com $
 
 """
 Very difficult test library for type detection and flexibility.

@@ -7,7 +7,7 @@
 # Copyright (C) 2016 District Data Labs
 # For license information, see LICENSE.txt
 #
-# ID: test_scatter.py [] nathan.danielsen@gmail.com $
+# ID: test_scatter.py [fc94ec4] ndanielsen@users.noreply.github.com $
 """
 Test the ScatterViz feature analysis visualizers
 """

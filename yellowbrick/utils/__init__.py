@@ -10,7 +10,7 @@
 # Copyright (C) 2016 District Data LAbs
 # For license information, see LICENSE.txt
 #
-# ID: __init__.py [] jason.s.keung@gmail.com $
+# ID: __init__.py [79cd8cf] benjamin@bengfort.com $
 
 """
 Utility functions and helpers for the Yellowbrick library.

@@ -8,7 +8,7 @@
 # Copyright (C) 2016 District Data Labs
 # For license information, see LICENSE.txt
 #
-# ID: test_rcmod.py [] benjamin@bengfort.com $
+# ID: test_rcmod.py [c6aff34] benjamin@bengfort.com $
 
 """
 Testing the matplotlib configuration modifications for aesthetic.
