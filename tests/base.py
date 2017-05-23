@@ -52,6 +52,9 @@ class VisualTestCase(unittest.TestCase):
         Assert tthat the backend is 'Agg' and close all previous plots
         """
         plt.close("all")
+        from matplotlib import rcParams
+        rcParams['font.family'] = 'DejaVu Sans'
+        
         self.assertEqual(self._backend, 'agg')
         super(VisualTestCase, self).setUp()
 
@@ -90,7 +93,6 @@ class VisualTestCase(unittest.TestCase):
         inspect_obj = inspect.stack()
         module_path, test_func_name = self._setup_imagetest(inspect_obj=inspect_obj)
         remove_ticks_and_titles(visualizer.ax)
-        # visualizer.ax
         plt.savefig(self.img_outpath())
         base_image = self._get_base_img()
         test_img = self.img_outpath()
