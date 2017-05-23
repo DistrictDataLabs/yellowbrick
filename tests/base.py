@@ -66,24 +66,24 @@ class VisualTestCase(unittest.TestCase):
         module_path, test_func_name = self._setUp_ImageTest(inspect_obj=inspect_obj)
 
         module_path = os.path.join(*module_path)
-        test_results = os.path.join('tests', 'test_images', module_path)
+        actual_images = os.path.join('tests', 'actual_images', module_path)
 
-        if not os.path.exists(test_results):
-            mpl.cbook.mkdirs(test_results)
+        if not os.path.exists(actual_images):
+            mpl.cbook.mkdirs(actual_images)
 
-        self._test_img_outpath = os.path.join(test_results, test_func_name + extension)
+        self._test_img_outpath = os.path.join(actual_images, test_func_name + extension)
         return self._test_img_outpath
 
     def _get_base_img(self, extension='.png'):
         test_func_name, module_path = self._setUp_ImageTest()
 
-        module_path = os.path.join(*self.module_path)
+        module_path = os.path.join(*module_path)
         base_results = os.path.join('tests', 'baseline_images', module_path)
 
         if not os.path.exists(base_results):
             mpl.cbook.mkdirs(base_results)
 
-        base_img = os.path.join(base_results, self.test_func_name + extension)
+        base_img = os.path.join(base_results, test_func_name + extension)
 
         return base_img
 
