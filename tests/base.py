@@ -54,7 +54,7 @@ class VisualTestCase(unittest.TestCase):
         self.assertEqual(self._backend, 'agg')
         super(VisualTestCase, self).setUp()
 
-    def _setUp_ImageTest(self, inspect_obj=None):
+    def _setup_imagetest(self, inspect_obj=None):
         if inspect_obj is not None:
             full_path = inspect_obj[1][1][:-3]
             self._module_path =  full_path.split('yellowbrick')[1].split('/')[2:]
@@ -63,7 +63,7 @@ class VisualTestCase(unittest.TestCase):
 
     def img_outpath(self, extension='.png'):
         inspect_obj = inspect.stack()
-        module_path, test_func_name = self._setUp_ImageTest(inspect_obj=inspect_obj)
+        module_path, test_func_name = self._setup_imagetest(inspect_obj=inspect_obj)
 
         module_path = os.path.join(*module_path)
         actual_images = os.path.join('tests', 'actual_images', module_path)
@@ -75,7 +75,7 @@ class VisualTestCase(unittest.TestCase):
         return self._test_img_outpath
 
     def _get_base_img(self, extension='.png'):
-        test_func_name, module_path = self._setUp_ImageTest()
+        module_path, test_func_name = self._setup_imagetest()
 
         module_path = os.path.join(*module_path)
         base_results = os.path.join('tests', 'baseline_images', module_path)
@@ -88,7 +88,6 @@ class VisualTestCase(unittest.TestCase):
         return base_img
 
     def assert_images_similar(self, tolerance=0.1):
-        """ """
         base_image = self._get_base_img()
         test_img = self._test_img_outpath
         yb_compare_images(base_image, test_img, tolerance)
