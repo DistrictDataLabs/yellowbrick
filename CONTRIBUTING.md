@@ -95,14 +95,13 @@ The Yellowbrick repository is set up in a typical production/release/development
 
 You can work directly in your fork and create a pull request from your fork's develop branch into ours. We also recommend setting up an `upstream` remote so that you can easily pull the latest development changes from the main Yellowbrick repository (see [configuring a remote for a fork](https://help.github.com/articles/configuring-a-remote-for-a-fork/)). You can do that as follows:
 
-``
-$ git remote add upstream https://github.com/DistrictDataLabs/yellowbrick.git
-$ git remote -v
-origin    https://github.com/YOUR_USERNAME/YOUR_FORK.git (fetch)
-origin    https://github.com/YOUR_USERNAME/YOUR_FORK.git (push)
-upstream  https://github.com/DistrictDataLabs/yellowbrick.git (fetch)
-upstream  https://github.com/DistrictDataLabs/yellowbrick.git (push)
-``
+`$ git remote add upstream https://github.com/DistrictDataLabs/yellowbrick.git`
+`$ git remote -v`
+> origin    https://github.com/YOUR_USERNAME/YOUR_FORK.git (fetch)
+> origin    https://github.com/YOUR_USERNAME/YOUR_FORK.git (push)
+> upstream  https://github.com/DistrictDataLabs/yellowbrick.git (fetch)
+> upstream  https://github.com/DistrictDataLabs/yellowbrick.git (push)
+
 
 When you're ready, request a code review for your pull request. Then, when reviewed and approved, you can merge your fork into our main branch. Make sure to use the "Squash and Merge" option in order to create a Git history that is understandable.
 
@@ -216,10 +215,16 @@ class MyVisualizerTests(VisualTestCase, DatasetMixin):
             self.fail("my visualizer didn't work")
 ```
 
-Tests can be run as follows::
+The entire test suite can be run as follows::
 
 ```
 $ make test
+```
+
+You can also run your own test file as follows::
+
+```
+$ nosetests tests/test_your_visualizer.py
 ```
 
 The Makefile uses the nosetest runner and testing suite as well as the coverage library, so make sure you have those dependencies installed! The `DatasetMixin` also requires requests.py to fetch data from our Amazon S3 account.
