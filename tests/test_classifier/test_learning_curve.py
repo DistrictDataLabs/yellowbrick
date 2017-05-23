@@ -1,0 +1,107 @@
+# tests.test_classifier.test_learning_curve
+# Tests for the LearningCurveVisualizer
+#
+# Author:   Jason Keung <jason.s.keung@gmail.com>
+# Created:  Tues May 23 11:45:00 2017 -0400
+#
+# Copyright (C) 2017 District Data Labs
+# For license information, see LICENSE.txt
+#
+# ID: test_learning_curve.py jason.s.keung@gmail.com $
+
+"""
+Tests for the LearningCurveVisualizer
+"""
+
+##########################################################################
+## Imports
+##########################################################################
+
+import unittest
+import numpy as np
+
+from ..base import VisualTestCase
+
+from sklearn.svm import LinearSVC
+from sklearn.datasets import load_digits
+from sklearn.model_selection import ShuffleSplit
+from yellowbrick.classifier.learning_curve import LearningCurveVisualizer
+from yellowbrick.classifier.learning_curve import learning_curve_plot
+
+##########################################################################
+## LearningCurveTests Test Cases
+##########################################################################
+
+class LearningCurveTests(VisualTestCase):
+
+    def __init__(self, *args, **kwargs):
+        super(LearningCurveTests, self).__init__(*args, **kwargs)
+        #Use the same data for all the tests
+        self.digits = load_digits()
+
+        X = self.digits.data
+        y = self.digits.target
+
+    def test_learning_curve_comprehensive(self):
+        """
+        Assert no errors occur during learning curve integration
+        """
+        try:
+            visualizer = LearningCurveVisualizer(LinearSVC(), train_sizes=np.linspace(.1, 1.0, 5), 
+            	cv=ShuffleSplit(n_splits=100, test_size=0.2, random_state=0), 
+            	n_jobs=4)
+            visualizer.fit(self.X, self.y)
+            visualizer.poof()
+        except Exception as e:
+            self.fail("error during learning curve: {}".format(e))
+
+    def test_learning_curve_model_only(self):
+        """
+        Assert no errors occur during learning curve integration
+        """
+        try:
+            visualizer = LearningCurveVisualizer(LinearSVC())
+            visualizer.fit(self.X, self.y)
+            visualizer.poof()
+        except Exception as e:
+            self.fail("error during learning curve: {}".format(e))
+
+    def test_learning_curve_model_cv_only(self):
+        """
+        Assert no errors occur during learning curve integration
+        """
+        try:
+            visualizer = LearningCurveVisualizer(LinearSVC(),
+            	cv=ShuffleSplit(n_splits=100, test_size=0.2, random_state=0))
+            visualizer.fit(self.X, self.y)
+            visualizer.poof()
+        except Exception as e:
+            self.fail("error during learning curve: {}".format(e))
+
+    def test_learning_curve_model_trainsize_cv_only(self):
+        """
+        Assert no errors occur during learning curve integration
+        """
+        try:
+            visualizer = LearningCurveVisualizer(LinearSVC(), 
+            	train_sizes=np.linspace(.1, 1.0, 5),
+            	cv=ShuffleSplit(n_splits=100, test_size=0.2, random_state=0))
+            visualizer.fit(self.X, self.y)
+            visualizer.poof()
+        except Exception as e:
+            self.fail("error during learning curve: {}".format(e))
+
+    def test_learning_curve_bad_trainsize(self):
+        """
+        Assert no errors occur during learning curve integration
+        """
+        try:
+            visualizer = LearningCurveVisualizer(LinearSVC(), 
+            	train_sizes=10000,
+            	cv=ShuffleSplit(n_splits=100, test_size=0.2, random_state=0))
+            visualizer.fit(self.X, self.y)
+            visualizer.poof()
+        except Exception as e:
+            self.fail("error during learning curve: {}".format(e))
+
+ 
