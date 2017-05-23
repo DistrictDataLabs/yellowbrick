@@ -54,7 +54,7 @@ class VisualTestCase(unittest.TestCase):
         plt.close("all")
         from matplotlib import rcParams
         rcParams['font.family'] = 'DejaVu Sans'
-        
+
         self.assertEqual(self._backend, 'agg')
         super(VisualTestCase, self).setUp()
 
@@ -89,7 +89,7 @@ class VisualTestCase(unittest.TestCase):
 
         return base_img
 
-    def assert_images_similar(self, visualizer, tolerance=0.1):
+    def assert_images_similar(self, visualizer, tolerance=0.01):
         inspect_obj = inspect.stack()
         module_path, test_func_name = self._setup_imagetest(inspect_obj=inspect_obj)
         remove_ticks_and_titles(visualizer.ax)
