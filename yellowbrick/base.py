@@ -16,6 +16,7 @@ Abstract base classes and interface for Yellowbrick.
 
 import matplotlib.pyplot as plt
 
+from .utils.wrapper import Wrapper
 from sklearn.base import BaseEstimator
 from .exceptions import YellowbrickTypeError
 from .utils import get_model_name, isestimator
@@ -44,11 +45,23 @@ class Visualizer(BaseEstimator):
 
     kwargs : dict
         Keyword arguments that are passed to the base class and may influence
-        the visualization as defined in other Visualizers.
+        the visualization as defined in other Visualizers. Optional keyword
+        arguments include:
+
+        =============   =======================================================
+        Property        Description
+        -------------   -------------------------------------------------------
+        size            specify a size for the figure (currently unimplemented)
+        color           specify a color, colormap, or palette for the figure
+        title           specify the title of the figure
+        =============   =======================================================
 
     Notes
     -----
-
+    Visualizers are objects that learn from data (e.g. estimators), therefore
+    they must be ``fit()`` before they can be drawn or used. Visualizers also
+    maintain a reference to an ``ax`` object, a matplotlib Axes where the
+    figures are drawn and rendered.
     """
 
     def __init__(self, ax=None, **kwargs):
@@ -63,6 +76,11 @@ class Visualizer(BaseEstimator):
 
     @property
     def ax(self):
+        """
+        The matplotlib axes that the visualizer draws upon (can also be a grid
+        of multiple axes objects). The visualizer automatically creates an
+        axes for the user if one has not been specified.
+        """
         if not hasattr(self, "_ax") or self._ax is None:
             self._ax = plt.gca()
         return self._ax
@@ -85,7 +103,6 @@ class Visualizer(BaseEstimator):
 
         Parameters
         ----------
-
         X : ndarray or DataFrame of shape n x m
             A matrix of n instances with m features
 
@@ -93,7 +110,14 @@ class Visualizer(BaseEstimator):
             An array or series of target or class values
 
         kwargs: dict
-            keyword arguments passed to Scikit-Learn API.
+            Keyword arguments passed to the drawing functionality or to the
+            Scikit-Learn API. See visualizer specific details for how to use
+            the kwargs to modify the visualization or fitting process.
+
+        Returns
+        -------
+        self : visualizer
+            The fit method must always return self to support pipelines.
         """
         return self
 
@@ -186,89 +210,36 @@ class Visualizer(BaseEstimator):
 
 
 ##########################################################################
-## Score Visualizers
-##########################################################################
-
-class ScoreVisualizer(Visualizer):
-    """
-    Base class to follow an estimator in a visual pipeline.
-
-    Draws the score for the fitted model.
-    """
-
-    def __init__(self, model, ax=None, **kwargs):
-        """
-        These parameters can be influenced later on in the visualization
-        process, but can and should be set as early as possible.
-
-        Parameters
-        ----------
-        models: object
-            the Scikit-Learn models being compared with each other.
-
-        ax : matplotlib Axes, default: None
-            The axes to plot the figure on.
-
-        kwargs: dict
-            keyword arguments.
-        """
-        super(ScoreVisualizer, self).__init__(ax=ax, **kwargs)
-
-        self.estimator = model
-        self.name = get_model_name(self.estimator)
-
-    def fit(self, X, y=None, **kwargs):
-        """
-        Parameters
-        ----------
-
-        X : ndarray or DataFrame of shape n x m
-            A matrix of n instances with m features
-
-        y : ndarray or Series of length n
-            An array or series of target or class values
-
-        kwargs: dict
-            keyword arguments passed to Scikit-Learn API.
-        """
-        self.estimator.fit(X, y, **kwargs)
-        return self
-
-    def predict(self, X):
-        """
-        Parameters
-        ----------
-
-        X : ndarray or DataFrame of shape n x m
-            A matrix of n instances with m features
-
-        """
-        return self.estimator.predict(X)
-
-    def draw(self, X, y):
-        """
-        Parameters
-        ----------
-
-        X : ndarray or DataFrame of shape n x m
-            A matrix of n instances with m features
-
-        y : ndarray or Series of length n
-            An array or series of target or class values
-        """
-        pass
-
-
-##########################################################################
 ## Model Visualizers
 ##########################################################################
 
-class ModelVisualizer(Visualizer):
+class ModelVisualizer(Visualizer, Wrapper):
     """
-    A model visualization accepts as input an unfitted Scikit-Learn estimator(s)
-    and enables the user to visualize the performance of models across a range
-    of hyperparameter values (e.g. using VisualGridsearch and ValidationCurve).
+    The ModelVisualizer class wraps a Scikit-Learn estimator (usually a
+    predictive model like a regressor, classifier, or clusterer) so that all
+    functionality that belongs to the estimator can be accessed from the
+    visualizer, thereby allowing visualzers to be proxies for model objects,
+    simply drawing on behalf of the wrapped model.
+
+    Parameters
+    ----------
+    model : Estimator
+        A Scikit-Learn estimator to wrap functionality for, usually regressor,
+        classifier, or clusterer predictive model.
+
+    ax : matplotlib Axes, default: None
+        The axis to plot the figure on. If None is passed in the current axes
+        will be used (or generated if required).
+
+    kwargs : dict
+        Keyword arguments that are passed to the base class and may influence
+        the visualization as defined in other Visualizersself.
+
+    Notes
+    -----
+    Model visualizers can wrap either fitted or unfitted models.
     """
+
     def __init__(self, model, ax=None, **kwargs):
         """
         Parameters
@@ -278,19 +249,21 @@ class ModelVisualizer(Visualizer):
 
         kwargs: dict
             keyword arguments for Scikit-Learn model
-
-        These parameters can be influenced later on in the visualization
-        process, but can and should be set as early as possible.
         """
-        super(ModelVisualizer, self).__init__(ax=ax, **kwargs)
         self.estimator = model
+        self.name = get_model_name(self.estimator)
 
+        Wrapper.__init__(self, self.estimator)
+        Visualizer.__init__(self, ax=ax, **kwargs)
 
     def fit(self, X, y=None, **kwargs):
         """
+        Fits the wrapped estimator so that subclasses that override fit can
+        ensure that the estimator is fit using super rather than a direct call
+        down to the estimator. Score estimators tend to expect a fitted model.
+
         Parameters
         ----------
-
         X : ndarray or DataFrame of shape n x m
             A matrix of n instances with m features
 
@@ -298,20 +271,60 @@ class ModelVisualizer(Visualizer):
             An array or series of target or class values
 
         kwargs: dict
-            keyword arguments passed to Scikit-Learn API.
-        """
-        pass
+            Keyword arguments passed to the drawing functionality or to the
+            Scikit-Learn API. See visualizer specific details for how to use
+            the kwargs to modify the visualization or fitting process.
 
-    def predict(self, X):
+        Returns
+        -------
+        self : visualizer
+            The fit method must always return self to support pipelines.
         """
-        Parameters
-        ----------
+        self.estimator.fit(X, y)
+        return self
 
-        X : ndarray or DataFrame of shape n x m
-            A matrix of n instances with m features
 
+##########################################################################
+## Score Visualizers
+##########################################################################
+
+class ScoreVisualizer(ModelVisualizer):
+    """
+    The ScoreVisualizer reports the performance of a Scikit-Learn estimator
+    (usually a predictive model like a regressor, classifier, or clusterer) in
+    a visual manner. They hook into the Scikit-Learn pipeline through the
+    ``score(X_test, y_test)`` method, reporting not just a single numeric
+    score, but also a visual report of the score in model space.
+
+    Parameters
+    ----------
+    model : Estimator
+        A Scikit-Learn estimator to wrap functionality for, usually regressor,
+        classifier, or clusterer predictive model.
+
+    ax : matplotlib Axes, default: None
+        The axis to plot the figure on. If None is passed in the current axes
+        will be used (or generated if required).
+
+    kwargs : dict
+        Keyword arguments that are passed to the base class and may influence
+        the visualization as defined in other Visualizersself.
+
+    Notes
+    -----
+    Score visualizers can wrap either fitted or unfitted models.
+    """
+
+    def score(self, X, y, **kwargs):
         """
-        pass
+        The primary entry point for score visualizers is the score method,
+        which makes predictions based on X and scores them relative to y.
+        """
+        raise NotImplementedError(
+            "ScoreVisualizer subclasses should implement score"
+        )
+
+
 
 ##########################################################################
 ## Multiple Models and Mixins

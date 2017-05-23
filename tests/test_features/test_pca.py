@@ -19,7 +19,9 @@ class PCADecompositionTests(unittest.TestCase, DatasetMixin):
     Test the PCADecomposition visualizer (scaled or non-scaled) for 2 and 3 dimensions.
     """
     def test_scale_true_2d(self):
-
+        """
+        Test the PCADecomposition visualizer 2 dimensions scaled.
+        """
         X = np.array(
                 [[ 2.318, 2.727, 4.260, 7.212, 4.792],
                  [ 2.315, 2.726, 4.295, 7.140, 4.783,],
@@ -56,6 +58,9 @@ class PCADecompositionTests(unittest.TestCase, DatasetMixin):
         npt.assert_array_almost_equal(pca_array, X_pca_decomp)
 
     def test_scale_false_2d(self):
+        """
+        Test the PCADecomposition visualizer 2 dimensions non-scaled.
+        """
         X = np.array(
             [[2.318, 2.727, 4.260, 7.212, 4.792],
              [2.315, 2.726, 4.295, 7.140, 4.783, ],
@@ -90,7 +95,9 @@ class PCADecompositionTests(unittest.TestCase, DatasetMixin):
         npt.assert_array_almost_equal(pca_array, X_pca_decomp)
 
     def test_scale_true_3d(self):
-
+        """
+        Test the PCADecomposition visualizer 3 dimensions scaled.
+        """
         X = np.array(
                 [[ 2.318, 2.727, 4.260, 7.212, 4.792],
                  [ 2.315, 2.726, 4.295, 7.140, 4.783,],
@@ -126,7 +133,9 @@ class PCADecompositionTests(unittest.TestCase, DatasetMixin):
         npt.assert_array_almost_equal(pca_array, X_pca_decomp)
     
     def test_scale_false_3d(self):
-
+        """
+        Test the PCADecomposition visualizer 3 dimensions non-scaled.
+        """
         X = np.array(
                 [[ 2.318, 2.727, 4.260, 7.212, 4.792],
                  [ 2.315, 2.726, 4.295, 7.140, 4.783,],
@@ -164,6 +173,9 @@ class PCADecompositionTests(unittest.TestCase, DatasetMixin):
         npt.assert_array_almost_equal(pca_array, X_pca_decomp)
 
     def test_scale_true_4d_execption(self):
+        """
+        Test the PCADecomposition visualizer 4 dimensions scaled (catch ValueError).
+        """
         X = np.array(
             [[2.318, 2.727, 4.260, 7.212, 4.792],
              [2.315, 2.726, 4.295, 7.140, 4.783, ],
@@ -179,9 +191,12 @@ class PCADecompositionTests(unittest.TestCase, DatasetMixin):
 
         with pytest.raises(ValueError) as exception:
             PCADecomposition(**params)
-        assert 'proj_dim object is 2 or 3' in str(exception.value)
+        assert 'proj_dim object is not 2 or 3.' in str(exception.value)
 
     def test_scale_true_3d_execption(self):
+        """
+        Test the PCADecomposition visualizer 3 dims scaled on 2 dim data set (catch ValueError).
+        """
         X = np.array(
             [[2.318, 2.727],
              [2.315, 2.726],
@@ -196,6 +211,6 @@ class PCADecompositionTests(unittest.TestCase, DatasetMixin):
         params = {'scale': True, 'center': False, 'proj_dim': 3, 'col': y}
 
         with pytest.raises(ValueError) as exception:
-            pca =PCADecomposition(**params)
+            pca = PCADecomposition(**params)
             pca.fit(X)
         assert 'n_components=3 must be between 0 and n_features' in str(exception.value)

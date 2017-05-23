@@ -3,7 +3,7 @@
 ##########################################################################
 import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D
- 
+
 from yellowbrick.features.base import DataVisualizer
 from yellowbrick.style import palettes
 
@@ -105,7 +105,7 @@ class PCADecomposition(DataVisualizer):
         super(PCADecomposition, self).__init__(ax=ax, **kwargs)
         # Data Parameters
         if proj_dim not in (2, 3):
-            raise ValueError("self.proj_dim object is not 2 or 3.")
+            raise ValueError("proj_dim object is not 2 or 3.")
 
         self.col = col
         self.pca_features_ = None
@@ -128,7 +128,8 @@ class PCADecomposition(DataVisualizer):
 
     def draw(self, **kwargs):
         X = self.pca_features_
-        
+        if self.ax is None:
+            self.ax = self.gca()
         if self.proj_dim == 2:
             self.ax.scatter(X[:, 0], X[:, 1], c=self.col, cmap=self.colormap)
         if self.proj_dim == 3:

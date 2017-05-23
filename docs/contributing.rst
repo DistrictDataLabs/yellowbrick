@@ -75,7 +75,7 @@ Once forked, use the following steps to get your development environment set up 
         $ git fetch
         $ git checkout develop
 
-At this point you're ready to get started writing code. If you're going to take on a specific task, we'd strongly encourage you to check out the issue on `Waffle <https://waffle.io/DistrictDataLabs/yellowbrick>`_ and create a `pull request <https://github.com/DistrictDataLabs/yellowbrick/pulls>`_ *before you start coding* to better foster communication with other contributors.
+At this point you're ready to get started writing code. If you're going to take on a specific task, we'd strongly encourage you to check out the issue on `Waffle <https://waffle.io/DistrictDataLabs/yellowbrick>`_ and create a `pull request <https://github.com/DistrictDataLabs/yellowbrick/pulls>`_ *before you start coding* to better foster communication with other contributors. For a great example of a pull request for a new feature visualizer, check out `this one <https://github.com/DistrictDataLabs/yellowbrick/pull/232>`_ by `Carlo Morales <https://github.com/cjmorale>`_.
 
 The next section is about managing GitHub branches for contributions, but if you're ready jump straight to `Developing Visualizers`_!
 
