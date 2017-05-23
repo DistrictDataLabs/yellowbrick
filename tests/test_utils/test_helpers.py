@@ -8,7 +8,7 @@
 # Copyright (C) 2017 District Data Labs
 # For license information, see LICENSE.txt
 #
-# ID: test_helpers.py [] benjamin@bengfort.com $
+# ID: test_helpers.py [79cd8cf] benjamin@bengfort.com $
 
 """
 Tests for the stand alone helper functions in Yellowbrick utils.

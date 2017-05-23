@@ -7,7 +7,7 @@
 # Copyright (C) 2016 District Data Labs
 # For license information, see LICENSE.txt
 #
-# ID: test_palettes.py [] benjamin@bengfort.com $
+# ID: test_palettes.py [c6aff34] benjamin@bengfort.com $
 
 """
 Tests the palettes module of the yellowbrick library.
