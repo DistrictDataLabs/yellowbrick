@@ -29,15 +29,10 @@ from tests.dataset import DatasetMixin
 from tests.base import VisualTestCase
 from matplotlib.testing.exceptions import ImageComparisonFailure
 
-
-
 try:
     import pandas
 except ImportError:
     pandas = None
-
-# mptl.use('agg')
-
 
 ##########################################################################
 # ScatterViz Base Tests
