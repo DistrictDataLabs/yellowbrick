@@ -231,8 +231,9 @@ class ScatterVizTests(VisualTestCase, DatasetMixin):
         visualizer = ScatterViz(features=features)
         visualizer.fit(X_two_cols, self.y)
         visualizer.draw(X_two_cols, self.y)
-        visualizer.poof(outpath=self.img_outpath())
-        self.assert_images_similar()
+        # visualizer.poof(outpath=self.img_outpath())
+
+        self.assert_images_similar(visualizer)
 
 
     def test_scatter_image_fail(self):
@@ -246,7 +247,7 @@ class ScatterVizTests(VisualTestCase, DatasetMixin):
         visualizer.fit(X_two_cols, self.y)
         visualizer.draw(X_two_cols, self.y)
 
-        visualizer.poof(outpath=self.img_outpath())
+        # visualizer.poof(outpath=self.img_outpath())
 
         with self.assertRaises(ImageComparisonFailure):
-            self.assert_images_similar()
+            self.assert_images_similar(visualizer)

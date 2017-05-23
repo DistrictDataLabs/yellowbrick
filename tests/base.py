@@ -23,6 +23,7 @@ import os
 import unittest
 import matplotlib as mpl
 import matplotlib.pyplot as plt
+from matplotlib import ticker
 
 from matplotlib.testing.compare import compare_images
 from matplotlib.testing.exceptions import ImageComparisonFailure
@@ -62,9 +63,7 @@ class VisualTestCase(unittest.TestCase):
         return self._module_path, self._test_func_name
 
     def img_outpath(self, extension='.png'):
-        inspect_obj = inspect.stack()
-        module_path, test_func_name = self._setup_imagetest(inspect_obj=inspect_obj)
-
+        module_path, test_func_name = self._setup_imagetest()
         module_path = os.path.join(*module_path)
         actual_images = os.path.join('tests', 'actual_images', module_path)
 
@@ -87,10 +86,32 @@ class VisualTestCase(unittest.TestCase):
 
         return base_img
 
-    def assert_images_similar(self, tolerance=0.1):
+    def assert_images_similar(self, visualizer, tolerance=0.1):
+        inspect_obj = inspect.stack()
+        module_path, test_func_name = self._setup_imagetest(inspect_obj=inspect_obj)
+        remove_ticks_and_titles(visualizer.ax)
+        # visualizer.ax
+        plt.savefig(self.img_outpath())
         base_image = self._get_base_img()
-        test_img = self._test_img_outpath
+        test_img = self.img_outpath()
         yb_compare_images(base_image, test_img, tolerance)
+
+
+def remove_ticks_and_titles(ax):
+    # figure.suptitle("")
+    null_formatter = ticker.NullFormatter()
+    # for ax in figure.get_axes():
+    ax.set_title("")
+    ax.xaxis.set_major_formatter(null_formatter)
+    ax.xaxis.set_minor_formatter(null_formatter)
+    ax.yaxis.set_major_formatter(null_formatter)
+    ax.yaxis.set_minor_formatter(null_formatter)
+    try:
+        ax.zaxis.set_major_formatter(null_formatter)
+        ax.zaxis.set_minor_formatter(null_formatter)
+    except AttributeError:
+        pass
+
 
 
 def yb_compare_images(expected, actual, tol):
