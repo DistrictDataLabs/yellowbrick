@@ -32,4 +32,5 @@ class ClassBalanceTests(VisualTestCase):
         model.fit(X,y)
         visualizer = ClassBalance(model, classes=["A", "B"])
         visualizer.score(X,y)
-
+        visualizer.poof(outpath=self.img_outpath())
+        self.assert_images_similar()

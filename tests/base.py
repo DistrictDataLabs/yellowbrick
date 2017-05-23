@@ -48,40 +48,34 @@ class VisualTestCase(unittest.TestCase):
 
     def setUp(self):
         """
-        Assert tthat the backend is 'Agg'
+        Assert tthat the backend is 'Agg' and close all previous plots
         """
         plt.close("all")
         self.assertEqual(self._backend, 'agg')
         super(VisualTestCase, self).setUp()
 
-    def tearDown(self):
-        """
-        Assert tthat the backend is 'Agg'
-        """
-        super(VisualTestCase, self).tearDown()
-
-    def setUp_ImageTest(self, inspect_obj=None):
+    def _setUp_ImageTest(self, inspect_obj=None):
         if inspect_obj is not None:
             full_path = inspect_obj[1][1][:-3]
-            self.module_path =  full_path.split('yellowbrick')[1].split('/')[2:]
-            self.test_func_name = inspect_obj[1][3]
-        return self.module_path, self.test_func_name
+            self._module_path =  full_path.split('yellowbrick')[1].split('/')[2:]
+            self._test_func_name = inspect_obj[1][3]
+        return self._module_path, self._test_func_name
 
     def img_outpath(self, extension='.png'):
         inspect_obj = inspect.stack()
-        module_path, test_func_name = self.setUp_ImageTest(inspect_obj=inspect_obj)
+        module_path, test_func_name = self._setUp_ImageTest(inspect_obj=inspect_obj)
 
         module_path = os.path.join(*module_path)
-        actual_results = os.path.join('tests', 'actual_images', module_path)
+        test_results = os.path.join('tests', 'test_images', module_path)
 
-        if not os.path.exists(actual_results):
-            mpl.cbook.mkdirs(actual_results)
+        if not os.path.exists(test_results):
+            mpl.cbook.mkdirs(test_results)
 
-        self.img_outpath = os.path.join(actual_results, test_func_name + extension)
-        return self.img_outpath
+        self._test_img_outpath = os.path.join(test_results, test_func_name + extension)
+        return self._test_img_outpath
 
-    def get_base_img(self, extension='.png'):
-        test_func_name, module_path = self.setUp_ImageTest()
+    def _get_base_img(self, extension='.png'):
+        test_func_name, module_path = self._setUp_ImageTest()
 
         module_path = os.path.join(*self.module_path)
         base_results = os.path.join('tests', 'baseline_images', module_path)
@@ -94,8 +88,9 @@ class VisualTestCase(unittest.TestCase):
         return base_img
 
     def assert_images_similar(self, tolerance=0.1):
-        base_image = self.get_base_img()
-        test_img = self.img_outpath
+        """ """
+        base_image = self._get_base_img()
+        test_img = self._test_img_outpath
         yb_compare_images(base_image, test_img, tolerance)
 
 
