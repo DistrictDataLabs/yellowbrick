@@ -1,3 +1,21 @@
+# yellowbrick.classifier.confusion_matrix
+# Visual confusion matrix for classifier scoring.
+#
+# Author:   Neal Humphrey
+# Created:  Tue May 03 11:05:11 2017 -0700
+#
+# Copyright (C) 2017 District Data Labs
+# For license information, see LICENSE.txt
+#
+# ID: confusion_matrix.py [5388065] neal@nhumphrey.com $
+
+"""
+Visual confusion matrix for classifier scoring.
+"""
+
+##########################################################################
+## Imports
+##########################################################################
 
 from .base import ClassificationScoreVisualizer
 

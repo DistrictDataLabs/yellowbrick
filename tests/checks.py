@@ -7,7 +7,7 @@
 # Copyright (C) 2017 District Data Labs
 # For license information, see LICENSE.txt
 #
-# ID: checks.py [] benjamin@bengfort.com $
+# ID: checks.py [4131cb1] benjamin@bengfort.com $
 
 """
 Performs checking that visualizers adhere to Yellowbrick conventions.
