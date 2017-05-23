@@ -74,7 +74,7 @@ DATASETS = {
     },
     'bikeshare': {
         'url': 'https://s3.amazonaws.com/ddl-data-lake/yellowbrick/bikeshare.zip',
-        'signature': '7eb79d0be41f9d9f6373b1fa3f4789e7a9ef880720dc8ea29ec752b914d4b525',
+        'signature': 'a9b440f65549746dff680c92ff8bdca3c7265f09db1cf09e708e6e26fc8aba44',
         'type': 'numpy',
     },
 }
