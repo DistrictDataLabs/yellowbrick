@@ -7,7 +7,7 @@
 # Copyright (C) 2017 District Data Labs
 # For license information, see LICENSE.txt
 #
-# ID: test_jointplot.py [] pdamo24@gmail.com $
+# ID: test_jointplot.py [9e008b0] pdamodaran@users.noreply.github.com $
 
 """
 Test the JointPlotVisualizer.

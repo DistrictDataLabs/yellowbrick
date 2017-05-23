@@ -7,7 +7,7 @@
 # Copyright (C) 2016 District Data Labs
 # For license information, see LICENSE.txt
 #
-# ID: test_colors.py [] benjamin@bengfort.com $
+# ID: test_colors.py [c6aff34] benjamin@bengfort.com $
 
 """
 Tests for the color utilities and helpers module

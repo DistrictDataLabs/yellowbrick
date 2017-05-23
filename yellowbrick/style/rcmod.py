@@ -7,7 +7,7 @@
 # Copyright (C) 2016 District Data Labs
 # For license information, see LICENSE.txt
 #
-# ID: rcmod.py [] benjamin@bengfort.com $
+# ID: rcmod.py [c6aff34] benjamin@bengfort.com $
 
 """
 Modifies the matplotlib rcParams in order to make yellowbrick more appealing.

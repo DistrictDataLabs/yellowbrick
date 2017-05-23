@@ -1,9 +1,29 @@
+# yellowbrick.classifier.class_balance
+# Class balance visualizer for showing per-class support.
+#
+# Author:   Rebecca Bilbro <rbilbro@districtdatalabs.com>
+# Author:   Benjamin Bengfort <bbengfort@districtdatalabs.com>
+# Author:   Neal Humphrey
+# Created:  Wed May 18 12:39:40 2016 -0400
+#
+# Copyright (C) 2017 District Data Labs
+# For license information, see LICENSE.txt
+#
+# ID: class_balance.py [5388065] neal@nhumphrey.com $
 
-from .base import ClassificationScoreVisualizer
-from ..style.palettes import color_palette
+"""
+Class balance visualizer for showing per-class support.
+"""
+
+##########################################################################
+## Imports
+##########################################################################
 
 import numpy as np
 import matplotlib.pyplot as plt
+
+from .base import ClassificationScoreVisualizer
+from ..style.palettes import color_palette
 
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import precision_recall_fscore_support
@@ -124,7 +144,6 @@ class ClassBalance(ClassificationScoreVisualizer):
         kwargs: generic keyword arguments.
 
         """
-
         # Set the title
         self.set_title('Class Balance for {}'.format(self.name))
 
@@ -135,6 +154,7 @@ class ClassBalance(ClassificationScoreVisualizer):
         # Compute the ceiling for the y limit
         cmax, cmin = max(self.support.values()), min(self.support.values())
         self.ax.set_ylim(0, cmax + cmax* 0.1)
+
 
 def class_balance(model, X, y=None, ax=None, classes=None, **kwargs):
     """Quick method:

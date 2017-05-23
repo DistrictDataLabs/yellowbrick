@@ -2,6 +2,57 @@
 Changelog
 =========
 
+Hotfix 0.4.2
+------------
+
+Update to the deployment docs and package on both Anaconda and PyPI.
+
+* Tag: v0.4.2_
+* Deployed: Monday, May 22, 2017
+* Contributors: Benjamin Bengfort, Jason Keung
+
+.. _v0.4.2: https://github.com/DistrictDataLabs/yellowbrick/releases/tag/v0.4.2
+
+
+Version 0.4.1
+-------------
+This release is an intermediate version bump in anticipation of the PyCon 2017 sprints.
+
+The primary goals of this version were to (1) update the Yellowbrick dependencies (2) enhance the Yellowbrick documentation to help orient new users and contributors, and (3) make several small additions and upgrades (e.g. pulling the Yellowbrick utils into a standalone module).
+
+We have updated the Scikit-Learn and SciPy dependencies from version 0.17.1 or later to 0.18 or later. This primarily entails moving from ``from sklearn.cross_validation import train_test_split`` to ``from sklearn.model_selection import train_test_split``.
+
+The updates to the documentation include new Quickstart and Installation guides as well as updates to the Contributors documentation, which is modeled on the Scikit-Learn contributing documentation.
+
+This version also included upgrades to the KMeans visualizer, which now supports not only ``silhouette_score`` but also ``distortion_score`` and ``calinski_harabaz_score``. The ``distortion_score`` computes the mean distortion of all samples as the sum of the squared distances between each observation and its closest centroid. This is the metric that K-Means attempts to minimize as it is fitting the model. The ``calinski_harabaz_score`` is defined as ratio between the within-cluster dispersion and the between-cluster dispersion.
+
+Finally, this release includes a prototype of the ``VisualPipeline``, which extends Scikit-Learn's ``Pipeline`` class, allowing multiple Visualizers to be chained or sequenced together.
+
+* Tag: v0.4.1_
+* Deployed: Monday, May 22, 2017
+* Contributors: Benjamin Bengfort, Rebecca Bilbro, Nathan Danielsen
+
+Changes:
+   - Score and model visualizers now wrap estimators as proxies so that all methods on the estimator can be directly accessed from the visualizer
+   - Updated Scikit-learn dependency from >=0.17.1  to >=0.18
+   - Replaced ``sklearn.cross_validation`` with ``model_selection``
+   - Updated SciPy dependency from >=0.17.1 to >=0.18
+   - ScoreVisualizer now subclasses ModelVisualizer; towards allowing both fitted and unfitted models passed to Visualizers
+   - Added CI tests for Python 3.6 compatibility
+   - Added new quickstart guide and install instructions
+   - Updates to the contributors documentation
+   - Added ``distortion_score`` and ``calinski_harabaz_score`` computations and visualizations to KMeans visualizer.
+   - Replaced the ``self.ax`` property on all of the individual ``draw`` methods with a new property on the ``Visualizer`` class that ensures all visualizers automatically have axes.
+   - Refactored the utils module into a package
+   - Continuing to update the docstrings to conform to Sphinx
+   - Added a prototype visual pipeline class that extends the Scikit-learn pipeline class to ensure that visualizers get called correctly.
+
+Bug Fixes:
+   - Fixed title bug in Rank2D FeatureVisualizer
+
+.. _v0.4.1: https://github.com/DistrictDataLabs/yellowbrick/releases/tag/v0.4.1
+
+
 Version 0.4
 -----------
 This release is the culmination of the Spring 2017 DDL Research Labs that focused on developing Yellowbrick as a community effort guided by a sprint/agile workflow. We added several more visualizers, did a lot of user testing and bug fixes, updated the documentation, and generally discovered how best to make Yellowbrick a friendly project to contribute to.
