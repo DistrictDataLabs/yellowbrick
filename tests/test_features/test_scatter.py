@@ -21,22 +21,30 @@ import numpy as np
 import numpy.testing as npt
 import matplotlib as mptl
 
-from tests.dataset import DatasetMixin
 from yellowbrick.features.scatter import *
 from yellowbrick.exceptions import YellowbrickValueError
 from yellowbrick.style import palettes
+
+from tests.dataset import DatasetMixin
+from tests.base import VisualTestCase
+from matplotlib.testing.exceptions import ImageComparisonFailure
+
+
 
 try:
     import pandas
 except ImportError:
     pandas = None
 
+# mptl.use('agg')
+
+
 ##########################################################################
 # ScatterViz Base Tests
 ##########################################################################
 
 
-class ScatterVizTests(unittest.TestCase, DatasetMixin):
+class ScatterVizTests(VisualTestCase, DatasetMixin):
 
     # yapf: disable
     X = np.array([
@@ -48,13 +56,15 @@ class ScatterVizTests(unittest.TestCase, DatasetMixin):
         [2.110, 3.620, 4.470, 8.210, 5.612, ]
         ])
     # yapf: enable
-    y = np.array([1, 1, 0, 1, 0, 0])
+    y = np.array([1, 0, 1, 0, 1, 0])
 
     def setUp(self):
         self.occupancy = self.load_data('occupancy')
+        super(ScatterVizTests, self).setUp()
 
     def tearDown(self):
         self.occupancy = None
+        super(ScatterVizTests, self).tearDown()
 
     def test_init_alias(self):
         features = ["temperature", "relative_humidity"]
@@ -209,3 +219,35 @@ class ScatterVizTests(unittest.TestCase, DatasetMixin):
         visualizer = ScatterViz(features=[1, 2])
         visualizer.fit_transform_poof(self.X, self.y)
         self.assertEquals(visualizer.features_, [1, 2])
+
+    def test_scatter_image(self):
+        """
+        Assert no errors occur during scatter visualizer integration
+        """
+        # self.setUp_ImageTest()
+
+        X_two_cols = self.X[:, :2]
+        features = ["temperature", "relative_humidity"]
+        visualizer = ScatterViz(features=features)
+        visualizer.fit(X_two_cols, self.y)
+        visualizer.draw(X_two_cols, self.y)
+        visualizer.poof(outpath=self.img_outpath())
+
+        self.assert_images_similar()
+
+
+    def test_scatter_image_fail(self):
+        """
+        Assert no errors occur during scatter visualizer integration
+        """
+
+        X_two_cols = self.X[:, :2]
+        features = ["temperature", "relative_humidity"]
+        visualizer = ScatterViz(features=features)
+        visualizer.fit(X_two_cols, self.y)
+        visualizer.draw(X_two_cols, self.y)
+
+        visualizer.poof(outpath=self.img_outpath())
+
+        with self.assertRaises(ImageComparisonFailure):
+            self.assert_images_similar()

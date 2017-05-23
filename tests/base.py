@@ -17,8 +17,15 @@ Helper functions and cases for making assertions on visualizations.
 ## Imports
 ##########################################################################
 
+import inspect
+import os
+
 import unittest
 import matplotlib as mpl
+import matplotlib.pyplot as plt
+
+from matplotlib.testing.compare import compare_images
+from matplotlib.testing.exceptions import ImageComparisonFailure
 
 
 ##########################################################################
@@ -37,9 +44,72 @@ class VisualTestCase(unittest.TestCase):
         Note:
         """
         klass._backend = mpl.get_backend()
+        super(VisualTestCase, klass).setUpClass()
 
     def setUp(self):
         """
         Assert tthat the backend is 'Agg'
         """
+        plt.close("all")
         self.assertEqual(self._backend, 'agg')
+        super(VisualTestCase, self).setUp()
+
+    def tearDown(self):
+        """
+        Assert tthat the backend is 'Agg'
+        """
+        super(VisualTestCase, self).tearDown()
+
+    def setUp_ImageTest(self, inspect_obj=None):
+        if inspect_obj is not None:
+            full_path = inspect_obj[1][1][:-3]
+            self.module_path =  full_path.split('yellowbrick')[1].split('/')[2:]
+            self.test_func_name = inspect_obj[1][3]
+        return self.module_path, self.test_func_name
+
+    def img_outpath(self, extension='.png'):
+        inspect_obj = inspect.stack()
+        module_path, test_func_name = self.setUp_ImageTest(inspect_obj=inspect_obj)
+
+        module_path = os.path.join(*module_path)
+        actual_results = os.path.join('tests', 'actual_images', module_path)
+
+        if not os.path.exists(actual_results):
+            mpl.cbook.mkdirs(actual_results)
+
+        self.img_outpath = os.path.join(actual_results, test_func_name + extension)
+        return self.img_outpath
+
+    def get_base_img(self, extension='.png'):
+        test_func_name, module_path = self.setUp_ImageTest()
+
+        module_path = os.path.join(*self.module_path)
+        base_results = os.path.join('tests', 'baseline_images', module_path)
+
+        if not os.path.exists(base_results):
+            mpl.cbook.mkdirs(base_results)
+
+        base_img = os.path.join(base_results, self.test_func_name + extension)
+
+        return base_img
+
+    def assert_images_similar(self, tolerance=0.1):
+        base_image = self.get_base_img()
+        test_img = self.img_outpath
+        yb_compare_images(base_image, test_img, tolerance)
+
+
+def yb_compare_images(expected, actual, tol):
+    __tracebackhide__ = True
+
+    if not os.path.exists(expected):
+        raise ImageComparisonFailure('image does not exist: %s' % expected)
+
+    err = compare_images(expected, actual, tol, in_decorator=True)
+
+    if err:
+        for key in ["actual", "expected"]:
+            err[key] = os.path.relpath(err[key])
+        raise ImageComparisonFailure(
+            'images not close (RMS %(rms).3f):\n\t%(actual)s\n\t%(expected)s '
+             % err)
