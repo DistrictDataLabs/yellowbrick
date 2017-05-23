@@ -33,5 +33,4 @@ class ClassificationReportTests(VisualTestCase):
         model.fit(X,y)
         visualizer = ClassificationReport(model, classes=["A", "B"])
         visualizer.score(X,y)
-        visualizer.poof(outpath=self.img_outpath())
-        self.assert_images_similar()
+        self.assert_images_similar(visualizer)
