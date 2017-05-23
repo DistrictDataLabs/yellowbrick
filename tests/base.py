@@ -67,7 +67,7 @@ class VisualTestCase(unittest.TestCase):
             self._test_func_name = inspect_obj[1][3]
         return self._module_path, self._test_func_name
 
-    def _img_outpath(self, extension='.png'):
+    def _actual_img_path(self, extension='.png'):
         """Determines the correct outpath for drawing a matplotlib image that
         corresponds to the unittest module path.
         """
@@ -81,7 +81,7 @@ class VisualTestCase(unittest.TestCase):
         self._test_img_outpath = os.path.join(actual_images, test_func_name + extension)
         return self._test_img_outpath
 
-    def _get_base_img(self, extension='.png'):
+    def _base_img_path(self, extension='.png'):
         """Gets the baseline_image path for comparison that corresponds to the
         unittest module path.
         """
@@ -97,10 +97,10 @@ class VisualTestCase(unittest.TestCase):
     def assert_images_similar(self, visualizer, tol=0.01):
         """Accessible testing method for testing generation of a Visualizer.
 
-        Requires the placement of a baseline image for comparison the
+        Requires the placement of a baseline image for comparison in the
         tests/baseline_images folder that corresponds to the module path of the
-        VisualTestCase. The name of the image corresponds to the unittest function
-        where "self.assert_images_similar" is called.
+        VisualTestCase being evaluated. The name of the image corresponds to
+        the unittest function where "self.assert_images_similar" is called.
 
         For example, calling "assert_images_similar" in the unittest
         "test_class_report" in tests.test_classifier.test_class_balance would
@@ -132,9 +132,10 @@ class VisualTestCase(unittest.TestCase):
         # clean and remove the textual/ formatting elements from the visualizer
         remove_ticks_and_titles(visualizer.ax)
 
-        plt.savefig(self._img_outpath())
-        base_image = self._get_base_img()
-        test_img = self._img_outpath()
+        plt.savefig(self._actual_img_path())
+        base_image = self._base_img_path()
+        test_img = self._actual_img_path()
+        # test it!
         yb_compare_images(base_image, test_img, tol)
 
 
