@@ -206,11 +206,11 @@ class TopFeaturesVisualizer(ClassificationScoreVisualizer):
 
 ##########################################################################
 ## Top Features Visualizer Quick Method
-##########################################################################
-
+#
 # It would be nice if there were a function here that used the top features
 # visualizer to grab the top features for each class and output them
 # using multiplot visualizer. But for now we'll just do one.
+##########################################################################
 
 def top_features(model, X, y=None, ax=None, N=None, class_label=None, features=None, **kwargs):
     """
@@ -251,9 +251,3 @@ def top_features(model, X, y=None, ax=None, N=None, class_label=None, features=N
     visualizer.score(class_label=class_label)
 
     return visualizer.ax
-
-
-
-
-
-
