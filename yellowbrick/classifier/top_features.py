@@ -11,7 +11,8 @@
 
 
 """
-Visualize the top N features of classifier.
+Visualize the top N features of classifier. This includes the N highest
+and the N lowest features.
 
 TODO:
 -   Docstrings
@@ -46,11 +47,6 @@ class TopFeaturesVisualizer(ClassificationScoreVisualizer):
     
     Any classifier given to this visualizer must have coef_, 
     otherwise we'll throw a "Estimator Not Implemented" warning.
-    
-    TODO:
-    * Implement visualizer for feature_importances_
-    * Add funcitonality for "one sided" visualizer that takes absolute values
-    and ranks those.
 
     Parameters
     ----------
@@ -214,5 +210,50 @@ class TopFeaturesVisualizer(ClassificationScoreVisualizer):
 
 # It would be nice if there were a function here that used the top features
 # visualizer to grab the top features for each class and output them
-# using multiplot visualizer.
+# using multiplot visualizer. But for now we'll just do one.
+
+def top_features(model, X, y=None, ax=None, N=None, class_label=None, features=None, **kwargs):
+    """
+    Quick method:
+    Takes a class label and displays the top N features (top and bottom).
+    
+    This helper function is a quick wrapper to utilize the TopFeatures 
+    Visualizer for one-off analysis.
+    
+    Parameters
+    ----------
+    
+    model : the Scikit-Learn estimator (should be a classifier)
+    
+    X : ndarray of shape n x m.
+        A matrix of n instances with m features.
+        
+    y : ndarray of length n of target or class values.
+    
+    ax : matplotlib axis
+        The axes to plot the figure on.
+        
+    N : int of top N features (N highest and N lowest values)
+    
+    class_label : string
+    The name of the class in the target data.
+    
+    features : ndarray of feature names (optional, otherwise using indexes)
+    
+    Returns
+    -------
+    ax : matplotlib axis
+        Returns the axes that the class balance plot was drawn on.
+    """
+
+    visualizer = TopFeaturesVisualizer(svm, N=N, features=features)
+    visualizer.fit(X, y)
+    visualizer.score(class_label=class_label)
+
+    return visualizer.ax
+
+
+
+
+
 
