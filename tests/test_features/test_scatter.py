@@ -232,7 +232,6 @@ class ScatterVizTests(VisualTestCase, DatasetMixin):
         visualizer.fit(X_two_cols, self.y)
         visualizer.draw(X_two_cols, self.y)
         visualizer.poof(outpath=self.img_outpath())
-
         self.assert_images_similar()
 
 
