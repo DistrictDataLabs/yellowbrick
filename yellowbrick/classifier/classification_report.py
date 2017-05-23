@@ -1,5 +1,23 @@
-from .base import ClassificationScoreVisualizer
+# yellowbrick.classifier.classification_report
+# Visual classification report for classifier scoring.
+#
+# Author:   Rebecca Bilbro <rbilbro@districtdatalabs.com>
+# Author:   Benjamin Bengfort <bbengfort@districtdatalabs.com>
+# Author:   Neal Humphrey
+# Created:  Wed May 18 12:39:40 2016 -0400
+#
+# Copyright (C) 2017 District Data Labs
+# For license information, see LICENSE.txt
+#
+# ID: classification_report.py [5388065] neal@nhumphrey.com $
 
+"""
+Visual classification report for classifier scoring.
+"""
+
+##########################################################################
+## Imports
+##########################################################################
 
 import numpy as np
 import matplotlib.pyplot as plt
@@ -8,8 +26,10 @@ from sklearn.model_selection import train_test_split
 from sklearn.metrics import precision_recall_fscore_support
 
 from ..utils import get_model_name
-from ..style.palettes import color_sequence
 from ..style import find_text_color
+from ..style.palettes import color_sequence
+from .base import ClassificationScoreVisualizer
+
 
 ##########################################################################
 ## Classification Report

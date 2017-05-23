@@ -7,7 +7,7 @@
 # Copyright (C) 2016 District Data Labs
 # For license information, see LICENSE.txt
 #
-# ID: tests.test_regressor.test_alphas.py [] benjamin@bengfort.com $
+# ID: test_alphas.py [7d3f5e6] benjamin@bengfort.com $
 
 """
 Tests for the alpha selection visualizations.
