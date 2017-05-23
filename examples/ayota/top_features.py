@@ -1,5 +1,17 @@
+# classifier.top_features
+# Visualize top N features of a classifier
+#
+# Author:   Elaine Ayo <@ayota>
+# Created:  Tue May 23 14:10:42 2017 -0400
+#
+# Copyright (C) 2017 District Data Labs
+# For license information, see LICENSE.txt
+#
+# ID: classifier.top_features.base.py [] $
+
+
 """
-Implementations of visualization of top N features of classifier.
+Visualize the top N features of classifier.
 
 TODO:
 -Docstrings
@@ -10,7 +22,7 @@ TODO:
 """
 
 ##########################################################################
-# Imports
+## Imports
 ##########################################################################
 
 import numpy as np
@@ -20,15 +32,6 @@ import matplotlib.pyplot as plt
 from yellowbrick.classifier import ClassificationScoreVisualizer
 from yellowbrick.exceptions import YellowbrickValueError
 from yellowbrick.style import color_palette
-
-##########################################################################
-## Top Features Visualizer Quick Method
-##########################################################################
-
-# It would be nice if there were a function here that used the top features
-# visualizer to grab the top features for each class and output them
-# using multiplot visualizer.
-
 
 ##########################################################################
 ## Top Features Visualizer
@@ -198,3 +201,12 @@ class TopFeaturesVisualizer(ClassificationScoreVisualizer):
             warnings.warn(
                 "No feature names specified. Index values will be used."
             )
+
+##########################################################################
+## Top Features Visualizer Quick Method
+##########################################################################
+
+# It would be nice if there were a function here that used the top features
+# visualizer to grab the top features for each class and output them
+# using multiplot visualizer.
+
