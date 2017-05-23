@@ -10,5 +10,4 @@ API Reference
     yellowbrick.classifier
     yellowbrick.cluster
     yellowbrick.text
-    yellowbrick.pipeline
     yellowbrick.style
