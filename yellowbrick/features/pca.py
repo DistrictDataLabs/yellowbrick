@@ -15,11 +15,11 @@ from sklearn.preprocessing import StandardScaler
 ##########################################################################
 def pca_decomposition(X, y=None, ax=None, scale=True, proj_dim=2,
                       colormap=palettes.DEFAULT_SEQUENCE, color=None, **kwargs):
-    """Two dimensional principal component (PC) plot of data projected onto the first and
-    second principal components. It is best practices to center and scale the inputted
+    """Produce a two or three dimensional principal component (PC) plot of a data set 
+    projected onto it first 2 or 3 PC. It is best practices to center and scale the inputted
     data set before applying a PC decomposition. There are scale and center arguments
     that can be used to control centering anc scaling of an inputted data set. Therefore 
-    this class is a one stop shop for easily getting a 2 dimensional PC plot.
+    this class is a one stop shop for easily getting a PC plot.
     
     Parameters
     ----------
@@ -36,17 +36,28 @@ def pca_decomposition(X, y=None, ax=None, scale=True, proj_dim=2,
         Boolean that indicates if the values of X should be scaled.
 
     proj_dim : int, default: 2
+        The dimension of the PCA project for visualizer.
+    
+    colormap : string or cmap, default: None
+        optional string or matplotlib cmap to colorize lines
+        Use either color to colorize the lines on a per class basis or
+        colormap to color them on a continuous scale.
     
     color : list or tuple of colors, default: None
-        Specify the colors for each individual class
+        Specify the colors for each individual class.
 
     kwargs : dict
         Keyword arguments that are passed to the base class and may influence
         the visualization as defined in other Visualizers.
-    Returns
-    -------
-    ax : matplotlib axes
-        Returns the axes that the parallel coordinates were drawn on.
+
+    Examples
+    --------
+    >>> from sklearn import datasets
+    >>> iris = datasets.load_iris()
+    >>> X = iris.data
+    >>> y = iris.target
+    >>> pca_decomposition(X, color=y, proj_dim=3, colormap='RdBu_r')
+    
     """
     # Instantiate the visualizer
     visualizer = PCADecomposition(X=X, y=y, ax=ax, scale=scale, proj_dim=proj_dim,
@@ -63,23 +74,32 @@ def pca_decomposition(X, y=None, ax=None, scale=True, proj_dim=2,
 ##########################################################################
 class PCADecomposition(DataVisualizer):
     """
-    Two dimensional principal component (PC) plot of data projected onto the first and
-    second principal components. It is best practices to center and scale the inputted
+    Produce a two or three dimensional principal component (PC) plot of a data set 
+    projected onto it first 2 or 3 PC. It is best practices to center and scale the inputted
     data set before applying a PC decomposition. There are scale and center arguments
     that can be used to control centering anc scaling of an inputted data set. Therefore 
-    this class is a one stop shop for easily getting a 2 dimensional PC plot.
+    this class is a one stop shop for easily getting a PC plot.
 
     Parameters
     ----------
+    X : ndarray or DataFrame of shape n x m
+        A matrix of n instances with m features
+        
+    y : ndarray or Series of length n
+        An array or series of target or class values
 
     ax : matplotlib Axes, default: None
         The axes to plot the figure on. If None is passed in the current axes
         will be used (or generated if required).
     
     scale : bool, default: True
+        Boolean that indicates if user wants to scale data.
+    
+    proj_dim : int, default: 2
+        The dimension of the PCA project for visualizer.
     
     color : list or tuple of colors, default: None
-        Specify the colors for each individual class
+        Specify the colors for each individual class.
 
     colormap : string or cmap, default: None
         optional string or matplotlib cmap to colorize lines
@@ -154,6 +174,3 @@ class PCADecomposition(DataVisualizer):
             self.fig.set_xlabel('Principal Component 1')
             self.fig.set_ylabel('Principal Component 2')
             self.fig.set_zlabel('Principal Component 3')
-
-
-
