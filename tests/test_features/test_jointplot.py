@@ -108,13 +108,17 @@ class JointPlotTests(unittest.TestCase, DatasetMixin):
         Assert no UserWarning occurs if matplotlib major version >= 2
         (and not exactly 2.0.0).
         """
-        with warnings.catch_warnings(record=True) as w:
+        with warnings.catch_warnings(record=True) as ws:
             # Filter on UserWarnings
-            ver_warn_msg = "requires matplotlib major version 2 or greater"
-            warnings.filterwarnings("always", category=UserWarning,
-                                    message=ver_warn_msg)
+            warnings.filterwarnings("always", category=UserWarning)
             visualizer = JointPlotVisualizer()
             visualizer.fit(self.X, self.y)
             visualizer.poof()
-            self.assertEqual(0, len(w), w[-1].message if w else "No error")
+
+            # Filter out user warnings not related to matplotlib version
+            ver_warn_msg = "requires matplotlib major version 2 or greater"
+            mpl_ver_cnt = len([w for w in ws \
+                               if str(w.message).index(ver_warn_msg) >= 0])
+            self.assertEqual(0, mpl_ver_cnt, ws[-1].message \
+                        if ws else "No error")
 
