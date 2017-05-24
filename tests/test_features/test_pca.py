@@ -9,15 +9,32 @@ import pytest
 
 from tests.dataset import DatasetMixin
 from yellowbrick.features.pca import PCADecomposition
+from yellowbrick.features.pca import pca_decomposition
 
 ##########################################################################
-## RadViz Base Tests
+##PCA Tests
 ##########################################################################
 
 class PCADecompositionTests(unittest.TestCase, DatasetMixin):
     """
     Test the PCADecomposition visualizer (scaled or non-scaled) for 2 and 3 dimensions.
     """
+    def test_pca_decomposition(self):
+        """
+        Test the quick method PCADecomposition visualizer 2 dimensions scaled.
+        """
+        X = np.array(
+                [[ 2.318, 2.727, 4.260, 7.212, 4.792],
+                 [ 2.315, 2.726, 4.295, 7.140, 4.783,],
+                 [ 2.315, 2.724, 4.260, 7.135, 4.779,],
+                 [ 2.110, 3.609, 4.330, 7.985, 5.595,],
+                 [ 2.110, 3.626, 4.330, 8.203, 5.621,],
+                 [ 2.110, 3.620, 4.470, 8.210, 5.612,]]
+            )
+
+        y = np.array([1, 1, 0, 1, 0, 0])
+        pca_decomposition(X=X, color=y, roj_dim=2, scale=True)
+
     def test_scale_true_2d(self):
         """
         Test the PCADecomposition visualizer 2 dimensions scaled.

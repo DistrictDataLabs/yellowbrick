@@ -14,10 +14,13 @@ from sklearn.preprocessing import StandardScaler
 ## Quick Methods
 ##########################################################################
 def pca_decomposition(X, y=None, ax=None, scale=True, proj_dim=2,
-                      colormap='RdBu_r', color=None, **kwargs):
-    """Displays each feature as a vertical axis and each instance as a line.
-    This helper function is a quick wrapper to utilize the ParallelCoordinates
-    Visualizer (Transformer) for one-off analysis.
+                      colormap=palettes.DEFAULT_SEQUENCE, color=None, **kwargs):
+    """Two dimensional principal component (PC) plot of data projected onto the first and
+    second principal components. It is best practices to center and scale the inputted
+    data set before applying a PC decomposition. There are scale and center arguments
+    that can be used to control centering anc scaling of an inputted data set. Therefore 
+    this class is a one stop shop for easily getting a 2 dimensional PC plot.
+    
     Parameters
     ----------
     X : ndarray or DataFrame of shape n x m
@@ -46,15 +49,15 @@ def pca_decomposition(X, y=None, ax=None, scale=True, proj_dim=2,
         Returns the axes that the parallel coordinates were drawn on.
     """
     # Instantiate the visualizer
-    visualizer = PCADecomposition(X, y, ax, scale, color, colormap, proj_dim=2,
-                                  **kwargs)
+    visualizer = PCADecomposition(X=X, y=y, ax=ax, scale=scale, proj_dim=proj_dim,
+                                  colormap= colormap, color=color)
 
     # Fit and transform the visualizer (calls draw)
     visualizer.fit(X, y, **kwargs)
     visualizer.transform(X)
 
     # Return the axes object on the visualizer
-    return visualizer.ax
+    return visualizer.poof()
 ##########################################################################
 ##2D and #3D PCA Visualizer
 ##########################################################################
@@ -100,14 +103,14 @@ class PCADecomposition(DataVisualizer):
     >>> visualizer.poof()
 
     """
-    def __init__(self, ax=None, scale=True, col=None, proj_dim=2,
+    def __init__(self, X=None, y=None, ax=None, scale=True, color=None, proj_dim=2,
                  colormap=palettes.DEFAULT_SEQUENCE, **kwargs):
         super(PCADecomposition, self).__init__(ax=ax, **kwargs)
         # Data Parameters
         if proj_dim not in (2, 3):
             raise ValueError("proj_dim object is not 2 or 3.")
 
-        self.col = col
+        self.color = color
         self.pca_features_ = None
         self.scale = scale
         self.proj_dim = proj_dim
@@ -128,15 +131,14 @@ class PCADecomposition(DataVisualizer):
 
     def draw(self, **kwargs):
         X = self.pca_features_
-        if self.ax is None:
-            self.ax = self.gca()
+
         if self.proj_dim == 2:
-            self.ax.scatter(X[:, 0], X[:, 1], c=self.col, cmap=self.colormap)
+            self.ax.scatter(X[:, 0], X[:, 1], c=self.color, cmap=self.colormap)
         if self.proj_dim == 3:
             self.fig = plt.figure()
             self.fig = self.fig.add_subplot(111, projection='3d')
-            
-            self.ax = self.fig.scatter(X[:, 0], X[:, 1], X[:, 2], c=self.col,
+
+            self.ax = self.fig.scatter(X[:, 0], X[:, 1], X[:, 2], c=self.color,
                                        cmap=self.colormap)
         return self.ax
 
@@ -146,12 +148,12 @@ class PCADecomposition(DataVisualizer):
             self.set_title('Principal Component Plot')
             self.ax.set_ylabel('Principal Component 2')
             self.ax.set_xlabel('Principal Component 1')
-            
+
         else:
             self.fig.set_title('Principal Component Plot')
             self.fig.set_xlabel('Principal Component 1')
             self.fig.set_ylabel('Principal Component 2')
             self.fig.set_zlabel('Principal Component 3')
-            
-            
+
+
 
