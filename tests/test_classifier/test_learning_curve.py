@@ -27,6 +27,7 @@ from sklearn.datasets import load_digits
 from sklearn.model_selection import ShuffleSplit
 from yellowbrick.classifier.learning_curve import LearningCurveVisualizer
 from yellowbrick.classifier.learning_curve import learning_curve_plot
+from yellowbrick.exceptions import YellowbrickError
 from tests.dataset import DatasetMixin
 
 ##########################################################################
@@ -37,14 +38,8 @@ class LearningCurveTests(VisualTestCase, DatasetMixin):
 
     def setUp(self):
         self.occupancy = self.load_data('occupancy')
-        X = self.occupancy[[
-            "temperature", "relative_humidity", "light", "C02", "humidity"
-        ]]
-
-        y = self.occupancy['occupancy'].astype(int)
-
-        X = X.view((float, len(X.dtype.names)))
         
+
     def tearDown(self):
         self.occupancy = None
         X = None
@@ -54,10 +49,19 @@ class LearningCurveTests(VisualTestCase, DatasetMixin):
         """
         Test learning curve with all parameters.
         """
+
+        X = self.occupancy[[
+                "temperature", "relative_humidity", "light", "C02", "humidity"
+            ]]
+
+        y = self.occupancy['occupancy'].astype(int)
+
+        X = X.view((float, len(X.dtype.names)))
+
         try:
             visualizer = LearningCurveVisualizer(LinearSVC(), train_sizes=np.linspace(.1, 1.0, 5), 
-            	cv=ShuffleSplit(n_splits=100, test_size=0.2, random_state=0), 
-            	n_jobs=4)
+                cv=ShuffleSplit(n_splits=100, test_size=0.2, random_state=0), 
+                n_jobs=4)
             visualizer.fit(X, y)
             visualizer.poof()
         except Exception as e:
@@ -67,6 +71,15 @@ class LearningCurveTests(VisualTestCase, DatasetMixin):
         """
         Test learning curve with inputting model only.
         """
+
+        X = self.occupancy[[
+                "temperature", "relative_humidity", "light", "C02", "humidity"
+            ]]
+
+        y = self.occupancy['occupancy'].astype(int)
+
+        X = X.view((float, len(X.dtype.names)))
+        
         try:
             visualizer = LearningCurveVisualizer(LinearSVC())
             visualizer.fit(X, y)
@@ -78,9 +91,18 @@ class LearningCurveTests(VisualTestCase, DatasetMixin):
         """
         Test learning curve with inputting model and cv only.
         """
+
+        X = self.occupancy[[
+                "temperature", "relative_humidity", "light", "C02", "humidity"
+            ]]
+
+        y = self.occupancy['occupancy'].astype(int)
+
+        X = X.view((float, len(X.dtype.names)))
+        
         try:
             visualizer = LearningCurveVisualizer(LinearSVC(),
-            	cv=ShuffleSplit(n_splits=100, test_size=0.2, random_state=0))
+                cv=ShuffleSplit(n_splits=100, test_size=0.2, random_state=0))
             visualizer.fit(X, y)
             visualizer.poof()
         except Exception as e:
@@ -90,10 +112,19 @@ class LearningCurveTests(VisualTestCase, DatasetMixin):
         """
         Test learning curve with inputting model, training size, and cv only.
         """
+
+        X = self.occupancy[[
+                "temperature", "relative_humidity", "light", "C02", "humidity"
+            ]]
+
+        y = self.occupancy['occupancy'].astype(int)
+
+        X = X.view((float, len(X.dtype.names)))
+        
         try:
             visualizer = LearningCurveVisualizer(LinearSVC(), 
-            	train_sizes=np.linspace(.1, 1.0, 5),
-            	cv=ShuffleSplit(n_splits=100, test_size=0.2, random_state=0))
+                train_sizes=np.linspace(.1, 1.0, 5),
+                cv=ShuffleSplit(n_splits=100, test_size=0.2, random_state=0))
             visualizer.fit(X, y)
             visualizer.poof()
         except Exception as e:
@@ -103,10 +134,19 @@ class LearningCurveTests(VisualTestCase, DatasetMixin):
         """
         Test learning curve with bad input for training size.
         """
-        with self.assertRaises(YellowbrickTypeError):
+
+        X = self.occupancy[[
+                "temperature", "relative_humidity", "light", "C02", "humidity"
+            ]]
+
+        y = self.occupancy['occupancy'].astype(int)
+
+        X = X.view((float, len(X.dtype.names)))
+        
+        with self.assertRaises(YellowbrickError):
             visualizer = LearningCurveVisualizer(LinearSVC(), 
-            	train_sizes=10000,
-            	cv=ShuffleSplit(n_splits=100, test_size=0.2, random_state=0))
+                train_sizes=10000,
+                cv=ShuffleSplit(n_splits=100, test_size=0.2, random_state=0))
             visualizer.fit(X, y)
             visualizer.poof()
         
