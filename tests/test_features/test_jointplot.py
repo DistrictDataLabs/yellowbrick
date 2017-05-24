@@ -117,8 +117,10 @@ class JointPlotTests(unittest.TestCase, DatasetMixin):
 
             # Filter out user warnings not related to matplotlib version
             ver_warn_msg = "requires matplotlib major version 2 or greater"
-            mpl_ver_cnt = len([w for w in ws \
-                               if str(w.message).index(ver_warn_msg) >= 0])
+            mpl_ver_cnt = 0
+            for w in ws:
+                if w and w.message and str(w.message).index(ver_warn_msg) >= 0:
+                    mpl_ver_cnt += 1
             self.assertEqual(0, mpl_ver_cnt, ws[-1].message \
                         if ws else "No error")
 
