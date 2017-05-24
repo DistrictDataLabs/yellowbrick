@@ -110,7 +110,9 @@ class JointPlotTests(unittest.TestCase, DatasetMixin):
         """
         with warnings.catch_warnings(record=True) as w:
             # Filter on UserWarnings
-            warnings.filterwarnings("always", category=UserWarning)
+            ver_warn_msg = "requires matplotlib major version 2 or greater"
+            warnings.filterwarnings("always", category=UserWarning,
+                                    message=ver_warn_msg)
             visualizer = JointPlotVisualizer()
             visualizer.fit(self.X, self.y)
             visualizer.poof()
