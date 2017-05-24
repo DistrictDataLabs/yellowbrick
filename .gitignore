@@ -123,3 +123,7 @@ fabric.properties
 # *.ipr
 
 .idea
+
+
+# VisualTestCase Outputs
+/tests/actual_images/*
