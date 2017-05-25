@@ -7,7 +7,7 @@
 # Copyright (C) 2017 District Data Labs
 # For license information, see LICENSE.txt
 #
-# ID: fredist.py [] rbilbro@districtdatalabs.com $
+# ID: freqdist.py [67b2740] rebecca.bilbro@bytecubed.com $
 
 """
 Implementations of frequency distributions for text visualization

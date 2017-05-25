@@ -8,7 +8,7 @@
 # Copyright (C) 2016 District Data Labs
 # For license information, see LICENSE.txt
 #
-# ID: base.py [] benjamin@bengfort.com $
+# ID: base.py [7d3f5e6] benjamin@bengfort.com $
 
 """
 Base classes for regressor Visualizers.

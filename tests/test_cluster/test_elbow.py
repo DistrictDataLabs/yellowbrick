@@ -7,7 +7,7 @@
 # Copyright (C) 2016 District Data Labs
 # For license information, see LICENSE.txt
 #
-# ID: test_elbow.py [] benjamin@bengfort.com $
+# ID: test_elbow.py [5a370c8] benjamin@bengfort.com $
 
 """
 Tests for the KElbowVisualizer
