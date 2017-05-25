@@ -11,7 +11,7 @@ Yellowbrick: Machine Learning Visualization
 
 Yellowbrick is a suite of visual diagnostic tools called "Visualizers" that extend the Scikit-Learn API to allow human steering of the model selection process. In a nutshell, Yellowbrick combines Scikit-Learn with Matplotlib in the best tradition of the Scikit-Learn documentation, but to produce visualizations for *your* models! For more on Yellowbrick, please see the :doc:`introduction`.
 
-If you're new to Yellowbrick, checkout the :doc:`setup` or skip ahead to the :doc:`examples/examples`. Yellowbrick is a rich library with many Visualizers being added on a regular basis. For details on specific Visualizers and extended usage head over to the :doc:`api/modules`. If you've signed up to do user testing, checkout the :doc:`evaluation` (and thank you!).
+If you're new to Yellowbrick, checkout the :doc:`quickstart` or skip ahead to the :doc:`examples/index`. Yellowbrick is a rich library with many Visualizers being added on a regular basis. For details on specific Visualizers and extended usage head over to the :doc:`api/modules`. If you've signed up to do user testing, checkout the :doc:`evaluation` (and thank you!).
 
 Visualizers
 -----------
@@ -79,10 +79,10 @@ The following is a complete listing of the Yellowbrick documentation for this ve
    :maxdepth: 2
 
    introduction
-   about
-   setup
-   examples/examples
+   quickstart
+   examples/index
    api/modules
+   about
    evaluation
    contributing
    changelog

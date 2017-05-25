@@ -55,6 +55,24 @@ Visualizers are estimators (objects that learn from data) whose primary objectiv
 
 And more! Visualizers are being added all the time, be sure to check the examples (or even the develop branch) and feel free to contribute your ideas for Visualizers!
 
+## Installing Yellowbrick
+
+Yellowbrick is compatible with Python 2.7 or later but it is preferred to use Python 3.5 or later to take full advantage of all functionality. Yellowbrick also depends on Scikit-Learn 0.18 or later and Matplotlib 1.5 or later. The simplest way to install Yellowbrick is from PyPI with pip, Python's preferred package installer.
+
+    $ pip install yellowbrick
+
+Note that Yellowbrick is an active project and routinely publishes new releases with more visualizers and updates. In order to upgrade Yellowbrick to the latest version, use pip as follows.
+
+    $ pip install -u yellowbrick
+
+You can also use the `-u` flag to update Scikit-Learn, matplotlib, or any other third party utilities that work well with Yellowbrick to their latest versions.
+
+If you're using Windows or Anaconda, you can take advantage of the conda utility to install Yellowbrick:
+
+    conda install -c districtdatalabs yellowbrick
+
+Note, however, that there is a [known bug](https://github.com/DistrictDataLabs/yellowbrick/issues/205) installing Yellowbrick on Linux with Anaconda.
+
 ## Using Yellowbrick
 
 The Yellowbrick API is specifically designed to play nicely with Scikit-Learn. Here is an example of a typical workflow sequence with Scikit-Learn and Yellowbrick:
@@ -89,7 +107,7 @@ visualizer.poof()
 
 For additional information on getting started with Yellowbrick, check out our [examples notebook](https://github.com/DistrictDataLabs/yellowbrick/blob/develop/examples/examples.ipynb).
 
-We also have a [quick start guide](https://github.com/DistrictDataLabs/yellowbrick/blob/master/docs/setup.rst).
+We also have a [quick start guide](https://github.com/DistrictDataLabs/yellowbrick/blob/master/docs/quickstart.rst).
 
 ## Contributing to Yellowbrick
 
