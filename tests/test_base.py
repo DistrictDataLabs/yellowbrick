@@ -8,7 +8,7 @@
 # Copyright (C) 2016 District Data Labs
 # For license information, see LICENSE.txt
 #
-# ID: tests.test_base.py.py [] benjamin@bengfort.com $
+# ID: test_base.py [83131ef] benjamin@bengfort.com $
 
 """
 Assertions for the base classes and abstract hierarchy.
@@ -37,31 +37,36 @@ class BaseTests(unittest.TestCase):
     Test the high level API for yellowbrick
     """
 
-    def test_visualizer_returns_self(self):
+    def test_ax_property(self):
+        """
+        Test the ax property on the base Visualizer
+        """
+        visualizer = Visualizer()
+        self.assertIsNone(visualizer._ax)
+        self.assertIsNotNone(visualizer.ax)
+
+        visualizer.ax = "foo"
+        self.assertEqual(visualizer._ax, "foo")
+        self.assertEqual(visualizer.ax, "foo")
+
+    def test_visualizer_fit_returns_self(self):
         """
         Assert that all visualizers return self
         """
         visualizer = Visualizer()
         self.assertIs(visualizer.fit([]), visualizer)
 
-    # def test_base_poof(self):
-    #     """
-    #     Assert that the base visualizer implements poof interface
-    #     """
-    #     with self.assertRaises(NotImplementedError):
-    #         visualizer = Visualizer()
-    #         visualizer.poof()
-
-    def test_fit_draw(self):
+    def test_draw_interface(self):
         """
-        Assert fit_draw calls fit and draw
+        Assert that draw cannot be called at the base level
         """
+        with self.assertRaises(NotImplementedError):
+            visualizer = Visualizer()
+            visualizer.draw()
 
+    def test_finalize_interface(self):
+        """
+        Assert finalize returns the finalized axes
+        """
         visualizer = Visualizer()
-        visualizer.fit = mock.Mock()
-        visualizer.draw = mock.Mock()
-
-        visualizer.fit_draw([])
-
-        visualizer.fit.assert_called_once_with([], None)
-        visualizer.draw.assert_called_once_with()
+        self.assertIs(visualizer.finalize(), visualizer.ax)

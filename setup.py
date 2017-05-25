@@ -33,8 +33,9 @@ from setuptools import find_packages
 ## Basic information
 NAME         = "yellowbrick"
 DESCRIPTION  = "A suite of visual analysis and diagnostic tools for machine learning."
-AUTHOR       = "Rebecca Bilbro"
-EMAIL        = "rbilbro@districtdatalabs.com"
+AUTHOR       = "Rebecca Bilbro, Benjamin Bengfort"
+EMAIL        = "info@districtdatalabs.com"
+MAINTAINER   = "Benjamin Bengfort"
 LICENSE      = "Apache 2"
 REPOSITORY   = "https://github.com/districtdatalabs/yellowbrick"
 PACKAGE      = "yellowbrick"
@@ -64,7 +65,7 @@ CLASSIFIERS  = (
 PROJECT      = os.path.abspath(os.path.dirname(__file__))
 REQUIRE_PATH = "requirements.txt"
 VERSION_PATH = os.path.join(PACKAGE, "version.py")
-PKG_DESCRIBE = "DESCRIPTION.txt"
+PKG_DESCRIBE = "DESCRIPTION.rst"
 
 ## Directories to ignore in find_packages
 EXCLUDES     = (
@@ -116,7 +117,7 @@ config = {
     "license": LICENSE,
     "author": AUTHOR,
     "author_email": EMAIL,
-    "maintainer": AUTHOR,
+    "maintainer": MAINTAINER,
     "maintainer_email": EMAIL,
     "url": REPOSITORY,
     "download_url": "{}/tarball/v{}".format(REPOSITORY, get_version()),

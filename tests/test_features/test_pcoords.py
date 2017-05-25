@@ -7,7 +7,7 @@
 # Copyright (C) 2016 District Data Labs
 # For license information, see LICENSE.txt
 #
-# ID: test_pcoords.py [] benjamin@bengfort.com $
+# ID: test_pcoords.py [1d407ab] benjamin@bengfort.com $
 
 """
 Testing for the parallel coordinates feature visualizers
@@ -61,7 +61,7 @@ class ParallelCoordinatesTests(unittest.TestCase, DatasetMixin):
         y = occupancy['occupancy'].astype(int)
 
         # Convert X to an ndarray
-        X = X.view((float, len(X.dtype.names)))
+        X = np.array(X.tolist())
 
         # Test the visualizer
         visualizer = ParallelCoordinates()

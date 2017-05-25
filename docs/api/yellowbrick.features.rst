@@ -35,3 +35,11 @@ yellowbrick.features.rankd module
     :members:
     :undoc-members:
     :show-inheritance:
+
+yellowbrick.features.jointplot module
+-------------------------------------
+
+.. automodule:: yellowbrick.features.jointplot
+    :members:
+    :undoc-members:
+    :show-inheritance:
