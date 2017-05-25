@@ -68,12 +68,17 @@ class ROCAUC(ClassificationScoreVisualizer):
 
     Examples
     --------
-
+    >>> from sklearn.datasets import load_breast_cancer
     >>> from yellowbrick.classifier import ROCAUC
     >>> from sklearn.linear_model import LogisticRegression
+    >>> from sklearn.model_selection import train_test_split
+    >>> data = load_breast_cancer()
+    >>> X = data['data']
+    >>> y = data['target']
+    >>> X_train, X_test, y_train, y_test = train_test_split(X, y)
     >>> logistic = LogisticRegression()
     >>> viz = ROCAUC(logistic)
-    >>> viz.fit(X_train, y_train)
+    >>> viz.fit(X_train,y_train)
     >>> viz.score(X_test, y_test)
     >>> viz.poof()
 
@@ -165,6 +170,10 @@ class ROCAUC(ClassificationScoreVisualizer):
         # Set the limits for the ROC/AUC (always between 0 and 1)
         self.ax.set_xlim([-0.02, 1.0])
         self.ax.set_ylim([ 0.00, 1.1])
+        
+        # Set x and y axis
+        self.ax.set_ylabel('True Postive Rate')
+        self.ax.set_xlabel('False Positive Rate')        
 
 
 def roc_auc(model, X, y=None, ax=None, **kwargs):
