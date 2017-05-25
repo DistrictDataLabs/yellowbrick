@@ -78,7 +78,7 @@ class ROCAUC(ClassificationScoreVisualizer):
     >>> X_train, X_test, y_train, y_test = train_test_split(X, y)
     >>> logistic = LogisticRegression()
     >>> viz = ROCAUC(logistic)
-    >>> viz.fit(X_train,y_train)
+    >>> viz.fit(X_train, y_train)
     >>> viz.score(X_test, y_test)
     >>> viz.poof()
 
