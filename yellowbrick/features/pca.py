@@ -6,6 +6,7 @@ from mpl_toolkits.mplot3d import Axes3D
 
 from yellowbrick.features.base import DataVisualizer
 from yellowbrick.style import palettes
+from yellowbrick.exceptions import YellowbrickError
 
 from sklearn.pipeline import Pipeline
 from sklearn.decomposition import PCA
@@ -128,7 +129,7 @@ class PCADecomposition(DataVisualizer):
         super(PCADecomposition, self).__init__(ax=ax, **kwargs)
         # Data Parameters
         if proj_dim not in (2, 3):
-            raise ValueError("proj_dim object is not 2 or 3.")
+            raise YellowbrickError("proj_dim object is not 2 or 3.")
 
         self.color = color
         self.pca_features_ = None

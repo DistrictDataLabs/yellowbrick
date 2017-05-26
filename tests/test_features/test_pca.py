@@ -5,7 +5,7 @@
 import unittest
 import numpy as np
 import numpy.testing as npt
-import pytest
+import yellowbrick
 
 from tests.dataset import DatasetMixin
 from yellowbrick.features.pca import PCADecomposition
@@ -191,7 +191,7 @@ class PCADecompositionTests(unittest.TestCase, DatasetMixin):
 
     def test_scale_true_4d_execption(self):
         """
-        Test the PCADecomposition visualizer 4 dimensions scaled (catch ValueError).
+        Test the PCADecomposition visualizer 4 dimensions scaled (catch YellowbrickError).
         """
         X = np.array(
             [[2.318, 2.727, 4.260, 7.212, 4.792],
@@ -205,10 +205,8 @@ class PCADecompositionTests(unittest.TestCase, DatasetMixin):
         y = np.array([1, 1, 0, 1, 0, 0])
 
         params = {'scale': True, 'center': False, 'proj_dim': 4, 'col': y}
-
-        with pytest.raises(ValueError) as exception:
+        with self.assertRaisesRegexp(yellowbrick.exceptions.YellowbrickError, "proj_dim object is not 2 or 3"):
             PCADecomposition(**params)
-        assert 'proj_dim object is not 2 or 3.' in str(exception.value)
 
     def test_scale_true_3d_execption(self):
         """
@@ -227,7 +225,7 @@ class PCADecompositionTests(unittest.TestCase, DatasetMixin):
 
         params = {'scale': True, 'center': False, 'proj_dim': 3, 'col': y}
 
-        with pytest.raises(ValueError) as exception:
+
+        with self.assertRaisesRegexp(ValueError, "n_components=3 must be between 0 and n_features"):
             pca = PCADecomposition(**params)
             pca.fit(X)
-        assert 'n_components=3 must be between 0 and n_features' in str(exception.value)
