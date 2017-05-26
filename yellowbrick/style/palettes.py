@@ -509,7 +509,6 @@ def color_palette(palette=None, n_colors=None):
             n_colors = len(palette)
 
     elif not isinstance(palette, string_types):
-        palette = palette
         if n_colors is None:
             n_colors = len(palette)
 
