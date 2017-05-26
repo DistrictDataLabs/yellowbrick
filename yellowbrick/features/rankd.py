@@ -7,7 +7,7 @@
 # Copyright (C) 2016 District Data Labs
 # For license information, see LICENSE.txt
 #
-# ID: rankd.py [] benjamin@bengfort.com $
+# ID: rankd.py [ee754dc] benjamin@bengfort.com $
 
 """
 Implements 1D (histograms) and 2D (joint plot) feature rankings.

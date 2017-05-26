@@ -33,4 +33,4 @@ class ClassificationReportTests(VisualTestCase):
         model.fit(X,y)
         visualizer = ClassificationReport(model, classes=["A", "B"])
         visualizer.score(X,y)
-
+        self.assert_images_similar(visualizer)
