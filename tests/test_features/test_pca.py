@@ -1,18 +1,35 @@
+# tests.test_features.test_pca
+# Tests for the PCA based feature visualizer.
+#
+# Author:   Carlo Morales <@cjmorale>
+# Created:  Tue May 23 18:34:27 2017 -0400
+#
+# Copyright (C) 2017 District Data Labs
+# For license information, see LICENSE.txt
+#
+# ID: test_pca.py [] cmorales@pacificmetrics.com $
+
+"""
+Tests for the PCA based feature visualizer.
+"""
+
 ##########################################################################
 ## Imports
 ##########################################################################
 
 import unittest
+import yellowbrick
 import numpy as np
 import numpy.testing as npt
-import yellowbrick
 
-from yellowbrick.features.pca import * 
+from tests.base import VisualTestCase
+from yellowbrick.features.pca import *
+
 ##########################################################################
 ##PCA Tests
 ##########################################################################
 
-class PCADecompositionTests(unittest.TestCase):
+class PCADecompositionTests(VisualTestCase):
     """
     Test the PCADecomposition visualizer (scaled or non-scaled) for 2 and 3 dimensions.
     """
@@ -145,7 +162,7 @@ class PCADecompositionTests(unittest.TestCase):
         visualizer.poof()
 
         npt.assert_array_almost_equal(pca_array, X_pca_decomp)
-    
+
     def test_scale_false_3d(self):
         """
         Test the PCADecomposition visualizer 3 dimensions non-scaled.
