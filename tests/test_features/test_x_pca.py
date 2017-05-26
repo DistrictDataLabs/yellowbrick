@@ -7,15 +7,12 @@ import numpy as np
 import numpy.testing as npt
 import yellowbrick
 
-from tests.dataset import DatasetMixin
-from yellowbrick.features.pca import PCADecomposition
-from yellowbrick.features.pca import pca_decomposition
-
+from yellowbrick.features.pca import * 
 ##########################################################################
 ##PCA Tests
 ##########################################################################
 
-class PCADecompositionTests(unittest.TestCase, DatasetMixin):
+class PCADecompositionTests(unittest.TestCase):
     """
     Test the PCADecomposition visualizer (scaled or non-scaled) for 2 and 3 dimensions.
     """
