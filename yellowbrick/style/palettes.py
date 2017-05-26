@@ -70,6 +70,11 @@ PALETTES = {
 
     "set1":     ["#377eb8", "#4daf4a", "#e41a1c", "#984ea3", "#ffff33", "#ff7f00",
                  "#a65628", "#f781bf", "#999999"],
+
+    # colors extracted from this blog post during pycon2017:
+    # http://lewisandquark.tumblr.com/
+    "neural_paint":   ["#167192", "#6e7548", "#c5a2ab", "#00ccff", "#de78ae", "#ffcc99",
+                "#3d3f42", "#ffffcc"],
 }
 
 
@@ -471,6 +476,7 @@ def color_palette(palette=None, n_colors=None):
             * :py:const:`sns_bright`
             * :py:const:`sns_dark`
             * :py:const:`flatui`
+            * :py:const:`neural_paint`
 
     n_colors : None or int
         Number of colors in the palette. If ``None``, the default will depend

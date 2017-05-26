@@ -181,6 +181,16 @@ class ColorPaletteFunctionTests(VisualTestCase):
             pal_out = color_palette(name)
             self.assertEqual(len(pal_out), 6)
 
+    def test_other_palettes(self):
+        """
+        Test that the other palettes exist
+        """
+        pals = ["flatui", "paired", "neural_paint", "set1"]
+        for name in pals:
+            pal_out = color_palette(name)
+            self.assertTrue(pal_out)
+
+
     def test_bad_palette_name(self):
         """
         Test that a bad palette name raises an exception
