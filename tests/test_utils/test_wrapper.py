@@ -105,7 +105,7 @@ class WrapperTests(unittest.TestCase):
 
     def test_wrapped_methods(self):
         """
-        Assert that wrapped estimator methods are calle d
+        Assert that wrapped estimator methods are called
         """
         obj = WrappedEstimator()
 
