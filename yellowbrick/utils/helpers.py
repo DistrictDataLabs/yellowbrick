@@ -28,6 +28,29 @@ from yellowbrick.exceptions import YellowbrickTypeError
 
 
 ##########################################################################
+## Character Mapping helper function
+##########################################################################
+
+def character_mapping(array, mapping):
+    """
+
+    Parameters
+    ----------
+    array: iterable
+        an iterable object containing predictions from a classifier
+
+    Returns
+    -------
+    array : list
+        a list of predicted values after applying a given mapping
+
+    """
+    array = [str(x) for x in array]
+    for key, value in mapping.items():
+        array = [x.replace(value, key) for x in array]
+    return array
+
+##########################################################################
 ## Model and Feature Information
 ##########################################################################
 

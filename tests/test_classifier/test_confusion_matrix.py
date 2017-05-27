@@ -1,4 +1,4 @@
-
+import yellowbrick
 from yellowbrick.classifier.confusion_matrix import *
 from tests.base import VisualTestCase
 
@@ -6,8 +6,7 @@ from tests.base import VisualTestCase
 from sklearn.datasets import load_digits
 from sklearn.model_selection import train_test_split
 from sklearn.linear_model import LogisticRegression
-
-
+from sklearn.linear_model import PassiveAggressiveRegressor
 
 
 class ConfusionMatrixTests(VisualTestCase):
@@ -61,3 +60,28 @@ class ConfusionMatrixTests(VisualTestCase):
         cm = ConfusionMatrix(model, classes=[0])
         cm.fit(self.X_train, self.y_train)
         cm.score(self.X_test, self.y_test)
+
+    def test_defined_mapping(self):
+        model = LogisticRegression()
+        classes = ['one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine']
+        mapping = {'zero': '0', 'one': '1', 'two': '2', 'three': '3', 'four': '4', 'five': '5',
+                   'six': '6', 'seven': '7', 'eight': '8', 'nine': '9'}
+        cm = ConfusionMatrix(model, classes=classes, label_mapping = mapping)
+        cm.fit(self.X_train, self.y_train)
+        cm.score(self.X_test, self.y_test)
+
+    def test_inverse_mapping(self):
+        model = LogisticRegression()
+        classes = ['zero', 'one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine']
+        cm = ConfusionMatrix(model, classes=classes)
+        cm.fit(self.X_train, self.y_train)
+        cm.score(self.X_test, self.y_test)
+
+    def test_isclassifier(self):
+        model = PassiveAggressiveRegressor()
+        message = 'This estimator is not a classifier; try a regression or clustering score visualizer instead!'
+        classes = ['zero', 'one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine']
+
+        with self.assertRaisesRegex(yellowbrick.exceptions.YellowbrickError, message):
+            ConfusionMatrix(model, classes=classes)
+
