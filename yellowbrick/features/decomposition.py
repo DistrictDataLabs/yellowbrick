@@ -3,6 +3,7 @@
 ##########################################################################
 
 from .base import FeatureVisualizer
+from ..style.palettes import DEFAULT_SEQUENCE
 
 from sklearn.pipeline import Pipeline
 from sklearn.decomposition import PCA
@@ -33,7 +34,7 @@ class ExplainedVariance(FeatureVisualizer):
     
     """
 
-    def __init__(self, ax=None, n_components=None, scale=True, center=True, colormap='RdBu_r', 
+    def __init__(self, ax=None, n_components=None, scale=True, center=True, colormap=DEFAULT_SEQUENCE, 
                  **kwargs):
 
         super(ExplainedVariance, self).__init__(ax=ax, **kwargs)
