@@ -82,6 +82,6 @@ class ConfusionMatrixTests(VisualTestCase):
         message = 'This estimator is not a classifier; try a regression or clustering score visualizer instead!'
         classes = ['zero', 'one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine']
 
-        with self.assertRaisesRegex(yellowbrick.exceptions.YellowbrickError, message):
+        with self.assertRaisesRegexp(yellowbrick.exceptions.YellowbrickError, message):
             ConfusionMatrix(model, classes=classes)
 
