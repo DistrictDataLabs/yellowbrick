@@ -7,7 +7,7 @@
 # Copyright (C) 2016 District Data Labs
 # For license information, see LICENSE.txt
 #
-# ID: __init__.py [] benjamin@bengfort.com $
+# ID: __init__.py [c6aff34] benjamin@bengfort.com $
 
 """
 Manage the style and aesthetic of the yellowbrick library.

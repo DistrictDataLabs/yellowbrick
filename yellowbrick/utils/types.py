@@ -7,7 +7,7 @@
 # Copyright (C) 2017 District Data Labs
 # For license information, see LICENSE.txt
 #
-# ID: types.py [] benjamin@bengfort.com $
+# ID: types.py [79cd8cf] benjamin@bengfort.com $
 
 """
 Detection utilities for Scikit-Learn and Numpy types for flexibility

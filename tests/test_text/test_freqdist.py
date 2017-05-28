@@ -7,7 +7,7 @@
 # Copyright (C) 2017 District Data Labs
 # For license information, see LICENSE.txt
 #
-# ID: test_freqdist.py [] rbilbro@districtdatalabs.com $
+# ID: test_freqdist.py [bd9cbb9] rebecca.bilbro@bytecubed.com $
 
 """
 Tests for the frequency distribution text visualization
