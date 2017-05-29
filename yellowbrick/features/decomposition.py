@@ -89,8 +89,8 @@ class ExplainedVariance(FeatureVisualizer):
     
     """
 
-    def __init__(self, n_components=None, ax=None, scale=True, center=True, colormap=palettes.DEFAULT_SEQUENCE, 
-                 **kwargs):
+    def __init__(self, n_components=None, ax=None, scale=True, center=True, 
+                 colormap=palettes.DEFAULT_SEQUENCE, **kwargs):
 
         super(ExplainedVariance, self).__init__(ax=ax, **kwargs)
 
@@ -99,8 +99,8 @@ class ExplainedVariance(FeatureVisualizer):
         self.center = center
         self.scale = scale
         self.pipeline = Pipeline([('scale', StandardScaler(with_mean=self.center,
-                                                                   with_std=self.scale)), 
-                                                                  ('pca', PCA(n_components=self.n_components))])
+                                                           with_std=self.scale)), 
+                                  ('pca', PCA(n_components=self.n_components))])
         self.pca_features = None
 
     @property
@@ -109,11 +109,11 @@ class ExplainedVariance(FeatureVisualizer):
 
     def fit(self, X, y=None):
         self.pipeline.fit(X)
+        self.draw()
         return self
 
     def transform(self, X):
         self.pca_features = self.pipeline.transform(X)
-        self.draw()
         return self.pca_features
 
     def draw(self):
