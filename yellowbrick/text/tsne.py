@@ -7,7 +7,7 @@
 # Copyright (C) 2016 Bengfort.com
 # For license information, see LICENSE.txt
 #
-# ID: tsne.py [] benjamin@bengfort.com $
+# ID: tsne.py [6aa9198] benjamin@bengfort.com $
 
 """
 Implements TSNE visualizations of documents in 2D space.

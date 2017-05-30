@@ -7,7 +7,7 @@
 # Copyright (C) 2017 District Data Labs
 # For license information, see LICENSE.txt
 #
-# ID: decorators.py [] benjamin@bengfort.com $
+# ID: decorators.py [79cd8cf] benjamin@bengfort.com $
 
 """
 Decorators and descriptors for annotating yellowbrick library functions.

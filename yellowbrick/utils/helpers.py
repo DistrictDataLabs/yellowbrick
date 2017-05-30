@@ -7,7 +7,7 @@
 # Copyright (C) 2017 District Data Labs
 # For license information, see LICENSE.txt
 #
-# ID: helpers.py [] benjamin@bengfort.com $
+# ID: helpers.py [79cd8cf] benjamin@bengfort.com $
 
 """
 Helper functions and generic utilities for use in Yellowbrick code.

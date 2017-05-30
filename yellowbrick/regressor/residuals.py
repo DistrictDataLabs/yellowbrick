@@ -8,7 +8,7 @@
 # Copyright (C) 2016 2016 District Data Labs
 # For license information, see LICENSE.txt
 #
-# ID: residuals.py [] benjamin@bengfort.com $
+# ID: residuals.py [7d3f5e6] benjamin@bengfort.com $
 
 """
 Regressor visualizers that score residuals: prediction vs. actual data.

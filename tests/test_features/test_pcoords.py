@@ -7,7 +7,7 @@
 # Copyright (C) 2016 District Data Labs
 # For license information, see LICENSE.txt
 #
-# ID: test_pcoords.py [] benjamin@bengfort.com $
+# ID: test_pcoords.py [1d407ab] benjamin@bengfort.com $
 
 """
 Testing for the parallel coordinates feature visualizers
@@ -48,6 +48,7 @@ class ParallelCoordinatesTests(unittest.TestCase, DatasetMixin):
         visualizer = ParallelCoordinates()
         visualizer.fit_transform(self.X, self.y)
 
+    @unittest.skip("takes too long with matplotlib 2.0.2; see #230")
     def test_integrated_pcoords(self):
         """
         Test parallel coordinates on a real, occupancy data set

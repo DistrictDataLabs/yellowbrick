@@ -7,7 +7,7 @@
 # Copyright (C) 2016 District Data Labs
 # For license information, see LICENSE.txt
 #
-# ID: alphas.py [] benjamin@bengfort.com $
+# ID: alphas.py [7d3f5e6] benjamin@bengfort.com $
 
 """
 Implements alpha selection visualizers for regularization

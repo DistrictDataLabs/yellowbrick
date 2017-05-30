@@ -1,14 +1,33 @@
+# yellowbrick.classifier.rocauc
+# Implements visual ROC/AUC curves for classification evaluation.
+#
+# Author:   Rebecca Bilbro <rbilbro@districtdatalabs.com>
+# Author:   Benjamin Bengfort <bbengfort@districtdatalabs.com>
+# Author:   Neal Humphrey
+# Created:  Wed May 18 12:39:40 2016 -0400
+#
+# Copyright (C) 2017 District Data Labs
+# For license information, see LICENSE.txt
+#
+# ID: rocauc.py [5388065] neal@nhumphrey.com $
+
+"""
+Implements visual ROC/AUC curves for classification evaluation.
+"""
+
+##########################################################################
+## Imports
+##########################################################################
+
+import numpy as np
+import matplotlib.pyplot as plt
 
 from .base import ClassificationScoreVisualizer
 from ..utils import get_model_name
 from ..style.palettes import LINE_COLOR
 
-import numpy as np
-import matplotlib.pyplot as plt
-
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import auc, roc_auc_score, roc_curve
-
 
 
 ##########################################################################
@@ -49,9 +68,14 @@ class ROCAUC(ClassificationScoreVisualizer):
 
     Examples
     --------
-
+    >>> from sklearn.datasets import load_breast_cancer
     >>> from yellowbrick.classifier import ROCAUC
     >>> from sklearn.linear_model import LogisticRegression
+    >>> from sklearn.model_selection import train_test_split
+    >>> data = load_breast_cancer()
+    >>> X = data['data']
+    >>> y = data['target']
+    >>> X_train, X_test, y_train, y_test = train_test_split(X, y)
     >>> logistic = LogisticRegression()
     >>> viz = ROCAUC(logistic)
     >>> viz.fit(X_train, y_train)
@@ -146,6 +170,10 @@ class ROCAUC(ClassificationScoreVisualizer):
         # Set the limits for the ROC/AUC (always between 0 and 1)
         self.ax.set_xlim([-0.02, 1.0])
         self.ax.set_ylim([ 0.00, 1.1])
+        
+        # Set x and y axis
+        self.ax.set_ylabel('True Postive Rate')
+        self.ax.set_xlabel('False Positive Rate')        
 
 
 def roc_auc(model, X, y=None, ax=None, **kwargs):

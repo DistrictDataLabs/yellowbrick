@@ -7,7 +7,7 @@
 # Copyright (C) 2017 District Data Labs
 # For license information, see LICENSE.txt
 #
-# ID: test_decorators.py [] benjamin@bengfort.com $
+# ID: test_decorators.py [79cd8cf] benjamin@bengfort.com $
 
 """
 Tests for the decorators module in Yellowbrick utils.

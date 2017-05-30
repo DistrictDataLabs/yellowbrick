@@ -7,7 +7,7 @@
 # Copyright (C) 2016 District Data Labs
 # For license information, see LICENSE.txt
 #
-# ID: test_residuals.py [] benjamin@bengfort.com $
+# ID: test_residuals.py [7d3f5e6] benjamin@bengfort.com $
 
 """
 Ensure that the regressor residuals visualizations work.

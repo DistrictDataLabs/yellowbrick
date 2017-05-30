@@ -7,7 +7,7 @@
 # Copyright (C) 2017 District Data Labs
 # For license information, see LICENSE.txt
 #
-# ID: test_jointplot.py [] pdamo24@gmail.com $
+# ID: test_jointplot.py [9e008b0] pdamodaran@users.noreply.github.com $
 
 """
 Test the JointPlotVisualizer.
@@ -68,12 +68,13 @@ class JointPlotTests(unittest.TestCase, DatasetMixin):
             self.assertEqual(len(w), 1)
             self.assertEqual(
                 str(w[-1].message),
-                "JointPlotVisualizer requires Matplotlib version 2.0.0.Please upgrade to continue."
+                "JointPlotVisualizer requires matplotlib major version 2 "
+                "or greater. Please upgrade."
             )
 
 
     @unittest.skipIf(MPL_VERS_MAJ < 2, "requires matplotlib 2.0.0 or greater")
-    def test_jointplot(self):
+    def test_jointplot_has_no_errors(self):
         """
         Assert no errors occur during jointplot visualizer integration
         """
@@ -84,7 +85,7 @@ class JointPlotTests(unittest.TestCase, DatasetMixin):
 
 
     @unittest.skipIf(MPL_VERS_MAJ < 2, "requires matplotlib 2.0.0 or greater")
-    def test_jointplot_integrated(self):
+    def test_jointplot_integrated_has_no_errors(self):
         """
         Test jointplot on the concrete data set
         """
@@ -99,3 +100,27 @@ class JointPlotTests(unittest.TestCase, DatasetMixin):
         visualizer = JointPlotVisualizer(feature=feature, target=target, joint_plot="hex")
         visualizer.fit(X, y)                # Fit the data to the visualizer
         g = visualizer.poof()
+
+
+    @unittest.skipIf(MPL_VERS_MAJ < 2, "requires matplotlib 2.0.0 or greater")
+    def test_jointplot_no_matplotlib2_warning(self):
+        """
+        Assert no UserWarning occurs if matplotlib major version >= 2
+        (and not exactly 2.0.0).
+        """
+        with warnings.catch_warnings(record=True) as ws:
+            # Filter on UserWarnings
+            warnings.filterwarnings("always", category=UserWarning)
+            visualizer = JointPlotVisualizer()
+            visualizer.fit(self.X, self.y)
+            visualizer.poof()
+
+            # Filter out user warnings not related to matplotlib version
+            ver_warn_msg = "requires matplotlib major version 2 or greater"
+            mpl_ver_cnt = 0
+            for w in ws:
+                if w and w.message and ver_warn_msg in str(w.message):
+                    mpl_ver_cnt += 1
+            self.assertEqual(0, mpl_ver_cnt, ws[-1].message \
+                        if ws else "No error")
+
