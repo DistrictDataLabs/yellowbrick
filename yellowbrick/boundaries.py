@@ -133,9 +133,15 @@ class DecisionBoundariesVisualizer(ModelVisualizer):
                 raise YellowbrickValueError(
                     'DecisionBoundariesVisualizer only accepts two features.')
 
-    def select_feature_columns(self, X, y=None):
+    def select_feature_columns(self, X):
         """ """
-        _, ncols = X.shape
+
+        if len(X.shape) == 1:
+            X_flat = X.view(np.float64).reshape(len(X), -1)
+        else:
+            X_flat = X
+
+        _, ncols = X_flat.shape
 
         if ncols == 2:
             X_two_cols = X
@@ -148,9 +154,7 @@ class DecisionBoundariesVisualizer(ModelVisualizer):
 
         # handle numpy named/ structured array
         elif self.features_ is not None and is_structured_array(X):
-            # raise Exception(X.shape)
             X_selected = X[self.features_]
-            # raise Exception(X_selected.shape)
             X_two_cols = X_selected.view(np.float64).reshape(len(X_selected), -1)
 
         # handle features that are numeric columns in ndarray matrix
@@ -164,7 +168,7 @@ class DecisionBoundariesVisualizer(ModelVisualizer):
                 explicitly set these two features in the init kwargs or
                 pass a matrix/ dataframe in with only two columns.""")
 
-        return X_two_cols, y
+        return X_two_cols
 
     def fit(self, X, y=None, **kwargs):
         """
@@ -188,8 +192,7 @@ class DecisionBoundariesVisualizer(ModelVisualizer):
         self : instance
             Returns the instance of the visualizer
         """
-
-        _, ncols = X.shape
+        X = self.select_feature_columns(X)
 
         # Assign each class a unique number for drawing
         if self.classes_ is None:
@@ -211,8 +214,6 @@ class DecisionBoundariesVisualizer(ModelVisualizer):
             )
 
         # ensure that only
-        X, y = self.select_feature_columns(X, y=y)
-
         self.estimator.fit(X, y)
 
         # Plot the decision boundary. For that, we will assign a color to each
