@@ -133,7 +133,7 @@ class DecisionBoundariesVisualizer(ModelVisualizer):
                 raise YellowbrickValueError(
                     'DecisionBoundariesVisualizer only accepts two features.')
 
-    def select_feature_columns(self, X):
+    def _select_feature_columns(self, X):
         """ """
 
         if len(X.shape) == 1:
@@ -192,7 +192,7 @@ class DecisionBoundariesVisualizer(ModelVisualizer):
         self : instance
             Returns the instance of the visualizer
         """
-        X = self.select_feature_columns(X)
+        X = self._select_feature_columns(X)
 
         # Assign each class a unique number for drawing
         if self.classes_ is None:
@@ -246,7 +246,7 @@ class DecisionBoundariesVisualizer(ModelVisualizer):
         """
         # ensure that if someone is passing in another X such as X_test, that
         # features will be properly handled
-        X = self.select_feature_columns(X)
+        X = self._select_feature_columns(X)
 
         num_colors = len(self.classes_) * 2
         color_cycle = iter(
