@@ -61,7 +61,11 @@ class ThresholdVisualizerTest(VisualTestCase):
     def test_threshold_viz(self):
         """
         Assert no errors occur during KnnDecisionBoundariesVisualizer integration
+        and produces consistent images
         """
         model = BernoulliNB(3)
-        viz = ThresholdVisualizer(model)
-        viz.fit_draw_poof(X, y=y)
+        visualizer = ThresholdVisualizer(model)
+        visualizer.fit(X, y=y)
+        visualizer.draw()
+        visualizer.poof()
+        self.assert_images_similar(visualizer)
