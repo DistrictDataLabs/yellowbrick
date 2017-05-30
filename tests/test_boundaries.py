@@ -91,7 +91,6 @@ class DecisionBoundariesVisualizerTest(VisualTestCase):
         self.assertIsNone(viz.Z)
         self.assertIsNone(viz.xx)
         self.assertIsNone(viz.yy)
-        # self.assertIsNone(viz.ax)
         self.assertIsNone(viz.class_labels)
         self.assertIsNone(viz.title)
         self.assertIsNone(viz.x)
@@ -295,7 +294,7 @@ class DecisionBoundariesVisualizerTest(VisualTestCase):
         visualizer = DecisionBoundariesVisualizer(model, features=['a', 'f'])
         visualizer.fit_draw_poof(X, y=y)
         self.assertEquals(visualizer.features_, ['a', 'f'])
-
+        self.assert_images_similar(visualizer)
 
     def test_integrated_scatter_numpy_arrays_no_names(self):
         model = neighbors.KNeighborsClassifier(3)
@@ -303,3 +302,17 @@ class DecisionBoundariesVisualizerTest(VisualTestCase):
         visualizer = DecisionBoundariesVisualizer(model, features=[1, 2])
         visualizer.fit_draw_poof(X, y)
         self.assertEquals(visualizer.features_, [1, 2])
+
+
+    def test_real_data_set_viz(self):
+        model = naive_bayes.MultinomialNB()
+
+        data = datasets.load_iris()
+        feature_names = [name.replace(' ', '_') for name in  data.feature_names ]
+        df = pd.DataFrame(data.data, columns=feature_names)
+        X = df[['sepal_length_(cm)', 'sepal_width_(cm)']].as_matrix()
+        y = data.target
+
+        visualizer = DecisionBoundariesVisualizer(model)
+        visualizer.fit_draw_poof(X, y)
+        self.assert_images_similar(visualizer)
