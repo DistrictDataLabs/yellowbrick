@@ -131,9 +131,7 @@ class JointPlotVisualizer(FeatureVisualizer):
 
         # Check matplotlib version - needs to be version 2.0.0 or greater.
         mpl_vers_maj = int(mpl.__version__.split(".")[0])
-        if mpl_vers_maj >= 2:
-            pass
-        else:
+        if mpl_vers_maj < 2:
             warnings.warn((
                 "{} requires matplotlib major version 2 or greater. "
                 "Please upgrade."
