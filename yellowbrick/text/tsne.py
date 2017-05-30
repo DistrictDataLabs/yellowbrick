@@ -7,7 +7,7 @@
 # Copyright (C) 2016 Bengfort.com
 # For license information, see LICENSE.txt
 #
-# ID: tsne.py [] benjamin@bengfort.com $
+# ID: tsne.py [6aa9198] benjamin@bengfort.com $
 
 """
 Implements TSNE visualizations of documents in 2D space.
@@ -277,10 +277,6 @@ class TSNEVisualizer(TextVisualizer):
         of each of the points. If the target is not specified, then the points
         are plotted as a single cloud to show similar documents.
         """
-
-        # Create the axis if it doesn't exist
-        if self.ax is None: self.ax = plt.gca()
-
         # Create the color mapping for the classes.
         # TODO: Allow both colormap, listed colors, and palette definition
         # See the FeatureVisualizer for more on this.

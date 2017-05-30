@@ -7,7 +7,7 @@
 # Copyright (C) 2016 District Data Labs
 # For license information, see LICENSE.txt
 #
-# ID: alphas.py [] benjamin@bengfort.com $
+# ID: alphas.py [7d3f5e6] benjamin@bengfort.com $
 
 """
 Implements alpha selection visualizers for regularization
@@ -139,9 +139,6 @@ class AlphaSelection(RegressionScoreVisualizer):
         """
         Draws the alpha plot based on the values on the estimator.
         """
-        if self.ax is None:
-            self.ax = plt.gca()
-
         # Search for the correct parameters on the estimator.
         alphas = self._find_alphas_param()
         errors = self._find_errors_param()
@@ -250,10 +247,11 @@ class ManualAlphaSelection(AlphaSelection):
     cv : int, cross-validation generator or an iterable, optional
         Determines the cross-validation splitting strategy.
         Possible inputs for cv are:
-          - None, to use the default 3-fold cross validation,
-          - integer, to specify the number of folds in a `(Stratified)KFold`,
-          - An object to be used as a cross-validation generator.
-          - An iterable yielding train, test splits.
+
+        - None, to use the default 3-fold cross validation,
+        - integer, to specify the number of folds in a `(Stratified)KFold`,
+        - An object to be used as a cross-validation generator.
+        - An iterable yielding train, test splits.
 
         This argument is passed to the
         ``sklearn.model_selection.cross_val_score`` method to produce the
@@ -337,9 +335,6 @@ class ManualAlphaSelection(AlphaSelection):
         Draws the alphas values against their associated error in a similar
         fashion to the AlphaSelection visualizer.
         """
-        if self.ax is None:
-            self.ax = plt.gca()
-
         # Plot the alpha against the error
         self.ax.plot(self.alphas, self.errors, label=self.name.lower())
 

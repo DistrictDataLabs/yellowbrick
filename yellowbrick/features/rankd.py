@@ -7,7 +7,7 @@
 # Copyright (C) 2016 District Data Labs
 # For license information, see LICENSE.txt
 #
-# ID: rankd.py [] benjamin@bengfort.com $
+# ID: rankd.py [ee754dc] benjamin@bengfort.com $
 
 """
 Implements 1D (histograms) and 2D (joint plot) feature rankings.
@@ -246,10 +246,8 @@ class Rank2D(FeatureVisualizer):
         """
         Draws the heatmap of the ranking matrix of variables.
         """
-        # Create the axes if they don't exist
-        if self.ax is None:
-            self.ax = plt.gca()
-            self.ax.set_aspect("equal")
+        # Set the axes aspect to be equal
+        self.ax.set_aspect("equal")
 
         # Generate a mask for the upper triangle
         mask = np.zeros_like(X, dtype=np.bool)
@@ -285,7 +283,7 @@ class Rank2D(FeatureVisualizer):
 
         """
         # Set the title
-        self.ax.set_title(
+        self.set_title(
             "{} Ranking of {} Features".format(
                 self.ranking_.title(), len(self.features_)
             )

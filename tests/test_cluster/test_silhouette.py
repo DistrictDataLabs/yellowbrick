@@ -7,7 +7,7 @@
 # Copyright (C) 2016 District Data Labs
 # For license information, see LICENSE.txt
 #
-# ID: test_silhouette.py [] benjamin@bengfort.com $
+# ID: test_silhouette.py [57b563b] benjamin@bengfort.com $
 
 """
 Tests for the SilhouetteVisualizer

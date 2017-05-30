@@ -7,7 +7,7 @@
 # Copyright (C) 2016 District Data Labs
 # For license information, see LICENSE.txt
 #
-# ID: radviz.py [] benjamin@bengfort.com $
+# ID: radviz.py [0f4b236] benjamin@bengfort.com $
 
 """
 Implements radviz for feature analysis.
@@ -162,9 +162,9 @@ class RadialVisualizer(DataVisualizer):
         # Get the shape of the data
         nrows, ncols = X.shape
 
-        # Create the axes if they don't exist
-        if self.ax is None:
-            self.ax = plt.gca(xlim=[-1,1], ylim=[-1,1])
+        # Set the axes limits
+        self.ax.set_xlim([-1,1])
+        self.ax.set_ylim([-1,1])
 
         # Create the colors
         # TODO: Allow both colormap, listed colors, and palette definition

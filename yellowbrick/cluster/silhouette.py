@@ -7,7 +7,7 @@
 # Copyright (C) 2016 District Data Labs
 # For license information, see LICENSE.txt
 #
-# ID: silhouette.py [] benjamin@bengfort.com $
+# ID: silhouette.py [57b563b] benjamin@bengfort.com $
 
 """
 Implements visualizers that use the silhouette metric for cluster evaluation.
@@ -92,9 +92,6 @@ class SilhouetteVisualizer(ClusteringScoreVisualizer):
             usually computed with ``predict()``. Labels are not stored on the
             visualizer so that the figure can be redrawn with new data.
         """
-
-        if self.ax is None:
-            self.ax = self.gca()
 
         # Track the positions of the lines being drawn
         y_upper = 10 # the top of the silhouette

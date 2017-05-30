@@ -1,19 +1,16 @@
-# yellowbrick.utils
-# Utility functions and helpers for the Yellowbrick library.
+# yellowbrick.utils.types
+# Detection utilities for Scikit-Learn and Numpy types for flexibility
 #
-# Author:   Jason Keung <jason.s.keung@gmail.com>
-# Author:   Patrick O'Melveny <pvomelveny@gmail.com>
 # Author:   Benjamin Bengfort <bbengfort@districtdatalabs.com>
-# Author:   Rebecca Bilbro <rbilbro@districtdatalabs.com>
-# Created:  Thu Jun 02 15:33:18 2016 -0500
+# Created:  Fri May 19 10:51:13 2017 -0700
 #
-# Copyright (C) 2016 District Data LAbs
+# Copyright (C) 2017 District Data Labs
 # For license information, see LICENSE.txt
 #
-# ID: utils.py [] jason.s.keung@gmail.com $
+# ID: types.py [79cd8cf] benjamin@bengfort.com $
 
 """
-Utility functions and helpers for the Yellowbrick library.
+Detection utilities for Scikit-Learn and Numpy types for flexibility
 """
 
 ##########################################################################
@@ -21,41 +18,10 @@ Utility functions and helpers for the Yellowbrick library.
 ##########################################################################
 
 import inspect
-import math
 import numpy as np
 
-from functools import wraps
-from sklearn.pipeline import Pipeline
 from sklearn.base import BaseEstimator
-
 from yellowbrick.exceptions import YellowbrickTypeError
-
-
-##########################################################################
-## Model detection utilities
-##########################################################################
-
-def get_model_name(model):
-    """
-    Detects the model name for a Scikit-Learn model or pipeline
-
-    Parameters
-    ----------
-    model: class or instance
-        The object to determine the name for
-    """
-    if not is_estimator(model):
-        raise YellowbrickTypeError(
-            "Cannot detect the model name for non estimator: '{}'".format(
-                type(model)
-            )
-        )
-
-    else:
-        if isinstance(model, Pipeline):
-            return model.steps[-1][-1].__class__.__name__
-        else:
-            return model.__class__.__name__
 
 
 ##########################################################################
@@ -184,105 +150,20 @@ def is_dataframe(obj):
 isdataframe = is_dataframe
 
 
-#From here: http://stackoverflow.com/questions/26248654/numpy-return-0-with-divide-by-zero
-def div_safe( numerator, denominator ):
+def is_structured_array(obj):
     """
-    Ufunc-extension that returns 0 instead of nan when dividing numpy arrays
+    Returns True if the given object is a Numpy Structured Array.
 
     Parameters
     ----------
-    numerator: array-like
-
-    denominator: scalar or array-like that can be validly divided by the numerator
-
-    returns a numpy array
-
-    example: div_safe( [-1, 0, 1], 0 ) == [0, 0, 0]
+    obj: instance
+        The object to test whether or not is a Numpy Structured Array.
     """
-    #First handle scalars
-    if np.isscalar(numerator):
-        raise ValueError("div_safe should only be used with an array-like numerator")
-
-    #Then numpy arrays
-    try:
-        with np.errstate(divide='ignore', invalid='ignore'):
-            result = np.true_divide( numerator, denominator )
-            result[ ~ np.isfinite( result )] = 0  # -inf inf NaN
-        return result
-    except ValueError as e:
-        raise e
-
-##########################################################################
-## Decorators
-##########################################################################
-
-def memoized(fget):
-    """
-    Return a property attribute for new-style classes that only calls its
-    getter on the first access. The result is stored and on subsequent
-    accesses is returned, preventing the need to call the getter any more.
-
-    Parameters
-    ----------
-    fget: function
-        The getter method to memoize for subsequent access.
-
-    See also
-    --------
-    python-memoized-property
-        `python-memoized-property <https://github.com/estebistec/python-memoized-property>`_
-    """
-    attr_name = '_{0}'.format(fget.__name__)
-
-    @wraps(fget)
-    def fget_memoized(self):
-        if not hasattr(self, attr_name):
-            setattr(self, attr_name, fget(self))
-        return getattr(self, attr_name)
-
-    return property(fget_memoized)
+    if isinstance(obj, np.ndarray) and hasattr(obj, 'dtype'):
+        if obj.dtype.names is not None:
+            return True
+    return False
 
 
-class docutil(object):
-    """
-    This decorator can be used to apply the doc string from another function
-    to the decorated function. This is used for our single call wrapper
-    functions who implement the visualizer API without forcing the user to
-    jump through all the hoops. The docstring of both the visualizer and the
-    single call wrapper should be identical, this decorator ensures that we
-    only have to edit one doc string.
-
-    Usage::
-
-        @docutil(Visualizer.__init__)
-        def visualize(*args, **kwargs):
-            pass
-
-    The basic usage is that you instantiate the decorator with the function
-    whose docstring you want to copy, then apply that decorator to the the
-    function whose docstring you would like modified.
-
-    Note that this decorator performs no wrapping of the target function.
-    """
-
-    def __init__(self, func):
-        """Create a decorator to document other functions with the specified
-        function's doc string.
-
-        Parameters
-        ----------
-        func : function
-            The function whose doc string we should decorate with
-        """
-        self.doc = func.__doc__
-
-    def __call__(self, func):
-        """Modify the decorated function with the stored doc string.
-
-        Parameters
-        ----------
-        func: function
-            The function to apply the saved doc string to.
-        """
-        func.__doc__ = self.doc
-        return func
+# Alias for closer name to isinstance and issubclass
+isstructuredarray = is_structured_array

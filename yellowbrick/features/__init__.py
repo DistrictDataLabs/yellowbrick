@@ -7,7 +7,7 @@
 # Copyright (C) 2016 District Data Labs
 # For license information, see LICENSE.txt
 #
-# ID: __init__.py [] benjamin@bengfort.com $
+# ID: __init__.py [0f4b236] benjamin@bengfort.com $
 
 """
 Visualizers for feature analysis and diagnostics.
@@ -21,3 +21,5 @@ Visualizers for feature analysis and diagnostics.
 from .pcoords import ParallelCoordinates, parallel_coordinates
 from .radviz import RadialVisualizer, RadViz, radviz
 from .rankd import Rank2D, rank2d
+from .scatter import ScatterViz, ScatterVisualizer, scatterviz
+from .jointplot import  JointPlotVisualizer

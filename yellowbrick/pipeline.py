@@ -7,7 +7,7 @@
 # Copyright (C) 2016 District Data Labs
 # For license information, see LICENSE.txt
 #
-# ID: pipeline.py [] benjamin@bengfort.com $
+# ID: pipeline.py [1efae1f] benjamin@bengfort.com $
 
 """
 Implements a visual pipeline that subclasses Scikit-Learn pipelines.
@@ -17,7 +17,9 @@ Implements a visual pipeline that subclasses Scikit-Learn pipelines.
 ## Imports
 ##########################################################################
 
+from os import path
 from .base import Visualizer
+from .utils.helpers import slugify
 from sklearn.pipeline import Pipeline
 
 
@@ -71,25 +73,36 @@ class VisualPipeline(Pipeline):
             if isinstance(step[1], Visualizer)
         )
 
-    def draw(self, *args, **kwargs):
+    def poof(self, outdir=None, ext=".pdf", **kwargs):
         """
-        Calls draw on steps (including the final estimator) that has a draw
-        method and passes the args and kwargs to that draw function.
+        A single entry point to rendering all visualizations in the visual
+        pipeline. The rendering for the output depends on the backend context,
+        but for path based renderings (e.g. saving to a file), specify a
+        directory and extension to compse an outpath to save each
+        visualization (file names will be based on the  named step).
+
+        Parameters
+        ----------
+        outdir : path
+            The directory to save visualizations to.
+
+        ext : string, default = ".pdf"
+            The extension of the file to save the visualization to.
+
+        kwargs : dict
+            Keyword arguments to pass to the ``poof()`` method of all steps.
         """
         for name, step in self.visual_steps.items():
-            step.draw(*args, **kwargs)
+            if outdir is not None:
+                outpath = path.join(outdir, slugify(name) + ext)
+            else:
+                outpath = None
 
-    def poof(self, *args, **kwargs):
-        """
-        Calls poof on steps (including the final estimator) that has a poof
-        method and passes the args and kwargs to that poof function.
-        """
-        for name, step in self.visual_steps.items():
-            step.poof(*args, **kwargs)
+            step.poof(outpath=outpath, **kwargs)
 
-    def fit_transform_poof(self, X, y=None, **kwargs):
+    def fit_transform_poof(self, X, y=None, outpath=None, **kwargs):
         """
         Fit the model and transforms and then call poof.
         """
         self.fit_transform(X, y, **kwargs)
-        self.poof(**kwargs)
+        self.poof(outpath, **kwargs)

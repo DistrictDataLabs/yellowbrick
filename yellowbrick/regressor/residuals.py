@@ -8,7 +8,7 @@
 # Copyright (C) 2016 2016 District Data Labs
 # For license information, see LICENSE.txt
 #
-# ID: residuals.py [] benjamin@bengfort.com $
+# ID: residuals.py [7d3f5e6] benjamin@bengfort.com $
 
 """
 Regressor visualizers that score residuals: prediction vs. actual data.
@@ -20,7 +20,7 @@ Regressor visualizers that score residuals: prediction vs. actual data.
 
 import matplotlib.pyplot as plt
 
-from sklearn.cross_validation import train_test_split
+from sklearn.model_selection import train_test_split
 
 from ..bestfit import draw_best_fit
 from ..style.palettes import LINE_COLOR
@@ -129,10 +129,6 @@ class PredictionError(RegressionScoreVisualizer):
         ------
         ax : the axis with the plotted figure
         """
-        # Create the axis if it doesn't exist
-        if self.ax is None:
-            self.ax = plt.gca()
-
         self.ax.scatter(y, y_pred, c=self.colors['point'])
 
         # TODO If score is happening inside a loop, draw would get called multiple times.
@@ -339,10 +335,6 @@ class ResidualsPlot(RegressionScoreVisualizer):
         ax : the axis with the plotted figure
 
         """
-        # Create the axis if it doesn't exist
-        if self.ax is None:
-            self.ax = plt.gca()
-
         color = self.colors['train_point'] if train else self.colors['test_point']
         alpha = 0.5 if train else 1.0
 

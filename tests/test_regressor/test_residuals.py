@@ -7,7 +7,7 @@
 # Copyright (C) 2016 District Data Labs
 # For license information, see LICENSE.txt
 #
-# ID: test_residuals.py [] benjamin@bengfort.com $
+# ID: test_residuals.py [7d3f5e6] benjamin@bengfort.com $
 
 """
 Ensure that the regressor residuals visualizations work.
@@ -25,7 +25,7 @@ from yellowbrick.regressor.residuals import *
 
 from sklearn.svm import SVR
 from sklearn import cross_validation as cv
-from sklearn.cross_validation import train_test_split as tts
+from sklearn.model_selection import train_test_split as tts
 
 ##########################################################################
 ## Data
