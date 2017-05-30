@@ -121,7 +121,6 @@ def decisionviz(model,
 # Static ScatterVisualizer Visualizer
 ##########################################################################
 
-
 class DecisionBoundariesVisualizer(ModelVisualizer):
     """
     DecisionBoundariesVisualizer is a bivariate data visualization algorithm
