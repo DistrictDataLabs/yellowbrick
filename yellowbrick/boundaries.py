@@ -23,6 +23,105 @@ from yellowbrick.utils import is_dataframe, is_structured_array, has_ndarray_int
 from yellowbrick.style.palettes import PALETTES
 
 
+
+##########################################################################
+# Quick Methods
+##########################################################################
+
+def decisionviz(model,
+                X,
+                y,
+                colors=None,
+                classes=None,
+                features=None,
+                show_scatter=True,
+                step_size=0.0025,
+                markers=None,
+                scatter_alpha=0.6,
+                title=None,
+                **kwargs):
+    """DecisionBoundariesVisualizer is a bivariate data visualization algorithm
+        that plots the decision boundaries of each class.
+
+    This helper function is a quick wrapper to utilize the
+    DecisionBoundariesVisualizers (Transformer) for one-off analysis.
+
+    Parameters
+    ----------
+        model : the Scikit-Learn estimator, required
+            Should be an instance of a classifier, else the __init__ will
+            return an error.
+
+        x : matrix, required
+            The feature name that corresponds to a column name or index postion
+            in the matrix that will be plotted against the x-axis
+
+        y : array, required
+            The feature name that corresponds to a column name or index postion
+            in the matrix that will be plotted against the y-axis
+
+        colors : string or matplotlib cmap, default: yellowbrick palette 'set1'
+            Sets the color palette of the visualizer
+
+        classes : a list of class names for the legend, default: None
+            If classes is None and a y value is passed to fit then the classes
+            are selected from the target vector.
+
+        features : list of strings, default: None
+            The names of the features or columns
+
+        show_scatter : boolean, default: True
+            If boolean is True, then a scatter plot with points will be drawn
+            on top of the decision boundary graph
+
+        step_size : float percentage, default: 0.0025
+            Determines the step size for creating the numpy meshgrid that will
+            later become the foundation of the decision boundary graph. The
+            default value of 0.0025 means that the step size for constructing
+            the meshgrid will be 0.25%% of differenes of the max and min of x
+            and y for each feature.
+
+        markers : iterable of strings, default: ,od*vh+
+            Matplotlib style markers for points on the scatter plot points
+
+        scatter_alpha : float, default: 0.6
+            Sets the alpha transparency for the scatter plot points
+
+        title : string, default: stringified feature_one and feature_two
+            Sets the title of the visualization
+
+        kwargs : keyword arguments passed to the super class.
+
+    Returns
+    -------
+    ax : matplotlib axes
+        Returns the axes that the decision boundaries graph were drawn on.
+    """
+    # Instantiate the visualizer
+    visualizer = DecisionBoundariesVisualizer(model,
+                    X,
+                    y,
+                    colors=None,
+                    classes=None,
+                    features=None,
+                    show_scatter=True,
+                    step_size=0.0025,
+                    markers=None,
+                    scatter_alpha=0.6,
+                    title=None,
+                    **kwargs)
+
+    # Fit, draw and poof the visualizer
+    visualizer.fit_draw_poof(X, y, **kwargs)
+
+    # Return the axes object on the visualizer
+    return visualizer.ax
+
+##########################################################################
+# Static ScatterVisualizer Visualizer
+##########################################################################
+
+
 class DecisionBoundariesVisualizer(ModelVisualizer):
     """
     DecisionBoundariesVisualizer is a bivariate data visualization algorithm

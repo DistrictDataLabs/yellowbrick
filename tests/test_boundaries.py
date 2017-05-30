@@ -316,3 +316,14 @@ class DecisionBoundariesVisualizerTest(VisualTestCase):
         visualizer = DecisionBoundariesVisualizer(model)
         visualizer.fit_draw_poof(X, y)
         self.assert_images_similar(visualizer)
+
+    def test_quick_method(self):
+        model = naive_bayes.MultinomialNB()
+
+        data = datasets.load_iris()
+        feature_names = [name.replace(' ', '_') for name in  data.feature_names ]
+        df = pd.DataFrame(data.data, columns=feature_names)
+        X = df[['sepal_length_(cm)', 'sepal_width_(cm)']].as_matrix()
+        y = data.target
+
+        visualizer = decisionviz(model, X, y)
