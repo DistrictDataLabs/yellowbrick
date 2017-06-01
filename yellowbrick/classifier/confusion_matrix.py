@@ -21,7 +21,6 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 from sklearn.metrics import confusion_matrix
-from sklearn.preprocessing import LabelEncoder
 
 from ..utils import div_safe
 from ..utils.helpers import character_mapping
@@ -72,7 +71,7 @@ class ConfusionMatrix(ClassificationScoreVisualizer):
     """
 
 
-    def __init__(self, model, ax=None, classes=None, label_mapping=None, **kwargs):
+    def __init__(self, model, ax=None, classes=None, label_encoder=None, **kwargs):
         super(ConfusionMatrix, self).__init__(
             model, ax=ax, classes=classes, **kwargs
         )
@@ -81,10 +80,10 @@ class ConfusionMatrix(ClassificationScoreVisualizer):
         self.confusion_matrix = None
 
         self.cmap = color_sequence(kwargs.pop('cmap', 'YlOrRd'))
-        self.cmap.set_under(color='w')
-        self.cmap.set_over(color='#2a7d4f')
-        self.edgecolors=[] #used to draw diagonal line for predicted class = true class
-        self.label_mapping= label_mapping
+        self.cmap.set_under(color = 'w')
+        self.cmap.set_over(color = '#2a7d4f')
+        self.edgecolors = [] #used to draw diagonal line for predicted class = true class
+        self.label_encoder = label_encoder
 
     def score(self, X, y, sample_weight=None, percent=True):
         """
@@ -109,18 +108,14 @@ class ConfusionMatrix(ClassificationScoreVisualizer):
         y_pred = self.predict(X)
 
 
-        if self.label_mapping:
-            # if a mapping is passed to class apply it here.
-            y = character_mapping(y, self.label_mapping)
-            y_pred = character_mapping(y_pred, self.label_mapping)
-
-        if len(set(y_pred)) == len(set(self.classes_)):
-            if set(y_pred) != set(self.classes_):
-                self._label_encoder = LabelEncoder()
-                self._label_encoder.fit(self.classes_)
-
-                y = self._label_encoder.inverse_transform(y)
-                y_pred = self._label_encoder.inverse_transform(y_pred)
+        if self.label_encoder:
+            try :
+                y = self.label_encoder.inverse_transform(y)
+                y_pred = self.label_encoder.inverse_transform(y_pred)
+            except AttributeError:
+                # if a mapping is passed to class apply it here.
+                y = character_mapping(y, self.label_encoder)
+                y_pred = character_mapping(y_pred, self.label_encoder)
 
         self.confusion_matrix = confusion_matrix(
             y, y_pred, labels=self.classes_, sample_weight=sample_weight

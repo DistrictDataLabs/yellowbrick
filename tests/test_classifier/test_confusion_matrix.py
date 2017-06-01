@@ -1,7 +1,7 @@
 import yellowbrick
 from yellowbrick.classifier.confusion_matrix import *
 from tests.base import VisualTestCase
-
+from sklearn.preprocessing import LabelEncoder
 
 from sklearn.datasets import load_digits
 from sklearn.model_selection import train_test_split
@@ -66,14 +66,16 @@ class ConfusionMatrixTests(VisualTestCase):
         classes = ['one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine']
         mapping = {'zero': '0', 'one': '1', 'two': '2', 'three': '3', 'four': '4', 'five': '5',
                    'six': '6', 'seven': '7', 'eight': '8', 'nine': '9'}
-        cm = ConfusionMatrix(model, classes=classes, label_mapping = mapping)
+        cm = ConfusionMatrix(model, classes=classes, label_encoder = mapping)
         cm.fit(self.X_train, self.y_train)
         cm.score(self.X_test, self.y_test)
 
     def test_inverse_mapping(self):
         model = LogisticRegression()
+        le = LabelEncoder()
         classes = ['zero', 'one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine']
-        cm = ConfusionMatrix(model, classes=classes)
+        le.fit(['zero', 'one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine'])
+        cm = ConfusionMatrix(model, classes=classes, label_encoder=le)
         cm.fit(self.X_train, self.y_train)
         cm.score(self.X_test, self.y_test)
 
