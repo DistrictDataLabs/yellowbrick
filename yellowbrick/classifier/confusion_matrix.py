@@ -57,7 +57,7 @@ class ConfusionMatrix(ClassificationScoreVisualizer):
         If None, values that appear at least once in y_true or y_pred are used in sorted order.
         Default: None
         
-    label_encoder : dict, a dictionary in the form {class: encoded_class}
+    label_mapping : dict, a dictionary in the form {class: encoded_class}
 
     Examples
     --------
