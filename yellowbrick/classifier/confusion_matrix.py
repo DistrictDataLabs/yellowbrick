@@ -23,7 +23,6 @@ import matplotlib.pyplot as plt
 from sklearn.metrics import confusion_matrix
 
 from ..utils import div_safe
-from ..utils.helpers import character_mapping
 from ..style import find_text_color
 from ..style.palettes import color_sequence
 from .base import ClassificationScoreVisualizer
@@ -114,8 +113,8 @@ class ConfusionMatrix(ClassificationScoreVisualizer):
                 y_pred = self.label_encoder.inverse_transform(y_pred)
             except AttributeError:
                 # if a mapping is passed to class apply it here.
-                y = character_mapping(y, self.label_encoder)
-                y_pred = character_mapping(y_pred, self.label_encoder)
+                y = [self.label_encoder[x] for x in y]
+                y_pred = [self.label_encoder[x] for x in y_pred]
 
         self.confusion_matrix = confusion_matrix(
             y, y_pred, labels=self.classes_, sample_weight=sample_weight
