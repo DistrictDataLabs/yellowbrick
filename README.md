@@ -129,4 +129,4 @@ Beyond creating visualizers, there are many ways to contribute:
 
 As you can see, there are lots of ways to get involved and we would be very happy for you to join us! The only thing we ask is that you abide by the principles of openness, respect, and consideration of others as described in the [Python Software Foundation Code of Conduct](https://www.python.org/psf/codeofconduct/).
 
-For more information, checkout [CONTRIBUTING.md](https://github.com/DistrictDataLabs/yellowbrick/blob/develop/CONTRIBUTING.md).
+For more information, checkout [CONTRIBUTING.md](https://github.com/DistrictDataLabs/yellowbrick/blob/develop/CONTRIBUTING.md). 
