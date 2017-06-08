@@ -7,7 +7,7 @@
 # Copyright (C) 2016 District Data Labs
 # For license information, see LICENSE.txt
 #
-# ID: pcoords.py [] benjamin@bengfort.com $
+# ID: pcoords.py [0f4b236] benjamin@bengfort.com $
 
 """
 Implementations of parallel coordinates for multi-dimensional feature

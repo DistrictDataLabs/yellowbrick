@@ -105,7 +105,11 @@ These quick functions give you slightly less control over the machine learning w
 Walkthrough
 -----------
 
-Consider a regression analysis as a simple example of the use of visualizers in the machine learning workflow. Using a `bike sharing dataset <https://archive.ics.uci.edu/ml/datasets/bike+sharing+dataset>`_, we would like to predict the number of bikes rented in a given hour based on features like the season, weather, or if it's a holiday. We can load our data as follows:
+Consider a regression analysis as a simple example of the use of visualizers in the machine learning workflow. Using a `bike sharing dataset <https://s3.amazonaws.com/ddl-data-lake/yellowbrick/bikeshare.zip>`_ based upon the one uploaded to the `UCI Machine Learning Repository <https://archive.ics.uci.edu/ml/datasets/bike+sharing+dataset>`_, we would like to predict the number of bikes rented in a given hour based on features like the season, weather, or if it's a holiday.
+
+.. note:: We have updated the dataset from the UCI ML repository to make it a bit easier to load into Pandas; make sure you download the `Yellowbrick version of the dataset <https://s3.amazonaws.com/ddl-data-lake/yellowbrick/bikeshare.zip>`_.
+
+After downloading the dataset and unzipping it in your current working directory, we can load our data as follows:
 
 .. code-block:: python
 
@@ -114,7 +118,7 @@ Consider a regression analysis as a simple example of the use of visualizers in 
     data = pd.read_csv('bikeshare.csv')
     X = data[[
         "season", "month", "hour", "holiday", "weekday", "workingday",
-        "weather", "temp", "atemp", "hum", "windspeed"
+        "weather", "temp", "feelslike", "humidity", "windspeed"
     ]]
     y = data["riders"]
 

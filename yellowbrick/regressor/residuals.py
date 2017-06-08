@@ -8,7 +8,7 @@
 # Copyright (C) 2016 2016 District Data Labs
 # For license information, see LICENSE.txt
 #
-# ID: residuals.py [] benjamin@bengfort.com $
+# ID: residuals.py [7d3f5e6] benjamin@bengfort.com $
 
 """
 Regressor visualizers that score residuals: prediction vs. actual data.
@@ -193,6 +193,7 @@ def prediction_error(model, X, y=None, ax=None, **kwargs):
     # Fit and transform the visualizer (calls draw)
     visualizer.fit(X_train, y_train, **kwargs)
     visualizer.score(X_test, y_test)
+    visualizer.finalize() 
 
     # Return the axes object on the visualizer
     return visualizer.ax
@@ -404,6 +405,7 @@ def residuals_plot(model, X, y=None, ax=None, **kwargs):
     # Fit and transform the visualizer (calls draw)
     visualizer.fit(X_train, y_train, **kwargs)
     visualizer.score(X_test, y_test)
+    visualizer.finalize()
 
     # Return the axes object on the visualizer
     return visualizer.ax
