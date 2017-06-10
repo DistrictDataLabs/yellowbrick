@@ -131,10 +131,6 @@ def rank2d(X, y=None, ax=None, algorithm='pearson', features=None,
 ## Base Feature Visualizer
 ##########################################################################
 
- # TODO: This class is identical to the Parallel Coordinates version,
-        # so hoist this functionality to a higher level class that is extended
-        # by both RadViz and ParallelCoordinates.
-
 class RankDBase(FeatureVisualizer):
     """
     Base visualizer for Rank1D and Rank2D
