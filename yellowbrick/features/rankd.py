@@ -279,6 +279,10 @@ class RankDBase(FeatureVisualizer):
                 "'{}' is unrecognized ranking method".format(algorithm)
             )
 
+        # Extract matrix from dataframe if necessary
+        if is_dataframe(X):
+            X = X.as_matrix()
+
         return self.ranking_methods[algorithm](X)
 
     def finalize(self, **kwargs):
