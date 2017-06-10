@@ -244,12 +244,12 @@ class RankDBase(FeatureVisualizer):
 
         Returns
         -------
-        Xp : ndarray
+        X' : ndarray
             The transformed matrix, X'
         """
         # Rank and draw the input matrix
-        Xp = self.rank(X)
-        self.draw(Xp, **kwargs)
+        R = self.rank(X)
+        self.draw(R, **kwargs)
 
         # Return the X matrix, unchanged
         return X
@@ -354,26 +354,13 @@ class Rank1D(RankDBase):
         super(Rank1D, self).__init__(ax=None, algorithm=algorithm, features=features,
                          colormap=colormap, **kwargs)
 
-    def draw(self, X, **kwargs):
+    def draw(self, R, **kwargs):
         """
         Draws the heatmap of the ranking matrix of variables.
         """
-        self.ax.bar(np.arange(len(X)), X, color=self.colormap[0])
-        self.ax.set_xticks(np.arange(len(X)))
+        self.ax.bar(np.arange(len(R)), R, color=self.colormap[0])
+        self.ax.set_xticks(np.arange(len(R)))
         self.ax.xaxis.grid(False)
-
-    def finalize(self, **kwargs):
-        """
-        Finalize executes any subclass-specific axes finalization steps.
-        The user calls poof and poof calls finalize.
-
-        Parameters
-        ----------
-        kwargs: dict
-            generic keyword arguments
-
-        """
-        super(Rank1D, self).finalize(**kwargs)
         self.ax.set_xticklabels(self.features_, rotation=90, ha='left')
 
 
@@ -438,23 +425,23 @@ class Rank2D(RankDBase):
         super(Rank2D, self).__init__(ax=None, algorithm=algorithm, features=features,
                          colormap=colormap, **kwargs)
 
-    def draw(self, X, **kwargs):
+    def draw(self, R, **kwargs):
         """
         Draws the heatmap of the ranking matrix of variables.
         """
         # Set the axes aspect to be equal
         self.ax.set_aspect("equal")
-        self.ax.set_xticks(np.arange(len(X)))
-        self.ax.set_yticks(np.arange(len(X)))
+        self.ax.set_xticks(np.arange(len(R)))
+        self.ax.set_yticks(np.arange(len(R)))
 
         # Generate a mask for the upper triangle
-        mask = np.zeros_like(X, dtype=np.bool)
+        mask = np.zeros_like(R, dtype=np.bool)
         mask[np.triu_indices_from(mask)] = True
 
         # Draw the heatmap
         # TODO: Move mesh to a property so the colorbar can be finalized
-        data = np.ma.masked_where(mask, X)
-        mesh = self.ax.pcolormesh(data, cmap=self.colormap, vmin=-1, vmax=1)
+        data = np.ma.masked_where(mask, R)
+        mesh = self.ax.pcolormesh(data, cmap=self.colormap, vmin=   -1, vmax=1)
 
         # Set the Axis limits
         self.ax.set(
@@ -468,17 +455,5 @@ class Rank2D(RankDBase):
         # Reverse the rows to get the lower left triangle
         self.ax.invert_yaxis()
 
-    def finalize(self, **kwargs):
-        """
-        Finalize executes any subclass-specific axes finalization steps.
-        The user calls poof and poof calls finalize.
-
-        Parameters
-        ----------
-        kwargs: dict
-            generic keyword arguments
-
-        """
-        super(Rank2D, self).finalize(**kwargs)
         self.ax.set_xticklabels(self.features_, rotation=90, ha='left')
         self.ax.set_yticklabels(self.features_, va='top')
