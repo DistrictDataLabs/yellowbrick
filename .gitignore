@@ -124,6 +124,5 @@ fabric.properties
 
 .idea
 
-
 # VisualTestCase Outputs
 /tests/actual_images/*

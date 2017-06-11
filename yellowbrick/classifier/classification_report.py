@@ -25,7 +25,6 @@ import matplotlib.pyplot as plt
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import precision_recall_fscore_support
 
-from ..utils import get_model_name
 from ..style import find_text_color
 from ..style.palettes import color_sequence
 from .base import ClassificationScoreVisualizer
@@ -70,33 +69,11 @@ class ClassificationReport(ClassificationScoreVisualizer):
 
     """
     def __init__(self, model, ax=None, classes=None, **kwargs):
-
-        super(ClassificationReport, self).__init__(model, ax=ax, **kwargs)
-
-        ## hoisted to ScoreVisualizer base class
-        self.estimator = model
-        self.name = get_model_name(self.estimator)
+        super(ClassificationReport, self).__init__(
+            model, ax=ax, classes=classes, **kwargs
+        )
 
         self.cmap = color_sequence(kwargs.pop('cmap', 'YlOrRd'))
-        self.classes_ = classes
-
-    def fit(self, X, y=None, **kwargs):
-        """
-        Parameters
-        ----------
-
-        X : ndarray or DataFrame of shape n x m
-            A matrix of n instances with m features
-
-        y : ndarray or Series of length n
-            An array or series of target or class values
-
-        kwargs: keyword arguments passed to Scikit-Learn API.
-        """
-        super(ClassificationReport, self).fit(X, y, **kwargs)
-        if self.classes_ is None:
-            self.classes_ = self.estimator.classes_
-        return self
 
     def score(self, X, y=None, **kwargs):
         """

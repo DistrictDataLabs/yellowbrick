@@ -20,10 +20,8 @@ Class balance visualizer for showing per-class support.
 ##########################################################################
 
 import numpy as np
-import matplotlib.pyplot as plt
 
 from .base import ClassificationScoreVisualizer
-from ..style.palettes import color_palette
 
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import precision_recall_fscore_support
@@ -57,39 +55,11 @@ class ClassBalance(ClassificationScoreVisualizer):
         Keyword arguments passed to the super class. Here, used
         to colorize the bars in the histogram.
 
+    Notes
+    -----
     These parameters can be influenced later on in the visualization
     process, but can and should be set as early as possible.
     """
-    def __init__(self, model, ax=None, classes=None, **kwargs):
-
-        super(ClassBalance, self).__init__(model, ax=ax, **kwargs)
-
-        self.colors    = color_palette(kwargs.pop('colors', None))
-        self.classes_  = classes
-
-    def fit(self, X, y=None, **kwargs):
-        """
-        Parameters
-        ----------
-
-        X : ndarray or DataFrame of shape n x m
-            A matrix of n instances with m features
-
-        y : ndarray or Series of length n
-            An array or series of target or class values
-
-        kwargs: keyword arguments passed to Scikit-Learn API.
-
-        Returns
-        -------
-        self : instance
-            Returns the instance of the classification score visualizer
-
-        """
-        super(ClassBalance, self).fit(X, y, **kwargs)
-        if self.classes_ is None:
-            self.classes_ = self.estimator.classes_
-        return self
 
     def score(self, X, y=None, **kwargs):
         """
@@ -148,8 +118,8 @@ class ClassBalance(ClassificationScoreVisualizer):
         self.set_title('Class Balance for {}'.format(self.name))
 
         # Set the x ticks with the class names
-        # TODO: change to the self.ax method rather than plt.xticks
-        plt.xticks(np.arange(len(self.support)), self.support.keys())
+        self.ax.set_xticks(np.arange(len(self.support)))
+        self.ax.set_xticklabels(self.support.keys())
 
         # Compute the ceiling for the y limit
         cmax, cmin = max(self.support.values()), min(self.support.values())
