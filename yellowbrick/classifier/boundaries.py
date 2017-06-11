@@ -37,14 +37,15 @@ def decisionviz(model,
                 show_scatter=True,
                 step_size=0.0025,
                 markers=None,
-                scatter_alpha=0.6,
+                pcolormesh_alpha=0.8,
+                scatter_alpha=1.0,
                 title=None,
                 **kwargs):
     """DecisionBoundariesVisualizer is a bivariate data visualization algorithm
         that plots the decision boundaries of each class.
 
     This helper function is a quick wrapper to utilize the
-    DecisionBoundariesVisualizers (Transformer) for one-off analysis.
+    DecisionBoundariesVisualizers for one-off analysis.
 
     Parameters
     ----------
@@ -84,7 +85,10 @@ def decisionviz(model,
         markers : iterable of strings, default: ,od*vh+
             Matplotlib style markers for points on the scatter plot points
 
-        scatter_alpha : float, default: 0.6
+        pcolormesh_alpha : float, default: 0.8
+            Sets the alpha transparency for the meshgrid of model boundaries
+
+        scatter_alpha : float, default: 1.0
             Sets the alpha transparency for the scatter plot points
 
         title : string, default: stringified feature_one and feature_two
@@ -101,14 +105,15 @@ def decisionviz(model,
     visualizer = DecisionBoundariesVisualizer(model,
                     X,
                     y,
-                    colors=None,
-                    classes=None,
-                    features=None,
-                    show_scatter=True,
-                    step_size=0.0025,
-                    markers=None,
-                    scatter_alpha=0.6,
-                    title=None,
+                    colors=colors,
+                    classes=classes,
+                    features=features,
+                    show_scatter=show_scatter,
+                    step_size=step_size,
+                    markers=markers,
+                    pcolormesh_alpha=pcolormesh_alpha,
+                    scatter_alpha=scatter_alpha,
+                    title=title,
                     **kwargs)
 
     # Fit, draw and poof the visualizer
@@ -165,7 +170,10 @@ class DecisionBoundariesVisualizer(ModelVisualizer):
         markers : iterable of strings, default: ,od*vh+
             Matplotlib style markers for points on the scatter plot points
 
-        scatter_alpha : float, default: 0.6
+        pcolormesh_alpha : float, default: 0.8
+            Sets the alpha transparency for the meshgrid of model boundaries
+
+        scatter_alpha : float, default: 1.0
             Sets the alpha transparency for the scatter plot points
 
         title : string, default: stringified feature_one and feature_two
@@ -188,7 +196,8 @@ class DecisionBoundariesVisualizer(ModelVisualizer):
                  show_scatter=True,
                  step_size=0.0025,
                  markers=None,
-                 scatter_alpha=0.6,
+                 pcolormesh_alpha=0.8,
+                 scatter_alpha=1.0,
                  title=None,
                  **kwargs):
         """
@@ -208,6 +217,7 @@ class DecisionBoundariesVisualizer(ModelVisualizer):
         self.step_size = step_size
         self.markers = itertools.cycle(
             kwargs.pop('markers', (',', 'o', 'd', '*', 'v', 'h', '+')))
+        self.pcolormesh_alpha = pcolormesh_alpha
         self.scatter_alpha = scatter_alpha
         self.title = title
 
@@ -356,6 +366,7 @@ class DecisionBoundariesVisualizer(ModelVisualizer):
             self.xx,
             self.yy,
             self.Z_shape,
+            alpha=self.pcolormesh_alpha,
             cmap=ListedColormap(colors.values()))
 
         # Create a data structure to hold the scatter plot representations
