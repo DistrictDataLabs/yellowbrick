@@ -17,7 +17,10 @@ Ensure that the Threshold visualizations work.
 ##########################################################################
 import unittest
 import numpy as np
-import pandas as pd
+try:
+    import pandas as pd
+except ImportError:
+    pd = None
 
 from tests.base import VisualTestCase
 from tests.dataset import DatasetMixin
@@ -88,6 +91,7 @@ class ThresholdVisualizerTest(VisualTestCase, DatasetMixin):
 
         self.assert_images_similar(visualizer)
 
+    @unittest.skipUnless(pd is not None, "Pandas is not installed, could not run test.")
     def test_threshold_viz_read_data(self):
         """
         Test ThresholdVisualizer on the real, occupancy data set with pandas
