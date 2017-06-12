@@ -243,7 +243,7 @@ class ThresholdVisualizer(ModelVisualizer):
             color_values = get_color_cycle()
 
         # unpack first three colors for visualization
-        recall_color, precision_color, queue_rate_color, *_ = color_values
+        recall_color, precision_color, queue_rate_color = color_values[:3]
 
         if self.ax is None:
             self.ax = plt.gca(xlim=[-1, 1], ylim=[-1, 1])
