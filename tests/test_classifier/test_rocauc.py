@@ -167,7 +167,7 @@ class ROCAUCTests(VisualTestCase, DatasetMixin):
         data = load_breast_cancer()
         model = DecisionTreeClassifier()
 
-        # TODO: impage comparison of the quick method 
+        # TODO: impage comparison of the quick method
         ax = roc_auc(model, data.data, data.target)
 
     def test_rocauc_no_micro(self):
