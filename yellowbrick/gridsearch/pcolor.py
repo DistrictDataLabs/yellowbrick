@@ -187,7 +187,8 @@ class GridSearchColorPlot(GridSearchVisualizer):
 
     def __init__(self, model, param_1, param_2, colormap='RdBu_r', ax=None,
                  **kwargs):
-        super(GridSearchColorPlot, self).__init__(model, ax=ax, **kwargs)
+        # super(GridSearchColorPlot, self).__init__(model, ax=ax, **kwargs)
+        super().__init__(model, ax=ax, **kwargs)
         self.param_1 = param_1
         self.param_2 = param_2
         self.colormap = colormap
@@ -220,3 +221,5 @@ class GridSearchColorPlot(GridSearchVisualizer):
 
     def finalize(self):
         self.set_title("Grid Search Scores")
+        self.ax.set_xlabel(self.param_1)
+        self.ax.set_ylabel(self.param_2)
