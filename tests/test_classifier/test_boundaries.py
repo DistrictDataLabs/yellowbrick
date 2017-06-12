@@ -23,8 +23,13 @@ except ImportError:
 
 from collections import OrderedDict
 import numpy as np
-import pandas as pd
 
+try:
+    import pandas as pd
+except ImportError:
+    pd = None
+
+import unittest
 from tests.base import VisualTestCase
 from yellowbrick.classifier import *
 from yellowbrick.exceptions import YellowbrickTypeError
@@ -305,7 +310,7 @@ class DecisionBoundariesVisualizerTest(VisualTestCase):
         visualizer.fit_draw_poof(X, y)
         self.assertEquals(visualizer.features_, [1, 2])
 
-
+    @unittest.skipUnless(pd is not None, "Pandas is not installed, could not run test.")
     def test_real_data_set_viz(self):
         model = naive_bayes.MultinomialNB()
 
@@ -319,6 +324,7 @@ class DecisionBoundariesVisualizerTest(VisualTestCase):
         visualizer.fit_draw_poof(X, y)
         self.assert_images_similar(visualizer)
 
+    @unittest.skipUnless(pd is not None, "Pandas is not installed, could not run test.")
     def test_quick_method(self):
         model = naive_bayes.MultinomialNB()
 
