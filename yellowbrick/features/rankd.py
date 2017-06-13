@@ -32,7 +32,7 @@ from yellowbrick.style.colors import resolve_colors, get_color_cycle
 ##########################################################################
 
 def rank1d(X, y=None, ax=None, algorithm='shapiro', features=None,
-           colormap='RdBu_r', **kwargs):
+           orientation='h', show_feature_names=True, **kwargs):
     """Scores each feature with the algorithm and ranks them in a bar plot.
 
     This helper function is a quick wrapper to utilize the Rank1D Visualizer
@@ -53,14 +53,16 @@ def rank1d(X, y=None, ax=None, algorithm='shapiro', features=None,
         The ranking algorithm to use, default is 'Shapiro-Wilk.
 
     features : list
-        a list of feature names to use
+        A list of feature names to use.
         If a DataFrame is passed to fit and features is None, feature
         names are selected as the columns of the DataFrame.
 
-    colormap : string or cmap
-        optional string or matplotlib cmap to colorize lines
-        Use either color to colorize the lines on a per class basis or
-        colormap to color them on a continuous scale.
+    orientation : 'h' or 'v'
+        Specifies a horizontal or vertical bar chart.
+
+    show_feature_names : boolean, default: True
+        If True, the feature names are used to label the axis ticks in the
+        plot.
 
     Returns
     -------
@@ -69,7 +71,8 @@ def rank1d(X, y=None, ax=None, algorithm='shapiro', features=None,
 
     """
     # Instantiate the visualizer
-    visualizer = Rank1D(ax, algorithm, features, colormap, **kwargs)
+    visualizer = Rank1D(ax, algorithm, features, orientation,
+                        show_feature_names, **kwargs)
 
     # Fit and transform the visualizer (calls draw)
     visualizer.fit(X, y, **kwargs)
@@ -79,7 +82,7 @@ def rank1d(X, y=None, ax=None, algorithm='shapiro', features=None,
     return visualizer.ax
 
 def rank2d(X, y=None, ax=None, algorithm='pearson', features=None,
-           colormap='RdBu_r', **kwargs):
+           show_feature_names=True, colormap='RdBu_r', **kwargs):
     """Displays pairwise comparisons of features with the algorithm and ranks
     them in a lower-left triangle heatmap plot.
 
@@ -101,9 +104,13 @@ def rank2d(X, y=None, ax=None, algorithm='pearson', features=None,
         the ranking algorithm to use, default is Pearson correlation.
 
     features : list
-        a list of feature names to use
+        A list of feature names to use.
         If a DataFrame is passed to fit and features is None, feature
         names are selected as the columns of the DataFrame.
+
+    show_feature_names : boolean, default: True
+        If True, the feature names are used to label the axis ticks in the
+        plot.
 
     colormap : string or cmap
         optional string or matplotlib cmap to colorize lines
@@ -117,7 +124,8 @@ def rank2d(X, y=None, ax=None, algorithm='pearson', features=None,
 
     """
     # Instantiate the visualizer
-    visualizer = Rank2D(ax, algorithm, features, colormap, **kwargs)
+    visualizer = Rank2D(ax, algorithm, features, colormap, show_feature_names,
+                        **kwargs)
 
     # Fit and transform the visualizer (calls draw)
     visualizer.fit(X, y, **kwargs)
@@ -145,18 +153,24 @@ class RankDBase(FeatureVisualizer):
         The ranking algorithm to use; options and defaults vary by subclass
 
     features : list
-        a list of feature names to use
+        A list of feature names to use.
         If a DataFrame is passed to fit and features is None, feature
         names are selected as the columns of the DataFrame.
 
-    colormap : string or cmap, default: 'RdBu_r'
-        optional string or matplotlib cmap to colorize lines
-        Use either color to colorize the lines on a per class basis or
-        colormap to color them on a continuous scale.
+    show_feature_names : boolean, default: True
+        If True, the feature names are used to label the axis ticks in the
+        plot.
 
     kwargs : dict
         Keyword arguments that are passed to the base class and may influence
         the visualization as defined in other Visualizers.
+
+    Attributes
+    ----------
+    ranks_ : ndarray
+        R is a n dimensional, symmetric array of rank scores, where n is the
+        number of features. E.g. for 1D ranking, R is (n,) and for 2D ranking
+        R is (n,n) and so forth.
 
     Examples
     --------
@@ -172,8 +186,10 @@ class RankDBase(FeatureVisualizer):
     process, but can and should be set as early as possible.
     """
 
-    def __init__(self, ax=None, algorithm='shapiro', features=None,
-                 colormap='RdBu_r', **kwargs):
+    ranking_methods = {}
+
+    def __init__(self, ax=None, algorithm=None, features=None,
+                 show_feature_names=True, **kwargs):
         """
         Initialize the class with the options required to rank and
         order features as well as visualize the result.
@@ -181,11 +197,10 @@ class RankDBase(FeatureVisualizer):
         super(RankDBase, self).__init__(ax=ax, **kwargs)
 
         # Data Parameters
-        self.ranking_  = algorithm
+        self.ranking_ = algorithm
         self.features_ = features
 
-        # Visual Parameters
-        self.colormap = colormap
+        self.show_feature_names_ = show_feature_names
 
     def fit(self, X, y=None, **kwargs):
         """
@@ -240,12 +255,14 @@ class RankDBase(FeatureVisualizer):
 
         Returns
         -------
-        X' : ndarray
-            The transformed matrix, X'
+        X : ndarray
+            Typically a transformed matrix, X' is returned. However, this
+            method performs no transformation on the original data, instead
+            rsimply anking the features that are in the input data and returns
+            the original data, unmodified.
         """
-        # Rank and draw the input matrix
-        R = self.rank(X)
-        self.draw(R, **kwargs)
+        self.ranks_ = self.rank(X)
+        self.draw(**kwargs)
 
         # Return the X matrix, unchanged
         return X
@@ -265,7 +282,9 @@ class RankDBase(FeatureVisualizer):
         Returns
         -------
         R : ndarray
-            The mxm ranking matrix of the variables
+            R is a n dimensional, symmetric array where n is the number of
+            features. E.g. for 1D ranking, R is (n,) and for 2D ranking R is
+            (n,n) and so forth.
         """
         algorithm = algorithm or self.ranking_
         algorithm = algorithm.lower()
@@ -320,18 +339,26 @@ class Rank1D(RankDBase):
         The ranking algorithm to use, default is 'Shapiro-Wilk.
 
     features : list
-        a list of feature names to use
+        A list of feature names to use.
         If a DataFrame is passed to fit and features is None, feature
         names are selected as the columns of the DataFrame.
 
-    colormap : string or cmap, default: 'RdBu_r'
-        optional string or matplotlib cmap to colorize lines
-        Use either color to colorize the lines on a per class basis or
-        colormap to color them on a continuous scale.
+    orientation : 'h' or 'v'
+        Specifies a horizontal or vertical bar chart.
+
+    show_feature_names : boolean, default: True
+        If True, the feature names are used to label the x and y ticks in the
+        plot.
 
     kwargs : dict
         Keyword arguments that are passed to the base class and may influence
         the visualization as defined in other Visualizers.
+
+    Attributes
+    ----------
+    ranks_ : ndarray
+        R is an array of rank scores with shape (n,), where n is the
+        number of features. It is computed during `fit`.
 
     Examples
     --------
@@ -341,27 +368,48 @@ class Rank1D(RankDBase):
     >>> visualizer.transform(X)
     >>> visualizer.poof()
     """
+
     ranking_methods = {
         'shapiro': lambda X: np.array([shapiro(x)[0] for x in X.T]),
     }
 
     def __init__(self, ax=None, algorithm='shapiro', features=None,
-                 colormap='RdBu_r', **kwargs):
+                 orientation='h', show_feature_names=True, **kwargs):
         """
         Initialize the class with the options required to rank and
         order features as well as visualize the result.
         """
-        super(Rank1D, self).__init__(ax=None, algorithm=algorithm, features=features,
-                         colormap=colormap, **kwargs)
+        super(Rank1D, self).__init__(
+            ax=None, algorithm=algorithm, features=features,
+            show_feature_names=show_feature_names, **kwargs
+        )
+        self.orientation_ = orientation
 
-    def draw(self, R, **kwargs):
+    def draw(self, **kwargs):
         """
         Draws the heatmap of the ranking matrix of variables.
         """
-        self.ax.bar(np.arange(len(R)), R, color=self.colormap[0])
-        self.ax.set_xticks(np.arange(len(R)))
-        self.ax.xaxis.grid(False)
-        self.ax.set_xticklabels(self.features_, rotation=90, ha='left')
+        if self.orientation_ == 'h':
+            self.ax.barh(np.arange(len(self.ranks_)), self.ranks_, color='b')
+            self.ax.set_yticks(np.arange(len(self.ranks_)))
+            if self.show_feature_names_:
+                self.ax.set_yticklabels(self.features_)
+            else:
+                self.ax.set_yticklabels([])
+            self.ax.invert_yaxis()
+            self.ax.yaxis.grid(False)
+        elif self.orientation_ == 'v':
+            self.ax.bar(np.arange(len(self.ranks_)), self.ranks_, color='b')
+            self.ax.set_xticks(np.arange(len(self.ranks_)))
+            if self.show_feature_names_:
+                self.ax.set_xticklabels(self.features_, rotation=90)
+            else:
+                self.ax.set_xticklabels([])
+            self.ax.xaxis.grid(False)
+        else:
+            raise YellowbrickValueError(
+                "Orientation must be 'h' or 'v'"
+            )
 
 
 ##########################################################################
@@ -384,7 +432,7 @@ class Rank2D(RankDBase):
         The ranking algorithm to use, default is Pearson correlation.
 
     features : list
-        a list of feature names to use
+        A list of feature names to use.
         If a DataFrame is passed to fit and features is None, feature
         names are selected as the columns of the DataFrame.
 
@@ -393,9 +441,19 @@ class Rank2D(RankDBase):
         Use either color to colorize the lines on a per class basis or
         colormap to color them on a continuous scale.
 
+    show_feature_names : boolean, default: True
+        If True, the feature names are used to label the axis ticks in the
+        plot.
+
     kwargs : dict
         Keyword arguments that are passed to the base class and may influence
         the visualization as defined in other Visualizers.
+
+    Attributes
+    ----------
+    ranks_ : ndarray
+        R is an array of rank scores with shape (n,n), where n is the
+        number of features. It is computed during `fit`.
 
     Examples
     --------
@@ -417,31 +475,34 @@ class Rank2D(RankDBase):
     }
 
     def __init__(self, ax=None, algorithm='pearson', features=None,
-                 colormap='RdBu_r', **kwargs):
+                 colormap='RdBu_r', show_feature_names=True, **kwargs):
         """
         Initialize the class with the options required to rank and
         order features as well as visualize the result.
         """
-        super(Rank2D, self).__init__(ax=None, algorithm=algorithm, features=features,
-                         colormap=colormap, **kwargs)
+        super(Rank2D, self).__init__(
+            ax=None, algorithm=algorithm, features=features,
+            show_feature_names=show_feature_names, **kwargs
+        )
+        self.colormap=colormap
 
-    def draw(self, R, **kwargs):
+    def draw(self, **kwargs):
         """
         Draws the heatmap of the ranking matrix of variables.
         """
         # Set the axes aspect to be equal
         self.ax.set_aspect("equal")
-        self.ax.set_xticks(np.arange(len(R)))
-        self.ax.set_yticks(np.arange(len(R)))
+        self.ax.set_xticks(np.arange(len(self.ranks_)) + 0.5)
+        self.ax.set_yticks(np.arange(len(self.ranks_)) + 0.5)
 
         # Generate a mask for the upper triangle
-        mask = np.zeros_like(R, dtype=np.bool)
+        mask = np.zeros_like(self.ranks_, dtype=np.bool)
         mask[np.triu_indices_from(mask)] = True
 
         # Draw the heatmap
         # TODO: Move mesh to a property so the colorbar can be finalized
-        data = np.ma.masked_where(mask, R)
-        mesh = self.ax.pcolormesh(data, cmap=self.colormap, vmin=   -1, vmax=1)
+        data = np.ma.masked_where(mask, self.ranks_)
+        mesh = self.ax.pcolormesh(data, cmap=self.colormap, vmin=-1, vmax=1)
 
         # Set the Axis limits
         self.ax.set(
@@ -455,5 +516,9 @@ class Rank2D(RankDBase):
         # Reverse the rows to get the lower left triangle
         self.ax.invert_yaxis()
 
-        self.ax.set_xticklabels(self.features_, rotation=90, ha='left')
-        self.ax.set_yticklabels(self.features_, va='top')
+        if self.show_feature_names_:
+            self.ax.set_xticklabels(self.features_, rotation=90)
+            self.ax.set_yticklabels(self.features_)
+        else:
+            self.ax.set_xticklabels([])
+            self.ax.set_yticklabels([])
