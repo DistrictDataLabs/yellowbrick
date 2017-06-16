@@ -16,7 +16,7 @@ from matplotlib.patches import Patch
 
 from yellowbrick.exceptions import YellowbrickTypeError
 from yellowbrick.exceptions import YellowbrickValueError
-from yellowbrick.base import ModelVisualizer
+from yellowbrick.classifier.base import ClassificationScoreVisualizer
 from yellowbrick.utils import get_model_name
 from yellowbrick.style.colors import resolve_colors
 from yellowbrick.utils import is_dataframe, is_structured_array, has_ndarray_int_columns
@@ -126,7 +126,7 @@ def decisionviz(model,
 # Static ScatterVisualizer Visualizer
 ##########################################################################
 
-class DecisionBoundariesVisualizer(ModelVisualizer):
+class DecisionBoundariesVisualizer(ClassificationScoreVisualizer):
     """
     DecisionBoundariesVisualizer is a bivariate data visualization algorithm
     that plots the decision boundaries of each class.
@@ -190,26 +190,23 @@ class DecisionBoundariesVisualizer(ModelVisualizer):
                  model,
                  x=None,
                  y=None,
-                 colors=None,
-                 classes=None,
                  features=None,
                  show_scatter=True,
                  step_size=0.0025,
                  markers=None,
                  pcolormesh_alpha=0.8,
                  scatter_alpha=1.0,
-                 title=None,
+                #  title=None,
+                 *args,
                  **kwargs):
         """
         Pass in a unfitted model to generate a decision boundaries
         visualization.
         """
-        super(DecisionBoundariesVisualizer, self).__init__(self)
+        super(DecisionBoundariesVisualizer, self).__init__(model, *args, **kwargs)
 
         self.x = x
         self.y = y
-        self.colors = colors if colors is not None else PALETTES['set1']
-        self.classes_ = classes
         self.features_ = features
         self.estimator = model
         self.name = get_model_name(self.estimator)
@@ -219,7 +216,6 @@ class DecisionBoundariesVisualizer(ModelVisualizer):
             kwargs.pop('markers', (',', 'o', 'd', '*', 'v', 'h', '+')))
         self.pcolormesh_alpha = pcolormesh_alpha
         self.scatter_alpha = scatter_alpha
-        self.title = title
 
         # these are set later
         self.Z = None

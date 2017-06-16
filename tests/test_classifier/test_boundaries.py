@@ -83,7 +83,6 @@ class DecisionBoundariesVisualizerTest(VisualTestCase):
         model = neighbors.KNeighborsClassifier(3)
         viz = DecisionBoundariesVisualizer(model)
 
-        self.assertIn("#", viz.colors[0])  # default color palette
         self.assertEquals(viz.step_size, 0.0025)
         self.assertEqual(viz.name, 'KNeighborsClassifier')
         self.assertEqual(viz.estimator, model)
