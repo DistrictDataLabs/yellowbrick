@@ -7,7 +7,7 @@
 # Copyright (C) 2017 District Data Labs
 # For license information, see LICENSE.txt
 #
-# ID: test_knn.py [] nathan.danielsen@gmail.com $
+# ID: test_boundaries.py [] nathan.danielsen@gmail.com $
 """
 Ensure that the Decision Boundary visualizations work.
 """
@@ -41,7 +41,7 @@ from sklearn import naive_bayes
 ##########################################################################
 # Data
 ##########################################################################
-# yapf: disable
+
 X = np.array([
     [2.318, 2.727, 4.260, 7.212, 4.792, ],
     [2.315, 2.726, 4.295, 7.140, 4.783, ],
@@ -60,7 +60,7 @@ X = np.array([
 y = np.array([1, 2, 1, 2, 1, 0, 0, 1, 3, 1, 3, 2])
 
 X_two_cols = X[:, :2]
-# yapf: enable
+
 ##########################################################################
 # Residuals Plots test case
 ##########################################################################
@@ -70,8 +70,7 @@ class DecisionBoundariesVisualizerTest(VisualTestCase):
     """Testcases for the DecisionBoundariesVisualizers """
 
     def test_decision_bounardies(self):
-        """Assert no errors occur during KnnDecisionBoundariesVisualizer
-        integration
+        """Assert no errors occur during KnnDecisionBoundariesVisualizer integration
         """
         model = neighbors.KNeighborsClassifier(3)
         viz = DecisionViz(model)
