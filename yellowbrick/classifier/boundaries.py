@@ -315,13 +315,11 @@ class DecisionBoundariesVisualizer(ClassificationScoreVisualizer):
 
         # Plot the decision boundary. For that, we will assign a color to each
         # point in the mesh [x_min, x_max]x[y_min, y_max].
-        x_min, x_max = X[:, 0].min() - 1, X[:, 0].max() + 1
-        y_min, y_max = X[:, 1].min() - 1, X[:, 1].max() + 1
+        x_min, x_max = X[:, 0].min() - (X[:, 0].min() * .01), X[:, 0].max() + (X[:, 0].max() * .01)
+        y_min, y_max = X[:, 1].min() - (X[:, 1].min() * .01), X[:, 1].max() + (X[:, 1].max() * .01)
 
-        # Create the axes if they don't exist
-        if self.ax is None:
-            self.ax = plt.gca(xlim=[x_min, x_max], ylim=[y_min, y_max])
-
+        self.ax.set_xlim([x_min, x_max])
+        self.ax.set_ylim([y_min, y_max])
         # set the step increment for drawing the boundary graph
         x_step = (x_max - x_min) * self.step_size
         y_step = (y_max - y_min) * self.step_size
@@ -345,9 +343,8 @@ class DecisionBoundariesVisualizer(ClassificationScoreVisualizer):
         # features will be properly handled
         X = self._select_feature_columns(X)
 
-        num_colors = len(self.classes_) * 2
         color_cycle = iter(
-            resolve_colors(color=self.colors, num_colors=num_colors))
+            resolve_colors(color=self.colors, num_colors=len(self.classes_)))
         colors = OrderedDict([(c, next(color_cycle))
                               for c in self.classes_.keys()])
 
@@ -399,8 +396,6 @@ class DecisionBoundariesVisualizer(ClassificationScoreVisualizer):
             ]
             self.ax.legend(handles=labels)
 
-        self.ax.axis('auto')
-
     def finalize(self, **kwargs):
         """
         Finalize executes any subclass-specific axes finalization steps.
@@ -413,11 +408,6 @@ class DecisionBoundariesVisualizer(ClassificationScoreVisualizer):
         """
         # Divide out the two features
         feature_one, feature_two = self.features_
-
-        if self.title is None:
-
-            self.title = 'Decisions Boundaries: {feature_one} vs {feature_two}'.format(
-                **locals())
 
         self.set_title(self.title)
         # Add the legend

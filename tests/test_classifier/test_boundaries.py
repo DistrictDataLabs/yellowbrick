@@ -219,13 +219,11 @@ class DecisionBoundariesVisualizerTest(VisualTestCase):
         fitted_viz.ax.pcolormesh = mock.MagicMock()
         fitted_viz.ax.scatter = mock.MagicMock()
         fitted_viz.ax.legend = mock.MagicMock()
-        fitted_viz.ax.axis = mock.MagicMock()
 
         fitted_viz.draw(X_two_cols, y=y)
         self.assertEquals(len(fitted_viz.ax.pcolormesh.mock_calls), 1)
         self.assertEquals(len(fitted_viz.ax.scatter.mock_calls), 0)
         self.assertEquals(len(fitted_viz.ax.legend.mock_calls), 1)
-        fitted_viz.ax.axis.assert_called_once_with('auto')
 
     def test_finalize(self):
         model = neighbors.KNeighborsClassifier(3)
@@ -235,15 +233,12 @@ class DecisionBoundariesVisualizerTest(VisualTestCase):
         fitted_viz.draw(X_two_cols, y=y)
 
         fitted_viz.ax = mock.Mock()
-        fitted_viz.ax.set_title = mock.MagicMock()
         fitted_viz.ax.legend = mock.MagicMock()
         fitted_viz.ax.set_xlabel = mock.MagicMock()
         fitted_viz.ax.set_ylabel = mock.MagicMock()
 
         fitted_viz.poof()
 
-        fitted_viz.ax.set_title.assert_called_once_with(
-            'Decisions Boundaries: one vs two')
         fitted_viz.ax.legend.assert_called_once_with(loc='best', frameon=True)
         fitted_viz.ax.set_xlabel.assert_called_once_with('one')
         fitted_viz.ax.set_ylabel.assert_called_once_with('two')
