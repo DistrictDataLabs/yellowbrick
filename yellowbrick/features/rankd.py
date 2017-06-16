@@ -27,12 +27,15 @@ from yellowbrick.exceptions import YellowbrickValueError
 from yellowbrick.style.colors import resolve_colors, get_color_cycle
 
 
+__all__ = ["rank1d", "rank2d", "Rank1D", "Rank2D"]
+
+
 ##########################################################################
 ## Quick Methods
 ##########################################################################
 
 def rank1d(X, y=None, ax=None, algorithm='shapiro', features=None,
-           orientation='h', show_feature_names=True, **kwargs):
+           orient='h', show_feature_names=True, **kwargs):
     """Scores each feature with the algorithm and ranks them in a bar plot.
 
     This helper function is a quick wrapper to utilize the Rank1D Visualizer
@@ -57,7 +60,7 @@ def rank1d(X, y=None, ax=None, algorithm='shapiro', features=None,
         If a DataFrame is passed to fit and features is None, feature
         names are selected as the columns of the DataFrame.
 
-    orientation : 'h' or 'v'
+    orient : 'h' or 'v'
         Specifies a horizontal or vertical bar chart.
 
     show_feature_names : boolean, default: True
@@ -71,8 +74,8 @@ def rank1d(X, y=None, ax=None, algorithm='shapiro', features=None,
 
     """
     # Instantiate the visualizer
-    visualizer = Rank1D(ax, algorithm, features, orientation,
-                        show_feature_names, **kwargs)
+    visualizer = Rank1D(ax, algorithm, features, orient, show_feature_names,
+                        **kwargs)
 
     # Fit and transform the visualizer (calls draw)
     visualizer.fit(X, y, **kwargs)
@@ -168,9 +171,9 @@ class RankDBase(FeatureVisualizer):
     Attributes
     ----------
     ranks_ : ndarray
-        R is a n dimensional, symmetric array of rank scores, where n is the
-        number of features. E.g. for 1D ranking, R is (n,) and for 2D ranking
-        R is (n,n) and so forth.
+        An n-dimensional, symmetric array of rank scores, where n is the
+        number of features. E.g. for 1D ranking, it is (n,), for a
+        2D ranking it is (n,n) and so forth.
 
     Examples
     --------
@@ -258,7 +261,7 @@ class RankDBase(FeatureVisualizer):
         X : ndarray
             Typically a transformed matrix, X' is returned. However, this
             method performs no transformation on the original data, instead
-            rsimply anking the features that are in the input data and returns
+            simply ranking the features that are in the input data and returns
             the original data, unmodified.
         """
         self.ranks_ = self.rank(X)
@@ -269,7 +272,7 @@ class RankDBase(FeatureVisualizer):
 
     def rank(self, X, algorithm=None):
         """
-        Returns the ranking of each pair of columns as an m by m matrix.
+        Returns the feature ranking.
 
         Parameters
         ----------
@@ -281,10 +284,10 @@ class RankDBase(FeatureVisualizer):
 
         Returns
         -------
-        R : ndarray
-            R is a n dimensional, symmetric array where n is the number of
-            features. E.g. for 1D ranking, R is (n,) and for 2D ranking R is
-            (n,n) and so forth.
+        ranks : ndarray
+            An n-dimensional, symmetric array of rank scores, where n is the
+            number of features. E.g. for 1D ranking, it is (n,), for a
+            2D ranking it is (n,n) and so forth.
         """
         algorithm = algorithm or self.ranking_
         algorithm = algorithm.lower()
@@ -325,9 +328,9 @@ class RankDBase(FeatureVisualizer):
 
 class Rank1D(RankDBase):
     """
-    Rank1D computes a score for each feature in the data set with
-    a specific metric or algorithm (e.g. takes the shapiro) then returns
-    them ranked as a bar plot.
+    Rank1D computes a score for each feature in the data set with a specific
+    metric or algorithm (e.g. Shapiro-Wilk) then returns the features ranked
+    as a bar plot.
 
     Parameters
     ----------
@@ -343,7 +346,7 @@ class Rank1D(RankDBase):
         If a DataFrame is passed to fit and features is None, feature
         names are selected as the columns of the DataFrame.
 
-    orientation : 'h' or 'v'
+    orient : 'h' or 'v'
         Specifies a horizontal or vertical bar chart.
 
     show_feature_names : boolean, default: True
@@ -357,7 +360,7 @@ class Rank1D(RankDBase):
     Attributes
     ----------
     ranks_ : ndarray
-        R is an array of rank scores with shape (n,), where n is the
+        An array of rank scores with shape (n,), where n is the
         number of features. It is computed during `fit`.
 
     Examples
@@ -374,7 +377,7 @@ class Rank1D(RankDBase):
     }
 
     def __init__(self, ax=None, algorithm='shapiro', features=None,
-                 orientation='h', show_feature_names=True, **kwargs):
+                 orient='h', show_feature_names=True, **kwargs):
         """
         Initialize the class with the options required to rank and
         order features as well as visualize the result.
@@ -383,29 +386,43 @@ class Rank1D(RankDBase):
             ax=None, algorithm=algorithm, features=features,
             show_feature_names=show_feature_names, **kwargs
         )
-        self.orientation_ = orientation
+        self.orientation_ = orient
 
     def draw(self, **kwargs):
         """
-        Draws the heatmap of the ranking matrix of variables.
+        Draws the bar plot of the ranking array of features.
         """
         if self.orientation_ == 'h':
+            # Make the plot
             self.ax.barh(np.arange(len(self.ranks_)), self.ranks_, color='b')
+
+            # Add ticks and tick labels
             self.ax.set_yticks(np.arange(len(self.ranks_)))
             if self.show_feature_names_:
                 self.ax.set_yticklabels(self.features_)
             else:
                 self.ax.set_yticklabels([])
+
+            # Order the features from top to bottom on the y axis
             self.ax.invert_yaxis()
+
+            # Turn off y grid lines
             self.ax.yaxis.grid(False)
+
         elif self.orientation_ == 'v':
+            # Make the plot
             self.ax.bar(np.arange(len(self.ranks_)), self.ranks_, color='b')
+
+            # Add ticks and tick labels
             self.ax.set_xticks(np.arange(len(self.ranks_)))
             if self.show_feature_names_:
                 self.ax.set_xticklabels(self.features_, rotation=90)
             else:
                 self.ax.set_xticklabels([])
+
+            # Turn off x grid lines
             self.ax.xaxis.grid(False)
+
         else:
             raise YellowbrickValueError(
                 "Orientation must be 'h' or 'v'"
@@ -452,7 +469,7 @@ class Rank2D(RankDBase):
     Attributes
     ----------
     ranks_ : ndarray
-        R is an array of rank scores with shape (n,n), where n is the
+        An array of rank scores with shape (n,n), where n is the
         number of features. It is computed during `fit`.
 
     Examples
@@ -492,8 +509,6 @@ class Rank2D(RankDBase):
         """
         # Set the axes aspect to be equal
         self.ax.set_aspect("equal")
-        self.ax.set_xticks(np.arange(len(self.ranks_)) + 0.5)
-        self.ax.set_yticks(np.arange(len(self.ranks_)) + 0.5)
 
         # Generate a mask for the upper triangle
         mask = np.zeros_like(self.ranks_, dtype=np.bool)
@@ -516,6 +531,9 @@ class Rank2D(RankDBase):
         # Reverse the rows to get the lower left triangle
         self.ax.invert_yaxis()
 
+        # Add ticks and tick labels
+        self.ax.set_xticks(np.arange(len(self.ranks_)) + 0.5)
+        self.ax.set_yticks(np.arange(len(self.ranks_)) + 0.5)
         if self.show_feature_names_:
             self.ax.set_xticklabels(self.features_, rotation=90)
             self.ax.set_yticklabels(self.features_)
