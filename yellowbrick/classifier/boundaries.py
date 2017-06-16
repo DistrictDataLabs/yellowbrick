@@ -49,52 +49,49 @@ def decisionviz(model,
 
     Parameters
     ----------
-        model : the Scikit-Learn estimator, required
-            Should be an instance of a classifier, else the __init__ will
-            return an error.
+    model : the Scikit-Learn estimator, required
+        Should be an instance of a classifier, else the __init__ will
+        return an error.
 
-        x : matrix, required
-            The feature name that corresponds to a column name or index postion
-            in the matrix that will be plotted against the x-axis
+    x : matrix, required
+        The feature name that corresponds to a column name or index postion
+        in the matrix that will be plotted against the x-axis
 
-        y : array, required
-            The feature name that corresponds to a column name or index postion
-            in the matrix that will be plotted against the y-axis
+    y : array, required
+        The feature name that corresponds to a column name or index postion
+        in the matrix that will be plotted against the y-axis
 
-        colors : string or matplotlib cmap, default: yellowbrick palette 'set1'
-            Sets the color palette of the visualizer
+    classes : a list of class names for the legend, default: None
+        If classes is None and a y value is passed to fit then the classes
+        are selected from the target vector.
 
-        classes : a list of class names for the legend, default: None
-            If classes is None and a y value is passed to fit then the classes
-            are selected from the target vector.
+    features : list of strings, default: None
+        The names of the features or columns
 
-        features : list of strings, default: None
-            The names of the features or columns
+    show_scatter : boolean, default: True
+        If boolean is True, then a scatter plot with points will be drawn
+        on top of the decision boundary graph
 
-        show_scatter : boolean, default: True
-            If boolean is True, then a scatter plot with points will be drawn
-            on top of the decision boundary graph
+    step_size : float percentage, default: 0.0025
+        Determines the step size for creating the numpy meshgrid that will
+        later become the foundation of the decision boundary graph. The
+        default value of 0.0025 means that the step size for constructing
+        the meshgrid will be 0.25%% of differenes of the max and min of x
+        and y for each feature.
 
-        step_size : float percentage, default: 0.0025
-            Determines the step size for creating the numpy meshgrid that will
-            later become the foundation of the decision boundary graph. The
-            default value of 0.0025 means that the step size for constructing
-            the meshgrid will be 0.25%% of differenes of the max and min of x
-            and y for each feature.
+    markers : iterable of strings, default: ,od*vh+
+        Matplotlib style markers for points on the scatter plot points
 
-        markers : iterable of strings, default: ,od*vh+
-            Matplotlib style markers for points on the scatter plot points
+    pcolormesh_alpha : float, default: 0.8
+        Sets the alpha transparency for the meshgrid of model boundaries
 
-        pcolormesh_alpha : float, default: 0.8
-            Sets the alpha transparency for the meshgrid of model boundaries
+    scatter_alpha : float, default: 1.0
+        Sets the alpha transparency for the scatter plot points
 
-        scatter_alpha : float, default: 1.0
-            Sets the alpha transparency for the scatter plot points
+    title : string, default: stringified feature_one and feature_two
+        Sets the title of the visualization
 
-        title : string, default: stringified feature_one and feature_two
-            Sets the title of the visualization
-
-        kwargs : keyword arguments passed to the super class.
+    kwargs : keyword arguments passed to the super class.
 
     Returns
     -------
@@ -134,55 +131,52 @@ class DecisionBoundariesVisualizer(ClassificationScoreVisualizer):
     Parameters
     ----------
 
-        model : the Scikit-Learn estimator
-            Should be an instance of a classifier, else the __init__ will
-            return an error.
+    model : the Scikit-Learn estimator
+        Should be an instance of a classifier, else the __init__ will
+        return an error.
 
-        x : string, default: None
-            The feature name that corresponds to a column name or index postion
-            in the matrix that will be plotted against the x-axis
+    x : string, default: None
+        The feature name that corresponds to a column name or index postion
+        in the matrix that will be plotted against the x-axis
 
-        y : string, default: None
-            The feature name that corresponds to a column name or index postion
-            in the matrix that will be plotted against the y-axis
+    y : string, default: None
+        The feature name that corresponds to a column name or index postion
+        in the matrix that will be plotted against the y-axis
 
-        colors : string or matplotlib cmap, default: yellowbrick palette 'set1'
-            Sets the color palette of the visualizer
+    classes : a list of class names for the legend, default: None
+        If classes is None and a y value is passed to fit then the classes
+        are selected from the target vector.
 
-        classes : a list of class names for the legend, default: None
-            If classes is None and a y value is passed to fit then the classes
-            are selected from the target vector.
+    features : list of strings, default: None
+        The names of the features or columns
 
-        features : list of strings, default: None
-            The names of the features or columns
+    show_scatter : boolean, default: True
+        If boolean is True, then a scatter plot with points will be drawn
+        on top of the decision boundary graph
 
-        show_scatter : boolean, default: True
-            If boolean is True, then a scatter plot with points will be drawn
-            on top of the decision boundary graph
+    step_size : float percentage, default: 0.0025
+        Determines the step size for creating the numpy meshgrid that will
+        later become the foundation of the decision boundary graph. The
+        default value of 0.0025 means that the step size for constructing
+        the meshgrid will be 0.25%% of differenes of the max and min of x
+        and y for each feature.
 
-        step_size : float percentage, default: 0.0025
-            Determines the step size for creating the numpy meshgrid that will
-            later become the foundation of the decision boundary graph. The
-            default value of 0.0025 means that the step size for constructing
-            the meshgrid will be 0.25%% of differenes of the max and min of x
-            and y for each feature.
+    markers : iterable of strings, default: ,od*vh+
+        Matplotlib style markers for points on the scatter plot points
 
-        markers : iterable of strings, default: ,od*vh+
-            Matplotlib style markers for points on the scatter plot points
+    pcolormesh_alpha : float, default: 0.8
+        Sets the alpha transparency for the meshgrid of model boundaries
 
-        pcolormesh_alpha : float, default: 0.8
-            Sets the alpha transparency for the meshgrid of model boundaries
+    scatter_alpha : float, default: 1.0
+        Sets the alpha transparency for the scatter plot points
 
-        scatter_alpha : float, default: 1.0
-            Sets the alpha transparency for the scatter plot points
+    title : string, default: stringified feature_one and feature_two
+        Sets the title of the visualization
 
-        title : string, default: stringified feature_one and feature_two
-            Sets the title of the visualization
+    kwargs : keyword arguments passed to the super class.
 
-        kwargs : keyword arguments passed to the super class.
-
-        These parameters can be influenced later on in the visualization
-        process, but can and should be set as early as possible.
+    These parameters can be influenced later on in the visualization
+    process, but can and should be set as early as possible.
 
     """
 
@@ -209,7 +203,6 @@ class DecisionBoundariesVisualizer(ClassificationScoreVisualizer):
         self.y = y
         self.features_ = features
         self.estimator = model
-        self.name = get_model_name(self.estimator)
         self.show_scatter = show_scatter
         self.step_size = step_size
         self.markers = itertools.cycle(
