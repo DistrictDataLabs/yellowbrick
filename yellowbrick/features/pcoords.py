@@ -21,6 +21,8 @@ coordinates that optimize column order.
 
 import numpy as np
 import matplotlib.pyplot as plt
+from sklearn.preprocessing import (MinMaxScaler, MaxAbsScaler, Normalizer,
+                                   StandardScaler)
 
 from yellowbrick.utils import is_dataframe
 from yellowbrick.features.base import DataVisualizer
@@ -32,8 +34,8 @@ from yellowbrick.style.colors import resolve_colors, get_color_cycle
 ##########################################################################
 
 def parallel_coordinates(X, y, ax=None, features=None, classes=None,
-                         color=None, colormap=None, vlines=True,
-                         vlines_kwds=None, **kwargs):
+                         normalize=None, color=None, colormap=None,
+                         vlines=True, vlines_kwds=None, **kwargs):
     """Displays each feature as a vertical axis and each instance as a line.
 
     This helper function is a quick wrapper to utilize the ParallelCoordinates
@@ -56,6 +58,9 @@ def parallel_coordinates(X, y, ax=None, features=None, classes=None,
 
     classes : list of strings, default: None
         The names of the classes in the target
+
+    normalize : string or None, default: None
+        specifies which normalization method to use, if any
 
     color : list or tuple of colors, default: None
         Specify the colors for each individual class
@@ -80,66 +85,8 @@ def parallel_coordinates(X, y, ax=None, features=None, classes=None,
     """
     # Instantiate the visualizer
     visualizer = ParallelCoordinates(
-        ax, features, classes, color, colormap, vlines, vlines_kwds, **kwargs
-    )
-
-    # Fit and transform the visualizer (calls draw)
-    visualizer.fit(X, y, **kwargs)
-    visualizer.transform(X)
-
-    # Return the axes object on the visualizer
-    return visualizer.ax
-
-def normalized_parallel_coordinates(X, y, ax=None, features=None,
-                                    classes=None, color=None, colormap=None,
-                                    vlines=True, vlines_kwds=None, **kwargs):
-    """Displays each feature as a vertical axis and each instance as a line.
-
-    This helper function is a quick wrapper to utilize the
-    NormalizedParallelCoordinates Visualizer (Transformer) for one-off analysis.
-
-    Parameters
-    ----------
-
-    X : ndarray or DataFrame of shape n x m
-        A matrix of n instances with m features
-
-    y : ndarray or Series of length n
-        An array or series of target or class values
-
-    ax : matplotlib Axes, default: None
-        The axes to plot the figure on.
-
-    features : list of strings, default: None
-        The names of the features or columns
-
-    classes : list of strings, default: None
-        The names of the classes in the target
-
-    color : list or tuple of colors, default: None
-        Specify the colors for each individual class
-
-    colormap : string or matplotlib cmap, default: None
-        Sequential colormap for continuous target
-
-    vlines : bool, default: True
-        Display the vertical azis lines
-
-    vlines_kwds : dict, default: None
-        Keyword arguments to draw the vlines
-
-    kwargs : dict
-        Keyword arguments that are passed to the base class and may influence
-        the visualization as defined in other Visualizers.
-
-    Returns
-    -------
-    ax : matplotlib axes
-        Returns the axes that the parallel coordinates were drawn on.
-    """
-    # Instantiate the visualizer
-    visualizer = NormalizedParallelCoordinates(
-        ax, features, classes, color, colormap, vlines, vlines_kwds, **kwargs
+        ax, features, classes, normalize, color, colormap, vlines,
+        vlines_kwds, **kwargs
     )
 
     # Fit and transform the visualizer (calls draw)
@@ -177,6 +124,11 @@ class ParallelCoordinates(DataVisualizer):
         If classes is None and a y value is passed to fit then the classes
         are selected from the target vector.
 
+    normalize : string or None, default: None
+        specifies which normalization method to use, if any
+        Current supported options are 'minmax', 'maxabs', 'standard', 'l1',
+        and 'l2'.
+
     color : list or tuple, default: None
         optional list or tuple of colors to colorize lines
         Use either color to colorize the lines on a per class basis or
@@ -212,11 +164,21 @@ class ParallelCoordinates(DataVisualizer):
     process, but can and should be set as early as possible.
     """
 
-    def __init__(self, ax=None, features=None, classes=None, color=None,
-                 colormap=None, vlines=True, vlines_kwds=None, **kwargs):
+    normalizers = {
+        'minmax': MinMaxScaler(),
+        'maxabs': MaxAbsScaler(),
+        'standard': StandardScaler(),
+        'l1': Normalizer('l1'),
+        'l2': Normalizer('l2'),
+    }
+
+    def __init__(self, ax=None, features=None, classes=None, normalize=None,
+                 color=None, colormap=None, vlines=True, vlines_kwds=None,
+                 **kwargs):
         super(ParallelCoordinates, self).__init__(
             ax, features, classes, color, colormap, **kwargs
         )
+        self.normalize = normalize
 
         # Visual Parameters
         self.show_vlines = vlines
@@ -232,6 +194,15 @@ class ParallelCoordinates(DataVisualizer):
         # Convert from dataframe
         if is_dataframe(X):
             X = X.as_matrix()
+
+        # Normalize
+        if self.normalize is not None:
+            if self.normalize not in self.normalizers:
+                raise YellowbrickValueError(
+                    "'{}' is an unrecognized normalization method"
+                    .format(normalize)
+                )
+            X = self.normalizers[self.normalize].fit_transform(X)
 
         # Get the shape of the data
         nrows, ncols = X.shape
@@ -294,82 +265,3 @@ class ParallelCoordinates(DataVisualizer):
         # Set the legend and the grid
         self.ax.legend(loc='best')
         self.ax.grid()
-
-
-##########################################################################
-## Normalized Static Parallel Coordinates Visualizer
-##########################################################################
-
-class NormalizedParallelCoordinates(ParallelCoordinates):
-    """
-    Parallel coordinates displays each feature as a vertical axis spaced
-    evenly along the horizontal, and each instance as a line drawn between
-    each individual axis.
-
-    Parameters
-    ----------
-
-    ax : matplotlib Axes, default: None
-        The axis to plot the figure on. If None is passed in the current axes
-        will be used (or generated if required).
-
-    features : list, default: None
-        a list of feature names to use
-        If a DataFrame is passed to fit and features is None, feature
-        names are selected as the columns of the DataFrame.
-
-    classes : list, default: None
-        a list of class names for the legend
-        If classes is None and a y value is passed to fit then the classes
-        are selected from the target vector.
-
-    color : list or tuple, default: None
-        optional list or tuple of colors to colorize lines
-        Use either color to colorize the lines on a per class basis or
-        colormap to color them on a continuous scale.
-
-    colormap : string or cmap, default: None
-        optional string or matplotlib cmap to colorize lines
-        Use either color to colorize the lines on a per class basis or
-        colormap to color them on a continuous scale.
-
-    vlines : boolean, default: True
-        flag to determine vertical line display
-
-    vlines_kwds : dict, default: None
-        options to style or display the vertical lines, default: None
-
-    kwargs : dict
-        Keyword arguments that are passed to the base class and may influence
-        the visualization as defined in other Visualizers.
-
-    Examples
-    --------
-
-    >>> visualizer = ParallelCoordinates()
-    >>> visualizer.fit(X, y)
-    >>> visualizer.transform(X)
-    >>> visualizer.poof()
-
-    Notes
-    -----
-
-    These parameters can be influenced later on in the visualization
-    process, but can and should be set as early as possible.
-    """
-
-    def draw(self, X, y, **kwargs):
-        """
-        Called from the fit method, this method creates the parallel
-        coordinates canvas and draws each instance and vertical lines on it.
-        """
-        # Convert from dataframe
-        if is_dataframe(X):
-            X = X.as_matrix()
-
-        # Normalize
-        maxes = X.max(axis=0)
-        mins = X.min(axis=0)
-        X_normed = (X - mins) / (maxes - mins)
-
-        super(NormalizedParallelCoordinates, self).draw(X_normed, y, **kwargs)
