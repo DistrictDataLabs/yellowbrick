@@ -26,7 +26,7 @@ from sklearn.preprocessing import (MinMaxScaler, MaxAbsScaler, Normalizer,
 
 from yellowbrick.utils import is_dataframe
 from yellowbrick.features.base import DataVisualizer
-from yellowbrick.exceptions import YellowbrickTypeError
+from yellowbrick.exceptions import YellowbrickTypeError, YellowbrickValueError
 from yellowbrick.style.colors import resolve_colors, get_color_cycle
 
 ##########################################################################
@@ -34,7 +34,7 @@ from yellowbrick.style.colors import resolve_colors, get_color_cycle
 ##########################################################################
 
 def parallel_coordinates(X, y, ax=None, features=None, classes=None,
-                         normalize=None, color=None, colormap=None,
+                         normalize=None, sample=1.0, color=None, colormap=None,
                          vlines=True, vlines_kwds=None, **kwargs):
     """Displays each feature as a vertical axis and each instance as a line.
 
@@ -62,6 +62,9 @@ def parallel_coordinates(X, y, ax=None, features=None, classes=None,
     normalize : string or None, default: None
         specifies which normalization method to use, if any
 
+    sample : float or int, default: 1.0
+        specifies how many examples to display from the data
+
     color : list or tuple of colors, default: None
         Specify the colors for each individual class
 
@@ -69,7 +72,7 @@ def parallel_coordinates(X, y, ax=None, features=None, classes=None,
         Sequential colormap for continuous target
 
     vlines : bool, default: True
-        Display the vertical azis lines
+        Display the vertical axis lines
 
     vlines_kwds : dict, default: None
         Keyword arguments to draw the vlines
@@ -85,7 +88,7 @@ def parallel_coordinates(X, y, ax=None, features=None, classes=None,
     """
     # Instantiate the visualizer
     visualizer = ParallelCoordinates(
-        ax, features, classes, normalize, color, colormap, vlines,
+        ax, features, classes, normalize, sample, color, colormap, vlines,
         vlines_kwds, **kwargs
     )
 
@@ -128,6 +131,11 @@ class ParallelCoordinates(DataVisualizer):
         specifies which normalization method to use, if any
         Current supported options are 'minmax', 'maxabs', 'standard', 'l1',
         and 'l2'.
+
+    sample : float or int, default: 1.0
+        specifies how many examples to display from the data
+        If int, specifies the maximum number of samples to display.
+        If float, specifies a fraction between 0 and 1 to display.
 
     color : list or tuple, default: None
         optional list or tuple of colors to colorize lines
@@ -173,12 +181,13 @@ class ParallelCoordinates(DataVisualizer):
     }
 
     def __init__(self, ax=None, features=None, classes=None, normalize=None,
-                 color=None, colormap=None, vlines=True, vlines_kwds=None,
-                 **kwargs):
+                 sample=1.0, color=None, colormap=None, vlines=True,
+                 vlines_kwds=None, **kwargs):
         super(ParallelCoordinates, self).__init__(
             ax, features, classes, color, colormap, **kwargs
         )
         self.normalize = normalize
+        self.sample = sample
 
         # Visual Parameters
         self.show_vlines = vlines
@@ -195,12 +204,31 @@ class ParallelCoordinates(DataVisualizer):
         if is_dataframe(X):
             X = X.as_matrix()
 
+        # Choose a subset of samples
+        if isinstance(self.sample, int):
+            if self.sample < 1:
+                raise YellowbrickValueError(
+                    "`sample` parameter of type `int` must be greater than 1"
+                )
+            n_samples = min([self.sample, len(X)])
+        elif isinstance(self.sample, float):
+            if self.sample <= 0 or self.sample > 1:
+                raise YellowbrickValueError(
+                    "`sample` parameter of type `float` must be between 0 and 1"
+                )
+            n_samples = int(len(X) * self.sample)
+        else:
+            raise YellowbrickTypeError(
+                "`sample` parameter must be int or float"
+            )
+        X = X[:n_samples, :]
+
         # Normalize
         if self.normalize is not None:
             if self.normalize not in self.normalizers:
                 raise YellowbrickValueError(
                     "'{}' is an unrecognized normalization method"
-                    .format(normalize)
+                    .format(self.normalize)
                 )
             X = self.normalizers[self.normalize].fit_transform(X)
 
