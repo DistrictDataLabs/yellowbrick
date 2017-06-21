@@ -193,6 +193,7 @@ def prediction_error(model, X, y=None, ax=None, **kwargs):
     # Fit and transform the visualizer (calls draw)
     visualizer.fit(X_train, y_train, **kwargs)
     visualizer.score(X_test, y_test)
+    visualizer.finalize() 
 
     # Return the axes object on the visualizer
     return visualizer.ax
@@ -404,6 +405,7 @@ def residuals_plot(model, X, y=None, ax=None, **kwargs):
     # Fit and transform the visualizer (calls draw)
     visualizer.fit(X_train, y_train, **kwargs)
     visualizer.score(X_test, y_test)
+    visualizer.finalize()
 
     # Return the axes object on the visualizer
     return visualizer.ax

@@ -21,10 +21,13 @@ import numpy as np
 import numpy.testing as npt
 import matplotlib as mptl
 
-from tests.dataset import DatasetMixin
 from yellowbrick.features.scatter import *
 from yellowbrick.exceptions import YellowbrickValueError
 from yellowbrick.style import palettes
+
+from tests.dataset import DatasetMixin
+from tests.base import VisualTestCase
+from matplotlib.testing.exceptions import ImageComparisonFailure
 
 try:
     import pandas
@@ -36,7 +39,7 @@ except ImportError:
 ##########################################################################
 
 
-class ScatterVizTests(unittest.TestCase, DatasetMixin):
+class ScatterVizTests(VisualTestCase, DatasetMixin):
 
     # yapf: disable
     X = np.array([
@@ -48,13 +51,15 @@ class ScatterVizTests(unittest.TestCase, DatasetMixin):
         [2.110, 3.620, 4.470, 8.210, 5.612, ]
         ])
     # yapf: enable
-    y = np.array([1, 1, 0, 1, 0, 0])
+    y = np.array([1, 0, 1, 0, 1, 0])
 
     def setUp(self):
         self.occupancy = self.load_data('occupancy')
+        super(ScatterVizTests, self).setUp()
 
     def tearDown(self):
         self.occupancy = None
+        super(ScatterVizTests, self).tearDown()
 
     def test_init_alias(self):
         features = ["temperature", "relative_humidity"]
@@ -81,8 +86,8 @@ class ScatterVizTests(unittest.TestCase, DatasetMixin):
         visualizer.fit_transform(X_two_cols, self.y)
 
     def test_scatter_no_features(self):
-        """Assert no errors occur during scatter visualizer integration
-        with no featues
+        """
+        Assert no errors during scatter visualizer integration - no features
         """
         X_two_cols = self.X[:, :2]
         visualizer = ScatterViz()
@@ -91,7 +96,7 @@ class ScatterVizTests(unittest.TestCase, DatasetMixin):
 
     def test_scatter_only_two_features_allowed_init(self):
         """
-        Assert that only two features are allowed for this visualizer in init
+        Assert that only two features are allowed for scatter visualizer init
         """
         features = ["temperature", "relative_humidity", "light"]
 
@@ -101,7 +106,7 @@ class ScatterVizTests(unittest.TestCase, DatasetMixin):
 
     def test_scatter_xy_and_features_raise_error(self):
         """
-        Assert that x,y and features will raise error
+        Assert that x,y and features will raise scatterviz error
         """
         features = ["temperature", "relative_humidity", "light"]
 
@@ -110,15 +115,14 @@ class ScatterVizTests(unittest.TestCase, DatasetMixin):
 
     def test_scatter_xy_changes_to_features(self):
         """
-        Assert that x,y and features will raise error
+        Assert that x,y with no features will not raise scatterviz error
         """
         visualizer = ScatterViz(x='one', y='two')
         self.assertEquals(visualizer.features_, ['one', 'two'])
 
     def test_scatter_requires_two_features_in_numpy_matrix(self):
         """
-        Assert that only two features are allowed for this visualizer if not
-        set in the init
+        Assert only two features allowed for scatter visualizer if not in init
         """
         visualizer = ScatterViz()
         with self.assertRaises(YellowbrickValueError) as context:
@@ -146,7 +150,7 @@ class ScatterVizTests(unittest.TestCase, DatasetMixin):
 
     def test_scatter_quick_method(self):
         """
-        Test scatter on the real, occupancy data set
+        Test scatter quick method on the real, occupancy data set
         """
         # Load the data from the fixture
         X = self.occupancy[[
@@ -168,7 +172,7 @@ class ScatterVizTests(unittest.TestCase, DatasetMixin):
                          "Pandas is not installed, could not run test.")
     def test_integrated_scatter_with_pandas(self):
         """
-        Test scatter on the real, occupancy data set with a pandas dataframe
+        Test scatterviz on the real, occupancy data set with pandas
         """
         # Load the data from the fixture
         X = self.occupancy[[
@@ -188,6 +192,9 @@ class ScatterVizTests(unittest.TestCase, DatasetMixin):
         visualizer.fit_transform_poof(X, y)
 
     def test_integrated_scatter_numpy_named_arrays(self):
+        """
+        Test scatterviz on numpy named arrays
+        """
         dt = np.dtype({
             'names': ['one', 'two', 'three', 'four', "five"],
             'formats': [
@@ -206,6 +213,38 @@ class ScatterVizTests(unittest.TestCase, DatasetMixin):
 
 
     def test_integrated_scatter_numpy_arrays_no_names(self):
+        """
+        Test scaterviz on regular numpy arrays
+        """
         visualizer = ScatterViz(features=[1, 2])
         visualizer.fit_transform_poof(self.X, self.y)
         self.assertEquals(visualizer.features_, [1, 2])
+
+    def test_scatter_image(self):
+        """
+        Test the scatterviz image similarity
+        """
+        # self.setUp_ImageTest()
+
+        X_two_cols = self.X[:, :2]
+        features = ["temperature", "relative_humidity"]
+        visualizer = ScatterViz(features=features)
+        visualizer.fit(X_two_cols, self.y)
+        visualizer.draw(X_two_cols, self.y)
+
+        self.assert_images_similar(visualizer)
+
+
+    def test_scatter_image_fail(self):
+        """
+        Assert bad image similarity on scatterviz errors 
+        """
+
+        X_two_cols = self.X[:, :2]
+        features = ["temperature", "relative_humidity"]
+        visualizer = ScatterViz(features=features)
+        visualizer.fit(X_two_cols, self.y)
+        visualizer.draw(X_two_cols, self.y)
+
+        with self.assertRaises(ImageComparisonFailure):
+            self.assert_images_similar(visualizer)

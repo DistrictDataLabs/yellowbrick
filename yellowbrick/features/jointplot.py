@@ -129,13 +129,12 @@ class JointPlotVisualizer(FeatureVisualizer):
                  xy_plot='hist', xy_args=None,
                  size=6, ratio=5, space=.2, **kwargs):
 
-        #check matplotlib version - needs to be version 2.0.0
-        if mpl.__version__ == "2.0.0":
-            pass
-        else:
+        # Check matplotlib version - needs to be version 2.0.0 or greater.
+        mpl_vers_maj = int(mpl.__version__.split(".")[0])
+        if mpl_vers_maj < 2:
             warnings.warn((
-                "{} requires Matplotlib version 2.0.0."
-                "Please upgrade to continue."
+                "{} requires matplotlib major version 2 or greater. "
+                "Please upgrade."
             ).format(self.__class__.__name__))
 
         super(JointPlotVisualizer, self).__init__(ax, **kwargs)

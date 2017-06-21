@@ -93,7 +93,6 @@ class PosTagVisualizer(TextVisualizer):
             'IN'   : 'darkwhite',
             'POS'  : 'darkyellow',
             'PRP$' : 'magenta',
-            'PRP$' : 'magenta',
             'DT'   : 'black',
             'CC'   : 'black',
             'CD'   : 'black',
@@ -140,6 +139,6 @@ class PosTagVisualizer(TextVisualizer):
         self.tagged = [
             (self.TAGS.get(tag),tok) for tok, tag in tagged_tuples
         ]
-        # 
+        #
         # print(' '.join((colorize(token, color) for color, token in self.tagged)))
         # print('\n')

@@ -21,14 +21,16 @@ import unittest
 import numpy as np
 import numpy.testing as npt
 
+from tests.base import VisualTestCase
 from tests.dataset import DatasetMixin
 from yellowbrick.features.radviz import *
+
 
 ##########################################################################
 ## RadViz Base Tests
 ##########################################################################
 
-class RadVizTests(unittest.TestCase, DatasetMixin):
+class RadVizTests(VisualTestCase, DatasetMixin):
 
     X = np.array(
             [[ 2.318, 2.727, 4.260, 7.212, 4.792],
