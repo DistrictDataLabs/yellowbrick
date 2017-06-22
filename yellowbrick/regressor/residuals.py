@@ -22,10 +22,11 @@ import matplotlib.pyplot as plt
 
 from sklearn.model_selection import train_test_split
 
-from ..bestfit import draw_best_fit
 from ..style.palettes import LINE_COLOR
 from .base import RegressionScoreVisualizer
 from ..exceptions import YellowbrickTypeError
+from ..bestfit import draw_best_fit, draw_identity_line
+
 
 ## Packages for export
 __all__ = [
@@ -145,7 +146,10 @@ class PredictionError(RegressionScoreVisualizer):
 
         # TODO If score is happening inside a loop, draw would get called multiple times.
         # Ideally we'd want the best fit line to be drawn only once
-        draw_best_fit(y, y_pred, self.ax, 'linear', ls='--', lw=2, c=self.colors['line'])
+        draw_best_fit(
+            y, y_pred, self.ax, 'linear', ls='--', lw=2,
+            c=self.colors['line'], label='best fit'
+        )
 
         # Set the axes limits based on the range of X and Y data
         # NOTE: shared_limits will be accounted for in finalize()
@@ -167,6 +171,12 @@ class PredictionError(RegressionScoreVisualizer):
         # Set the title on the plot
         self.set_title('Prediction Error for {}'.format(self.name))
 
+        # Draw the 45 degree line
+        draw_identity_line(
+            ax=self.ax, ls='--', lw=2, c=self.colors['line'],
+            alpha=0.5, label="identity"
+        )
+
         # Square the axes to ensure a 45 degree line
         if self.shared_limits:
             # Get the current limits
@@ -183,12 +193,15 @@ class PredictionError(RegressionScoreVisualizer):
             self.ax.set_xlim(bounds)
             self.ax.set_ylim(bounds)
 
-            # Ensure the aspect ratio is square 
+            # Ensure the aspect ratio is square
             self.ax.set_aspect('equal', adjustable='box')
 
         # Set the axes labels
         self.ax.set_ylabel('Predicted')
         self.ax.set_xlabel('Measured')
+
+        # Set the legend
+        self.ax.legend(loc='best', frameon=True)
 
 
 def prediction_error(model, X, y=None, ax=None, **kwargs):

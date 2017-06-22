@@ -18,6 +18,7 @@ Uses Scikit-Learn to compute a best fit function, then draws it in the plot.
 ##########################################################################
 
 import numpy as np
+import matplotlib.pyplot as plt
 
 from sklearn import linear_model
 from sklearn.preprocessing import PolynomialFeatures
@@ -172,6 +173,75 @@ def fit_log(X, y):
     """
     raise NotImplementedError("Logrithmic best fit lines are not implemented")
 
+
+##########################################################################
+## Draw 45 Degree Line
+##########################################################################
+
+def draw_identity_line(ax=None, dynamic=True, **kwargs):
+    """
+    Draws a 45 degree identity line such that y=x for all points within the
+    given axes x and y limits. This function also registeres a callback so
+    that as the figure is modified, the axes are updated and the line remains
+    drawn correctly.
+
+    Parameters
+    ----------
+
+    ax : matplotlib Axes, default: None
+        The axes to plot the figure on. If None is passed in the current axes
+        will be used (or generated if required).
+
+    dynamic : bool, default : True
+        If the plot is dynamic, callbacks will be registered to update the
+        identiy line as axes are changed.
+
+    kwargs : dict
+        Keyword arguments to pass to the matplotlib plot function to style the
+        identity line.
+
+
+    Returns
+    -------
+
+    ax : matplotlib Axes
+        The axes with the line drawn on it.
+    """
+
+    # Get the current working axes
+    ax = ax or plt.gca()
+
+    # Define the standard line color
+    if 'c' not in kwargs and 'color' not in kwargs:
+        kwargs['color'] = LINE_COLOR
+
+    # Define the standard opacity
+    if 'alpha' not in kwargs:
+        kwargs['alpha'] = 0.5
+
+    # Draw the identity line
+    identity, = ax.plot([],[], **kwargs)
+
+    # Define the callback
+    def callback(ax):
+        # Get the x and y limits on the axes
+        xlim = ax.get_xlim()
+        ylim = ax.get_ylim()
+
+        # Set the bounding range of the line
+        data = (
+            max(xlim[0], ylim[0]), min(xlim[1], ylim[1])
+        )
+        identity.set_data(data, data)
+
+    # Register the callback and return
+    callback(ax)
+
+    if dynamic:
+        ax.callbacks.connect('xlim_changed', callback)
+        ax.callbacks.connect('ylim_changed', callback)
+
+    return ax
 
 
 if __name__ == '__main__':
