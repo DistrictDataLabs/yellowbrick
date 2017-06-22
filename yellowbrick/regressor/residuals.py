@@ -55,6 +55,14 @@ class PredictionError(RegressionScoreVisualizer):
         The axes to plot the figure on. If None is passed in the current axes
         will be used (or generated if required).
 
+    shared_limits : bool, default: True
+        If shared_limits is True, the range of the X and Y axis limits will
+        be identical, creating a square graphic with a true 45 degree line.
+        In this form, it is easier to diagnose under- or over- prediction,
+        though the figure will become more sparse. To localize points, set
+        shared_limits to False, but note that this will distort the figure
+        and should be accounted for during analysis.
+
     point_color : color
         Defines the color of the error points; can be any matplotlib color.
 
@@ -82,14 +90,18 @@ class PredictionError(RegressionScoreVisualizer):
     its primary entry point is the `score()` method.
     """
 
-    def __init__(self, model, ax=None, **kwargs):
-
+    def __init__(self, model, ax=None, shared_limits=True, **kwargs):
+        # Initialize the visualizer
         super(PredictionError, self).__init__(model, ax=ax, **kwargs)
 
+        # Visual arguments
         self.colors = {
             'point': kwargs.pop('point_color', None),
             'line': kwargs.pop('line_color', LINE_COLOR),
         }
+
+        # Drawing arguments
+        self.shared_limits = shared_limits
 
     def score(self, X, y=None, **kwargs):
         """
@@ -135,6 +147,9 @@ class PredictionError(RegressionScoreVisualizer):
         # Ideally we'd want the best fit line to be drawn only once
         draw_best_fit(y, y_pred, self.ax, 'linear', ls='--', lw=2, c=self.colors['line'])
 
+        # Set the axes limits based on the range of X and Y data
+        # NOTE: shared_limits will be accounted for in finalize()
+        # TODO: do better than add one for really small residuals
         self.ax.set_xlim(y.min()-1, y.max()+1)
         self.ax.set_ylim(y_pred.min()-1, y_pred.max()+1)
 
@@ -151,6 +166,25 @@ class PredictionError(RegressionScoreVisualizer):
         """
         # Set the title on the plot
         self.set_title('Prediction Error for {}'.format(self.name))
+
+        # Square the axes to ensure a 45 degree line
+        if self.shared_limits:
+            # Get the current limits
+            ylim = self.ax.get_ylim()
+            xlim = self.ax.get_xlim()
+
+            # Find the range that captures all data
+            bounds = (
+                min(ylim[0], xlim[0]),
+                max(ylim[1], xlim[1]),
+            )
+
+            # Reset the limits
+            self.ax.set_xlim(bounds)
+            self.ax.set_ylim(bounds)
+
+            # Ensure the aspect ratio is square 
+            self.ax.set_aspect('equal', adjustable='box')
 
         # Set the axes labels
         self.ax.set_ylabel('Predicted')
@@ -205,12 +239,12 @@ def prediction_error(model, X, y=None, ax=None, **kwargs):
 
 class ResidualsPlot(RegressionScoreVisualizer):
     """
-    A residual plot shows the residuals on the vertical axis
-    and the independent variable on the horizontal axis.
+    A residual plot shows the residuals on the vertical axis and the
+    independent variable on the horizontal axis.
 
-    If the points are randomly dispersed around the horizontal axis,
-    a linear regression model is appropriate for the data;
-    otherwise, a non-linear model is more appropriate.
+    If the points are randomly dispersed around the horizontal axis, a linear
+    regression model is appropriate for the data; otherwise, a non-linear
+    model is more appropriate.
 
     Parameters
     ----------
