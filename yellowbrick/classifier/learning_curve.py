@@ -20,8 +20,8 @@ import numpy as np
 import matplotlib.pyplot as plt
 from sklearn.model_selection import learning_curve
 from sklearn.model_selection import ShuffleSplit
-
 from yellowbrick.base import ModelVisualizer
+from yellowbrick.exceptions import YellowbrickError
 
 ##########################################################################
 ## LearningCurveVisualizer Visualizer
@@ -81,7 +81,10 @@ class LearningCurveVisualizer(ModelVisualizer):
         self.cv = cv
         self.n_jobs = n_jobs
         self.train_sizes = np.linspace(.1, 1.0, 5) if train_sizes is None else train_sizes
-        
+
+        if not (isinstance(self.train_sizes, np.ndarray)):
+            raise YellowbrickError('train_sizes must be np.ndarray or pd.Series')
+
         # to be set later
         self.train_scores = None
         self.test_scores = None

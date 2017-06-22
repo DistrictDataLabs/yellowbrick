@@ -37,17 +37,12 @@ from tests.dataset import DatasetMixin
 class LearningCurveTests(VisualTestCase, DatasetMixin):
 
     def setUp(self):
+        super(LearningCurveTests, self).setUp()
         self.occupancy = self.load_data('occupancy')
-        
-
-    def tearDown(self):
-        self.occupancy = None
-        X = None
-        y = None
 
     def test_learning_curve_comprehensive(self):
         """
-        Test learning curve with all parameters.
+        Test learning curve with all parameters with visual unit test.
         """
 
         X = self.occupancy[[
@@ -59,7 +54,7 @@ class LearningCurveTests(VisualTestCase, DatasetMixin):
         X = X.view((float, len(X.dtype.names)))
 
         try:
-            visualizer = LearningCurveVisualizer(LinearSVC(), train_sizes=np.linspace(.1, 1.0, 5), 
+            visualizer = LearningCurveVisualizer(LinearSVC(random_state=0), train_sizes=np.linspace(.1, 1.0, 5), 
                 cv=ShuffleSplit(n_splits=100, test_size=0.2, random_state=0), 
                 n_jobs=4)
             visualizer.fit(X, y)
@@ -67,9 +62,11 @@ class LearningCurveTests(VisualTestCase, DatasetMixin):
         except Exception as e:
             self.fail("error during learning curve: {}".format(e))
 
+        self.assert_images_similar(visualizer)
+
     def test_learning_curve_model_only(self):
         """
-        Test learning curve with inputting model only.
+        Test learning curve with inputting model only. 
         """
 
         X = self.occupancy[[
@@ -150,3 +147,4 @@ class LearningCurveTests(VisualTestCase, DatasetMixin):
             visualizer.fit(X, y)
             visualizer.poof()
         
+
