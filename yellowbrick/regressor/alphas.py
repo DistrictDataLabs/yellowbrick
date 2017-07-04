@@ -302,7 +302,7 @@ class ManualAlphaSelection(AlphaSelection):
             ).format(name))
 
         # Call super to initialize the class
-        super(AlphaSelection, self).__init__(model, ax=ax, **kwargs)
+        super(ManualAlphaSelection, self).__init__(model, ax=ax, **kwargs)
 
         # Set manual alpha selection parameters
         self.alphas = alphas or np.logspace(-10, -2, 200)

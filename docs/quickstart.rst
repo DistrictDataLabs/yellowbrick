@@ -118,7 +118,7 @@ After downloading the dataset and unzipping it in your current working directory
     data = pd.read_csv('bikeshare.csv')
     X = data[[
         "season", "month", "hour", "holiday", "weekday", "workingday",
-        "weather", "temp", "atemp", "hum", "windspeed"
+        "weather", "temp", "feelslike", "humidity", "windspeed"
     ]]
     y = data["riders"]
 

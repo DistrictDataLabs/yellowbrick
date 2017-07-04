@@ -94,7 +94,6 @@ class SilhouetteVisualizer(ClusteringScoreVisualizer):
         """
 
         # Track the positions of the lines being drawn
-        y_upper = 10 # the top of the silhouette
         y_lower = 10 # The bottom of the silhouette
 
         # Get the colors from the various properties
