@@ -199,12 +199,30 @@ class ParallelCoordinates(DataVisualizer):
         super(ParallelCoordinates, self).__init__(
             ax, features, classes, color, colormap, **kwargs
         )
+
+        # Validate 'normalize' argument
         if normalize in self.normalizers or normalize is None:
             self.normalize = normalize
         else:
             raise YellowbrickValueError(
                 "'{}' is an unrecognized normalization method"
-                .format(self.normalize)
+                .format(normalize)
+            )
+
+        # Validate 'sample' argument
+        if isinstance(sample, int):
+            if sample < 1:
+                raise YellowbrickValueError(
+                    "`sample` parameter of type `int` must be greater than 1"
+                )
+        elif isinstance(sample, float):
+            if sample <= 0 or sample > 1:
+                raise YellowbrickValueError(
+                    "`sample` parameter of type `float` must be between 0 and 1"
+                )
+        else:
+            raise YellowbrickTypeError(
+                "`sample` parameter must be int or float"
             )
         self.sample = sample
 
@@ -225,22 +243,11 @@ class ParallelCoordinates(DataVisualizer):
 
         # Choose a subset of samples
         # TODO: allow selection of a random subset of samples instead of head
+
         if isinstance(self.sample, int):
-            if self.sample < 1:
-                raise YellowbrickValueError(
-                    "`sample` parameter of type `int` must be greater than 1"
-                )
             self.n_samples = min([self.sample, len(X)])
         elif isinstance(self.sample, float):
-            if self.sample <= 0 or self.sample > 1:
-                raise YellowbrickValueError(
-                    "`sample` parameter of type `float` must be between 0 and 1"
-                )
             self.n_samples = int(len(X) * self.sample)
-        else:
-            raise YellowbrickTypeError(
-                "`sample` parameter must be int or float"
-            )
         X = X[:self.n_samples, :]
 
         # Normalize
