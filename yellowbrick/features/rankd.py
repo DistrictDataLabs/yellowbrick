@@ -22,7 +22,7 @@ import matplotlib.pyplot as plt
 from scipy.stats import shapiro
 
 from yellowbrick.utils import is_dataframe
-from yellowbrick.features.base import FeatureVisualizer
+from yellowbrick.features.base import MultiFeatureVisualizer
 from yellowbrick.exceptions import YellowbrickValueError
 from yellowbrick.style.colors import resolve_colors, get_color_cycle
 
@@ -142,7 +142,7 @@ def rank2d(X, y=None, ax=None, algorithm='pearson', features=None,
 ## Base Feature Visualizer
 ##########################################################################
 
-class RankDBase(FeatureVisualizer):
+class RankDBase(MultiFeatureVisualizer):
     """
     Base visualizer for Rank1D and Rank2D
 
@@ -197,52 +197,13 @@ class RankDBase(FeatureVisualizer):
         Initialize the class with the options required to rank and
         order features as well as visualize the result.
         """
-        super(RankDBase, self).__init__(ax=ax, **kwargs)
+        super(RankDBase, self).__init__(ax=ax, features=features, **kwargs)
 
         # Data Parameters
         self.ranking_ = algorithm
-        self.features_ = features
 
+        # Display parameters
         self.show_feature_names_ = show_feature_names
-
-    def fit(self, X, y=None, **kwargs):
-        """
-        The fit method gathers information about the state of the visualizer.
-
-        Parameters
-        ----------
-        X : ndarray or DataFrame of shape n x m
-            A matrix of n instances with m features
-
-        y : ndarray or Series of length n
-            An array or series of target or class values
-
-        kwargs : dict
-            Pass generic arguments to the drawing method
-
-        Returns
-        -------
-        self : instance
-            Returns the instance of the transformer/visualizer
-        """
-        # Get the shape of the data
-        nrows, ncols = X.shape
-
-        # Handle the feature names if they're None.
-        if self.features_ is None:
-
-            # If X is a data frame, get the columns off it.
-            if is_dataframe(X):
-                self.features_ = X.columns
-
-            # Otherwise create numeric labels for each column.
-            else:
-                self.features_ = [
-                    str(cdx) for cdx in range(ncols)
-                ]
-
-        # Fit always returns self.
-        return self
 
     def transform(self, X, **kwargs):
         """
