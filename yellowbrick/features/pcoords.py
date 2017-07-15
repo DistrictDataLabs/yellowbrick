@@ -51,31 +51,44 @@ def parallel_coordinates(X, y, ax=None, features=None, classes=None,
         An array or series of target or class values
 
     ax : matplotlib Axes, default: None
-        The axes to plot the figure on.
+        The axis to plot the figure on. If None is passed in the current axes
+        will be used (or generated if required).
 
-    features : list of strings, default: None
-        The names of the features or columns
+    features : list, default: None
+        a list of feature names to use
+        If a DataFrame is passed to fit and features is None, feature
+        names are selected as the columns of the DataFrame.
 
-    classes : list of strings, default: None
-        The names of the classes in the target
+    classes : list, default: None
+        a list of class names for the legend
+        If classes is None and a y value is passed to fit then the classes
+        are selected from the target vector.
 
     normalize : string or None, default: None
         specifies which normalization method to use, if any
+        Current supported options are 'minmax', 'maxabs', 'standard', 'l1',
+        and 'l2'.
 
     sample : float or int, default: 1.0
         specifies how many examples to display from the data
+        If int, specifies the maximum number of samples to display.
+        If float, specifies a fraction between 0 and 1 to display.
 
-    color : list or tuple of colors, default: None
-        Specify the colors for each individual class
+    color : list or tuple, default: None
+        optional list or tuple of colors to colorize lines
+        Use either color to colorize the lines on a per class basis or
+        colormap to color them on a continuous scale.
 
-    colormap : string or matplotlib cmap, default: None
-        Sequential colormap for continuous target
+    colormap : string or cmap, default: None
+        optional string or matplotlib cmap to colorize lines
+        Use either color to colorize the lines on a per class basis or
+        colormap to color them on a continuous scale.
 
-    vlines : bool, default: True
-        Display the vertical axis lines
+    vlines : boolean, default: True
+        flag to determine vertical line display
 
     vlines_kwds : dict, default: None
-        Keyword arguments to draw the vlines
+        options to style or display the vertical lines, default: None
 
     kwargs : dict
         Keyword arguments that are passed to the base class and may influence
@@ -186,7 +199,13 @@ class ParallelCoordinates(DataVisualizer):
         super(ParallelCoordinates, self).__init__(
             ax, features, classes, color, colormap, **kwargs
         )
-        self.normalize = normalize
+        if normalize in self.normalizers or normalize is None:
+            self.normalize = normalize
+        else:
+            raise YellowbrickValueError(
+                "'{}' is an unrecognized normalization method"
+                .format(self.normalize)
+            )
         self.sample = sample
 
         # Visual Parameters
@@ -205,31 +224,27 @@ class ParallelCoordinates(DataVisualizer):
             X = X.as_matrix()
 
         # Choose a subset of samples
+        # TODO: allow selection of a random subset of samples instead of head
         if isinstance(self.sample, int):
             if self.sample < 1:
                 raise YellowbrickValueError(
                     "`sample` parameter of type `int` must be greater than 1"
                 )
-            n_samples = min([self.sample, len(X)])
+            self.n_samples = min([self.sample, len(X)])
         elif isinstance(self.sample, float):
             if self.sample <= 0 or self.sample > 1:
                 raise YellowbrickValueError(
                     "`sample` parameter of type `float` must be between 0 and 1"
                 )
-            n_samples = int(len(X) * self.sample)
+            self.n_samples = int(len(X) * self.sample)
         else:
             raise YellowbrickTypeError(
                 "`sample` parameter must be int or float"
             )
-        X = X[:n_samples, :]
+        X = X[:self.n_samples, :]
 
         # Normalize
         if self.normalize is not None:
-            if self.normalize not in self.normalizers:
-                raise YellowbrickValueError(
-                    "'{}' is an unrecognized normalization method"
-                    .format(self.normalize)
-                )
             X = self.normalizers[self.normalize].fit_transform(X)
 
         # Get the shape of the data
