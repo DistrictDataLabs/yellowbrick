@@ -24,5 +24,3 @@ cycler>=0.10.0
 
 # Build Requirements (uncomment for deployment)
 #wheel>=0.29.0
-
-

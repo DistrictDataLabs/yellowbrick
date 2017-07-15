@@ -365,8 +365,7 @@ class Rank1D(RankDBase):
 
     Examples
     --------
-
-    >>> visualizer = Rank2D()
+    >>> visualizer = Rank1D()
     >>> visualizer.fit(X, y)
     >>> visualizer.transform(X)
     >>> visualizer.poof()
@@ -468,9 +467,15 @@ class Rank2D(RankDBase):
 
     Attributes
     ----------
+<<<<<<< HEAD
     ranks_ : ndarray
         An array of rank scores with shape (n,n), where n is the
         number of features. It is computed during `fit`.
+=======
+    ``ranks_`` : ndarray
+        An array of rank scores with shape (n,n), where n is the
+        number of features. It is computed during ``fit``.
+>>>>>>> pcoords
 
     Examples
     --------
