@@ -88,6 +88,42 @@ class Rank2D(FeatureVisualizer):
     Rank2D performs pairwise comparisons of each feature in the data set with
     a specific metric or algorithm (e.g. Pearson correlation) then returns
     them ranked as a lower left triangle diagram.
+
+    Parameters
+    ----------
+    ax : matplotlib Axes, default: None
+        The axis to plot the figure on. If None is passed in the current axes
+        will be used (or generated if required).
+
+    algorithm : one of {'pearson', 'covariance'}, default: 'pearson'
+        The ranking algorithm to use, default is Pearson correlation.
+
+    features : list
+        a list of feature names to use
+        If a DataFrame is passed to fit and features is None, feature
+        names are selected as the columns of the DataFrame.
+
+    colormap : string or cmap, default: 'RdBu_r'
+        optional string or matplotlib cmap to colorize lines
+        Use either color to colorize the lines on a per class basis or
+        colormap to color them on a continuous scale.
+
+    kwargs : dict
+        Keyword arguments that are passed to the base class and may influence
+        the visualization as defined in other Visualizers.
+
+    Examples
+    --------
+
+    >>> visualizer = Rank2D()
+    >>> visualizer.fit(X, y)
+    >>> visualizer.transform(X)
+    >>> visualizer.poof()
+
+    Notes
+    -----
+    These parameters can be influenced later on in the visualization
+    process, but can and should be set as early as possible.
     """
 
     ranking_methods = {
@@ -100,27 +136,6 @@ class Rank2D(FeatureVisualizer):
         """
         Initialize the Rank2D class with the options required to rank and
         order features as well as visualize the result.
-
-        Parameters
-        ----------
-        ax : matplotlib axes
-            the axis to plot the figure on.
-
-        algorithm : one of {pearson, covariance}
-            the ranking algorithm to use, default is Pearson correlation.
-
-        features : list
-            a list of feature names to use
-            If a DataFrame is passed to fit and features is None, feature
-            names are selected as the columns of the DataFrame.
-
-        colormap : string or cmap
-            optional string or matplotlib cmap to colorize lines
-            Use either color to colorize the lines on a per class basis or
-            colormap to color them on a continuous scale.
-
-        kwargs : dict
-            keyword arguments passed to the super class.
         """
         super(Rank2D, self).__init__(ax=ax, **kwargs)
 
@@ -231,10 +246,8 @@ class Rank2D(FeatureVisualizer):
         """
         Draws the heatmap of the ranking matrix of variables.
         """
-        # Create the axes if they don't exist
-        if self.ax is None:
-            self.ax = plt.gca()
-            self.ax.set_aspect("equal")
+        # Set the axes aspect to be equal
+        self.ax.set_aspect("equal")
 
         # Generate a mask for the upper triangle
         mask = np.zeros_like(X, dtype=np.bool)
@@ -270,7 +283,7 @@ class Rank2D(FeatureVisualizer):
 
         """
         # Set the title
-        self.ax.set_title(
+        self.set_title(
             "{} Ranking of {} Features".format(
                 self.ranking_.title(), len(self.features_)
             )

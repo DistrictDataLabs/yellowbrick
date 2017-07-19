@@ -28,14 +28,6 @@ yellowbrick.bestfit module
     :undoc-members:
     :show-inheritance:
 
-yellowbrick.classifier module
------------------------------
-
-.. automodule:: yellowbrick.classifier
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
 yellowbrick.exceptions module
 -----------------------------
 
