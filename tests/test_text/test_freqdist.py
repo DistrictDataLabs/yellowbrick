@@ -30,6 +30,7 @@ from sklearn.feature_extraction.text import CountVectorizer
 
 class FreqDistTests(unittest.TestCase, DatasetMixin):
 
+
     def test_integrated_freqdist(self):
         """
         Assert no errors occur during freqdist integration
@@ -40,5 +41,5 @@ class FreqDistTests(unittest.TestCase, DatasetMixin):
         docs       = vectorizer.fit_transform(corpus.data)
         features   = vectorizer.get_feature_names()
 
-        visualizer = FreqDistVisualizer()
-        visualizer.fit(docs, features)
+        visualizer = FreqDistVisualizer(features)
+        visualizer.fit(docs)
