@@ -54,14 +54,43 @@ def draw_best_fit(X, y, ax, estimator='linear', **kwargs):
 
     The estimator function can be one of the following:
 
-        'linear':      Uses OLS to fit the regression
-        'quadratic':   Uses OLS with Polynomial order 2
-        'exponential': Not implemented yet
-        'log':         Not implemented yet
-        'select_best': Selects the best fit via MSE
+    - ``'linear'``:      Uses OLS to fit the regression
+    - ``'quadratic'``:   Uses OLS with Polynomial order 2
+    - ``'exponential'``: Not implemented yet
+    - ``'log'``:         Not implemented yet
+    - ``'select_best'``: Selects the best fit via MSE
 
     The remaining keyword arguments are passed to ax.plot to define and
     describe the line of best fit.
+
+    Parameters
+    ----------
+    X : ndarray or DataFrame of shape n x m
+        A matrix of n instances with m features
+
+    y : ndarray or Series of length n
+        An array or series of target or class values
+
+    ax : matplotlib Axes, default: None
+        The axis to plot the figure on. If None is passed in the current axes
+        will be used (or generated if required).
+
+    estimator : string, default: 'linear'
+        The name of the estimator function used to draw the best fit line.
+        The estimator can currently be one of linear, quadratic, exponential,
+        log, or select_best. The select best method uses the minimum MSE to
+        select the best fit line.
+
+    kwargs : dict
+        Keyword arguments to pass to the matplotlib plot function to style and
+        label the line of best fit. By default, the standard line color is
+        used unless the color keyword argument is passed in.
+
+    Returns
+    -------
+
+    ax : matplotlib Axes
+        The axes with the line drawn on it.
     """
 
     # Estimators are the types of best fit lines that can be drawn.
@@ -117,6 +146,9 @@ def draw_best_fit(X, y, ax, estimator='linear', **kwargs):
     # Set the color if not passed in.
     if 'c' not in kwargs and 'color' not in kwargs:
         kwargs['color'] = LINE_COLOR
+
+    # Get the current working axes
+    ax = ax or plt.gca()
 
     # Plot line of best fit onto the axes that were passed in.
     # TODO: determine if xlim or X.min(), X.max() are better params
@@ -206,6 +238,11 @@ def draw_identity_line(ax=None, dynamic=True, **kwargs):
 
     ax : matplotlib Axes
         The axes with the line drawn on it.
+
+    Notes
+    -----
+
+    .. seealso:: `StackOverflow discussion: Does matplotlib have a function for drawing diagonal lines in axis coordinates? <https://stackoverflow.com/questions/22104256/does-matplotlib-have-a-function-for-drawing-diagonal-lines-in-axis-coordinates>`_
     """
 
     # Get the current working axes

@@ -64,6 +64,17 @@ class PredictionError(RegressionScoreVisualizer):
         shared_limits to False, but note that this will distort the figure
         and should be accounted for during analysis.
 
+    besfit : bool, default: True
+        Draw a linear best fit line to estimate the correlation between the
+        predicted and measured value of the target variable. The color of
+        the bestfit line is determined by the ``line_color`` argument.
+
+    identity: bool, default: True
+        Draw the 45 degree identity line, y=x in order to better show the
+        relationship or pattern of the residuals. E.g. to estimate if the
+        model is over- or under- estimating the given values. The color of the
+        identity line is a muted version of the ``line_color`` argument.
+
     point_color : color
         Defines the color of the error points; can be any matplotlib color.
 
@@ -91,7 +102,8 @@ class PredictionError(RegressionScoreVisualizer):
     its primary entry point is the `score()` method.
     """
 
-    def __init__(self, model, ax=None, shared_limits=True, **kwargs):
+    def __init__(self, model, ax=None, shared_limits=True,
+                 bestfit=True, identity=True, **kwargs):
         # Initialize the visualizer
         super(PredictionError, self).__init__(model, ax=ax, **kwargs)
 
@@ -103,6 +115,8 @@ class PredictionError(RegressionScoreVisualizer):
 
         # Drawing arguments
         self.shared_limits = shared_limits
+        self.bestfit = bestfit
+        self.identity = identity
 
     def score(self, X, y=None, **kwargs):
         """
@@ -126,7 +140,8 @@ class PredictionError(RegressionScoreVisualizer):
         """
         y_pred = self.predict(X)
         self.draw(y, y_pred)
-        return self.estimator.score(X, y, **kwargs)
+        self.score_ =  self.estimator.score(X, y, **kwargs)
+        return self.score_
 
     def draw(self, y, y_pred):
         """
@@ -146,10 +161,11 @@ class PredictionError(RegressionScoreVisualizer):
 
         # TODO If score is happening inside a loop, draw would get called multiple times.
         # Ideally we'd want the best fit line to be drawn only once
-        draw_best_fit(
-            y, y_pred, self.ax, 'linear', ls='--', lw=2,
-            c=self.colors['line'], label='best fit'
-        )
+        if self.bestfit:
+            draw_best_fit(
+                y, y_pred, self.ax, 'linear', ls='--', lw=2,
+                c=self.colors['line'], label='best fit'
+            )
 
         # Set the axes limits based on the range of X and Y data
         # NOTE: shared_limits will be accounted for in finalize()
@@ -169,12 +185,10 @@ class PredictionError(RegressionScoreVisualizer):
         kwargs: generic keyword arguments.
         """
         # Set the title on the plot
-        self.set_title('Prediction Error for {}'.format(self.name))
-
-        # Draw the 45 degree line
-        draw_identity_line(
-            ax=self.ax, ls='--', lw=2, c=self.colors['line'],
-            alpha=0.5, label="identity"
+        self.set_title(
+            'Prediction Error for {} ($r^2 = {:0.3f}$)'.format(
+                self.name, self.score_
+            )
         )
 
         # Square the axes to ensure a 45 degree line
@@ -196,9 +210,19 @@ class PredictionError(RegressionScoreVisualizer):
             # Ensure the aspect ratio is square
             self.ax.set_aspect('equal', adjustable='box')
 
+        # Draw the 45 degree line
+        if self.identity:
+            draw_identity_line(
+                ax=self.ax, ls='--', lw=2, c=self.colors['line'],
+                alpha=0.5, label="identity"
+            )
+
         # Set the axes labels
-        self.ax.set_ylabel('Predicted')
-        self.ax.set_xlabel('Measured')
+        self.ax.set_ylabel('$\hat{y}$')
+        self.ax.set_xlabel('$y$')
+
+        # Annotate the score
+        self.ax.annotate('$r^2={:0.3f}$'.format(self.score_), xy=(0,0), xytext=(0,0))
 
         # Set the legend
         self.ax.legend(loc='best', frameon=True)
@@ -225,6 +249,35 @@ def prediction_error(model, X, y=None, ax=None, **kwargs):
 
     ax : matplotlib Axes
         The axes to plot the figure on.
+
+    shared_limits : bool, default: True
+        If shared_limits is True, the range of the X and Y axis limits will
+        be identical, creating a square graphic with a true 45 degree line.
+        In this form, it is easier to diagnose under- or over- prediction,
+        though the figure will become more sparse. To localize points, set
+        shared_limits to False, but note that this will distort the figure
+        and should be accounted for during analysis.
+
+    besfit : bool, default: True
+        Draw a linear best fit line to estimate the correlation between the
+        predicted and measured value of the target variable. The color of
+        the bestfit line is determined by the ``line_color`` argument.
+
+    identity: bool, default: True
+        Draw the 45 degree identity line, y=x in order to better show the
+        relationship or pattern of the residuals. E.g. to estimate if the
+        model is over- or under- estimating the given values. The color of the
+        identity line is a muted version of the ``line_color`` argument.
+
+    point_color : color
+        Defines the color of the error points; can be any matplotlib color.
+
+    line_color : color
+        Defines the color of the best fit line; can be any matplotlib color.
+
+    kwargs : dict
+        Keyword arguments that are passed to the base class and may influence
+        the visualization as defined in other Visualizers.
 
     Returns
     -------
