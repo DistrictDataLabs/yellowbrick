@@ -60,9 +60,13 @@ class PredictionErrorTests(VisualTestCase):
         Assert no errors occur during Prediction Error Plots integration
         """
         model = SVR()
-        model.fit(X, y)
+        X_train, X_test, y_train, y_test = tts(X, y, test_size=0.5, random_state=42)
+        model.fit(X_train, y_train)
         visualizer = PredictionError(model)
-        visualizer.score(X, y)
+        visualizer.score(X_test, y_test)
+        visualizer.poof()
+        visualizer.ax.grid(False)
+        self.assert_images_similar(visualizer)
 
 ##########################################################################
 ## Residuals Plots test case
@@ -75,7 +79,10 @@ class ResidualsPlotTests(VisualTestCase):
         Assert no errors occur during Residual Plots integration
         """
         model = SVR()
-        X_train, X_test, y_train, y_test = tts(X, y, test_size=0.5)
+        X_train, X_test, y_train, y_test = tts(X, y, test_size=0.5, random_state=42)
         model.fit(X_train, y_train)
         visualizer = ResidualsPlot(model)
         visualizer.score(X_test, y_test)
+        visualizer.poof()
+        visualizer.ax.grid(False)
+        self.assert_images_similar(visualizer)
