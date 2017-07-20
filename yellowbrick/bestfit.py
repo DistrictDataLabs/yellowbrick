@@ -18,6 +18,7 @@ Uses Scikit-Learn to compute a best fit function, then draws it in the plot.
 ##########################################################################
 
 import numpy as np
+import matplotlib.pyplot as plt
 
 from sklearn import linear_model
 from sklearn.preprocessing import PolynomialFeatures
@@ -53,14 +54,43 @@ def draw_best_fit(X, y, ax, estimator='linear', **kwargs):
 
     The estimator function can be one of the following:
 
-        'linear':      Uses OLS to fit the regression
-        'quadratic':   Uses OLS with Polynomial order 2
-        'exponential': Not implemented yet
-        'log':         Not implemented yet
-        'select_best': Selects the best fit via MSE
+    - ``'linear'``:      Uses OLS to fit the regression
+    - ``'quadratic'``:   Uses OLS with Polynomial order 2
+    - ``'exponential'``: Not implemented yet
+    - ``'log'``:         Not implemented yet
+    - ``'select_best'``: Selects the best fit via MSE
 
     The remaining keyword arguments are passed to ax.plot to define and
     describe the line of best fit.
+
+    Parameters
+    ----------
+    X : ndarray or DataFrame of shape n x m
+        A matrix of n instances with m features
+
+    y : ndarray or Series of length n
+        An array or series of target or class values
+
+    ax : matplotlib Axes, default: None
+        The axis to plot the figure on. If None is passed in the current axes
+        will be used (or generated if required).
+
+    estimator : string, default: 'linear'
+        The name of the estimator function used to draw the best fit line.
+        The estimator can currently be one of linear, quadratic, exponential,
+        log, or select_best. The select best method uses the minimum MSE to
+        select the best fit line.
+
+    kwargs : dict
+        Keyword arguments to pass to the matplotlib plot function to style and
+        label the line of best fit. By default, the standard line color is
+        used unless the color keyword argument is passed in.
+
+    Returns
+    -------
+
+    ax : matplotlib Axes
+        The axes with the line drawn on it.
     """
 
     # Estimators are the types of best fit lines that can be drawn.
@@ -117,6 +147,9 @@ def draw_best_fit(X, y, ax, estimator='linear', **kwargs):
     if 'c' not in kwargs and 'color' not in kwargs:
         kwargs['color'] = LINE_COLOR
 
+    # Get the current working axes
+    ax = ax or plt.gca()
+
     # Plot line of best fit onto the axes that were passed in.
     # TODO: determine if xlim or X.min(), X.max() are better params
     xr = np.linspace(*ax.get_xlim(), num=100)
@@ -172,6 +205,80 @@ def fit_log(X, y):
     """
     raise NotImplementedError("Logrithmic best fit lines are not implemented")
 
+
+##########################################################################
+## Draw 45 Degree Line
+##########################################################################
+
+def draw_identity_line(ax=None, dynamic=True, **kwargs):
+    """
+    Draws a 45 degree identity line such that y=x for all points within the
+    given axes x and y limits. This function also registeres a callback so
+    that as the figure is modified, the axes are updated and the line remains
+    drawn correctly.
+
+    Parameters
+    ----------
+
+    ax : matplotlib Axes, default: None
+        The axes to plot the figure on. If None is passed in the current axes
+        will be used (or generated if required).
+
+    dynamic : bool, default : True
+        If the plot is dynamic, callbacks will be registered to update the
+        identiy line as axes are changed.
+
+    kwargs : dict
+        Keyword arguments to pass to the matplotlib plot function to style the
+        identity line.
+
+
+    Returns
+    -------
+
+    ax : matplotlib Axes
+        The axes with the line drawn on it.
+
+    Notes
+    -----
+
+    .. seealso:: `StackOverflow discussion: Does matplotlib have a function for drawing diagonal lines in axis coordinates? <https://stackoverflow.com/questions/22104256/does-matplotlib-have-a-function-for-drawing-diagonal-lines-in-axis-coordinates>`_
+    """
+
+    # Get the current working axes
+    ax = ax or plt.gca()
+
+    # Define the standard line color
+    if 'c' not in kwargs and 'color' not in kwargs:
+        kwargs['color'] = LINE_COLOR
+
+    # Define the standard opacity
+    if 'alpha' not in kwargs:
+        kwargs['alpha'] = 0.5
+
+    # Draw the identity line
+    identity, = ax.plot([],[], **kwargs)
+
+    # Define the callback
+    def callback(ax):
+        # Get the x and y limits on the axes
+        xlim = ax.get_xlim()
+        ylim = ax.get_ylim()
+
+        # Set the bounding range of the line
+        data = (
+            max(xlim[0], ylim[0]), min(xlim[1], ylim[1])
+        )
+        identity.set_data(data, data)
+
+    # Register the callback and return
+    callback(ax)
+
+    if dynamic:
+        ax.callbacks.connect('xlim_changed', callback)
+        ax.callbacks.connect('ylim_changed', callback)
+
+    return ax
 
 
 if __name__ == '__main__':
