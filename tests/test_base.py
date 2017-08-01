@@ -8,7 +8,7 @@
 # Copyright (C) 2016 District Data Labs
 # For license information, see LICENSE.txt
 #
-# ID: tests.test_base.py.py [] benjamin@bengfort.com $
+# ID: test_base.py [83131ef] benjamin@bengfort.com $
 
 """
 Assertions for the base classes and abstract hierarchy.

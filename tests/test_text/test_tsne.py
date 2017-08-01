@@ -7,7 +7,7 @@
 # Copyright (C) 2016 Bengfort.com
 # For license information, see LICENSE.txt
 #
-# ID: test_tsne.py [] benjamin@bengfort.com $
+# ID: test_tsne.py [6aa9198] benjamin@bengfort.com $
 
 """
 Tests for the TSNE visual corpus embedding mechanism.

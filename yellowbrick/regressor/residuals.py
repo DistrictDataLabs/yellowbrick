@@ -8,7 +8,7 @@
 # Copyright (C) 2016 2016 District Data Labs
 # For license information, see LICENSE.txt
 #
-# ID: residuals.py [] benjamin@bengfort.com $
+# ID: residuals.py [7d3f5e6] benjamin@bengfort.com $
 
 """
 Regressor visualizers that score residuals: prediction vs. actual data.
@@ -22,10 +22,11 @@ import matplotlib.pyplot as plt
 
 from sklearn.model_selection import train_test_split
 
-from ..bestfit import draw_best_fit
 from ..style.palettes import LINE_COLOR
 from .base import RegressionScoreVisualizer
 from ..exceptions import YellowbrickTypeError
+from ..bestfit import draw_best_fit, draw_identity_line
+
 
 ## Packages for export
 __all__ = [
@@ -55,6 +56,25 @@ class PredictionError(RegressionScoreVisualizer):
         The axes to plot the figure on. If None is passed in the current axes
         will be used (or generated if required).
 
+    shared_limits : bool, default: True
+        If shared_limits is True, the range of the X and Y axis limits will
+        be identical, creating a square graphic with a true 45 degree line.
+        In this form, it is easier to diagnose under- or over- prediction,
+        though the figure will become more sparse. To localize points, set
+        shared_limits to False, but note that this will distort the figure
+        and should be accounted for during analysis.
+
+    besfit : bool, default: True
+        Draw a linear best fit line to estimate the correlation between the
+        predicted and measured value of the target variable. The color of
+        the bestfit line is determined by the ``line_color`` argument.
+
+    identity: bool, default: True
+        Draw the 45 degree identity line, y=x in order to better show the
+        relationship or pattern of the residuals. E.g. to estimate if the
+        model is over- or under- estimating the given values. The color of the
+        identity line is a muted version of the ``line_color`` argument.
+
     point_color : color
         Defines the color of the error points; can be any matplotlib color.
 
@@ -82,14 +102,21 @@ class PredictionError(RegressionScoreVisualizer):
     its primary entry point is the `score()` method.
     """
 
-    def __init__(self, model, ax=None, **kwargs):
-
+    def __init__(self, model, ax=None, shared_limits=True,
+                 bestfit=True, identity=True, **kwargs):
+        # Initialize the visualizer
         super(PredictionError, self).__init__(model, ax=ax, **kwargs)
 
+        # Visual arguments
         self.colors = {
             'point': kwargs.pop('point_color', None),
             'line': kwargs.pop('line_color', LINE_COLOR),
         }
+
+        # Drawing arguments
+        self.shared_limits = shared_limits
+        self.bestfit = bestfit
+        self.identity = identity
 
     def score(self, X, y=None, **kwargs):
         """
@@ -113,7 +140,8 @@ class PredictionError(RegressionScoreVisualizer):
         """
         y_pred = self.predict(X)
         self.draw(y, y_pred)
-        return self.estimator.score(X, y, **kwargs)
+        self.score_ =  self.estimator.score(X, y, **kwargs)
+        return self.score_
 
     def draw(self, y, y_pred):
         """
@@ -133,8 +161,15 @@ class PredictionError(RegressionScoreVisualizer):
 
         # TODO If score is happening inside a loop, draw would get called multiple times.
         # Ideally we'd want the best fit line to be drawn only once
-        draw_best_fit(y, y_pred, self.ax, 'linear', ls='--', lw=2, c=self.colors['line'])
+        if self.bestfit:
+            draw_best_fit(
+                y, y_pred, self.ax, 'linear', ls='--', lw=2,
+                c=self.colors['line'], label='best fit'
+            )
 
+        # Set the axes limits based on the range of X and Y data
+        # NOTE: shared_limits will be accounted for in finalize()
+        # TODO: do better than add one for really small residuals
         self.ax.set_xlim(y.min()-1, y.max()+1)
         self.ax.set_ylim(y_pred.min()-1, y_pred.max()+1)
 
@@ -150,11 +185,47 @@ class PredictionError(RegressionScoreVisualizer):
         kwargs: generic keyword arguments.
         """
         # Set the title on the plot
-        self.set_title('Prediction Error for {}'.format(self.name))
+        self.set_title(
+            'Prediction Error for {} ($r^2 = {:0.3f}$)'.format(
+                self.name, self.score_
+            )
+        )
+
+        # Square the axes to ensure a 45 degree line
+        if self.shared_limits:
+            # Get the current limits
+            ylim = self.ax.get_ylim()
+            xlim = self.ax.get_xlim()
+
+            # Find the range that captures all data
+            bounds = (
+                min(ylim[0], xlim[0]),
+                max(ylim[1], xlim[1]),
+            )
+
+            # Reset the limits
+            self.ax.set_xlim(bounds)
+            self.ax.set_ylim(bounds)
+
+            # Ensure the aspect ratio is square
+            self.ax.set_aspect('equal', adjustable='box')
+
+        # Draw the 45 degree line
+        if self.identity:
+            draw_identity_line(
+                ax=self.ax, ls='--', lw=2, c=self.colors['line'],
+                alpha=0.5, label="identity"
+            )
 
         # Set the axes labels
-        self.ax.set_ylabel('Predicted')
-        self.ax.set_xlabel('Measured')
+        self.ax.set_ylabel('$\hat{y}$')
+        self.ax.set_xlabel('$y$')
+
+        # Annotate the score
+        self.ax.annotate('$r^2={:0.3f}$'.format(self.score_), xy=(0,0), xytext=(0,0))
+
+        # Set the legend
+        self.ax.legend(loc='best', frameon=True)
 
 
 def prediction_error(model, X, y=None, ax=None, **kwargs):
@@ -179,6 +250,35 @@ def prediction_error(model, X, y=None, ax=None, **kwargs):
     ax : matplotlib Axes
         The axes to plot the figure on.
 
+    shared_limits : bool, default: True
+        If shared_limits is True, the range of the X and Y axis limits will
+        be identical, creating a square graphic with a true 45 degree line.
+        In this form, it is easier to diagnose under- or over- prediction,
+        though the figure will become more sparse. To localize points, set
+        shared_limits to False, but note that this will distort the figure
+        and should be accounted for during analysis.
+
+    besfit : bool, default: True
+        Draw a linear best fit line to estimate the correlation between the
+        predicted and measured value of the target variable. The color of
+        the bestfit line is determined by the ``line_color`` argument.
+
+    identity: bool, default: True
+        Draw the 45 degree identity line, y=x in order to better show the
+        relationship or pattern of the residuals. E.g. to estimate if the
+        model is over- or under- estimating the given values. The color of the
+        identity line is a muted version of the ``line_color`` argument.
+
+    point_color : color
+        Defines the color of the error points; can be any matplotlib color.
+
+    line_color : color
+        Defines the color of the best fit line; can be any matplotlib color.
+
+    kwargs : dict
+        Keyword arguments that are passed to the base class and may influence
+        the visualization as defined in other Visualizers.
+
     Returns
     -------
     ax : matplotlib Axes
@@ -193,6 +293,7 @@ def prediction_error(model, X, y=None, ax=None, **kwargs):
     # Fit and transform the visualizer (calls draw)
     visualizer.fit(X_train, y_train, **kwargs)
     visualizer.score(X_test, y_test)
+    visualizer.finalize()
 
     # Return the axes object on the visualizer
     return visualizer.ax
@@ -204,12 +305,12 @@ def prediction_error(model, X, y=None, ax=None, **kwargs):
 
 class ResidualsPlot(RegressionScoreVisualizer):
     """
-    A residual plot shows the residuals on the vertical axis
-    and the independent variable on the horizontal axis.
+    A residual plot shows the residuals on the vertical axis and the
+    independent variable on the horizontal axis.
 
-    If the points are randomly dispersed around the horizontal axis,
-    a linear regression model is appropriate for the data;
-    otherwise, a non-linear model is more appropriate.
+    If the points are randomly dispersed around the horizontal axis, a linear
+    regression model is appropriate for the data; otherwise, a non-linear
+    model is more appropriate.
 
     Parameters
     ----------
@@ -245,7 +346,7 @@ class ResidualsPlot(RegressionScoreVisualizer):
 
     >>> from yellowbrick.regressor import ResidualsPlot
     >>> from sklearn.linear_model import Ridge
-    >>> model = PredictionError(Ridge())
+    >>> model = ResidualsPlot(Ridge())
     >>> model.fit(X_train, y_train)
     >>> model.score(X_test, y_test)
     >>> model.poof()
@@ -404,6 +505,7 @@ def residuals_plot(model, X, y=None, ax=None, **kwargs):
     # Fit and transform the visualizer (calls draw)
     visualizer.fit(X_train, y_train, **kwargs)
     visualizer.score(X_test, y_test)
+    visualizer.finalize()
 
     # Return the axes object on the visualizer
     return visualizer.ax

@@ -7,7 +7,7 @@
 # Copyright (C) 2017 District Data Labs
 # For license information, see LICENSE.txt
 #
-# ID: fredist.py [] rbilbro@districtdatalabs.com $
+# ID: freqdist.py [67b2740] rebecca.bilbro@bytecubed.com $
 
 """
 Implementations of frequency distributions for text visualization
@@ -19,6 +19,7 @@ Implementations of frequency distributions for text visualization
 
 import numpy as np
 import matplotlib.pyplot as plt
+import matplotlib.patches as mpatches
 
 from operator import itemgetter
 
@@ -77,7 +78,7 @@ def freqdist(X, y=None, ax=None, color=None, N=50, **kwargs):
     return visualizer.ax
 
 
-class FreqDistVisualizer(TextVisualizer):
+class FrequencyVisualizer(TextVisualizer):
     """
     A frequency distribution tells us the frequency of each vocabulary
     item in the text. In general, it could count any kind of observable
@@ -88,33 +89,50 @@ class FreqDistVisualizer(TextVisualizer):
 
     Parameters
     ----------
-    ax : matplotlib axes
+    features : list, default: None
+        The list of feature names from the vectorizer, ordered by index. E.g.
+        a lexicon that specifies the unique vocabulary of the corpus. This
+        can be typically fetched using the ``get_feature_names()`` method of
+        the transformer in Scikit-Learn.
+
+    ax : matplotlib axes, default: None
         The axes to plot the figure on.
+
+    n: integer, default: 50
+        Top N tokens to be plotted.
+
+    orient : 'h' or 'v', default: 'h'
+        Specifies a horizontal or vertical bar chart.
+
     color : list or tuple of colors
         Specify color for bars
-    N: integer
-        Top N tokens to be plotted.
+
     kwargs : dict
         Pass any additional keyword arguments to the super class.
 
     These parameters can be influenced later on in the visualization
     process, but can and should be set as early as possible.
     """
-    def __init__(self, ax=None, color=None, N=50, **kwargs):
-        """
-        Initializes the base frequency distributions with many
-        of the options required in order to make this
-        visualization work.
-        """
+
+    def __init__(self, features, ax=None, n=50, orient='h', color=None, **kwargs):
         super(FreqDistVisualizer, self).__init__(ax=ax, **kwargs)
 
+        # Check that the orient is correct
+        orient = orient.lower().strip()
+        if orient not in {'h', 'v'}:
+            raise YellowbrickValueError(
+                "Orientation must be 'h' or 'v'"
+            )
+
         # Visualizer parameters
-        self.N = 50
+        self.N = n
+        self.features = features
 
-        # Visual Parameters
+        # Visual arguments
         self.color = color
+        self.orient = orient
 
-    def freq_dist(self):
+    def count(self, X):
         """
         Called from the fit method, this method gets all the
         words from the corpus and their corresponding frequency
@@ -122,28 +140,24 @@ class FreqDistVisualizer(TextVisualizer):
 
         Parameters
         ----------
-        kwargs: generic keyword arguments.
+
+        X : ndarray or masked ndarray
+            Pass in the matrix of vectorized documents, can be masked in
+            order to sum the word frequencies for only a subset of documents.
+
+        Returns
+        -------
+
+        counts : array
+            A vector containing the counts of all words in X (columns)
 
         """
-        counts = np.asarray(self.docs.sum(axis=0)).ravel().tolist()
-        self.word_freq = list(zip(self.features, counts))
+        # Sum on axis 0 (by columns), each column is a word
+        # Convert the matrix to an array
+        # Squeeze to remove the 1 dimension objects (like ravel)
+        return np.squeeze(np.asarray(X.sum(axis=0)))
 
-    def get_counts(self):
-        """
-        Called from the fit method, this method sorts the words
-        from the corpus with their corresponding frequency
-        counts in reverse order.
-
-        Parameters
-        ----------
-        kwargs: generic keyword arguments.
-
-        """
-        sorted_word_freq = sorted(self.word_freq,
-                                  key=itemgetter(1), reverse=True)
-        self.words, self.counts = list(zip(*sorted_word_freq))
-
-    def fit(self, docs, features):
+    def fit(self, X, y=None):
         """
         The fit method is the primary drawing input for the frequency
         distribution visualization. It requires vectorized lists of
@@ -152,22 +166,41 @@ class FreqDistVisualizer(TextVisualizer):
 
         Parameters
         ----------
-        docs : ndarray or DataFrame of shape n x m
-            A matrix of n instances with m features representing the corpus of
-            vectorized documents.
+        X : ndarray or DataFrame of shape n x m
+            A matrix of n instances with m features representing the corpus
+            of frequency vectorized documents.
 
-        features : list
-            List of corpus vocabulary words
+        y : ndarray or DataFrame of shape n
+            Labels for the documents for conditional frequency distribution.
 
-        Text documents must be vectorized before passing to fit()
+        .. note:: Text documents must be vectorized before ``fit()``.
         """
 
-        self.docs     = docs
-        self.features = features
+        # Compute the conditional word frequency
+        if y is not None:
+            # Fit the frequencies
+            self.conditional_freqdist_ = {}
 
-        self.freq_dist()
-        self.get_counts()
+            # Conditional frequency distribution
+            self.classes_ = [str(label) for label in set(y)]
+            for label in self.classes_:
+                self.conditional_freqdist_[label] = self.count(X[y == label])
+        else:
+            # No conditional frequencies
+            self.conditional_freqdist_ = None
+
+        # Frequency distribution of entire corpus.
+        self.freqdist_ = self.count(X)
+        self.sorted_ = self.freqdist_.argsort()[::-1] # Descending order
+
+        # Compute the number of words, vocab, and hapaxes
+        self.vocab_ = self.freqdist_.shape[0]
+        self.words_ = self.freqdist_.sum()
+        self.hapaxes_ = sum(1 for c in self.freqdist_ if c == 1)
+
+        # Draw and ensure that we return self
         self.draw()
+        return self
 
     def draw(self, **kwargs):
         """
@@ -179,12 +212,58 @@ class FreqDistVisualizer(TextVisualizer):
         kwargs: generic keyword arguments.
 
         """
-        # Plot the top 50 most frequent words
-        y_pos = np.arange(self.N)
-        self.ax.bar(y_pos, self.counts[:self.N], align='center', alpha=0.5)
+        # Prepare the data
+        bins  = np.arange(self.N)
+        words = [self.features[i] for i in self.sorted_[:self.N]]
+        freqs = {}
 
-        # Set the tick marks
-        self.ax.set_xticks(y_pos)
+        # Set up the bar plots
+        if self.conditional_freqdist_:
+            for label, values in sorted(self.conditional_freqdist_.items(), key=itemgetter(0)):
+                freqs[label] = [
+                    values[i] for i in self.sorted_[:self.N]
+                ]
+        else:
+            freqs['corpus'] = [
+                self.freqdist_[i] for i in self.sorted_[:self.N]
+            ]
+
+        # Draw a horizontal barplot
+        if self.orient == 'h':
+            # Add the barchart, stacking if necessary
+            for label, freq in freqs.items():
+                self.ax.barh(bins, freq, label=label, align='center')
+
+            # Set the y ticks to the words
+            self.ax.set_yticks(bins)
+            self.ax.set_yticklabels(words)
+
+            # Order the features from top to bottom on the y axis
+            self.ax.invert_yaxis()
+
+            # Turn off y grid lines and turn on x grid lines
+            self.ax.yaxis.grid(False)
+            self.ax.xaxis.grid(True)
+
+        # Draw a vertical barplot
+        elif self.orient == 'v':
+            # Add the barchart, stacking if necessary
+            for label, freq in freqs.items():
+                self.ax.bar(bins, freq, label=label, align='edge')
+
+            # Set the y ticks to the words
+            self.ax.set_xticks(bins)
+            self.ax.set_xticklabels(words, rotation=90)
+
+            # Turn off x grid lines and turn on y grid lines
+            self.ax.yaxis.grid(True)
+            self.ax.xaxis.grid(False)
+
+        # Unknown state
+        else:
+            raise YellowbrickValueError(
+                "Orientation must be 'h' or 'v'"
+            )
 
     def finalize(self, **kwargs):
         """
@@ -198,12 +277,21 @@ class FreqDistVisualizer(TextVisualizer):
         """
         # Set the title
         self.set_title(
-            'Frequency distribution for top {} tokens'.format(self.N)
+            'Frequency Distribution of Top {} tokens'.format(self.N)
         )
 
-        # Rotate tick marks to make words legible
-        self.ax.set_xticklabels(self.words[:self.N], rotation=90)
+        # Create the vocab, count, and hapaxes labels
+        infolabel = "vocab: {:,}\nwords: {:,}\nhapax: {:,}".format(
+            self.vocab_, self.words_, self.hapaxes_
+        )
+
+        self.ax.text(0.68, 0.97, infolabel, transform=self.ax.transAxes,
+                     fontsize=9, verticalalignment='top',
+                     bbox={'boxstyle':'round', 'facecolor':'white', 'alpha':.8})
 
         # Set the legend and the grid
-        self.ax.legend(loc='best')
-        self.ax.grid()
+        self.ax.legend(loc='upper right', frameon=True)
+
+
+# Backwards compatibility alias
+FreqDistVisualizer = FrequencyVisualizer

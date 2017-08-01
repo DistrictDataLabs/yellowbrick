@@ -7,7 +7,7 @@
 # Copyright (C) 2016 District Data Labs
 # For license information, see LICENSE.txt
 #
-# ID: pipeline.py [] benjamin@bengfort.com $
+# ID: pipeline.py [1efae1f] benjamin@bengfort.com $
 
 """
 Implements a visual pipeline that subclasses Scikit-Learn pipelines.

@@ -32,4 +32,4 @@ class ClassBalanceTests(VisualTestCase):
         model.fit(X,y)
         visualizer = ClassBalance(model, classes=["A", "B"])
         visualizer.score(X,y)
-
+        self.assert_images_similar(visualizer)
