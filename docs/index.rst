@@ -3,15 +3,14 @@
     You can adapt this file completely to your liking, but it should at least
     contain the root `toctree` directive.
 
-
-===========================================
 Yellowbrick: Machine Learning Visualization
 ===========================================
+
 .. image:: images/visualizers.png
 
-Yellowbrick is a suite of visual diagnostic tools called "Visualizers" that extend the Scikit-Learn API to allow human steering of the model selection process. In a nutshell, Yellowbrick combines Scikit-Learn with Matplotlib in the best tradition of the Scikit-Learn documentation, but to produce visualizations for *your* models! For more on Yellowbrick, please see the :doc:`introduction`.
+Yellowbrick is a suite of visual diagnostic tools called "Visualizers" that extend the Scikit-Learn API to allow human steering of the model selection process. In a nutshell, Yellowbrick combines Scikit-Learn with Matplotlib in the best tradition of the Scikit-Learn documentation, but to produce visualizations for *your* models! For more on Yellowbrick, please see the :doc:`about`.
 
-If you're new to Yellowbrick, checkout the :doc:`quickstart` or skip ahead to the :doc:`examples/index`. Yellowbrick is a rich library with many Visualizers being added on a regular basis. For details on specific Visualizers and extended usage head over to the :doc:`api/modules`. If you've signed up to do user testing, checkout the :doc:`evaluation` (and thank you!).
+If you're new to Yellowbrick, checkout the :doc:`quickstart` or skip ahead to the :doc:`tutorial`. Yellowbrick is a rich library with many Visualizers being added on a regular basis. For details on specific Visualizers and extended usage head over to the :doc:`api/index`. Interested in contributing to Yellowbrick? Checkout the :ref:`contributing guide <contributing>` . If you've signed up to do user testing, head over to the :doc:`evaluation` (and thank you!).
 
 Visualizers
 -----------
@@ -59,7 +58,7 @@ Getting Help
 
 Yellowbrick is a welcoming, inclusive project in the tradition of Matplotlib and Scikit-Learn. Similar to those projects, we try to follow the `Python Software Foundation Code of Conduct <http://www.python.org/psf/codeofconduct/>`_. Please don't hesitate to reach out to us for help or if you have any contributions or bugs to report!
 
-We're still in the initial stages of the project, and don't necessarily have a mailing list or FAQ put together (but with your help we can build one!). Ask questions on `Stack Overflow <http://stackoverflow.com/questions/tagged/yellowbrick>`_ and tag them with "yellowbrick". Or you can add issues on GitHub. You can also tweet or direct message us on Twitter `@DistrictDataLab <https://twitter.com/districtdatalab>`_.
+The primary way to ask for help with Yellowbrick is to post on our `Google Groups Listserv <https://groups.google.com/forum/#!forum/yellowbrick>`_. This is an email list/forum that members of the community can join and respond to each other; you should be able to receive the quickest response here. Please also consider joining the group so you can respond to questions! You can also ask questions on `Stack Overflow <http://stackoverflow.com/questions/tagged/yellowbrick>`_ and tag them with "yellowbrick". Or you can add issues on GitHub. You can also tweet or direct message us on Twitter `@DistrictDataLab <https://twitter.com/districtdatalab>`_.
 
 Open Source
 -----------
@@ -69,27 +68,24 @@ The Yellowbrick `license <https://github.com/DistrictDataLabs/yellowbrick/blob/m
 Yellowbrick is hosted on `GitHub <https://github.com/DistrictDataLabs/yellowbrick/>`_. The `issues <https://github.com/DistrictDataLabs/yellowbrick/issues/>`_ and `pull requests <https://github.com/DistrictDataLabs/yellowbrick/pulls>`_ are tracked there.
 
 
-=================
 Table of Contents
-=================
+-----------------
 
 The following is a complete listing of the Yellowbrick documentation for this version of the library:
 
 .. toctree::
    :maxdepth: 2
 
-   introduction
    quickstart
-   examples/index
-   api/modules
+   tutorial
+   api/index
    about
    evaluation
    contributing
    changelog
 
-==================
 Indices and tables
-==================
+------------------
 
 * :ref:`genindex`
 * :ref:`modindex`
