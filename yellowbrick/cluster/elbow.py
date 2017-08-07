@@ -247,6 +247,8 @@ class KElbowVisualizer(ClusteringScoreVisualizer):
             )
 
         self.draw()
+        
+        return self
 
     def draw(self):
         """
