@@ -1,15 +1,10 @@
-import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 
+from sklearn.linear_model import Ridge, Lasso
 from sklearn.model_selection import train_test_split
-from sklearn.linear_model import RidgeCV
-from sklearn.linear_model import LassoCV
 
-from sklearn.pipeline import make_pipeline
-from sklearn.preprocessing import PolynomialFeatures
-from yellowbrick.regressor import AlphaSelection
-from yellowbrick.regressor import ManualAlphaSelection
+from yellowbrick.regressor import PredictionError
 
 
 if __name__ == '__main__':
@@ -26,12 +21,10 @@ if __name__ == '__main__':
     # Create the train and test data
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2)
 
-    # Create a list of alphas to cross-validate against
-    alphas = np.logspace(-12, -0.5, 400)
-
     # Instantiate the linear model and visualizer
-    model = LassoCV(alphas=alphas)
-    visualizer = AlphaSelection(model)
+    lasso = Lasso()
+    visualizer = PredictionError(lasso)
 
     visualizer.fit(X_train, y_train)  # Fit the training data to the visualizer
-    g = visualizer.poof(outpath="images/alpha_selection.png")             # Draw/show/poof the data
+    visualizer.score(X_test, y_test)  # Evaluate the model on the test data
+    g = visualizer.poof(outpath="images/prediction_error.png")             # Draw/show/poof the data
