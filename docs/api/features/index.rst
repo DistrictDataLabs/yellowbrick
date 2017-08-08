@@ -12,11 +12,11 @@ and between dimensions.
 
 At the moment we have three feature analysis visualizers implemented:
 
--  :doc:`rank2d`: rank pairs of features to detect covariance
--  :doc:`radviz`: plot data points along axes ordered around a circle to detect
-   separability
+-  :doc:`rankd`: rank single and pairs of features to detect covariance
+-  :doc:`radviz`: plot data points along axes ordered around a circle to detect separability
 -  :doc:`pcoords`: plot instances as lines along vertical axes to
    detect clusters
+-  :doc:`scatter`: plot instances by selecting subsets of features
 
 Feature analysis visualizers implement the ``Transformer`` API from
 Scikit-Learn, meaning they can be used as intermediate transform steps
@@ -28,15 +28,19 @@ is called which displays the image.
 .. code:: python
 
     # Feature Analysis Imports
-    # NOTE that all these are available for import from the `yellowbrick.features` module
-    from yellowbrick.features.rankd import Rank2D
+    # NOTE that all these are available for import directly from the `yellowbrick.features` module
+    from yellowbrick.features.rankd import Rank1D, Rank2D
     from yellowbrick.features.radviz import RadViz
     from yellowbrick.features.pcoords import ParallelCoordinates
+    from yellowbrick.features.jointplot import JointPlotVisualizer
+    from yellowbrick.features.pca import PCADecomposition
+    from yellowbrick.features.scatter import ScatterVisualizer
 
 
 .. toctree::
    :maxdepth: 2
 
    radviz
-   rank2d
+   rankd
    pcoords
+   scatter

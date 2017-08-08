@@ -3,6 +3,21 @@ import matplotlib.pyplot as plt
 
 from yellowbrick.features import ParallelCoordinates
 
+
+def pcoords(X, y, outpath, **kwargs):
+    # Create a new figure and axes
+    fig = plt.figure()
+    ax = fig.add_subplot(111)
+
+    # Create the visualizer
+    visualizer = ParallelCoordinates(**kwargs)
+    visualizer.fit(X, y)
+    visualizer.transform(X)
+
+    # Save to disk
+    visualizer.poof(outpath=outpath)
+
+
 if __name__ == '__main__':
     # Load the classification data set
     data = pd.read_csv("../../../examples/data/occupancy/occupancy.csv")
@@ -15,9 +30,11 @@ if __name__ == '__main__':
     X = data[features].as_matrix()
     y = data.occupancy.as_matrix()
 
-    # Instantiate the visualizer
-    visualizer = ParallelCoordinates(classes=classes, features=features)
+    # Draw the full, original parallel coordinates
+    pcoords(X, y, "images/parallel_coordinates.png", classes=classes, features=features)
 
-    visualizer.fit(X, y)      # Fit the data to the visualizer
-    visualizer.transform(X)   # Transform the data
-    visualizer.poof(outpath="images/parallel_coordinates.png")         # Draw/show/poof the data
+    # Draw the noramlized, sampled parallel coordinates
+    pcoords(X, y, "images/normalized_sampled_parallel_coordinates.png",
+        classes=classes, features=features,
+        normalize='standard', sample=0.1,
+    )
