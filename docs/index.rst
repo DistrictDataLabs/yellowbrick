@@ -20,36 +20,38 @@ Visualizers are estimators (objects that learn from data) whose primary objectiv
 Feature Visualization
 ~~~~~~~~~~~~~~~~~~~~~
 
-- Rank2D: pairwise ranking of features to detect relationships
-- Parallel Coordinates: horizontal visualization of instances
-- Radial Visualization: separation of instances around a circular plot
+- :doc:`api/features/rankd`: pairwise ranking of features to detect relationships
+- :doc:`api/features/pcoords`: horizontal visualization of instances
+- :doc:`Radial Visualization <api/features/radviz>`: separation of instances around a circular plot
+- :doc:`api/features/pca`: projection of instances based on principal components
+- :doc:`Scatter and Joint Plots<api/features/scatter>`: direct data visualization with feature selection
 
 Classification Visualization
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-- Class Balance: see how the distribution of classes affects the model
-- Classification Report: visual representation of precision, recall, and F1
-- ROC/AUC Curves: receiver operator characteristics and area under the curve
-- Confusion Matrices: visual description of class decision making
+- :doc:`api/classifier/class_balance`: see how the distribution of classes affects the model
+- :doc:`api/classifier/classification_report`: visual representation of precision, recall, and F1
+- :doc:`ROC/AUC Curves <api/classifier/rocauc>`: receiver operator characteristics and area under the curve
+- :doc:`Confusion Matrices <api/classifier/confusion_matrix>`: visual description of class decision making
 
 Regression Visualization
 ~~~~~~~~~~~~~~~~~~~~~~~~
 
-- Prediction Error Plots: find model breakdowns along the domain of the target
-- Residuals Plot: show the difference in residuals of training and test data
-- Alpha Selection: show how the choice of alpha influences regularization
+- :doc:`api/regressor/peplot`: find model breakdowns along the domain of the target
+- :doc:`api/regressor/residuals`: show the difference in residuals of training and test data
+- :doc:`api/regressor/alphas`: show how the choice of alpha influences regularization
 
 Clustering Visualization
 ~~~~~~~~~~~~~~~~~~~~~~~~
 
-- K-Elbow Plot: select k using the elbow method and various metrics
-- Silhouette Plot: select k by visualizing silhouette coefficient values
+- :doc:`K-Elbow Plot <api/cluster/elbow>`: select k using the elbow method and various metrics
+- :doc:`Silhouette Plot <api/cluster/silhouette>`: select k by visualizing silhouette coefficient values
 
 Text Visualization
 ~~~~~~~~~~~~~~~~~~
 
-- Term Frequency: visualize the frequency distribution of terms in the corpus
-- TSNE: use stochastic neighbor embedding to project documents.
+- :doc:`Term Frequency <api/text/freqdist>`: visualize the frequency distribution of terms in the corpus
+- :doc:`api/text/tsne`: use stochastic neighbor embedding to project documents.
 
 ... and more! Visualizers are being added all the time; be sure to check the examples (or even the `develop branch <https://github.com/DistrictDataLabs/yellowbrick/tree/develop>`_) and feel free to contribute your ideas for new Visualizers!
 
