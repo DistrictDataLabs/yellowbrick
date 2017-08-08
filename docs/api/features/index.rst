@@ -16,6 +16,7 @@ At the moment we have three feature analysis visualizers implemented:
 -  :doc:`radviz`: plot data points along axes ordered around a circle to detect separability
 -  :doc:`pcoords`: plot instances as lines along vertical axes to
    detect clusters
+-  :doc:`pca`: project higher dimensions into a visual space using PCA
 -  :doc:`scatter`: plot instances by selecting subsets of features
 
 Feature analysis visualizers implement the ``Transformer`` API from
@@ -43,4 +44,5 @@ is called which displays the image.
    radviz
    rankd
    pcoords
+   pca
    scatter
