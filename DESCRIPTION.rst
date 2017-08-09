@@ -26,9 +26,11 @@ Visualizers are estimators (objects that learn from data) whose primary objectiv
 Feature Visualization
 ~~~~~~~~~~~~~~~~~~~~~
 
-- **Rank2D**: pairwise ranking of features to detect relationships
+- **Rank Features**: single or pairwise ranking of features to detect relationships
 - **Parallel Coordinates**: horizontal visualization of instances
 - **Radial Visualization**: separation of instances around a circular plot
+- **PCA Projection**: projection of instances based on principal components
+- **Scatter and Joint Plots**: direct data visualization with feature selection
 
 Classification Visualization
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
