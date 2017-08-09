@@ -7,7 +7,7 @@
 # Copyright (C) 2017 District Data Labs
 # For license information, see LICENSE.txt
 #
-# ID: test_freqdist.py [] rbilbro@districtdatalabs.com $
+# ID: test_freqdist.py [bd9cbb9] rebecca.bilbro@bytecubed.com $
 
 """
 Tests for the frequency distribution text visualization
@@ -30,6 +30,7 @@ from sklearn.feature_extraction.text import CountVectorizer
 
 class FreqDistTests(unittest.TestCase, DatasetMixin):
 
+
     def test_integrated_freqdist(self):
         """
         Assert no errors occur during freqdist integration
@@ -40,5 +41,5 @@ class FreqDistTests(unittest.TestCase, DatasetMixin):
         docs       = vectorizer.fit_transform(corpus.data)
         features   = vectorizer.get_feature_names()
 
-        visualizer = FreqDistVisualizer()
-        visualizer.fit(docs, features)
+        visualizer = FreqDistVisualizer(features)
+        visualizer.fit(docs)

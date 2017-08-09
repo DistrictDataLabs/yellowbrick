@@ -1,9 +1,27 @@
+# yellowbrick.classifier.class_balance
+# Class balance visualizer for showing per-class support.
+#
+# Author:   Rebecca Bilbro <rbilbro@districtdatalabs.com>
+# Author:   Benjamin Bengfort <bbengfort@districtdatalabs.com>
+# Author:   Neal Humphrey
+# Created:  Wed May 18 12:39:40 2016 -0400
+#
+# Copyright (C) 2017 District Data Labs
+# For license information, see LICENSE.txt
+#
+# ID: class_balance.py [5388065] neal@nhumphrey.com $
 
-from .base import ClassificationScoreVisualizer
-from ..style.palettes import color_palette
+"""
+Class balance visualizer for showing per-class support.
+"""
+
+##########################################################################
+## Imports
+##########################################################################
 
 import numpy as np
-import matplotlib.pyplot as plt
+
+from .base import ClassificationScoreVisualizer
 
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import precision_recall_fscore_support
@@ -37,39 +55,11 @@ class ClassBalance(ClassificationScoreVisualizer):
         Keyword arguments passed to the super class. Here, used
         to colorize the bars in the histogram.
 
+    Notes
+    -----
     These parameters can be influenced later on in the visualization
     process, but can and should be set as early as possible.
     """
-    def __init__(self, model, ax=None, classes=None, **kwargs):
-
-        super(ClassBalance, self).__init__(model, ax=ax, **kwargs)
-
-        self.colors    = color_palette(kwargs.pop('colors', None))
-        self.classes_  = classes
-
-    def fit(self, X, y=None, **kwargs):
-        """
-        Parameters
-        ----------
-
-        X : ndarray or DataFrame of shape n x m
-            A matrix of n instances with m features
-
-        y : ndarray or Series of length n
-            An array or series of target or class values
-
-        kwargs: keyword arguments passed to Scikit-Learn API.
-
-        Returns
-        -------
-        self : instance
-            Returns the instance of the classification score visualizer
-
-        """
-        super(ClassBalance, self).fit(X, y, **kwargs)
-        if self.classes_ is None:
-            self.classes_ = self.estimator.classes_
-        return self
 
     def score(self, X, y=None, **kwargs):
         """
@@ -124,17 +114,17 @@ class ClassBalance(ClassificationScoreVisualizer):
         kwargs: generic keyword arguments.
 
         """
-
         # Set the title
         self.set_title('Class Balance for {}'.format(self.name))
 
         # Set the x ticks with the class names
-        # TODO: change to the self.ax method rather than plt.xticks
-        plt.xticks(np.arange(len(self.support)), self.support.keys())
+        self.ax.set_xticks(np.arange(len(self.support)))
+        self.ax.set_xticklabels(self.support.keys())
 
         # Compute the ceiling for the y limit
         cmax, cmin = max(self.support.values()), min(self.support.values())
         self.ax.set_ylim(0, cmax + cmax* 0.1)
+
 
 def class_balance(model, X, y=None, ax=None, classes=None, **kwargs):
     """Quick method:

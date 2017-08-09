@@ -123,3 +123,9 @@ fabric.properties
 # *.ipr
 
 .idea
+
+# VisualTestCase Outputs
+/tests/actual_images/*
+
+# Data downloaded from Yellowbrick 
+data/

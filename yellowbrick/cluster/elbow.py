@@ -7,7 +7,7 @@
 # Copyright (C) 2016 District Data Labs
 # For license information, see LICENSE.txt
 #
-# ID: elbow.py [] benjamin@bengfort.com $
+# ID: elbow.py [5a370c8] benjamin@bengfort.com $
 
 """
 Implements the elbow method for determining the optimal number of clusters.
@@ -247,6 +247,8 @@ class KElbowVisualizer(ClusteringScoreVisualizer):
             )
 
         self.draw()
+        
+        return self
 
     def draw(self):
         """

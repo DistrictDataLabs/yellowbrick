@@ -105,7 +105,11 @@ These quick functions give you slightly less control over the machine learning w
 Walkthrough
 -----------
 
-Consider a regression analysis as a simple example of the use of visualizers in the machine learning workflow. Using a `bike sharing dataset <https://archive.ics.uci.edu/ml/datasets/bike+sharing+dataset>`_, we would like to predict the number of bikes rented in a given hour based on features like the season, weather, or if it's a holiday. We can load our data as follows:
+Consider a regression analysis as a simple example of the use of visualizers in the machine learning workflow. Using a `bike sharing dataset <https://s3.amazonaws.com/ddl-data-lake/yellowbrick/bikeshare.zip>`_ based upon the one uploaded to the `UCI Machine Learning Repository <https://archive.ics.uci.edu/ml/datasets/bike+sharing+dataset>`_, we would like to predict the number of bikes rented in a given hour based on features like the season, weather, or if it's a holiday.
+
+.. note:: We have updated the dataset from the UCI ML repository to make it a bit easier to load into Pandas; make sure you download the `Yellowbrick version of the dataset <https://s3.amazonaws.com/ddl-data-lake/yellowbrick/bikeshare.zip>`_.
+
+After downloading the dataset and unzipping it in your current working directory, we can load our data as follows:
 
 .. code-block:: python
 
@@ -114,7 +118,7 @@ Consider a regression analysis as a simple example of the use of visualizers in 
     data = pd.read_csv('bikeshare.csv')
     X = data[[
         "season", "month", "hour", "holiday", "weekday", "workingday",
-        "weather", "temp", "atemp", "hum", "windspeed"
+        "weather", "temp", "feelslike", "humidity", "windspeed"
     ]]
     y = data["riders"]
 
@@ -217,4 +221,4 @@ The prediction error visualizer plots the actual (measured) vs. expected (predic
 
 In this plot we can see that most of the instance density is less than 200 riders. We may want to try orthogonal matching pursuit or splines to fit a regression that takes into account more regionality. We can also note that that weird topology from the residuals plot seems to be fixed using the Ridge regression, and that there is a bit more balance in our model between large and small values. Potentially the Ridge regularization cured a covariance issue we had between two features. As we move forward in our analysis using other model forms, we can continue to utilize visualizers to quickly compare and see our results.
 
-Hopefully this workflow gives you an idea of how to integrate Visualizers into machine learning with Scikit-Learn and inspires you to use them in your work and write your own! For additional information on getting started with Yellowbrick, check out our :ref:`examples <examples/yellowbrick-examples>`.
+Hopefully this workflow gives you an idea of how to integrate Visualizers into machine learning with Scikit-Learn and inspires you to use them in your work and write your own! For additional information on getting started with Yellowbrick, check out the :doc:`tutorial`. After that you can get up to speed on specific visualizers detailed in the :doc:`api/index`.

@@ -21,6 +21,10 @@ import os
 import sys
 sys.path.insert(0, os.path.abspath('..'))
 
+# Set the backend of matplotlib to prevent build errors.
+import matplotlib
+matplotlib.use('agg')
+
 import yellowbrick as yb
 
 # -- General configuration ------------------------------------------------

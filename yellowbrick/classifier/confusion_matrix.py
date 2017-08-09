@@ -1,18 +1,39 @@
+# yellowbrick.classifier.confusion_matrix
+# Visual confusion matrix for classifier scoring.
+#
+# Author:   Neal Humphrey
+# Created:  Tue May 03 11:05:11 2017 -0700
+#
+# Copyright (C) 2017 District Data Labs
+# For license information, see LICENSE.txt
+#
+# ID: confusion_matrix.py [5388065] neal@nhumphrey.com $
 
-from .base import ClassificationScoreVisualizer
+"""
+Visual confusion matrix for classifier scoring.
+"""
+
+##########################################################################
+## Imports
+##########################################################################
 
 import numpy as np
 import matplotlib.pyplot as plt
+
 from sklearn.metrics import confusion_matrix
 
-from ..style.palettes import color_sequence
-from ..style import find_text_color
 from ..utils import div_safe
+from ..style import find_text_color
+from ..style.palettes import color_sequence
+from .base import ClassificationScoreVisualizer
 
 
 ##########################################################################
 ## ConfusionMatrix
 ##########################################################################
+
+CMAP_OVERCOLOR = '#2a7d4f'
+
 
 class ConfusionMatrix(ClassificationScoreVisualizer):
     """
@@ -32,11 +53,18 @@ class ConfusionMatrix(ClassificationScoreVisualizer):
 
     ax : the matplotlib axis to plot the figure on (if None, a new axis will be created)
 
-    classes : a list of class names to use in the confusion_matrix.
-        This is passed to the 'labels' parameter of sklearn.metrics.confusion_matrix(), and follows the behaviour
+    classes : list, default: None 
+        a list of class names to use in the confusion_matrix. This is passed to the 'labels' 
+        parameter of sklearn.metrics.confusion_matrix(), and follows the behaviour
         indicated by that function. It may be used to reorder or select a subset of labels.
         If None, values that appear at least once in y_true or y_pred are used in sorted order.
-        Default: None
+        
+    label_encoder : dict or LabelEncoder, default: None 
+        When specifying the ``classes`` argument, the input to ``fit()`` and ``score()`` must match the 
+        expected labels. If the ``X`` and ``y`` datasets have been encoded prior to training and the 
+        labels must be preserved for the visualization, use this argument to provide a mapping from the 
+        encoded class to the correct label. Because typically a Scikit-Learn ``LabelEncoder`` is used to 
+        perform this operation, you may provide it directly to the class to utilize its fitted encoding. 
 
     Examples
     --------
@@ -50,67 +78,19 @@ class ConfusionMatrix(ClassificationScoreVisualizer):
     """
 
 
-    def __init__(self, model, ax=None, classes=None, **kwargs):
-
-        super(ConfusionMatrix, self).__init__(model, ax=ax, classes=None,**kwargs)
-        #Parameters provided by super (for reference during development only):
-        #self.ax
-        #self.size
-        #self.color
-        #self.title
-        #self.estimator
-        #self.name
+    def __init__(self, model, ax=None, classes=None, label_encoder=None, **kwargs):
+        super(ConfusionMatrix, self).__init__(
+            model, ax=ax, classes=classes, **kwargs
+        )
 
         #Initialize all the other attributes we'll use (for coder clarity)
         self.confusion_matrix = None
 
         self.cmap = color_sequence(kwargs.pop('cmap', 'YlOrRd'))
-        self.cmap.set_under(color='w')
-        self.cmap.set_over(color='#2a7d4f')
-        self.edgecolors=[] #used to draw diagonal line for predicted class = true class
-
-
-        #Convert list to array if necessary, since estimator.classes_ returns nparray
-        self._classes = None if classes == None else np.array(classes)
-
-    #TODO hoist this to shared confusion matrix / classification report heatmap class
-    @property
-    def classes(self):
-        '''
-        Returns a numpy array of the classes in y
-        Matches the user provided list if provided by the user in __init__
-        If no list provided, tries to obtain it from the fitted estimator
-        '''
-        if self._classes is None:
-            try:
-                print("trying")
-                return self.estimator.classes_
-            except AttributeError:
-                return None
-        return self._classes
-
-    @classes.setter
-    def classes(self, value):
-        self._classes = value
-
-    #todo hoist
-    def fit(self, X, y=None, **kwargs):
-        """
-        Parameters
-        ----------
-
-        X : ndarray or DataFrame of shape n x m
-            A matrix of n instances with m features
-
-        y : ndarray or Series of length n
-            An array or series of target or class values
-
-        kwargs: keyword arguments passed to Scikit-Learn API.
-        """
-        super(ConfusionMatrix, self).fit(X, y, **kwargs)
-        if self._classes is None:
-            self.classes = self.estimator.classes_
-        return self
+        self.cmap.set_under(color = 'w')
+        self.cmap.set_over(color=CMAP_OVERCOLOR)
+        self.edgecolors = [] #used to draw diagonal line for predicted class = true class
+        self.label_encoder = label_encoder
 
     def score(self, X, y, sample_weight=None, percent=True):
         """
@@ -134,14 +114,26 @@ class ConfusionMatrix(ClassificationScoreVisualizer):
         """
         y_pred = self.predict(X)
 
-        self.confusion_matrix = confusion_matrix(y_true = y, y_pred = y_pred, labels=self.classes, sample_weight=sample_weight)
+
+        if self.label_encoder:
+            try :
+                y = self.label_encoder.inverse_transform(y)
+                y_pred = self.label_encoder.inverse_transform(y_pred)
+            except AttributeError:
+                # if a mapping is passed to class apply it here.
+                y = [self.label_encoder[x] for x in y]
+                y_pred = [self.label_encoder[x] for x in y_pred]
+
+        self.confusion_matrix = confusion_matrix(
+            y, y_pred, labels=self.classes_, sample_weight=sample_weight
+        )
         self._class_counts = self.class_counts(y)
 
         #Make array of only the classes actually being used.
         #Needed because sklearn confusion_matrix only returns counts for selected classes
             #but percent should be calculated based on all classes
         selected_class_counts = []
-        for c in self.classes:
+        for c in self.classes_:
             try:
                 selected_class_counts.append(self._class_counts[c])
             except KeyError:
@@ -180,16 +172,16 @@ class ConfusionMatrix(ClassificationScoreVisualizer):
         self.max = self._confusion_matrix_plottable.max()
 
         #Set up the dimensions of the pcolormesh
-        X = np.linspace(start=0, stop=len(self.classes), num=len(self.classes)+1)
-        Y = np.linspace(start=0, stop=len(self.classes), num=len(self.classes)+1)
+        X = np.linspace(start=0, stop=len(self.classes_), num=len(self.classes_)+1)
+        Y = np.linspace(start=0, stop=len(self.classes_), num=len(self.classes_)+1)
         self.ax.set_ylim(bottom=0, top=self._confusion_matrix_plottable.shape[0])
         self.ax.set_xlim(left=0, right=self._confusion_matrix_plottable.shape[1])
 
         #Put in custom axis labels
-        self.xticklabels = self.classes
-        self.yticklabels = self.classes[::-1]
-        self.xticks = np.arange(0, len(self.classes), 1) + .5
-        self.yticks = np.arange(0, len(self.classes), 1) + .5
+        self.xticklabels = self.classes_
+        self.yticklabels = self.classes_[::-1]
+        self.xticks = np.arange(0, len(self.classes_), 1) + .5
+        self.yticks = np.arange(0, len(self.classes_), 1) + .5
         self.ax.set(xticks=self.xticks, yticks=self.yticks)
         self.ax.set_xticklabels(self.xticklabels, rotation="vertical", fontsize=8)
         self.ax.set_yticklabels(self.yticklabels, fontsize=8)

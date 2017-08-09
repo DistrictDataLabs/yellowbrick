@@ -7,7 +7,7 @@
 # Copyright (C) 2017 District Data Labs
 # For license information, see LICENSE.txt
 #
-# ID: wrapper.py [] benjamin@bengfort.com $
+# ID: wrapper.py [b2ecd50] benjamin@bengfort.com $
 
 """
 Utility package that provides a wrapper for new style classes.

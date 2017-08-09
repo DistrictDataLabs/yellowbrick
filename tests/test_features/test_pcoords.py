@@ -7,7 +7,7 @@
 # Copyright (C) 2016 District Data Labs
 # For license information, see LICENSE.txt
 #
-# ID: test_pcoords.py [] benjamin@bengfort.com $
+# ID: test_pcoords.py [1d407ab] benjamin@bengfort.com $
 
 """
 Testing for the parallel coordinates feature visualizers
@@ -48,9 +48,61 @@ class ParallelCoordinatesTests(unittest.TestCase, DatasetMixin):
         visualizer = ParallelCoordinates()
         visualizer.fit_transform(self.X, self.y)
 
+    def test_normalized_pcoords(self):
+        """
+        Assert no errors occur using 'normalize' argument
+        """
+        visualizer = ParallelCoordinates(normalize='l2')
+        visualizer.fit_transform(self.X, self.y)
+
+    def test_normalized_pcoords_invalid_arg(self):
+        """
+        Invalid argument to 'normalize' should raise
+        """
+        with self.assertRaises(YellowbrickValueError):
+            ParallelCoordinates(normalize='foo')
+
+    def test_pcoords_sample_int(self):
+        """
+        Assert no errors occur using integer 'sample' argument
+        """
+        visualizer = ParallelCoordinates(sample=10)
+        visualizer.fit_transform(self.X, self.y)
+
+    def test_pcoords_sample_int_invalid(self):
+        """
+        Negative int values should raise
+        """
+        with self.assertRaises(YellowbrickValueError):
+            ParallelCoordinates(sample=-1)
+
+    def test_pcoords_sample_float(self):
+        """
+        Assert no errors occur using float 'sample' argument
+        """
+        visualizer = ParallelCoordinates(sample=0.5)
+        visualizer.fit_transform(self.X, self.y)
+
+    def test_pcoords_sample_float_invalid(self):
+        """
+        Float values for 'sample' argument outside [0,1] should raise.
+        """
+        with self.assertRaises(YellowbrickValueError):
+            ParallelCoordinates(sample=-0.2)
+        with self.assertRaises(YellowbrickValueError):
+            ParallelCoordinates(sample=1.1)
+
+    def test_pcoords_sample_invalid_type(self):
+        """
+        Non-numeric values for 'sample' argument should raise.
+        """
+        with self.assertRaises(YellowbrickTypeError):
+            ParallelCoordinates(sample='foo')
+
     def test_integrated_pcoords(self):
         """
-        Test parallel coordinates on a real, occupancy data set
+        Test parallel coordinates on a real, occupancy data set (downsampled
+        for speed)
         """
         occupancy = self.load_data('occupancy')
 
@@ -64,5 +116,5 @@ class ParallelCoordinatesTests(unittest.TestCase, DatasetMixin):
         X = np.array(X.tolist())
 
         # Test the visualizer
-        visualizer = ParallelCoordinates()
+        visualizer = ParallelCoordinates(sample=200)
         visualizer.fit_transform(X, y)

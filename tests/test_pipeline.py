@@ -7,7 +7,7 @@
 # Copyright (C) 2016 District Data Labs
 # For license information, see LICENSE.txt
 #
-# ID: test_pipeline.py [] benjamin@bengfort.com $
+# ID: test_pipeline.py [1efae1f] benjamin@bengfort.com $
 
 """
 Tests to ensure that the visual pipeline works as expected.

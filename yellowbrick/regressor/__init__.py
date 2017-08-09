@@ -7,7 +7,7 @@
 # Copyright (C) 2016 District Data Labs
 # For license information, see LICENSE.txt
 #
-# ID: __init__.py [] benjamin@bengfort.com $
+# ID: __init__.py [7d3f5e6] benjamin@bengfort.com $
 
 """
 Visualizers for Regression analysis and diagnostics, particularly
