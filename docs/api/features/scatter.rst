@@ -6,7 +6,7 @@ Sometimes for feature analysis you simply need a scatter plot to determine the d
 Scatter Visualization
 ---------------------
 
-A scatter visualzier simply plots two features against each other and colors the points according to the target. This can be useful in assessing the relationship of pairs of features to an individual target.
+A scatter visualizer simply plots two features against each other and colors the points according to the target. This can be useful in assessing the relationship of pairs of features to an individual target.
 
 .. code:: python
 
@@ -60,7 +60,7 @@ A joint plot visualizer plots a feature against the target and shows the distrib
 
 .. image:: images/jointplot.png
 
-The joint plot visualizer can also be plotted with hexbins in the case of many, many points. 
+The joint plot visualizer can also be plotted with hexbins in the case of many, many points.
 
 .. code:: python
 

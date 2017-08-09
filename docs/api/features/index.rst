@@ -10,12 +10,12 @@ our intent that the steering process will allow the data scientist to
 zoom and filter and explore the relationships between their instances
 and between dimensions.
 
-At the moment we have three feature analysis visualizers implemented:
+At the moment we have five feature analysis visualizers implemented:
 
 -  :doc:`rankd`: rank single and pairs of features to detect covariance
 -  :doc:`radviz`: plot data points along axes ordered around a circle to detect separability
 -  :doc:`pcoords`: plot instances as lines along vertical axes to
-   detect clusters
+   detect classes or clusters
 -  :doc:`pca`: project higher dimensions into a visual space using PCA
 -  :doc:`scatter`: plot instances by selecting subsets of features
 

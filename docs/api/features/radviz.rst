@@ -2,10 +2,10 @@ RadViz Visualizer
 =================
 
 RadViz is a multivariate data visualization algorithm that plots each
-feature dimension uniformely around the circumference of a circle then
+feature dimension uniformly around the circumference of a circle then
 plots points on the interior of the circle such that the point
 normalizes its values on the axes from the center to each arc. This
-meachanism allows as many dimensions as will easily fit on a circle,
+mechanism allows as many dimensions as will easily fit on a circle,
 greatly expanding the dimensionality of the visualization.
 
 Data scientists use this method to detect separability between classes.

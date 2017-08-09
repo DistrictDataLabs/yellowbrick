@@ -4,7 +4,7 @@ Regression Visualizers
 Regression models attempt to predict a target in a continuous space.
 Regressor score visualizers display the instances in model space to
 better understand how the model is making predictions. We currently have
-implemented two regressor evaluations:
+implemented three regressor evaluations:
 
 -  :doc:`residuals`: plot the difference between the expected and actual
    values
