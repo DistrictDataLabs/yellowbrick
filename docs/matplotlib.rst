@@ -5,7 +5,7 @@ Effective Matplotlib
 
 Yellowbrick generates visualizations by wrapping `matplotlib <http://matplotlib.org/>`_, the most prominent Python scientific visualization library. Because of this, Yellowbrick is able to generate publication-ready images for a variety of GUI backends, image formats, and Jupyter notebooks. Yellowbrick strives to provide well-styled visual diagnostic tools and complete information. However, to customize figures or roll your own visualizers, a strong background in using matplotlib is required.
 
-With permisison, we have included part of `Chris Moffitt's <https://github.com/chris1610>`_ `Effectively Using Matplotlib <http://pbpython.com/effective-matplotlib.html>`_ as a crash course into Matplotlib terminology and usage. For a complete example, please visit his excellent post on creating a visual sales analysis! Addtionally we recommend `Nicolas P. Rougier's Matplotlib tutorial <https://www.labri.fr/perso/nrougier/teaching/matplotlib/>`_ for an indepth dive.
+With permission, we have included part of `Chris Moffitt's <https://github.com/chris1610>`_ `Effectively Using Matplotlib <http://pbpython.com/effective-matplotlib.html>`_ as a crash course into Matplotlib terminology and usage. For a complete example, please visit his excellent post on creating a visual sales analysis! Additionally we recommend `Nicolas P. Rougier's Matplotlib tutorial <https://www.labri.fr/perso/nrougier/teaching/matplotlib/>`_ for an in-depth dive.
 
 Figures and Axes
 ----------------
@@ -177,16 +177,17 @@ For this example, we’ll draw a line showing an average and include labels show
 
 While this may not be the most exciting plot it does show how much power you have when following this approach.
 
-Up until now, all the changes we have made have been with the indivudual plot. Fortunately, we also have the ability to add multiple plots on a figure as well as save the entire figure using various options.
+Up until now, all the changes we have made have been with the individual plot. Fortunately, we also have the ability to add multiple plots on a figure as well as save the entire figure using various options.
 
 If we decided that we wanted to put two plots on the same figure, we should have a basic understanding of how to do it. First, create the figure, then the axes, then plot it all together. We can accomplish this using ``plt.subplots()``:
 
 .. code:: python
+
     fig, (ax0, ax1) = plt.subplots(nrows=1, ncols=2, sharey=True, figsize=(7, 4))
 
 In this example, I’m using ``nrows`` and ``ncols`` to specify the size because this is very clear to the new user. In sample code you will frequently just see variables like 1,2. I think using the named parameters is a little easier to interpret later on when you’re looking at your code.
 
-I am also using ``sharey=True`` so that the yaxis will share the same labels.
+I am also using ``sharey=True`` so that the y-axis will share the same labels.
 
 This example is also kind of nifty because the various axes get unpacked to ``ax0`` and ``ax1``. Now that we have these axes, you can plot them like the examples above but put one plot on ``ax0`` and the other on ``ax1``.
 
@@ -215,7 +216,7 @@ This example is also kind of nifty because the various axes get unpacked to ``ax
     ax1.legend().set_visible(False)
     ax0.legend().set_visible(False)
 
-When writing code in a Jupyter notebook you can take advantage of the ``%matplotlib inline`` or ``@matplotlib notebook`` directives to render figures inline. More often, however, you probably want to save your images to disk. Matplotlib supports many different formats for saving files. You can use ``fig.canvas.get_supported_filetypes()`` to see what your system supports:
+When writing code in a Jupyter notebook you can take advantage of the ``%matplotlib inline`` or ``%matplotlib notebook`` directives to render figures inline. More often, however, you probably want to save your images to disk. Matplotlib supports many different formats for saving files. You can use ``fig.canvas.get_supported_filetypes()`` to see what your system supports:
 
 .. code:: python
 
