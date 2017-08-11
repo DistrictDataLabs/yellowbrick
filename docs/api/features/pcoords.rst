@@ -1,3 +1,5 @@
+.. -*- mode: rst -*-
+
 Parallel Coordinates
 ====================
 

@@ -1,3 +1,5 @@
+.. -*- mode: rst -*-
+
 Rank Features
 =============
 

@@ -1,5 +1,7 @@
+.. -*- mode: rst -*-
+
 Classification Report
-~~~~~~~~~~~~~~~~~~~~~
+=====================
 
 The classification report visualizer displays the precision, recall, and
 F1 scores for the model. In order to support easier interpretation and problem detection, the report integrates numerical scores with a color-coded

@@ -1,4 +1,4 @@
-.. _examples/yellowbrick-modelselect:
+.. -*- mode: rst -*-
 
 Model Selection Tutorial
 ========================
@@ -7,6 +7,24 @@ In this tutorial, we are going to look at scores for a variety of
 `Scikit-Learn <http://scikit-learn.org>`__ models and compare them using
 visual diagnostic tools from `Yellowbrick <http://www.scikit-yb.org>`__
 in order to select the best model for our data.
+
+The Model Selection Triple
+--------------------------
+Discussions of machine learning are frequently characterized by a singular focus on model selection. Be it logistic regression, random forests, Bayesian methods, or artificial neural networks, machine learning practitioners are often quick to express their preference. The reason for this is mostly historical. Though modern third-party machine learning libraries have made the deployment of multiple models appear nearly trivial, traditionally the application and tuning of even one of these algorithms required many years of study. As a result, machine learning practitioners tended to have strong preferences for particular (and likely more familiar) models over others.
+
+However, model selection is a bit more nuanced than simply picking the "right" or "wrong" algorithm. In practice, the workflow includes:
+
+  1. selecting and/or engineering the smallest and most predictive feature set
+  2. choosing a set of algorithms from a model family, and
+  3. tuning the algorithm hyperparameters to optimize performance.
+
+The **model selection triple** was first described in a 2015 SIGMOD_ paper by Kumar et al. In their paper, which concerns the development of next-generation database systems built to anticipate predictive modeling, the authors cogently express that such systems are badly needed due to the highly experimental nature of machine learning in practice. "Model selection," they explain, "is iterative and exploratory because the space of [model selection triples] is usually infinite, and it is generally impossible for analysts to know a priori which [combination] will yield satisfactory accuracy and/or insights."
+
+Recently, much of this workflow has been automated through grid search methods, standardized APIs, and GUI-based applications. In practice, however, human intuition and guidance can more effectively hone in on quality models than exhaustive search. By visualizing the model selection process, data scientists can steer towards final, explainable models and avoid pitfalls and traps.
+
+The Yellowbrick library is a diagnostic visualization platform for machine learning that allows data scientists to steer the model selection process. Yellowbrick extends the Scikit-Learn API with a new core object: the Visualizer. Visualizers allow visual models to be fit and transformed as part of the Scikit-Learn Pipeline process, providing visual diagnostics throughout the transformation of high dimensional data.
+
+.. _SIGMOD: http://cseweb.ucsd.edu/~arunkk/vision/SIGMODRecord15.pdf
 
 About the Data
 --------------
@@ -371,7 +389,7 @@ in fact poisonous).
 
 
 
-.. image:: images/modelselect_linear_svc.png
+.. image:: images/tutorial/modelselect_linear_svc.png
 
 
 .. code:: python
@@ -380,7 +398,7 @@ in fact poisonous).
 
 
 
-.. image:: images/modelselect_nu_svc.png
+.. image:: images/tutorial/modelselect_nu_svc.png
 
 
 .. code:: python
@@ -389,7 +407,7 @@ in fact poisonous).
 
 
 
-.. image:: images/modelselect_svc.png
+.. image:: images/tutorial/modelselect_svc.png
 
 
 .. code:: python
@@ -398,7 +416,7 @@ in fact poisonous).
 
 
 
-.. image:: images/modelselect_sgd_classifier.png
+.. image:: images/tutorial/modelselect_sgd_classifier.png
 
 
 .. code:: python
@@ -407,7 +425,7 @@ in fact poisonous).
 
 
 
-.. image:: images/modelselect_kneighbors_classifier.png
+.. image:: images/tutorial/modelselect_kneighbors_classifier.png
 
 
 .. code:: python
@@ -416,7 +434,7 @@ in fact poisonous).
 
 
 
-.. image:: images/modelselect_logistic_regression_cv.png
+.. image:: images/tutorial/modelselect_logistic_regression_cv.png
 
 
 .. code:: python
@@ -425,7 +443,7 @@ in fact poisonous).
 
 
 
-.. image:: images/modelselect_logistic_regression.png
+.. image:: images/tutorial/modelselect_logistic_regression.png
 
 
 .. code:: python
@@ -434,7 +452,7 @@ in fact poisonous).
 
 
 
-.. image:: images/modelselect_bagging_classifier.png
+.. image:: images/tutorial/modelselect_bagging_classifier.png
 
 
 .. code:: python
@@ -443,7 +461,7 @@ in fact poisonous).
 
 
 
-.. image:: images/modelselect_extra_trees_classifier.png
+.. image:: images/tutorial/modelselect_extra_trees_classifier.png
 
 
 .. code:: python
@@ -452,7 +470,7 @@ in fact poisonous).
 
 
 
-.. image:: images/modelselect_random_forest_classifier.png
+.. image:: images/tutorial/modelselect_random_forest_classifier.png
 
 
 Reflection

@@ -1,5 +1,7 @@
+.. -*- mode: rst -*-
+
 Example Datasets
-----------------
+================
 
 Yellowbrick hosts several datasets wrangled from the `UCI Machine
 Learning Repository <http://archive.ics.uci.edu/ml/>`__ to present the

@@ -1,4 +1,5 @@
-=========
+.. -*- mode: rst -*-
+
 Changelog
 =========
 
@@ -10,7 +11,7 @@ Version 0.5
 * Contributors: Benjamin Bengfort, Rebecca Bilbro, Nathan Danielsen, Carlo Morales, Jim Stearns, Phillip Schafer, Jason Keung
 
 Changes:
-    - Added VisualTestCase.    
+    - Added VisualTestCase.
     - New PCADecomposition Visualizer, which decomposes high dimensional data into two or three dimensions so that each instance can be plotted in a scatter plot.
     - New and improved ROCAUC Visualizer, which now supports multiclass classification.
     - Prototype Decision Boundary Visualizer, which is a bivariate data visualization algorithm that plots the decision boundaries of each class.

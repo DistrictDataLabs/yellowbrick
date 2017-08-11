@@ -1,3 +1,5 @@
+.. -*- mode: rst -*-
+
 RadViz Visualizer
 =================
 
