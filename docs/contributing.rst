@@ -210,6 +210,25 @@ Tests can be run as follows::
 
 The Makefile uses the nosetest runner and testing suite as well as the coverage library, so make sure you have those dependencies installed! The ``DatasetMixin`` also requires requests.py to fetch data from our Amazon S3 account.
 
+Image Comparison Tests
+~~~~~~~~~~~~~~~~~~~~~~
+Writing an image based comparison test is only a little more difficult than the simple testcase presented above. We have adapted matplotlib's image comparison test utility into an easy to use assert method : ``self.assert_images_similar(visualizer)``
+
+The main consideration is that you must specify the “baseline”, or expected, image in the ``tests/baseline_images/`` folder structure.
+
+For example, create your unittest located in ``tests/test_regressor/test_myvisualizer.py`` as follows::
+
+    from tests.base import VisualTestCase
+    ...
+        def test_my_visualizer_output(self):
+            ...
+            visualizer = MyVisualizer()
+            visualizer.fit(X)
+            visualizer.poof()
+            self.assert_images_similar(visualizer)
+
+The first time this test is run, there will be no baseline image to compare against, so the test will fail. Copy the output images (in this case ``tests/actual_images/test_regressor/test_myvisualizer/test_my_visualizer_output.png``) to the correct subdirectory of baseline_images tree in the source directory (in this case ``tests/baseline_images/test_regressor/test_myvisualizer/test_my_visualizer_output.png``). Put this new file under source code revision control (with git add). When rerunning the tests, they should now pass.
+
 Documentation
 ~~~~~~~~~~~~~
 
