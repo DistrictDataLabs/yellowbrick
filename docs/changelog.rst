@@ -1,6 +1,34 @@
-=========
+.. -*- mode: rst -*-
+
 Changelog
 =========
+
+Version 0.5
+-----------
+
+* Tag: v0.5_
+* Deployed: Wednesday, August 9, 2017
+* Contributors: Benjamin Bengfort, Rebecca Bilbro, Nathan Danielsen, Carlo Morales, Jim Stearns, Phillip Schafer, Jason Keung
+
+Changes:
+    - Added VisualTestCase.
+    - New PCADecomposition Visualizer, which decomposes high dimensional data into two or three dimensions so that each instance can be plotted in a scatter plot.
+    - New and improved ROCAUC Visualizer, which now supports multiclass classification.
+    - Prototype Decision Boundary Visualizer, which is a bivariate data visualization algorithm that plots the decision boundaries of each class.
+    - Added Rank1D Visualizer, which is a one dimensional ranking of features that utilizes the Shapiro-Wilks ranking that takes into account only a single feature at a time (e.g. histogram analysis).
+    - Improved Prediction Error Plot with identity line, shared limits, and r squared.
+    - Updated FreqDist Visualizer to make word features a hyperparameter.
+    - Added normalization and scaling to Parallel Coordinates.
+    - Added Learning Curve Visualizer, which displays a learning curve based on the number of samples versus the training and cross validation scores to show how a model learns and improves with experience.
+    - Added data downloader module to the yellowbrick library.
+    - Complete overhaul of the yellowbrick documentation; categories of methods are located in separate pages to make it easier to read and contribute to the documentation.
+    - Added a new color palette inspired by `ANN-generated colors <http://lewisandquark.tumblr.com/>`_
+
+Bug Fixes:
+   - Repairs to PCA, RadViz, FreqDist unit tests
+   - Repair to matplotlib version check in JointPlot Visualizer
+
+.. _v0.5: https://github.com/DistrictDataLabs/yellowbrick/releases/tag/v0.5
 
 Hotfix 0.4.2
 ------------
