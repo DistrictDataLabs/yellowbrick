@@ -6,23 +6,20 @@
 #
 # Copyright (C) 2017 District Data Labs
 # For license information, see LICENSE.txt
+import bisect
 
 import numpy as np
-import matplotlib.pyplot as plt
-import matplotlib as mpl
-from matplotlib.patches import Patch
-from collections import OrderedDict
-
-import bisect
 from scipy.stats import mstats
 
 from sklearn.cross_validation import train_test_split
 from sklearn.metrics import precision_recall_curve
 
+from yellowbrick.exceptions import YellowbrickTypeError
 from yellowbrick.style.palettes import get_color_cycle
 from yellowbrick.style.colors import resolve_colors
 from yellowbrick.base import ModelVisualizer
-from yellowbrick.utils import get_model_name, isclassifier
+from yellowbrick.utils import isclassifier
+
 
 ##########################################################################
 # Quick Methods
@@ -32,17 +29,27 @@ from yellowbrick.utils import get_model_name, isclassifier
 def thresholdviz(model,
                  X,
                  y,
-                 colormap=None,
                  color=None,
                  n_trials=50,
                  test_size_percent=0.1,
                  quantiles=(0.1, 0.5, 0.9),
                  random_state=0,
-                 title=None,
                  **kwargs):
     """Quick method for ThresholdVisualizer.
-    Visualizes precision, recall and queue rate at different different
-    thresholds for binary targets.
+    Visualizes the bounds of precision, recall and queue rate at different
+    thresholds for binary targets after a given number of trials.
+
+    The visualization shows the threshold precentage on the x-axis which can be
+    compared against the queue rate, precision, and recall as percentages on
+    the y-axis. The default that each of the medium curves is set at the 90%%
+    central interval, but can be adjusted.
+
+    This visualization will help the user determine given their tolerances for
+    precision, queue and recall the appropriate threshold to set in their
+    application.
+
+    See also::
+        ``http://blog.insightdatalabs.com/visualizing-classifier-thresholds/``
 
     Parameters
     ----------
@@ -51,28 +58,19 @@ def thresholdviz(model,
         Should be an instance of a classifier otherwise a will raise a
         YellowbrickTypeError exception on instantiation.
 
-    colormap : string or cmap, default: None
+    color : string, default: None
         Optional string or matplotlib cmap to colorize lines
-        Use either color to colorize the lines on a per class basis or
-        colormap to color them on a continuous scale.
+        Use either color to colorize the lines on a per class basis
 
-    color : String, default: None
-        Optional string or matplotlib cmap to colorize lines
-        Use either color to colorize the lines on a per class basis or
-        colormap to color them on a continuous scale.
-
-    n_trials : Integer, default: 50
+    n_trials : integer, default: 50
         Number of trials to conduct via train_test_split
 
-    quantiles : Sequence, default: (0.1, 0.5, .9)
+    quantiles : sequence, default: (0.1, 0.5, .9)
         Setting the quantiles for visualizing model variability using
         scipy.stats.mstats.mquantiles
 
-    random_state : Integer, default: 0
+    random_state : integer, default: None
         Random state integer for sampling in train_test_split
-
-    title : String, default: None
-        Title of the visualization
 
     kwargs : keyword arguments passed to the super class.
 
@@ -84,17 +82,15 @@ def thresholdviz(model,
     # Instantiate the visualizer
     visualizer = ThresholdVisualizer(
         model,
-        colormap=colormap,
         color=color,
         n_trials=n_trials,
         test_size_percent=test_size_percent,
         quantiles=quantiles,
         random_state=random_state,
-        title=title,
         **kwargs)
 
     # Fit and transform the visualizer (calls draw)
-    visualizer.fit_draw_poof(X, y)
+    visualizer.fit_poof(X, y)
 
     # Return the axes object on the visualizer
     return visualizer.ax
@@ -106,8 +102,20 @@ def thresholdviz(model,
 
 
 class ThresholdVisualizer(ModelVisualizer):
-    """Visualizes precision, recall and queue rate at different different
-    thresholds for binary targets.
+    """Visualizes the bounds of precision, recall and queue rate at different
+    thresholds for binary targets after a given number of trials.
+
+    The visualization shows the threshold precentage on the x-axis which can be
+    compared against the queue rate, precision, and recall as percentages on
+    the y-axis. The default that each of the medium curves is set at the 90%%
+    central interval, but can be adjusted.
+
+    This visualization will help the user determine given their tolerances for
+    precision, queue and recall the appropriate threshold to set in their
+    application.
+
+    See also::
+        ``http://blog.insightdatalabs.com/visualizing-classifier-thresholds/``
 
     Parameters
     ----------
@@ -116,41 +124,29 @@ class ThresholdVisualizer(ModelVisualizer):
         Should be an instance of a classifier otherwise a will raise a
         YellowbrickTypeError exception on instantiation.
 
-    colormap : string or cmap, default: None
+    color : string, default: None
         Optional string or matplotlib cmap to colorize lines
-        Use either color to colorize the lines on a per class basis or
-        colormap to color them on a continuous scale.
+        Use either color to colorize the lines on a per class basis
 
-    color : String, default: None
-        Optional string or matplotlib cmap to colorize lines
-        Use either color to colorize the lines on a per class basis or
-        colormap to color them on a continuous scale.
-
-    n_trials : Integer, default: 50
+    n_trials : integer, default: 50
         Number of trials to conduct via train_test_split
 
-    quantiles : Sequence, default: (0.1, 0.5, .9)
+    quantiles : sequence, default: (0.1, 0.5, .9)
         Setting the quantiles for visualizing model variability using
         scipy.stats.mstats.mquantiles
 
-    random_state : Integer, default: 0
+    random_state : integer, default: None
         Random state integer for sampling in train_test_split
-
-    title : String, default: None
-        Title of the visualization
 
     kwargs : keyword arguments passed to the super class.
     """
 
     def __init__(self,
                  model,
-                 colormap=None,
-                 color=None,
                  n_trials=50,
                  test_size_percent=0.1,
                  quantiles=(0.1, 0.5, 0.9),
-                 random_state=0,
-                 title=None,
+                 random_state=None,
                  **kwargs):
         # Check to see if model is an instance of a classifier.
         # Should return an error if it isn't.
@@ -161,13 +157,10 @@ class ThresholdVisualizer(ModelVisualizer):
         super(ThresholdVisualizer, self).__init__(model, **kwargs)
 
         self.estimator = model
-        self.colormap = kwargs.pop('colormap', None)
-        self.color = kwargs.pop('color', None)
-        self.title = title
         self.n_trials = n_trials
         self.test_size_percent = test_size_percent
         self.quantiles = quantiles
-        self.random_state = np.random.RandomState(random_state)
+        self.random_state = random_state
 
         # to be set later
         self.plot_data = None
@@ -193,12 +186,13 @@ class ThresholdVisualizer(ModelVisualizer):
         """
         self.plot_data = []
 
-        for trial in range(self.n_trials):
+        for _ in range(self.n_trials):
             train_X, test_X, train_y, test_y = train_test_split(
                 X,
                 y,
                 test_size=self.test_size_percent,
-                random_state=self.random_state)
+                random_state=self.random_state # defaults to None
+                )
             self.estimator.fit(train_X, train_y)
             # get prediction probabilities for each
             predictions = self.estimator.predict_proba(test_X)[:, 1]
@@ -219,7 +213,7 @@ class ThresholdVisualizer(ModelVisualizer):
             }
             self.plot_data.append(trial_data)
 
-        return self
+        return self.draw()
 
     def draw(self, *kwargs):
         """
@@ -236,17 +230,11 @@ class ThresholdVisualizer(ModelVisualizer):
             Returns the AxesSubplot instance of the visualizer
         """
         # set the colors
-        if self.colormap is not None or self.color is not None:
+        if self.color is not None:
             color_values = resolve_colors(
-                num_colors=3, colormap=self.colormap, color=self.color)
+                num_colors=3, color=self.color)
         else:
             color_values = get_color_cycle()
-
-        # unpack first three colors for visualization
-        recall_color, precision_color, queue_rate_color = color_values[:3]
-
-        if self.ax is None:
-            self.ax = plt.gca(xlim=[-1, 1], ylim=[-1, 1])
 
         uniform_thresholds = np.linspace(0, 1, num=101)
         uniform_precision_plots = []
@@ -267,42 +255,17 @@ class ThresholdVisualizer(ModelVisualizer):
             uniform_recall_plots.append(uniform_recall)
             uniform_queue_rate_plots.append(uniform_queue_rate)
 
-        lower_precision, median_precision, upper_precision = mstats.mquantiles(
-            uniform_precision_plots, prob=self.quantiles, axis=0)
-        lower_recall, median_recall, upper_recall = mstats.mquantiles(
-            uniform_recall_plots, prob=self.quantiles, axis=0)
-        lower_queue_rate, median_queue_rate, upper_queue_rate = mstats.mquantiles(
-            uniform_queue_rate_plots, prob=self.quantiles, axis=0)
+        uplots = (uniform_precision_plots, uniform_recall_plots, uniform_queue_rate_plots)
 
-        self.ax.plot(
-            uniform_thresholds, median_precision, color=precision_color)
-        self.ax.plot(uniform_thresholds, median_recall, color=recall_color)
-        self.ax.plot(
-            uniform_thresholds, median_queue_rate, color=queue_rate_color)
+        for uniform_plot, color in zip(uplots, color_values):
+            # Compute the lower, median, and upper plots
+            lower, median, upper = mstats.mquantiles(uniform_plot, prob=self.quantiles, axis=0)
 
-        self.ax.fill_between(
-            uniform_thresholds,
-            upper_precision,
-            lower_precision,
-            alpha=0.5,
-            linewidth=0,
-            color=precision_color)
-        self.ax.fill_between(
-            uniform_thresholds,
-            upper_recall,
-            lower_recall,
-            alpha=0.5,
-            linewidth=0,
-            color=recall_color)
-        self.ax.fill_between(
-            uniform_thresholds,
-            upper_queue_rate,
-            lower_queue_rate,
-            alpha=0.5,
-            linewidth=0,
-            color=queue_rate_color)
+            # Draw the median line
+            self.ax.plot(uniform_thresholds, median, color=color)
 
-        self.ax.axis('auto')
+            # Draw the fill between the lower and upper bounds
+            self.ax.fill_between(uniform_thresholds, upper, lower, alpha=0.5, linewidth=0, color=color)
 
         return self.ax
 
@@ -313,17 +276,19 @@ class ThresholdVisualizer(ModelVisualizer):
         Parameters
         ----------
         kwargs: generic keyword arguments.
-
         """
+        super(ThresholdVisualizer, self).finalize(**kwargs)
+
         # Set the title
-        if self.title is not None:
-            self.set_title(self.title)
-        leg = self.ax.legend(
+        if self.title is None:
+            self.set_title("Threshold Plot of Binary Classifier")
+
+        self.ax.legend(
             ('precision', 'recall', 'queue_rate'), frameon=True, loc='best')
         self.ax.set_xlabel('threshold')
         self.ax.set_ylabel('percent')
 
-    def fit_draw_poof(self, X, y=None, **kwargs):
+    def fit_poof(self, X, y=None, **kwargs):
         """Convience method to fit, draw and poof / finalize the visualizer in
         one step after instantiation.
 
@@ -344,7 +309,6 @@ class ThresholdVisualizer(ModelVisualizer):
             Returns the instance of the visualizer
         """
         self.fit(X, y)
-        self.draw()
         self.poof()
         return self
 

@@ -63,14 +63,12 @@ class ThresholdVisualizerTest(VisualTestCase, DatasetMixin):
         model = BernoulliNB(3)
         viz = ThresholdVisualizer(model)
         self.assertIs(viz.estimator, model)
-        self.assertIsNone(viz.colormap)
         self.assertIsNone(viz.color)
         self.assertIsNone(viz.title)
         self.assertIsNone(viz.plot_data)
         self.assertEquals(viz.n_trials, 50)
         self.assertEquals(viz.test_size_percent, 0.1)
         self.assertEquals(viz.quantiles, (0.1, 0.5, 0.9))
-        self.assertTrue(isinstance(viz.random_state, np.random.RandomState))
 
 
     def test_threshold_viz(self):
@@ -79,13 +77,10 @@ class ThresholdVisualizerTest(VisualTestCase, DatasetMixin):
         and produces consistent images
         """
         model = BernoulliNB(3)
-        visualizer = ThresholdVisualizer(model)
+        visualizer = ThresholdVisualizer(model, random_state=0)
 
-        # assert that fit method returns self
-        self.assertIs(visualizer, visualizer.fit(X, y=y))
-
-        # assert that draw method returns ax
-        self.assertIs(visualizer.ax, visualizer.draw())
+        # assert that fit method returns ax
+        self.assertIs(visualizer.ax, visualizer.fit(X, y=y))
 
         visualizer.poof()
 
@@ -109,7 +104,7 @@ class ThresholdVisualizerTest(VisualTestCase, DatasetMixin):
         ]
 
         model = BernoulliNB(3)
-        visualizer = ThresholdVisualizer(model)
+        visualizer = ThresholdVisualizer(model, random_state=0)
         # Fit and transform the visualizer (calls draw)
         visualizer.fit(X, y)
         visualizer.draw()
