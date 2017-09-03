@@ -85,8 +85,9 @@ class PCADecompositionTests(VisualTestCase):
         visualizer.fit(X)
         pca_array = visualizer.transform(X)
         visualizer.poof()
-
         npt.assert_array_almost_equal(pca_array, X_pca_decomp)
+        self.assert_images_similar(visualizer)
+
 
     def test_scale_false_2d(self):
         """
@@ -198,9 +199,6 @@ class PCADecompositionTests(VisualTestCase):
         visualizer = PCADecomposition(**params)
         visualizer.fit(X)
         pca_array = visualizer.transform(X)
-        visualizer.poof()
-
-
         npt.assert_array_almost_equal(pca_array, X_pca_decomp)
 
     def test_scale_true_4d_execption(self):

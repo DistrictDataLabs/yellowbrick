@@ -28,6 +28,7 @@ import matplotlib as mpl
 import numpy.testing as npt
 
 from tests.dataset import DatasetMixin
+from tests.base import VisualTestCase
 from yellowbrick.features.jointplot import *
 
 ##########################################################################
@@ -38,7 +39,7 @@ from yellowbrick.features.jointplot import *
 MPL_VERS_MAJ = int(mpl.__version__.split(".")[0])
 
 
-class JointPlotTests(unittest.TestCase, DatasetMixin):
+class JointPlotTests(VisualTestCase, DatasetMixin):
 
     X = np.array([1, 2, 3, 5, 8, 10])
 
@@ -56,7 +57,7 @@ class JointPlotTests(unittest.TestCase, DatasetMixin):
         Ensure that the jointplot warns if mpl version is < 2.0.0
         """
         # Note Python 3.2+ has a self.assertWarns ... but we need to be
-        # Python 2.7 compatible, so we're going to do this. 
+        # Python 2.7 compatible, so we're going to do this.
         with warnings.catch_warnings(record=True) as w:
             # Cause all warnings to always be triggered.
             warnings.simplefilter("always")
@@ -82,6 +83,7 @@ class JointPlotTests(unittest.TestCase, DatasetMixin):
         visualizer = JointPlotVisualizer()
         visualizer.fit(self.X, self.y)
         visualizer.poof()
+        self.assert_images_similar(visualizer)
 
 
     @unittest.skipIf(MPL_VERS_MAJ < 2, "requires matplotlib 2.0.0 or greater")
@@ -100,6 +102,7 @@ class JointPlotTests(unittest.TestCase, DatasetMixin):
         visualizer = JointPlotVisualizer(feature=feature, target=target, joint_plot="hex")
         visualizer.fit(X, y)                # Fit the data to the visualizer
         g = visualizer.poof()
+        self.assert_images_similar(visualizer)
 
 
     @unittest.skipIf(MPL_VERS_MAJ < 2, "requires matplotlib 2.0.0 or greater")
@@ -123,4 +126,3 @@ class JointPlotTests(unittest.TestCase, DatasetMixin):
                     mpl_ver_cnt += 1
             self.assertEqual(0, mpl_ver_cnt, ws[-1].message \
                         if ws else "No error")
-
