@@ -208,7 +208,7 @@ class RadialVisualizer(DataVisualizer):
 
         # Add the circular axis path
         # TODO: Make this a seperate function (along with labeling)
-        self.ax.add_patch(patches.Circle((0.0, 0.0), radius=1.0, facecolor='none'))
+        self.ax.add_patch(patches.Circle((0.0, 0.0), radius=1.0, facecolor='none', edgecolor='grey', linewidth=.5 ))
 
         # Add the feature names
         for xy, name in zip(s, self.features_):
