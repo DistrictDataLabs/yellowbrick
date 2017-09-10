@@ -71,6 +71,9 @@ class RadVizTests(VisualTestCase, DatasetMixin):
         """
         visualizer = RadViz()
         visualizer.fit_transform(self.X, self.y)
+        visualizer.poof()
+        self.assert_images_similar(visualizer)
+
 
     def test_integrated_radviz(self):
         """
@@ -89,3 +92,5 @@ class RadVizTests(VisualTestCase, DatasetMixin):
         # Test the visualizer
         visualizer = RadViz()
         visualizer.fit_transform(X, y)
+        visualizer.poof()
+        self.assert_images_similar(visualizer)
