@@ -27,7 +27,7 @@ from sklearn.utils import as_float_array
 from .base import ClusteringScoreVisualizer
 from ..exceptions import YellowbrickValueError
 from ..style import resolve_colors, color_palette
-
+from ..utils import is_dataframe, is_structured_array, has_ndarray_int_columns
 
 ## Packages for export
 # __all__ = [
@@ -51,14 +51,13 @@ class IterLabelsVisualizer(ClusteringScoreVisualizer):
         # Required internal properties
         self.X = None
         self.y = None
-        self.time_slices = None
+        self.label_slices = None
         self.labels_ = None
 
-    def get_label_slices(self):
-        """Groupby for Label Analysis"""
+    def get_label_slices(self, label_array, **kargs):
+        """
+        """
         # Grap the label class  column and sort it
-        label_array = self.y
-
         # Determine the what label class ids and numberic ids should be attached
         label_ids = np.unique(label_array)
         time_labels = np.arange(label_ids.size)
@@ -68,9 +67,49 @@ class IterLabelsVisualizer(ClusteringScoreVisualizer):
         array_labeled = [label_map[val] for val in label_array]
 
         # Measure the time slices for each
-        self.time_slices = ndimage.find_objects(array_labeled)
+        self.label_slices = ndimage.find_objects(array_labeled)
 
-        return self.time_slices
+        return self.label_slices
+
+    def transform(self, X, y=None, label_col=None, label_value=None, label_array=None, **kargs):
+
+        if label_col is None:
+            raise Exception("The tranform method requires a label_col")
+
+        if label_array is not None:
+            # if the label array is present then skip the other steps
+            pass
+
+        elif isinstance(X, np.ndarray) and isinstance(label_col, int):
+            label_array = X[:, label_col]
+
+        elif is_dataframe(X):
+            label_array = X[label_col].values
+            X = X.as_matrix()
+
+        # handle numpy named/ structured array
+        elif is_structured_array(X):
+            label_array = X[label_col]
+
+        else:
+            raise Exception("X is not a recognized data type")
+
+        if label_value is not None:
+            if label_value not in np.unique(label_array):
+                raise Exception("label_value not found in the label_col")
+
+            label_indices = np.where(label_array == label_value)
+            self.X = X[label_indices]
+            if y:
+                self.y = y[label_indices]
+
+        else:
+            label_indices = np.argsort(label_array)
+            self.X = X[label_indices]
+            if y:
+                self.y = y[label_indices]
+            self.get_label_slices(np.sort(label_array))
+
 
     def fit_model(self, X_slice):
         clf = self.estimator()

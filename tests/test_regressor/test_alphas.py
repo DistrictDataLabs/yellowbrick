@@ -120,3 +120,17 @@ class AlphaSelectionTests(VisualTestCase):
                 self.assertTrue(len(errors) > 0)
             except YellowbrickValueError:
                 self.fail("could not find errors on {}".format(model.name))
+
+
+    def test_similar_image(self):
+        """
+        Test similar plot drawn
+        """
+
+        visualizer = AlphaSelection(LassoCV(random_state=0))
+
+        X, y = make_regression(random_state=0)
+        visualizer.fit(X, y)
+        visualizer.poof()
+
+        self.assert_images_similar(visualizer)
