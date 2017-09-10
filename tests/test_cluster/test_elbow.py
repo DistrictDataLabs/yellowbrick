@@ -127,7 +127,7 @@ class KElbowVisualizerTests(VisualTestCase, DatasetMixin):
         """
         Test the distortion metric of the k-elbow visualizer
         """
-        visualizer = KElbowVisualizer(KMeans(), k=5, metric="distortion")
+        visualizer = KElbowVisualizer(KMeans(random_state=0), k=5, metric="distortion", timings=False)
         visualizer.fit(X)
 
         expected = [
@@ -135,6 +135,8 @@ class KElbowVisualizerTests(VisualTestCase, DatasetMixin):
             9.5203330222217666, 8.9777589843618912
         ]
         self.assertEqual(len(visualizer.k_scores_), 4)
+        visualizer.poof()
+        self.assert_images_similar(visualizer)
         # kMeans is stochastic so numbers will change
         # self.assertEqual(visualizer.k_scores_, expected)
 
@@ -142,7 +144,7 @@ class KElbowVisualizerTests(VisualTestCase, DatasetMixin):
         """
         Test the silhouette metric of the k-elbow visualizer
         """
-        visualizer = KElbowVisualizer(KMeans(), k=5, metric="silhouette")
+        visualizer = KElbowVisualizer(KMeans(random_state=0), k=5, metric="silhouette", timings=False)
         visualizer.fit(X)
 
         expected = [
@@ -150,6 +152,8 @@ class KElbowVisualizerTests(VisualTestCase, DatasetMixin):
             0.24802958481973392, 0.21792458448172247
         ]
         self.assertEqual(len(visualizer.k_scores_), 4)
+        visualizer.poof()
+        self.assert_images_similar(visualizer)
         # kMeans is stochastic so numbers will change
         # self.assertEqual(visualizer.k_scores_, expected)
 
@@ -157,14 +161,17 @@ class KElbowVisualizerTests(VisualTestCase, DatasetMixin):
         """
         Test the calinski-harabaz metric of the k-elbow visualizer
         """
-        visualizer = KElbowVisualizer(KMeans(), k=5, metric="calinski_harabaz")
+        visualizer = KElbowVisualizer(KMeans(random_state=0), k=5, metric="calinski_harabaz", timings=False)
         visualizer.fit(X)
 
         expected = [
             81.662726256035683, 50.992378259195554,
             40.952179227847012, 37.068658049555459
         ]
+
         self.assertEqual(len(visualizer.k_scores_), 4)
+        visualizer.poof()
+        self.assert_images_similar(visualizer)
         # kMeans is stochastic so numbers will change
         # self.assertEqual(visualizer.k_scores_, expected)
 
@@ -179,7 +186,7 @@ class KElbowVisualizerTests(VisualTestCase, DatasetMixin):
         """
         Test the twinx double axes with k-elbow timings
         """
-        visualizer = KElbowVisualizer(KMeans(), k=5, timings=True)
+        visualizer = KElbowVisualizer(KMeans(random_state=0), k=5, timings=True)
         visualizer.fit(X)
 
         # Check that we kept track of time
@@ -189,3 +196,15 @@ class KElbowVisualizerTests(VisualTestCase, DatasetMixin):
         # Check that we plotted time on a twinx
         self.assertTrue(hasattr(visualizer, "axes"))
         self.assertEqual(len(visualizer.axes), 2)
+
+        # delete the timings axes and
+        # overwrite k_timers_, k_values_ for image similarity Tests
+        visualizer.axes[1].remove()
+        visualizer.k_timers_ = [0.01084589958190918, 0.011144161224365234, 0.017028093338012695, 0.010634183883666992]
+        visualizer.k_values_ = [2, 3, 4, 5]
+
+        # call draw again which is normally called in fit
+        visualizer.draw()
+        visualizer.poof()
+
+        self.assert_images_similar(visualizer)
