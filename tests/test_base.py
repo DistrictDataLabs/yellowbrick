@@ -70,3 +70,15 @@ class BaseTests(unittest.TestCase):
         """
         visualizer = Visualizer()
         self.assertIs(visualizer.finalize(), visualizer.ax)
+
+    def test_size_property(self):
+        """
+        Test the size property on the base Visualizer
+        """
+        visualizer = Visualizer()
+        self.assertIsNone(visualizer._size)
+        self.assertIsNotNone(visualizer.size)
+
+        visualizer.size = 42
+        self.assertEqual(visualizer._size, 42)
+        self.assertEqual(visualizer.size, 42)

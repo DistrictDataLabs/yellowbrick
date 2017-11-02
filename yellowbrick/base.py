@@ -89,6 +89,21 @@ class Visualizer(BaseEstimator):
     def ax(self, ax):
         self._ax = ax
 
+    @property
+    def size(self):
+        """
+        Returns the actual size in pixels as set by matplotlib, or
+        the user provided size if available.
+        """
+        if not hasattr(self, "_size") or self._size is None:
+            fig = plt.gcf()
+            self._size = fig.get_size_inches()*fig.dpi
+        return self._size
+
+    @size.setter
+    def size(self, size):
+        self._size = size
+
     ##////////////////////////////////////////////////////////////////////
     ## Estimator interface
     ##////////////////////////////////////////////////////////////////////
