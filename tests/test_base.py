@@ -82,5 +82,7 @@ class BaseTests(unittest.TestCase):
         figure_size = fig.get_size_inches() * fig.get_dpi()
         self.assertEqual(all(visualizer.size), all(figure_size))
         visualizer.size = (1080, 720)
+        figure_size = fig.get_size_inches() * fig.get_dpi()
+        self.assertEqual(all(visualizer.size), all(figure_size))
         self.assertEqual(visualizer._size, (1080, 720))
         self.assertEqual(visualizer.size, (1080, 720))

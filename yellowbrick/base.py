@@ -51,7 +51,7 @@ class Visualizer(BaseEstimator):
         =============   =======================================================
         Property        Description
         -------------   -------------------------------------------------------
-        size            specify a size for the figure (currently unimplemented)
+        size            specify a size for the figure
         color           specify a color, colormap, or palette for the figure
         title           specify the title of the figure
         =============   =======================================================
@@ -103,6 +103,12 @@ class Visualizer(BaseEstimator):
     @size.setter
     def size(self, size):
         self._size = size
+        if self._size is not None:
+            fig = plt.gcf()
+            width, height = size
+            width_in_inches = width / fig.get_dpi()
+            height_in_inches = height / fig.get_dpi()
+            fig.set_size_inches(width_in_inches, height_in_inches)
 
     ##////////////////////////////////////////////////////////////////////
     ## Estimator interface
