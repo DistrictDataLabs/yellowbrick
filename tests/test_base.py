@@ -70,3 +70,19 @@ class BaseTests(unittest.TestCase):
         """
         visualizer = Visualizer()
         self.assertIs(visualizer.finalize(), visualizer.ax)
+
+    def test_size_property(self):
+        """
+        Test the size property on the base Visualizer
+        """
+        fig = plt.figure(figsize =(1,2))
+        visualizer = Visualizer()
+        self.assertIsNone(visualizer._size)
+        self.assertIsNotNone(visualizer.size)
+        figure_size = fig.get_size_inches() * fig.get_dpi()
+        self.assertEqual(all(visualizer.size), all(figure_size))
+        visualizer.size = (1080, 720)
+        figure_size = fig.get_size_inches() * fig.get_dpi()
+        self.assertEqual(all(visualizer.size), all(figure_size))
+        self.assertEqual(visualizer._size, (1080, 720))
+        self.assertEqual(visualizer.size, (1080, 720))
