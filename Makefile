@@ -26,7 +26,7 @@ clean:
 
 # Targets for testing
 test:
-	$(PYTHON_BIN)/nosetests -v --with-coverage --cover-package=$(PROJECT) --cover-inclusive --cover-erase tests
+	$(PYTHON_BIN)/py.test --cov=yellowbrick tests/
 
 # Publish to gh-pages
 publish:
