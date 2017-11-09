@@ -28,6 +28,7 @@ clean:
 test:
 	$(PYTHON_BIN)/py.test --cov=$(PROJECT) tests/
 
+
 # Publish to gh-pages
 publish:
 	git subtree push --prefix=deploy origin gh-pages
