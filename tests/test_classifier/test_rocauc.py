@@ -158,7 +158,7 @@ class ROCAUCTests(VisualTestCase, DatasetMixin):
 
         # Compare the images
         visualizer.poof()
-        self.assert_images_similar(visualizer)
+        self.assert_images_similar(visualizer, tol=0.071)
 
     def test_rocauc_quickmethod(self):
         """

@@ -166,7 +166,9 @@ class ScatterVizTests(VisualTestCase, DatasetMixin):
         ax = scatterviz(X[:, :2], y=y, ax=None, features=features)
 
         # test that is returns a matplotlib obj with axes
-        self.assertIn('Axes', str(ax.properties()['axes']))
+        self.assertIsInstance(ax, mptl.axes.Axes)
+
+
 
     @unittest.skipUnless(pandas is not None,
                          "Pandas is not installed, could not run test.")
@@ -237,7 +239,7 @@ class ScatterVizTests(VisualTestCase, DatasetMixin):
 
     def test_scatter_image_fail(self):
         """
-        Assert bad image similarity on scatterviz errors 
+        Assert bad image similarity on scatterviz errors
         """
 
         X_two_cols = self.X[:, :2]
