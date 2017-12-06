@@ -26,7 +26,7 @@ clean:
 
 # Targets for testing
 test:
-	$(PYTHON_BIN)/py.test --cov=$(PROJECT) tests/
+	$(PYTHON_BIN)/pytest --cov=$(PROJECT) tests/
 
 
 # Publish to gh-pages
