@@ -18,6 +18,7 @@ Tests for the part-of-speech tagging visualization
 ## Imports
 ##########################################################################
 
+import pytest
 import unittest
 
 from yellowbrick.text.postag import *
@@ -57,7 +58,7 @@ whipped cream and chocolate curls if desired.
 
 class PosTagTests(unittest.TestCase):
 
-    @unittest.skipUnless(nltk is not None, "NLTK is not installed, could not run test.")
+    @pytest.mark.skipif(nltk is not None, reason="NLTK is not installed, could not run test.")
     def test_integrated_postag(self):
         """
         Assert no errors occur during postag integration

@@ -9,6 +9,8 @@ before_install:
   - pip install scipy
   - pip install nose coverage mock
   - pip install coveralls requests
+  - pip install -r tests/requirements.txt
+
 
 install: pip install -r requirements.txt
 
