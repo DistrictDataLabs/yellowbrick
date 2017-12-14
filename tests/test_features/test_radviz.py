@@ -107,7 +107,7 @@ class RadVizNullTests(unittest.TestCase):
             [1, 2, np.nan],
         ])
         
-        self.assertWarns(UserWarning, warn_if_nan, data)
+        self.assertWarns(UserWarning, warn_if_nans_exist, data)
 
     def test_count_rows_with_nans(self):
         """
@@ -165,7 +165,8 @@ class RadVizNullTests(unittest.TestCase):
         np.testing.assert_array_equal(expected, observed)
 
 
-def warn_if_nan(data):
+def warn_if_nans_exist(data):
+    """Warn if nans exist in a numpy array."""
     null_count = count_nan_rows(data)
     total = len(data)
     percent = null_count / total
@@ -178,9 +179,11 @@ def warn_if_nan(data):
 
 
 def count_nan_rows(data):
+    """Count the number of rows that contain any nan values."""
     if data.shape[0] >= 2:
         return np.where(np.isnan(data).sum(axis=1) != 0, 1, 0).sum()
 
 
 def drop_rows_containing_nans(data):
+    """Drop rows in a numpy array that contain nan values."""
     return data[~np.isnan(data).any(axis=1)]
