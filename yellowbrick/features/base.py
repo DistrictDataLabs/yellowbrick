@@ -21,11 +21,13 @@ Base classes for feature visualizers and feature selection tools.
 from yellowbrick.base import Visualizer
 from yellowbrick.utils import is_dataframe
 from sklearn.base import TransformerMixin
+import yellowbrick.utils.nan_warnings as nan_warnings
 
 
 ##########################################################################
 ## Feature Visualizers
 ##########################################################################
+
 
 class FeatureVisualizer(Visualizer, TransformerMixin):
     """
@@ -188,6 +190,10 @@ class DataVisualizer(FeatureVisualizer):
                 self.features_ = [
                     str(cdx) for cdx in range(ncols)
                 ]
+
+        # Drop nan-containing rows and warn that this has taken place
+        nan_warnings.warn_if_nans_exist(X)
+        X = nan_warnings.drop_rows_containing_nans(X)
 
         # Draw the instances
         self.draw(X, y, **kwargs)
