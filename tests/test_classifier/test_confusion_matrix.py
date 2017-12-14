@@ -17,7 +17,7 @@ class ConfusionMatrixTests(VisualTestCase):
 
         X = self.digits.data
         y = self.digits.target
-        
+
         X_train, X_test, y_train, y_test = train_test_split(X,y, test_size =0.2, random_state=11)
         self.X_train = X_train
         self.X_test = X_test
@@ -29,6 +29,7 @@ class ConfusionMatrixTests(VisualTestCase):
         cm = ConfusionMatrix(model, classes=[0,1,2,3,4,5,6,7,8,9])
         cm.fit(self.X_train, self.y_train)
         cm.score(self.X_test, self.y_test)
+        self.assert_images_similar(cm)
 
     def test_no_classes_provided(self):
         model = LogisticRegression()
@@ -60,6 +61,7 @@ class ConfusionMatrixTests(VisualTestCase):
         cm = ConfusionMatrix(model, classes=[0])
         cm.fit(self.X_train, self.y_train)
         cm.score(self.X_test, self.y_test)
+        self.assert_images_similar(cm)
 
     def test_defined_mapping(self):
         model = LogisticRegression()
@@ -78,6 +80,8 @@ class ConfusionMatrixTests(VisualTestCase):
         cm = ConfusionMatrix(model, classes=classes, label_encoder=le)
         cm.fit(self.X_train, self.y_train)
         cm.score(self.X_test, self.y_test)
+        self.assert_images_similar(cm)
+
 
     def test_isclassifier(self):
         model = PassiveAggressiveRegressor()
@@ -86,4 +90,3 @@ class ConfusionMatrixTests(VisualTestCase):
 
         with self.assertRaisesRegexp(yellowbrick.exceptions.YellowbrickError, message):
             ConfusionMatrix(model, classes=classes)
-
