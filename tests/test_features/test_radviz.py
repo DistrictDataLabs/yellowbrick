@@ -134,6 +134,36 @@ class RadVizNullTests(unittest.TestCase):
         self.assertEqual(2, count_nan_rows(data2))
         self.assertEqual(3, count_nan_rows(data3))
 
+    def test_drop_nan_rows_no_nans(self):
+        """
+        Test that an array with no nulls is returned intact
+        """
+        data = np.array([
+            [1, 2, 3],
+            [4, 5, 6],
+            [7, 8, 9],
+        ])
+
+        observed = drop_rows_containing_nans(data)
+        np.testing.assert_array_equal(data, observed)
+
+    def test_drop_nan_rows(self):
+        """
+        Test that an array with nulls is returned without null containing rows
+        """
+        data = np.array([
+            [1, 2, np.nan],
+            [4, 5, 6],
+            [np.nan, np.nan, np.nan],
+        ])
+
+        expected = np.array([
+            [4, 5, 6],
+        ])
+
+        observed = drop_rows_containing_nans(data)
+        np.testing.assert_array_equal(expected, observed)
+
 
 def warn_if_nan(data):
     null_count = count_nan_rows(data)
@@ -150,3 +180,7 @@ def warn_if_nan(data):
 def count_nan_rows(data):
     if data.shape[0] >= 2:
         return np.where(np.isnan(data).sum(axis=1) != 0, 1, 0).sum()
+
+
+def drop_rows_containing_nans(data):
+    return data[~np.isnan(data).any(axis=1)]
