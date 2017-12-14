@@ -17,10 +17,7 @@ Test the RadViz feature analysis visualizers
 ## Imports
 ##########################################################################
 
-import unittest
-import numpy as np
 import numpy.testing as npt
-import warnings
 
 from tests.base import VisualTestCase
 from tests.dataset import DatasetMixin
@@ -30,6 +27,7 @@ from yellowbrick.features.radviz import *
 ##########################################################################
 ## RadViz Base Tests
 ##########################################################################
+
 
 class RadVizTests(VisualTestCase, DatasetMixin):
     X = np.array(
@@ -93,97 +91,3 @@ class RadVizTests(VisualTestCase, DatasetMixin):
         visualizer.fit_transform(X, y)
         visualizer.poof()
         self.assert_images_similar(visualizer)
-
-
-
-
-class RadVizNullTests(unittest.TestCase):
-    def test_raise_warning_if_nans_exist(self):
-        """
-        Test that a warning is raised if any nans are in the data
-        """
-        data = np.array([
-            [1, 2, 3],
-            [1, 2, np.nan],
-        ])
-        
-        self.assertWarns(UserWarning, warn_if_nans_exist, data)
-
-    def test_count_rows_with_nans(self):
-        """
-        Test that a warning is raised if any nans are in the data
-        """
-        data0 = np.array([
-            [1, 2, 3],
-            [1, 2, 3],
-            [1, 2, 3],
-        ])
-
-        data2 = np.array([
-            [np.nan, 2, 3],
-            [1, np.nan, 3],
-        ])
-
-        data3 = np.array([
-            [np.nan, 2, 3],
-            [1, np.nan, 3],
-            [np.nan, np.nan, np.nan],
-        ])
-
-        self.assertEqual(0, count_nan_rows(data0))
-        self.assertEqual(2, count_nan_rows(data2))
-        self.assertEqual(3, count_nan_rows(data3))
-
-    def test_drop_nan_rows_no_nans(self):
-        """
-        Test that an array with no nulls is returned intact
-        """
-        data = np.array([
-            [1, 2, 3],
-            [4, 5, 6],
-            [7, 8, 9],
-        ])
-
-        observed = drop_rows_containing_nans(data)
-        np.testing.assert_array_equal(data, observed)
-
-    def test_drop_nan_rows(self):
-        """
-        Test that an array with nulls is returned without null containing rows
-        """
-        data = np.array([
-            [1, 2, np.nan],
-            [4, 5, 6],
-            [np.nan, np.nan, np.nan],
-        ])
-
-        expected = np.array([
-            [4, 5, 6],
-        ])
-
-        observed = drop_rows_containing_nans(data)
-        np.testing.assert_array_equal(expected, observed)
-
-
-def warn_if_nans_exist(data):
-    """Warn if nans exist in a numpy array."""
-    null_count = count_nan_rows(data)
-    total = len(data)
-    percent = null_count / total
-
-    # if np.isnan(data).any():
-    if null_count > 0:
-        warnings.warn(
-            'Warning! Found {} rows of {} ({}%) with nan/null/None '
-            'values which are cannot be plotted.'.format(null_count, total, percent))
-
-
-def count_nan_rows(data):
-    """Count the number of rows that contain any nan values."""
-    if data.shape[0] >= 2:
-        return np.where(np.isnan(data).sum(axis=1) != 0, 1, 0).sum()
-
-
-def drop_rows_containing_nans(data):
-    """Drop rows in a numpy array that contain nan values."""
-    return data[~np.isnan(data).any(axis=1)]
