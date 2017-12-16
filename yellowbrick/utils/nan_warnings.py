@@ -4,20 +4,20 @@ Small helpers that help find missing data.
 
 import numpy as np
 import warnings
+from yellowbrick.exceptions import DataWarning
 
 
 def warn_if_nans_exist(data):
     """Warn if nans exist in a numpy array."""
     null_count = count_nan_rows(data)
     total = len(data)
-    percent = null_count / total
+    percent = 100 * null_count / total
 
-    # if np.isnan(data).any():
     if null_count > 0:
-        warnings.warn(
-            'Warning! Found {} rows of {} ({}%) with nan/null/None '
-            'values which are cannot be plotted.'.format(null_count, total,
-                                                         percent))
+        warning_message = \
+            'Warning! Found {} rows of {} ({:0.2f}%) with nan values which are ' \
+            'not plotted.'.format(null_count, total, percent)
+        warnings.warn(warning_message, DataWarning)
 
 
 def count_nan_rows(data):
