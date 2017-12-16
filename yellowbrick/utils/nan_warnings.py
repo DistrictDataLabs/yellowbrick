@@ -9,7 +9,7 @@ from yellowbrick.exceptions import DataWarning
 
 def warn_if_nans_exist(data):
     """Warn if nans exist in a numpy array."""
-    null_count = count_nan_rows(data)
+    null_count = count_rows_with_nans(data)
     total = len(data)
     percent = 100 * null_count / total
 
@@ -20,10 +20,16 @@ def warn_if_nans_exist(data):
         warnings.warn(warning_message, DataWarning)
 
 
-def count_nan_rows(data):
-    """Count the number of rows that contain any nan values."""
-    if data.shape[0] >= 2:
+def count_rows_with_nans(data):
+    """Count the number of rows in 2D arrays that contain any nan values."""
+    if data.ndim == 2:
         return np.where(np.isnan(data).sum(axis=1) != 0, 1, 0).sum()
+
+
+def count_nan_elements(data):
+    """Count the number of elements in 1D arrays that are nan values."""
+    if data.ndim == 1:
+        return np.isnan(data).sum()
 
 
 def drop_rows_containing_nans(data):
