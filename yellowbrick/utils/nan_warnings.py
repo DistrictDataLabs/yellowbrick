@@ -15,8 +15,8 @@ def warn_if_nans_exist(X):
 
     if null_count > 0:
         warning_message = \
-            'Warning! Found {} rows of {} ({:0.2f}%) with nan values which are ' \
-            'not plotted.'.format(null_count, total, percent)
+            'Warning! Found {} rows of {} ({:0.2f}%) with nan values. Only ' \
+            'complete rows will be plotted.'.format(null_count, total, percent)
         warnings.warn(warning_message, DataWarning)
 
 
