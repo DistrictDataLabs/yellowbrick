@@ -193,7 +193,7 @@ class DataVisualizer(FeatureVisualizer):
 
         # Drop nan-containing rows and warn that this has taken place
         nan_warnings.warn_if_nans_exist(X)
-        X = nan_warnings.drop_rows_containing_nans(X)
+        X, y = nan_warnings.clean_data(X, y)
 
         # Draw the instances
         self.draw(X, y, **kwargs)
