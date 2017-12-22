@@ -162,7 +162,7 @@ class RadialVisualizer(DataVisualizer):
 
         # Clean out nans and warn that the user they aren't plotted
         nan_warnings.warn_if_nans_exist(X)
-        X, y = nan_warnings.clean_data(X, y)
+        X, y = nan_warnings.filter_missing(X, y)
 
         # Get the shape of the data
         nrows, ncols = X.shape
