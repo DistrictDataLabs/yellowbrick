@@ -9,7 +9,7 @@ Base class for grid search visualizers
 import numpy as np
 from ..utils import is_gridsearch
 from ..base import ModelVisualizer
-from ..exceptions import YellowbrickTypeError
+from ..exceptions import YellowbrickTypeError, YellowbrickKeyError
 
 
 ##########################################################################
@@ -39,17 +39,27 @@ def param_projection(cv_results, x_param, y_param):
     ax : matplotlib axes
         Returns the axes that the classification report was drawn on.
     """
-    # Extract the parameter values corresponding to each gridsearch result
-    x_vals = cv_results['param_' + x_param]
-    y_vals = cv_results['param_' + y_param]
+    # Extract the parameter values corresponding to each gridsearch trial.
+    # These are masked arrays where the cases where each parameter is
+    # non-applicable are masked.
+    try:
+        x_vals = cv_results['param_' + x_param]
+    except KeyError:
+        raise YellowbrickKeyError("Parameter '{}' does not exist in the grid "
+                                  "search results".format(x_param))
+    try:
+        y_vals = cv_results['param_' + y_param]
+    except KeyError:
+        raise YellowbrickKeyError("Parameter '{}' does not exist in the grid "
+                                  "search results".format(y_param))
 
     # Get unique, unmasked values of the two display parameters
     unique_x_vals = sorted(list(set(x_vals.compressed())))
     unique_y_vals = sorted(list(set(y_vals.compressed())))
-    n_x = len(x_vals)
-    n_y = len(y_vals)
+    n_x = len(unique_x_vals)
+    n_y = len(unique_y_vals)
 
-    # Get mapping from parameter value -> integer index
+    # Get mapping of each parameter value -> an integer index
     int_mapping_1 = {value: idx for idx, value in enumerate(unique_x_vals)}
     int_mapping_2 = {value: idx for idx, value in enumerate(unique_y_vals)}
 
@@ -76,7 +86,7 @@ def param_projection(cv_results, x_param, y_param):
             else:
                 best_scores[y, x] = max(all_scores[y][x])
 
-    return x_vals, y_vals, best_scores
+    return unique_x_vals, unique_y_vals, best_scores
 
 
 ##########################################################################
