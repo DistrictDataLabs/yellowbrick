@@ -39,21 +39,23 @@ def param_projection(cv_results, x_param, y_param):
     ax : matplotlib axes
         Returns the axes that the classification report was drawn on.
     """
-    # Get unique values of the two display parameters
-    x_vals = sorted(list(set(cv_results['param_' + x_param].compressed())))
-    y_vals = sorted(list(set(cv_results['param_' + y_param].compressed())))
+    # Extract the parameter values corresponding to each gridsearch result
+    x_vals = cv_results['param_' + x_param]
+    y_vals = cv_results['param_' + y_param]
+
+    # Get unique, unmasked values of the two display parameters
+    unique_x_vals = sorted(list(set(x_vals.compressed())))
+    unique_y_vals = sorted(list(set(y_vals.compressed())))
     n_x = len(x_vals)
     n_y = len(y_vals)
 
     # Get mapping from parameter value -> integer index
-    int_mapping_1 = {value: idx for idx, value in enumerate(x_vals)}
-    int_mapping_2 = {value: idx for idx, value in enumerate(y_vals)}
+    int_mapping_1 = {value: idx for idx, value in enumerate(unique_x_vals)}
+    int_mapping_2 = {value: idx for idx, value in enumerate(unique_y_vals)}
 
     # Translate each gridsearch result to indices on the grid
-    idx_x = [int_mapping_1[value] if value else None
-             for value in cv_results['param_' + x_param]]
-    idx_y = [int_mapping_2[value] if value else None
-             for value in cv_results['param_' + y_param]]
+    idx_x = [int_mapping_1[value] if value else None for value in x_vals]
+    idx_y = [int_mapping_2[value] if value else None for value in y_vals]
 
     # Create an array of all scores for each value of the display parameters.
     # This is a n_x by n_y array of lists with `None` in place of empties
