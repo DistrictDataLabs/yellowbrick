@@ -48,6 +48,9 @@ def gridsearch_color_plot(model, x_param, y_param, X=None, y=None, ax=None,
     y_param : string
         The name of the parameter to be visualized on the vertical axis.
 
+    metric : string (default 'mean_test_score')
+        The field from the grid search's `cv_results` that we want to display.
+
     X  : ndarray or DataFrame of shape n x m or None (default None)
         A matrix of n instances with m features. If not None, forces the
         GridSearchCV object to be fit.
@@ -95,6 +98,9 @@ class GridSearchColorPlot(GridSearchVisualizer):
     y_param : string
         The name of the parameter to be visualized on the vertical axis.
 
+    metric : string (default 'mean_test_score')
+        The field from the grid search's `cv_results` that we want to display.
+
     ax : matplotlib Axes, default: None
         The axes to plot the figure on. If None is passed in the current axes
         will be used (or generated if required).
@@ -120,17 +126,18 @@ class GridSearchColorPlot(GridSearchVisualizer):
     >>> model.poof()
     """
 
-    def __init__(self, model, x_param, y_param, colormap='RdBu_r', ax=None,
-                 **kwargs):
+    def __init__(self, model, x_param, y_param, metric='mean_test_score',
+                 colormap='RdBu_r', ax=None, **kwargs):
         super(GridSearchColorPlot, self).__init__(model, ax=ax, **kwargs)
         self.x_param = x_param
         self.y_param = y_param
+        self.metric = metric
         self.colormap = colormap
 
     def draw(self):
         # Project the grid search results to 2 dimensions
         x_vals, y_vals, best_scores = self.param_projection(
-            self.x_param, self.y_param
+            self.x_param, self.y_param, metric=self.metric
         )
 
         # Mask nans so that they can be filled with a hatch

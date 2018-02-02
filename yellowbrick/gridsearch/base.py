@@ -16,7 +16,7 @@ from ..exceptions import YellowbrickTypeError, YellowbrickKeyError
 ## Dimension reduction utility
 ##########################################################################
 
-def param_projection(cv_results, x_param, y_param):
+def param_projection(cv_results, x_param, y_param, metric='mean_test_score'):
     """
     Projects the grid search results onto 2 dimensions.
 
@@ -26,7 +26,7 @@ def param_projection(cv_results, x_param, y_param):
     ----------
     cv_results : dict
         A dictionary of results from the `GridSearchCV` object's `cv_results_`
-        attribute
+        attribute.
 
     x_param : string
         The name of the parameter to be visualized on the horizontal axis.
@@ -34,10 +34,19 @@ def param_projection(cv_results, x_param, y_param):
     y_param : string
         The name of the parameter to be visualized on the vertical axis.
 
+    metric : string (default 'mean_test_score')
+        The field from the grid search's `cv_results` that we want to display.
+
     Returns
     -------
-    ax : matplotlib axes
-        Returns the axes that the classification report was drawn on.
+    unique_x_vals : list
+        The parameter values that will be used to label the x axis.
+
+    unique_y_vals: list
+        The parameter values that will be used to label the y axis.
+
+    best_scores: 2D numpy array (n_y by n_x)
+        Array of scores to be displayed for each parameter value pair.
     """
     # Extract the parameter values corresponding to each gridsearch trial.
     # These are masked arrays where the cases where each parameter is
@@ -71,7 +80,7 @@ def param_projection(cv_results, x_param, y_param):
     # This is a n_x by n_y array of lists with `None` in place of empties
     # (my kingdom for a dataframe...)
     all_scores = [[None for _ in range(n_x)] for _ in range(n_y)]
-    for x, y, score in zip(idx_x, idx_y, cv_results['mean_test_score']):
+    for x, y, score in zip(idx_x, idx_y, cv_results[metric]):
         if x is not None and y is not None:
             if all_scores[y][x] is None:
                 all_scores[y][x] = []
@@ -109,14 +118,36 @@ class GridSearchVisualizer(ModelVisualizer):
         # Initialize the super method.
         super(GridSearchVisualizer, self).__init__(model, ax=ax, **kwargs)
 
-    def param_projection(self, x_param, y_param):
+    def param_projection(self, x_param, y_param, metric):
         """
         Projects the grid search results onto 2 dimensions.
 
         The wrapped GridSearch object is assumed to be fit already.
         The display value is taken as the max over the non-displayed dimensions.
+
+        Parameters
+        ----------
+        x_param : string
+            The name of the parameter to be visualized on the horizontal axis.
+
+        y_param : string
+            The name of the parameter to be visualized on the vertical axis.
+
+        metric : string (default 'mean_test_score')
+            The field from the grid search's `cv_results` that we want to display.
+
+        Returns
+        -------
+        unique_x_vals : list
+            The parameter values that will be used to label the x axis.
+
+        unique_y_vals: list
+            The parameter values that will be used to label the y axis.
+
+        best_scores: 2D numpy array (n_y by n_x)
+            Array of scores to be displayed for each parameter value pair.
         """
-        return param_projection(self.estimator.cv_results_, x_param, y_param)
+        return param_projection(self.estimator.cv_results_, x_param, y_param, metric)
 
     def fit(self, X, y=None, **kwargs):
         """
