@@ -21,75 +21,10 @@ __all__ = [
 
 
 ##########################################################################
-## Dimension reduction utility
-##########################################################################
-
-def param_projection(cv_results, param_1, param_2):
-    """
-    Projects the grid search results onto 2 dimensions.
-
-    The display value is taken as the max over the non-displayed dimensions.
-
-    Parameters
-    ----------
-    cv_results : dict
-        A dictionary of results from the `GridSearchCV` object's `cv_results_`
-        attribute
-
-    param_1 : string
-        The name of the parameter to be visualized on the horizontal axis.
-
-    param_2 : string
-        The name of the parameter to be visualized on the vertical axis.
-
-    Returns
-    -------
-    ax : matplotlib axes
-        Returns the axes that the classification report was drawn on.
-    """
-    # Get unique values of the two display parameters
-    x_vals = sorted(list(set(cv_results['param_' + param_1].compressed())))
-    y_vals = sorted(list(set(cv_results['param_' + param_2].compressed())))
-    n_x = len(x_vals)
-    n_y = len(y_vals)
-
-    # Get mapping from parameter value -> integer index
-    int_mapping_1 = {value: idx for idx, value in enumerate(x_vals)}
-    int_mapping_2 = {value: idx for idx, value in enumerate(y_vals)}
-
-    # Translate each gridsearch result to indices on the grid
-    idx_x = [int_mapping_1[value] if value else None
-             for value in cv_results['param_' + param_1]]
-    idx_y = [int_mapping_2[value] if value else None
-             for value in cv_results['param_' + param_2]]
-
-    # Create an array of all scores for each value of the display parameters.
-    # This is a n_x by n_y array of lists with `None` in place of empties
-    # (my kingdom for a dataframe...)
-    all_scores = [[None for _ in range(n_x)] for _ in range(n_y)]
-    for x, y, score in zip(idx_x, idx_y, cv_results['mean_test_score']):
-        if x is not None and y is not None:
-            if all_scores[y][x] is None:
-                all_scores[y][x] = []
-            all_scores[y][x].append(score)
-
-    # Get a numpy array consisting of the best scores for each parameter pair
-    best_scores = np.empty((n_y, n_x))
-    for x in range(n_x):
-        for y in range(n_y):
-            if all_scores[y][x] is None:
-                best_scores[y, x] = np.nan
-            else:
-                best_scores[y, x] = max(all_scores[y][x])
-
-    return x_vals, y_vals, best_scores
-
-
-##########################################################################
 ## Quick method
 ##########################################################################
 
-def gridsearch_color_plot(model, param_1, param_2, X=None, y=None, ax=None,
+def gridsearch_color_plot(model, x_param, y_param, X=None, y=None, ax=None,
                           **kwargs):
     """Quick method:
     Create a color plot showing the best grid search scores across two
@@ -98,7 +33,7 @@ def gridsearch_color_plot(model, param_1, param_2, X=None, y=None, ax=None,
     This helper function is a quick wrapper to utilize GridSearchColorPlot
     for one-off analysis.
 
-    If no `X` data is passed, the model is assume to be fit already. This
+    If no `X` data is passed, the model is assumed to be fit already. This
     allows quick exploration without waiting for the grid search to re-run.
 
     Parameters
@@ -107,10 +42,10 @@ def gridsearch_color_plot(model, param_1, param_2, X=None, y=None, ax=None,
         Should be an instance of GridSearchCV. If not, an exception is raised.
         The model may be fit or unfit.
 
-    param_1 : string
+    x_param : string
         The name of the parameter to be visualized on the horizontal axis.
 
-    param_2 : string
+    y_param : string
         The name of the parameter to be visualized on the vertical axis.
 
     X  : ndarray or DataFrame of shape n x m or None (default None)
@@ -132,7 +67,7 @@ def gridsearch_color_plot(model, param_1, param_2, X=None, y=None, ax=None,
         Returns the axes that the classification report was drawn on.
     """
     # Instantiate the visualizer
-    visualizer = GridSearchColorPlot(model, param_1, param_2, ax=ax, **kwargs)
+    visualizer = GridSearchColorPlot(model, x_param, y_param, ax=ax, **kwargs)
 
     # Fit if necessary
     if X is not None:
@@ -154,10 +89,10 @@ class GridSearchColorPlot(GridSearchVisualizer):
     model : Scikit-Learn grid search object
         Should be an instance of GridSearchCV. If not, an exception is raised.
 
-    param_1 : string
+    x_param : string
         The name of the parameter to be visualized on the horizontal axis.
 
-    param_2 : string
+    y_param : string
         The name of the parameter to be visualized on the vertical axis.
 
     ax : matplotlib Axes, default: None
@@ -180,23 +115,22 @@ class GridSearchColorPlot(GridSearchVisualizer):
     >>> from sklearn.svm import SVC
     >>> gridsearch = GridSearchCV(SVC(),
                                   {'kernel': ['rbf', 'linear'], 'C': [1, 10]})
-    >>> model = GridSearchColorPlot(gridsearch, param_1='kernel', param_2='C')
+    >>> model = GridSearchColorPlot(gridsearch, x_param='kernel', y_param='C')
     >>> model.fit(X)
     >>> model.poof()
     """
 
-    def __init__(self, model, param_1, param_2, colormap='RdBu_r', ax=None,
+    def __init__(self, model, x_param, y_param, colormap='RdBu_r', ax=None,
                  **kwargs):
-        # super(GridSearchColorPlot, self).__init__(model, ax=ax, **kwargs)
-        super().__init__(model, ax=ax, **kwargs)
-        self.param_1 = param_1
-        self.param_2 = param_2
+        super(GridSearchColorPlot, self).__init__(model, ax=ax, **kwargs)
+        self.x_param = x_param
+        self.y_param = y_param
         self.colormap = colormap
 
     def draw(self):
         # Project the grid search results to 2 dimensions
-        x_vals, y_vals, best_scores = param_projection(
-            self.cv_results_, self.param_1, self.param_2
+        x_vals, y_vals, best_scores = self.param_projection(
+            self.x_param, self.y_param
         )
 
         # Mask nans so that they can be filled with a hatch
@@ -221,5 +155,5 @@ class GridSearchColorPlot(GridSearchVisualizer):
 
     def finalize(self):
         self.set_title("Grid Search Scores")
-        self.ax.set_xlabel(self.param_1)
-        self.ax.set_ylabel(self.param_2)
+        self.ax.set_xlabel(self.x_param)
+        self.ax.set_ylabel(self.y_param)
