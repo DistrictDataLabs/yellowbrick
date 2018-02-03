@@ -9,7 +9,9 @@ Base class for grid search visualizers
 import numpy as np
 from ..utils import is_gridsearch
 from ..base import ModelVisualizer
-from ..exceptions import YellowbrickTypeError, YellowbrickKeyError
+from ..exceptions import (YellowbrickTypeError,
+                          YellowbrickKeyError,
+                          YellowbrickValueError)
 
 
 ##########################################################################
@@ -48,7 +50,8 @@ def param_projection(cv_results, x_param, y_param, metric='mean_test_score'):
     best_scores: 2D numpy array (n_y by n_x)
         Array of scores to be displayed for each parameter value pair.
     """
-    # Extract the parameter values corresponding to each gridsearch trial.
+    # Extract the parameter values and score corresponding to each gridsearch
+    # trial.
     # These are masked arrays where the cases where each parameter is
     # non-applicable are masked.
     try:
@@ -61,6 +64,11 @@ def param_projection(cv_results, x_param, y_param, metric='mean_test_score'):
     except KeyError:
         raise YellowbrickKeyError("Parameter '{}' does not exist in the grid "
                                   "search results".format(y_param))
+    try:
+        scores = cv_results[metric]
+    except KeyError:
+        raise YellowbrickKeyError("Metric '{}' does not exist in the grid "
+                                  "search results".format(metric))
 
     # Get unique, unmasked values of the two display parameters
     unique_x_vals = sorted(list(set(x_vals.compressed())))
@@ -93,7 +101,13 @@ def param_projection(cv_results, x_param, y_param, metric='mean_test_score'):
             if all_scores[y][x] is None:
                 best_scores[y, x] = np.nan
             else:
-                best_scores[y, x] = max(all_scores[y][x])
+                try:
+                    best_scores[y, x] = max(all_scores[y][x])
+                except ValueError:
+                    raise YellowbrickValueError(
+                        "Cannot display grid search results for metric '{}': "
+                        "result values may not all be numeric".format(metric)
+                    )
 
     return unique_x_vals, unique_y_vals, best_scores
 
