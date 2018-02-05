@@ -41,13 +41,14 @@ class SilhouetteVisualizerTests(VisualTestCase):
 
         # Generate a blobs data set
         X, y = make_blobs(
-            n_samples=1000, n_features=12, centers=8, shuffle=True,
+            n_samples=1000, n_features=12, centers=8, shuffle=False, random_state=0
         )
 
         try:
-            visualizer = SilhouetteVisualizer(KMeans())
+            visualizer = SilhouetteVisualizer(KMeans(random_state=0))
             visualizer.fit(X)
             visualizer.poof()
+            self.assert_images_similar(visualizer)
         except Exception as e:
             self.fail("error during silhouette: {}".format(e))
 
@@ -60,12 +61,13 @@ class SilhouetteVisualizerTests(VisualTestCase):
 
         # Generate a blobs data set
         X, y = make_blobs(
-            n_samples=1000, n_features=12, centers=8, shuffle=True,
+            n_samples=1000, n_features=12, centers=8, shuffle=False, random_state=0
         )
 
         try:
-            visualizer = SilhouetteVisualizer(MiniBatchKMeans())
+            visualizer = SilhouetteVisualizer(MiniBatchKMeans(random_state=0))
             visualizer.fit(X)
             visualizer.poof()
+            self.assert_images_similar(visualizer)
         except Exception as e:
             self.fail("error during silhouette: {}".format(e))

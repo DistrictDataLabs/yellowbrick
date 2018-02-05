@@ -1,4 +1,5 @@
-============
+.. -*- mode: rst -*-
+
 Contributing
 ============
 
@@ -75,77 +76,37 @@ Once forked, use the following steps to get your development environment set up 
         $ git fetch
         $ git checkout develop
 
-At this point you're ready to get started writing code. If you're going to take on a specific task, we'd strongly encourage you to check out the issue on `Waffle <https://waffle.io/DistrictDataLabs/yellowbrick>`_ and create a `pull request <https://github.com/DistrictDataLabs/yellowbrick/pulls>`_ *before you start coding* to better foster communication with other contributors. For a great example of a pull request for a new feature visualizer, check out `this one <https://github.com/DistrictDataLabs/yellowbrick/pull/232>`_ by `Carlo Morales <https://github.com/cjmorale>`_.
+At this point you're ready to get started writing code. If you're going to take on a specific task, we'd strongly encourage you to check out the issue on `Waffle <https://waffle.io/DistrictDataLabs/yellowbrick>`_ and create a `pull request <https://github.com/DistrictDataLabs/yellowbrick/pulls>`_ *before you start coding* to better foster communication with other contributors. More on this in the next section.
 
-The next section is about managing GitHub branches for contributions, but if you're ready jump straight to `Developing Visualizers`_!
+Pull Requests
+~~~~~~~~~~~~~
 
-Branching Convention
-~~~~~~~~~~~~~~~~~~~~
+A `pull request (PR) <https://help.github.com/articles/about-pull-requests/>`_ is a GitHub tool for initiating an exchange of code and creating a communication channel for Yellowbrick maintainers to discuss your contribution. In essenence, you are requesting that the maintainers merge code from your forked repository into the develop branch of the primary Yellowbrick repository. Once completed, your code will be part of Yellowbrick!
 
-The Yellowbrick repository is set up in a typical production/release/development cycle as described in "`A Successful Git Branching Model <http://nvie.com/posts/a-successful-git-branching-model/>`_." The primary working branch is the ``develop`` branch. This should be the branch that you are working on and from, since this has all the latest code. The ``master`` branch contains the latest stable version and release_, which is pushed to PyPI_. No one but core contributors will generally push to master.
+When starting a Yellowbrick contribution, *open the pull request as soon as possible*. We use your PR issue page to discuss your intentions and to give guidance and direction. Every time you push a commit into your forked repository, the commit is automatically included with your pull request, therefore we can review as you code. The earlier you open a PR, the more easily we can incorporate your updates, we'd hate for you to do a ton of work only to discover someone else already did it or that you went in the wrong direction and need to refactor.
 
-.. note:: All pull requests should be into the ``yellowbrick/develop`` branch from your forked repository.
+.. note:: For a great example of a pull request for a new feature visualizer, check out `this one <https://github.com/DistrictDataLabs/yellowbrick/pull/232>`_ by `Carlo Morales <https://github.com/cjmorale>`_.
 
-You can work directly in your fork and create a pull request from your fork's develop branch into ours. We also recommend setting up an ``upstream`` remote so that you can easily pull the latest development changes from the main Yellowbrick repository (see `configuring a remote for a fork <https://help.github.com/articles/configuring-a-remote-for-a-fork/>`_). You can do that as follows::
+When you open a pull request, ensure it is from your forked repository to the develop branch of `github.com/districtdatalabs/yellowbrick <https://github.com/districtdatalabs/yellowbrick>`_; we will not merge a PR into the master branch. Title your Pull Request so that it is easy to understand what you're working on at a glance. Also be sure to include a reference to the issue that you're working on so that correct references are set up.
 
-    $ git remote add upstream https://github.com/DistrictDataLabs/yellowbrick.git
-    $ git remote -v
-    origin    https://github.com/YOUR_USERNAME/YOUR_FORK.git (fetch)
-    origin    https://github.com/YOUR_USERNAME/YOUR_FORK.git (push)
-    upstream  https://github.com/DistrictDataLabs/yellowbrick.git (fetch)
-    upstream  https://github.com/DistrictDataLabs/yellowbrick.git (push)
+After you open a PR, you should get a message from one of the maintainers. Use that time to discuss your idea and where best to implement your work. Feel free to go back and forth as you are developing with questions in the comment thread of the PR. Once you are ready, please ensure that you explicitly ping the maintainer to do a code review. Before code review, your PR should contain the following:
 
-When you're ready, request a code review for your pull request. Then, when reviewed and approved, you can merge your fork into our main branch. Make sure to use the "Squash and Merge" option in order to create a Git history that is understandable.
+1. Your code contribution
+2. Tests for your contribution
+3. Documentation for your contribution
+4. A PR comment describing the changes you made and how to use them
+5. A PR comment that includes an image/example of your visualizer
 
-.. note:: When merging a pull request, use the "squash and merge" option.
+At this point your code will be formally reviewed by one of the contributors. We use GitHub's code review tool, starting a new code review and adding comments to specific lines of code as well as general global comments. Please respond to the comments promptly, and don't be afraid to ask for help implementing any requested changes! You may have to go back and forth a couple of times to complete the code review.
 
-Core contributors have write access to the repository. In order to reduce the number of merges (and merge conflicts) we recommend that you utilize a feature branch off of develop to do intermediate work in::
+When the following is true:
 
-    $ git checkout -b feature-myfeature develop
+1. Code is reviewed by at least one maintainer
+2. Continuous Integration tests have passed
+3. Code coverage and quality have not decreased
+4. Code is up to date with the yellowbrick develop branch
 
-Once you are done working (and everything is tested) merge your feature into develop.::
-
-    $ git checkout develop
-    $ git merge --no-ff feature-myfeature
-    $ git branch -d feature-myfeature
-    $ git push origin develop
-
-Head back to Waffle and checkout another issue!
-
-Releases
-~~~~~~~~
-
-When ready to create a new release we branch off of develop as follows::
-
-    $ git checkout -b release-x.x
-
-This creates a release branch for version x.x. At this point do the version bump by modifying ``version.py`` and the test version in ``tests/__init__.py``. Make sure all tests pass for the release and that the documentation is up to date. There may be style changes or deployment options that have to be done at this phase in the release branch. At this phase you'll also modify the ``changelog`` with the features and changes in the release.
-
-Once the release is ready for prime-time, merge into master::
-
-    $ git checkout master
-    $ git merge --no-ff --no-edit release-x.x
-
-Tag the release in GitHub::
-
-    $ git tag -a vx.x
-    $ git push origin vx.x
-
-You'll have to go to the release_ page to edit the release with similar information as added to the changelog. Once done, push the release to PyPI::
-
-    $ make build
-    $ make deploy
-
-Check that the PyPI page is updated with the correct version and that ``pip install -U yellowbrick`` updates the version and works correctly. Also check the documentation on PyHosted, ReadTheDocs, and on our website to make sure that it was correctly updated. Finally merge the release into develop and clean up::
-
-    $ git checkout develop
-    $ git merge --no-ff --no-edit release-x.x
-    $ git branch -d release-x.x
-
-Hotfixes and minor releases also follow a similar pattern; the goal is to effectively get new code to users as soon as possible!
-
-.. _release: https://github.com/DistrictDataLabs/yellowbrick/releases
-.. _PyPI: https://pypi.python.org/pypi/yellowbrick
+Then we will "Squash and Merge" your contribution, combining all of your commits into a single commit and merging it into the develop branch of Yellowbrick. Congratulations! Once your contribution has been merged into master, you will be officially listed as a contributor.
 
 Developing Visualizers
 ----------------------
@@ -156,7 +117,7 @@ In this section, we'll discuss the basics of developing visualizers. This of cou
 
     <iframe src="https://www.slideshare.net/BenjaminBengfort/slideshelf" width="615px" height="470px" frameborder="0" marginwidth="0" marginheight="0" scrolling="no" style="border:none;" allowfullscreen webkitallowfullscreen mozallowfullscreen></iframe>
 
-One thing that is necessary is a good understanding of Scikit-Learn and Matplotlib. Because our API is intended to integrate with Scikit-Learn, a good start is to review `"APIs of Scikit-Learn objects" <http://scikit-learn.org/stable/developers/contributing.html#apis-of-scikit-learn-objects>`_ and `"rolling your own estimator" <http://scikit-learn.org/stable/developers/contributing.html#rolling-your-own-estimator>`_. In terms of matplotlib, check out `Nicolas P. Rougier's Matplotlib tutorial <https://www.labri.fr/perso/nrougier/teaching/matplotlib/>`_.
+One thing that is necessary is a good understanding of Scikit-Learn and Matplotlib. Because our API is intended to integrate with Scikit-Learn, a good start is to review `"APIs of Scikit-Learn objects" <http://scikit-learn.org/stable/developers/contributing.html#apis-of-scikit-learn-objects>`_ and `"rolling your own estimator" <http://scikit-learn.org/stable/developers/contributing.html#rolling-your-own-estimator>`_. In terms of matplotlib, use Yellowbrick's guide :doc:`matplotlib`. Additional resources include `Nicolas P. Rougier's Matplotlib tutorial <https://www.labri.fr/perso/nrougier/teaching/matplotlib/>`_ and `Chris Moffitt's Effectively Using Matplotlib <http://pbpython.com/effective-matplotlib.html>`_.
 
 Visualizer API
 ~~~~~~~~~~~~~~
@@ -249,6 +210,25 @@ Tests can be run as follows::
 
 The Makefile uses the nosetest runner and testing suite as well as the coverage library, so make sure you have those dependencies installed! The ``DatasetMixin`` also requires requests.py to fetch data from our Amazon S3 account.
 
+Image Comparison Tests
+~~~~~~~~~~~~~~~~~~~~~~
+Writing an image based comparison test is only a little more difficult than the simple testcase presented above. We have adapted matplotlib's image comparison test utility into an easy to use assert method : ``self.assert_images_similar(visualizer)``
+
+The main consideration is that you must specify the “baseline”, or expected, image in the ``tests/baseline_images/`` folder structure.
+
+For example, create your unittest located in ``tests/test_regressor/test_myvisualizer.py`` as follows::
+
+    from tests.base import VisualTestCase
+    ...
+        def test_my_visualizer_output(self):
+            ...
+            visualizer = MyVisualizer()
+            visualizer.fit(X)
+            visualizer.poof()
+            self.assert_images_similar(visualizer)
+
+The first time this test is run, there will be no baseline image to compare against, so the test will fail. Copy the output images (in this case ``tests/actual_images/test_regressor/test_myvisualizer/test_my_visualizer_output.png``) to the correct subdirectory of baseline_images tree in the source directory (in this case ``tests/baseline_images/test_regressor/test_myvisualizer/test_my_visualizer_output.png``). Put this new file under source code revision control (with git add). When rerunning the tests, they should now pass.
+
 Documentation
 ~~~~~~~~~~~~~
 
@@ -292,4 +272,77 @@ The initial documentation for your visualizer will be a well structured docstrin
         In the notes section specify any gotchas or other info.
         """
 
-You should also add your example to the ``examples`` directory of the documentation when you have the chance, as well as create a demonstration in a notebook in the ``examples`` directory of the repository.
+You should also add your example to the ``api`` directory of the documentation when you have the chance. Currently the documentation is undergoing development, notes on how to add your visualizer to the documentation will be updated in the future.
+
+Advanced Development
+--------------------
+
+In this section we discuss more advanced contributing guidelines including setting up branches for development as well as the release cycle. This section is intended for maintainers and core contributors of the Yellowbrick project. If you would like to be a maintainer please contact one of the current maintainers of the project.
+
+Branching Convention
+~~~~~~~~~~~~~~~~~~~~
+
+The Yellowbrick repository is set up in a typical production/release/development cycle as described in "`A Successful Git Branching Model <http://nvie.com/posts/a-successful-git-branching-model/>`_." The primary working branch is the ``develop`` branch. This should be the branch that you are working on and from, since this has all the latest code. The ``master`` branch contains the latest stable version and release_, which is pushed to PyPI_. No one but core contributors will generally push to master.
+
+.. note:: All pull requests should be into the ``yellowbrick/develop`` branch from your forked repository.
+
+You can work directly in your fork and create a pull request from your fork's develop branch into ours. We also recommend setting up an ``upstream`` remote so that you can easily pull the latest development changes from the main Yellowbrick repository (see `configuring a remote for a fork <https://help.github.com/articles/configuring-a-remote-for-a-fork/>`_). You can do that as follows::
+
+    $ git remote add upstream https://github.com/DistrictDataLabs/yellowbrick.git
+    $ git remote -v
+    origin    https://github.com/YOUR_USERNAME/YOUR_FORK.git (fetch)
+    origin    https://github.com/YOUR_USERNAME/YOUR_FORK.git (push)
+    upstream  https://github.com/DistrictDataLabs/yellowbrick.git (fetch)
+    upstream  https://github.com/DistrictDataLabs/yellowbrick.git (push)
+
+When you're ready, request a code review for your pull request. Then, when reviewed and approved, you can merge your fork into our main branch. Make sure to use the "Squash and Merge" option in order to create a Git history that is understandable.
+
+.. note:: When merging a pull request, use the "squash and merge" option.
+
+Core contributors have write access to the repository. In order to reduce the number of merges (and merge conflicts) we recommend that you utilize a feature branch off of develop to do intermediate work in::
+
+    $ git checkout -b feature-myfeature develop
+
+Once you are done working (and everything is tested) merge your feature into develop.::
+
+    $ git checkout develop
+    $ git merge --no-ff feature-myfeature
+    $ git branch -d feature-myfeature
+    $ git push origin develop
+
+Head back to Waffle and checkout another issue!
+
+Releases
+~~~~~~~~
+
+When ready to create a new release we branch off of develop as follows::
+
+    $ git checkout -b release-x.x
+
+This creates a release branch for version x.x. At this point do the version bump by modifying ``version.py`` and the test version in ``tests/__init__.py``. Make sure all tests pass for the release and that the documentation is up to date. There may be style changes or deployment options that have to be done at this phase in the release branch. At this phase you'll also modify the ``changelog`` with the features and changes in the release.
+
+Once the release is ready for prime-time, merge into master::
+
+    $ git checkout master
+    $ git merge --no-ff --no-edit release-x.x
+
+Tag the release in GitHub::
+
+    $ git tag -a vx.x
+    $ git push origin vx.x
+
+You'll have to go to the release_ page to edit the release with similar information as added to the changelog. Once done, push the release to PyPI::
+
+    $ make build
+    $ make deploy
+
+Check that the PyPI page is updated with the correct version and that ``pip install -U yellowbrick`` updates the version and works correctly. Also check the documentation on PyHosted, ReadTheDocs, and on our website to make sure that it was correctly updated. Finally merge the release into develop and clean up::
+
+    $ git checkout develop
+    $ git merge --no-ff --no-edit release-x.x
+    $ git branch -d release-x.x
+
+Hotfixes and minor releases also follow a similar pattern; the goal is to effectively get new code to users as soon as possible!
+
+.. _release: https://github.com/DistrictDataLabs/yellowbrick/releases
+.. _PyPI: https://pypi.python.org/pypi/yellowbrick
