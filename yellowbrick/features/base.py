@@ -42,16 +42,6 @@ class FeatureVisualizer(Visualizer, TransformerMixin):
     def __init__(self, ax=None, **kwargs):
         super(FeatureVisualizer, self).__init__(ax=ax, **kwargs)
 
-    def fit(self, X, y=None, **fit_params):
-        """
-        This method performs preliminary computations in order to set up the
-        figure or perform other analyses. It can also call drawing methods in
-        order to set up various non-instance related figure elements.
-
-        This method must return self.
-        """
-        return self
-
     def transform(self, X):
         """
         Primarily a pass-through to ensure that the feature visualizer will
@@ -205,7 +195,7 @@ class DataVisualizer(MultiFeatureVisualizer):
 
     def fit(self, X, y=None, **kwargs):
         """
-        The fit method is the primary drawing input for the parallel coords
+        The fit method is the primary drawing input for the
         visualization since it has both the X and y data required for the
         viz and the transform method does not.
 
@@ -231,6 +221,9 @@ class DataVisualizer(MultiFeatureVisualizer):
         if self.classes_ is None:
             # TODO: Is this the most efficient method?
             self.classes_ = [str(label) for label in set(y)]
+
+        # Draw the instances
+        self.draw(X, y, **kwargs)
 
         # Fit always returns self.
         return self

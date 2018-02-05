@@ -23,3 +23,4 @@ from .radviz import RadialVisualizer, RadViz, radviz
 from .rankd import Rank1D, rank1d, Rank2D, rank2d
 from .scatter import ScatterViz, ScatterVisualizer, scatterviz
 from .jointplot import  JointPlotVisualizer
+from .pca import PCADecomposition, pca_decomposition

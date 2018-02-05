@@ -343,7 +343,7 @@ class Rank1D(RankDBase):
         order features as well as visualize the result.
         """
         super(Rank1D, self).__init__(
-            ax=None, algorithm=algorithm, features=features,
+            ax=ax, algorithm=algorithm, features=features,
             show_feature_names=show_feature_names, **kwargs
         )
         self.orientation_ = orient
@@ -428,15 +428,9 @@ class Rank2D(RankDBase):
 
     Attributes
     ----------
-<<<<<<< HEAD
     ranks_ : ndarray
         An array of rank scores with shape (n,n), where n is the
         number of features. It is computed during `fit`.
-=======
-    ``ranks_`` : ndarray
-        An array of rank scores with shape (n,n), where n is the
-        number of features. It is computed during ``fit``.
->>>>>>> pcoords
 
     Examples
     --------
@@ -464,7 +458,7 @@ class Rank2D(RankDBase):
         order features as well as visualize the result.
         """
         super(Rank2D, self).__init__(
-            ax=None, algorithm=algorithm, features=features,
+            ax=ax, algorithm=algorithm, features=features,
             show_feature_names=show_feature_names, **kwargs
         )
         self.colormap=colormap
