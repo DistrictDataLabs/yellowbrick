@@ -10,12 +10,13 @@
 # ID: exceptions.py [cb75e0e] benjamin@bengfort.com $
 
 """
-Exceptions hierarchy for the yellowbrick library
+Exceptions and warnings hierarchy for the yellowbrick library
 """
 
 ##########################################################################
 ## Exceptions Hierarchy
 ##########################################################################
+
 
 class YellowbrickError(Exception):
     """
@@ -48,5 +49,26 @@ class YellowbrickTypeError(YellowbrickError, TypeError):
 class YellowbrickValueError(YellowbrickError, ValueError):
     """
     A bad value was passed into a function.
+    """
+    pass
+
+
+class YellowbrickKeyError(YellowbrickError, KeyError):
+    """
+    An invalid key was used in a hash (dict or set).
+    """
+    pass
+
+
+class YellowbrickWarning(UserWarning):
+    """
+    Warning class used to notify users of Yellowbrick-specific issues.
+    """
+    pass
+
+
+class DataWarning(YellowbrickWarning):
+    """
+    The supplied data has an issue that may produce unexpected visualizations.
     """
     pass

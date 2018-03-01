@@ -106,7 +106,7 @@ class ROCAUC(ClassificationScoreVisualizer):
     ensure the best quality visualization, do not use a LabelEncoder for this
     and do not pass in class labels.
 
-    .. sealso:: http://scikit-learn.org/stable/auto_examples/model_selection/plot_roc.html
+    .. seealso:: http://scikit-learn.org/stable/auto_examples/model_selection/plot_roc.html
     .. todo:: Allow the class list to filter the curves on the visualization.
 
     Examples
@@ -199,7 +199,7 @@ class ROCAUC(ClassificationScoreVisualizer):
         Called internally by score, possibly more than once
 
         Returns
-        ------
+        -------
         ax : the axis with the plotted figure
         """
         colors = self.colors[0:len(self.classes_)]
@@ -219,7 +219,7 @@ class ROCAUC(ClassificationScoreVisualizer):
         if self.micro:
             self.ax.plot(
                 self.fpr[MICRO], self.tpr[MICRO], linestyle="--",
-                color= self.colors[len(self.classes_)],
+                color= self.colors[len(self.classes_)-1],
                 label='micro-average ROC curve, AUC = {:0.2f}'.format(
                     self.roc_auc["micro"],
                 )
@@ -229,7 +229,7 @@ class ROCAUC(ClassificationScoreVisualizer):
         if self.macro:
             self.ax.plot(
                 self.fpr[MACRO], self.tpr[MACRO], linestyle="--",
-                color= self.colors[len(self.classes_)+1],
+                color= self.colors[len(self.classes_)-1],
                 label='macro-average ROC curve, AUC = {:0.2f}'.format(
                     self.roc_auc["macro"],
                 )
@@ -408,7 +408,7 @@ def roc_auc(model, X, y=None, ax=None, **kwargs):
     ensure the best quality visualization, do not use a LabelEncoder for this
     and do not pass in class labels.
 
-    .. sealso:: http://scikit-learn.org/stable/auto_examples/model_selection/plot_roc.html
+    .. seealso:: http://scikit-learn.org/stable/auto_examples/model_selection/plot_roc.html
     .. todo:: Allow the class list to filter the curves on the visualization.
 
     Examples

@@ -6,7 +6,8 @@ numpy>=1.11.0
 cycler>=0.10.0
 
 # Testing Requirements (uncomment for development)
-#nose>=1.3.7
+#pytest>=3.2.3
+#pytest_cov>=2.5.1
 #coverage>=4.1
 #requests>=2.10.0
 
@@ -24,5 +25,3 @@ cycler>=0.10.0
 
 # Build Requirements (uncomment for deployment)
 #wheel>=0.29.0
-
-

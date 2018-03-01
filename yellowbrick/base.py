@@ -51,7 +51,7 @@ class Visualizer(BaseEstimator):
         =============   =======================================================
         Property        Description
         -------------   -------------------------------------------------------
-        size            specify a size for the figure (currently unimplemented)
+        size            specify a size for the figure
         color           specify a color, colormap, or palette for the figure
         title           specify the title of the figure
         =============   =======================================================
@@ -88,6 +88,27 @@ class Visualizer(BaseEstimator):
     @ax.setter
     def ax(self, ax):
         self._ax = ax
+
+    @property
+    def size(self):
+        """
+        Returns the actual size in pixels as set by matplotlib, or
+        the user provided size if available.
+        """
+        if not hasattr(self, "_size") or self._size is None:
+            fig = plt.gcf()
+            self._size = fig.get_size_inches()*fig.dpi
+        return self._size
+
+    @size.setter
+    def size(self, size):
+        self._size = size
+        if self._size is not None:
+            fig = plt.gcf()
+            width, height = size
+            width_in_inches = width / fig.get_dpi()
+            height_in_inches = height / fig.get_dpi()
+            fig.set_size_inches(width_in_inches, height_in_inches)
 
     ##////////////////////////////////////////////////////////////////////
     ## Estimator interface
