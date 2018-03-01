@@ -26,32 +26,34 @@ Visualizers are estimators (objects that learn from data) whose primary objectiv
 
 #### Feature Visualization
 
-- Rank2D: pairwise ranking of features to detect relationships
-- Parallel Coordinates: horizontal visualization of instances
-- Radial Visualization: separation of instances around a circular plot
+- **Rank Features**: single or pairwise ranking of features to detect relationships
+- **Parallel Coordinates**: horizontal visualization of instances
+- **Radial Visualization**: separation of instances around a circular plot
+- **PCA Projection**: projection of instances based on principal components
+- **Scatter and Joint Plots**: direct data visualization with feature selection
 
 #### Classification Visualization
 
-- Class Balance: see how the distribution of classes affects the model
-- Classification Report: visual representation of precision, recall, and F1
-- ROC/AUC Curves: receiver operator characteristics and area under the curve
-- Confusion Matrices: visual description of class decision making
+- **Class Balance**: see how the distribution of classes affects the model
+- **Classification Report**: visual representation of precision, recall, and F1
+- **ROC/AUC Curves**: receiver operator characteristics and area under the curve
+- **Confusion Matrices**: visual description of class decision making
 
 #### Regression Visualization
 
-- Prediction Error Plots: find model breakdowns along the domain of the target
-- Residuals Plot: show the difference in residuals of training and test data
-- Alpha Selection: show how the choice of alpha influences regularization
+- **Prediction Error Plots**: find model breakdowns along the domain of the target
+- **Residuals Plot**: show the difference in residuals of training and test data
+- **Alpha Selection**: show how the choice of alpha influences regularization
 
 #### Clustering Visualization
 
-- K-Elbow Plot: select k using the elbow method and various metrics
-- Silhouette Plot: select k by visualizing silhouette coefficient values
+- **K-Elbow Plot**: select k using the elbow method and various metrics
+- **Silhouette Plot**: select k by visualizing silhouette coefficient values
 
 #### Text Visualization
 
-- Term Frequency: visualize the frequency distribution of terms in the corpus
-- TSNE: use stochastic neighbor embedding to project documents.
+- **Term Frequency**: visualize the frequency distribution of terms in the corpus
+- **TSNE**: use stochastic neighbor embedding to project documents.
 
 And more! Visualizers are being added all the time, be sure to check the examples (or even the develop branch) and feel free to contribute your ideas for Visualizers!
 
@@ -113,7 +115,7 @@ We also have a [quick start guide](https://github.com/DistrictDataLabs/yellowbri
 
 Yellowbrick is an open source project that is supported by a community who will gratefully and humbly accept any contributions you might make to the project. Large or small, any contribution makes a big difference; and if you've never contributed to an open source project before, we hope you will start with Yellowbrick!
 
-Principally, Yellowbrick development is about the addition and creation of *visualizers* --- objects that learn from data and create a visual representation of the data or model. Visualizers integrate with Scikit-Learn estimators, transformers, and pipelines for specific purposes and as a result, can be simple to build and deploy. The most common contribution is therefore a new visualizer for a specific model or model family. We'll discuss in detail how to build visualizers later.
+Principally, Yellowbrick development is about the addition and creation of *visualizers* &mdash; objects that learn from data and create a visual representation of the data or model. Visualizers integrate with Scikit-Learn estimators, transformers, and pipelines for specific purposes and as a result, can be simple to build and deploy. The most common contribution is therefore a new visualizer for a specific model or model family. We'll discuss in detail how to build visualizers later.
 
 Beyond creating visualizers, there are many ways to contribute:
 

@@ -219,7 +219,7 @@ class ROCAUC(ClassificationScoreVisualizer):
         if self.micro:
             self.ax.plot(
                 self.fpr[MICRO], self.tpr[MICRO], linestyle="--",
-                color= self.colors[len(self.classes_)],
+                color= self.colors[len(self.classes_)-1],
                 label='micro-average ROC curve, AUC = {:0.2f}'.format(
                     self.roc_auc["micro"],
                 )
@@ -229,7 +229,7 @@ class ROCAUC(ClassificationScoreVisualizer):
         if self.macro:
             self.ax.plot(
                 self.fpr[MACRO], self.tpr[MACRO], linestyle="--",
-                color= self.colors[len(self.classes_)+1],
+                color= self.colors[len(self.classes_)-1],
                 label='macro-average ROC curve, AUC = {:0.2f}'.format(
                     self.roc_auc["macro"],
                 )

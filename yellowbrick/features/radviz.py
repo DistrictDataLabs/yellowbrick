@@ -23,6 +23,7 @@ import matplotlib.patches as patches
 
 from yellowbrick.features.base import DataVisualizer
 from yellowbrick.exceptions import YellowbrickTypeError
+import yellowbrick.utils.nan_warnings as nan_warnings
 from yellowbrick.style.colors import resolve_colors, get_color_cycle
 
 
@@ -159,6 +160,10 @@ class RadialVisualizer(DataVisualizer):
         is determined by the feature data set.
         """
 
+        # Clean out nans and warn that the user they aren't plotted
+        nan_warnings.warn_if_nans_exist(X)
+        X, y = nan_warnings.filter_missing(X, y)
+
         # Get the shape of the data
         nrows, ncols = X.shape
 
@@ -208,7 +213,7 @@ class RadialVisualizer(DataVisualizer):
 
         # Add the circular axis path
         # TODO: Make this a seperate function (along with labeling)
-        self.ax.add_patch(patches.Circle((0.0, 0.0), radius=1.0, facecolor='none'))
+        self.ax.add_patch(patches.Circle((0.0, 0.0), radius=1.0, facecolor='none', edgecolor='grey', linewidth=.5 ))
 
         # Add the feature names
         for xy, name in zip(s, self.features_):

@@ -32,6 +32,9 @@ from .base import ClassificationScoreVisualizer
 ## ConfusionMatrix
 ##########################################################################
 
+CMAP_OVERCOLOR = '#2a7d4f'
+
+
 class ConfusionMatrix(ClassificationScoreVisualizer):
     """
     Creates a heatmap visualization of the sklearn.metrics.confusion_matrix(). A confusion
@@ -50,11 +53,18 @@ class ConfusionMatrix(ClassificationScoreVisualizer):
 
     ax : the matplotlib axis to plot the figure on (if None, a new axis will be created)
 
-    classes : a list of class names to use in the confusion_matrix.
-        This is passed to the 'labels' parameter of sklearn.metrics.confusion_matrix(), and follows the behaviour
+    classes : list, default: None 
+        a list of class names to use in the confusion_matrix. This is passed to the 'labels' 
+        parameter of sklearn.metrics.confusion_matrix(), and follows the behaviour
         indicated by that function. It may be used to reorder or select a subset of labels.
         If None, values that appear at least once in y_true or y_pred are used in sorted order.
-        Default: None
+        
+    label_encoder : dict or LabelEncoder, default: None 
+        When specifying the ``classes`` argument, the input to ``fit()`` and ``score()`` must match the 
+        expected labels. If the ``X`` and ``y`` datasets have been encoded prior to training and the 
+        labels must be preserved for the visualization, use this argument to provide a mapping from the 
+        encoded class to the correct label. Because typically a Scikit-Learn ``LabelEncoder`` is used to 
+        perform this operation, you may provide it directly to the class to utilize its fitted encoding. 
 
     Examples
     --------
@@ -68,7 +78,7 @@ class ConfusionMatrix(ClassificationScoreVisualizer):
     """
 
 
-    def __init__(self, model, ax=None, classes=None, **kwargs):
+    def __init__(self, model, ax=None, classes=None, label_encoder=None, **kwargs):
         super(ConfusionMatrix, self).__init__(
             model, ax=ax, classes=classes, **kwargs
         )
@@ -77,9 +87,10 @@ class ConfusionMatrix(ClassificationScoreVisualizer):
         self.confusion_matrix = None
 
         self.cmap = color_sequence(kwargs.pop('cmap', 'YlOrRd'))
-        self.cmap.set_under(color='w')
-        self.cmap.set_over(color='#2a7d4f')
-        self.edgecolors=[] #used to draw diagonal line for predicted class = true class
+        self.cmap.set_under(color = 'w')
+        self.cmap.set_over(color=CMAP_OVERCOLOR)
+        self.edgecolors = [] #used to draw diagonal line for predicted class = true class
+        self.label_encoder = label_encoder
 
     def score(self, X, y, sample_weight=None, percent=True):
         """
@@ -102,6 +113,16 @@ class ConfusionMatrix(ClassificationScoreVisualizer):
                 be set to False or inaccurate percents will be displayed.
         """
         y_pred = self.predict(X)
+
+
+        if self.label_encoder:
+            try :
+                y = self.label_encoder.inverse_transform(y)
+                y_pred = self.label_encoder.inverse_transform(y_pred)
+            except AttributeError:
+                # if a mapping is passed to class apply it here.
+                y = [self.label_encoder[x] for x in y]
+                y_pred = [self.label_encoder[x] for x in y_pred]
 
         self.confusion_matrix = confusion_matrix(
             y, y_pred, labels=self.classes_, sample_weight=sample_weight

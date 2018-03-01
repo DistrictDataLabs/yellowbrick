@@ -98,8 +98,8 @@ class JointPlotVisualizer(FeatureVisualizer):
         histcolor_y     used to set the color for the histogram on the y axis
         ==============  =====================================================
 
-    size: float, default: 6
-        Size of each side of the figure in inches
+    size: float, default: 600
+        Size of each side of the figure in pixels
 
     ratio: float, default: 5
         Ratio of joint axis size to the x and y axes height
@@ -127,13 +127,11 @@ class JointPlotVisualizer(FeatureVisualizer):
     def __init__(self, ax=None, feature=None, target=None,
                  joint_plot='scatter', joint_args=None,
                  xy_plot='hist', xy_args=None,
-                 size=6, ratio=5, space=.2, **kwargs):
+                 size=600, ratio=5, space=.2, **kwargs):
 
         # Check matplotlib version - needs to be version 2.0.0 or greater.
         mpl_vers_maj = int(mpl.__version__.split(".")[0])
-        if mpl_vers_maj >= 2:
-            pass
-        else:
+        if mpl_vers_maj < 2:
             warnings.warn((
                 "{} requires matplotlib major version 2 or greater. "
                 "Please upgrade."
@@ -147,7 +145,7 @@ class JointPlotVisualizer(FeatureVisualizer):
         self.joint_args = joint_args
         self.xy_plot = xy_plot
         self.xy_args = xy_args
-        self.size = size
+        self.size = (size, size)
         self.ratio = ratio
         self.space = space
 
@@ -212,8 +210,7 @@ class JointPlotVisualizer(FeatureVisualizer):
         Sets up the layout for the joint plot draw calls ``draw_joint`` and
         ``draw_xy`` to render the visualizations.
         """
-
-        fig = plt.figure(figsize=(self.size, self.size))
+        fig = plt.gcf()
         gs = plt.GridSpec(self.ratio + 1, self.ratio + 1)
 
         #Set up the 3 axes objects

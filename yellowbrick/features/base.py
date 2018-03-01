@@ -27,6 +27,7 @@ from sklearn.base import TransformerMixin
 ## Feature Visualizers
 ##########################################################################
 
+
 class FeatureVisualizer(Visualizer, TransformerMixin):
     """
     Base class for feature visualization to investigate features
@@ -80,7 +81,7 @@ class FeatureVisualizer(Visualizer, TransformerMixin):
 
 class DataVisualizer(FeatureVisualizer):
     """
-    Data Visualizers are a subclass of Feature Visualiers which plot the
+    Data Visualizers are a subclass of Feature Visualizers which plot the
     instances in feature space (also called data space, hence the name of the
     visualizer). Feature space is a multi-dimensional space defined by the
     columns of the instance dependent vector input, X which is passed to

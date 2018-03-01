@@ -35,19 +35,18 @@ from sklearn.preprocessing import StandardScaler
 
 def pca_decomposition(X, y=None, ax=None, scale=True, proj_dim=2,
                       colormap=palettes.DEFAULT_SEQUENCE, color=None, **kwargs):
-    """Produce a two or three dimensional principal component (PC) plot of a data set
-    projected onto it first 2 or 3 PC. It is best practices to center and scale the inputted
-    data set before applying a PC decomposition. There are scale and center arguments
-    that can be used to control centering anc scaling of an inputted data set. Therefore
-    this class is a one stop shop for easily getting a PC plot.
-
+    """Produce a two or three dimensional principal component plot of the data array ``X``
+    projected onto it's largest sequential principal components. It is common practice to scale the
+    data array ``X`` before applying a PC decomposition. Variable scaling can be controlled using 
+    the ``scale`` argument.
+    
     Parameters
     ----------
     X : ndarray or DataFrame of shape n x m
-        A matrix of n instances with m features
+        A matrix of n instances with m features.
 
     y : ndarray or Series of length n
-        An array or series of target or class values
+        An array or series of target or class values.
 
     ax : matplotlib Axes, default: None
         The axes to plot the figure on.
@@ -56,10 +55,10 @@ def pca_decomposition(X, y=None, ax=None, scale=True, proj_dim=2,
         Boolean that indicates if the values of X should be scaled.
 
     proj_dim : int, default: 2
-        The dimension of the PCA project for visualizer.
+        Dimension of the PCA visualizer.
 
     colormap : string or cmap, default: None
-        optional string or matplotlib cmap to colorize lines
+        Optional string or matplotlib cmap to colorize lines.
         Use either color to colorize the lines on a per class basis or
         colormap to color them on a continuous scale.
 
@@ -94,35 +93,34 @@ def pca_decomposition(X, y=None, ax=None, scale=True, proj_dim=2,
 ##########################################################################
 class PCADecomposition(DataVisualizer):
     """
-    Produce a two or three dimensional principal component (PC) plot of a data set
-    projected onto it first 2 or 3 PC. It is best practices to center and scale the inputted
-    data set before applying a PC decomposition. There are scale and center arguments
-    that can be used to control centering anc scaling of an inputted data set. Therefore
-    this class is a one stop shop for easily getting a PC plot.
+    Produce a two or three dimensional principal component plot of the data array ``X``
+    projected onto it's largest sequential principal components. It is common practice to scale the
+    data array ``X`` before applying a PC decomposition. Variable scaling can be controlled using 
+    the ``scale`` argument.
 
     Parameters
     ----------
     X : ndarray or DataFrame of shape n x m
-        A matrix of n instances with m features
+        A matrix of n instances with m features.
 
     y : ndarray or Series of length n
-        An array or series of target or class values
+        An array or series of target or class values.
 
     ax : matplotlib Axes, default: None
-        The axes to plot the figure on. If None is passed in the current axes
+        The axes to plot the figure on. If None is passed in the current axes.
         will be used (or generated if required).
 
     scale : bool, default: True
         Boolean that indicates if user wants to scale data.
 
     proj_dim : int, default: 2
-        The dimension of the PCA project for visualizer.
+        Dimension of the PCA visualizer.
 
     color : list or tuple of colors, default: None
         Specify the colors for each individual class.
 
     colormap : string or cmap, default: None
-        optional string or matplotlib cmap to colorize lines
+        Optional string or matplotlib cmap to colorize lines.
         Use either color to colorize the lines on a per class basis or
         colormap to color them on a continuous scale.
 
