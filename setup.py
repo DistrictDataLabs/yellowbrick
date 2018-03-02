@@ -127,7 +127,10 @@ config = {
     "keywords": KEYWORDS,
     "zip_safe": False,
     "scripts": [],
+    "setup_requires":["pytest-runner"],
+    "tests_require":["pytest"],
 }
+
 
 ##########################################################################
 ## Run setup script
