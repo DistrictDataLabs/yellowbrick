@@ -6,11 +6,10 @@ from yellowbrick.features import ScatterVisualizer, JointPlotVisualizer
 
 def scatter(data, target, outpath, **kwargs):
     # Create a new figure and axes
-    fig = plt.figure()
-    ax = fig.add_subplot(111)
+    _, ax = plt.subplots()
 
     # Create the visualizer
-    visualizer = ScatterVisualizer(**kwargs)
+    visualizer = ScatterVisualizer(ax=ax, **kwargs)
     visualizer.fit(data, target)
     visualizer.transform(data)
 
@@ -25,7 +24,7 @@ def jointplot(X, y, outpath, **kwargs):
     ax = fig.add_subplot(111)
 
     # Create the visualizer
-    visualizer = JointPlotVisualizer(**kwargs)
+    visualizer = JointPlotVisualizer(ax=ax, **kwargs)
     visualizer.fit(X, y)
     visualizer.transform(X)
 

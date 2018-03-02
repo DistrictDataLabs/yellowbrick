@@ -18,8 +18,8 @@ Base classes for text feature visualizers and text feature selection tools.
 ##########################################################################
 
 from yellowbrick.base import Visualizer
-from yellowbrick.utils import is_dataframe
 from sklearn.base import TransformerMixin
+
 
 ##########################################################################
 ## Text Visualizers

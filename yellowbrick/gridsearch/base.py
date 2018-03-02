@@ -64,9 +64,8 @@ def param_projection(cv_results, x_param, y_param, metric='mean_test_score'):
     except KeyError:
         raise YellowbrickKeyError("Parameter '{}' does not exist in the grid "
                                   "search results".format(y_param))
-    try:
-        scores = cv_results[metric]
-    except KeyError:
+
+    if metric not in cv_results:
         raise YellowbrickKeyError("Metric '{}' does not exist in the grid "
                                   "search results".format(metric))
 

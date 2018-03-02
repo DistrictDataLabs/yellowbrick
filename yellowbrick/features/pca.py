@@ -17,8 +17,9 @@ Decomposition based feature visualization with PCA.
 ## Imports
 ##########################################################################
 
+# NOTE: must import mplot3d to load the 3D projection
+import mpl_toolkits.mplot3d # noqa 
 import matplotlib.pyplot as plt
-from mpl_toolkits.mplot3d import Axes3D
 
 from yellowbrick.features.base import FeatureVisualizer
 from yellowbrick.style import palettes

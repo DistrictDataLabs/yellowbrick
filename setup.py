@@ -20,7 +20,6 @@ See http://bbengfort.github.io/programmer/2016/01/20/packaging-with-pypi.html
 ##########################################################################
 
 import os
-import re
 import codecs
 
 from setuptools import setup

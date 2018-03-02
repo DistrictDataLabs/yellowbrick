@@ -17,8 +17,6 @@ Tests for the frequency distribution text visualization
 ## Imports
 ##########################################################################
 
-import unittest
-
 from yellowbrick.text.freqdist import *
 from tests.dataset import DatasetMixin
 from tests.base import VisualTestCase

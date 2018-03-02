@@ -28,6 +28,7 @@ from copy import copy
 from six import string_types
 from yellowbrick.exceptions import YellowbrickValueError
 
+
 # Check to see if matplotlib is at least sorta up to date
 from distutils.version import LooseVersion
 mpl_ge_150 = LooseVersion(mpl.__version__) >= "1.5.0"
@@ -133,6 +134,9 @@ class ColorMap(object):
         Converts color strings into a color listing.
         """
         if isinstance(value, string_types):
+            # Must import here to avoid recursive import 
+            from .palettes import PALETTES
+
             if value not in PALETTES:
                 raise YellowbrickValueError(
                     "'{}' is not a registered color palette".format(value)

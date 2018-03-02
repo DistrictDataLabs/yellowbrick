@@ -19,10 +19,9 @@ Tests for the SilhouetteVisualizer
 
 from ..base import VisualTestCase
 
-from sklearn.cluster import KMeans, MiniBatchKMeans
 from sklearn.datasets import make_blobs
+from sklearn.cluster import KMeans, MiniBatchKMeans
 
-from yellowbrick.exceptions import YellowbrickValueError
 from yellowbrick.cluster.silhouette import SilhouetteVisualizer
 
 
@@ -31,13 +30,15 @@ from yellowbrick.cluster.silhouette import SilhouetteVisualizer
 ##########################################################################
 
 class SilhouetteVisualizerTests(VisualTestCase):
+    """
+    Silhouette Visualizer
+    """
 
     def test_integrated_kmeans_silhouette(self):
         """
         Test no exceptions for kmeans silhouette visualizer on blobs dataset
-
-        See #182: cannot use occupancy dataset because of memory usage
         """
+        # NOTE see #182: cannot use occupancy dataset because of memory usage
 
         # Generate a blobs data set
         X, y = make_blobs(
@@ -55,9 +56,8 @@ class SilhouetteVisualizerTests(VisualTestCase):
     def test_integrated_mini_batch_kmeans_silhouette(self):
         """
         Test no exceptions for mini-batch kmeans silhouette visualizer
-
-        See #182: cannot use occupancy dataset because of memory usage
         """
+        # NOTE see #182: cannot use occupancy dataset because of memory usage
 
         # Generate a blobs data set
         X, y = make_blobs(

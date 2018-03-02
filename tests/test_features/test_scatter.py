@@ -18,7 +18,6 @@ Test the ScatterViz feature analysis visualizers
 
 import unittest
 import numpy as np
-import numpy.testing as npt
 import matplotlib as mptl
 
 from yellowbrick.features.scatter import *
@@ -100,9 +99,8 @@ class ScatterVizTests(VisualTestCase, DatasetMixin):
         """
         features = ["temperature", "relative_humidity", "light"]
 
-        with self.assertRaises(YellowbrickValueError) as context:
-            visualizer = ScatterViz(features=features)
-
+        with self.assertRaises(YellowbrickValueError):
+            ScatterViz(features=features)
 
     def test_scatter_xy_and_features_raise_error(self):
         """
@@ -110,8 +108,8 @@ class ScatterVizTests(VisualTestCase, DatasetMixin):
         """
         features = ["temperature", "relative_humidity", "light"]
 
-        with self.assertRaises(YellowbrickValueError) as context:
-            visualizer = ScatterViz(features=features, x='one', y='two')
+        with self.assertRaises(YellowbrickValueError):
+            ScatterViz(features=features, x='one', y='two')
 
     def test_scatter_xy_changes_to_features(self):
         """

@@ -14,16 +14,16 @@ Implements a 2D scatter plot for feature analysis.
 ##########################################################################
 # Imports
 ##########################################################################
-import itertools
 
+import itertools
 import numpy as np
-import matplotlib.pyplot as plt
-import matplotlib.patches as patches
 
 from yellowbrick.features.base import DataVisualizer
-from yellowbrick.utils import is_dataframe, is_structured_array, has_ndarray_int_columns
+from yellowbrick.utils import is_dataframe, is_structured_array
+from yellowbrick.utils import has_ndarray_int_columns
 from yellowbrick.exceptions import YellowbrickValueError
 from yellowbrick.style.colors import resolve_colors, get_color_cycle
+
 
 ##########################################################################
 # Quick Methods

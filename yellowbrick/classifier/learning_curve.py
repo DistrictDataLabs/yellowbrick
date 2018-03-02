@@ -10,16 +10,16 @@
 # ID: learning_curve.py [] jason.s.keung@gmail.com $
 
 """
-Implementations a learning curve visualizer for classification. 
+Implementations a learning curve visualizer for classification.
 """
 
 ##########################################################################
 ## Imports
 ##########################################################################
 import numpy as np
-import matplotlib.pyplot as plt
+
 from sklearn.model_selection import learning_curve
-from sklearn.model_selection import ShuffleSplit
+
 from yellowbrick.base import ModelVisualizer
 from yellowbrick.exceptions import YellowbrickError
 
@@ -29,18 +29,18 @@ from yellowbrick.exceptions import YellowbrickError
 
 class LearningCurveVisualizer(ModelVisualizer):
     """
-    Generate a simple plot of the test and training learning curve. 
+    Generate a simple plot of the test and training learning curve.
     Learning curves demonstrate is a plot of proxy measures for implied
-    learning with experience. 
+    learning with experience.
 
-    * The X axis represents experience, or the number of training samples. 
+    * The X axis represents experience, or the number of training samples.
     * The Y axis represents learning, or the train and cross validation scores.
 
     Parameters
     ----------
 
     model : a Scikit-Learn estimator
-    
+
     train_sizes: ndarray or Series, default: np.linspace(.1, 1.0, 5)
         An array that represents the proportion of data for the learning curve
 
@@ -53,9 +53,9 @@ class LearningCurveVisualizer(ModelVisualizer):
           - An object to be used as a cross-validation generator.
           - An iterable yielding train/test splits.
 
-    see scikit-learn `cross-validation guide <http://scikit-learn.org/stable/modules/cross_validation.html>`_ 
+    see scikit-learn `cross-validation guide <http://scikit-learn.org/stable/modules/cross_validation.html>`_
     for more information
-    
+
     n_jobs : integer, optional
         Number of jobs to run in parallel (default 1).
 
@@ -73,10 +73,10 @@ class LearningCurveVisualizer(ModelVisualizer):
     >>> model.poof()
     """
     def __init__(self, model, train_sizes=None, cv=None, n_jobs=1, **kwargs):
-        
+
         # Call super to initialize the class
         super(LearningCurveVisualizer, self).__init__(model, **kwargs)
-        
+
         # Set parameters
         self.cv = cv
         self.n_jobs = n_jobs
@@ -92,7 +92,7 @@ class LearningCurveVisualizer(ModelVisualizer):
         self.train_scores_std = None
         self.test_scores_mean = None
         self.test_scores_std = None
-        
+
     def fit(self, X, y, **kwargs):
         """
         The fit method is the primary drawing input for the learning curve
@@ -122,11 +122,11 @@ class LearningCurveVisualizer(ModelVisualizer):
         self.train_scores_std = np.std(self.train_scores, axis=1)
         self.test_scores_mean = np.mean(self.test_scores, axis=1)
         self.test_scores_std = np.std(self.test_scores, axis=1)
-        
+
         self.draw(**kwargs)
 
         return self
-        
+
     def draw(self, **kwargs):
         """
         Renders the learning curve across each axis.
@@ -147,9 +147,9 @@ class LearningCurveVisualizer(ModelVisualizer):
                  label="Training Score")
 
         self.ax.plot(self.train_sizes, self.test_scores_mean, 'o-', color='g',
-                 label="Cross-validation Score")  
+                 label="Cross-validation Score")
 
-        return self.ax      
+        return self.ax
 
     def finalize(self, **kwargs):
         """
@@ -173,8 +173,8 @@ class LearningCurveVisualizer(ModelVisualizer):
 def learning_curve_plot(X, y, model, ax=None, train_sizes=None,
            cv=None, n_jobs=1, **kwargs):
     """
-    Displays a learning curve based on number of samples vs training and 
-    cross validation scores. The learning curve aims to show how a model 
+    Displays a learning curve based on number of samples vs training and
+    cross validation scores. The learning curve aims to show how a model
     learns and improves with experience.
 
     This helper function is a quick wrapper to utilize the LearningCurveVisualizer
@@ -193,7 +193,7 @@ def learning_curve_plot(X, y, model, ax=None, train_sizes=None,
         The axes to plot the figure on.
 
     model : a Scikit-Learn estimator
-    
+
     train_sizes: ndarray or Series, default: np.linspace(.1, 1.0, 5)
         An array that represents the proportion of data for the learning curve
 
@@ -225,7 +225,7 @@ def learning_curve_plot(X, y, model, ax=None, train_sizes=None,
     ax : matplotlib axes
         Returns the axes that the learning curve were drawn on.
     """
-   
+
     # Instantiate the visualizer
     visualizer = LearningCurveVisualizer(model, train_sizes, cv, n_jobs, **kwargs)
 

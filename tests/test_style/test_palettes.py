@@ -312,17 +312,17 @@ class ColorPaletteFunctionTests(VisualTestCase):
         Test value errors for unrecognized sequences
         """
         with self.assertRaises(YellowbrickValueError):
-            cmap = color_sequence('PepperBucks', 3)
+            color_sequence('PepperBucks', 3)
 
     def test_color_sequence_bounds(self):
         """
         Test color sequence out of bounds value error
         """
         with self.assertRaises(YellowbrickValueError):
-            cmap = color_sequence('RdBu', 18)
+            color_sequence('RdBu', 18)
 
         with self.assertRaises(YellowbrickValueError):
-            cmap = color_sequence('RdBu', 2)
+            color_sequence('RdBu', 2)
 
 if __name__ == "__main__":
     unittest.main()

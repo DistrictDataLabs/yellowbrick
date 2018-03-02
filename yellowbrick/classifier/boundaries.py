@@ -6,22 +6,21 @@
 #
 # Copyright (C) 2017 District Data Labs
 # For license information, see LICENSE.txt
-from collections import OrderedDict
+
 import itertools
 import numpy as np
 
-import matplotlib.pyplot as plt
-from matplotlib.colors import ListedColormap
+from collections import OrderedDict
+
 from matplotlib.patches import Patch
+from matplotlib.colors import ListedColormap
 
 from yellowbrick.exceptions import YellowbrickTypeError
 from yellowbrick.exceptions import YellowbrickValueError
 from yellowbrick.classifier.base import ClassificationScoreVisualizer
-from yellowbrick.utils import get_model_name
 from yellowbrick.style.colors import resolve_colors
-from yellowbrick.utils import is_dataframe, is_structured_array, has_ndarray_int_columns
-from yellowbrick.style.palettes import PALETTES
-
+from yellowbrick.utils import is_dataframe, is_structured_array
+from yellowbrick.utils import has_ndarray_int_columns
 
 
 ##########################################################################

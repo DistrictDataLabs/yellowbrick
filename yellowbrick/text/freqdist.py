@@ -18,14 +18,11 @@ Implementations of frequency distributions for text visualization
 ##########################################################################
 
 import numpy as np
-import matplotlib.pyplot as plt
-import matplotlib.patches as mpatches
 
 from operator import itemgetter
 
 from yellowbrick.text.base import TextVisualizer
-from yellowbrick.exceptions import YellowbrickTypeError
-from yellowbrick.style.colors import resolve_colors, get_color_cycle
+from yellowbrick.exceptions import YellowbrickValueError
 
 
 ##########################################################################

@@ -17,14 +17,11 @@ Implements TSNE visualizations of documents in 2D space.
 ## Imports
 ##########################################################################
 
-import numpy as np
-import matplotlib.pyplot as plt
-
 from collections import defaultdict
 
 from yellowbrick.text.base import TextVisualizer
+from yellowbrick.style.colors import get_color_cycle
 from yellowbrick.exceptions import YellowbrickValueError
-from yellowbrick.style.colors import resolve_colors, get_color_cycle
 
 from sklearn.manifold import TSNE
 from sklearn.pipeline import Pipeline

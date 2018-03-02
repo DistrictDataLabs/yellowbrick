@@ -17,9 +17,6 @@ Tests for the color utilities and helpers module
 ## Imports
 ##########################################################################
 
-import warnings
-import unittest
-
 from yellowbrick.style import *
 from yellowbrick.style.colors import *
 from tests.base import VisualTestCase

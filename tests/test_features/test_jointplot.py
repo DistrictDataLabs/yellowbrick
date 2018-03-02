@@ -25,7 +25,6 @@ import warnings
 import unittest
 import numpy as np
 import matplotlib as mpl
-import numpy.testing as npt
 
 from tests.dataset import DatasetMixin
 from tests.base import VisualTestCase
@@ -63,7 +62,7 @@ class JointPlotTests(VisualTestCase, DatasetMixin):
             warnings.simplefilter("always")
 
             # Trigger a warning.
-            visualizer = JointPlotVisualizer()
+            JointPlotVisualizer()
 
             # Ensure that a warning occurred
             self.assertEqual(len(w), 1)
@@ -101,7 +100,7 @@ class JointPlotTests(VisualTestCase, DatasetMixin):
         # Test the visualizer
         visualizer = JointPlotVisualizer(feature=feature, target=target, joint_plot="hex")
         visualizer.fit(X, y)                # Fit the data to the visualizer
-        g = visualizer.poof()
+        visualizer.poof()
         self.assert_images_similar(visualizer)
 
 

@@ -19,15 +19,14 @@ coordinates that optimize column order.
 ## Imports
 ##########################################################################
 
-import numpy as np
-import matplotlib.pyplot as plt
-from sklearn.preprocessing import (MinMaxScaler, MaxAbsScaler, Normalizer,
-                                   StandardScaler)
+from sklearn.preprocessing import MinMaxScaler, MaxAbsScaler
+from sklearn.preprocessing import Normalizer, StandardScaler
 
 from yellowbrick.utils import is_dataframe
 from yellowbrick.features.base import DataVisualizer
 from yellowbrick.exceptions import YellowbrickTypeError, YellowbrickValueError
-from yellowbrick.style.colors import resolve_colors, get_color_cycle
+from yellowbrick.style.colors import get_color_cycle
+
 
 ##########################################################################
 ## Quick Methods

@@ -122,7 +122,7 @@ class ClassBalance(ClassificationScoreVisualizer):
         self.ax.set_xticklabels(self.support.keys())
 
         # Compute the ceiling for the y limit
-        cmax, cmin = max(self.support.values()), min(self.support.values())
+        cmax = max(self.support.values())
         self.ax.set_ylim(0, cmax + cmax* 0.1)
 
 

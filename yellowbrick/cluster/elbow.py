@@ -19,7 +19,6 @@ https://bl.ocks.org/rpgove/0060ff3b656618e9136b
 ##########################################################################
 
 import time
-import numpy as np
 
 from .base import ClusteringScoreVisualizer
 from ..exceptions import YellowbrickValueError
@@ -247,7 +246,7 @@ class KElbowVisualizer(ClusteringScoreVisualizer):
             )
 
         self.draw()
-        
+
         return self
 
     def draw(self):

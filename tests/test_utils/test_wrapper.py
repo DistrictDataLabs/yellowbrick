@@ -18,7 +18,6 @@ Testing for the wrapping utility.
 ##########################################################################
 
 import unittest
-import numpy as np
 
 from yellowbrick.base import Visualizer
 from yellowbrick.utils.wrapper import *

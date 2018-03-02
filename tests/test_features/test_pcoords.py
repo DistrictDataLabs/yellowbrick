@@ -17,7 +17,6 @@ Testing for the parallel coordinates feature visualizers
 ## Imports
 ##########################################################################
 
-import unittest
 import numpy as np
 
 from tests.base import VisualTestCase

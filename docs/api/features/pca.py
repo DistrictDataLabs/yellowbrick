@@ -6,10 +6,9 @@ from yellowbrick.features.pca import PCADecomposition
 
 def pca(X, y, outpath, **kwargs):
     # Create a new figure and axes
-    fig = plt.figure()
-    ax = fig.add_subplot(111)
+    _, ax = plt.subplots()
 
-    viz = PCADecomposition(**kwargs)
+    viz = PCADecomposition(ax=ax, **kwargs)
     viz.fit_transform(X, y)
     viz.poof(outpath=outpath)
 

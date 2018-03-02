@@ -125,7 +125,7 @@ class ClassificationReport(ClassificationScoreVisualizer):
 
                 self.ax.text(column,row,current_score,va='center',ha='center', color=text_color)
 
-        fig = plt.imshow(self.matrix, interpolation='nearest', cmap=self.cmap, vmin=0, vmax=1, aspect='auto')
+        plt.imshow(self.matrix, interpolation='nearest', cmap=self.cmap, vmin=0, vmax=1, aspect='auto')
 
         # Add the color bar
         plt.colorbar()

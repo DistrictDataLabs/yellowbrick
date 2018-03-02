@@ -18,13 +18,11 @@ Implements 1D (histograms) and 2D (joint plot) feature rankings.
 ##########################################################################
 
 import numpy as np
-import matplotlib.pyplot as plt
 from scipy.stats import shapiro
 
 from yellowbrick.utils import is_dataframe
 from yellowbrick.features.base import MultiFeatureVisualizer
 from yellowbrick.exceptions import YellowbrickValueError
-from yellowbrick.style.colors import resolve_colors, get_color_cycle
 
 
 __all__ = ["rank1d", "rank2d", "Rank1D", "Rank2D"]

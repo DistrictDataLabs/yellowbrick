@@ -22,11 +22,6 @@ import unittest
 
 from yellowbrick.base import *
 
-try:
-    from unittest import mock
-except ImportError:
-    import mock
-
 
 ##########################################################################
 ## Imports

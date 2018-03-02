@@ -18,14 +18,12 @@ Implements radviz for feature analysis.
 ##########################################################################
 
 import numpy as np
-import matplotlib.pyplot as plt
 import matplotlib.patches as patches
 
 from yellowbrick.utils import is_dataframe
 from yellowbrick.features.base import DataVisualizer
-from yellowbrick.exceptions import YellowbrickTypeError
 import yellowbrick.utils.nan_warnings as nan_warnings
-from yellowbrick.style.colors import resolve_colors, get_color_cycle
+from yellowbrick.style.colors import get_color_cycle
 
 
 ##########################################################################
