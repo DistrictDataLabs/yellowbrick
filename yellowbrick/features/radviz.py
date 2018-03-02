@@ -21,6 +21,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.patches as patches
 
+from yellowbrick.utils import is_dataframe
 from yellowbrick.features.base import DataVisualizer
 from yellowbrick.exceptions import YellowbrickTypeError
 import yellowbrick.utils.nan_warnings as nan_warnings
@@ -159,6 +160,9 @@ class RadialVisualizer(DataVisualizer):
         draws each instance as a class or target colored point, whose location
         is determined by the feature data set.
         """
+        # Convert from dataframe
+        if is_dataframe(X):
+            X = X.as_matrix()
 
         # Clean out nans and warn that the user they aren't plotted
         nan_warnings.warn_if_nans_exist(X)

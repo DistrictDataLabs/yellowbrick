@@ -115,7 +115,7 @@ class ScatterVisualizer(DataVisualizer):
 
         features : a list of two feature names to use, default: None
             List of two features that correspond to the columns in the array.
-            The order of the two features correspond to X and Y axises on the
+            The order of the two features correspond to X and Y axes on the
             graph. More than two feature names or columns will raise an error.
             If a DataFrame is passed to fit and features is None, feature names
             are selected that are the columns of the DataFrame.
@@ -163,7 +163,8 @@ class ScatterVisualizer(DataVisualizer):
         self.markers = itertools.cycle(
             kwargs.pop('markers', (',', '+', 'o', '*', 'v', 'h', 'd')))
 
-
+        self.color = color
+        self.colormap = colormap
 
         if self.x is not None and self.y is not None and self.features_ is not None:
             raise YellowbrickValueError(
