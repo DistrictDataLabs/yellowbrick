@@ -53,6 +53,13 @@ class YellowbrickValueError(YellowbrickError, ValueError):
     pass
 
 
+class YellowbrickKeyError(YellowbrickError, KeyError):
+    """
+    An invalid key was used in a hash (dict or set).
+    """
+    pass
+
+
 class YellowbrickWarning(UserWarning):
     """
     Warning class used to notify users of Yellowbrick-specific issues.
