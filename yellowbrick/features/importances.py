@@ -191,3 +191,60 @@ class FeatureImportances(ModelVisualizer):
         Returns true if the visualizer has been fit.
         """
         return hasattr(self, 'feature_importances_') and hasattr(self, 'features_')
+
+
+##########################################################################
+## Quick Method
+##########################################################################
+
+def feature_importances(model, X, y=None, ax=None,
+                        labels=None, relative=True, **kwargs):
+    """
+    Displays the most informative features in a model by showing a bar chart
+    of features ranked by their importances. Although primarily a feature
+    engineering mechanism, this visualizer requires a model that has either a
+    ``coef_`` or ``feature_importances_`` parameter after fit.
+
+    Parameters
+    ----------
+    model : Estimator
+        A Scikit-Learn estimator that learns feature importances. Must support
+        either ``coef_`` or ``feature_importances_`` parameters.
+
+    X : ndarray or DataFrame of shape n x m
+        A matrix of n instances with m features
+
+    y : ndarray or Series of length n, optional
+        An array or series of target or class values
+
+    ax : matplotlib Axes, default: None
+        The axis to plot the figure on. If None is passed in the current axes
+        will be used (or generated if required).
+
+    labels : list, default: None
+        A list of feature names to use. If a DataFrame is passed to fit and
+        features is None, feature names are selected as the column names.
+
+    relative : bool, default: True
+        If true, the features are described by their relative importance as a
+        percentage of the strongest feature component; otherwise the raw
+        numeric description of the feature importance is shown.
+
+    kwargs : dict
+        Keyword arguments that are passed to the base class and may influence
+        the visualization as defined in other Visualizers.
+
+    Returns
+    -------
+    ax : matplotlib axes
+        Returns the axes that the parallel coordinates were drawn on.
+    """
+    # Instantiate the visualizer
+    visualizer = FeatureImportances(model, ax, labels, relative, **kwargs)
+
+    # Fit and transform the visualizer (calls draw)
+    visualizer.fit(X, y)
+    visualizer.finalize()
+
+    # Return the axes object on the visualizer
+    return visualizer.ax

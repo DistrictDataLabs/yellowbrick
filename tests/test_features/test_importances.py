@@ -27,6 +27,7 @@ from yellowbrick.features.importances import *
 
 from sklearn.base import BaseEstimator
 from sklearn.linear_model import Lasso
+from sklearn.ensemble import RandomForestClassifier
 from sklearn.ensemble import GradientBoostingClassifier
 
 from tests.base import VisualTestCase
@@ -98,6 +99,28 @@ class TestFeatureImportancesVisualizer(VisualTestCase, DatasetMixin):
         viz.poof()
 
         self.assert_images_similar(viz)
+
+    def test_integration_quick_method(self):
+        """
+        Integration test of quick method
+        """
+
+        occupancy = self.load_data('occupancy')
+        features = [
+            "temperature", "relative_humidity", "light", "C02", "humidity"
+        ]
+
+        # TODO: find some way to convert this structured array sanely
+        X = np.array(occupancy[features].tolist())
+        y = occupancy['occupancy'].astype(int)
+
+        fig = plt.figure()
+        ax = fig.add_subplot()
+
+        clf = RandomForestClassifier(random_state=42)
+        g = feature_importances(clf, X, y, ax)
+
+        self.assert_images_similar(ax=g)
 
     def test_fit_no_importances_model(self):
         """
