@@ -59,7 +59,9 @@ class ThresholdVisualizerTest(VisualTestCase, DatasetMixin):
         super(ThresholdVisualizerTest, self).tearDown()
 
     def test_threshold_vi__init__(self):
-        """Test that init params are in order"""
+        """
+        Test that init params are in order
+        """
         model = BernoulliNB(3)
         viz = ThresholdVisualizer(model)
         self.assertIs(viz.estimator, model)
@@ -73,8 +75,7 @@ class ThresholdVisualizerTest(VisualTestCase, DatasetMixin):
 
     def test_threshold_viz(self):
         """
-        Assert no errors occur during integration
-        and produces consistent images
+        Integration test of threshold visualizers
         """
         model = BernoulliNB(3)
         visualizer = ThresholdVisualizer(model, random_state=0)
@@ -112,7 +113,9 @@ class ThresholdVisualizerTest(VisualTestCase, DatasetMixin):
         self.assert_images_similar(visualizer)
 
     def test_threshold_viz_quick_method_read_data(self):
-        """Test for thresholdviz quick method with visual unit test"""
+        """
+        Test for thresholdviz quick method with visual unit test
+        """
         model = BernoulliNB(3)
 
         visualizer = type('Visualizer', (object, ),

@@ -17,6 +17,8 @@ Tests for the SilhouetteVisualizer
 ## Imports
 ##########################################################################
 
+import matplotlib.pyplot as plt
+
 from ..base import VisualTestCase
 
 from sklearn.datasets import make_blobs
@@ -46,9 +48,13 @@ class SilhouetteVisualizerTests(VisualTestCase):
         )
 
         try:
-            visualizer = SilhouetteVisualizer(KMeans(random_state=0))
+            fig = plt.figure()
+            ax = fig.add_subplot()
+
+            visualizer = SilhouetteVisualizer(KMeans(random_state=0), ax=ax)
             visualizer.fit(X)
             visualizer.poof()
+
             self.assert_images_similar(visualizer)
         except Exception as e:
             self.fail("error during silhouette: {}".format(e))
@@ -65,9 +71,13 @@ class SilhouetteVisualizerTests(VisualTestCase):
         )
 
         try:
-            visualizer = SilhouetteVisualizer(MiniBatchKMeans(random_state=0))
+            fig = plt.figure()
+            ax = fig.add_subplot()
+
+            visualizer = SilhouetteVisualizer(MiniBatchKMeans(random_state=0), ax=ax)
             visualizer.fit(X)
             visualizer.poof()
+
             self.assert_images_similar(visualizer)
         except Exception as e:
             self.fail("error during silhouette: {}".format(e))

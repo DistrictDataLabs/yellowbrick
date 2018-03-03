@@ -106,8 +106,7 @@ class ParallelCoordinatesTests(VisualTestCase, DatasetMixin):
 
     def test_integrated_pcoords(self):
         """
-        Test parallel coordinates on a real, occupancy data set (downsampled
-        for speed)
+        Test parallel coordinates on a real data set (downsampled for speed)
         """
         occupancy = self.load_data('occupancy')
 
