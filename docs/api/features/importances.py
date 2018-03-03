@@ -1,3 +1,4 @@
+import os
 import pandas as pd
 import matplotlib.pyplot as plt
 
@@ -5,16 +6,17 @@ from yellowbrick.features.importances import FeatureImportances
 from sklearn.ensemble import GradientBoostingClassifier
 from sklearn.linear_model import Lasso
 
-from tests.dataset import DatasetMixin
 
-loader = DatasetMixin()
+DATA_DIR = os.path.relpath(os.path.join(
+    os.path.dirname(__file__), "..", "..", "..", "examples", "data"
+))
 
 
 def feature_importances_(outpath):
-    occupancy = pd.DataFrame(loader.load_data('occupancy'))
+    occupancy = pd.read_csv(os.path.join(DATA_DIR, "occupancy", "occupancy.csv"))
 
     feats = [
-        "temperature", "relative_humidity", "light", "C02", "humidity"
+        "temperature", "relative humidity", "light", "C02", "humidity"
     ]
 
     X = occupancy[feats]
@@ -29,7 +31,8 @@ def feature_importances_(outpath):
 
 
 def coef_(outpath):
-    concrete = pd.DataFrame(loader.load_data('concrete'))
+    concrete = pd.read_csv(os.path.join(DATA_DIR, "concrete", "concrete.csv"))
+
     feats = ['cement','slag','ash','water','splast','coarse','fine','age']
     X = concrete[feats]
     y = concrete['strength']
@@ -44,5 +47,5 @@ def coef_(outpath):
 
 
 if __name__ == '__main__':
-    feature_importances_("images/feature_importances_.png")
-    coef_("images/coef_.png")
+    feature_importances_("images/feature_importances.png")
+    coef_("images/feature_importances_coef.png")

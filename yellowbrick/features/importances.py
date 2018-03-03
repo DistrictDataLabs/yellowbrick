@@ -61,6 +61,14 @@ class FeatureImportances(ModelVisualizer):
         Keyword arguments that are passed to the base class and may influence
         the visualization as defined in other Visualizers.
 
+    Attributes
+    ----------
+    features_ : np.array
+        The feature labels ranked according to their importance
+
+    feature_importances_ : np.array
+        The numeric value of the feature importance computed by the model
+
     Examples
     --------
 
