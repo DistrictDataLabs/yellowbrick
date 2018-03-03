@@ -121,8 +121,5 @@ crashlytics.properties
 crashlytics-build.properties
 fabric.properties
 
-# VisualTestCase Outputs
-/tests/actual_images/*
-
 # Data downloaded from Yellowbrick
 data/

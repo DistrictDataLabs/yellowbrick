@@ -47,7 +47,7 @@ def pytest_itemcollected(item):
     # Goal: produce a parsable string of the relative path, parent docstring
     # or class name, and the docstring of the test case, then set the nodeid
     # so that pytest-spec will correctly parse the information.
-    path = os.path.relpath(item.fspath)
+    path = os.path.relpath(str(item.fspath))
     prefix = parent.__doc__ or getattr(parent, '__name__', parent.__class__.__name__)
     suffix = node.__doc__ if node.__doc__ else node.__name__
 
