@@ -133,13 +133,10 @@ class ScatterVizTests(VisualTestCase, DatasetMixin):
         Test scatter on the real, occupancy data set
         """
         # Load the data from the fixture
-        X = self.occupancy[[
+        X = np.asarray(self.occupancy[[
             "temperature", "relative_humidity", "light", "C02", "humidity"
-        ]]
+        ]].tolist())
         y = self.occupancy['occupancy'].astype(int)
-
-        # Convert X to an ndarray
-        X = X.view((float, len(X.dtype.names)))
 
         # Test the visualizer
         features = ["temperature", "relative_humidity"]
@@ -151,13 +148,10 @@ class ScatterVizTests(VisualTestCase, DatasetMixin):
         Test scatter quick method on the real, occupancy data set
         """
         # Load the data from the fixture
-        X = self.occupancy[[
+        X = np.array(self.occupancy[[
             "temperature", "relative_humidity", "light", "C02", "humidity"
-        ]]
+        ]].tolist())
         y = self.occupancy['occupancy'].astype(int)
-
-        # Convert X to an ndarray
-        X = X.view((float, len(X.dtype.names)))
 
         # Test the visualizer
         features = ["temperature", "relative_humidity"]
@@ -165,8 +159,6 @@ class ScatterVizTests(VisualTestCase, DatasetMixin):
 
         # test that is returns a matplotlib obj with axes
         self.assertIsInstance(ax, mptl.axes.Axes)
-
-
 
     @unittest.skipUnless(pandas is not None,
                          "Pandas is not installed, could not run test.")
