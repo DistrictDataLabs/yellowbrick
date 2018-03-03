@@ -52,8 +52,15 @@ class VisualTestCase(unittest.TestCase):
         """
         Assert tthat the backend is 'Agg' and close all previous plots
         """
+        # Reset the matplotlib environment
+        plt.cla()        # clear current axis
+        plt.clf()        # clear current figure 
         plt.close("all") # close all existing plots
-        rcParams['font.family'] = 'DejaVu Sans' # Travis-CI does not have san-sarif
+
+        # Travis-CI does not have san-serif
+        rcParams['font.family'] = 'DejaVu Sans'
+
+        # Assert that the backend is agg
         self.assertEqual(self._backend, 'agg')
         super(VisualTestCase, self).setUp()
 

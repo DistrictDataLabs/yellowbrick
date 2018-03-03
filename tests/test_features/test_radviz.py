@@ -78,13 +78,10 @@ class RadVizTests(VisualTestCase, DatasetMixin):
         """
 
         # Load the data from the fixture
-        X = self.occupancy[[
+        X = np.array(self.occupancy[[
             "temperature", "relative_humidity", "light", "C02", "humidity"
-        ]]
+        ]].tolist())
         y = self.occupancy['occupancy'].astype(int)
-
-        # Convert X to an ndarray
-        X = X.view((float, len(X.dtype.names)))
 
         # Test the visualizer
         visualizer = RadViz()
