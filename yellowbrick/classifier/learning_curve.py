@@ -210,9 +210,6 @@ def learning_curve_plot(X, y, model, ax=None, train_sizes=None,
         :class:`StratifiedKFold` used. If the estimator is not a classifier
         or if ``y`` is neither binary nor multiclass, :class:`KFold` is used.
 
-        Refer :ref:`User Guide <cross_validation>` for the various
-        cross-validators that can be used here.
-
     n_jobs : integer, optional
         Number of jobs to run in parallel (default 1).
 

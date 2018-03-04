@@ -132,4 +132,30 @@ Beyond creating visualizers, there are many ways to contribute:
 
 As you can see, there are lots of ways to get involved and we would be very happy for you to join us! The only thing we ask is that you abide by the principles of openness, respect, and consideration of others as described in the [Python Software Foundation Code of Conduct](https://www.python.org/psf/codeofconduct/).
 
-For more information, checkout [CONTRIBUTING.md](https://github.com/DistrictDataLabs/yellowbrick/blob/develop/CONTRIBUTING.md).
+For more information, checkout the `CONTRIBUTING.md` file in the root of the repository or the detailed documentation at [Contributing to Yellowbrick](http://www.scikit-yb.org/en/latest/contributing.html)
+
+## Development Scripts
+
+Yellowbrick contains scripts to help with development, including downloading fixture data for tests and managing images for comparison.
+
+### Images
+
+The image comparison helper script manages the test directory's `baseline_images` folder by copying files from the `actual_images` folder to setup baselines. To use this script, first run the tests (which will cause image not found errors) then copy the images into baseline as follows:
+
+```
+$ python -m tests.images tests/test_visualizer.py
+```
+
+Where `tests/test_visualizer.py` is the test file that contains the image comparison tests. All related tests will be discovered, validated, and copied to the baseline directory. To clear out images from both actual and baseline to reset tests, use the `-C` flag:
+
+```
+$ python -m tests.images -C tests/test_visualizer.py
+```
+
+Glob syntax can be used to move multiple files. For example to reset all the classifier tests:
+
+```
+$ python -m tests.images tests/test_classifier/*   
+```
+
+Though it is recommended that specific test cases are targeted, rather than updating entire directories. 
