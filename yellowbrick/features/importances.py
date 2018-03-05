@@ -57,6 +57,14 @@ class FeatureImportances(ModelVisualizer):
         percentage of the strongest feature component; otherwise the raw
         numeric description of the feature importance is shown.
 
+    absolute : bool, default: False
+        Make all coeficients absolute to more easily compare negative
+        coeficients with positive ones.
+
+    xlabel : str, default: None
+        The label for the X-axis. If None is automatically determined by the
+        underlying model and options provided.
+
     kwargs : dict
         Keyword arguments that are passed to the base class and may influence
         the visualization as defined in other Visualizers.
@@ -78,11 +86,15 @@ class FeatureImportances(ModelVisualizer):
     >>> visualizer.poof()
     """
 
-    def __init__(self, model, ax=None, labels=None, relative=True, **kwargs):
+    def __init__(self, model, ax=None, labels=None, relative=True,
+                 absolute=False, xlabel=None, **kwargs):
         super(FeatureImportances, self).__init__(model, ax, **kwargs)
 
         # Data Parameters
-        self.set_params(labels=labels, relative=relative)
+        self.set_params(
+            labels=labels, relative=relative, absolute=absolute,
+            xlabel=xlabel,
+        )
 
     def fit(self, X, y=None, **kwargs):
         """
@@ -109,6 +121,10 @@ class FeatureImportances(ModelVisualizer):
 
         # Get the feature importances from the model
         self.feature_importances_ = self._find_importances_param()
+
+        # Apply absolute value filter before normalization
+        if self.absolute:
+            self.feature_importances_ = np.abs(self.feature_importances_)
 
         # Normalize features relative to the maximum
         if self.relative:
@@ -169,8 +185,7 @@ class FeatureImportances(ModelVisualizer):
                 len(self.features_), self.name))
 
         # Set the xlabel
-        xlabel = 'relative' if self.relative else 'feature'
-        self.ax.set_xlabel("{} importance".format(xlabel))
+        self.ax.set_xlabel(self._get_xlabel())
 
         # Remove the ygrid
         self.ax.grid(False, axis='y')
@@ -194,6 +209,25 @@ class FeatureImportances(ModelVisualizer):
             )
         )
 
+    def _get_xlabel(self):
+        """
+        Determines the xlabel based on the underlying data structure
+        """
+        # Return user-specified label
+        if self.xlabel:
+            return self.xlabel
+
+        # Label for coefficients
+        if hasattr(self.estimator, "coef_"):
+            if self.relative:
+                return "relative coefficient magnitude"
+            return "coefficient value"
+
+        # Default label for feature_importances_
+        if self.relative:
+            return "relative importance"
+        return "feature importance"
+
     def _is_fitted(self):
         """
         Returns true if the visualizer has been fit.
@@ -205,8 +239,8 @@ class FeatureImportances(ModelVisualizer):
 ## Quick Method
 ##########################################################################
 
-def feature_importances(model, X, y=None, ax=None,
-                        labels=None, relative=True, **kwargs):
+def feature_importances(model, X, y=None, ax=None, labels=None,
+                        relative=True, absolute=False, xlabel=None, **kwargs):
     """
     Displays the most informative features in a model by showing a bar chart
     of features ranked by their importances. Although primarily a feature
@@ -238,6 +272,14 @@ def feature_importances(model, X, y=None, ax=None,
         percentage of the strongest feature component; otherwise the raw
         numeric description of the feature importance is shown.
 
+    absolute : bool, default: False
+        Make all coeficients absolute to more easily compare negative
+        coeficients with positive ones.
+
+    xlabel : str, default: None
+        The label for the X-axis. If None is automatically determined by the
+        underlying model and options provided.
+
     kwargs : dict
         Keyword arguments that are passed to the base class and may influence
         the visualization as defined in other Visualizers.
@@ -248,7 +290,8 @@ def feature_importances(model, X, y=None, ax=None,
         Returns the axes that the parallel coordinates were drawn on.
     """
     # Instantiate the visualizer
-    visualizer = FeatureImportances(model, ax, labels, relative, **kwargs)
+    visualizer = FeatureImportances(
+        model, ax, labels, relative, absolute, xlabel, **kwargs)
 
     # Fit and transform the visualizer (calls draw)
     visualizer.fit(X, y)

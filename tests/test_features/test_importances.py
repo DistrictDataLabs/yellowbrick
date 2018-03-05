@@ -189,6 +189,30 @@ class TestFeatureImportancesVisualizer(VisualTestCase, DatasetMixin):
         coefs.sort()
         npt.assert_array_equal(visualizer.feature_importances_, coefs)
 
+    def test_fit_absolute(self):
+        """
+        Test fit with absolute values
+        """
+        coefs = np.array([0.4, 0.2, -0.08, 0.07, 0.16, .23, -0.38, 0.1, -0.05])
+
+        model = MockEstimator()
+        model.make_importance_param(value=coefs)
+
+        # Test absolute value
+        visualizer = FeatureImportances(model, absolute=True, relative=False)
+        visualizer.fit(np.random.rand(100, len(coefs)), np.random.rand(100))
+
+        expected = np.array([0.05, 0.07, 0.08, 0.1, 0.16, 0.2, .23, 0.38, 0.4])
+        npt.assert_array_equal(visualizer.feature_importances_, expected)
+
+        # Test no absolute value
+        visualizer = FeatureImportances(model, absolute=False, relative=False)
+        visualizer.fit(np.random.rand(100, len(coefs)), np.random.rand(100))
+
+        expected = np.array([-0.38, -0.08, -0.05, 0.07, 0.1, 0.16, 0.2, .23, 0.4])
+        npt.assert_array_equal(visualizer.feature_importances_, expected)
+
+
     @pytest.mark.skipif(pd is None, reason="pandas is required for this test")
     def test_fit_dataframe(self):
         """
@@ -290,6 +314,44 @@ class TestFeatureImportancesVisualizer(VisualTestCase, DatasetMixin):
 
         with pytest.raises(YellowbrickTypeError):
             visualizer._find_importances_param()
+
+    def test_xlabel(self):
+        """
+        Check the various xlabels are sensical
+        """
+        model = MockEstimator()
+        model.make_importance_param('feature_importances_')
+        visualizer = FeatureImportances(model, xlabel="foo", relative=True)
+
+        # Assert the visualizer uses the user supplied xlabel
+        assert visualizer._get_xlabel() == "foo", "could not set user xlabel"
+
+        # Check the visualizer default relative xlabel
+        visualizer.set_params(xlabel=None)
+        assert "relative" in visualizer._get_xlabel()
+
+        # Check value xlabel with default
+        visualizer.set_params(relative=False)
+        assert "relative" not in visualizer._get_xlabel()
+
+        # Check coeficients
+        model = MockEstimator()
+        model.make_importance_param('coef_')
+        visualizer = FeatureImportances(model, xlabel="baz", relative=True)
+
+        # Assert the visualizer uses the user supplied xlabel
+        assert visualizer._get_xlabel() == "baz", "could not set user xlabel"
+
+        # Check the visualizer default relative xlabel
+        visualizer.set_params(xlabel=None)
+        assert "coefficient" in visualizer._get_xlabel()
+        assert "relative" in visualizer._get_xlabel()
+
+        # Check value xlabel with default
+        visualizer.set_params(relative=False)
+        assert "coefficient" in visualizer._get_xlabel()
+        assert "relative" not in visualizer._get_xlabel()
+
 
     def test_is_fitted(self):
         """
