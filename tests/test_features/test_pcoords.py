@@ -117,7 +117,7 @@ class ParallelCoordinatesTests(VisualTestCase, DatasetMixin):
         y = occupancy['occupancy'].astype(int)
 
         # Convert X to an ndarray
-        X = np.array(X.tolist())
+        X = X.copy().view((float, len(X.dtype.names)))
 
         # Test the visualizer
         visualizer = ParallelCoordinates(sample=200)
