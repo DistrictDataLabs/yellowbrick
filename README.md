@@ -30,6 +30,7 @@ Visualizers are estimators (objects that learn from data) whose primary objectiv
 - **Parallel Coordinates**: horizontal visualization of instances
 - **Radial Visualization**: separation of instances around a circular plot
 - **PCA Projection**: projection of instances based on principal components
+- **Feature Importances**: rank features based on their in-model performance 
 - **Scatter and Joint Plots**: direct data visualization with feature selection
 
 #### Classification Visualization

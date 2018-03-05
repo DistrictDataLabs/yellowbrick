@@ -18,6 +18,8 @@ Base classes for feature visualizers and feature selection tools.
 ## Imports
 ##########################################################################
 
+import numpy as np
+
 from yellowbrick.base import Visualizer
 from yellowbrick.utils import is_dataframe
 from sklearn.base import TransformerMixin
@@ -104,21 +106,17 @@ class MultiFeatureVisualizer(FeatureVisualizer):
         This method must return self.
         """
 
-        # Get the shape of the data
-        nrows, ncols = X.shape
-
         # Handle the feature names if they're None.
         if self.features_ is None:
 
             # If X is a data frame, get the columns off it.
             if is_dataframe(X):
-                self.features_ = X.columns
+                self.features_ = np.array(X.columns)
 
             # Otherwise create numeric labels for each column.
             else:
-                self.features_ = [
-                    str(cdx) for cdx in range(ncols)
-                ]
+                _, ncols = X.shape
+                self.features_ = np.arange(0, ncols)
 
         return self
 

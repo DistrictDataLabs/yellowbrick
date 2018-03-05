@@ -54,7 +54,7 @@ class VisualTestCase(unittest.TestCase):
         """
         # Reset the matplotlib environment
         plt.cla()        # clear current axis
-        plt.clf()        # clear current figure 
+        plt.clf()        # clear current figure
         plt.close("all") # close all existing plots
 
         # Travis-CI does not have san-serif
@@ -101,7 +101,7 @@ class VisualTestCase(unittest.TestCase):
         base_img = os.path.join(base_results, test_func_name + extension)
         return base_img
 
-    def assert_images_similar(self, visualizer, tol=0.01):
+    def assert_images_similar(self, visualizer=None, ax=None, tol=0.01):
         """Accessible testing method for testing generation of a Visualizer.
 
         Requires the placement of a baseline image for comparison in the
@@ -125,19 +125,26 @@ class VisualTestCase(unittest.TestCase):
             An instantiated yellowbrick visualizer that has been fitted,
             transformed and had all operations except for poof called on it.
 
+        ax : matplotlib Axes, default: None
+            The axis to plot the figure on.
+
         tol : float
             The tolerance (a color value difference, where 255 is the
             maximal difference).  The test fails if the average pixel
             difference is greater than this value.
-
         """
+        if visualizer is None and ax is None:
+            raise ValueError("must supply either a visualizer or axes")
+
+        ax = ax or visualizer.ax
+
         # inspect is used to locate and organize the baseline images and actual
         # test generated images for comparison
         inspect_obj = inspect.stack()
         module_path, test_func_name = self._setup_imagetest(inspect_obj=inspect_obj)
 
         # clean and remove the textual/ formatting elements from the visualizer
-        remove_ticks_and_titles(visualizer.ax)
+        remove_ticks_and_titles(ax)
 
         plt.savefig(self._actual_img_path())
         base_image = self._base_img_path()
