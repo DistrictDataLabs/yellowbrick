@@ -133,9 +133,12 @@ class ScatterVizTests(VisualTestCase, DatasetMixin):
         Test scatter on the real, occupancy data set
         """
         # Load the data from the fixture
-        X = np.asarray(self.occupancy[[
+        X = self.occupancy[[
             "temperature", "relative_humidity", "light", "C02", "humidity"
-        ]].tolist())
+        ]]
+
+        # Convert to numpy arrays
+        X = X.copy().view((float, len(X.dtype.names)))
         y = self.occupancy['occupancy'].astype(int)
 
         # Test the visualizer
@@ -148,9 +151,12 @@ class ScatterVizTests(VisualTestCase, DatasetMixin):
         Test scatter quick method on the real, occupancy data set
         """
         # Load the data from the fixture
-        X = np.array(self.occupancy[[
+        X = self.occupancy[[
             "temperature", "relative_humidity", "light", "C02", "humidity"
-        ]].tolist())
+        ]]
+
+        # Convert to numpy arrays
+        X = X.copy().view((float, len(X.dtype.names)))
         y = self.occupancy['occupancy'].astype(int)
 
         # Test the visualizer

@@ -63,8 +63,9 @@ class TestFeatureImportancesVisualizer(VisualTestCase, DatasetMixin):
             "temperature", "relative_humidity", "light", "C02", "humidity"
         ]
 
-        # TODO: find some way to convert this structured array sanely
-        X = np.array(occupancy[features].tolist())
+        # Extract X and y as numpy arrays
+        X = occupancy[features].copy()
+        X = X.view((float, len(X.dtype.names)))
         y = occupancy['occupancy'].astype(int)
 
         fig = plt.figure()
@@ -85,8 +86,9 @@ class TestFeatureImportancesVisualizer(VisualTestCase, DatasetMixin):
         concrete = self.load_data('concrete')
         feats = ['cement','slag','ash','water','splast','coarse','fine','age']
 
-        # TODO: find some way to convert this structured array sanely
-        X = np.array(concrete[feats].tolist())
+        # Create X and y datasets as numpy arrays
+        X = concrete[feats].copy()
+        X = X.view((float, len(X.dtype.names)))
         y = concrete['strength']
 
         fig = plt.figure()
@@ -110,8 +112,9 @@ class TestFeatureImportancesVisualizer(VisualTestCase, DatasetMixin):
             "temperature", "relative_humidity", "light", "C02", "humidity"
         ]
 
-        # TODO: find some way to convert this structured array sanely
-        X = np.array(occupancy[features].tolist())
+        # Create X and y datasets as numpy arrays
+        X = occupancy[features].copy()
+        X = X.view((float, len(X.dtype.names)))
         y = occupancy['occupancy'].astype(int)
 
         fig = plt.figure()

@@ -214,7 +214,8 @@ class ScatterVisualizer(DataVisualizer):
 
         # handle numpy named/ structured array
         elif self.features_ is not None and is_structured_array(X):
-            X_two_cols = np.array(X[self.features_].tolist())
+            X_selected = X[self.features_]
+            X_two_cols = X_selected.copy().view((np.float64, len(X_selected.dtype.names)))
 
         # handle features that are numeric columns in ndarray matrix
         elif self.features_ is not None and has_ndarray_int_columns(self.features_, X):

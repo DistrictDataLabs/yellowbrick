@@ -84,7 +84,7 @@ class ROCAUCTests(VisualTestCase, DatasetMixin):
         y = data['occupancy'].astype(int)
 
         # Convert X to an ndarray
-        X = np.array(X.tolist())
+        X = X.copy().view((float, len(X.dtype.names)))
 
         # Return train/test splits
         return tts(X, y, test_size=0.2, random_state=42)
