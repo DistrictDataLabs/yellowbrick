@@ -39,6 +39,13 @@ class ModelError(YellowbrickError):
     pass
 
 
+class NotFitted(ModelError):
+    """
+    An action was called that requires a fitted model.
+    """
+    pass
+
+
 class YellowbrickTypeError(YellowbrickError, TypeError):
     """
     There was an unexpected type or none for a property or input.
