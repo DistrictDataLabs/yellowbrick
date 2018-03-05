@@ -63,7 +63,6 @@ class TestFeatureImportancesVisualizer(VisualTestCase, DatasetMixin):
             "temperature", "relative_humidity", "light", "C02", "humidity"
         ]
 
-
         # Extract X and y as numpy arrays
         X = occupancy[features].copy()
         X = X.view((float, len(X.dtype.names)))
@@ -86,7 +85,6 @@ class TestFeatureImportancesVisualizer(VisualTestCase, DatasetMixin):
 
         concrete = self.load_data('concrete')
         feats = ['cement','slag','ash','water','splast','coarse','fine','age']
-
 
         # Create X and y datasets as numpy arrays
         X = concrete[feats].copy()
@@ -113,7 +111,6 @@ class TestFeatureImportancesVisualizer(VisualTestCase, DatasetMixin):
         features = [
             "temperature", "relative_humidity", "light", "C02", "humidity"
         ]
-
 
         # Create X and y datasets as numpy arrays
         X = occupancy[features].copy()
