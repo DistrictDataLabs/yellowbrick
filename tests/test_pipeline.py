@@ -7,7 +7,7 @@
 # Copyright (C) 2016 District Data Labs
 # For license information, see LICENSE.txt
 #
-# ID: test_pipeline.py [] benjamin@bengfort.com $
+# ID: test_pipeline.py [1efae1f] benjamin@bengfort.com $
 
 """
 Tests to ensure that the visual pipeline works as expected.
@@ -38,15 +38,22 @@ class Thing(object):
     pass
 
 
-class EstimatorSpec(BaseEstimator):
+class MockEstimator(BaseEstimator):
 
     def fit(self, X, y=None, **kwargs):
         return self
 
-MockEstimator = mock.Mock(spec = EstimatorSpec)
+class MockVisualEstimator(Visualizer):
+
+    def fit(self, X, y=None, **kwargs):
+        self.draw(**kwargs)
+        return self
+
+    def draw(self, **kwargs):
+        pass
 
 
-class TransformerSpec(BaseEstimator, TransformerMixin):
+class MockTransformer(BaseEstimator, TransformerMixin):
 
     def fit(self, X, y=None, **kwargs):
         return self
@@ -54,12 +61,11 @@ class TransformerSpec(BaseEstimator, TransformerMixin):
     def transform(self, X, **kwargs):
         return X
 
-MockTransformer = mock.Mock(spec = TransformerSpec)
 
-
-class VisualTransformerSpec(Visualizer, TransformerMixin):
+class MockVisualTransformer(Visualizer, TransformerMixin):
 
     def fit(self, X, y=None, **kwargs):
+        self.draw(**kwargs)
         return self
 
     def transform(self, X, **kwargs):
@@ -67,11 +73,6 @@ class VisualTransformerSpec(Visualizer, TransformerMixin):
 
     def draw(self, **kwargs):
         pass
-
-    def poof(self, **kwargs):
-        pass
-
-MockVisualTransformer = mock.Mock(spec = VisualTransformerSpec)
 
 
 ##########################################################################
@@ -145,27 +146,64 @@ class VisualPipelineTests(unittest.TestCase):
 
         pipeline = VisualPipeline([
             ('a', MockTransformer()),
-            ('b', VisualTransformerSpec()),
-            ('c', MockTransformer()),
-            ('d', VisualTransformerSpec()),
-            ('e', MockEstimator()),
-        ])
-
-        self.assertIn('b', pipeline.visual_steps)
-        self.assertIn('d', pipeline.visual_steps)
-
-    @unittest.skip("mocks don't work for some reason")
-    def test_fit_transform_poof_and_draw_calls(self):
-        """
-        Test calling fit, transform, draw and poof on the pipeline
-        """
-
-        pipeline = VisualPipeline([
-            ('a', MockTransformer()),
             ('b', MockVisualTransformer()),
             ('c', MockTransformer()),
             ('d', MockVisualTransformer()),
             ('e', MockEstimator()),
+        ])
+
+        self.assertNotIn('a', pipeline.visual_steps)
+        self.assertIn('b', pipeline.visual_steps)
+        self.assertNotIn('c', pipeline.visual_steps)
+        self.assertIn('d', pipeline.visual_steps)
+        self.assertNotIn('e', pipeline.visual_steps)
+
+    def test_pipeline_poof(self):
+        """
+        Test the poof call against the VisualPipeline
+        """
+
+        pipeline = VisualPipeline([
+            ('a', mock.MagicMock(MockTransformer())),
+            ('b', mock.MagicMock(MockVisualTransformer())),
+            ('c', mock.MagicMock(MockTransformer())),
+            ('d', mock.MagicMock(MockVisualTransformer())),
+            ('e', mock.MagicMock(MockEstimator()),)
+        ])
+
+        pipeline.poof()
+        pipeline.steps[1][1].poof.assert_called_once_with(outpath=None)
+        pipeline.steps[3][1].poof.assert_called_once_with(outpath=None)
+
+    def test_pipeline_savefig_poof(self):
+        """
+        Test the poof call with an outdir to save all the figures
+        """
+        pipeline = VisualPipeline([
+            ('a', mock.MagicMock(MockTransformer())),
+            ('b', mock.MagicMock(MockVisualTransformer())),
+            ('c', mock.MagicMock(MockTransformer())),
+            ('d', mock.MagicMock(MockVisualTransformer())),
+            ('e', mock.MagicMock(MockVisualEstimator()),)
+        ])
+
+        pipeline.poof(outdir="/tmp/figures")
+        pipeline.steps[1][1].poof.assert_called_once_with(outpath="/tmp/figures/b.pdf")
+        pipeline.steps[3][1].poof.assert_called_once_with(outpath="/tmp/figures/d.pdf")
+        pipeline.steps[4][1].poof.assert_called_once_with(outpath="/tmp/figures/e.pdf")
+
+    @unittest.skip("need to find a way for fit to return self in mocks")
+    def test_fit_transform_poof_and_draw_calls(self):
+        """
+        Test calling fit, transform, and poof on the pipeline
+        """
+
+        pipeline = VisualPipeline([
+            ('a', mock.MagicMock(MockTransformer())),
+            ('b', mock.MagicMock(MockVisualTransformer())),
+            ('c', mock.MagicMock(MockTransformer())),
+            ('d', mock.MagicMock(MockVisualTransformer())),
+            ('e', mock.MagicMock(MockEstimator()),)
         ])
 
         X = [[1, 1, 1, 1, 1],
@@ -180,14 +218,10 @@ class VisualPipelineTests(unittest.TestCase):
 
         pipeline.transform(X)
         for name, step in pipeline.named_steps.items():
+            if name == 'e': continue
             step.transform.assert_called_once_with(X)
-
-        pipeline.draw()
-        for name, step in pipeline.named_steps.items():
-            if name in {'a', 'c', 'e'}: continue
-            step.draw.assert_called_once_with()
 
         pipeline.poof()
         for name, step in pipeline.named_steps.items():
             if name in {'a', 'c', 'e'}: continue
-            step.poof.assert_called_once_with()
+            step.poof.assert_called_once_with(outpath=None)

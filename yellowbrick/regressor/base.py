@@ -8,7 +8,7 @@
 # Copyright (C) 2016 District Data Labs
 # For license information, see LICENSE.txt
 #
-# ID: base.py [] benjamin@bengfort.com $
+# ID: base.py [7d3f5e6] benjamin@bengfort.com $
 
 """
 Base classes for regressor Visualizers.
@@ -39,7 +39,7 @@ class RegressionScoreVisualizer(ScoreVisualizer):
 
     The primary functionality of this class is to perform a check to ensure
     the passed in estimator is a regressor, otherwise it raises a
-    ``YellowbrickTypeError``. 
+    ``YellowbrickTypeError``.
     """
 
     def __init__(self, model, ax=None, **kwargs):

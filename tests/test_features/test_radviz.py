@@ -7,7 +7,7 @@
 # Copyright (C) 2016 District Data Labs
 # For license information, see LICENSE.txt
 #
-# ID: test_radviz.py [] benjamin@bengfort.com $
+# ID: test_radviz.py [01d5996] benjamin@bengfort.com $
 
 """
 Test the RadViz feature analysis visualizers
@@ -21,14 +21,16 @@ import unittest
 import numpy as np
 import numpy.testing as npt
 
+from tests.base import VisualTestCase
 from tests.dataset import DatasetMixin
 from yellowbrick.features.radviz import *
+
 
 ##########################################################################
 ## RadViz Base Tests
 ##########################################################################
 
-class RadVizTests(unittest.TestCase, DatasetMixin):
+class RadVizTests(VisualTestCase, DatasetMixin):
 
     X = np.array(
             [[ 2.318, 2.727, 4.260, 7.212, 4.792],
@@ -69,6 +71,9 @@ class RadVizTests(unittest.TestCase, DatasetMixin):
         """
         visualizer = RadViz()
         visualizer.fit_transform(self.X, self.y)
+        visualizer.poof()
+        self.assert_images_similar(visualizer)
+
 
     def test_integrated_radviz(self):
         """
@@ -87,3 +92,5 @@ class RadVizTests(unittest.TestCase, DatasetMixin):
         # Test the visualizer
         visualizer = RadViz()
         visualizer.fit_transform(X, y)
+        visualizer.poof()
+        self.assert_images_similar(visualizer)

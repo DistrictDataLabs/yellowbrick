@@ -7,7 +7,7 @@
 # Copyright (C) 2016 District Data Labs
 # For license information, see LICENSE.txt
 #
-# ID: colors.py [] benjamin@bengfort.com $
+# ID: colors.py [c6aff34] benjamin@bengfort.com $
 
 """
 Colors and color helpers brought in from an alternate library.
@@ -66,8 +66,8 @@ def resolve_colors(num_colors=None, colormap=None, color=None):
     colormap : str or None
         the colormap used to create the sequence of colors
 
-    color : list or Non e
-        the list of colors to specifically use with the plot 
+    color : list or None
+        the list of colors to specifically use with the plot
 
     """
 

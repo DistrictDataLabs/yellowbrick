@@ -7,7 +7,7 @@
 # Copyright (C) 2017 District Data Labs
 # For license information, see LICENSE.txt
 #
-# ID: base.py [] rbilbro@districtdatalabs.com $
+# ID: base.py [75d9b20] rebecca.bilbro@bytecubed.com $
 
 """
 Base classes for text feature visualizers and text feature selection tools.

@@ -8,7 +8,7 @@
 # Copyright (C) 2016 District Data Labs
 # For license information, see LICENSE.txt
 #
-# ID: test_rcmod.py [] benjamin@bengfort.com $
+# ID: test_rcmod.py [c6aff34] benjamin@bengfort.com $
 
 """
 Testing the matplotlib configuration modifications for aesthetic.
@@ -39,7 +39,8 @@ class RCParamTester(VisualTestCase):
 
     excluded_params = {
         "backend",  # This cannot be changed by manipulating rc
-        "svg.embed_char_paths"  # This param causes test issues and is deprecated anyway
+        "svg.embed_char_paths",  # This param causes test issues and is deprecated anyway
+        "font.family", # breaks the visualtest case
     }
 
     def flatten_list(self, orig_list):

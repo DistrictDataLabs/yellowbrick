@@ -28,6 +28,7 @@ clean:
 test:
 	$(PYTHON_BIN)/nosetests -v --with-coverage --cover-package=$(PROJECT) --cover-inclusive --cover-erase tests
 
+
 # Publish to gh-pages
 publish:
 	git subtree push --prefix=deploy origin gh-pages

@@ -123,3 +123,12 @@ fabric.properties
 # *.ipr
 
 .idea
+
+# pyenv
+.python-version
+
+# VisualTestCase Outputs
+/tests/actual_images/*
+
+# Data downloaded from Yellowbrick
+data/
