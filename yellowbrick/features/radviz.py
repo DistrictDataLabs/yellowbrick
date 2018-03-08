@@ -23,6 +23,7 @@ import matplotlib.patches as patches
 
 from yellowbrick.features.base import DataVisualizer
 from yellowbrick.exceptions import YellowbrickTypeError
+import yellowbrick.utils.nan_warnings as nan_warnings
 from yellowbrick.style.colors import resolve_colors, get_color_cycle
 
 
@@ -158,6 +159,10 @@ class RadialVisualizer(DataVisualizer):
         draws each instance as a class or target colored point, whose location
         is determined by the feature data set.
         """
+
+        # Clean out nans and warn that the user they aren't plotted
+        nan_warnings.warn_if_nans_exist(X)
+        X, y = nan_warnings.filter_missing(X, y)
 
         # Get the shape of the data
         nrows, ncols = X.shape
