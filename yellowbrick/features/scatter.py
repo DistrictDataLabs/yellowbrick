@@ -22,7 +22,7 @@ from yellowbrick.features.base import DataVisualizer
 from yellowbrick.utils import is_dataframe, is_structured_array
 from yellowbrick.utils import has_ndarray_int_columns
 from yellowbrick.exceptions import YellowbrickValueError
-from yellowbrick.style.colors import resolve_colors, get_color_cycle
+from yellowbrick.style.colors import resolve_colors
 
 
 ##########################################################################
@@ -249,13 +249,11 @@ class ScatterVisualizer(DataVisualizer):
         self.ax.set_ylim([-1,1])
 
         # set the colors
-        if self.colormap is not None or self.color is not None:
-            color_values = resolve_colors(
-                num_colors=len(self.classes_),
-                colormap=self.colormap,
-                color=self.color)
-        else:
-            color_values = get_color_cycle()
+        color_values = resolve_colors(
+            n_colors=len(self.classes_),
+            colormap=self.colormap,
+            colors=self.color
+        )
 
         colors = dict(zip(self.classes_, color_values))
 

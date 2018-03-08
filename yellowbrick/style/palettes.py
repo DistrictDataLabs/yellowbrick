@@ -1,14 +1,33 @@
-# yellowbrick.style.palettes # Implements the variety of colors that yellowbrick allows access to by nam #
-# Author:   Patrick O'Melveny <pvomelveny@gmail.com# Author:   Benjamin Bengfort <bbengfort@districtdatalabs.com>  # Copyright (C) 2016 District Data Lab# For license information, see LICENSE.txt
-# D: palettes.py [] pvomelveny@gmail.com  "" Implements the variety of colors that yellowbrick allows access to by name This code was originally based on Seaborn's rcmody.py but has since beecleaned up to be Yellowbrick-specific and to dereference tools we don't use. Note that these functions alter the matplotlib rc dictionary on the fly.  ######################################################################### ## Import #########################################################################
+# yellowbrick.style.palettes
+# Implements the variety of colors that yellowbrick allows access to by name.
+#
+# Author:   Patrick O'Melveny <pvomelveny@gmail.com
+# Author:   Benjamin Bengfort <bbengfort@districtdatalabs.com>
+#
+# Copyright (C) 2016 District Data Lab
+# For license information, see LICENSE.txt
+#
+# ID: palettes.py [] pvomelveny@gmail.com
+
+"""
+Implements the variety of colors that yellowbrick allows access to by name.
+This code was originally based on Seaborn's rcmody.py but has since been
+cleaned up to be Yellowbrick-specific and to dereference tools we don't use.
+Note that these functions alter the matplotlib rc dictionary on the fly.
+"""
+
+#########################################################################
+## Imports
+#########################################################################
+
 from __future__ import division
-from itertools import cycle
 
 import numpy as np
 import matplotlib as mpl
 import matplotlib.pyplot as plt
 import matplotlib.colors as mplcol
 
+from itertools import cycle
 from six import string_types
 from six.moves import range
 

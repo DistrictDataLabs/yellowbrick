@@ -343,7 +343,7 @@ class DecisionBoundariesVisualizer(ClassificationScoreVisualizer):
         X = self._select_feature_columns(X)
 
         color_cycle = iter(
-            resolve_colors(color=self.colors, num_colors=len(self.classes_)))
+            resolve_colors(colors=self.colors, n_colors=len(self.classes_)))
         colors = OrderedDict([(c, next(color_cycle))
                               for c in self.classes_.keys()])
 
