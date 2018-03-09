@@ -299,6 +299,10 @@ class ClassPredictionError(ClassificationScoreVisualizer):
         self.ax.set_xlabel("actual class")
         self.ax.set_ylabel("number of predicted class")
 
+        # Compute the ceiling for the y limit
+        cmax = max([sum(scores) for scores in self.scores_])
+        self.ax.set_ylim(0, cmax + cmax * 0.1)
+
         # Put the legend outside of the graph
         plt.legend(bbox_to_anchor=(1.04, 0.5), loc="center left")
         plt.tight_layout(rect=[0, 0, 0.85, 1])
