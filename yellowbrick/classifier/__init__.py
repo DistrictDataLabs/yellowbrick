@@ -30,4 +30,3 @@ from .learning_curve import LearningCurveVisualizer, learning_curve_plot
 from .rocauc import ROCAUC, roc_auc
 from .boundaries import decisionviz, DecisionBoundariesVisualizer, DecisionViz
 from .threshold import ThreshViz, ThresholdVisualizer, thresholdviz
-from .class_balance_heat_map import ClassBalanceHeatMap, class_balance_heat_map
