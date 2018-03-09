@@ -30,19 +30,41 @@ from tests.base import VisualTestCase
 ## Color Tests
 ##########################################################################
 
-def test_get_color_cycle():
+class TestGetColorCycle(VisualTestCase):
     """
-    Test the retreival of the current color cycle
+    Test get_color_cycle helper function
     """
-    c = get_color_cycle()
-    assert len(c) == 6
 
-    with ColorPalette('paired'):
+    def test_cycle_depends_on_palette(self):
+        """
+        Ensure the color cycle depends on the palette
+        """
         c = get_color_cycle()
-        assert len(c) == 12
+        assert len(c) == 6
 
-    c = get_color_cycle()
-    assert len(c) == 6
+        with ColorPalette('paired'):
+            c = get_color_cycle()
+            assert len(c) == 12
+
+        c = get_color_cycle()
+        assert len(c) == 6
+
+    @pytest.mark.filterwarnings()
+    @pytest.mark.skipif(mpl_ge_150, reason="requires matplotlib 1.5 or later")
+    def test_mpl_ge_150(self):
+        """
+        Test get color cycle with matplotlib 1.5 or later
+        """
+        assert get_color_cycle() == mpl.rcParams['axes.color_cycle']
+
+
+    @pytest.mark.filterwarnings()
+    @pytest.mark.skipif(not mpl_ge_150, reason="requires matplotlib ealier than 1.5")
+    def test_mpl_lt_150(self):
+        """
+        Test get color cycle with matplotlib earlier than 1.5
+        """
+        assert get_color_cycle() == mpl.rcParams['axes.color_cycle']
 
 
 class TestResolveColors(VisualTestCase):
