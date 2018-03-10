@@ -20,6 +20,8 @@ Tests for the color utilities and helper functions
 import pytest
 
 from matplotlib import cm
+from cycler import Cycler
+
 from yellowbrick.style.colors import *
 from yellowbrick.style.palettes import ColorPalette, PALETTES
 
@@ -50,16 +52,31 @@ class TestGetColorCycle(VisualTestCase):
         assert len(c) == 6
 
     @pytest.mark.filterwarnings()
-    @pytest.mark.skipif(mpl_ge_150, reason="requires matplotlib 1.5 or later")
+    @pytest.mark.skipif(not mpl_ge_150, reason="requires matplotlib 1.5 or later")
     def test_mpl_ge_150(self):
         """
         Test get color cycle with matplotlib 1.5 or later
         """
-        assert get_color_cycle() == mpl.rcParams['axes.color_cycle']
+        colors = get_color_cycle()
+        cycle = mpl.rcParams['axes.prop_cycle']
+
+        # Ensure the cycle is in fact a cycle
+        assert isinstance(cycle, Cycler)
+
+        # Ensure that colors is actually a list (might change in the future)
+        assert isinstance(colors, list)
+
+        # Ensure the cycler and the colors have the same length
+        cycle = list(cycle)
+        assert len(colors) == len(cycle)
+
+        # Ensure the colors and cycle match
+        for color, cycle_color in zip(colors, cycle):
+            assert color == cycle_color['color']
 
 
     @pytest.mark.filterwarnings()
-    @pytest.mark.skipif(not mpl_ge_150, reason="requires matplotlib ealier than 1.5")
+    @pytest.mark.skipif(mpl_ge_150, reason="requires matplotlib ealier than 1.5")
     def test_mpl_lt_150(self):
         """
         Test get color cycle with matplotlib earlier than 1.5
