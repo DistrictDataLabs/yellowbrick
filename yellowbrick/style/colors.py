@@ -46,7 +46,7 @@ def get_color_cycle():
         cyl = mpl.rcParams['axes.prop_cycle']
         # matplotlib 1.5 verifies that axes.prop_cycle *is* a cycler
         # but no garuantee that there's a `color` key.
-        # so users could have a custom rcParmas w/ no color...
+        # so users could have a custom rcParams w/ no color...
         try:
             return [x['color'] for x in cyl]
         except KeyError:
@@ -112,7 +112,7 @@ def resolve_colors(n_colors=None, colormap=None, colors=None):
     else:
         _colors = get_color_cycle()
 
-    # Truncate or multiple the color list according to the number of colors 
+    # Truncate or multiple the color list according to the number of colors
     if n_colors is not None and len(_colors) != n_colors:
         _colors = [
             _colors[idx % len(_colors)] for idx in np.arange(n_colors)
