@@ -46,7 +46,7 @@ def get_color_cycle():
         cyl = mpl.rcParams['axes.prop_cycle']
         # matplotlib 1.5 verifies that axes.prop_cycle *is* a cycler
         # but no garuantee that there's a `color` key.
-        # so users could have a custom rcParmas w/ no color...
+        # so users could have a custom rcParams w/ no color...
         try:
             return [x['color'] for x in cyl]
         except KeyError:
@@ -54,58 +54,71 @@ def get_color_cycle():
     return mpl.rcParams['axes.color_cycle']
 
 
-def resolve_colors(num_colors=None, colormap=None, color=None):
+def resolve_colors(n_colors=None, colormap=None, colors=None):
     """
-    Resolves the colormap or the color list with the number of colors.
-    See: https://github.com/pydata/pandas/blob/master/pandas/tools/plotting.py#L163
+    Generates a list of colors based on common color arguments, for example
+    the name of a colormap or palette or another iterable of colors. The list
+    is then truncated (or multiplied) to the specific number of requested
+    colors.
 
     Parameters
     ----------
-    num_colors : int or None
-        the number of colors in the cycle or colormap
+    n_colors : int, default: None
+        Specify the length of the list of returned colors, which will either
+        truncate or multiple the colors available. If None the length of the
+        colors will not be modified.
 
-    colormap : str or None
-        the colormap used to create the sequence of colors
+    colormap : str, default: None
+        The name of the matplotlib color map with which to generate colors.
 
-    color : list or None
-        the list of colors to specifically use with the plot
+    colors : iterable, default: None
+        A collection of colors to use specifically with the plot.
 
+    Returns
+    -------
+    colors : list
+        A list of colors that can be used in matplotlib plots.
+
+    Notes
+    -----
+    This function was originally based on a similar function in the pandas
+    plotting library that has been removed in the new version of the library.
     """
 
-    # Work with the colormap
-    if color is None and colormap is None:
-        if isinstance(colormap, str):
-            cmap = colormap
-            colormap = cm.get_cmap(colormap)
+    # Work with the colormap if specified and colors is not
+    if colormap is not None and colors is None:
+        if isinstance(colormap, string_types):
+            try:
+                colormap = cm.get_cmap(colormap)
+            except ValueError as e:
+                raise YellowbrickValueError(e)
 
-            if colormap is None:
-                raise YellowbrickValueError(
-                    "Colormap {0} is not a valid matploblib cmap".format(cmap)
-                )
 
-        colors = list(map(colormap, np.linspace(0, 1, num=num_colors)))
+        n_colors = n_colors or len(get_color_cycle())
+        _colors = list(map(colormap, np.linspace(0, 1, num=n_colors)))
 
     # Work with the color list
-    elif color is not None:
+    elif colors is not None:
 
+        # Warn if both colormap and colors is specified.
         if colormap is not None:
             warnings.warn(
-                "'color' and 'colormap' cannot be used simultaneously! Using 'color'."
+                "both colormap and colors specified; using colors"
             )
 
-        colors = list(color) # Ensure colors is a list
+        _colors = list(colors) # Ensure colors is a list
 
     # Get the default colors
     else:
-        colors = get_color_cycle()
+        _colors = get_color_cycle()
 
-    if len(colors) != num_colors:
-        multiple = num_colors // len(colors) - 1
-        mod = num_colors % len(colors)
-        colors += multiple * colors
-        colors += colors[:mod]
+    # Truncate or multiple the color list according to the number of colors
+    if n_colors is not None and len(_colors) != n_colors:
+        _colors = [
+            _colors[idx % len(_colors)] for idx in np.arange(n_colors)
+        ]
 
-    return colors
+    return _colors
 
 
 class ColorMap(object):
@@ -134,7 +147,7 @@ class ColorMap(object):
         Converts color strings into a color listing.
         """
         if isinstance(value, string_types):
-            # Must import here to avoid recursive import 
+            # Must import here to avoid recursive import
             from .palettes import PALETTES
 
             if value not in PALETTES:
