@@ -208,7 +208,7 @@ class ClassPredictionError(ClassificationScoreVisualizer):
     process, but can and should be set as early as possible.
     """
 
-    def score(self, X, y=None, **kwargs):
+    def score(self, X, y, **kwargs):
         """
         Generates a 2D array where each row is the count of the
         predicted classes and each column is the true class
@@ -236,9 +236,12 @@ class ClassPredictionError(ClassificationScoreVisualizer):
 
         indices = unique_labels(y_true, y_pred)
 
-        if len(self.classes_) != len(indices):
-            raise ModelError(
-                'Please correct label mismatch.')
+        if len(self.classes_) > len(indices):
+            raise ModelError("y and y_pred contain zero values "
+                             "for one of the specified classes")
+        elif len(self.classes_) < len(indices):
+            raise NotImplementedError("filtering classes is "
+                                        "currently not supported")
 
         # Create a table of scores whose rows are the true classes
         # and whose columns are the predicted classes; each element
