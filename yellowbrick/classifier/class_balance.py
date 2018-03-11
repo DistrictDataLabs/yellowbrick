@@ -269,8 +269,8 @@ class ClassPredictionError(ClassificationScoreVisualizer):
         prev = np.zeros(len(self.classes_))
 
         colors = resolve_colors(
-            color=self.colors,
-            num_colors=len(self.classes_))
+            colors=self.colors,
+            n_colors=len(self.classes_))
 
         for idx, row in enumerate(self.scores_):
             self.ax.bar(indices, row, label=self.classes_[idx],
