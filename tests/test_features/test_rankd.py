@@ -17,7 +17,7 @@ Test the Rankd feature analysis visualizers
 ## Imports
 ##########################################################################
 
-import numpy.testing as npt
+import numpy.testing as np
 
 from tests.base import VisualTestCase
 from tests.dataset import DatasetMixin
@@ -130,3 +130,4 @@ class Rank2DTests(VisualTestCase, DatasetMixin):
         visualizer.fit_transform(X, y)
         visualizer.poof()
         self.assert_images_similar(visualizer)
+#
