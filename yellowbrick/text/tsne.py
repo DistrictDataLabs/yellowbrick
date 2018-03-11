@@ -20,7 +20,7 @@ Implements TSNE visualizations of documents in 2D space.
 from collections import defaultdict
 
 from yellowbrick.text.base import TextVisualizer
-from yellowbrick.style.colors import get_color_cycle
+from yellowbrick.style.colors import resolve_colors
 from yellowbrick.exceptions import YellowbrickValueError
 
 from sklearn.manifold import TSNE
@@ -130,12 +130,12 @@ class TSNEVisualizer(TextVisualizer):
     ax : matplotlib axes
         The axes to plot the figure on.
 
-    decompose : string or None
+    decompose : string, Transformer, or None, default: ``'svd'``
         A preliminary decomposition is often used prior to TSNE to make the
-        projection faster. Specify `"svd"` for sparse data or `"pca"` for
-        dense data. If decompose is None, the original data set will be used.
+        projection faster. Specify ``"svd"`` for sparse data or ``"pca"`` for
+        dense data.
 
-    decompose_by : int
+    decompose_by : int, default: 50
         Specify the number of components for preliminary decomposition, by
         default this is 50; the more components, the slower TSNE will be.
 
@@ -148,12 +148,19 @@ class TSNEVisualizer(TextVisualizer):
     colormap : string or matplotlib cmap
         Sequential colormap for continuous target
 
+    random_state : int, RandomState instance or None, optional, default: None
+        If int, random_state is the seed used by the random number generator;
+        If RandomState instance, random_state is the random number generator;
+        If None, the random number generator is the RandomState instance used
+        by np.random. The random state is applied to the preliminary
+        decomposition as well as tSNE.
+
     kwargs : dict
         Pass any additional keyword arguments to the TSNE transformer.
     """
 
     def __init__(self, ax=None, decompose='svd', decompose_by=50, classes=None,
-               colors=None, colormap=None, **kwargs):
+               colors=None, colormap=None, random_state=None, **kwargs):
         """
         Initialize the TSNE visualizer with visual hyperparameters.
         """
@@ -167,6 +174,7 @@ class TSNEVisualizer(TextVisualizer):
         # TODO: Only colors currently works to select the colors of classes.
         self.colors = colors
         self.colormap = colormap
+        self.random_state = random_state
 
         # TSNE Parameters
         self.transformer_ = self.make_transformer(decompose, decompose_by, kwargs)
@@ -181,10 +189,11 @@ class TSNEVisualizer(TextVisualizer):
         Parameters
         ----------
 
-        decompose : string or None
-            A preliminary decomposition is often used prior to TSNE to make the
-            projection faster. Specify `"svd"` for sparse data or `"pca"` for
-            dense data. If decompose is None, the original data set will be used.
+        decompose : string, Transformer, or None
+            A preliminary decomposition is often used prior to TSNE to make
+            the projection faster. Specify ``"svd"`` for sparse data or ``"pca"``
+            for dense data. If decompose is None, the original data set will
+            be used.
 
         decompose_by : int
             Specify the number of components for preliminary decomposition, by
@@ -215,10 +224,12 @@ class TSNEVisualizer(TextVisualizer):
         # Add the pre-decomposition
         if decompose:
             klass = decompositions[decompose]
-            steps.append((decompose, klass(n_components=decompose_by)))
+            steps.append((decompose, klass(
+                n_components=decompose_by, random_state=self.random_state)))
 
         # Add the TSNE manifold
-        steps.append(('tsne', TSNE(n_components=2, **tsne_kwargs)))
+        steps.append(('tsne', TSNE(
+            n_components=2, random_state=self.random_state, **tsne_kwargs)))
 
         # return the pipeline
         return Pipeline(steps)
@@ -253,7 +264,7 @@ class TSNEVisualizer(TextVisualizer):
         """
 
         # If we don't have classes already stored, store them.
-        if y and self.classes_ is None:
+        if y is not None and self.classes_ is None:
             self.classes_ = [str(label) for label in set(y)]
 
         # Fit our internal transformer and transform the data.
@@ -275,10 +286,9 @@ class TSNEVisualizer(TextVisualizer):
         are plotted as a single cloud to show similar documents.
         """
         # Create the color mapping for the classes.
-        # TODO: Allow both colormap, listed colors, and palette definition
-        # See the FeatureVisualizer for more on this.
-        color_values = get_color_cycle()
         classes = self.classes_ or [None]
+        color_values = resolve_colors(
+            n_colors=len(classes), colormap=self.colormap, colors=self.color)
         colors = dict(zip(classes, color_values))
 
         # Expand the points into vectors of x and y for scatter plotting,
@@ -287,7 +297,7 @@ class TSNEVisualizer(TextVisualizer):
         series = defaultdict(lambda: {'x':[], 'y':[]})
         if self.classes_: classes = frozenset(self.classes_)
 
-        if target:
+        if target is not None:
             for label, point in zip(target, points):
                 if self.classes_ and label not in classes:
                     continue
