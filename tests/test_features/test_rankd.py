@@ -17,7 +17,7 @@ Test the Rankd feature analysis visualizers
 ## Imports
 ##########################################################################
 
-
+import pytest
 import numpy as np
 
 from tests.base import VisualTestCase
@@ -109,8 +109,9 @@ class Rank2DTests(VisualTestCase, DatasetMixin):
         visualizer = Rank2D()
         visualizer.fit_transform(self.X, self.y)
         visualizer.poof()
-        # self.assert_images_similar(visualizer)
 
+
+    @pytest.mark.xfail
     def test_integrated_rankd2(self):
         """
         Test rand2 on the real, occupancy data set
@@ -127,5 +128,5 @@ class Rank2DTests(VisualTestCase, DatasetMixin):
         visualizer = Rank2D()
         visualizer.fit_transform(X, y)
         visualizer.poof()
-        # self.assert_images_similar(visualizer)
+        self.assert_images_similar(visualizer)
 #
