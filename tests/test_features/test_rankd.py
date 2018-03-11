@@ -17,12 +17,13 @@ Test the Rankd feature analysis visualizers
 ## Imports
 ##########################################################################
 
-import numpy.testing as np
+
+import numpy as np
+import matplotlib.pyplot as plt
 
 from tests.base import VisualTestCase
 from tests.dataset import DatasetMixin
 from yellowbrick.features.rankd import *
-
 
 ##########################################################################
 ## Rank1D Base Tests
@@ -42,11 +43,12 @@ class Rank1DTests(VisualTestCase, DatasetMixin):
     y = np.array([1, 1, 0, 1, 0, 0])
 
     def setUp(self):
+        super(Rank1DTests, self).setUp()
         self.occupancy = self.load_data('occupancy')
 
     def tearDown(self):
+        super(Rank1DTests, self).tearDown()
         self.occupancy = None
-
 
 
     def test_rankd1(self):
@@ -77,9 +79,6 @@ class Rank1DTests(VisualTestCase, DatasetMixin):
         self.assert_images_similar(visualizer)
 
 
-
-
-
 ##########################################################################
 ## Rank2D Base Tests
 ##########################################################################
@@ -97,14 +96,14 @@ class Rank2DTests(VisualTestCase, DatasetMixin):
     y = np.array([1, 1, 0, 1, 0, 0])
 
     def setUp(self):
+        super(Rank2DTests, self).setUp()
         self.occupancy = self.load_data('occupancy')
 
     def tearDown(self):
+        super(Rank2DTests, self).tearDown()
         self.occupancy = None
 
-
-
-    def test_rankd1(self):
+    def test_rankd2(self):
         """
         Assert no errors occur during radviz visualizer integration
         """
@@ -113,7 +112,7 @@ class Rank2DTests(VisualTestCase, DatasetMixin):
         visualizer.poof()
         self.assert_images_similar(visualizer)
 
-    def test_integrated_rankd1(self):
+    def test_integrated_rankd2(self):
         """
         Test radviz on the real, occupancy data set
         """
