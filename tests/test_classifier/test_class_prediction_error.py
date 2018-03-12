@@ -58,7 +58,7 @@ class ClassPredictionErrorTests(VisualTestCase):
         visualizer.score(X,y)
         self.assert_images_similar(visualizer)
 
-    @pytest.make.skip(reason="not implemented yet")
+    @pytest.mark.skip(reason="not implemented yet")
     def test_no_classes_provided(self):
         """
         Assert no errors when no classes are provided
