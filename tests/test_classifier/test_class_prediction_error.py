@@ -1,8 +1,9 @@
-# tests.test_classifier.test_rocauc
-# Testing for the ROCAUC visualizer
+# tests.test_classifier.test_class_prediction_error
+# Testing for the ClassPredictionError visualizer
 #
 # Author:   Benjamin Bengfort <bbengfort@districtdatalabs.com>
 # Author:   Rebecca Bilbro <rbilbro@districtdatalabs.com>
+# Author:   Larry Gray
 # Created:  Tue May 23 13:41:55 2017 -0700
 #
 # Copyright (C) 2017 District Data Labs
@@ -19,21 +20,9 @@
 
 import pytest
 import numpy as np
-import numpy.testing as npt
 
-from tests.base import VisualTestCase
-from tests.dataset import DatasetMixin
-from yellowbrick.classifier.rocauc import *
-from yellowbrick.exceptions import ModelError
-
-from sklearn.svm import LinearSVC
-from sklearn.naive_bayes import MultinomialNB
-from sklearn.tree import DecisionTreeClassifier
-from sklearn.datasets import load_breast_cancer
-from sklearn.linear_model import LogisticRegression
-from sklearn.base import BaseEstimator, ClassifierMixin
-from sklearn.model_selection import train_test_split as tts
 from yellowbrick.classifier.class_balance import *
+
 from tests.base import VisualTestCase
 from sklearn.svm import LinearSVC
 
@@ -61,7 +50,7 @@ class ClassPredictionErrorTests(VisualTestCase):
     @pytest.mark.skip(reason="not implemented yet")
     def test_class_report(self):
         """
-        Assert no errors occur during classification report integration
+        Assert no errors occur during class prediction error integration
         """
         model = LinearSVC()
         model.fit(X,y)
