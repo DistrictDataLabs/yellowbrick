@@ -19,7 +19,6 @@ import math
 
 from .utils.wrapper import Wrapper
 from sklearn.base import BaseEstimator
-from .exceptions import YellowbrickTypeError
 from .utils import get_model_name, isestimator
 from sklearn.model_selection import cross_val_predict as cvp
 from .exceptions import YellowbrickValueError
@@ -255,7 +254,7 @@ class ModelVisualizer(Visualizer, Wrapper):
 
     kwargs : dict
         Keyword arguments that are passed to the base class and may influence
-        the visualization as defined in other Visualizersself.
+        the visualization as defined by other Visualizers.
 
     Notes
     -----

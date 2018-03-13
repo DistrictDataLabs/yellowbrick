@@ -1,8 +1,8 @@
 import matplotlib.pyplot as plt
 
 from corpus import load_corpus
-from collections import defaultdict
 from yellowbrick.text import TSNEVisualizer
+
 from sklearn.cluster import KMeans
 from sklearn.feature_extraction.text import TfidfVectorizer
 
@@ -13,7 +13,7 @@ def tsne(docs, labels, outpath, **kwargs):
     ax = fig.add_subplot(111)
 
     # Visualize the frequency distribution
-    visualizer = TSNEVisualizer(**kwargs)
+    visualizer = TSNEVisualizer(ax=ax, **kwargs)
     visualizer.fit(docs, labels)
     visualizer.poof(outpath=outpath)
 

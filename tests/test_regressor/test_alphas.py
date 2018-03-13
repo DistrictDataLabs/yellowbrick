@@ -17,7 +17,6 @@ Tests for the alpha selection visualizations.
 ## Imports
 ##########################################################################
 
-import unittest
 import numpy as np
 
 from tests.base import VisualTestCase
@@ -46,11 +45,11 @@ class AlphaSelectionTests(VisualTestCase):
 
         for model in (SVR, Ridge, Lasso, LassoLars, ElasticNet):
             with self.assertRaises(YellowbrickTypeError):
-                alphas = AlphaSelection(model())
+                AlphaSelection(model())
 
         for model in (RidgeCV, LassoCV, LassoLarsCV, ElasticNetCV):
             try:
-                alphas = AlphaSelection(model())
+                AlphaSelection(model())
             except YellowbrickTypeError:
                 self.fail("could not instantiate RegressorCV on alpha selection")
 
@@ -59,7 +58,7 @@ class AlphaSelectionTests(VisualTestCase):
         Assert AlphaSelection only works with regressors
         """
         with self.assertRaises(YellowbrickTypeError):
-            model = AlphaSelection(SVC())
+            AlphaSelection(SVC())
 
     def test_store_cv_values(self):
         """

@@ -11,11 +11,10 @@ import bisect
 import numpy as np
 from scipy.stats import mstats
 
-from sklearn.cross_validation import train_test_split
+from sklearn.model_selection import train_test_split
 from sklearn.metrics import precision_recall_curve
 
 from yellowbrick.exceptions import YellowbrickTypeError
-from yellowbrick.style.palettes import get_color_cycle
 from yellowbrick.style.colors import resolve_colors
 from yellowbrick.base import ModelVisualizer
 from yellowbrick.utils import isclassifier
@@ -229,12 +228,8 @@ class ThresholdVisualizer(ModelVisualizer):
         self.ax : AxesSubplot of the visualizer
             Returns the AxesSubplot instance of the visualizer
         """
-        # set the colors
-        if self.color is not None:
-            color_values = resolve_colors(
-                num_colors=3, color=self.color)
-        else:
-            color_values = get_color_cycle()
+        # Set the colors from the supplied values or reasonable defaults
+        color_values = resolve_colors(n_colors=3, colors=self.color)
 
         uniform_thresholds = np.linspace(0, 1, num=101)
         uniform_precision_plots = []

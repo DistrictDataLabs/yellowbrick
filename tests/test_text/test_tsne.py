@@ -19,7 +19,6 @@ Tests for the TSNE visual corpus embedding mechanism.
 
 
 import unittest
-import numpy as np
 
 from yellowbrick.text.tsne import *
 from tests.dataset import DatasetMixin
@@ -38,7 +37,7 @@ class TSNETests(unittest.TestCase, DatasetMixin):
         Ensure an error is raised when a bad decompose argument is specified
         """
         with self.assertRaises(YellowbrickValueError):
-            tsne = TSNEVisualizer(decompose='bob')
+            TSNEVisualizer(decompose='bob')
 
     def test_make_pipeline(self):
         """
@@ -65,7 +64,7 @@ class TSNETests(unittest.TestCase, DatasetMixin):
         tfidf  = TfidfVectorizer()
 
         docs   = tfidf.fit_transform(corpus.data)
-        labels = corpus.target 
+        labels = corpus.target
 
         tsne = TSNEVisualizer()
         tsne.fit_transform(docs, labels)

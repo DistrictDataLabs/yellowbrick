@@ -81,10 +81,8 @@ class RadVizTests(VisualTestCase, DatasetMixin):
         X = self.occupancy[[
             "temperature", "relative_humidity", "light", "C02", "humidity"
         ]]
+        X = X.copy().view((float, len(X.dtype.names)))
         y = self.occupancy['occupancy'].astype(int)
-
-        # Convert X to an ndarray
-        X = X.view((float, len(X.dtype.names)))
 
         # Test the visualizer
         visualizer = RadViz()

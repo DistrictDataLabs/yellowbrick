@@ -1,7 +1,7 @@
 # Clustering Evaluation Imports
 from functools import partial
 
-from sklearn.cluster import KMeans, MiniBatchKMeans
+from sklearn.cluster import MiniBatchKMeans
 from sklearn.datasets import make_blobs as sk_make_blobs
 
 from yellowbrick.cluster import SilhouetteVisualizer

@@ -2,15 +2,9 @@
 Colorplot visualizer for gridsearch results.
 """
 
-import time
 import numpy as np
 
 from .base import GridSearchVisualizer
-from ..exceptions import YellowbrickValueError
-
-from sklearn.metrics.pairwise import pairwise_distances
-from sklearn.preprocessing import LabelEncoder
-from matplotlib.mlab import griddata
 
 
 ## Packages for export

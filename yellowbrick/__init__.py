@@ -26,20 +26,24 @@ _orig_rc_params = mpl.rcParams.copy()
 from .version import get_version
 
 # Import the style management functions
-from .style.rcmod import *
-from .style.palettes import *
+from .style.rcmod import reset_defaults, reset_orig
+from .style.rcmod import set_aesthetic, set_style, set_palette
+from .style.palettes import color_palette, set_color_codes
 
 # Import yellowbrick functionality to the top level
+# TODO: review top-level functionality
 from .anscombe import anscombe
 from .classifier import ROCAUC, ClassBalance, ClassificationScoreVisualizer
 # from .classifier import crplot, rocplot
 # from .regressor import peplot, residuals_plot
 
+
 ##########################################################################
 ## Set default aesthetics
 ##########################################################################
 
-set_aesthetic() # modifies mpl.rcParams
+set_aesthetic() # NOTE: modifies mpl.rcParams
+
 
 ##########################################################################
 ## Package Version

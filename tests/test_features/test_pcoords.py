@@ -17,7 +17,6 @@ Testing for the parallel coordinates feature visualizers
 ## Imports
 ##########################################################################
 
-import unittest
 import numpy as np
 
 from tests.base import VisualTestCase
@@ -107,8 +106,7 @@ class ParallelCoordinatesTests(VisualTestCase, DatasetMixin):
 
     def test_integrated_pcoords(self):
         """
-        Test parallel coordinates on a real, occupancy data set (downsampled
-        for speed)
+        Test parallel coordinates on a real data set (downsampled for speed)
         """
         occupancy = self.load_data('occupancy')
 
@@ -119,7 +117,7 @@ class ParallelCoordinatesTests(VisualTestCase, DatasetMixin):
         y = occupancy['occupancy'].astype(int)
 
         # Convert X to an ndarray
-        X = np.array(X.tolist())
+        X = X.copy().view((float, len(X.dtype.names)))
 
         # Test the visualizer
         visualizer = ParallelCoordinates(sample=200)

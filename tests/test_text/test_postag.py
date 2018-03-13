@@ -19,16 +19,16 @@ Tests for the part-of-speech tagging visualization
 ##########################################################################
 
 import pytest
-import unittest
 
 from yellowbrick.text.postag import *
 
+
 try:
     import nltk
-    from nltk.corpus import wordnet as wn
     from nltk import pos_tag, word_tokenize
 except ImportError:
     nltk = None
+
 
 ##########################################################################
 ## Data
@@ -56,9 +56,12 @@ whipped cream and chocolate curls if desired.
 ## PosTag Tests
 ##########################################################################
 
-class PosTagTests(unittest.TestCase):
+class TestPosTag(object):
+    """
+    PosTag (Part of Speech Tagging Visualizer) Tests
+    """
 
-    @pytest.mark.skipif(nltk is not None, reason="NLTK is not installed, could not run test.")
+    @pytest.mark.skipif(nltk is None, reason="test requires nltk")
     def test_integrated_postag(self):
         """
         Assert no errors occur during postag integration

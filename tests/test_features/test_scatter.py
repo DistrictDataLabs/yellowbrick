@@ -18,7 +18,6 @@ Test the ScatterViz feature analysis visualizers
 
 import unittest
 import numpy as np
-import numpy.testing as npt
 import matplotlib as mptl
 
 from yellowbrick.features.scatter import *
@@ -100,9 +99,8 @@ class ScatterVizTests(VisualTestCase, DatasetMixin):
         """
         features = ["temperature", "relative_humidity", "light"]
 
-        with self.assertRaises(YellowbrickValueError) as context:
-            visualizer = ScatterViz(features=features)
-
+        with self.assertRaises(YellowbrickValueError):
+            ScatterViz(features=features)
 
     def test_scatter_xy_and_features_raise_error(self):
         """
@@ -110,8 +108,8 @@ class ScatterVizTests(VisualTestCase, DatasetMixin):
         """
         features = ["temperature", "relative_humidity", "light"]
 
-        with self.assertRaises(YellowbrickValueError) as context:
-            visualizer = ScatterViz(features=features, x='one', y='two')
+        with self.assertRaises(YellowbrickValueError):
+            ScatterViz(features=features, x='one', y='two')
 
     def test_scatter_xy_changes_to_features(self):
         """
@@ -138,10 +136,10 @@ class ScatterVizTests(VisualTestCase, DatasetMixin):
         X = self.occupancy[[
             "temperature", "relative_humidity", "light", "C02", "humidity"
         ]]
-        y = self.occupancy['occupancy'].astype(int)
 
-        # Convert X to an ndarray
-        X = X.view((float, len(X.dtype.names)))
+        # Convert to numpy arrays
+        X = X.copy().view((float, len(X.dtype.names)))
+        y = self.occupancy['occupancy'].astype(int)
 
         # Test the visualizer
         features = ["temperature", "relative_humidity"]
@@ -156,10 +154,10 @@ class ScatterVizTests(VisualTestCase, DatasetMixin):
         X = self.occupancy[[
             "temperature", "relative_humidity", "light", "C02", "humidity"
         ]]
-        y = self.occupancy['occupancy'].astype(int)
 
-        # Convert X to an ndarray
-        X = X.view((float, len(X.dtype.names)))
+        # Convert to numpy arrays
+        X = X.copy().view((float, len(X.dtype.names)))
+        y = self.occupancy['occupancy'].astype(int)
 
         # Test the visualizer
         features = ["temperature", "relative_humidity"]
@@ -167,8 +165,6 @@ class ScatterVizTests(VisualTestCase, DatasetMixin):
 
         # test that is returns a matplotlib obj with axes
         self.assertIsInstance(ax, mptl.axes.Axes)
-
-
 
     @unittest.skipUnless(pandas is not None,
                          "Pandas is not installed, could not run test.")

@@ -5,11 +5,10 @@ from yellowbrick.features.rankd import Rank1D, Rank2D
 
 def rank1d(X, y, outpath, **kwargs):
     # Create a new figure and axes
-    fig = plt.figure()
-    ax = fig.add_subplot(111)
+    _, ax = plt.subplots()
 
     # Create the visualizer
-    visualizer = Rank1D(**kwargs)
+    visualizer = Rank1D(ax=ax, **kwargs)
     visualizer.fit(X, y)
     visualizer.transform(X)
 
@@ -19,11 +18,10 @@ def rank1d(X, y, outpath, **kwargs):
 
 def rank2d(X, y, outpath, **kwargs):
     # Create a new figure and axes
-    fig = plt.figure()
-    ax = fig.add_subplot(111)
+    _, ax = plt.subplots()
 
     # Create the visualizer
-    visualizer = Rank2D(**kwargs)
+    visualizer = Rank2D(ax=ax, **kwargs)
     visualizer.fit(X, y)
     visualizer.transform(X)
 

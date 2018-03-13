@@ -21,7 +21,6 @@ import inspect
 import numpy as np
 
 from sklearn.base import BaseEstimator
-from yellowbrick.exceptions import YellowbrickTypeError
 
 
 ##########################################################################

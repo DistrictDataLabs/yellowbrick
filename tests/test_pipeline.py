@@ -91,7 +91,7 @@ class VisualPipelineTests(unittest.TestCase):
 
         # validate a bad intermediate transformer on the Pipeline
         with self.assertRaises(TypeError):
-            pipeline = Pipeline([
+            Pipeline([
                 ('real', MockTransformer()),
                 ('bad', Thing()),
                 ('model', MockEstimator()),
@@ -99,7 +99,7 @@ class VisualPipelineTests(unittest.TestCase):
 
         # validate a bad intermediate transformer on the VisualPipeline
         with self.assertRaises(TypeError):
-            pipeline = VisualPipeline([
+            VisualPipeline([
                 ('real', MockTransformer()),
                 ('bad', Thing()),
                 ('model', MockEstimator()),
@@ -107,21 +107,21 @@ class VisualPipelineTests(unittest.TestCase):
 
         # validate a bad final estimator on the Pipeline
         with self.assertRaises(TypeError):
-            pipeline = Pipeline([
+            Pipeline([
                 ('real', MockTransformer()),
                 ('bad', Thing()),
             ])
 
         # validate a bad final estimator on the VisualPipeline
         with self.assertRaises(TypeError):
-            pipeline = VisualPipeline([
+            VisualPipeline([
                 ('real', MockTransformer()),
                 ('bad', Thing()),
             ])
 
         # validate visual transformers on a Pipeline
         try:
-            pipeline = Pipeline([
+            Pipeline([
                 ('real', MockTransformer()),
                 ('visual', MockVisualTransformer()),
                 ('model', MockEstimator()),
@@ -131,7 +131,7 @@ class VisualPipelineTests(unittest.TestCase):
 
         # validate visual transformers on a VisualPipeline
         try:
-            pipeline = VisualPipeline([
+            VisualPipeline([
                 ('real', MockTransformer()),
                 ('visual', MockVisualTransformer()),
                 ('model', MockEstimator()),

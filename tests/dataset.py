@@ -18,7 +18,6 @@ Helper functions for tests that utilize downloadable datasets.
 ##########################################################################
 
 import os
-import sys
 import shutil
 import hashlib
 import zipfile

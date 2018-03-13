@@ -18,7 +18,6 @@ Implements alpha selection visualizers for regularization
 ##########################################################################
 
 import numpy as np
-import matplotlib.pyplot as plt
 
 from functools import partial
 
@@ -201,9 +200,8 @@ class AlphaSelection(RegressionScoreVisualizer):
         """
 
         # NOTE: The order of the search is very important!
-        for attr in ('cv_mse_path_', 'mse_path_'):
-            if hasattr(self.estimator, attr):
-                return getattr(self.estimator, attr).mean(1)
+        if hasattr(self.estimator, 'mse_path_'):
+            return self.estimator.mse_path_.mean(1)
 
         if hasattr(self.estimator, 'cv_values_'):
             return self.estimator.cv_values_.mean(0)
