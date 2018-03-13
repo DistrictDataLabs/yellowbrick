@@ -27,6 +27,8 @@ try:
 except ImportError:
     import mock
 
+# Transitioning to pytest
+import pytest
 
 ##########################################################################
 ## Imports
@@ -86,3 +88,46 @@ class BaseTests(unittest.TestCase):
         self.assertEqual(all(visualizer.size), all(figure_size))
         self.assertEqual(visualizer._size, (1080, 720))
         self.assertEqual(visualizer.size, (1080, 720))
+
+
+
+
+##########################################
+# MultipleVisualizer
+##########################################
+from yellowbrick.features.radviz import RadViz
+from yellowbrick.base import MultipleVisualizer
+from yellowbrick.exceptions import YellowbrickValueError
+
+import numpy as np
+
+class TestExample():
+    def setup_method(self,method):
+        self.X = np.array([[10,20,30],[5,10,15],[20,30,40],[2,3,4],[10,20,5]])
+        self.y = np.array([1,0,1,1,0])
+        self.classes = ["A","B"]
+        self.features = ["first","second","third"]
+        self.visualizers = [RadViz(classes=self.classes, features=self.features),
+                       RadViz(classes=self.classes, features=self.features)
+                      ]
+    def test_draw_multiplevisualizer(self):
+        #A simple multiple visualizer that puts two RadViz on two subplots
+        mv = MultipleVisualizer(self.visualizers)
+        mv.fit(self.X,self.y)
+        mv.poof()
+
+    def test_draw_with_rows(self):
+        #A simple multiple visualizer that puts two RadViz on two subplots
+        mv = MultipleVisualizer(self.visualizers, nrows=2)
+        mv.fit(self.X,self.y)
+        mv.poof()
+
+    def test_draw_with_cols(self):
+        #A simple multiple visualizer that puts two RadViz on two subplots
+        mv = MultipleVisualizer(self.visualizers, ncols=2)
+        mv.fit(self.X,self.y)
+        mv.poof()
+
+    def test_cant_define_both_rows_cols(self):
+        with pytest.raises(YellowbrickValueError) as e:
+            mv = MultipleVisualizer(self.visualizers, ncols=2, nrows=2)
