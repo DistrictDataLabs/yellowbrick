@@ -25,6 +25,7 @@ import matplotlib.pyplot as plt
 from yellowbrick.utils import is_dataframe
 from yellowbrick.base import ModelVisualizer
 from yellowbrick.exceptions import YellowbrickTypeError, NotFitted
+from yellowbrick.style import resolve_colors
 
 
 ##########################################################################
@@ -158,7 +159,8 @@ class FeatureImportances(ModelVisualizer):
     def draw(self, **kwargs):
         """
         Draws the feature importances as a bar chart; called from fit.
-        """
+        """ 
+
         # Quick validation
         for param in ('feature_importances_', 'features_'):
             if not hasattr(self, param):
@@ -167,8 +169,13 @@ class FeatureImportances(ModelVisualizer):
         # Find the positions for each bar
         pos = np.arange(self.features_.shape[0]) + 0.5
 
+        # Assign different colors for positive and negative coefficents
+        positive_color, negative_color = resolve_colors(n_colors=2, colors=self.color)
+        colors = np.array([positive_color if coefs > 0 else negative_color
+                           for coefs in self.feature_importances_])
+
         # Plot the bar chart
-        self.ax.barh(pos, self.feature_importances_, align='center')
+        self.ax.barh(pos, self.feature_importances_, color=colors, align='center')
 
         # Set the labels for the bars
         self.ax.set_yticks(pos)
