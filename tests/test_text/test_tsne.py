@@ -61,15 +61,6 @@ class TestTSNE(VisualTestCase, DatasetMixin):
         none = tsne.make_transformer(None)
         assert len(none.steps) == 1
 
-    @pytest.mark.skip(reason="not implemented yet")
-    def test_supply_own_transformer(self):
-        """
-        Test decomposition pipeline when own transformer is supplied
-        """
-        pass
-
-
-    @pytest.mark.xfail(reason="colors keep changing in actual")
     def test_integrated_tsne(self):
         """
         Check tSNE integrated visualization on the hobbies corpus
@@ -80,11 +71,10 @@ class TestTSNE(VisualTestCase, DatasetMixin):
         docs   = tfidf.fit_transform(corpus.data)
         labels = corpus.target
 
-        tsne = TSNEVisualizer(random_state=87, colormap='Set1')
+        tsne = TSNEVisualizer(random_state=8392, colormap='Set1')
         tsne.fit_transform(docs, labels)
 
         self.assert_images_similar(tsne, tol=0.1)
-
 
     def test_make_classification_tsne(self):
         """
@@ -99,5 +89,56 @@ class TestTSNE(VisualTestCase, DatasetMixin):
         ## visualize data with t-SNE
         tsne = TSNEVisualizer(random_state=87)
         tsne.fit(X, y)
+
+        self.assert_images_similar(tsne, tol=0.1)
+
+    def test_make_classification_tsne_class_labels(self):
+        """
+        Test tSNE integrated visualization with class labels specified
+        """
+
+        ## produce random data
+        X, y = make_classification(n_samples=200, n_features=100,
+                               n_informative=20, n_redundant=10,
+                               n_classes=3, random_state=42)
+
+        ## visualize data with t-SNE
+        tsne = TSNEVisualizer(random_state=87, labels=['a', 'b', 'c'])
+        tsne.fit(X, y)
+
+        self.assert_images_similar(tsne, tol=0.1)
+
+    def test_tsne_mismtached_labels(self):
+        """
+        Assert exception is raised when number of labels doesn't match
+        """
+        ## produce random data
+        X, y = make_classification(n_samples=200, n_features=100,
+                               n_informative=20, n_redundant=10,
+                               n_classes=3, random_state=42)
+
+        ## fewer labels than classes
+        tsne = TSNEVisualizer(random_state=87, labels=['a', 'b'])
+        with pytest.raises(YellowbrickValueError):
+            tsne.fit(X,y)
+
+        ## more labels than classes
+        tsne = TSNEVisualizer(random_state=87, labels=['a', 'b', 'c', 'd'])
+        with pytest.raises(YellowbrickValueError):
+            tsne.fit(X,y)
+
+
+    def test_no_target_tsne(self):
+        """
+        Test tSNE when no target or classes are specified
+        """
+        ## produce random data
+        X, y = make_classification(n_samples=200, n_features=100,
+                               n_informative=20, n_redundant=10,
+                               n_classes=3, random_state=6897)
+
+        ## visualize data with t-SNE
+        tsne = TSNEVisualizer(random_state=64)
+        tsne.fit(X)
 
         self.assert_images_similar(tsne, tol=0.1)

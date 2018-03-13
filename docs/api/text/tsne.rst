@@ -34,29 +34,18 @@ Now that the corpus is vectorized we can visualize it, showing the distribution 
 
 .. image:: images/tsne_all_docs.png
 
-We can also filter the classes that we want to view:
-
-.. code:: python
-
-    # Only visualize the sports, cinema, and gaming classes
-    tsne = TSNEVisualizer(classes=['sports', 'cinema', 'gaming'])
-    tsne.fit(docs, labels)
-    tsne.poof()
-
-.. image:: images/tsne_limit_classes.png
-
-Or we can omit labels all together:
+If we omit the target during fit, we can visualize the whole dataset to see if any meaningful patterns are observed.
 
 .. code:: python
 
     # Don't color points with their classes
-    tsne = TSNEVisualizer()
+    tsne = TSNEVisualizer(labels=["documents"])
     tsne.fit(docs)
     tsne.poof()
 
 .. image:: images/tsne_no_labels.png
 
-Finally, we don't have to use class labels at all, instead we can use cluster membership from K-Means to label each document:
+This means we don't have to use class labels at all, instead we can use cluster membership from K-Means to label each document, looking for clusters of related text by their contents:
 
 .. code:: python
 
