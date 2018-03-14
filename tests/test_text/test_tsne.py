@@ -17,6 +17,7 @@ Tests for the TSNE visual corpus embedding mechanism.
 ## Imports
 ##########################################################################
 
+import six 
 import pytest
 
 from yellowbrick.text.tsne import *
@@ -73,8 +74,9 @@ class TestTSNE(VisualTestCase, DatasetMixin):
 
         tsne = TSNEVisualizer(random_state=8392, colormap='Set1')
         tsne.fit_transform(docs, labels)
-
-        self.assert_images_similar(tsne, tol=55)
+        
+        tol = 40 if six.PY3 else 55
+        self.assert_images_similar(tsne, tol=tol)
 
     def test_make_classification_tsne(self):
         """
@@ -89,8 +91,9 @@ class TestTSNE(VisualTestCase, DatasetMixin):
         ## visualize data with t-SNE
         tsne = TSNEVisualizer(random_state=87)
         tsne.fit(X, y)
-
-        self.assert_images_similar(tsne, tol=0.1)
+    
+        tol = 0.1 if six.PY3 else 40
+        self.assert_images_similar(tsne, tol=tol)
 
     def test_make_classification_tsne_class_labels(self):
         """
@@ -105,8 +108,9 @@ class TestTSNE(VisualTestCase, DatasetMixin):
         ## visualize data with t-SNE
         tsne = TSNEVisualizer(random_state=87, labels=['a', 'b', 'c'])
         tsne.fit(X, y)
-
-        self.assert_images_similar(tsne, tol=0.1)
+    
+        tol = 0.1 if six.PY3 else 40
+        self.assert_images_similar(tsne, tol=tol)
 
     def test_tsne_mismtached_labels(self):
         """
