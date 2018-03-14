@@ -12,16 +12,16 @@ Version 0.5
 
 Changes:
     - Added VisualTestCase.
-    - New PCADecomposition Visualizer, which decomposes high dimensional data into two or three dimensions so that each instance can be plotted in a scatter plot.
+    - New PCADecomposition Visualizer, which decomposes high-dimensional data into two or three dimensions so that each instance can be plotted in a scatter plot.
     - New and improved ROCAUC Visualizer, which now supports multiclass classification.
     - Prototype Decision Boundary Visualizer, which is a bivariate data visualization algorithm that plots the decision boundaries of each class.
-    - Added Rank1D Visualizer, which is a one dimensional ranking of features that utilizes the Shapiro-Wilks ranking that takes into account only a single feature at a time (e.g. histogram analysis).
-    - Improved Prediction Error Plot with identity line, shared limits, and r squared.
+    - Added Rank1D Visualizer, which is a one-dimensional ranking of features that utilizes the Shapiro-Wilks ranking by taking into account only a single feature at a time (e.g. histogram analysis).
+    - Improved Prediction Error Plot with identity line, shared limits, and R-squared.
     - Updated FreqDist Visualizer to make word features a hyperparameter.
     - Added normalization and scaling to Parallel Coordinates.
     - Added Learning Curve Visualizer, which displays a learning curve based on the number of samples versus the training and cross validation scores to show how a model learns and improves with experience.
-    - Added data downloader module to the yellowbrick library.
-    - Complete overhaul of the yellowbrick documentation; categories of methods are located in separate pages to make it easier to read and contribute to the documentation.
+    - Added data downloader module to the Yellowbrick library.
+    - Complete overhaul of the Yellowbrick documentation; categories of methods are located in separate pages to make it easier to read and contribute to the documentation.
     - Added a new color palette inspired by `ANN-generated colors <http://lewisandquark.tumblr.com/>`_
 
 Bug Fixes:
@@ -48,13 +48,13 @@ This release is an intermediate version bump in anticipation of the PyCon 2017 s
 
 The primary goals of this version were to (1) update the Yellowbrick dependencies (2) enhance the Yellowbrick documentation to help orient new users and contributors, and (3) make several small additions and upgrades (e.g. pulling the Yellowbrick utils into a standalone module).
 
-We have updated the Scikit-Learn and SciPy dependencies from version 0.17.1 or later to 0.18 or later. This primarily entails moving from ``from sklearn.cross_validation import train_test_split`` to ``from sklearn.model_selection import train_test_split``.
+We have updated the scikit-learn and SciPy dependencies from version 0.17.1 or later to 0.18 or later. This primarily entails moving from ``from sklearn.cross_validation import train_test_split`` to ``from sklearn.model_selection import train_test_split``.
 
-The updates to the documentation include new Quickstart and Installation guides as well as updates to the Contributors documentation, which is modeled on the Scikit-Learn contributing documentation.
+The updates to the documentation include new Quickstart and Installation guides, as well as updates to the Contributors documentation, which is modeled on the scikit-learn contributing documentation.
 
-This version also included upgrades to the KMeans visualizer, which now supports not only ``silhouette_score`` but also ``distortion_score`` and ``calinski_harabaz_score``. The ``distortion_score`` computes the mean distortion of all samples as the sum of the squared distances between each observation and its closest centroid. This is the metric that K-Means attempts to minimize as it is fitting the model. The ``calinski_harabaz_score`` is defined as ratio between the within-cluster dispersion and the between-cluster dispersion.
+This version also included upgrades to the KMeans visualizer, which now supports not only ``silhouette_score`` but also ``distortion_score`` and ``calinski_harabaz_score``. The ``distortion_score`` computes the mean distortion of all samples as the sum of the squared distances between each observation and its closest centroid. This is the metric that KMeans attempts to minimize as it is fitting the model. The ``calinski_harabaz_score`` is defined as ratio between the within-cluster dispersion and the between-cluster dispersion.
 
-Finally, this release includes a prototype of the ``VisualPipeline``, which extends Scikit-Learn's ``Pipeline`` class, allowing multiple Visualizers to be chained or sequenced together.
+Finally, this release includes a prototype of the ``VisualPipeline``, which extends scikit-learn's ``Pipeline`` class, allowing multiple Visualizers to be chained or sequenced together.
 
 * Tag: v0.4.1_
 * Deployed: Monday, May 22, 2017
@@ -62,7 +62,7 @@ Finally, this release includes a prototype of the ``VisualPipeline``, which exte
 
 Changes:
    - Score and model visualizers now wrap estimators as proxies so that all methods on the estimator can be directly accessed from the visualizer
-   - Updated Scikit-learn dependency from >=0.17.1  to >=0.18
+   - Updated scikit-learn dependency from >=0.17.1  to >=0.18
    - Replaced ``sklearn.cross_validation`` with ``model_selection``
    - Updated SciPy dependency from >=0.17.1 to >=0.18
    - ScoreVisualizer now subclasses ModelVisualizer; towards allowing both fitted and unfitted models passed to Visualizers
@@ -73,7 +73,7 @@ Changes:
    - Replaced the ``self.ax`` property on all of the individual ``draw`` methods with a new property on the ``Visualizer`` class that ensures all visualizers automatically have axes.
    - Refactored the utils module into a package
    - Continuing to update the docstrings to conform to Sphinx
-   - Added a prototype visual pipeline class that extends the Scikit-learn pipeline class to ensure that visualizers get called correctly.
+   - Added a prototype visual pipeline class that extends the scikit-learn pipeline class to ensure that visualizers get called correctly.
 
 Bug Fixes:
    - Fixed title bug in Rank2D FeatureVisualizer
@@ -89,7 +89,7 @@ Notable in this release is the inclusion of two new feature visualizers that use
 
 This release also adds support for clustering visualizations, namely the elbow method for selecting K, ``KElbowVisualizer`` and a visualization of cluster size and density using the ``SilhouetteVisualizer``. The release also adds support for regularization analysis using the ``AlphaSelection`` visualizer. Both the text and classification modules were also improved with the inclusion of the ``PosTagVisualizer`` and the ``ConfusionMatrix`` visualizer respectively.
 
-This release also added an Anaconda repository and distribution so that users can ``conda install`` yellowbrick. Even more notable, we got yellowbrick stickers! We've also updated the documentation to make it more friendly and a bit more visual; fixing the API rendering errors. All-in-all, this was a big release with a lot of contributions and we thank everyone that participated in the lab!
+This release also added an Anaconda repository and distribution so that users can ``conda install`` yellowbrick. Even more notable, we got Yellowbrick stickers! We've also updated the documentation to make it more friendly and a bit more visual; fixing the API rendering errors. All-in-all, this was a big release with a lot of contributions and we thank everyone that participated in the lab!
 
 * Tag: v0.4_
 * Deployed: Thursday, May 4, 2017
@@ -140,7 +140,7 @@ Changes:
 
 Version 0.3.2
 -------------
-Hardened the Yellowbrick API to elevate the idea of a Visualizer to a first principle. This included reconciling shifts in the development of the preliminary versions to the new API, formalizing Visualizer methods like `draw()` and `finalize()`, and adding utilities that revolve around Scikit-Learn. To that end we also performed administrative tasks like refreshing the documentation and preparing the repository for more and varied open source contributions.
+Hardened the Yellowbrick API to elevate the idea of a Visualizer to a first principle. This included reconciling shifts in the development of the preliminary versions to the new API, formalizing Visualizer methods like `draw()` and `finalize()`, and adding utilities that revolve around scikit-learn. To that end we also performed administrative tasks like refreshing the documentation and preparing the repository for more and varied open source contributions.
 
 * Tag: v0.3.2_
 * Deployed: Friday, January 20, 2017
@@ -174,9 +174,9 @@ Hotfix to solve pip install issues with Yellowbrick.
 
 Version 0.3
 -----------
-This release marks a major change from the previous MVP releases as Yellowbrick moves towards direct integration with Scikit-Learn for visual diagnostics and steering of machine learning and could therefore be considered the first alpha release of the library. To that end we have created a Visualizer model which extends sklearn.base.BaseEstimator and can be used directly in the ML Pipeline. There are a number of visualizers that can be used throughout the model selection process, including for feature analysis, model selection, and hyperparameter tuning.
+This release marks a major change from the previous MVP releases as Yellowbrick moves towards direct integration with scikit-learn for visual diagnostics and steering of machine learning and could therefore be considered the first alpha release of the library. To that end we have created a Visualizer model which extends sklearn.base.BaseEstimator and can be used directly in the ML Pipeline. There are a number of visualizers that can be used throughout the model selection process, including for feature analysis, model selection, and hyperparameter tuning.
 
-In this release specifically we focused on visualizers in the data space for feature analysis and visualizers in the model space for scoring and evaluating models. Future releases will extend these base classes and add more functionality.
+In this release specifically, we focused on visualizers in the data space for feature analysis and visualizers in the model space for scoring and evaluating models. Future releases will extend these base classes and add more functionality.
 
 * Tag: v0.3_
 * Deployed: Sunday, October 9, 2016
@@ -186,28 +186,28 @@ In this release specifically we focused on visualizers in the data space for fea
    - Created an API for visualization with machine learning: Visualizers that are BaseEstimators.
    - Created a class hierarchy for Visualizers throughout the ML process particularly feature analysis and model evaluation
    - Visualizer interface is draw method which can be called multiple times on data or model spaces and a poof method to finalize the figure and display or save to disk.
-   - ScoreVisualizers wrap Scikit-Learn estimators and implement fit and predict (pass-throughs to the estimator) and also score which calls draw in order to visually score the estimator. If the estimator isn't appropriate for the scoring method an exception is raised.
+   - ScoreVisualizers wrap scikit-learn estimators and implement fit and predict (pass-throughs to the estimator) and also score which calls draw in order to visually score the estimator. If the estimator isn't appropriate for the scoring method an exception is raised.
    - ROCAUC is a ScoreVisualizer that plots the receiver operating characteristic curve and displays the area under the curve score.
    - ClassificationReport is a ScoreVisualizer that renders the confusion matrix of a classifier as a heatmap.
    - PredictionError is a ScoreVisualizer that plots the actual vs. predicted values and the 45 degree accuracy line for regressors.
    - ResidualPlot is a ScoreVisualizer that plots the residuals (y - yhat) across the actual values (y) with the zero accuracy line for both train and test sets.
    - ClassBalance is a ScoreVisualizer that displays the support for each class as a bar plot.
-   - FeatureVisualizers are Scikit-Learn Transformers that implement fit and transform and operate on the data space, calling draw to display instances.
+   - FeatureVisualizers are scikit-learn Transformers that implement fit and transform and operate on the data space, calling draw to display instances.
    - ParallelCoordinates plots instances with class across each feature dimension as line segments across a horizontal space.
    - RadViz plots instances with class in a circular space where each feature dimension is an arc around the circumference and points are plotted relative to the weight of the feature.
    - Rank2D plots pairwise scores of features as a heatmap in the space [-1, 1] to show relative importance of features. Currently implemented ranking functions are Pearson correlation and covariance.
    - Coordinated and added palettes in the bgrmyck space and implemented a version of the Seaborn set_palette and set_color_codes functions as well as the ColorPalette object and other matplotlib.rc modifications.
-   - Inherited Seaborn's notebook context and whitegrid axes style but make them the default, don't allow user to modify (if they'd like to, they'll have to import Seaborn). This gives Yellowbrick a consistent look and feel without giving too much work to the user and prepares us for Matplotlib 2.0.
+   - Inherited Seaborn's notebook context and whitegrid axes style but make them the default, don't allow user to modify (if they'd like to, they'll have to import Seaborn). This gives Yellowbrick a consistent look and feel without giving too much work to the user and prepares us for matplotlib 2.0.
    - Jupyter Notebook with Examples of all Visualizers and usage.
 
   Bug Fixes:
    - Fixed Travis-CI test failures with matplotlib.use('Agg').
    - Fixed broken link to Quickstart on README
-   - Refactor of the original API to the Scikit-Learn Visualizer API
+   - Refactor of the original API to the scikit-learn Visualizer API
 
 Version 0.2
 -----------
-Intermediate steps towards a complete API for visualization. Preparatory stages for Scikit-Learn visual pipelines.
+Intermediate steps towards a complete API for visualization. Preparatory stages for scikit-learn visual pipelines.
 
 * Tag: v0.2_
 * Deployed: Sunday, September 4, 2016

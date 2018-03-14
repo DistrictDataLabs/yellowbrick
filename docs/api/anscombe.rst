@@ -3,7 +3,7 @@
 Anscombe's Quartet
 ==================
 
-Yellowbrick has learned Anscombe's lesson - which is why we believe that
+Yellowbrick has learned Anscombe's lesson---which is why we believe that
 visual diagnostics are vital to machine learning.
 
 .. code:: python
