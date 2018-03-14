@@ -74,7 +74,7 @@ class TestTSNE(VisualTestCase, DatasetMixin):
         tsne = TSNEVisualizer(random_state=8392, colormap='Set1')
         tsne.fit_transform(docs, labels)
 
-        self.assert_images_similar(tsne, tol=40)
+        self.assert_images_similar(tsne, tol=55)
 
     def test_make_classification_tsne(self):
         """
