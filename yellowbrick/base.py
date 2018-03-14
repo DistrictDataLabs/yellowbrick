@@ -411,9 +411,7 @@ class MultiModelMixin(object):
 
 
 
-#TODO it appears that the previous class (MultiModelMixin) is not actually used
-# anywhere and would be redundant to this new class. Remove that one?
-class MultipleVisualizer(Visualizer):
+class VisualizerGrid(Visualizer):
     """
     Used as a base class for visualizers that use subplots.
 
@@ -443,29 +441,34 @@ class MultipleVisualizer(Visualizer):
 
     Examples
     --------
-    >>> from yellowbrick.base import MultipleVisualizer
+    >>> from yellowbrick.base import VisualizerGrid
     >>> from sklearn.linear_model import LogisticRegression
     >>> from yellowbrick.classifier import ConfusionMatrix
     >>> from yellowbrick.classifier import ClassBalance
     >>> model = LogisticRegression()
     >>> visualizers = [ClassBalance(model),ConfusionMatrix(model)]
-    >>> mv = MultipleVisualizer(visualizers, ncols=2)
+    >>> mv = VisualizerGrid(visualizers, ncols=2)
     >>> mv.fit(X_train, y_train)
     >>> mv.score(X_test, y_test)
     >>> mv.poof()
     """
     def __init__(self, visualizers = [], nrows = None, ncols = None, axarr = None, **kwargs):
-        self.visualizers = visualizers
-        self.plotcount = len(visualizers)
+        #Class static params
+        self.SUBPLOT_DEFAULT_PIXELS = 400
+
+        #Allocate passed parameters
+        self._visualizers = visualizers
+        plotcount = len(visualizers)
         if nrows == None and ncols == None:
+            #TODO: enhancement would be to also allow a 2-d array  of visualizers instead of just a 1-d left-to-right + top-to-bottom list
             self.ncols = 1
-            self.nrows = self.plotcount
+            self.nrows = plotcount
         elif ncols == None:
             self.nrows = nrows
-            self.ncols = math.ceil(self.plotcount / self.nrows)
+            self.ncols = math.ceil(plotcount / self.nrows)
         elif nrows == None:
             self.ncols = ncols
-            self.nrows = math.ceil(self.plotcount / self.ncols)
+            self.nrows = math.ceil(plotcount / self.ncols)
         else:
             raise YellowbrickValueError("You can only specify either nrows or ncols, \
                 the other will be calculated based on the length of the list of visualizers.")
@@ -490,10 +493,30 @@ class MultipleVisualizer(Visualizer):
 
         self.kwargs = kwargs
 
-    def fit(self,X,y):
+    @property
+    def visualizers(self):
+        return self._visualizers
 
-        for idx in range(len(self.visualizers)):
-            self.visualizers[idx].fit(X,y)
+    @visualizers.setter
+    def visualizers(self,value):
+        raise AttributeError("Visualizers list can only be set during class instantiation.")
+
+    @property 
+    def ax(self):
+         """
+         Override Visualizer.ax to return the current axis 
+         """
+         return plt.gca() 
+
+    @ax.setter
+    def ax(self, ax):
+         raise YellowbrickTypeError("cannot set new axes objects on multiple visualizers")
+
+
+    def fit(self,X,y,**kwargs):
+
+        for vz in self.visualizers:
+            vz.fit(X,y,**kwargs)
 
         return self
 
@@ -515,8 +538,8 @@ class MultipleVisualizer(Visualizer):
         #Choose a reasonable default size if the user has not manually specified one
         # self.size() uses pixels rather than matplotlib's default of inches
         if not hasattr(self, "_size") or self._size is None:
-            self._width = 400 * self.ncols
-            self._height = 400 * self.nrows
+            self._width = self.SUBPLOT_DEFAULT_PIXELS * self.ncols
+            self._height = self.SUBPLOT_DEFAULT_PIXELS * self.nrows
             self.size = (self._width,self._height);
 
         if outpath is not None:

@@ -88,10 +88,10 @@ class BaseTests(unittest.TestCase):
 
 
 ##########################################
-# MultipleVisualizer
+# VisualizerGrid
 ##########################################
 from yellowbrick.features.radviz import RadViz
-from yellowbrick.base import MultipleVisualizer
+from yellowbrick.base import VisualizerGrid
 from yellowbrick.exceptions import YellowbrickValueError
 
 import numpy as np
@@ -105,24 +105,24 @@ class TestExample():
         self.visualizers = [RadViz(classes=self.classes, features=self.features),
                        RadViz(classes=self.classes, features=self.features)
                       ]
-    def test_draw_multiplevisualizer(self):
+    def test_draw_VisualizerGrid(self):
         #A simple multiple visualizer that puts two RadViz on two subplots
-        mv = MultipleVisualizer(self.visualizers)
-        mv.fit(self.X,self.y)
-        mv.poof()
+        vg = VisualizerGrid(self.visualizers)
+        vg.fit(self.X,self.y)
+        vg.poof()
 
     def test_draw_with_rows(self):
         #A simple multiple visualizer that puts two RadViz on two subplots
-        mv = MultipleVisualizer(self.visualizers, nrows=2)
-        mv.fit(self.X,self.y)
-        mv.poof()
+        vg = VisualizerGrid(self.visualizers, nrows=2)
+        vg.fit(self.X,self.y)
+        vg.poof()
 
     def test_draw_with_cols(self):
         #A simple multiple visualizer that puts two RadViz on two subplots
-        mv = MultipleVisualizer(self.visualizers, ncols=2)
-        mv.fit(self.X,self.y)
-        mv.poof()
+        vg = VisualizerGrid(self.visualizers, ncols=2)
+        vg.fit(self.X,self.y)
+        vg.poof()
 
     def test_cant_define_both_rows_cols(self):
-        with pytest.raises(YellowbrickValueError) as e:
-            mv = MultipleVisualizer(self.visualizers, ncols=2, nrows=2)
+        with pytest.raises(YellowbrickValueError):
+            VisualizerGrid(self.visualizers, ncols=2, nrows=2)
