@@ -16,13 +16,17 @@ Test the RadViz feature analysis visualizers
 ##########################################################################
 ## Imports
 ##########################################################################
-
+import unittest
 import numpy.testing as npt
 
 from tests.base import VisualTestCase
 from tests.dataset import DatasetMixin
 from yellowbrick.features.radviz import *
 
+try:
+    import pandas
+except ImportError:
+    pandas = None
 
 ##########################################################################
 ## RadViz Base Tests
@@ -43,9 +47,11 @@ class RadVizTests(VisualTestCase, DatasetMixin):
 
     def setUp(self):
         self.occupancy = self.load_data('occupancy')
+        super(RadVizTests, self).setUp()
 
     def tearDown(self):
         self.occupancy = None
+        super(RadVizTests, self).tearDown()
 
     def test_normalize_x(self):
         """
@@ -88,4 +94,55 @@ class RadVizTests(VisualTestCase, DatasetMixin):
         visualizer = RadViz()
         visualizer.fit_transform(X, y)
         visualizer.poof()
+        self.assert_images_similar(visualizer)
+
+    @unittest.skipUnless(pandas is not None,
+                         "Pandas is not installed, could not run test.")
+    def test_integrated_radiz_with_pandas(self):
+        """
+        Test scatterviz on the real, occupancy data set with pandas
+        """
+        # Load the data from the fixture
+        X = self.occupancy[[
+            "temperature", "relative_humidity", "light", "C02", "humidity"
+        ]]
+        y = self.occupancy['occupancy'].astype(int)
+
+        # Convert X to a pandas dataframe
+        X = pandas.DataFrame(X)
+        X.columns = [
+            "temperature", "relative_humidity", "light", "C02", "humidity"
+        ]
+
+        # Test the visualizer
+        features = ["temperature", "relative_humidity"]
+        visualizer = RadViz(features=features)
+        visualizer.fit_transform_poof(X, y)
+        self.assert_images_similar(visualizer)
+
+
+    @unittest.skipUnless(pandas is not None,
+                         "Pandas is not installed, could not run test.")
+    def test_integrated_radiz_with_pandas_with_classes(self):
+        """
+        Test scatterviz on the real, occupancy data set with pandas with classes
+        """
+        # Load the data from the fixture
+        X = self.occupancy[[
+            "temperature", "relative_humidity", "light", "C02", "humidity"
+        ]]
+        classes = ['unoccupied', 'occupied']
+
+        y = self.occupancy['occupancy'].astype(int)
+
+        # Convert X to a pandas dataframe
+        X = pandas.DataFrame(X)
+        X.columns = [
+            "temperature", "relative_humidity", "light", "C02", "humidity"
+        ]
+
+        # Test the visualizer
+        features = ["temperature", "relative_humidity"]
+        visualizer = RadViz(features=features, classes=classes)
+        visualizer.fit_transform_poof(X, y)
         self.assert_images_similar(visualizer)
