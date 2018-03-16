@@ -23,10 +23,12 @@ import pytest
 import numpy as np
 import matplotlib.pyplot as plt
 
-from yellowbrick.classifier.class_prediction_error import *
+from yellowbrick.classifier.class_balance import *
 from yellowbrick.exceptions import ModelError
 
 from sklearn.svm import LinearSVC
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.datasets import make_multilabel_classification
 
 from tests.base import VisualTestCase
 
@@ -70,7 +72,7 @@ class ClassPredictionErrorTests(VisualTestCase):
         ax = fig.add_subplot()
 
         clf = LinearSVC(random_state=42)
-        g = feature_importances(clf, X, y, ax)
+        g = class_prediction_error(clf, X, y, ax)
 
         self.assert_images_similar(ax=g)
 
@@ -81,21 +83,20 @@ class ClassPredictionErrorTests(VisualTestCase):
         """
         model = LinearSVC()
         model.fit(X, y)
-        visualizer = ClassPredictionError(model, classes=["A", "B", "C"])
-        visualizer.score(X, y)
-        self.assertRaises(ModelError)
-        pass
+        with self.assertRaises(ModelError):
+            visualizer = ClassPredictionError(model,
+                                              classes=["A", "B", "C"])
+            visualizer.score(X, y)
 
     def test_classes_less_than_indices(self):
         """
-        Assert error when y and y_pred contain zero values for
-        one of the specified classess
+        Assert error when there is an attempt to filter classes
         """
         model = LinearSVC()
         model.fit(X, y)
-        visualizer = ClassPredictionError(model, classes=["A"])
-        visualizer.score(X, y)
-        self.assertRaises(NotImplementedError)
+        with self.assertRaises(NotImplementedError):
+            visualizer = ClassPredictionError(model, classes=["A"])
+            visualizer.score(X, y)
 
     @pytest.mark.skip(reason="not implemented yet")
     def test_no_classes_provided(self):
@@ -109,8 +110,8 @@ class ClassPredictionErrorTests(VisualTestCase):
         Test class must be either binary or multiclass type
         """
         X, y = make_multilabel_classification()
-        model = LinearSVC()
+        model = RandomForestClassifier()
         model.fit(X, y)
-        visualizer = ClassPredictionError(model)
-        visualizer.score(X, y)
-        self.assertRaises(YellowbrickValueError)
+        with self.assertRaises(YellowbrickValueError):
+            visualizer = ClassPredictionError(model)
+            visualizer.score(X, y)
