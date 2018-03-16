@@ -32,6 +32,8 @@ from sklearn.datasets import make_multilabel_classification
 
 from tests.base import VisualTestCase
 
+from tests.base import VisualTestCase
+
 ##########################################################################
 ## Data
 ##########################################################################
