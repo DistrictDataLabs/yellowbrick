@@ -79,7 +79,7 @@ class ConfusionMatrixTests(VisualTestCase):
         cm = ConfusionMatrix(model, classes=[0,1,2,11])
         cm.fit(self.X_train, self.y_train)
         cm.score(self.X_test, self.y_test)
-        self.assertTrue(cm.selected_class_counts[3]==0)
+        self.assertTrue(cm.class_counts_[3]==0)
 
     def test_one_class(self):
         """
