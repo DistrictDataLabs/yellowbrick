@@ -89,6 +89,10 @@ class ConfusionMatrix(ClassificationScoreVisualizer):
         Specify a colormap to define the heatmap of the predicted class
         against the actual class in the confusion matrix.
 
+    fontsize : int, default: None
+        Specify the fontsize of the text in the grid and labels to make the
+        matrix a bit easier to read. Uses rcParams font size by default.
+
     Attributes
     ----------
     confusion_matrix_ : array, shape = [n_classes, n_classes]
@@ -109,7 +113,8 @@ class ConfusionMatrix(ClassificationScoreVisualizer):
 
 
     def __init__(self, model, ax=None, classes=None, sample_weight=None,
-                 percent=False, label_encoder=None, cmap='YlOrRd', **kwargs):
+                 percent=False, label_encoder=None, cmap='YlOrRd',
+                 fontsize=None, **kwargs):
         super(ConfusionMatrix, self).__init__(
             model, ax=ax, classes=classes, **kwargs
         )
@@ -118,6 +123,7 @@ class ConfusionMatrix(ClassificationScoreVisualizer):
         self.cmap = color_sequence(cmap)
         self.cmap.set_under(color=CMAP_UNDERCOLOR)
         self.cmap.set_over(color=CMAP_OVERCOLOR)
+        self.fontsize = fontsize
 
         # Estimator parameters
         self.label_encoder = label_encoder
@@ -214,8 +220,8 @@ class ConfusionMatrix(ClassificationScoreVisualizer):
         ticks = np.arange(n_classes) + 0.5
 
         self.ax.set(xticks=ticks, yticks=ticks)
-        self.ax.set_xticklabels(xticklabels, rotation="vertical")
-        self.ax.set_yticklabels(yticklabels)
+        self.ax.set_xticklabels(xticklabels, rotation="vertical", fontsize=self.fontsize)
+        self.ax.set_yticklabels(yticklabels, fontsize=self.fontsize)
 
         # Set data labels in the grid enumerating over all x,y class pairs.
         # NOTE: X and Y are one element longer than the confusion matrix, so
@@ -240,7 +246,8 @@ class ConfusionMatrix(ClassificationScoreVisualizer):
                 # Add the label to the middle of the grid
                 cx, cy = x+0.5, y+0.5
                 self.ax.text(
-                    cy, cx, svalue, va='center', ha='center', color=text_color
+                    cy, cx, svalue, va='center', ha='center',
+                    color=text_color, fontsize=self.fontsize,
                 )
 
                 # Add a dark line on the grid with the diagonal. Note that the

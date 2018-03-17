@@ -114,6 +114,20 @@ class ConfusionMatrixTests(VisualTestCase):
            [ 0,  3,  0,  1,  0,  1,  0,  4, 25,  0],
            [ 1,  2,  0,  0,  1,  0,  0,  8,  3, 22]]))
 
+    def test_fontsize(self):
+        """
+        Test confusion matrix with smaller fontsize on digits dataset with SVC
+        """
+        _, ax = plt.subplots()
+
+        model = SVC(random_state=93)
+        cm = ConfusionMatrix(model, ax=ax, fontsize=8)
+
+        cm.fit(self.digits.X.train, self.digits.y.train)
+        cm.score(self.digits.X.test, self.digits.y.test)
+
+        self.assert_images_similar(cm, tol=10)
+
     def test_percent_mode(self):
         """
         Test confusion matrix in percent mode on digits dataset with SVC
