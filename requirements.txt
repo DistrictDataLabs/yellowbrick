@@ -4,6 +4,7 @@ scipy>=0.19
 scikit-learn>=0.19
 numpy>=1.13.0
 cycler>=0.10.0
+deprecation==2.0
 
 ## Testing Requirements (uncomment for development)
 #pytest>=3.4.1

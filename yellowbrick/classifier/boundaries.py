@@ -12,6 +12,7 @@ import numpy as np
 
 from collections import OrderedDict
 
+import deprecation
 from matplotlib.patches import Patch
 from matplotlib.colors import ListedColormap
 
@@ -26,7 +27,8 @@ from yellowbrick.utils import has_ndarray_int_columns
 ##########################################################################
 # Quick Methods
 ##########################################################################
-
+@deprecation.deprecated(deprecated_in="0.6.0",
+                        details="Will be moved to yellowbrick.contrib")
 def decisionviz(model,
                 X,
                 y,
@@ -178,7 +180,7 @@ class DecisionBoundariesVisualizer(ClassificationScoreVisualizer):
     process, but can and should be set as early as possible.
 
     """
-
+    @deprecation.deprecated(deprecated_in="0.6.0", details="Will be moved to yellowbrick.contrib")
     def __init__(self,
                  model,
                  x=None,
