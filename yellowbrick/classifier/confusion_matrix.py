@@ -34,6 +34,7 @@ from .base import ClassificationScoreVisualizer
 
 CMAP_UNDERCOLOR = 'w'
 CMAP_OVERCOLOR = '#2a7d4f'
+CMAP_MUTEDCOLOR = '0.75'
 
 
 class ConfusionMatrix(ClassificationScoreVisualizer):
@@ -144,11 +145,10 @@ class ConfusionMatrix(ClassificationScoreVisualizer):
         # TODO: remove this in v0.9
         for param in ("percent", "sample_weight"):
             if param in kwargs:
-                msg = (
+                warnings.warn(PendingDeprecationWarning((
                     "specifying '{}' in score is no longer supported, "
                     "pass to constructor of the visualizer instead."
-                ).format(param)
-                warnings.warn(msg, DeprecationWarning)
+                ).format(param)))
 
                 setattr(self, param, kwargs[param])
 
@@ -188,98 +188,76 @@ class ConfusionMatrix(ClassificationScoreVisualizer):
         """
         Renders the classification report; must be called after score.
         """
+
+        # Perform display related manipulations on the confusion matrix data
+        cm_display = self.confusion_matrix_
+
+        # Convert confusion matrix to percent of each row, i.e. the
+        # predicted as a percent of true in each class.
         if self.percent == True:
-            # Convert confusion matrix to percent of each row, i.e. the
-            # predicted as a percent of true in each class.
             # Note: div_safe function returns 0 instead of NAN.
-            self._confusion_matrix_display = div_safe(
-                    self.confusion_matrix_,
-                    self.class_counts_
-                )
-            self._confusion_matrix_display = np.round(
-                self._confusion_matrix_display* 100, decimals=0
-            )
-        else:
-            self._confusion_matrix_display = self.confusion_matrix_
+            cm_display = div_safe(self.confusion_matrix_, self.class_counts_)
+            cm_display = np.round(cm_display* 100, decimals=0)
 
         # Y axis should be sorted top to bottom in pcolormesh
-        self._confusion_matrix_plottable = self._confusion_matrix_display[::-1,::]
+        cm_display = cm_display[::-1,::]
 
-        #Set up the dimensions of the pcolormesh
-        X = np.linspace(start=0, stop=len(self.classes_), num=len(self.classes_)+1)
-        Y = np.linspace(start=0, stop=len(self.classes_), num=len(self.classes_)+1)
-        self.ax.set_ylim(bottom=0, top=self._confusion_matrix_plottable.shape[0])
-        self.ax.set_xlim(left=0, right=self._confusion_matrix_plottable.shape[1])
+        # Set up the dimensions of the pcolormesh
+        n_classes = len(self.classes_)
+        X, Y = np.arange(n_classes+1), np.arange(n_classes+1)
+        self.ax.set_ylim(bottom=0, top=cm_display.shape[0])
+        self.ax.set_xlim(left=0, right=cm_display.shape[1])
 
-        #Put in custom axis labels
+        # Fetch the grid labels from the classes in correct order; set ticks.
         xticklabels = self.classes_
         yticklabels = self.classes_[::-1]
-        xticks = np.arange(0, len(self.classes_), 1) + .5
-        yticks = np.arange(0, len(self.classes_), 1) + .5
-        self.ax.set(xticks=xticks, yticks=yticks)
+        ticks = np.arange(n_classes) + 0.5
+
+        self.ax.set(xticks=ticks, yticks=ticks)
         self.ax.set_xticklabels(xticklabels, rotation="vertical")
         self.ax.set_yticklabels(yticklabels)
 
-        ######################
-        # Add the data labels to each square
-        ######################
+        # Set data labels in the grid enumerating over all x,y class pairs.
+        # NOTE: X and Y are one element longer than the confusion matrix, so
+        # skip the last element in the enumeration to label grids.
+        for x in X[:-1]:
+            for y in Y[:-1]:
 
-        for x_index, x in np.ndenumerate(X):
-            #np.ndenumerate returns a tuple for the index, must access first element using [0]
-            x_index = x_index[0]
-            for y_index, y in np.ndenumerate(Y):
-                #Clean up our iterators
-                #numpy doesn't like non integers as indexes; also np.ndenumerate returns tuple
-                x_int = int(x)
-                y_int = int(y)
-                y_index = y_index[0]
+                # Extract the value and the text label
+                value = cm_display[x,y]
+                svalue = "{:0.0f}".format(value)
+                if self.percent:
+                    svalue += "%"
 
-                #X and Y are one element longer than the confusion_matrix. Don't want to add text for the last X or Y
-                if x_index == X[-1] or y_index == Y[-1]:
-                    break
+                # Determine the grid and text colors
+                base_color = self.cmap(value / cm_display.max())
+                text_color = find_text_color(base_color)
 
-                #center the text in the middle of the block
-                text_x = x + 0.5
-                text_y = y + 0.5
+                # Make zero values more subtle
+                if cm_display[x,y] == 0:
+                    text_color = CMAP_MUTEDCOLOR
 
-                #extract the value
-                grid_val = self._confusion_matrix_plottable[x_int,y_int]
+                # Add the label to the middle of the grid
+                cx, cy = x+0.5, y+0.5
+                self.ax.text(
+                    cy, cx, svalue, va='center', ha='center', color=text_color
+                )
 
-                #Determine text color
-                scaled_grid_val = grid_val / self._confusion_matrix_plottable.max()
-                base_color = self.cmap(scaled_grid_val)
-                text_color= find_text_color(base_color)
+                # Add a dark line on the grid with the diagonal. Note that the
+                # tick labels have already been reversed.
+                lc = 'k' if xticklabels[x] == yticklabels[y] else 'w'
+                self._edgecolors.append(lc)
 
-                #make zero values more subtle
-                if self._confusion_matrix_plottable[x_int,y_int] == 0:
-                    text_color = "0.75"
 
-                #Put the data labels in the middle of the heatmap square
-                self.ax.text(text_y,
-                            text_x,
-                            "{:.0f}{}".format(grid_val,"%" if self.percent==True else ""),
-                            va='center',
-                            ha='center',
-                            color=text_color)
+        # Draw the heatmap with colors bounded by vmin,vmax
+        vmin = 0.00001
+        vmax = 99.999 if self.percent == True else cm_display.max()
+        self.ax.pcolormesh(
+            X, Y, cm_display, vmin=vmin, vmax=vmax,
+            edgecolor=self._edgecolors, cmap=self.cmap, linewidth='0.01'
+        )
 
-                #If the prediction is correct, put a bounding box around that square to better highlight it to the user
-                #This will be used in ax.pcolormesh, setting now since we're iterating over the matrix
-                    #ticklabels are conveniently already reversed properly to match the _confusion_matrix_plottalbe order
-                if xticklabels[x_int] == yticklabels[y_int]:
-                    self._edgecolors.append('black')
-                else:
-                    self._edgecolors.append('w')
-
-        # Draw the heatmap. vmin and vmax operate in tandem with the cmap.set_under and cmap.set_over to alter the color of 0 and 100
-        highest_count = self._confusion_matrix_plottable.max()
-        vmax = 99.999 if self.percent == True else highest_count
-        self.ax.pcolormesh(X, Y,
-            self._confusion_matrix_plottable,
-            vmin=0.00001,
-            vmax=vmax,
-            edgecolor=self._edgecolors,
-            cmap=self.cmap,
-            linewidth='0.01') #edgecolor='0.75', linewidth='0.01'
+        # Return the axes being drawn on
         return self.ax
 
     def finalize(self, **kwargs):
