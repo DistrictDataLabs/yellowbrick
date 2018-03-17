@@ -17,7 +17,7 @@ Tests for the TSNE visual corpus embedding mechanism.
 ## Imports
 ##########################################################################
 
-import six 
+import six
 import pytest
 
 from yellowbrick.text.tsne import *
@@ -27,6 +27,11 @@ from yellowbrick.exceptions import YellowbrickValueError
 
 from sklearn.datasets import make_classification
 from sklearn.feature_extraction.text import TfidfVectorizer
+
+try:
+    import pandas
+except ImportError:
+    pandas = None
 
 
 ##########################################################################
@@ -74,7 +79,7 @@ class TestTSNE(VisualTestCase, DatasetMixin):
 
         tsne = TSNEVisualizer(random_state=8392, colormap='Set1')
         tsne.fit_transform(docs, labels)
-        
+
         tol = 40 if six.PY3 else 55
         self.assert_images_similar(tsne, tol=tol)
 
@@ -91,7 +96,7 @@ class TestTSNE(VisualTestCase, DatasetMixin):
         ## visualize data with t-SNE
         tsne = TSNEVisualizer(random_state=87)
         tsne.fit(X, y)
-    
+
         tol = 0.1 if six.PY3 else 40
         self.assert_images_similar(tsne, tol=tol)
 
@@ -108,7 +113,7 @@ class TestTSNE(VisualTestCase, DatasetMixin):
         ## visualize data with t-SNE
         tsne = TSNEVisualizer(random_state=87, labels=['a', 'b', 'c'])
         tsne.fit(X, y)
-    
+
         tol = 0.1 if six.PY3 else 40
         self.assert_images_similar(tsne, tol=tol)
 
@@ -144,5 +149,23 @@ class TestTSNE(VisualTestCase, DatasetMixin):
         ## visualize data with t-SNE
         tsne = TSNEVisualizer(random_state=64)
         tsne.fit(X)
+
+        self.assert_images_similar(tsne, tol=0.1)
+
+    @pytest.mark.skipif(pandas is None, reason="test requires pandas")
+    def test_visualizer_with_pandas(self):
+        """
+        Test tSNE when passed a pandas DataFrame and series
+        """
+        X, y = make_classification(
+            n_samples=200, n_features=100, n_informative=20, n_redundant=10,
+            n_classes=3, random_state=3020
+        )
+
+        X = pandas.DataFrame(X)
+        y = pandas.Series(y)
+
+        tsne = TSNEVisualizer(random_state=64)
+        tsne.fit(X, y)
 
         self.assert_images_similar(tsne, tol=0.1)

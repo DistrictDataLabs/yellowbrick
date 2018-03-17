@@ -45,7 +45,7 @@ If we omit the target during fit, we can visualize the whole dataset to see if a
 
 .. image:: images/tsne_no_labels.png
 
-This means we don't have to use class labels at all, instead we can use cluster membership from K-Means to label each document, looking for clusters of related text by their contents:
+This means we don't have to use class labels at all. Instead we can use cluster membership from K-Means to label each document. This will allow us to look for clusters of related text by their contents:
 
 .. code:: python
 

@@ -1,3 +1,13 @@
+# ID: tsne.py [] benjamin@bengfort.com $
+
+"""
+Generate figures for TSNE documentation.
+"""
+
+##########################################################################
+## Imports
+##########################################################################
+
 import matplotlib.pyplot as plt
 
 from corpus import load_corpus
@@ -6,6 +16,10 @@ from yellowbrick.text import TSNEVisualizer
 from sklearn.cluster import KMeans
 from sklearn.feature_extraction.text import TfidfVectorizer
 
+
+##########################################################################
+## Generate
+##########################################################################
 
 def tsne(docs, target, outpath, **kwargs):
     # Create a new figure and axes
@@ -17,6 +31,10 @@ def tsne(docs, target, outpath, **kwargs):
     visualizer.fit(docs, target)
     visualizer.poof(outpath=outpath)
 
+
+##########################################################################
+## Main Method
+##########################################################################
 
 if __name__ == '__main__':
 

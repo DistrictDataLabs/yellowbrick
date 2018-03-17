@@ -270,11 +270,10 @@ class TSNEVisualizer(TextVisualizer):
         # Store the classes we observed in y
         if y is not None:
             self.classes_ = np.unique(y)
+        elif y is None and self.labels is not None:
+            self.classes_ = np.array([self.labels[0]])
         else:
-            if self.labels is not None:
-                self.classes_ = np.array([self.labels[0]])
-            else:
-                self.classes_ = np.array([self.NULL_CLASS])
+            self.classes_ = np.array([self.NULL_CLASS])
 
         # Fit our internal transformer and transform the data.
         vecs = self.transformer_.fit_transform(X)
