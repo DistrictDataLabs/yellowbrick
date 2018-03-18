@@ -32,6 +32,8 @@ from sklearn.svm import SVC
 from sklearn.datasets import load_digits
 from sklearn.naive_bayes import GaussianNB
 from sklearn.preprocessing import LabelEncoder
+from sklearn.tree import DecisionTreeClassifier
+from sklearn.datasets import make_classification
 from sklearn.linear_model import LogisticRegression
 from sklearn.linear_model import PassiveAggressiveRegressor
 from sklearn.model_selection import train_test_split as tts
@@ -41,6 +43,9 @@ try:
 except ImportError:
     pd = None
 
+##########################################################################
+## Fixtures
+##########################################################################
 
 # Helpers for fixtures
 Dataset = namedtuple('Dataset', 'X,y')
@@ -63,6 +68,10 @@ def digits(request):
         Split(X_train, X_test), Split(y_train, y_test)
     )
 
+
+##########################################################################
+## Test Cases
+##########################################################################
 
 @pytest.mark.usefixtures("digits")
 class ConfusionMatrixTests(VisualTestCase, DatasetMixin):
@@ -310,6 +319,20 @@ class ConfusionMatrixTests(VisualTestCase, DatasetMixin):
             [   1,  985]
         ]))
 
+    @pytest.mark.skip(reason="requires random state in quick method")
+    def test_quick_method(self):
+        """
+        Test the quick method with a random dataset
+        """
+        X, y = make_classification(
+            n_samples=400, n_features=20, n_informative=8, n_redundant=8,
+            n_classes=2, n_clusters_per_class=4, random_state=27
+        )
+
+        _, ax = plt.subplots()
+        confusion_matrix(DecisionTreeClassifier(), X, y, ax=ax)
+
+        self.assert_images_similar(ax=ax)
 
     def test_isclassifier(self):
         """

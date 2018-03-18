@@ -20,12 +20,13 @@ Visual confusion matrix for classifier scoring.
 import warnings
 import numpy as np
 
-from sklearn.metrics import confusion_matrix
-
 from ..utils import div_safe
 from ..style import find_text_color
 from ..style.palettes import color_sequence
 from .base import ClassificationScoreVisualizer
+
+from sklearn.model_selection import train_test_split
+from sklearn.metrics import confusion_matrix as confusion_matrix_metric
 
 
 ##########################################################################
@@ -168,11 +169,11 @@ class ConfusionMatrix(ClassificationScoreVisualizer):
                 y_pred = self.label_encoder.inverse_transform(y_pred)
             except AttributeError:
                 # if a mapping is passed to class apply it here.
-                y = [self.label_encoder[x] for x in y]
-                y_pred = [self.label_encoder[x] for x in y_pred]
+                y = np.array([self.label_encoder[x] for x in y])
+                y_pred = np.array([self.label_encoder[x] for x in y_pred])
 
         # Compute the confusion matrix and class counts
-        self.confusion_matrix_ = confusion_matrix(
+        self.confusion_matrix_ = confusion_matrix_metric(
             y, y_pred, labels=self.classes_, sample_weight=self.sample_weight
         )
         self.class_counts_ = self.class_counts(y)
@@ -271,3 +272,95 @@ class ConfusionMatrix(ClassificationScoreVisualizer):
         self.set_title('{} Confusion Matrix'.format(self.name))
         self.ax.set_ylabel('True Class')
         self.ax.set_xlabel('Predicted Class')
+
+
+##########################################################################
+## Quick Method
+##########################################################################
+
+
+def confusion_matrix(model, X, y, ax=None, classes=None, sample_weight=None,
+                     percent=False, label_encoder=None, cmap='YlOrRd',
+                     fontsize=None, **kwargs):
+    """Quick method:
+
+    Creates a heatmap visualization of the sklearn.metrics.confusion_matrix().
+    A confusion matrix shows each combination of the true and predicted
+    classes for a test data set.
+
+    The default color map uses a yellow/orange/red color scale. The user can
+    choose between displaying values as the percent of true (cell value
+    divided by sum of row) or as direct counts. If percent of true mode is
+    selected, 100% accurate predictions are highlighted in green.
+
+    Requires a classification model.
+
+    Parameters
+    ----------
+    model : estimator
+        Must be a classifier, otherwise raises YellowbrickTypeError
+
+    X  : ndarray or DataFrame of shape n x m
+        A matrix of n instances with m features.
+
+    y  : ndarray or Series of length n
+        An array or series of target or class values.
+
+    ax : matplotlib Axes, default: None
+        The axes to plot the figure on. If None is passed in the current axes
+        will be used (or generated if required).
+
+    sample_weight: array-like of shape = [n_samples], optional
+        Passed to ``confusion_matrix`` to weight the samples.
+
+    percent: bool, default: False
+        Determines whether or not the confusion_matrix is displayed as counts
+        or as a percent of true predictions. Note, if specifying a subset of
+        classes, percent should be set to False or inaccurate figures will be
+        displayed.
+
+    classes : list, default: None
+        a list of class names to use in the confusion_matrix.
+        This is passed to the ``labels`` parameter of
+        ``sklearn.metrics.confusion_matrix()``, and follows the behaviour
+        indicated by that function. It may be used to reorder or select a
+        subset of labels. If None, classes that appear at least once in
+        ``y_true`` or ``y_pred`` are used in sorted order.
+
+    label_encoder : dict or LabelEncoder, default: None
+        When specifying the ``classes`` argument, the input to ``fit()``
+        and ``score()`` must match the expected labels. If the ``X`` and ``y``
+        datasets have been encoded prior to training and the labels must be
+        preserved for the visualization, use this argument to provide a
+        mapping from the encoded class to the correct label. Because typically
+        a Scikit-Learn ``LabelEncoder`` is used to perform this operation, you
+        may provide it directly to the class to utilize its fitted encoding.
+
+    cmap : string, default: ``'YlOrRd'``
+        Specify a colormap to define the heatmap of the predicted class
+        against the actual class in the confusion matrix.
+
+    fontsize : int, default: None
+        Specify the fontsize of the text in the grid and labels to make the
+        matrix a bit easier to read. Uses rcParams font size by default.
+
+    Returns
+    -------
+    ax : matplotlib axes
+        Returns the axes that the classification report was drawn on.
+    """
+    # Instantiate the visualizer
+    visualizer = ConfusionMatrix(
+        model, ax, classes, sample_weight, percent,
+        label_encoder, cmap, fontsize, **kwargs
+    )
+
+    # Create the train and test splits
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2)
+
+    # Fit and transform the visualizer (calls draw)
+    visualizer.fit(X_train, y_train, **kwargs)
+    visualizer.score(X_test, y_test)
+
+    # Return the axes object on the visualizer
+    return visualizer.ax
