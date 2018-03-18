@@ -9,10 +9,16 @@ The Silhouette Visualizer displays the silhouette coefficient for each sample on
 
 .. code:: python
 
+    from sklearn.datasets import make_blobs
+
     # Make 8 blobs dataset
     X, y = make_blobs(centers=8)
 
 .. code:: python
+
+    from sklearn.cluster import MiniBatchKMeans
+
+    from yellowbrick.cluster import SilhouetteVisualizer
 
     # Instantiate the clustering model and visualizer
     model = MiniBatchKMeans(6)
