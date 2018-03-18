@@ -69,7 +69,7 @@ X_two_cols = X[:, :2]
 
 class DecisionBoundariesVisualizerTest(VisualTestCase):
     """
-    DecisionBoundariesVisualizer 
+    DecisionBoundariesVisualizer
     """
 
     def test_decision_bounardies(self):
@@ -79,6 +79,9 @@ class DecisionBoundariesVisualizerTest(VisualTestCase):
         model = neighbors.KNeighborsClassifier(3)
         viz = DecisionViz(model)
         viz.fit_draw_poof(X_two_cols, y=y)
+
+    # def test_depreciated(self):
+    #     assert_warns_message(DeprecationWarning, "Will be moved to yellowbrick.contrib in v0.7", DecisionViz)
 
     def test_init(self):
         """

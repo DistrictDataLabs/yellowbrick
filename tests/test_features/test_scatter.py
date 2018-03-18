@@ -19,6 +19,7 @@ Test the ScatterViz feature analysis visualizers
 import unittest
 import numpy as np
 import matplotlib as mptl
+# from sklearn.utils.testing import assert_warns_message
 
 from yellowbrick.features.scatter import *
 from yellowbrick.exceptions import YellowbrickValueError
@@ -64,6 +65,9 @@ class ScatterVizTests(VisualTestCase, DatasetMixin):
         features = ["temperature", "relative_humidity"]
         visualizer = ScatterVisualizer(features=features, markers=['*'])
         self.assertIsNotNone(visualizer.markers)
+
+    # def test_depreciated(self):
+    #     assert_warns_message(DeprecationWarning, "Will be moved to yellowbrick.contrib in v0.7", ScatterVisualizer)
 
     def test_scatter(self):
         """
