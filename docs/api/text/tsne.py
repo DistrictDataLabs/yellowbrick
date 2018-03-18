@@ -1,3 +1,13 @@
+# ID: tsne.py [] benjamin@bengfort.com $
+
+"""
+Generate figures for TSNE documentation.
+"""
+
+##########################################################################
+## Imports
+##########################################################################
+
 import matplotlib.pyplot as plt
 
 from corpus import load_corpus
@@ -7,16 +17,24 @@ from sklearn.cluster import KMeans
 from sklearn.feature_extraction.text import TfidfVectorizer
 
 
-def tsne(docs, labels, outpath, **kwargs):
+##########################################################################
+## Generate
+##########################################################################
+
+def tsne(docs, target, outpath, **kwargs):
     # Create a new figure and axes
     fig = plt.figure()
     ax = fig.add_subplot(111)
 
     # Visualize the frequency distribution
     visualizer = TSNEVisualizer(ax=ax, **kwargs)
-    visualizer.fit(docs, labels)
+    visualizer.fit(docs, target)
     visualizer.poof(outpath=outpath)
 
+
+##########################################################################
+## Main Method
+##########################################################################
 
 if __name__ == '__main__':
 
@@ -25,17 +43,13 @@ if __name__ == '__main__':
     tfidf = TfidfVectorizer()
 
     docs   = tfidf.fit_transform(corpus.data)
-    labels = corpus.target
+    target = corpus.target
 
     # Whole corpus visualization
-    tsne(docs, labels, "images/tsne_all_docs.png")
-
-    # Partial corpus visualization
-    # Only visualize the sports, cinema, and gaming classes
-    tsne(docs, labels, "images/tsne_limit_classes.png", classes=['sports', 'cinema', 'gaming'])
+    tsne(docs, target, "images/tsne_all_docs.png")
 
     # No labels
-    tsne(docs, None, "images/tsne_no_labels.png")
+    tsne(docs, None, "images/tsne_no_labels.png", labels=["documents"])
 
     # Apply clustering instead of class names.
     clusters = KMeans(n_clusters=5)

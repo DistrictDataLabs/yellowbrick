@@ -60,11 +60,12 @@ class ROCAUC(ClassificationScoreVisualizer):
 
     Parameters
     ----------
-    ax : the axis to plot the figure on.
+    model : estimator
+        Must be a classifier, otherwise raises YellowbrickTypeError
 
-    model : the Scikit-Learn estimator
-        Should be an instance of a classifier, else the __init__ will
-        return an error.
+    ax : matplotlib Axes, default: None
+        The axes to plot the figure on. If None is passed in the current axes
+        will be used (or generated if required).
 
     classes : list
         A list of class names for the legend. If classes is None and a y value
