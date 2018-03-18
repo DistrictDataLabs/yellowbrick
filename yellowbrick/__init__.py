@@ -23,7 +23,7 @@ import matplotlib as mpl
 _orig_rc_params = mpl.rcParams.copy()
 
 # Import the version number at the top level
-from .version import get_version
+from .version import get_version, __version_info__
 
 # Import the style management functions
 from .style.rcmod import reset_defaults, reset_orig

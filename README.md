@@ -70,7 +70,7 @@ Note that Yellowbrick is an active project and routinely publishes new releases 
 
 You can also use the `-U` flag to update scikit-learn, matplotlib, or any other third party utilities that work well with Yellowbrick to their latest versions.
 
-If you're using Anaconda, you can take advantage of the conda utility to install Yellowbrick:
+If you're using Anaconda (recommended for Windows users), you can take advantage of the conda utility to install Yellowbrick:
 
     conda install -c districtdatalabs yellowbrick
 
