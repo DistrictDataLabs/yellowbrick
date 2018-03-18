@@ -28,9 +28,10 @@ from tests.dataset import DatasetMixin
 
 from sklearn.svm import LinearSVC
 from sklearn.naive_bayes import GaussianNB
-from sklearn.linear_model import LassoCV, LogisticRegression
+from sklearn.tree import DecisionTreeClassifier
 from sklearn.datasets import make_classification
 from sklearn.model_selection import train_test_split as tts
+from sklearn.linear_model import LassoCV, LogisticRegression
 
 try:
     import pandas as pd
@@ -181,6 +182,21 @@ class ClassificationReportTests(VisualTestCase, DatasetMixin):
                 'unoccupied': 0.9800031994880819,
                 'occupied': 0.9366447034972124
             }}
+
+    @pytest.mark.skip(reason="requires random state in quick method")
+    def test_quick_method(self):
+        """
+        Test the quick method with a random dataset
+        """
+        X, y = make_classification(
+            n_samples=400, n_features=20, n_informative=8, n_redundant=8,
+            n_classes=2, n_clusters_per_class=4, random_state=27
+        )
+
+        _, ax = plt.subplots()
+        classification_report(DecisionTreeClassifier(), X, y, ax=ax)
+
+        self.assert_images_similar(ax=ax)
 
     def test_isclassifier(self):
         """

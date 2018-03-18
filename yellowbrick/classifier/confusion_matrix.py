@@ -25,6 +25,7 @@ from ..style import find_text_color
 from ..style.palettes import color_sequence
 from .base import ClassificationScoreVisualizer
 
+from sklearn.model_selection import train_test_split
 from sklearn.metrics import confusion_matrix as confusion_matrix_metric
 
 
