@@ -25,6 +25,7 @@ from collections import namedtuple
 from yellowbrick.classifier.confusion_matrix import *
 
 from tests.base import VisualTestCase
+from tests.dataset import DatasetMixin
 
 from sklearn.svm import SVC
 from sklearn.datasets import load_digits
@@ -33,6 +34,12 @@ from sklearn.preprocessing import LabelEncoder
 from sklearn.linear_model import LogisticRegression
 from sklearn.linear_model import PassiveAggressiveRegressor
 from sklearn.model_selection import train_test_split as tts
+
+try:
+    import pandas as pd
+except ImportError:
+    pd = None
+
 
 # Helpers for fixtures
 Dataset = namedtuple('Dataset', 'X,y')
@@ -57,7 +64,7 @@ def digits(request):
 
 
 @pytest.mark.usefixtures("digits")
-class ConfusionMatrixTests(VisualTestCase):
+class ConfusionMatrixTests(VisualTestCase, DatasetMixin):
     """
     ConfusionMatrix visualizer tests
     """
@@ -264,6 +271,43 @@ class ConfusionMatrixTests(VisualTestCase):
         ylabels = [l.get_text() for l in ax.get_yticklabels()]
         ylabels.reverse()
         assert  ylabels == classes
+
+    @pytest.mark.skipif(pd is None, reason="test requires pandas")
+    def test_pandas_integration(self):
+        """
+        Test with Pandas DataFrame and Series input
+        """
+        _, ax = plt.subplots()
+
+        # Load the occupancy dataset from fixtures
+        data = self.load_data('occupancy')
+        target = 'occupancy'
+        features = [
+            "temperature", "relative_humidity", "light", "C02", "humidity"
+        ]
+
+        # Create instances and target
+        X = pd.DataFrame(data[features])
+        y = pd.Series(data[target].astype(int))
+
+        # Create train/test splits
+        splits = tts(X, y, test_size=0.2, random_state=8873)
+        X_train, X_test, y_train, y_test = splits
+
+        # Create confusion matrix
+        model = GaussianNB()
+        cm = ConfusionMatrix(model, ax=ax, classes=None)
+        cm.fit(X_train, y_train)
+        cm.score(X_test, y_test)
+
+        self.assert_images_similar(cm, tol=0.1)
+
+        # Ensure correct confusion matrix under the hood
+        npt.assert_array_equal(cm.confusion_matrix_, np.array([
+            [3012,  114],
+            [   1,  985]
+        ]))
+
 
     def test_isclassifier(self):
         """
