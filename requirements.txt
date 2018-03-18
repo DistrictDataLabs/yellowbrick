@@ -13,6 +13,7 @@ deprecation==2.0
 #pytest-spec>=1.1.0
 #coverage>=4.4.1
 #requests>=2.18.3
+#six==1.11.0
 
 ## Python 2 Testing Requirements
 #mock>=2.0.0
