@@ -41,6 +41,9 @@ try:
 except ImportError:
     pd = None
 
+##########################################################################
+## Fixtures
+##########################################################################
 
 # Helpers for fixtures
 Dataset = namedtuple('Dataset', 'X,y')
@@ -63,6 +66,10 @@ def digits(request):
         Split(X_train, X_test), Split(y_train, y_test)
     )
 
+
+##########################################################################
+## Test Cases
+##########################################################################
 
 @pytest.mark.usefixtures("digits")
 class ConfusionMatrixTests(VisualTestCase, DatasetMixin):
