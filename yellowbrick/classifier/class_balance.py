@@ -342,7 +342,8 @@ def class_prediction_error(model, X, y=None, ax=None, classes=None,
 
     # Create the train and test splits
     X_train, X_test, y_train, y_test = train_test_split(X, y,
-                                                        test_size=test_size)
+                                                        test_size=test_size,
+                                                        random_state=42)
 
     # Fit and transform the visualizer (calls draw)
     visualizer.fit(X_train, y_train, **kwargs)
