@@ -20,6 +20,8 @@ import pytest
 import numpy as np
 
 from tests.base import VisualTestCase
+from tests.sklearn_test_utils import assert_warns_message
+
 from yellowbrick.classifier import *
 from yellowbrick.exceptions import YellowbrickTypeError
 from yellowbrick.exceptions import YellowbrickValueError
@@ -80,8 +82,9 @@ class DecisionBoundariesVisualizerTest(VisualTestCase):
         viz = DecisionViz(model)
         viz.fit_draw_poof(X_two_cols, y=y)
 
-    # def test_depreciated(self):
-    #     assert_warns_message(DeprecationWarning, "Will be moved to yellowbrick.contrib in v0.7", DecisionViz)
+    def test_depreciated(self):
+        model = neighbors.KNeighborsClassifier(3)
+        assert_warns_message(DeprecationWarning, "Will be moved to yellowbrick.contrib in v0.7", DecisionViz, model)
 
     def test_init(self):
         """
