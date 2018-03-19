@@ -26,7 +26,7 @@ Visualizers are estimators (objects that learn from data) whose primary objectiv
 
 #### Feature Visualization
 
-- **Feature Importances**: rank features based on their in-model performance 
+- **Feature Importances**: rank features based on their in-model performance
 - **Parallel Coordinates**: horizontal visualization of instances
 - **PCA Projection**: projection of instances based on principal components
 - **RadViz**: separation of instances around a circular plot
@@ -36,6 +36,7 @@ Visualizers are estimators (objects that learn from data) whose primary objectiv
 #### Classification Visualization
 
 - **Class Balance**: see how the distribution of classes affects the model
+- **Class Prediction Error**: shows error and support in classification
 - **Classification Report**: visual representation of precision, recall, and F1
 - **Confusion Matrices**: visual description of class decision making
 - **ROC/AUC Curves**: receiver operator characteristics and area under the curve
@@ -158,4 +159,4 @@ Glob syntax can be used to move multiple files. For example to reset all the cla
 $ python -m tests.images tests/test_classifier/*   
 ```
 
-Though it is recommended that specific test cases are targeted, rather than updating entire directories. 
+Though it is recommended that specific test cases are targeted, rather than updating entire directories.
