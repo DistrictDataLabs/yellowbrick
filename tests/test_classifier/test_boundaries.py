@@ -86,6 +86,11 @@ class DecisionBoundariesVisualizerTest(VisualTestCase):
             model = neighbors.KNeighborsClassifier(3)
             DecisionViz(model)
             
+    def test_depreciated_message(self):
+        with pytest.warns(DeprecationWarning, match='Will be moved to yellowbrick.contrib in v0.7'):
+            model = neighbors.KNeighborsClassifier(3)
+            DecisionViz(model)
+            
     def test_init(self):
         """
         Test correct initialization of the internal state

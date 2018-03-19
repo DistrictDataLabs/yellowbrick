@@ -70,6 +70,12 @@ class ScatterVizTests(VisualTestCase, DatasetMixin):
         with pytest.deprecated_call():
             features = ["temperature", "relative_humidity"]
             ScatterViz(features=features)
+    
+    def test_depreciated_message(self):
+        with pytest.warns(DeprecationWarning, match='Will be moved to yellowbrick.contrib in v0.7'):
+            features = ["temperature", "relative_humidity"]
+            ScatterViz(features=features)
+    
             
     def test_scatter(self):
         """
