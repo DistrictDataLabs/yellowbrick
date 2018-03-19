@@ -19,7 +19,7 @@ Test the ScatterViz feature analysis visualizers
 import unittest
 import numpy as np
 import matplotlib as mptl
-from tests.sklearn_test_utils import assert_warns_message
+import pytest
 
 from yellowbrick.features.scatter import *
 from yellowbrick.exceptions import YellowbrickValueError
@@ -67,9 +67,10 @@ class ScatterVizTests(VisualTestCase, DatasetMixin):
         self.assertIsNotNone(visualizer.markers)
 
     def test_depreciated(self):
-        features = ["temperature", "relative_humidity"]
-        assert_warns_message(DeprecationWarning, "Will be moved to yellowbrick.contrib in v0.7", ScatterVisualizer, features=features)
-
+        with pytest.deprecated_call():
+            features = ["temperature", "relative_humidity"]
+            ScatterViz(features=features)
+            
     def test_scatter(self):
         """
         Assert no errors occur during scatter visualizer integration
