@@ -38,7 +38,7 @@ except ImportError:
 # ScatterViz Base Tests
 ##########################################################################
 
-
+@pytest.mark.filterwarnings('ignore')
 class ScatterVizTests(VisualTestCase, DatasetMixin):
 
     # yapf: disable
@@ -70,13 +70,13 @@ class ScatterVizTests(VisualTestCase, DatasetMixin):
         with pytest.deprecated_call():
             features = ["temperature", "relative_humidity"]
             ScatterViz(features=features)
-    
+
     def test_depreciated_message(self):
         with pytest.warns(DeprecationWarning, match='Will be moved to yellowbrick.contrib in v0.7'):
             features = ["temperature", "relative_humidity"]
             ScatterViz(features=features)
-    
-            
+
+
     def test_scatter(self):
         """
         Assert no errors occur during scatter visualizer integration

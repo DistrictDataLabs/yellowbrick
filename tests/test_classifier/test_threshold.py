@@ -68,9 +68,9 @@ class ThresholdVisualizerTest(VisualTestCase, DatasetMixin):
         self.assertIsNone(viz.color)
         self.assertIsNone(viz.title)
         self.assertIsNone(viz.plot_data)
-        self.assertEquals(viz.n_trials, 50)
-        self.assertEquals(viz.test_size_percent, 0.1)
-        self.assertEquals(viz.quantiles, (0.1, 0.5, 0.9))
+        self.assertEqual(viz.n_trials, 50)
+        self.assertEqual(viz.test_size_percent, 0.1)
+        self.assertEqual(viz.quantiles, (0.1, 0.5, 0.9))
 
 
     def test_threshold_viz(self):

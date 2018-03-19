@@ -344,5 +344,5 @@ class ConfusionMatrixTests(VisualTestCase, DatasetMixin):
             'try a regression or clustering score visualizer instead!'
         )
 
-        with self.assertRaisesRegexp(yb.exceptions.YellowbrickError, message):
+        with pytest.raises(yb.exceptions.YellowbrickError, match=message):
             ConfusionMatrix(model)
