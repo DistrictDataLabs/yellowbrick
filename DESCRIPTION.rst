@@ -37,6 +37,7 @@ Classification Visualization
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 - **Class Balance**: see how the distribution of classes affects the model
+- **Class Prediction Error**: shows error and support in classification
 - **Classification Report**: visual representation of precision, recall, and F1
 - **ROC/AUC Curves**: receiver operator characteristics and area under the curve
 - **Confusion Matrices**: visual description of class decision making

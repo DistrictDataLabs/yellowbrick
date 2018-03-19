@@ -3,6 +3,40 @@
 Changelog
 =========
 
+Version 0.6.0
+-------------
+
+* Tag: v0.6.0_
+* Deployed: Saturday, March 17, 2018
+* Contributors: Benjamin Bengfort, Nathan Danielsen, Rebecca Bilbro, Larry Gray, Kristen McIntyre, George Richardson, Taylor Miller, Gary Mayfield, Phillip Schafer, Jason Keung
+
+Changes:
+   - *New Feature!* The ``FeatureImportances`` Visualizer enables the user to visualize the most informative (relative and absolute) features in their model, plotting a bar graph of ``feature_importances_`` or ``coef_`` attributes.
+   - *New Feature!* The ``ExplainedVariance`` Visualizer produces a plot of the explained variance resulting from a dimensionality reduction to help identify the best tradeoff between number of dimensions and amount of information retained from the data.
+   - *New Feature!* The ``GridSearchVisualizer`` creates a color plot showing the best grid search scores across two parameters.
+   - *New Feature!* The ``ClassPredictionError`` Visualizer is a heatmap implementation of the class balance visualizer, which provides a way to quickly understand how successfully your classifier is predicting the correct classes.
+   - *New Feature!* The ``ThresholdVisualizer`` allows the user to visualize the bounds of precision, recall and queue rate at different thresholds for binary targets after a given number of trials.
+   - New ``MultiFeatureVisualizer`` helper class to provide base functionality for getting the names of features for use in plot annotation.
+   - Adds font size param to the confusion matrix to adjust its visibility.
+   - Add quick method for the confusion matrix
+   - Tests: In this version, we've switched from using nose to pytest. Image comparison tests have been added and the visual tests are updated to matplotlib 2.2.0. Test coverage has also been improved for a number of visualizers, including ``JointPlot``, ``AlphaPlot``, ``FreqDist``, ``RadViz``, ``ElbowPlot``, ``SilhouettePlot``, ``ConfusionMatrix``, ``Rank1D``, and ``Rank2D``.
+   - Documentation updates, including discussion of Image Comparison Tests for contributors.
+
+Bug Fixes:
+   - Fixes the ``resolve_colors`` function. You can now pass in a number of colors and a colormap and get back the correct number of colors.
+   - Fixes ``TSNEVisualizer`` Value Error when no classes are specified.
+   - Adds the circle back to ``RadViz``! This visualizer has also been updated to ensure there's a visualization even when there are missing values
+   - Updated ``RocAuc`` to correctly check the number of classes
+   - Switch from converting structured arrays to ndarrays using ``np.copy`` instead of ``np.tolist`` to avoid NumPy deprecation warning.
+   - ``DataVisualizer`` updated to remove ``np.nan`` values and warn the user that nans are not plotted.
+   - ``ClassificationReport`` no longer has lines that run through the numbers, is more grid-like
+
+Deprecation Warnings:
+   - ``ScatterPlotVisualizer`` is being moved to contrib in 0.7
+   - ``DecisionBoundaryVisualizer`` is being moved to contrib in 0.7
+
+.. _v0.6.0: https://github.com/DistrictDataLabs/yellowbrick/releases/tag/v0.6.0
+
 Version 0.5
 -----------
 
@@ -11,22 +45,22 @@ Version 0.5
 * Contributors: Benjamin Bengfort, Rebecca Bilbro, Nathan Danielsen, Carlo Morales, Jim Stearns, Phillip Schafer, Jason Keung
 
 Changes:
-    - Added VisualTestCase.
-    - New PCADecomposition Visualizer, which decomposes high-dimensional data into two or three dimensions so that each instance can be plotted in a scatter plot.
-    - New and improved ROCAUC Visualizer, which now supports multiclass classification.
-    - Prototype Decision Boundary Visualizer, which is a bivariate data visualization algorithm that plots the decision boundaries of each class.
-    - Added Rank1D Visualizer, which is a one-dimensional ranking of features that utilizes the Shapiro-Wilks ranking by taking into account only a single feature at a time (e.g. histogram analysis).
-    - Improved Prediction Error Plot with identity line, shared limits, and R-squared.
-    - Updated FreqDist Visualizer to make word features a hyperparameter.
-    - Added normalization and scaling to Parallel Coordinates.
+    - Added ``VisualTestCase``.
+    - New ``PCADecomposition`` Visualizer, which decomposes high-dimensional data into two or three dimensions so that each instance can be plotted in a scatter plot.
+    - New and improved ``ROCAUC`` Visualizer, which now supports multiclass classification.
+    - Prototype ``DecisionBoundary`` Visualizer, which is a bivariate data visualization algorithm that plots the decision boundaries of each class.
+    - Added ``Rank1D`` Visualizer, which is a one-dimensional ranking of features that utilizes the Shapiro-Wilks ranking by taking into account only a single feature at a time (e.g. histogram analysis).
+    - Improved ``PredictionErrorPlot`` with identity line, shared limits, and R-squared.
+    - Updated ``FreqDist`` Visualizer to make word features a hyperparameter.
+    - Added normalization and scaling to ``ParallelCoordinates``.
     - Added Learning Curve Visualizer, which displays a learning curve based on the number of samples versus the training and cross validation scores to show how a model learns and improves with experience.
     - Added data downloader module to the Yellowbrick library.
     - Complete overhaul of the Yellowbrick documentation; categories of methods are located in separate pages to make it easier to read and contribute to the documentation.
     - Added a new color palette inspired by `ANN-generated colors <http://lewisandquark.tumblr.com/>`_
 
 Bug Fixes:
-   - Repairs to PCA, RadViz, FreqDist unit tests
-   - Repair to matplotlib version check in JointPlot Visualizer
+   - Repairs to ``PCA``, ``RadViz``, ``FreqDist`` unit tests
+   - Repair to matplotlib version check in ``JointPlotVisualizer``
 
 .. _v0.5: https://github.com/DistrictDataLabs/yellowbrick/releases/tag/v0.5
 
@@ -128,8 +162,8 @@ The ``FreqDistVisualizer`` implements frequency distribution plot that tells us 
 * Contributors: Rebecca Bilbro, Benjamin Bengfort
 
 Changes:
-   - TSNEVisualizer for 2D projections of vectorized documents
-   - FreqDistVisualizer for token frequency of text in a corpus
+   - ``TSNEVisualizer`` for 2D projections of vectorized documents
+   - ``FreqDistVisualizer`` for token frequency of text in a corpus
    - Added the user testing evaluation to the documentation
    - Created scikit-yb.org and host documentation there with RFD
    - Created a sample corpus and text examples notebook
@@ -140,7 +174,7 @@ Changes:
 
 Version 0.3.2
 -------------
-Hardened the Yellowbrick API to elevate the idea of a Visualizer to a first principle. This included reconciling shifts in the development of the preliminary versions to the new API, formalizing Visualizer methods like `draw()` and `finalize()`, and adding utilities that revolve around scikit-learn. To that end we also performed administrative tasks like refreshing the documentation and preparing the repository for more and varied open source contributions.
+Hardened the Yellowbrick API to elevate the idea of a Visualizer to a first principle. This included reconciling shifts in the development of the preliminary versions to the new API, formalizing Visualizer methods like ``draw()`` and ``finalize()``, and adding utilities that revolve around scikit-learn. To that end we also performed administrative tasks like refreshing the documentation and preparing the repository for more and varied open source contributions.
 
 * Tag: v0.3.2_
 * Deployed: Friday, January 20, 2017
@@ -174,7 +208,7 @@ Hotfix to solve pip install issues with Yellowbrick.
 
 Version 0.3
 -----------
-This release marks a major change from the previous MVP releases as Yellowbrick moves towards direct integration with scikit-learn for visual diagnostics and steering of machine learning and could therefore be considered the first alpha release of the library. To that end we have created a Visualizer model which extends sklearn.base.BaseEstimator and can be used directly in the ML Pipeline. There are a number of visualizers that can be used throughout the model selection process, including for feature analysis, model selection, and hyperparameter tuning.
+This release marks a major change from the previous MVP releases as Yellowbrick moves towards direct integration with scikit-learn for visual diagnostics and steering of machine learning and could therefore be considered the first alpha release of the library. To that end we have created a Visualizer model which extends ``sklearn.base.BaseEstimator`` and can be used directly in the ML Pipeline. There are a number of visualizers that can be used throughout the model selection process, including for feature analysis, model selection, and hyperparameter tuning.
 
 In this release specifically, we focused on visualizers in the data space for feature analysis and visualizers in the model space for scoring and evaluating models. Future releases will extend these base classes and add more functionality.
 
@@ -183,20 +217,20 @@ In this release specifically, we focused on visualizers in the data space for fe
 * Contributors: Benjamin Bengfort, Rebecca Bilbro, Marius van Niekerk
 
   Enhancements:
-   - Created an API for visualization with machine learning: Visualizers that are BaseEstimators.
+   - Created an API for visualization with machine learning: Visualizers that are ``BaseEstimators``.
    - Created a class hierarchy for Visualizers throughout the ML process particularly feature analysis and model evaluation
    - Visualizer interface is draw method which can be called multiple times on data or model spaces and a poof method to finalize the figure and display or save to disk.
-   - ScoreVisualizers wrap scikit-learn estimators and implement fit and predict (pass-throughs to the estimator) and also score which calls draw in order to visually score the estimator. If the estimator isn't appropriate for the scoring method an exception is raised.
-   - ROCAUC is a ScoreVisualizer that plots the receiver operating characteristic curve and displays the area under the curve score.
-   - ClassificationReport is a ScoreVisualizer that renders the confusion matrix of a classifier as a heatmap.
-   - PredictionError is a ScoreVisualizer that plots the actual vs. predicted values and the 45 degree accuracy line for regressors.
-   - ResidualPlot is a ScoreVisualizer that plots the residuals (y - yhat) across the actual values (y) with the zero accuracy line for both train and test sets.
-   - ClassBalance is a ScoreVisualizer that displays the support for each class as a bar plot.
-   - FeatureVisualizers are scikit-learn Transformers that implement fit and transform and operate on the data space, calling draw to display instances.
-   - ParallelCoordinates plots instances with class across each feature dimension as line segments across a horizontal space.
-   - RadViz plots instances with class in a circular space where each feature dimension is an arc around the circumference and points are plotted relative to the weight of the feature.
-   - Rank2D plots pairwise scores of features as a heatmap in the space [-1, 1] to show relative importance of features. Currently implemented ranking functions are Pearson correlation and covariance.
-   - Coordinated and added palettes in the bgrmyck space and implemented a version of the Seaborn set_palette and set_color_codes functions as well as the ColorPalette object and other matplotlib.rc modifications.
+   - ``ScoreVisualizers`` wrap scikit-learn estimators and implement ``fit()`` and ``predict()`` (pass-throughs to the estimator) and also score which calls draw in order to visually score the estimator. If the estimator isn't appropriate for the scoring method an exception is raised.
+   - ``ROCAUC`` is a ``ScoreVisualizer`` that plots the receiver operating characteristic curve and displays the area under the curve score.
+   - ``ClassificationReport`` is a ``ScoreVisualizer`` that renders the confusion matrix of a classifier as a heatmap.
+   - ``PredictionError`` is a ``ScoreVisualizer`` that plots the actual vs. predicted values and the 45 degree accuracy line for regressors.
+   - ``ResidualPlot`` is a ``ScoreVisualizer`` that plots the residuals (y - yhat) across the actual values (y) with the zero accuracy line for both train and test sets.
+   - ``ClassBalance`` is a ``ScoreVisualizer`` that displays the support for each class as a bar plot.
+   - ``FeatureVisualizers`` are scikit-learn Transformers that implement ``fit()`` and ``transform()`` and operate on the data space, calling draw to display instances.
+   - ``ParallelCoordinates`` plots instances with class across each feature dimension as line segments across a horizontal space.
+   - ``RadViz`` plots instances with class in a circular space where each feature dimension is an arc around the circumference and points are plotted relative to the weight of the feature.
+   - ``Rank2D`` plots pairwise scores of features as a heatmap in the space [-1, 1] to show relative importance of features. Currently implemented ranking functions are Pearson correlation and covariance.
+   - Coordinated and added palettes in the bgrmyck space and implemented a version of the Seaborn set_palette and set_color_codes functions as well as the ``ColorPalette`` object and other matplotlib.rc modifications.
    - Inherited Seaborn's notebook context and whitegrid axes style but make them the default, don't allow user to modify (if they'd like to, they'll have to import Seaborn). This gives Yellowbrick a consistent look and feel without giving too much work to the user and prepares us for matplotlib 2.0.
    - Jupyter Notebook with Examples of all Visualizers and usage.
 
