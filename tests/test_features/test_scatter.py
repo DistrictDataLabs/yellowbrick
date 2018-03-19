@@ -16,10 +16,11 @@ Test the ScatterViz feature analysis visualizers
 # Imports
 ##########################################################################
 
+import six
+import pytest
 import unittest
 import numpy as np
 import matplotlib as mptl
-import pytest
 
 from yellowbrick.features.scatter import *
 from yellowbrick.exceptions import YellowbrickValueError
@@ -66,16 +67,16 @@ class ScatterVizTests(VisualTestCase, DatasetMixin):
         visualizer = ScatterVisualizer(features=features, markers=['*'])
         self.assertIsNotNone(visualizer.markers)
 
-    def test_depreciated(self):
+    def test_deprecated(self):
         with pytest.deprecated_call():
             features = ["temperature", "relative_humidity"]
             ScatterViz(features=features)
 
-    def test_depreciated_message(self):
+    @pytest.mark.skipif(six.PY2, reason="deprecation warnings filtered in PY2")
+    def test_deprecated_message(self):
         with pytest.warns(DeprecationWarning, match='Will be moved to yellowbrick.contrib in v0.7'):
             features = ["temperature", "relative_humidity"]
             ScatterViz(features=features)
-
 
     def test_scatter(self):
         """

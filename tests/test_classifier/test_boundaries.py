@@ -16,6 +16,7 @@ Ensure that the Decision Boundary visualizations work.
 # Imports
 ##########################################################################
 
+import six
 import pytest
 import numpy as np
 
@@ -82,12 +83,13 @@ class DecisionBoundariesVisualizerTest(VisualTestCase):
         viz = DecisionViz(model)
         viz.fit_draw_poof(X_two_cols, y=y)
 
-    def test_depreciated(self):
+    def test_deprecated(self):
         with pytest.deprecated_call():
             model = neighbors.KNeighborsClassifier(3)
             DecisionViz(model)
 
-    def test_depreciated_message(self):
+    @pytest.mark.skipif(six.PY2, reason="deprecation warnings filtered in PY2")
+    def test_deprecated_message(self):
         with pytest.warns(DeprecationWarning, match='Will be moved to yellowbrick.contrib in v0.7'):
             model = neighbors.KNeighborsClassifier(3)
             DecisionViz(model)
