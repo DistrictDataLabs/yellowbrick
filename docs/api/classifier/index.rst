@@ -1,3 +1,5 @@
+.. -*- mode: rst -*-
+
 Classification Visualizers
 ==========================
 
@@ -10,6 +12,8 @@ Classification models attempt to predict a target in a discrete space, that is a
 -  :doc:`rocauc`: Presents the graph of receiver operating characteristics
    along with area under the curve
 -  :doc:`class_balance`: Displays the difference between the class balances and support
+-  :doc:`class_prediction_error`: An alternative to the confusion matrix that shows both support and the difference between actual and predicted classes
+-  :doc:`threshold`: Shows the bounds of precision, recall and queue rate after a number of trials.
 
 Estimator score visualizers wrap Scikit-Learn estimators and expose the
 Estimator API such that they have fit(), predict(), and score() methods
@@ -26,7 +30,7 @@ a Pipeline or VisualPipeline.
     from sklearn.ensemble import RandomForestClassifier
     from sklearn.model_selection import train_test_split
 
-    from yellowbrick.classifier import ClassificationReport, ROCAUC, ClassBalance
+    from yellowbrick.classifier import ClassificationReport, ROCAUC, ClassBalance, ThresholdViz
 
 .. toctree::
    :maxdepth: 2
@@ -35,3 +39,5 @@ a Pipeline or VisualPipeline.
    confusion_matrix
    rocauc
    class_balance
+   class_prediction_error
+   threshold

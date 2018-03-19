@@ -18,6 +18,8 @@ Base classes for feature visualizers and feature selection tools.
 ## Imports
 ##########################################################################
 
+import numpy as np
+
 from yellowbrick.base import Visualizer
 from yellowbrick.utils import is_dataframe
 from sklearn.base import TransformerMixin
@@ -26,6 +28,7 @@ from sklearn.base import TransformerMixin
 ##########################################################################
 ## Feature Visualizers
 ##########################################################################
+
 
 class FeatureVisualizer(Visualizer, TransformerMixin):
     """
@@ -40,16 +43,6 @@ class FeatureVisualizer(Visualizer, TransformerMixin):
 
     def __init__(self, ax=None, **kwargs):
         super(FeatureVisualizer, self).__init__(ax=ax, **kwargs)
-
-    def fit(self, X, y=None, **fit_params):
-        """
-        This method performs preliminary computations in order to set up the
-        figure or perform other analyses. It can also call drawing methods in
-        order to set up various non-instance related figure elements.
-
-        This method must return self.
-        """
-        return self
 
     def transform(self, X):
         """
@@ -74,13 +67,66 @@ class FeatureVisualizer(Visualizer, TransformerMixin):
         return Xp
 
 
+class MultiFeatureVisualizer(FeatureVisualizer):
+    """
+    MultiFeatureVisualiers are a subclass of FeatureVisualizer that visualize
+    several features at once. This class provides base functionality for
+    getting the names of features for use in plot annotation.
+
+    Parameters
+    ----------
+
+    ax: matplotlib Axes, default: None
+        The axis to plot the figure on. If None is passed in the current axes
+        will be used (or generated if required).
+
+    features: list, default: None
+        a list of feature names to use
+        If a DataFrame is passed to fit and features is None, feature
+        names are selected as the columns of the DataFrame.
+
+    kwargs : dict
+        Keyword arguments that are passed to the base class and may influence
+        the visualization as defined in other Visualizers.
+
+    """
+
+    def __init__(self, ax=None, features=None, **kwargs):
+        super(MultiFeatureVisualizer, self).__init__(ax=ax, **kwargs)
+
+        # Data Parameters
+        self.features_ = features
+
+    def fit(self, X, y=None, **fit_params):
+        """
+        This method performs preliminary computations in order to set up the
+        figure or perform other analyses. It can also call drawing methods in
+        order to set up various non-instance related figure elements.
+
+        This method must return self.
+        """
+
+        # Handle the feature names if they're None.
+        if self.features_ is None:
+
+            # If X is a data frame, get the columns off it.
+            if is_dataframe(X):
+                self.features_ = np.array(X.columns)
+
+            # Otherwise create numeric labels for each column.
+            else:
+                _, ncols = X.shape
+                self.features_ = np.arange(0, ncols)
+
+        return self
+
 ##########################################################################
 ## Data Visualizers
 ##########################################################################
 
-class DataVisualizer(FeatureVisualizer):
+class DataVisualizer(MultiFeatureVisualizer):
     """
-    Data Visualizers are a subclass of Feature Visualiers which plot the
+    Data Visualizers are a subclass of Feature Visualizers which plot the
     instances in feature space (also called data space, hence the name of the
     visualizer). Feature space is a multi-dimensional space defined by the
     columns of the instance dependent vector input, X which is passed to
@@ -136,10 +182,9 @@ class DataVisualizer(FeatureVisualizer):
         Initialize the data visualization with many of the options required
         in order to make most visualizations work.
         """
-        super(DataVisualizer, self).__init__(ax=ax, **kwargs)
+        super(DataVisualizer, self).__init__(ax=ax, features=features, **kwargs)
 
         # Data Parameters
-        self.features_ = features
         self.classes_  = classes
 
         # Visual Parameters
@@ -148,7 +193,7 @@ class DataVisualizer(FeatureVisualizer):
 
     def fit(self, X, y=None, **kwargs):
         """
-        The fit method is the primary drawing input for the parallel coords
+        The fit method is the primary drawing input for the
         visualization since it has both the X and y data required for the
         viz and the transform method does not.
 
@@ -168,26 +213,12 @@ class DataVisualizer(FeatureVisualizer):
         self : instance
             Returns the instance of the transformer/visualizer
         """
-        # Get the shape of the data
-        nrows, ncols = X.shape
+        super(DataVisualizer, self).fit(X, y, **kwargs)
 
         # Store the classes for the legend if they're None.
         if self.classes_ is None:
             # TODO: Is this the most efficient method?
             self.classes_ = [str(label) for label in set(y)]
-
-        # Handle the feature names if they're None.
-        if self.features_ is None:
-
-            # If X is a data frame, get the columns off it.
-            if is_dataframe(X):
-                self.features_ = X.columns
-
-            # Otherwise create numeric labels for each column.
-            else:
-                self.features_ = [
-                    str(cdx) for cdx in range(ncols)
-                ]
 
         # Draw the instances
         self.draw(X, y, **kwargs)

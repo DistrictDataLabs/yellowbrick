@@ -1,3 +1,4 @@
+.. -*- mode: rst -*-
 .. yellowbrick documentation master file, created by
     sphinx-quickstart on Tue Jul  5 19:45:43 2016.
     You can adapt this file completely to your liking, but it should at least
@@ -24,12 +25,14 @@ Feature Visualization
 - :doc:`api/features/pcoords`: horizontal visualization of instances
 - :doc:`Radial Visualization <api/features/radviz>`: separation of instances around a circular plot
 - :doc:`api/features/pca`: projection of instances based on principal components
+- :doc:`api/features/importances`: rank features by importance or linear coeficients for a specific model
 - :doc:`Scatter and Joint Plots<api/features/scatter>`: direct data visualization with feature selection
 
 Classification Visualization
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 - :doc:`api/classifier/class_balance`: see how the distribution of classes affects the model
+- :doc:`api/classifier/class_prediction_error`: shows error and support in classification
 - :doc:`api/classifier/classification_report`: visual representation of precision, recall, and F1
 - :doc:`ROC/AUC Curves <api/classifier/rocauc>`: receiver operator characteristics and area under the curve
 - :doc:`Confusion Matrices <api/classifier/confusion_matrix>`: visual description of class decision making
@@ -81,9 +84,10 @@ The following is a complete listing of the Yellowbrick documentation for this ve
    quickstart
    tutorial
    api/index
-   about
    evaluation
    contributing
+   matplotlib
+   about
    changelog
 
 Indices and tables

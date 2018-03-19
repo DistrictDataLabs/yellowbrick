@@ -1,3 +1,5 @@
+.. -*- mode: rst -*-
+
 Text Modeling Visualizers
 =========================
 

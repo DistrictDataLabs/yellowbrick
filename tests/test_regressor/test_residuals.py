@@ -24,7 +24,6 @@ from tests.base import VisualTestCase
 from yellowbrick.regressor.residuals import *
 
 from sklearn.svm import SVR
-from sklearn import cross_validation as cv
 from sklearn.model_selection import train_test_split as tts
 
 ##########################################################################
@@ -67,6 +66,20 @@ class PredictionErrorTests(VisualTestCase):
         visualizer.poof()
         visualizer.ax.grid(False)
         self.assert_images_similar(visualizer)
+
+    @unittest.skip("not implemented yet")
+    def test_peplot_shared_limits(self):
+        """
+        Test shared limits on the peplot
+        """
+        raise NotImplementedError("not yet implemented")
+
+    @unittest.skip("not implemented yet")
+    def test_peplot_draw_bounds(self):
+        """
+        Test the peplot +/- one bounding in draw
+        """
+        raise NotImplementedError("not yet implemented")
 
 ##########################################################################
 ## Residuals Plots test case

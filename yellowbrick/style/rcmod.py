@@ -25,8 +25,6 @@ import functools
 import numpy as np
 import matplotlib as mpl
 
-from six import string_types
-
 # Check to see if we have a slightly modern version of mpl
 from distutils.version import LooseVersion
 mpl_ge_150 = LooseVersion(mpl.__version__) >= '1.5.0'

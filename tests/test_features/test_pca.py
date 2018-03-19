@@ -17,13 +17,14 @@ Tests for the PCA based feature visualizer.
 ## Imports
 ##########################################################################
 
-import unittest
-import yellowbrick
+import pytest
 import numpy as np
 import numpy.testing as npt
 
 from tests.base import VisualTestCase
 from yellowbrick.features.pca import *
+from yellowbrick.exceptions import YellowbrickError
+
 
 ##########################################################################
 ##PCA Tests
@@ -85,8 +86,9 @@ class PCADecompositionTests(VisualTestCase):
         visualizer.fit(X)
         pca_array = visualizer.transform(X)
         visualizer.poof()
-
         npt.assert_array_almost_equal(pca_array, X_pca_decomp)
+        self.assert_images_similar(visualizer)
+
 
     def test_scale_false_2d(self):
         """
@@ -198,28 +200,14 @@ class PCADecompositionTests(VisualTestCase):
         visualizer = PCADecomposition(**params)
         visualizer.fit(X)
         pca_array = visualizer.transform(X)
-        visualizer.poof()
-
-
         npt.assert_array_almost_equal(pca_array, X_pca_decomp)
 
     def test_scale_true_4d_execption(self):
         """
         Test the PCADecomposition visualizer 4 dimensions scaled (catch YellowbrickError).
         """
-        X = np.array(
-            [[2.318, 2.727, 4.260, 7.212, 4.792],
-             [2.315, 2.726, 4.295, 7.140, 4.783, ],
-             [2.315, 2.724, 4.260, 7.135, 4.779, ],
-             [2.110, 3.609, 4.330, 7.985, 5.595, ],
-             [2.110, 3.626, 4.330, 8.203, 5.621, ],
-             [2.110, 3.620, 4.470, 8.210, 5.612, ]]
-        )
-
-        y = np.array([1, 1, 0, 1, 0, 0])
-
-        params = {'scale': True, 'center': False, 'proj_dim': 4, 'col': y}
-        with self.assertRaisesRegexp(yellowbrick.exceptions.YellowbrickError, "proj_dim object is not 2 or 3"):
+        params = {'scale': True, 'center': False, 'proj_dim': 4}
+        with pytest.raises(YellowbrickError, match="proj_dim object is not 2 or 3"):
             PCADecomposition(**params)
 
     def test_scale_true_3d_execption(self):
@@ -240,6 +228,6 @@ class PCADecompositionTests(VisualTestCase):
         params = {'scale': True, 'center': False, 'proj_dim': 3, 'col': y}
 
 
-        with self.assertRaisesRegexp(ValueError, "n_components=3 must be between 0 and n_features"):
+        with pytest.raises(ValueError, match="n_components=3 must be between 0 and n_features"):
             pca = PCADecomposition(**params)
             pca.fit(X)

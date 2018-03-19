@@ -1,3 +1,5 @@
+.. -*- mode: rst -*-
+
 Token Frequency Distribution
 ============================
 

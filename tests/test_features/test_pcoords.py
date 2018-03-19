@@ -17,9 +17,9 @@ Testing for the parallel coordinates feature visualizers
 ## Imports
 ##########################################################################
 
-import unittest
 import numpy as np
 
+from tests.base import VisualTestCase
 from yellowbrick.features.pcoords import *
 from tests.dataset import DatasetMixin
 
@@ -28,7 +28,7 @@ from tests.dataset import DatasetMixin
 ##########################################################################
 
 
-class ParallelCoordinatesTests(unittest.TestCase, DatasetMixin):
+class ParallelCoordinatesTests(VisualTestCase, DatasetMixin):
 
     X = np.array(
             [[ 2.318, 2.727, 4.260, 7.212, 4.792],
@@ -47,6 +47,9 @@ class ParallelCoordinatesTests(unittest.TestCase, DatasetMixin):
         """
         visualizer = ParallelCoordinates()
         visualizer.fit_transform(self.X, self.y)
+        visualizer.poof()
+        self.assert_images_similar(visualizer)
+
 
     def test_normalized_pcoords(self):
         """
@@ -54,6 +57,8 @@ class ParallelCoordinatesTests(unittest.TestCase, DatasetMixin):
         """
         visualizer = ParallelCoordinates(normalize='l2')
         visualizer.fit_transform(self.X, self.y)
+        visualizer.poof()
+        self.assert_images_similar(visualizer)
 
     def test_normalized_pcoords_invalid_arg(self):
         """
@@ -101,8 +106,7 @@ class ParallelCoordinatesTests(unittest.TestCase, DatasetMixin):
 
     def test_integrated_pcoords(self):
         """
-        Test parallel coordinates on a real, occupancy data set (downsampled
-        for speed)
+        Test parallel coordinates on a real data set (downsampled for speed)
         """
         occupancy = self.load_data('occupancy')
 
@@ -113,8 +117,10 @@ class ParallelCoordinatesTests(unittest.TestCase, DatasetMixin):
         y = occupancy['occupancy'].astype(int)
 
         # Convert X to an ndarray
-        X = np.array(X.tolist())
+        X = X.copy().view((float, len(X.dtype.names)))
 
         # Test the visualizer
         visualizer = ParallelCoordinates(sample=200)
         visualizer.fit_transform(X, y)
+        visualizer.poof()
+        self.assert_images_similar(visualizer)

@@ -21,7 +21,6 @@ import inspect
 import numpy as np
 
 from sklearn.base import BaseEstimator
-from yellowbrick.exceptions import YellowbrickTypeError
 
 
 ##########################################################################
@@ -127,6 +126,32 @@ def is_clusterer(estimator):
 
 # Alias for closer name to isinstance and issubclass
 isclusterer = is_clusterer
+
+
+def is_gridsearch(estimator):
+    """
+    Returns True if the given estimator is a clusterer.
+
+    Parameters
+    ----------
+    estimator : class or instance
+        The object to test if it is a Scikit-Learn clusterer, especially a
+        Scikit-Learn estimator or Yellowbrick visualizer
+    """
+    # TODO: once we make ScoreVisualizer and ModelVisualizer pass through
+    # wrappers as in Issue #90, these three lines become unnecessary.
+    # NOTE: This must be imported here to avoid recursive import.
+    from yellowbrick.base import Visualizer
+    if isinstance(estimator, Visualizer):
+        return is_gridsearch(estimator.estimator)
+
+    # Estimator type for a GridSearchCV object is the type of the model it
+    # searches over; we need a direct check.
+    from sklearn.model_selection import GridSearchCV
+    return isinstance(estimator, GridSearchCV)
+
+# Alias for closer name to isinstance and issubclass
+isgridsearch = is_gridsearch
 
 
 def is_dataframe(obj):

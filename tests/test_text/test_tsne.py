@@ -17,28 +17,38 @@ Tests for the TSNE visual corpus embedding mechanism.
 ## Imports
 ##########################################################################
 
-
-import unittest
-import numpy as np
+import six
+import pytest
 
 from yellowbrick.text.tsne import *
+from tests.base import VisualTestCase
 from tests.dataset import DatasetMixin
 from yellowbrick.exceptions import YellowbrickValueError
+
+from sklearn.datasets import make_classification
 from sklearn.feature_extraction.text import TfidfVectorizer
+
+try:
+    import pandas
+except ImportError:
+    pandas = None
 
 
 ##########################################################################
 ## TSNE Tests
 ##########################################################################
 
-class TSNETests(unittest.TestCase, DatasetMixin):
+class TestTSNE(VisualTestCase, DatasetMixin):
+    """
+    TSNEVisualizer tests
+    """
 
     def test_bad_decomposition(self):
         """
         Ensure an error is raised when a bad decompose argument is specified
         """
-        with self.assertRaises(YellowbrickValueError):
-            tsne = TSNEVisualizer(decompose='bob')
+        with pytest.raises(YellowbrickValueError):
+            TSNEVisualizer(decompose='bob')
 
     def test_make_pipeline(self):
         """
@@ -46,26 +56,117 @@ class TSNETests(unittest.TestCase, DatasetMixin):
         """
 
         tsne = TSNEVisualizer() # Should not cause an exception.
-        self.assertIsNotNone(tsne.transformer_)
+        assert tsne.transformer_ is not None
 
         svdp = tsne.make_transformer('svd', 90)
-        self.assertEqual(len(svdp.steps), 2)
+        assert len(svdp.steps) == 2
 
         pcap = tsne.make_transformer('pca')
-        self.assertEqual(len(pcap.steps), 2)
+        assert len(pcap.steps) == 2
 
         none = tsne.make_transformer(None)
-        self.assertEqual(len(none.steps), 1)
+        assert len(none.steps) == 1
 
     def test_integrated_tsne(self):
         """
-        Assert no errors occur during tsne integration
+        Check tSNE integrated visualization on the hobbies corpus
         """
         corpus = self.load_data('hobbies')
         tfidf  = TfidfVectorizer()
 
         docs   = tfidf.fit_transform(corpus.data)
-        labels = corpus.target 
+        labels = corpus.target
 
-        tsne = TSNEVisualizer()
+        tsne = TSNEVisualizer(random_state=8392, colormap='Set1')
         tsne.fit_transform(docs, labels)
+
+        tol = 40 if six.PY3 else 55
+        self.assert_images_similar(tsne, tol=tol)
+
+    def test_make_classification_tsne(self):
+        """
+        Test tSNE integrated visualization on a sklearn classifier dataset
+        """
+
+        ## produce random data
+        X, y = make_classification(n_samples=200, n_features=100,
+                               n_informative=20, n_redundant=10,
+                               n_classes=3, random_state=42)
+
+        ## visualize data with t-SNE
+        tsne = TSNEVisualizer(random_state=87)
+        tsne.fit(X, y)
+
+        tol = 0.1 if six.PY3 else 40
+        self.assert_images_similar(tsne, tol=tol)
+
+    def test_make_classification_tsne_class_labels(self):
+        """
+        Test tSNE integrated visualization with class labels specified
+        """
+
+        ## produce random data
+        X, y = make_classification(n_samples=200, n_features=100,
+                               n_informative=20, n_redundant=10,
+                               n_classes=3, random_state=42)
+
+        ## visualize data with t-SNE
+        tsne = TSNEVisualizer(random_state=87, labels=['a', 'b', 'c'])
+        tsne.fit(X, y)
+
+        tol = 0.1 if six.PY3 else 40
+        self.assert_images_similar(tsne, tol=tol)
+
+    def test_tsne_mismtached_labels(self):
+        """
+        Assert exception is raised when number of labels doesn't match
+        """
+        ## produce random data
+        X, y = make_classification(n_samples=200, n_features=100,
+                               n_informative=20, n_redundant=10,
+                               n_classes=3, random_state=42)
+
+        ## fewer labels than classes
+        tsne = TSNEVisualizer(random_state=87, labels=['a', 'b'])
+        with pytest.raises(YellowbrickValueError):
+            tsne.fit(X,y)
+
+        ## more labels than classes
+        tsne = TSNEVisualizer(random_state=87, labels=['a', 'b', 'c', 'd'])
+        with pytest.raises(YellowbrickValueError):
+            tsne.fit(X,y)
+
+
+    def test_no_target_tsne(self):
+        """
+        Test tSNE when no target or classes are specified
+        """
+        ## produce random data
+        X, y = make_classification(n_samples=200, n_features=100,
+                               n_informative=20, n_redundant=10,
+                               n_classes=3, random_state=6897)
+
+        ## visualize data with t-SNE
+        tsne = TSNEVisualizer(random_state=64)
+        tsne.fit(X)
+
+        self.assert_images_similar(tsne, tol=0.1)
+
+    @pytest.mark.skipif(pandas is None, reason="test requires pandas")
+    def test_visualizer_with_pandas(self):
+        """
+        Test tSNE when passed a pandas DataFrame and series
+        """
+        X, y = make_classification(
+            n_samples=200, n_features=100, n_informative=20, n_redundant=10,
+            n_classes=3, random_state=3020
+        )
+
+        X = pandas.DataFrame(X)
+        y = pandas.Series(y)
+
+        tsne = TSNEVisualizer(random_state=64)
+        tsne.fit(X, y)
+
+        tol = 0.1 if six.PY3 else 40
+        self.assert_images_similar(tsne, tol=tol)

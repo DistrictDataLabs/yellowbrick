@@ -1,3 +1,5 @@
+.. -*- mode: rst -*-
+
 RadViz Visualizer
 =================
 
@@ -11,6 +13,14 @@ greatly expanding the dimensionality of the visualization.
 Data scientists use this method to detect separability between classes.
 E.g. is there an opportunity to learn from the feature set or is there
 just too much noise?
+
+If your data contains rows with missing values (numpy.nan), those missing
+values will not be plotted. In other words, you may not get the entire
+picture of your data. RadViz will raise a DataWarning to inform you of the
+percent missing.
+
+If you do receive this warning, you may want to look at imputation strategies.
+A good starting place is `scikit-learn Imputer. <http://scikit-learn.org/stable/modules/generated/sklearn.preprocessing.Imputer.html>`_
 
 .. code:: python
 

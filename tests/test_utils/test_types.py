@@ -22,7 +22,7 @@ import unittest
 
 from sklearn.pipeline import Pipeline
 from sklearn.decomposition import PCA
-from sklearn.neighbors import LSHForest
+from sklearn.neighbors import NearestNeighbors
 from sklearn.linear_model import RidgeCV, LassoCV
 from sklearn.linear_model import LinearRegression
 from sklearn.linear_model import LogisticRegression
@@ -61,7 +61,7 @@ class ModelUtilityTests(unittest.TestCase):
             LinearRegression(),
             LogisticRegression(),
             KMeans(),
-            LSHForest(),
+            NearestNeighbors(),
             PCA(),
             RidgeCV(),
             LassoCV(),
@@ -90,7 +90,7 @@ class ModelUtilityTests(unittest.TestCase):
             LinearRegression,
             LogisticRegression,
             KMeans,
-            LSHForest,
+            NearestNeighbors,
             PCA,
             RidgeCV,
             LassoCV,
@@ -153,7 +153,7 @@ class ModelUtilityTests(unittest.TestCase):
         notregressors = (
             KMeans,
             PCA,
-            LSHForest,
+            NearestNeighbors,
             LogisticRegression,
             RandomForestClassifier,
         )
@@ -182,7 +182,7 @@ class ModelUtilityTests(unittest.TestCase):
         notregressors = (
             KMeans,
             PCA,
-            LSHForest,
+            NearestNeighbors,
             LogisticRegression,
             RandomForestClassifier,
         )
@@ -239,7 +239,7 @@ class ModelUtilityTests(unittest.TestCase):
         notclassifiers = (
             KMeans,
             PCA,
-            LSHForest,
+            NearestNeighbors,
             LinearRegression,
             RidgeCV,
             LassoCV,
@@ -268,7 +268,7 @@ class ModelUtilityTests(unittest.TestCase):
         notclassifiers = (
             KMeans,
             PCA,
-            LSHForest,
+            NearestNeighbors,
             RidgeCV,
             LassoCV,
             LinearRegression,
@@ -330,7 +330,7 @@ class ModelUtilityTests(unittest.TestCase):
             LassoCV,
             LinearRegression,
             PCA,
-            LSHForest,
+            NearestNeighbors,
             LogisticRegression,
             RandomForestClassifier,
         )
@@ -362,7 +362,7 @@ class ModelUtilityTests(unittest.TestCase):
             LassoCV,
             LinearRegression,
             PCA,
-            LSHForest,
+            NearestNeighbors,
             LogisticRegression,
             RandomForestClassifier,
         )

@@ -18,13 +18,10 @@ Regressor visualizers that score residuals: prediction vs. actual data.
 ## Imports
 ##########################################################################
 
-import matplotlib.pyplot as plt
-
 from sklearn.model_selection import train_test_split
 
 from ..style.palettes import LINE_COLOR
 from .base import RegressionScoreVisualizer
-from ..exceptions import YellowbrickTypeError
 from ..bestfit import draw_best_fit, draw_identity_line
 
 

@@ -44,7 +44,7 @@ class ClusterBaseTests(unittest.TestCase):
 
         for nomodel in nomodels:
             with self.assertRaises(YellowbrickTypeError):
-                visualizer = ClusteringScoreVisualizer(nomodel())
+                ClusteringScoreVisualizer(nomodel())
 
         models = [
             KMeans, MiniBatchKMeans, AffinityPropagation, MeanShift, DBSCAN, Birch
@@ -52,6 +52,6 @@ class ClusterBaseTests(unittest.TestCase):
 
         for model in models:
             try:
-                visualizer = ClusteringScoreVisualizer(model())
+                ClusteringScoreVisualizer(model())
             except YellowbrickTypeError:
                 self.fail("could not pass clustering estimator to visualizer")
