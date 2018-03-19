@@ -10,8 +10,9 @@ The class prediction error chart provides a way to quickly understand how good y
     from sklearn.model_selection import train_test_split
 
     # Create classification dataset
-    X, y = make_classification(n_samples=1000, n_classes=5,
-                               n_informative=3, n_clusters_per_class=1)
+    X, y = make_classification(
+        n_samples=1000, n_classes=5, n_informative=3, n_clusters_per_class=1
+    )
 
     classes = ["apple", "kiwi", "pear", "banana", "orange"]
 
@@ -26,8 +27,9 @@ The class prediction error chart provides a way to quickly understand how good y
     from yellowbrick.classifier import ClassPredictionError
 
     # Instantiate the classification model and visualizer
-    visualizer = ClassPredictionError(RandomForestClassifier(),
-                                      classes=classes)
+    visualizer = ClassPredictionError(
+        RandomForestClassifier(), classes=classes
+    )
 
     # Fit the training data to the visualizer
     visualizer.fit(X_train, y_train)
@@ -36,7 +38,7 @@ The class prediction error chart provides a way to quickly understand how good y
     visualizer.score(X_test, y_test)
 
     # Draw visualization
-    g = visualizer.poof(outpath="images/class_prediction_error.png")
+    g = visualizer.poof()
 
 .. image:: images/class_prediction_error.png
 
