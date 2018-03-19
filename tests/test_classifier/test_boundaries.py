@@ -20,6 +20,7 @@ import pytest
 import numpy as np
 
 from tests.base import VisualTestCase
+
 from yellowbrick.classifier import *
 from yellowbrick.exceptions import YellowbrickTypeError
 from yellowbrick.exceptions import YellowbrickValueError
@@ -69,7 +70,7 @@ X_two_cols = X[:, :2]
 
 class DecisionBoundariesVisualizerTest(VisualTestCase):
     """
-    DecisionBoundariesVisualizer 
+    DecisionBoundariesVisualizer
     """
 
     def test_decision_bounardies(self):
@@ -80,6 +81,16 @@ class DecisionBoundariesVisualizerTest(VisualTestCase):
         viz = DecisionViz(model)
         viz.fit_draw_poof(X_two_cols, y=y)
 
+    def test_depreciated(self):
+        with pytest.deprecated_call():
+            model = neighbors.KNeighborsClassifier(3)
+            DecisionViz(model)
+            
+    def test_depreciated_message(self):
+        with pytest.warns(DeprecationWarning, match='Will be moved to yellowbrick.contrib in v0.7'):
+            model = neighbors.KNeighborsClassifier(3)
+            DecisionViz(model)
+            
     def test_init(self):
         """
         Test correct initialization of the internal state

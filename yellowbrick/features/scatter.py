@@ -16,6 +16,7 @@ Implements a 2D scatter plot for feature analysis.
 ##########################################################################
 
 import itertools
+from sklearn.utils.deprecation import deprecated
 import numpy as np
 
 from yellowbrick.features.base import DataVisualizer
@@ -29,7 +30,7 @@ from yellowbrick.style.colors import resolve_colors
 # Quick Methods
 ##########################################################################
 
-
+@deprecated("Will be moved to yellowbrick.contrib in v0.7")
 def scatterviz(X,
                y=None,
                ax=None,
@@ -92,8 +93,7 @@ def scatterviz(X,
 ##########################################################################
 # Static ScatterVisualizer Visualizer
 ##########################################################################
-
-
+@deprecated("Will be moved to yellowbrick.contrib in v0.7")
 class ScatterVisualizer(DataVisualizer):
     """
     ScatterVisualizer is a bivariate feature data visualization algorithm that
