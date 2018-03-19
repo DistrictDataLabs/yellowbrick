@@ -9,6 +9,8 @@ The AlphaSelection Visualizer demonstrates how different values of alpha influen
 
 .. code:: python
 
+    from sklearn.model_selection import train_test_split
+
     # Load the data
     df = load_data('concrete')
     feature_names = ['cement', 'slag', 'ash', 'water', 'splast', 'coarse', 'fine', 'age']
@@ -22,6 +24,12 @@ The AlphaSelection Visualizer demonstrates how different values of alpha influen
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2)
 
 .. code:: python
+
+    import numpy as np
+
+    from sklearn.linear_model import LassoCV
+    
+    from yellowbrick.regressor import AlphaSelection
 
     # Create a list of alphas to cross-validate against
     alphas = np.logspace(-12, -0.5, 400)
