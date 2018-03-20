@@ -60,7 +60,7 @@ The following code snippet creates a utility that will load the corpus from disk
             target=target,
         )
 
-This is a fairly long ibt of code, so let's walk through it step by step. The data in the corpus directory is stored as follows:
+This is a fairly long bit of code, so let's walk through it step by step. The data in the corpus directory is stored as follows:
 
 ::
 
