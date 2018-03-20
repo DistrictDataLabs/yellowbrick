@@ -12,6 +12,7 @@ Classification models attempt to predict a target in a discrete space, that is a
 -  :doc:`rocauc`: Presents the graph of receiver operating characteristics
    along with area under the curve
 -  :doc:`class_balance`: Displays the difference between the class balances and support
+-  :doc:`class_prediction_error`: An alternative to the confusion matrix that shows both support and the difference between actual and predicted classes
 -  :doc:`threshold`: Shows the bounds of precision, recall and queue rate after a number of trials.
 
 Estimator score visualizers wrap Scikit-Learn estimators and expose the
@@ -38,4 +39,5 @@ a Pipeline or VisualPipeline.
    confusion_matrix
    rocauc
    class_balance
+   class_prediction_error
    threshold
