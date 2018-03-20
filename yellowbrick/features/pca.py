@@ -18,7 +18,7 @@ Decomposition based feature visualization with PCA.
 ##########################################################################
 
 # NOTE: must import mplot3d to load the 3D projection
-import mpl_toolkits.mplot3d # noqa 
+import mpl_toolkits.mplot3d # noqa
 import matplotlib.pyplot as plt
 
 from yellowbrick.features.base import FeatureVisualizer
@@ -137,7 +137,7 @@ class PCADecomposition(FeatureVisualizer):
     >>> iris = datasets.load_iris()
     >>> X = iris.data
     >>> y = iris.target
-    >>> params = {'scale': True, 'center': False, 'col': y}
+    >>> params = {'scale': True, 'center': False, 'color': y}
     >>> visualizer = PCADecomposition(**params)
     >>> visualizer.fit(X)
     >>> visualizer.transform(X)
