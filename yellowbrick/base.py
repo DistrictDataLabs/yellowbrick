@@ -15,12 +15,13 @@ Abstract base classes and interface for Yellowbrick.
 """
 
 import matplotlib.pyplot as plt
+import math
 
 from .utils.wrapper import Wrapper
 from sklearn.base import BaseEstimator
 from .utils import get_model_name, isestimator
 from sklearn.model_selection import cross_val_predict as cvp
-
+from .exceptions import YellowbrickValueError
 
 ##########################################################################
 ## Base class hierarchy
@@ -407,3 +408,142 @@ class MultiModelMixin(object):
         """
         for model in self.models:
             yield cvp(model, X, y, cv=12)
+
+
+
+class VisualizerGrid(Visualizer):
+    """
+    Used as a base class for visualizers that use subplots.
+
+    Parameters
+    ----------
+    visualizers : A list of instantiated visualizers
+
+    nrows: integer, default: None
+        The number of rows desired, if you would like a fixed number of rows.
+        Specify only one of nrows and ncols, the other should be None. If you 
+        specify nrows, there will be enough columns created to fit all the 
+        visualizers specified in the visualizers list. 
+    
+    ncols: integer, default: None
+        The number of columns desired, if you would like a fixed number of columns.
+        Specify only one of nrows and ncols, the other should be None. If you 
+        specify ncols, there will be enough rows created to fit all the 
+        visualizers specified in the visualizers list. 
+
+    axarr: matplotlib.axarr, default: None.
+        If you want to put the plot onto an existing axarr, specify it here. Otherwise a new
+        one will be created. 
+
+    kwargs : additional keyword arguments, default: None
+        Any additional keyword arguments will be passed on to the fit() method and therefore 
+        passed on to the fit() method of the wrapped estimators, if applicable. Otherwise ignored.
+
+    Examples
+    --------
+    >>> from yellowbrick.base import VisualizerGrid
+    >>> from sklearn.linear_model import LogisticRegression
+    >>> from yellowbrick.classifier import ConfusionMatrix
+    >>> from yellowbrick.classifier import ClassBalance
+    >>> model = LogisticRegression()
+    >>> visualizers = [ClassBalance(model),ConfusionMatrix(model)]
+    >>> mv = VisualizerGrid(visualizers, ncols=2)
+    >>> mv.fit(X_train, y_train)
+    >>> mv.score(X_test, y_test)
+    >>> mv.poof()
+    """
+    def __init__(self, visualizers = [], nrows = None, ncols = None, axarr = None, **kwargs):
+        #Class static params
+        self.SUBPLOT_DEFAULT_PIXELS = 400
+
+        #Allocate passed parameters
+        self._visualizers = visualizers
+        plotcount = len(visualizers)
+        if nrows == None and ncols == None:
+            #TODO: enhancement would be to also allow a 2-d array  of visualizers instead of just a 1-d left-to-right + top-to-bottom list
+            self.ncols = 1
+            self.nrows = plotcount
+        elif ncols == None:
+            self.nrows = nrows
+            self.ncols = math.ceil(plotcount / self.nrows)
+        elif nrows == None:
+            self.ncols = ncols
+            self.nrows = math.ceil(plotcount / self.ncols)
+        else:
+            raise YellowbrickValueError("You can only specify either nrows or ncols, \
+                the other will be calculated based on the length of the list of visualizers.")
+        
+
+        if axarr == None:
+            fig, axarr = plt.subplots(self.nrows, self.ncols, squeeze = False)
+        
+        self.axarr = axarr
+
+        idx = 0
+        for row in range(self.nrows):
+            for col in range(self.ncols):
+                try:
+                    self.visualizers[idx].ax = self.axarr[row, col]
+                #If len(visualizers) isn't evenly divisibly by rows/columns, 
+                #we want to create the illusion of empty space by hiding the axis
+                except IndexError as e:
+                    self.axarr[row,col].axis('off')
+
+                idx += 1
+
+        self.kwargs = kwargs
+
+    @property
+    def visualizers(self):
+        return self._visualizers
+
+    @visualizers.setter
+    def visualizers(self,value):
+        raise AttributeError("Visualizers list can only be set during class instantiation.")
+
+    @property 
+    def ax(self):
+         """
+         Override Visualizer.ax to return the current axis 
+         """
+         return plt.gca() 
+
+    @ax.setter
+    def ax(self, ax):
+         raise YellowbrickTypeError("cannot set new axes objects on multiple visualizers")
+
+
+    def fit(self,X,y,**kwargs):
+
+        for vz in self.visualizers:
+            vz.fit(X,y,**kwargs)
+
+        return self
+
+    def score(self,X,y):
+
+        for idx in range(len(self.visualizers)):
+            self.visualizers[idx].score(X,y)
+
+        return self
+
+    def poof(self, outpath=None, **kwargs):
+        
+        if self.axarr is None: return
+
+        #Finalize all visualizers
+        for idx in range(len(self.visualizers)):
+            self.visualizers[idx].finalize()
+
+        #Choose a reasonable default size if the user has not manually specified one
+        # self.size() uses pixels rather than matplotlib's default of inches
+        if not hasattr(self, "_size") or self._size is None:
+            self._width = self.SUBPLOT_DEFAULT_PIXELS * self.ncols
+            self._height = self.SUBPLOT_DEFAULT_PIXELS * self.nrows
+            self.size = (self._width,self._height);
+
+        if outpath is not None:
+            plt.savefig(outpath, **kwargs)
+        else:
+            plt.show()
+
