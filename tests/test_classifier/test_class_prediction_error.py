@@ -28,7 +28,7 @@ from yellowbrick.exceptions import ModelError
 
 from sklearn.svm import LinearSVC
 from sklearn.ensemble import RandomForestClassifier
-from sklearn.datasets import make_multilabel_classification
+from sklearn.datasets import make_multilabel_classification, make_classification
 
 from tests.base import VisualTestCase
 
@@ -47,6 +47,10 @@ X = np.array(
 
 y = np.array([1, 1, 0, 1, 0, 0])
 
+X, y = make_classification(
+    n_classes=4, n_informative=3, n_clusters_per_class=1, random_state=42
+)
+
 ##########################################################################
 ##  Tests
 ##########################################################################
@@ -60,7 +64,7 @@ class ClassPredictionErrorTests(VisualTestCase):
         """
         model = LinearSVC()
         model.fit(X, y)
-        visualizer = ClassPredictionError(model, classes=["A", "B"])
+        visualizer = ClassPredictionError(model, classes=["A", "B", "C", "D"])
         visualizer.score(X, y)
         self.assert_images_similar(visualizer)
 
@@ -84,8 +88,9 @@ class ClassPredictionErrorTests(VisualTestCase):
         model = LinearSVC()
         model.fit(X, y)
         with self.assertRaises(ModelError):
-            visualizer = ClassPredictionError(model,
-                                              classes=["A", "B", "C"])
+            visualizer = ClassPredictionError(
+                model, classes=["A", "B", "C", "D", "E"]
+            )
             visualizer.score(X, y)
 
     def test_classes_less_than_indices(self):

@@ -7,10 +7,16 @@ The elbow method for :math:`K` selection visualizes multiple clustering models w
 
 .. code:: python
 
+    from sklearn.datasets import make_blobs
+
     # Make 8 blobs dataset
     X, y = make_blobs(centers=8)
 
 .. code:: python
+
+    from sklearn.cluster import MiniBatchKMeans
+
+    from yellowbrick.cluster import KElbowVisualizer
 
     # Instantiate the clustering model and visualizer
     visualizer = KElbowVisualizer(MiniBatchKMeans(), k=(4,12))
