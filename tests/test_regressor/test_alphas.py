@@ -151,4 +151,4 @@ class TestAlphaSelection(VisualTestCase):
 
         X, y = make_regression(random_state=352)
         visualizer.fit(X, y)
-        assert visualizer.score(X, y) == 0.9999780266590336
+        assert visualizer.score(X, y) == pytest.approx(0.9999780266590336)

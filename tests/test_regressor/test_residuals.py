@@ -128,7 +128,7 @@ class TestPredictionError(VisualTestCase, DatasetMixin):
         visualizer.fit(self.data.X.train, self.data.y.train)
         score = visualizer.score(self.data.X.test, self.data.y.test)
 
-        assert score == 1.0
+        assert score == pytest.approx(1.0)
         assert visualizer.score_ == score
 
     @pytest.mark.skip(reason="not implemented yet")
@@ -210,6 +210,6 @@ class TestResidualsPlot(VisualTestCase, DatasetMixin):
         visualizer.fit(self.data.X.train, self.data.y.train)
         score = visualizer.score(self.data.X.test, self.data.y.test)
 
-        assert score == 0.03344393985277794
-        assert visualizer.train_score_ == 0.04743502276335876
+        assert score == pytest.approx(0.03344393985277794)
+        assert visualizer.train_score_ == pytest.approx(0.04743502276335876)
         assert visualizer.test_score_ == score
