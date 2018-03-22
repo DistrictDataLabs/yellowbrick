@@ -4,9 +4,6 @@
 # Author:   Benjamin Bengfort <bbengfort@districtdatalabs.com>
 # Created:  Sun Oct 09 12:23:13 2016 -0400
 #
-# Copyright (C) 2016 District Data Labs
-# For license information, see LICENSE.txt
-#
 # ID: base.py [b8e3318] benjamin@bengfort.com $
 
 """
@@ -17,8 +14,8 @@ Helper functions and cases for making assertions on visualizations.
 ## Imports
 ##########################################################################
 
-import inspect
 import os
+import inspect
 
 import unittest
 import matplotlib as mpl

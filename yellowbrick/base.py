@@ -21,7 +21,7 @@ from .utils.wrapper import Wrapper
 from sklearn.base import BaseEstimator
 from .utils import get_model_name, isestimator
 from sklearn.model_selection import cross_val_predict as cvp
-from .exceptions import YellowbrickValueError
+from .exceptions import YellowbrickValueError, YellowbrickTypeError
 
 ##########################################################################
 ## Base class hierarchy
@@ -471,10 +471,10 @@ class VisualizerGrid(Visualizer):
             self.nrows = plotcount
         elif ncols == None:
             self.nrows = nrows
-            self.ncols = math.ceil(plotcount / self.nrows)
+            self.ncols = int(math.ceil(plotcount / self.nrows))
         elif nrows == None:
             self.ncols = ncols
-            self.nrows = math.ceil(plotcount / self.ncols)
+            self.nrows = int(math.ceil(plotcount / self.ncols))
         else:
             raise YellowbrickValueError("You can only specify either nrows or ncols, \
                 the other will be calculated based on the length of the list of visualizers.")
@@ -492,7 +492,7 @@ class VisualizerGrid(Visualizer):
                     self.visualizers[idx].ax = self.axarr[row, col]
                 #If len(visualizers) isn't evenly divisibly by rows/columns,
                 #we want to create the illusion of empty space by hiding the axis
-                except IndexError as e:
+                except IndexError:
                     self.axarr[row,col].axis('off')
 
                 idx += 1
