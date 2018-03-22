@@ -23,12 +23,19 @@ import hashlib
 import zipfile
 import numpy as np
 
+from collections import namedtuple
 from sklearn.datasets.base import Bunch
+
 
 try:
     import requests
 except ImportError:
     requests = None
+
+
+# Helpers for fixtures
+Dataset = namedtuple('Dataset', 'X,y')
+Split = namedtuple('Split', 'train,test')
 
 
 ##########################################################################

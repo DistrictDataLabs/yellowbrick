@@ -331,6 +331,12 @@ class ScoreVisualizer(ModelVisualizer):
         Keyword arguments that are passed to the base class and may influence
         the visualization as defined in other Visualizersself.
 
+    Returns
+    -------
+    score : float or array-like
+        Returns the score of the underlying model, which is model-speciifc,
+        e.g. accuracy for classifiers, R2 for regressors, etc.
+
     Notes
     -----
     Score visualizers can wrap either fitted or unfitted models.
@@ -421,22 +427,22 @@ class VisualizerGrid(Visualizer):
 
     nrows: integer, default: None
         The number of rows desired, if you would like a fixed number of rows.
-        Specify only one of nrows and ncols, the other should be None. If you 
-        specify nrows, there will be enough columns created to fit all the 
-        visualizers specified in the visualizers list. 
-    
+        Specify only one of nrows and ncols, the other should be None. If you
+        specify nrows, there will be enough columns created to fit all the
+        visualizers specified in the visualizers list.
+
     ncols: integer, default: None
         The number of columns desired, if you would like a fixed number of columns.
-        Specify only one of nrows and ncols, the other should be None. If you 
-        specify ncols, there will be enough rows created to fit all the 
-        visualizers specified in the visualizers list. 
+        Specify only one of nrows and ncols, the other should be None. If you
+        specify ncols, there will be enough rows created to fit all the
+        visualizers specified in the visualizers list.
 
     axarr: matplotlib.axarr, default: None.
         If you want to put the plot onto an existing axarr, specify it here. Otherwise a new
-        one will be created. 
+        one will be created.
 
     kwargs : additional keyword arguments, default: None
-        Any additional keyword arguments will be passed on to the fit() method and therefore 
+        Any additional keyword arguments will be passed on to the fit() method and therefore
         passed on to the fit() method of the wrapped estimators, if applicable. Otherwise ignored.
 
     Examples
@@ -472,11 +478,11 @@ class VisualizerGrid(Visualizer):
         else:
             raise YellowbrickValueError("You can only specify either nrows or ncols, \
                 the other will be calculated based on the length of the list of visualizers.")
-        
+
 
         if axarr == None:
             fig, axarr = plt.subplots(self.nrows, self.ncols, squeeze = False)
-        
+
         self.axarr = axarr
 
         idx = 0
@@ -484,7 +490,7 @@ class VisualizerGrid(Visualizer):
             for col in range(self.ncols):
                 try:
                     self.visualizers[idx].ax = self.axarr[row, col]
-                #If len(visualizers) isn't evenly divisibly by rows/columns, 
+                #If len(visualizers) isn't evenly divisibly by rows/columns,
                 #we want to create the illusion of empty space by hiding the axis
                 except IndexError as e:
                     self.axarr[row,col].axis('off')
@@ -501,12 +507,12 @@ class VisualizerGrid(Visualizer):
     def visualizers(self,value):
         raise AttributeError("Visualizers list can only be set during class instantiation.")
 
-    @property 
+    @property
     def ax(self):
          """
-         Override Visualizer.ax to return the current axis 
+         Override Visualizer.ax to return the current axis
          """
-         return plt.gca() 
+         return plt.gca()
 
     @ax.setter
     def ax(self, ax):
@@ -528,7 +534,7 @@ class VisualizerGrid(Visualizer):
         return self
 
     def poof(self, outpath=None, **kwargs):
-        
+
         if self.axarr is None: return
 
         #Finalize all visualizers
@@ -546,4 +552,3 @@ class VisualizerGrid(Visualizer):
             plt.savefig(outpath, **kwargs)
         else:
             plt.show()
-
