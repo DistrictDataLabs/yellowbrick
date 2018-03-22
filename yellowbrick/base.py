@@ -21,7 +21,7 @@ from .utils.wrapper import Wrapper
 from sklearn.base import BaseEstimator
 from .utils import get_model_name, isestimator
 from sklearn.model_selection import cross_val_predict as cvp
-from .exceptions import YellowbrickValueError
+from .exceptions import YellowbrickValueError, YellowbrickTypeError
 
 ##########################################################################
 ## Base class hierarchy
@@ -421,22 +421,22 @@ class VisualizerGrid(Visualizer):
 
     nrows: integer, default: None
         The number of rows desired, if you would like a fixed number of rows.
-        Specify only one of nrows and ncols, the other should be None. If you 
-        specify nrows, there will be enough columns created to fit all the 
-        visualizers specified in the visualizers list. 
-    
+        Specify only one of nrows and ncols, the other should be None. If you
+        specify nrows, there will be enough columns created to fit all the
+        visualizers specified in the visualizers list.
+
     ncols: integer, default: None
         The number of columns desired, if you would like a fixed number of columns.
-        Specify only one of nrows and ncols, the other should be None. If you 
-        specify ncols, there will be enough rows created to fit all the 
-        visualizers specified in the visualizers list. 
+        Specify only one of nrows and ncols, the other should be None. If you
+        specify ncols, there will be enough rows created to fit all the
+        visualizers specified in the visualizers list.
 
     axarr: matplotlib.axarr, default: None.
         If you want to put the plot onto an existing axarr, specify it here. Otherwise a new
-        one will be created. 
+        one will be created.
 
     kwargs : additional keyword arguments, default: None
-        Any additional keyword arguments will be passed on to the fit() method and therefore 
+        Any additional keyword arguments will be passed on to the fit() method and therefore
         passed on to the fit() method of the wrapped estimators, if applicable. Otherwise ignored.
 
     Examples
@@ -465,18 +465,18 @@ class VisualizerGrid(Visualizer):
             self.nrows = plotcount
         elif ncols == None:
             self.nrows = nrows
-            self.ncols = math.ceil(plotcount / self.nrows)
+            self.ncols = int(math.ceil(plotcount / self.nrows))
         elif nrows == None:
             self.ncols = ncols
-            self.nrows = math.ceil(plotcount / self.ncols)
+            self.nrows = int(math.ceil(plotcount / self.ncols))
         else:
             raise YellowbrickValueError("You can only specify either nrows or ncols, \
                 the other will be calculated based on the length of the list of visualizers.")
-        
+
 
         if axarr == None:
             fig, axarr = plt.subplots(self.nrows, self.ncols, squeeze = False)
-        
+
         self.axarr = axarr
 
         idx = 0
@@ -484,9 +484,9 @@ class VisualizerGrid(Visualizer):
             for col in range(self.ncols):
                 try:
                     self.visualizers[idx].ax = self.axarr[row, col]
-                #If len(visualizers) isn't evenly divisibly by rows/columns, 
+                #If len(visualizers) isn't evenly divisibly by rows/columns,
                 #we want to create the illusion of empty space by hiding the axis
-                except IndexError as e:
+                except IndexError:
                     self.axarr[row,col].axis('off')
 
                 idx += 1
@@ -501,12 +501,12 @@ class VisualizerGrid(Visualizer):
     def visualizers(self,value):
         raise AttributeError("Visualizers list can only be set during class instantiation.")
 
-    @property 
+    @property
     def ax(self):
          """
-         Override Visualizer.ax to return the current axis 
+         Override Visualizer.ax to return the current axis
          """
-         return plt.gca() 
+         return plt.gca()
 
     @ax.setter
     def ax(self, ax):
@@ -528,7 +528,7 @@ class VisualizerGrid(Visualizer):
         return self
 
     def poof(self, outpath=None, **kwargs):
-        
+
         if self.axarr is None: return
 
         #Finalize all visualizers
@@ -546,4 +546,3 @@ class VisualizerGrid(Visualizer):
             plt.savefig(outpath, **kwargs)
         else:
             plt.show()
-
