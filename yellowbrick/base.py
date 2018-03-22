@@ -331,6 +331,12 @@ class ScoreVisualizer(ModelVisualizer):
         Keyword arguments that are passed to the base class and may influence
         the visualization as defined in other Visualizersself.
 
+    Returns
+    -------
+    score : float or array-like
+        Returns the score of the underlying model, which is model-speciifc,
+        e.g. accuracy for classifiers, R2 for regressors, etc.
+
     Notes
     -----
     Score visualizers can wrap either fitted or unfitted models.
