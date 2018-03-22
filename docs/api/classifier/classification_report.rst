@@ -54,10 +54,10 @@ The metrics are defined in terms of true and false positives, and true and false
     Recall is the ability of a classifier to find all positive instances. For each class it is defined as the ratio of true positives to the sum of true positives and false negatives. Said another way, "for all instances that were actually positive, what percent was classified correctly?"
 
 **f1 score**
-    The F\ :sub:`1` score is a weighted harmonic mean of precision and recall such that the best score is 1.0 and the worst is 0.0. Generally speaking, F\ :sub:`1` scores are lower than accuracy measures as they embed precision and recall into their computation. As a rule of thumb, the weighted average of F\ :sub:`1` should be used to compare classifier models, not global accuracy. 
+    The F\ :sub:`1` score is a weighted harmonic mean of precision and recall such that the best score is 1.0 and the worst is 0.0. Generally speaking, F\ :sub:`1` scores are lower than accuracy measures as they embed precision and recall into their computation. As a rule of thumb, the weighted average of F\ :sub:`1` should be used to compare classifier models, not global accuracy.
 
 .. caution::
-    Support is ommitted from the classification metrics because it is difficult to scale this on a heatmap. In a future release we will add a support feature that describes the support as the percentage of the total number of instances.
+    Support is omitted from the classification metrics because it is difficult to scale this on a heatmap. In a future release we will add a support feature that describes the support as the percentage of the total number of instances.
 
 
 API Reference
