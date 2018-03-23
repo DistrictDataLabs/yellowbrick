@@ -20,9 +20,9 @@ The Threshold visualizer shows the bounds of precision, recall, and queue rate f
     y = data.is_spam.as_matrix()
 
 .. code:: python
-    
+
     from sklearn.linear_model import LogisticRegression
-    
+
     from yellowbrick.classifier import ThreshViz
 
     # Instantiate the classification model and visualizer
@@ -40,6 +40,6 @@ API Reference
 -------------
 
 .. automodule:: yellowbrick.classifier.threshold
-    :members: ThreshViz
+    :members: DiscriminationThreshold
     :undoc-members:
     :show-inheritance:

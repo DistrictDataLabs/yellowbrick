@@ -1,123 +1,147 @@
 # tests.test_classifier.test_threshold
-# Ensure that the threshold visualizations work.
+# Ensure that the discrimination threshold visualizations work.
 #
-# Author:   Nathan Danielsen <ndanielsen@gmail.com.com>
-# Created:  Wed April 26 20:17:29 2017 -0700
+# Author:  Nathan Danielsen <ndanielsen@gmail.com>
+# Author:  Benjamin Bengfort <bbengfort@districtdatalabs.com>
+# Created: Wed April 26 20:17:29 2017 -0700
 #
 # Copyright (C) 2017 District Data Labs
 # For license information, see LICENSE.txt
 #
 # ID: test_threshold.py [] nathan.danielsen@gmail.com $
+
 """
-Ensure that the Threshold visualizations work.
+Ensure that the DiscriminationThreshold visualizations work.
 """
 
 ##########################################################################
 ## Imports
 ##########################################################################
-import unittest
-import numpy as np
+
+import pytest
+import yellowbrick as yb
+import matplotlib.pyplot as plt
+
+from yellowbrick.classifier.threshold import *
+
+from tests.base import VisualTestCase
+from tests.dataset import DatasetMixin
+
+from sklearn.linear_model import Ridge
+from sklearn.datasets import make_classification
+from sklearn.naive_bayes import BernoulliNB, GaussianNB
+from sklearn.model_selection import train_test_split as tts
+
 try:
     import pandas as pd
 except ImportError:
     pd = None
 
-from tests.base import VisualTestCase
-from tests.dataset import DatasetMixin
-from yellowbrick.classifier import *
-
-from sklearn.naive_bayes import BernoulliNB
 
 ##########################################################################
-## Data
+## DiscriminationThreshold Test Cases
 ##########################################################################
 
-# yapf: disable
-X = np.array([
-    [2.318, 2.727, 4.260, 7.212, 4.792],
-    [2.315, 2.726, 4.295, 7.140, 4.783, ],
-    [2.315, 2.724, 4.260, 7.135, 4.779, ],
-    [2.110, 3.609, 4.330, 7.985, 5.595, ],
-    [2.110, 3.626, 4.330, 8.203, 5.621, ],
-    [2.110, 3.620, 4.470, 8.210, 5.612, ]
-    ])
-# yapf: enable
-y = np.array([1, 0, 1, 0, 1, 0])
+@pytest.mark.usefixtures("binary", "multiclass")
+class TestDiscriminationThreshold(VisualTestCase, DatasetMixin):
+    """
+    DiscriminationThreshold visualizer tests
+    """
 
-##########################################################################
-## Threshold visualizer test case
-##########################################################################
-
-
-class ThresholdVisualizerTest(VisualTestCase, DatasetMixin):
-    def setUp(self):
-        self.occupancy = self.load_data('occupancy')
-        super(ThresholdVisualizerTest, self).setUp()
-
-    def tearDown(self):
-        self.occupancy = None
-        super(ThresholdVisualizerTest, self).tearDown()
-
-    def test_threshold_vi__init__(self):
+    def test_threshold_default_initialization(self):
         """
-        Test that init params are in order
+        Test initialization default parameters
         """
         model = BernoulliNB(3)
-        viz = ThresholdVisualizer(model)
-        self.assertIs(viz.estimator, model)
-        self.assertIsNone(viz.color)
-        self.assertIsNone(viz.title)
-        self.assertIsNone(viz.plot_data)
-        self.assertEqual(viz.n_trials, 50)
-        self.assertEqual(viz.test_size_percent, 0.1)
-        self.assertEqual(viz.quantiles, (0.1, 0.5, 0.9))
+        viz = DiscriminationThreshold(model)
+        assert viz.estimator is model
+        assert viz.color is None
+        assert viz.title is None
+        assert viz.plot_data is None
+        assert viz.n_trials == 50
+        assert viz.test_size_percent == 0.1
+        assert viz.quantiles == (0.1, 0.5, 0.9)
 
+    def test_binary_discrimination_threshold(self):
+        """
+        Correctly generates viz for binary classification with BernoulliNB
+        """
+        _, ax = plt.subplots()
 
-    def test_threshold_viz(self):
-        """
-        Integration test of threshold visualizers
-        """
         model = BernoulliNB(3)
-        visualizer = ThresholdVisualizer(model, random_state=0)
+        visualizer = DiscriminationThreshold(model, ax=ax, random_state=23)
 
-        # assert that fit method returns ax
-        self.assertIs(visualizer.ax, visualizer.fit(X, y=y))
-
+        visualizer.fit(self.binary.X.train, self.binary.y.train)
         visualizer.poof()
 
         self.assert_images_similar(visualizer)
 
-    @unittest.skipUnless(pd is not None, "Pandas is not installed, could not run test.")
-    def test_threshold_viz_read_data(self):
+    def test_multiclass_discrimination_threshold(self):
         """
-        Test ThresholdVisualizer on the real, occupancy data set with pandas
+        Assert exception is raised in multiclass case.
         """
-        # Load the data from the fixture
-        X = self.occupancy[[
-            "temperature", "relative_humidity", "light", "C02", "humidity"
-        ]]
-        y = self.occupancy['occupancy'].astype(int)
+        visualizer = DiscriminationThreshold(GaussianNB(), random_state=23)
 
-        # Convert X to a pandas dataframe
-        X = pd.DataFrame(X)
-        X.columns = [
+        with pytest.raises(ValueError, match="multiclass format is not supported"):
+            visualizer.fit(self.multiclass.X.train, self.multiclass.y.train)
+
+    @pytest.mark.skipif(pd is None, reason="test requires pandas")
+    def test_pandas_integration(self):
+        """
+        Test with Pandas DataFrame and Series input
+        """
+        _, ax = plt.subplots()
+
+        # Load the occupancy dataset from fixtures
+        data = self.load_data('occupancy')
+        target = 'occupancy'
+        features = [
             "temperature", "relative_humidity", "light", "C02", "humidity"
         ]
 
-        model = BernoulliNB(3)
-        visualizer = ThresholdVisualizer(model, random_state=0)
-        # Fit and transform the visualizer (calls draw)
-        visualizer.fit(X, y)
-        visualizer.draw()
-        visualizer.poof()
-        self.assert_images_similar(visualizer)
+        # Create instances and target
+        X = pd.DataFrame(data[features])
+        y = pd.Series(data[target].astype(int))
 
-    def test_threshold_viz_quick_method_read_data(self):
-        """
-        Test for thresholdviz quick method with visual unit test
-        """
-        model = BernoulliNB(3)
+        # Create train/test splits
+        splits = tts(X, y, test_size=0.2, random_state=4512)
+        X_train, X_test, y_train, y_test = splits
 
-        visualizer = type('Visualizer', (object, ),
-                          {'ax': thresholdviz(model, X, y)})
-        self.assert_images_similar(visualizer)
+        classes = ['unoccupied', 'occupied']
+
+        # Create classification report
+        model = GaussianNB()
+        viz = DiscriminationThreshold(
+            model, ax=ax, classes=classes, random_state=193
+        )
+        viz.fit(X_train, y_train)
+        viz.poof()
+
+        self.assert_images_similar(viz, tol=0.1)
+
+    def test_quick_method(self):
+        """
+        Test for thresholdviz quick method with random dataset
+        """
+
+        X, y = make_classification(
+            n_samples=400, n_features=20, n_informative=8, n_redundant=8,
+            n_classes=2, n_clusters_per_class=4, random_state=2721
+        )
+
+        _, ax = plt.subplots()
+
+        thresholdviz(BernoulliNB(3), X, y, ax=ax)
+        self.assert_images_similar(ax=ax)
+
+    def test_isclassifier(self):
+        """
+        Assert only classifiers can be used with the visualizer
+        """
+        message = (
+            'This estimator is not a classifier; '
+            'try a regression or clustering score visualizer instead!'
+        )
+
+        with pytest.raises(yb.exceptions.YellowbrickError, match=message):
+            DiscriminationThreshold(Ridge())

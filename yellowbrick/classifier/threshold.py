@@ -1,11 +1,20 @@
 # yellowbrick.classifier.threshold
-# Threshold classifier visualizer for Yellowbrick.
+# DiscriminationThreshold visualizer for probabilistic classifiers.
 #
-# Author:   Nathan Danielsen <ndanielsen@gmail.com.com>
-# Created:  Wed April 26 20:17:29 2017 -0700
+# Author:  Nathan Danielsen <ndanielsen@gmail.com>
+# Author:  Benjamin Bengfort <bbengfort@districtdatalabs.com>
+# Created: Wed April 26 20:17:29 2017 -0700
 #
-# Copyright (C) 2017 District Data Labs
-# For license information, see LICENSE.txt
+# ID: threshold.py [] nathan.danielsen@gmail.com $
+
+"""
+DiscriminationThreshold visualizer for probabilistic classifiers.
+"""
+
+##########################################################################
+## Imports
+##########################################################################
+
 import bisect
 
 import numpy as np
@@ -19,88 +28,14 @@ from yellowbrick.style.colors import resolve_colors
 from yellowbrick.base import ModelVisualizer
 from yellowbrick.utils import isclassifier
 
-
-##########################################################################
-# Quick Methods
-##########################################################################
-
-
-def thresholdviz(model,
-                 X,
-                 y,
-                 color=None,
-                 n_trials=50,
-                 test_size_percent=0.1,
-                 quantiles=(0.1, 0.5, 0.9),
-                 random_state=0,
-                 **kwargs):
-    """Quick method for ThresholdVisualizer.
-    Visualizes the bounds of precision, recall and queue rate at different
-    thresholds for binary targets after a given number of trials.
-
-    The visualization shows the threshold precentage on the x-axis which can be
-    compared against the queue rate, precision, and recall as percentages on
-    the y-axis. The default that each of the medium curves is set at the 90%%
-    central interval, but can be adjusted.
-
-    This visualization will help the user determine given their tolerances for
-    precision, queue and recall the appropriate threshold to set in their
-    application.
-
-    See also::
-        ``http://blog.insightdatalabs.com/visualizing-classifier-thresholds/``
-
-    Parameters
-    ----------
-
-    model : a Scikit-Learn classifier, required
-        Should be an instance of a classifier otherwise a will raise a
-        YellowbrickTypeError exception on instantiation.
-
-    color : string, default: None
-        Optional string or matplotlib cmap to colorize lines
-        Use either color to colorize the lines on a per class basis
-
-    n_trials : integer, default: 50
-        Number of trials to conduct via train_test_split
-
-    quantiles : sequence, default: (0.1, 0.5, .9)
-        Setting the quantiles for visualizing model variability using
-        scipy.stats.mstats.mquantiles
-
-    random_state : integer, default: None
-        Random state integer for sampling in train_test_split
-
-    kwargs : keyword arguments passed to the super class.
-
-    Returns
-    -------
-    ax : matplotlib axes
-        Returns the axes that the parallel coordinates were drawn on.
-    """
-    # Instantiate the visualizer
-    visualizer = ThresholdVisualizer(
-        model,
-        color=color,
-        n_trials=n_trials,
-        test_size_percent=test_size_percent,
-        quantiles=quantiles,
-        random_state=random_state,
-        **kwargs)
-
-    # Fit and transform the visualizer (calls draw)
-    visualizer.fit_poof(X, y)
-
-    # Return the axes object on the visualizer
-    return visualizer.ax
+from sklearn.utils.deprecation import deprecated
 
 
 ##########################################################################
 # Static ThresholdVisualizer Visualizer
 ##########################################################################
 
-
-class ThresholdVisualizer(ModelVisualizer):
+class DiscriminationThreshold(ModelVisualizer):
     """Visualizes the bounds of precision, recall and queue rate at different
     thresholds for binary targets after a given number of trials.
 
@@ -307,4 +242,82 @@ class ThresholdVisualizer(ModelVisualizer):
         self.poof()
         return self
 
-ThreshViz = ThresholdVisualizer
+
+## Aliases (Deprecated)
+ThresholdVisualizer = DiscriminationThreshold
+ThreshViz = DiscriminationThreshold
+
+
+##########################################################################
+# Quick Methods
+##########################################################################
+
+
+def thresholdviz(model,
+                 X,
+                 y,
+                 color=None,
+                 n_trials=50,
+                 test_size_percent=0.1,
+                 quantiles=(0.1, 0.5, 0.9),
+                 random_state=0,
+                 **kwargs):
+    """Quick method for ThresholdVisualizer.
+    Visualizes the bounds of precision, recall and queue rate at different
+    thresholds for binary targets after a given number of trials.
+
+    The visualization shows the threshold precentage on the x-axis which can be
+    compared against the queue rate, precision, and recall as percentages on
+    the y-axis. The default that each of the medium curves is set at the 90%%
+    central interval, but can be adjusted.
+
+    This visualization will help the user determine given their tolerances for
+    precision, queue and recall the appropriate threshold to set in their
+    application.
+
+    See also::
+        ``http://blog.insightdatalabs.com/visualizing-classifier-thresholds/``
+
+    Parameters
+    ----------
+
+    model : a Scikit-Learn classifier, required
+        Should be an instance of a classifier otherwise a will raise a
+        YellowbrickTypeError exception on instantiation.
+
+    color : string, default: None
+        Optional string or matplotlib cmap to colorize lines
+        Use either color to colorize the lines on a per class basis
+
+    n_trials : integer, default: 50
+        Number of trials to conduct via train_test_split
+
+    quantiles : sequence, default: (0.1, 0.5, .9)
+        Setting the quantiles for visualizing model variability using
+        scipy.stats.mstats.mquantiles
+
+    random_state : integer, default: None
+        Random state integer for sampling in train_test_split
+
+    kwargs : keyword arguments passed to the super class.
+
+    Returns
+    -------
+    ax : matplotlib axes
+        Returns the axes that the parallel coordinates were drawn on.
+    """
+    # Instantiate the visualizer
+    visualizer = ThresholdVisualizer(
+        model,
+        color=color,
+        n_trials=n_trials,
+        test_size_percent=test_size_percent,
+        quantiles=quantiles,
+        random_state=random_state,
+        **kwargs)
+
+    # Fit and transform the visualizer (calls draw)
+    visualizer.fit_poof(X, y)
+
+    # Return the axes object on the visualizer
+    return visualizer.ax
