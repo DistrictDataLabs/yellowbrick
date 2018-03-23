@@ -69,3 +69,40 @@ Slides:
 
 .. _QuatroCinco: https://flic.kr/p/2Yj9mj
 .. _API: http://scikit-learn.org/stable/modules/classes.html
+
+
+Citing Yellowbrick
+------------------
+
+.. image:: https://zenodo.org/badge/DOI/10.5281/zenodo.1206239.svg
+   :target: https://doi.org/10.5281/zenodo.1206239
+
+We hope that Yellowbrick facilitates machine learning of all kinds and we're particularly fond of academic work and research. If you're writing a scientific publication that uses Yellowbrick you can cite *Bengfort et al. (2018)* with the following BibTex:
+
+.. code-block:: bibtex
+
+    @software{bengfort_yellowbrick_2018,
+        title = {Yellowbrick},
+        rights = {Apache License 2.0},
+        url = {http://www.scikit-yb.org/en/latest/},
+        abstract = {Yellowbrick is an open source, pure Python project that
+            extends the Scikit-Learn {API} with visual analysis and
+            diagnostic tools. The Yellowbrick {API} also wraps Matplotlib to
+            create publication-ready figures and interactive data
+            explorations while still allowing developers fine-grain control
+            of figures. For users, Yellowbrick can help evaluate the
+            performance, stability, and predictive value of machine learning
+            models, and assist in diagnosing problems throughout the machine
+            learning workflow.},
+        version = {0.6},
+        author = {Bengfort, Benjamin and Danielsen, Nathan and
+            Bilbro, Rebecca and Gray, Larry and {McIntyre}, Kristen and
+            Richardson, George and Miller, Taylor and Mayfield, Gary and
+            Schafer, Phillip and Keung, Jason},
+        date = {2018-03-17},
+        doi = {10.5281/zenodo.1206264}
+    }
+
+You can also find DOI (digital object identifiers) for every version of Yellowbrick on `zenodo.org <https://doi.org/10.5281/zenodo.1206239>`_; use the BibTeX on this site to reference specific versions or changes made to the software.
+
+We're also currently working on a scientific paper that describes Yellowbrick in the context of *steering the model selection process*. Stay tuned for a pre-release of this paper on arXiv. 
