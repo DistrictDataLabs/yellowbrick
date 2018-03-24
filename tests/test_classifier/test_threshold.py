@@ -48,6 +48,18 @@ class TestDiscriminationThreshold(VisualTestCase, DatasetMixin):
     DiscriminationThreshold visualizer tests
     """
 
+    def test_deprecated_aliases(self):
+        """
+        Assert aliases are deprecated
+        """
+        # TODO: Remove in v0.8
+        if yb.__version_info__["minor"] >= 8:
+            pytest.fail("alias deprecation should be removed in v0.8")
+
+        for alias in (ThresholdVisualizer, ThreshViz):
+            with pytest.deprecated_call():
+                alias(BernoulliNB())
+
     def test_threshold_default_initialization(self):
         """
         Test initialization default parameters
@@ -131,7 +143,7 @@ class TestDiscriminationThreshold(VisualTestCase, DatasetMixin):
 
         _, ax = plt.subplots()
 
-        thresholdviz(BernoulliNB(3), X, y, ax=ax)
+        discrimination_threshold(BernoulliNB(3), X, y, ax=ax)
         self.assert_images_similar(ax=ax)
 
     def test_isclassifier(self):

@@ -20,19 +20,19 @@ import bisect
 import numpy as np
 from scipy.stats import mstats
 
-from sklearn.model_selection import train_test_split
-from sklearn.metrics import precision_recall_curve
-
-from yellowbrick.exceptions import YellowbrickTypeError
-from yellowbrick.style.colors import resolve_colors
-from yellowbrick.base import ModelVisualizer
 from yellowbrick.utils import isclassifier
+from yellowbrick.base import ModelVisualizer
+from yellowbrick.style.colors import resolve_colors
+from yellowbrick.exceptions import YellowbrickTypeError
+
 
 from sklearn.utils.deprecation import deprecated
+from sklearn.metrics import precision_recall_curve
+from sklearn.model_selection import train_test_split
 
 
 ##########################################################################
-# Static ThresholdVisualizer Visualizer
+# Discrimination Thresholds Visualization
 ##########################################################################
 
 class DiscriminationThreshold(ModelVisualizer):
@@ -88,7 +88,7 @@ class DiscriminationThreshold(ModelVisualizer):
             raise YellowbrickTypeError(
                 "This estimator is not a classifier; try a regression or clustering score visualizer instead!"
             )
-        super(ThresholdVisualizer, self).__init__(model, **kwargs)
+        super(DiscriminationThreshold, self).__init__(model, **kwargs)
 
         self.estimator = model
         self.n_trials = n_trials
@@ -207,7 +207,7 @@ class DiscriminationThreshold(ModelVisualizer):
         ----------
         kwargs: generic keyword arguments.
         """
-        super(ThresholdVisualizer, self).finalize(**kwargs)
+        super(DiscriminationThreshold, self).finalize(**kwargs)
 
         # Set the title
         if self.title is None:
@@ -218,42 +218,12 @@ class DiscriminationThreshold(ModelVisualizer):
         self.ax.set_xlabel('threshold')
         self.ax.set_ylabel('percent')
 
-    def fit_poof(self, X, y=None, **kwargs):
-        """Convience method to fit, draw and poof / finalize the visualizer in
-        one step after instantiation.
-
-        Parameters
-        ----------
-        X : ndarray or DataFrame of shape n x m
-            A matrix of n instances with m features
-
-        y : ndarray or Series of length n
-            An array or series of target or class values
-
-        kwargs: dict
-            keyword arguments passed to Scikit-Learn API.
-
-        Returns
-        -------
-        self : instance
-            Returns the instance of the visualizer
-        """
-        self.fit(X, y)
-        self.poof()
-        return self
-
-
-## Aliases (Deprecated)
-ThresholdVisualizer = DiscriminationThreshold
-ThreshViz = DiscriminationThreshold
-
 
 ##########################################################################
 # Quick Methods
 ##########################################################################
 
-
-def thresholdviz(model,
+def discrimination_threshold(model,
                  X,
                  y,
                  color=None,
@@ -307,7 +277,7 @@ def thresholdviz(model,
         Returns the axes that the parallel coordinates were drawn on.
     """
     # Instantiate the visualizer
-    visualizer = ThresholdVisualizer(
+    visualizer = DiscriminationThreshold(
         model,
         color=color,
         n_trials=n_trials,
@@ -317,7 +287,22 @@ def thresholdviz(model,
         **kwargs)
 
     # Fit and transform the visualizer (calls draw)
-    visualizer.fit_poof(X, y)
+    visualizer.fit(X, y)
+    visualizer.poof()
 
     # Return the axes object on the visualizer
     return visualizer.ax
+
+
+##########################################################################
+## Aliases (Deprecated)
+##########################################################################
+
+@deprecated("alias for DiscriminationThreshold will be removed in v0.8")
+class ThresholdVisualizer(DiscriminationThreshold):
+    pass
+
+
+@deprecated("alias for DiscriminationThreshold will be removed in v0.8")
+class ThreshViz(DiscriminationThreshold):
+    pass
