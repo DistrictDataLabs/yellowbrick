@@ -18,31 +18,41 @@ Ensure that the DiscriminationThreshold visualizations work.
 ## Imports
 ##########################################################################
 
+import six
 import pytest
 import yellowbrick as yb
 import matplotlib.pyplot as plt
 
 from yellowbrick.classifier.threshold import *
+from yellowbrick.utils import is_probabilistic, is_classifier
 
 from tests.base import VisualTestCase
 from tests.dataset import DatasetMixin
+from numpy.testing.utils import assert_array_equal
 
-from sklearn.linear_model import Ridge
+from sklearn.svm import LinearSVC, NuSVC
 from sklearn.datasets import make_classification
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.neighbors import RadiusNeighborsClassifier
 from sklearn.naive_bayes import BernoulliNB, GaussianNB
-from sklearn.model_selection import train_test_split as tts
+from sklearn.linear_model import Ridge, LogisticRegression
+from sklearn.model_selection import StratifiedShuffleSplit
 
 try:
     import pandas as pd
 except ImportError:
     pd = None
 
+try:
+    from unittest.mock import patch
+except ImportError:
+    from mock import patch
+
 
 ##########################################################################
 ## DiscriminationThreshold Test Cases
 ##########################################################################
 
-@pytest.mark.usefixtures("binary", "multiclass")
 class TestDiscriminationThreshold(VisualTestCase, DatasetMixin):
     """
     DiscriminationThreshold visualizer tests
@@ -60,30 +70,21 @@ class TestDiscriminationThreshold(VisualTestCase, DatasetMixin):
             with pytest.deprecated_call():
                 alias(BernoulliNB())
 
-    def test_threshold_default_initialization(self):
-        """
-        Test initialization default parameters
-        """
-        model = BernoulliNB(3)
-        viz = DiscriminationThreshold(model)
-        assert viz.estimator is model
-        assert viz.color is None
-        assert viz.title is None
-        assert viz.plot_data is None
-        assert viz.n_trials == 50
-        assert viz.test_size_percent == 0.1
-        assert viz.quantiles == (0.1, 0.5, 0.9)
-
     def test_binary_discrimination_threshold(self):
         """
         Correctly generates viz for binary classification with BernoulliNB
         """
+        X, y = make_classification(
+            n_samples=400, n_features=20, n_informative=8, n_redundant=8,
+            n_classes=2, n_clusters_per_class=4, random_state=854
+        )
+
         _, ax = plt.subplots()
 
         model = BernoulliNB(3)
         visualizer = DiscriminationThreshold(model, ax=ax, random_state=23)
 
-        visualizer.fit(self.binary.X.train, self.binary.y.train)
+        visualizer.fit(X, y)
         visualizer.poof()
 
         self.assert_images_similar(visualizer)
@@ -92,10 +93,16 @@ class TestDiscriminationThreshold(VisualTestCase, DatasetMixin):
         """
         Assert exception is raised in multiclass case.
         """
-        visualizer = DiscriminationThreshold(GaussianNB(), random_state=23)
+        X, y = make_classification(
+            n_samples=400, n_features=20, n_informative=8, n_redundant=8,
+            n_classes=3, n_clusters_per_class=4, random_state=854
+        )
 
-        with pytest.raises(ValueError, match="multiclass format is not supported"):
-            visualizer.fit(self.multiclass.X.train, self.multiclass.y.train)
+        visualizer = DiscriminationThreshold(GaussianNB(), random_state=23)
+        msg = "multiclass format is not supported"
+
+        with pytest.raises(ValueError, match=msg):
+            visualizer.fit(X, y)
 
     @pytest.mark.skipif(pd is None, reason="test requires pandas")
     def test_pandas_integration(self):
@@ -115,18 +122,13 @@ class TestDiscriminationThreshold(VisualTestCase, DatasetMixin):
         X = pd.DataFrame(data[features])
         y = pd.Series(data[target].astype(int))
 
-        # Create train/test splits
-        splits = tts(X, y, test_size=0.2, random_state=4512)
-        X_train, X_test, y_train, y_test = splits
-
         classes = ['unoccupied', 'occupied']
 
-        # Create classification report
-        model = GaussianNB()
+        # Create the visualizer
         viz = DiscriminationThreshold(
-            model, ax=ax, classes=classes, random_state=193
+            LogisticRegression(), ax=ax, classes=classes, random_state=193
         )
-        viz.fit(X_train, y_train)
+        viz.fit(X, y)
         viz.poof()
 
         self.assert_images_similar(viz, tol=0.1)
@@ -146,14 +148,164 @@ class TestDiscriminationThreshold(VisualTestCase, DatasetMixin):
         discrimination_threshold(BernoulliNB(3), X, y, ax=ax)
         self.assert_images_similar(ax=ax)
 
-    def test_isclassifier(self):
+    @patch.object(DiscriminationThreshold, 'draw', autospec=True)
+    def test_fit(self, mock_draw):
         """
-        Assert only classifiers can be used with the visualizer
+        Test the fit method generates scores, calls draw, and returns self
         """
-        message = (
-            'This estimator is not a classifier; '
-            'try a regression or clustering score visualizer instead!'
+        X, y = make_classification(
+            n_samples=400, n_features=20, n_informative=8, n_redundant=8,
+            n_classes=2, n_clusters_per_class=4, random_state=1221
         )
+
+        visualizer = DiscriminationThreshold(BernoulliNB())
+        assert not hasattr(visualizer, "thresholds_")
+        assert not hasattr(visualizer, "cv_scores_")
+
+        out = visualizer.fit(X, y)
+
+        assert out is visualizer
+        if six.PY3:
+            mock_draw.assert_called_once()
+        assert hasattr(visualizer, "thresholds_")
+        assert hasattr(visualizer, "cv_scores_")
+
+        for metric in METRICS:
+            assert metric in visualizer.cv_scores_
+            assert "{}_lower".format(metric) in visualizer.cv_scores_
+            assert "{}_upper".format(metric) in visualizer.cv_scores_
+
+    def test_binary_discrimination_threshold_alt_args(self):
+        """
+        Correctly generates visualization with alternate arguments
+        """
+        X, y = make_classification(
+            n_samples=400, n_features=20, n_informative=10, n_redundant=3,
+            n_classes=2, n_clusters_per_class=4, random_state=1231,
+            flip_y=0.1, weights=[0.35, 0.65],
+        )
+
+        exclude = ["queue_rate", "fscore"]
+        cv = StratifiedShuffleSplit(n_splits=1, test_size=0.2)
+        visualizer = DiscriminationThreshold(
+            NuSVC(), exclude=exclude, cv=cv, random_state=98239
+        )
+
+        visualizer.fit(X, y)
+        visualizer.poof()
+
+        for metric in exclude:
+            assert metric not in visualizer.cv_scores_
+            assert "{}_lower".format(metric) not in visualizer.cv_scores_
+            assert "{}_upper".format(metric) not in visualizer.cv_scores_
+
+        self.assert_images_similar(visualizer)
+
+    def test_threshold_default_initialization(self):
+        """
+        Test initialization default parameters
+        """
+        model = BernoulliNB(3)
+        viz = DiscriminationThreshold(model)
+        assert viz.estimator is model
+        assert viz.color is None
+        assert viz.title is None
+        assert viz.n_trials == 50
+        assert viz.cv == 0.1
+        assert_array_equal(viz.quantiles, np.array((0.1, 0.5, 0.9)))
+
+    def test_requires_classifier(self):
+        """
+        Assert requires a classifier
+        """
+        message = "requires a probabilistic binary classifier"
+        assert not is_classifier(Ridge)
 
         with pytest.raises(yb.exceptions.YellowbrickError, match=message):
             DiscriminationThreshold(Ridge())
+
+    def test_requires_probabilistic_classifier(self):
+        """
+        Assert requires probabilistic classifier
+        """
+        message = "requires a probabilistic binary classifier"
+        assert is_classifier(RadiusNeighborsClassifier)
+        assert not is_probabilistic(RadiusNeighborsClassifier)
+
+        with pytest.raises(yb.exceptions.YellowbrickError, match=message):
+            DiscriminationThreshold(RadiusNeighborsClassifier())
+
+    def test_accepts_predict_proba(self):
+        """
+        Will accept classifiers with predict proba function
+        """
+        model = RandomForestClassifier
+        assert is_classifier(model)
+        assert is_probabilistic(model)
+        assert not hasattr(model, "decision_function")
+        assert hasattr(model, "predict_proba")
+
+        try:
+            DiscriminationThreshold(model())
+        except YellowbrickTypeError:
+            pytest.fail("did not accept decision function model")
+
+    def test_accepts_decision_function(self):
+        """
+        Will accept classifiers with decision function
+        """
+        model = LinearSVC
+        assert is_classifier(model)
+        assert is_probabilistic(model)
+        assert hasattr(model, "decision_function")
+        assert not hasattr(model, "predict_proba")
+
+        try:
+            DiscriminationThreshold(model())
+        except YellowbrickTypeError:
+            pytest.fail("did not accept decision function model")
+
+    def test_bad_quantiles(self):
+        """
+        Assert exception is raised when bad quantiles are passed in.
+        """
+        msg = (
+            "quantiles must be a sequence of three "
+            "monotonically increasing values less than 1"
+        )
+
+        with pytest.raises(YellowbrickValueError, match=msg):
+            DiscriminationThreshold(NuSVC(), quantiles=[0.25, 0.1, 0.75])
+
+    def test_bad_cv(self):
+        """
+        Assert an exception is raised when a bad cv value is passed in
+        """
+        with pytest.raises(YellowbrickValueError, match="not a valid cv splitter"):
+            DiscriminationThreshold(NuSVC(), cv="foo")
+
+    def test_splitter_random_state(self):
+        """
+        Test splitter random state is modified
+        """
+        viz = DiscriminationThreshold(NuSVC(), random_state=None)
+        assert viz._check_cv(None, random_state=None).random_state is None
+        assert viz._check_cv(None, random_state=42).random_state == 42
+
+        splits = StratifiedShuffleSplit(n_splits=1, random_state=None)
+        assert viz._check_cv(splits, random_state=None).random_state is None
+        assert viz._check_cv(splits, random_state=23).random_state == 23
+
+        splits = StratifiedShuffleSplit(n_splits=1, random_state=181)
+        assert viz._check_cv(splits, random_state=None).random_state is 181
+        assert viz._check_cv(splits, random_state=72).random_state == 72
+
+    def test_bad_exclude(self):
+        """
+        Assert an exception is raised on bad exclude param
+        """
+        with pytest.raises(YellowbrickValueError, match="not a valid metric"):
+            DiscriminationThreshold(NuSVC(), exclude="foo")
+
+        with pytest.raises(YellowbrickValueError, match="not a valid metric"):
+            DiscriminationThreshold(NuSVC(), exclude=["queue_rate", "foo"])

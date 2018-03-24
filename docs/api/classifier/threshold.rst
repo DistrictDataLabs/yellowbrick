@@ -1,39 +1,38 @@
 .. -*- mode: rst -*-
 
-Threshold
-=========
+Discrimination Threshold
+========================
 
-The Threshold visualizer shows the bounds of precision, recall, and queue rate for different thresholds for binary targets after a given number of trials.
+.. caution:: This visualizer only works for *binary* classification.
+
+A visualization of precision, recall, f1 score, and "queue rate" with respect to the "discrimination threshold" of a binary classifier. The *discrimination threshold* is the probability or score at which the positive class is chosen over the negative class. Generally this is set to 50% but the threshold can be adjusted to increase or decrease the sensitivity to false positives or to other application factors.
 
 .. code:: python
 
-    import pandas as pd
+    # Load a binary classification dataset
+    data = load_data("spam")
+    target = "is_spam"
+    features = [col for col in data.columns if col != target]
 
-    # Load the data set
-    data = pd.read_csv("https://archive.ics.uci.edu/ml/machine-learning-databases/spambase/spambase.data", header=None)
-    data.rename(columns={57:"is_spam"}, inplace=True)
-
-    features = [col for col in data.columns if col != "is_spam"]
-
-    # Extract the numpy arrays from the data frame
-    X = data[features].as_matrix()
-    y = data.is_spam.as_matrix()
+    # Extract the instances and target from the dataset
+    X = data[features]
+    y = data[target]
 
 .. code:: python
 
     from sklearn.linear_model import LogisticRegression
-
-    from yellowbrick.classifier import ThreshViz
+    from yellowbrick.classifier import DiscriminationThreshold
 
     # Instantiate the classification model and visualizer
     logistic = LogisticRegression()
-    visualizer = ThreshViz(logistic)
+    visualizer = DiscriminationThreshold(logistic)
 
     visualizer.fit(X, y)  # Fit the training data to the visualizer
-    g = visualizer.poof() # Draw/show/poof the data
+    visualizer.poof()     # Draw/show/poof the data
+
+.. image:: images/spam_discrimination_threshold.png
 
 
-.. image:: images/thresholdviz.png
 
 
 API Reference

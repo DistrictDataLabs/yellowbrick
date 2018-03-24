@@ -1,23 +1,82 @@
+import os
 import pandas as pd
+import matplotlib.pyplot as plt
 
-from yellowbrick.classifier import ThreshViz
+from yellowbrick.classifier import DiscriminationThreshold
 from sklearn.linear_model import LogisticRegression
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.preprocessing import LabelEncoder
+
+from functools import partial
+
+BASE = os.path.join("..", "..", "..", os.path.dirname("__file__"))
+EXAMPLES = os.path.join(BASE, "examples", "data")
+
+# TODO: Make these examples part of the code base
+CHURN_DATASET = os.path.join(EXAMPLES, "churn", "churn.txt")
+SPAM_DATASET =  os.path.join(EXAMPLES, "spam", "spambase.data")
+
+
+def load_spam():
+    df = pd.read_csv(SPAM_DATASET, header=None)
+    df.rename(columns={57:'is_spam'}, inplace=True)
+
+    target = 'is_spam'
+    features = [col for col in df.columns if col != target]
+
+    X = df[features]
+    y = df[target]
+
+    return X, y
+
+
+def load_churn():
+    df = pd.read_csv(CHURN_DATASET)
+    df.columns = [
+        c.lower().replace(' ', '_').replace('?', '').replace("'", "")
+        for c in df.columns
+    ]
+
+    state_encoder = LabelEncoder()
+    df.state = state_encoder.fit_transform(df.state)
+
+    del df['phone']
+
+    for col in ['intl_plan', 'vmail_plan', 'churn']:
+        df[col] = df[col].map({'no': 0, 'False.': 0, 'yes': 1, 'True.': 1})
+
+    X = df[[c for c in df.columns if c != 'churn']]
+    y = df['churn']
+
+    return X, y
+
+
+def plot_discrimination_threshold(clf, data='spam', outpath=None):
+    if data == 'spam':
+        X, y = load_spam()
+    elif data == 'churn':
+        X, y = load_churn()
+    else:
+        raise ValueError("no dataset loader '{}'".format(data))
+
+    _, ax = plt.subplots()
+
+    visualizer = DiscriminationThreshold(clf, ax=ax)
+    visualizer.fit(X, y)
+    visualizer.poof(outpath=outpath)
+
+
+plot_churn = partial(
+    plot_discrimination_threshold, data='churn',
+    outpath="images/churn_discrimination_threshold.png"
+)
+
+plot_spam = partial(
+    plot_discrimination_threshold, data='spam',
+    outpath="images/spam_discrimination_threshold.png"
+)
 
 
 if __name__ == '__main__':
-    # Load the data set
-    data = pd.read_csv('https://archive.ics.uci.edu/ml/machine-learning-databases/spambase/spambase.data', header=None)
-    data.rename(columns={57:'is_spam'}, inplace=True)
-
-    features = [col for col in data.columns if col != 'is_spam']
-
-    # Extract the numpy arrays from the data frame
-    X = data[features].as_matrix()
-    y = data.is_spam.as_matrix()
-
-    # Instantiate the classification model and visualizer
-    logistic = LogisticRegression()
-    visualizer = ThreshViz(logistic)
-
-    visualizer.fit(X, y)  # Fit the training data to the visualizer
-    g = visualizer.poof(outpath="images/thresholdviz.png") # Draw/show/poof the data
+    plot_churn(RandomForestClassifier())
+    plot_spam(LogisticRegression())
