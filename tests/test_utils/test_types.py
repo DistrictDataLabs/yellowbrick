@@ -1,412 +1,555 @@
 # tests.test_utils.test_types
-# Very difficult test library for type detection and flexibility.
+# Tests for type checking utilities and validation
 #
 # Author:   Benjamin Bengfort <bbengfort@districtdatalabs.com>
 # Created:  Fri May 19 10:58:32 2017 -0700
 #
-# Copyright (C) 2017 District Data Labs
-# For license information, see LICENSE.txt
-#
 # ID: test_types.py [79cd8cf] benjamin@bengfort.com $
 
 """
-Very difficult test library for type detection and flexibility.
+Tests for type checking utilities and validation.
+
+Generally if there is a problem with a type checking utility, the offending
+object should be imported then added to the correct bucket under the import
+statement (e.g. REGRESSORS). The pytest parametrize decorator uses these
+groups to generate tests, so this will automatically cause the test to run on
+that class.
 """
 
 ##########################################################################
 ## Imports
 ##########################################################################
 
+import pytest
 import inspect
-import unittest
 
-from sklearn.pipeline import Pipeline
-from sklearn.decomposition import PCA
-from sklearn.neighbors import NearestNeighbors
-from sklearn.linear_model import RidgeCV, LassoCV
-from sklearn.linear_model import LinearRegression
-from sklearn.linear_model import LogisticRegression
-from sklearn.ensemble import RandomForestClassifier
-from sklearn.cluster import KMeans, MiniBatchKMeans
-from sklearn.cluster import AffinityPropagation, Birch
+try:
+    import pandas as pd
+except:
+    pd = None
 
+# Yellowbrick Utilities
 from yellowbrick.utils.types import *
 from yellowbrick.base import Visualizer, ScoreVisualizer, ModelVisualizer
 
+# Import Regressors
+from sklearn.svm import SVR
+from sklearn.tree import DecisionTreeRegressor
+from sklearn.neural_network import MLPRegressor
+from sklearn.linear_model import LinearRegression
+from sklearn.ensemble import RandomForestRegressor
+from sklearn.linear_model import Ridge, RidgeCV, Lasso, LassoCV
+
+REGRESSORS = [
+    SVR, DecisionTreeRegressor, MLPRegressor, LinearRegression,
+    RandomForestRegressor, Ridge, RidgeCV, Lasso, LassoCV,
+]
+
+# Import Classifiers
+from sklearn.svm import SVC
+from sklearn.tree import DecisionTreeClassifier
+from sklearn.neural_network import MLPClassifier
+from sklearn.linear_model import LogisticRegression
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.ensemble import GradientBoostingClassifier
+from sklearn.naive_bayes import MultinomialNB, GaussianNB
+
+CLASSIFIERS = [
+    SVC, DecisionTreeClassifier, MLPClassifier, LogisticRegression,
+    RandomForestClassifier, GradientBoostingClassifier, MultinomialNB,
+    GaussianNB,
+]
+
+# Import Clusterers
+from sklearn.cluster import KMeans, MiniBatchKMeans
+from sklearn.cluster import AffinityPropagation, Birch
+
+CLUSTERERS = [
+    KMeans, MiniBatchKMeans, AffinityPropagation, Birch,
+]
+
+# Import Decompositions
+from sklearn.decomposition import PCA
+from sklearn.decomposition import TruncatedSVD
+
+DECOMPOSITIONS = [
+    PCA, TruncatedSVD
+]
+
+# Import Transformers
+from sklearn.feature_extraction import DictVectorizer
+from sklearn.preprocessing import QuantileTransformer
+from sklearn.preprocessing import StandardScaler, Imputer
+from sklearn.feature_extraction.text import TfidfVectorizer
+
+TRANSFORMERS = [
+    DictVectorizer, QuantileTransformer, StandardScaler, Imputer,
+    TfidfVectorizer,
+]
+
+# Import Pipeline Utilities
+from sklearn.pipeline import Pipeline, FeatureUnion
+
+
+PIPELINES = [
+    Pipeline, FeatureUnion,
+]
+
+# Import GridSearch Utilities
+from sklearn.model_selection import GridSearchCV, RandomizedSearchCV
+
+SEARCH = [
+    GridSearchCV, RandomizedSearchCV,
+]
+
+
+# Other Groups
+MODELS = REGRESSORS + CLASSIFIERS + CLUSTERERS
+ESTIMATORS = MODELS + DECOMPOSITIONS + TRANSFORMERS
+
+
+# Get the name of the object to label test cases
+def obj_name(obj):
+    if inspect.isclass(obj):
+        return obj.__name__
+    return obj.__class__.__name__
+
 
 ##########################################################################
-## Model Utility Tests
+## Model type checking test cases
 ##########################################################################
 
-class ModelUtilityTests(unittest.TestCase):
+class TestModelTypeChecking(object):
+    """
+    Test model type checking utilities
+    """
 
     ##////////////////////////////////////////////////////////////////////
-    ## isestimator testing
+    ## is_estimator testing
     ##////////////////////////////////////////////////////////////////////
 
     def test_estimator_alias(self):
         """
-        Assert is_estimator aliases isestimator
+        Assert isestimator aliases is_estimator
         """
-        self.assertEqual(
-            is_estimator(LinearRegression), isestimator(LinearRegression)
-        )
+        assert isestimator is is_estimator
 
-    def test_estimator_instance(self):
+    @pytest.mark.parametrize("model", ESTIMATORS, ids=obj_name)
+    def test_is_estimator(self, model):
         """
-        Test that isestimator works for instances
+        Test that is_estimator works for instances and classes
         """
+        assert inspect.isclass(model)
+        assert is_estimator(model)
 
-        models = (
-            LinearRegression(),
-            LogisticRegression(),
-            KMeans(),
-            NearestNeighbors(),
-            PCA(),
-            RidgeCV(),
-            LassoCV(),
-            RandomForestClassifier(),
-        )
+        obj = model()
+        assert is_estimator(obj)
 
-        for model in models:
-            self.assertTrue(isestimator(model))
+    @pytest.mark.parametrize("cls", [
+        list, dict, tuple, set, str, bool, int, float
+    ], ids=obj_name)
+    def test_not_is_estimator(self, cls):
+        """
+        Assert Python objects are not estimators
+        """
+        assert inspect.isclass(cls)
+        assert not is_estimator(cls)
 
-    def test_pipeline_instance(self):
+        obj = cls()
+        assert not is_estimator(obj)
+
+    def test_is_estimator_pipeline(self):
         """
-        Test that isestimator works for pipelines
+        Test that is_estimator works for pipelines
         """
+        assert is_estimator(Pipeline)
+        assert is_estimator(FeatureUnion)
+
         model = Pipeline([
             ('reduce_dim', PCA()),
             ('linreg', LinearRegression())
         ])
 
-        self.assertTrue(isestimator(model))
+        assert is_estimator(model)
 
-    def test_estimator_class(self):
+    def test_is_estimator_search(self):
         """
-        Test that isestimator works for classes
+        Test that is_estimator works for search
         """
-        models = (
-            LinearRegression,
-            LogisticRegression,
-            KMeans,
-            NearestNeighbors,
-            PCA,
-            RidgeCV,
-            LassoCV,
-            RandomForestClassifier,
-        )
+        assert is_estimator(GridSearchCV)
+        assert is_estimator(RandomizedSearchCV)
 
-        for model in models:
-            self.assertTrue(inspect.isclass(model))
-            self.assertTrue(isestimator(model))
+        model = GridSearchCV(SVR(), {'kernel': ['linear', 'rbf']})
+        assert is_estimator(model)
 
-    def test_collection_not_estimator(self):
+    @pytest.mark.parametrize("viz,params", [
+        (Visualizer, {}),
+        (ScoreVisualizer, {'model': LinearRegression()}),
+        (ModelVisualizer, {'model': LogisticRegression()})
+    ], ids=lambda i: obj_name(i[0]))
+    def test_is_estimator_visualizer(self, viz, params):
         """
-        Make sure that a collection is not an estimator
+        Test that is_estimator works for Visualizers
         """
-        for cls in (list, dict, tuple, set):
-            self.assertFalse(isestimator(cls))
+        assert inspect.isclass(viz)
+        assert is_estimator(viz)
 
-        things = ['pepper', 'sauce', 'queen']
-        self.assertFalse(isestimator(things))
-
-    def test_visualizer_is_estimator(self):
-        """
-        Assert that a Visualizer is an estimator
-        """
-        self.assertTrue(is_estimator(Visualizer))
-        self.assertTrue(is_estimator(Visualizer()))
-        self.assertTrue(is_estimator(ScoreVisualizer))
-        self.assertTrue(is_estimator(ScoreVisualizer(LinearRegression())))
-        self.assertTrue(is_estimator(ModelVisualizer))
-        self.assertTrue(is_estimator(ModelVisualizer(LogisticRegression())))
+        obj = viz(**params)
+        assert is_estimator(obj)
 
     ##////////////////////////////////////////////////////////////////////
-    ## isregressor testing
+    ## is_regressor testing
     ##////////////////////////////////////////////////////////////////////
 
     def test_regressor_alias(self):
         """
-        Assert is_regressor aliases isregressor
+        Assert isregressor aliases is_regressor
         """
-        instance = LinearRegression()
-        self.assertEqual(is_regressor(instance), isregressor(instance))
+        assert isregressor is is_regressor
 
-    def test_regressor_instance(self):
+    @pytest.mark.parametrize("model", REGRESSORS, ids=obj_name)
+    def test_is_regressor(self, model):
         """
-        Test that is_regressor works for instances
+        Test that is_regressor works for instances and classes
         """
+        assert inspect.isclass(model)
+        assert is_regressor(model)
 
-        # Test regressors are identified correctly
-        regressors = (
-            RidgeCV,
-            LassoCV,
-            LinearRegression,
-        )
+        obj = model()
+        assert is_regressor(obj)
 
-        for model in regressors:
-            instance = model()
-            self.assertTrue(is_regressor(instance))
-
-        # Test that non-regressors are identified correctly
-        notregressors = (
-            KMeans,
-            PCA,
-            NearestNeighbors,
-            LogisticRegression,
-            RandomForestClassifier,
-        )
-
-        for model in notregressors:
-            instance = model()
-            self.assertFalse(is_regressor(instance))
-
-    def test_regressor_class(self):
+    @pytest.mark.parametrize("model",
+        CLASSIFIERS+CLUSTERERS+TRANSFORMERS+DECOMPOSITIONS,
+    ids=obj_name)
+    def test_not_is_regressor(self, model):
         """
-        Test that is_regressor works for classes
+        Test that is_regressor does not match non-regressor estimators
         """
+        assert inspect.isclass(model)
+        assert not is_regressor(model)
 
-        # Test regressors are identified correctly
-        regressors = (
-            RidgeCV,
-            LassoCV,
-            LinearRegression,
-        )
+        obj = model()
+        assert not is_regressor(obj)
 
-        for klass in regressors:
-            self.assertTrue(inspect.isclass(klass))
-            self.assertTrue(is_regressor(klass))
-
-        # Test that non-regressors are identified correctly
-        notregressors = (
-            KMeans,
-            PCA,
-            NearestNeighbors,
-            LogisticRegression,
-            RandomForestClassifier,
-        )
-
-        for klass in notregressors:
-            self.assertTrue(inspect.isclass(klass))
-            self.assertFalse(is_regressor(klass))
-
-    def test_regressor_pipeline(self):
+    def test_is_regressor_pipeline(self):
         """
         Test that is_regressor works for pipelines
         """
+        assert not is_regressor(Pipeline)
+        assert not is_regressor(FeatureUnion)
+
         model = Pipeline([
             ('reduce_dim', PCA()),
             ('linreg', LinearRegression())
         ])
 
-        self.assertTrue(is_regressor(model))
+        assert is_regressor(model)
 
-    def test_regressor_visualizer(self):
+    @pytest.mark.xfail(reason="grid search has no _estimator_type it seems")
+    def test_is_regressor_search(self):
+        """
+        Test that is_regressor works for search
+        """
+        assert is_regressor(GridSearchCV)
+        assert is_regressor(RandomizedSearchCV)
+
+        model = GridSearchCV(SVR(), {'kernel': ['linear', 'rbf']})
+        assert is_regressor(model)
+
+    @pytest.mark.parametrize("viz,params", [
+        (ScoreVisualizer, {'model': LinearRegression()}),
+        (ModelVisualizer, {'model': Ridge()})
+    ], ids=lambda i: obj_name(i[0]))
+    def test_is_regressor_visualizer(self, viz, params):
         """
         Test that is_regressor works on visualizers
         """
-        model = ScoreVisualizer(LinearRegression())
-        self.assertTrue(is_regressor(model))
+        assert inspect.isclass(viz)
+        assert not is_regressor(viz)
+
+        obj = viz(**params)
+        assert is_regressor(obj)
 
     ##////////////////////////////////////////////////////////////////////
-    ## isclassifier testing
+    ## is_classifier testing
     ##////////////////////////////////////////////////////////////////////
 
     def test_classifier_alias(self):
         """
-        Assert is_classifier aliases isclassifier
+        Assert isclassifier aliases is_classifier
         """
-        instance = LogisticRegression()
-        self.assertEqual(is_classifier(instance), isclassifier(instance))
+        assert isclassifier is is_classifier
 
-    def test_classifier_instance(self):
+    @pytest.mark.parametrize("model", CLASSIFIERS, ids=obj_name)
+    def test_is_classifier(self, model):
         """
-        Test that is_classifier works for instances
+        Test that is_classifier works for instances and classes
         """
+        assert inspect.isclass(model)
+        assert is_classifier(model)
 
-        # Test classifiers are identified correctly
-        classifiers = (
-            LogisticRegression,
-            RandomForestClassifier,
-        )
+        obj = model()
+        assert is_classifier(obj)
 
-        for model in classifiers:
-            instance = model()
-            self.assertTrue(is_classifier(instance))
-
-        # Test that non-classifiers are identified correctly
-        notclassifiers = (
-            KMeans,
-            PCA,
-            NearestNeighbors,
-            LinearRegression,
-            RidgeCV,
-            LassoCV,
-        )
-
-        for model in notclassifiers:
-            instance = model()
-            self.assertFalse(is_classifier(instance))
-
-    def test_classifier_class(self):
+    @pytest.mark.parametrize("model",
+        REGRESSORS+CLUSTERERS+TRANSFORMERS+DECOMPOSITIONS,
+    ids=obj_name)
+    def test_not_is_classifier(self, model):
         """
-        Test that is_classifier works for classes
+        Test that is_classifier does not match non-classifier estimators
         """
+        assert inspect.isclass(model)
+        assert not is_classifier(model)
 
-        # Test classifiers are identified correctly
-        classifiers = (
-            RandomForestClassifier,
-            LogisticRegression,
-        )
-
-        for klass in classifiers:
-            self.assertTrue(inspect.isclass(klass))
-            self.assertTrue(is_classifier(klass))
-
-        # Test that non-regressors are identified correctly
-        notclassifiers = (
-            KMeans,
-            PCA,
-            NearestNeighbors,
-            RidgeCV,
-            LassoCV,
-            LinearRegression,
-        )
-
-        for klass in notclassifiers:
-            self.assertTrue(inspect.isclass(klass))
-            self.assertFalse(is_classifier(klass))
+        obj = model()
+        assert not is_classifier(obj)
 
     def test_classifier_pipeline(self):
         """
-        Test that is_regressor works for pipelines
+        Test that is_classifier works for pipelines
         """
+        assert not is_classifier(Pipeline)
+        assert not is_classifier(FeatureUnion)
+
         model = Pipeline([
             ('reduce_dim', PCA()),
             ('linreg', LogisticRegression())
         ])
 
-        self.assertTrue(is_classifier(model))
+        assert is_classifier(model)
 
-    def test_classifier_visualizer(self):
+    @pytest.mark.xfail(reason="grid search has no _estimator_type it seems")
+    def test_is_classifier_search(self):
+        """
+        Test that is_classifier works for search
+        """
+        assert is_classifier(GridSearchCV)
+        assert is_classifier(RandomizedSearchCV)
+
+        model = GridSearchCV(SVC(), {'kernel': ['linear', 'rbf']})
+        assert is_classifier(model)
+
+    @pytest.mark.parametrize("viz,params", [
+        (ScoreVisualizer, {'model': MultinomialNB()}),
+        (ModelVisualizer, {'model': MLPClassifier()})
+    ], ids=lambda i: obj_name(i[0]))
+    def test_is_classifier_visualizer(self, viz, params):
         """
         Test that is_classifier works on visualizers
         """
-        model = ScoreVisualizer(RandomForestClassifier())
-        self.assertTrue(is_classifier(model))
+        assert inspect.isclass(viz)
+        assert not is_classifier(viz)
+
+        obj = viz(**params)
+        assert is_classifier(obj)
 
     ##////////////////////////////////////////////////////////////////////
-    ## isclusterer testing
+    ## is_clusterer testing
     ##////////////////////////////////////////////////////////////////////
 
     def test_clusterer_alias(self):
         """
-        Assert is_clusterer aliases isclusterer
+        Assert isclusterer aliases is_clusterer
         """
-        instance = KMeans()
-        self.assertEqual(is_clusterer(instance), isclusterer(instance))
+        assert isclusterer is is_clusterer
 
-    def test_clusterer_instance(self):
+    @pytest.mark.parametrize("model", CLUSTERERS, ids=obj_name)
+    def test_is_clusterer(self, model):
         """
-        Test that is_clusterer works for instances
+        Test that is_clusterer works for instances and classes
         """
+        assert inspect.isclass(model)
+        assert is_clusterer(model)
 
-        # Test clusterers are identified correctly
-        clusterers = (
-            KMeans,
-            MiniBatchKMeans,
-            AffinityPropagation,
-            Birch
-        )
+        obj = model()
+        assert is_clusterer(obj)
 
-        for model in clusterers:
-            instance = model()
-            self.assertTrue(is_clusterer(instance))
-
-        # Test that non-clusterers are identified correctly
-        notclusterers = (
-            RidgeCV,
-            LassoCV,
-            LinearRegression,
-            PCA,
-            NearestNeighbors,
-            LogisticRegression,
-            RandomForestClassifier,
-        )
-
-        for model in notclusterers:
-            instance = model()
-            self.assertFalse(is_clusterer(instance))
-
-    def test_clusterer_class(self):
+    @pytest.mark.parametrize("model",
+        REGRESSORS+CLASSIFIERS+TRANSFORMERS+DECOMPOSITIONS,
+    ids=obj_name)
+    def test_not_is_clusterer(self, model):
         """
-        Test that is_clusterer works for classes
+        Test that is_clusterer does not match non-clusterer estimators
         """
+        assert inspect.isclass(model)
+        assert not is_clusterer(model)
 
-        # Test clusterers are identified correctly
-        clusterers = (
-            KMeans,
-            MiniBatchKMeans,
-            AffinityPropagation,
-            Birch
-        )
-
-        for klass in clusterers:
-            self.assertTrue(inspect.isclass(klass))
-            self.assertTrue(is_clusterer(klass))
-
-        # Test that non-clusterers are identified correctly
-        notclusterers = (
-            RidgeCV,
-            LassoCV,
-            LinearRegression,
-            PCA,
-            NearestNeighbors,
-            LogisticRegression,
-            RandomForestClassifier,
-        )
-
-        for klass in notclusterers:
-            self.assertTrue(inspect.isclass(klass))
-            self.assertFalse(is_clusterer(klass))
+        obj = model()
+        assert not is_clusterer(obj)
 
     def test_clusterer_pipeline(self):
         """
         Test that is_clusterer works for pipelines
         """
+        assert not is_clusterer(Pipeline)
+        assert not is_clusterer(FeatureUnion)
+
         model = Pipeline([
             ('reduce_dim', PCA()),
             ('kmeans', KMeans())
         ])
 
-        self.assertTrue(is_clusterer(model))
+        assert is_clusterer(model)
 
-    def test_clusterer_visualizer(self):
+    @pytest.mark.parametrize("viz,params", [
+        (ModelVisualizer, {'model': KMeans()})
+    ], ids=lambda i: obj_name(i[0]))
+    def test_is_clusterer_visualizer(self, viz, params):
         """
         Test that is_clusterer works on visualizers
         """
-        model = ScoreVisualizer(KMeans())
-        self.assertTrue(is_clusterer(model))
+        assert inspect.isclass(viz)
+        assert not is_clusterer(viz)
 
+        obj = viz(**params)
+        assert is_clusterer(obj)
 
-class StructuredArrayTests(unittest.TestCase):
+    ##////////////////////////////////////////////////////////////////////
+    ## is_gridsearch testing
+    ##////////////////////////////////////////////////////////////////////
 
-    def test_isstructuredarray_true(self):
-        x = np.array([(1,2.,'Hello'), (2,3.,"World")], dtype=[('foo', 'i4'),('bar', 'f4'), ('baz', 'S10')])
-        self.assertTrue(isstructuredarray(x))
+    def test_gridsearch_alias(self):
+        """
+        Assert isgridsearch aliases is_gridsearch
+        """
+        assert isgridsearch is is_gridsearch
 
-    def test_isstructuredarray_false(self):
-        x = np.array([[1,2,3], [1,2,3]])
-        self.assertFalse(isstructuredarray(x))
+    @pytest.mark.parametrize("model", SEARCH, ids=obj_name)
+    def test_is_gridsearch(self, model):
+        """
+        Test that is_gridsearch works correctly
+        """
+        assert inspect.isclass(model)
+        assert is_gridsearch(model)
 
-    def test_isstructuredarray_list(self):
-        x = [[1,2,3], [1,2,3]]
-        self.assertFalse(isstructuredarray(x))
+        obj = model(SVC, {"C": [0.5, 1, 10]})
+        assert is_gridsearch(obj)
+
+    @pytest.mark.parametrize("model",
+        [MLPRegressor, MLPClassifier, Imputer], ids=obj_name)
+    def test_not_is_gridsearch(self, model):
+        """
+        Test that is_gridsearch does not match non grid searches
+        """
+        assert inspect.isclass(model)
+        assert not is_gridsearch(model)
+
+        obj = model()
+        assert not is_gridsearch(obj)
+
+    ##////////////////////////////////////////////////////////////////////
+    ## is_probabilistic testing
+    ##////////////////////////////////////////////////////////////////////
+
+    def test_probabilistic_alias(self):
+        """
+        Assert isprobabilistic aliases is_probabilistic
+        """
+        assert isprobabilistic is is_probabilistic
+
+    @pytest.mark.parametrize("model", [
+        MultinomialNB, GaussianNB, LogisticRegression, SVC,
+        RandomForestClassifier, GradientBoostingClassifier, MLPClassifier,
+    ], ids=obj_name)
+    def test_is_probabilistic(self, model):
+        """
+        Test that is_probabilistic works correctly
+        """
+        assert inspect.isclass(model)
+        assert is_probabilistic(model)
+
+        obj = model()
+        assert is_probabilistic(obj)
+
+    @pytest.mark.parametrize("model", [
+        MLPRegressor, Imputer, StandardScaler, KMeans,
+        RandomForestRegressor,
+    ], ids=obj_name)
+    def test_not_is_probabilistic(self, model):
+        """
+        Test that is_probabilistic does not match non probablistic estimators
+        """
+        assert inspect.isclass(model)
+        assert not is_probabilistic(model)
+
+        obj = model()
+        assert not is_probabilistic(obj)
+
 
 ##########################################################################
-## Execute Tests
+## Data type checking test cases
 ##########################################################################
 
-if __name__ == "__main__":
-    unittest.main()
+class TestDataTypeChecking(object):
+    """
+    Test data type checking utilities
+    """
+
+    ##////////////////////////////////////////////////////////////////////
+    ## is_dataframe testing
+    ##////////////////////////////////////////////////////////////////////
+
+    def test_dataframe_alias(self):
+        """
+        Assert isdataframe aliases is_dataframe
+        """
+        assert isdataframe is is_dataframe
+
+    @pytest.mark.skipif(pd is None, reason="requires pandas")
+    def test_is_dataframe(self):
+        """
+        Test that is_dataframe works correctly
+        """
+        df = pd.DataFrame([
+            {'a': 1, 'b': 2.3, 'c': 'Hello'},
+            {'a': 2, 'b': 3.14, 'c': 'World'},
+        ])
+
+        assert is_dataframe(df)
+
+    @pytest.mark.parametrize("obj", [
+        np.array([
+            (1,2.,'Hello'), (2,3.,"World")],
+            dtype=[('foo', 'i4'),('bar', 'f4'), ('baz', 'S10')]
+        ),
+        np.array([[1,2,3], [1,2,3]]),
+        [[1,2,3], [1,2,3]],
+    ],
+    ids=["structured array", "array", "list"])
+    def test_not_is_dataframe(self, obj):
+        """
+        Test that is_dataframe does not match non-dataframes
+        """
+        assert not is_dataframe(obj)
+
+    ##////////////////////////////////////////////////////////////////////
+    ## is_structured_array testing
+    ##////////////////////////////////////////////////////////////////////
+
+    def test_structured_array_alias(self):
+        """
+        Assert isstructuredarray aliases is_structured_array
+        """
+        assert isstructuredarray is is_structured_array
+
+    def test_is_structured_array(self):
+        """
+        Test that is_structured_array works correctly
+        """
+        x = np.array([
+            (1,2.,'Hello'), (2,3.,"World")],
+            dtype=[('foo', 'i4'),('bar', 'f4'), ('baz', 'S10')]
+        )
+
+        assert is_structured_array(x)
+
+    @pytest.mark.parametrize("obj", [
+        np.array([[1,2,3], [1,2,3]]),
+        [[1,2,3], [1,2,3]],
+    ],
+    ids=obj_name)
+    def test_not_is_structured_array(self, obj):
+        """
+        Test that is_structured_array does not match non-structured-arrays
+        """
+        assert not is_structured_array(obj)
