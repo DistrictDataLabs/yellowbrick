@@ -41,6 +41,7 @@ Visualizers are estimators (objects that learn from data) whose primary objectiv
 - **Classification Report**: visual representation of precision, recall, and F1
 - **Confusion Matrices**: visual description of class decision making
 - **ROC/AUC Curves**: receiver operator characteristics and area under the curve
+- **Discrimination Threshold**: find a threshold that best separates binary classes
 
 #### Regression Visualization
 
