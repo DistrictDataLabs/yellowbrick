@@ -458,52 +458,91 @@ class DiscriminationThreshold(ModelVisualizer):
 # Quick Methods
 ##########################################################################
 
-def discrimination_threshold(model,
-                 X,
-                 y,
-                 n_trials=50,
-                 cv=0.1,
-                 quantiles=QUANTILES_MEDIAN_80,
-                 random_state=0,
-                 **kwargs):
-    """Quick method for ThresholdVisualizer.
-    Visualizes the bounds of precision, recall and queue rate at different
-    thresholds for binary targets after a given number of trials.
+def discrimination_threshold(model, X, y, ax=None, n_trials=50, cv=0.1,
+                             fbeta=1.0, argmax='fscore', exclude=None,
+                             quantiles=QUANTILES_MEDIAN_80, random_state=None,
+                             **kwargs):
+    """Quick method for DiscriminationThreshold.
 
-    The visualization shows the threshold precentage on the x-axis which can be
-    compared against the queue rate, precision, and recall as percentages on
-    the y-axis. The default that each of the medium curves is set at the 90%%
-    central interval, but can be adjusted.
+    Visualizes how precision, recall, f1 score, and queue rate change as the
+    discrimination threshold increases. For probabilistic, binary classifiers,
+    the discrimination threshold is the probability at which you choose the
+    positive class over the negative. Generally this is set to 50%, but
+    adjusting the discrimination threshold will adjust sensitivity to false
+    positives which is described by the inverse relationship of precision and
+    recall with respect to the threshold.
 
-    This visualization will help the user determine given their tolerances for
-    precision, queue and recall the appropriate threshold to set in their
-    application.
-
-    See also::
-        ``http://blog.insightdatalabs.com/visualizing-classifier-thresholds/``
+    .. seealso:: See DiscriminationThreshold for more details.
 
     Parameters
     ----------
+    model : Classification Estimator
+        A binary classification estimator that implements ``predict_proba`` or
+        ``decision_function`` methods. Will raise ``TypeError`` if the model
+        cannot be used with the visualizer.
 
-    model : a Scikit-Learn classifier, required
-        Should be an instance of a classifier otherwise a will raise a
-        YellowbrickTypeError exception on instantiation.
+    X : ndarray or DataFrame of shape n x m
+        A matrix of n instances with m features
 
-    color : string, default: None
-        Optional string or matplotlib cmap to colorize lines
-        Use either color to colorize the lines on a per class basis
+    y : ndarray or Series of length n
+        An array or series of target or class values. The target y must
+        be a binary classification target.
+
+    ax : matplotlib Axes, default: None
+        The axis to plot the figure on. If None is passed in the current axes
+        will be used (or generated if required).
 
     n_trials : integer, default: 50
-        Number of trials to conduct via train_test_split
+        Number of times to shuffle and split the dataset to account for noise
+        in the threshold metrics curves. Note if cv provides > 1 splits,
+        the number of trials will be n_trials * cv.get_n_splits()
 
-    quantiles : sequence, default: (0.1, 0.5, .9)
-        Setting the quantiles for visualizing model variability using
-        scipy.stats.mstats.mquantiles
+    cv : float or cross-validation generator, default: 0.1
+        Determines the splitting strategy for each trial. Possible inputs are:
 
-    random_state : integer, default: None
-        Random state integer for sampling in train_test_split
+        - float, to specify the percent of the test split
+        - object to be used as cross-validation generator
 
-    kwargs : keyword arguments passed to the super class.
+        This attribute is meant to give flexibility with stratified splitting
+        but if a splitter is provided, it should only return one split and
+        have shuffle set to True.
+
+    fbeta : float, 1.0 by default
+        The strength of recall versus precision in the F-score.
+
+    argmax : str, default: 'fscore'
+        Annotate the threshold maximized by the supplied metric (see exclude
+        for the possible metrics to use). If None, will not annotate the
+        graph.
+
+    exclude : str or list, optional
+        Specify metrics to omit from the graph, can include:
+
+        - ``"precision"``
+        - ``"recall"``
+        - ``"queue_rate"``
+        - ``"fscore"``
+
+        All metrics not excluded will be displayed in the graph, nor will they
+        be available in ``thresholds_``; however, they will be computed on fit.
+
+    quantiles : sequence, default: np.array([0.1, 0.5, 0.9])
+        Specify the quantiles to view model variability across a number of
+        trials. Must be monotonic and have three elements such that the first
+        element is the lower bound, the second is the drawn curve, and the
+        third is the upper bound. By default the curve is drawn at the median,
+        and the bounds from the 10th percentile to the 90th percentile.
+
+    random_state : int, optional
+        Used to seed the random state for shuffling the data while composing
+        different train and test splits. If supplied, the random state is
+        incremented in a deterministic fashion for each split.
+
+        Note that if a splitter is provided, it's random state will also be
+        updated with this random state, even if it was previously set.
+
+    kwargs : dict
+        Keyword arguments that are passed to the base visualizer class.
 
     Returns
     -------
@@ -512,12 +551,10 @@ def discrimination_threshold(model,
     """
     # Instantiate the visualizer
     visualizer = DiscriminationThreshold(
-        model,
-        n_trials=n_trials,
-        cv=cv,
-        quantiles=quantiles,
-        random_state=random_state,
-        **kwargs)
+        model, ax=None, n_trials=50, cv=0.1,  fbeta=1.0, argmax='fscore',
+        exclude=None,  quantiles=QUANTILES_MEDIAN_80, random_state=None,
+        **kwargs
+    )
 
     # Fit and transform the visualizer (calls draw)
     visualizer.fit(X, y)

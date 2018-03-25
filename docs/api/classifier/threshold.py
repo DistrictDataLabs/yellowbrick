@@ -14,12 +14,11 @@ EXAMPLES = os.path.join(BASE, "examples", "data")
 
 # TODO: Make these examples part of the code base
 CHURN_DATASET = os.path.join(EXAMPLES, "churn", "churn.txt")
-SPAM_DATASET =  os.path.join(EXAMPLES, "spam", "spambase.data")
+SPAM_DATASET =  os.path.join(EXAMPLES, "spam", "spam.csv")
 
 
 def load_spam():
-    df = pd.read_csv(SPAM_DATASET, header=None)
-    df.rename(columns={57:'is_spam'}, inplace=True)
+    df = pd.read_csv(SPAM_DATASET)
 
     target = 'is_spam'
     features = [col for col in df.columns if col != target]

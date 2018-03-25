@@ -36,6 +36,7 @@ Classification Visualization
 - :doc:`api/classifier/classification_report`: visual representation of precision, recall, and F1
 - :doc:`ROC/AUC Curves <api/classifier/rocauc>`: receiver operator characteristics and area under the curve
 - :doc:`Confusion Matrices <api/classifier/confusion_matrix>`: visual description of class decision making
+- :doc:`Discrimination Threshold <api/classifier/threshold>`: find a threshold that best separates binary classes 
 
 Regression Visualization
 ~~~~~~~~~~~~~~~~~~~~~~~~
