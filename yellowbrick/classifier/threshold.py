@@ -152,7 +152,7 @@ class DiscriminationThreshold(ModelVisualizer):
     ``YellowbrickTypeError`` is raised otherwise.
 
     .. seealso::
-        For a thorough explanation of discrimination threshoolds, see:
+        For a thorough explanation of discrimination thresholds, see:
         `Visualizing Machine Learning Thresholds to Make Better Business
         Decisions
         <http://blog.insightdatalabs.com/visualizing-classifier-thresholds/>`_
