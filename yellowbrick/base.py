@@ -458,9 +458,10 @@ class VisualizerGrid(Visualizer):
     >>> mv.score(X_test, y_test)
     >>> mv.poof()
     """
-    def __init__(self, visualizers = [], nrows = None, ncols = None, axarr = None, **kwargs):
+    def __init__(self, visualizers = [], nrows = None, ncols = None, axarr = None, sharex= False, sharey=False, **kwargs):
         #Class static params
-        self.SUBPLOT_DEFAULT_PIXELS = 400
+        self.SUBPLOT_DEFAULT_HEIGHT_PIXELS = 400
+        self.SUBPLOT_DEFAULT_WIDTH_PIXELS = 400
 
         #Allocate passed parameters
         self._visualizers = visualizers
@@ -481,9 +482,17 @@ class VisualizerGrid(Visualizer):
 
 
         if axarr == None:
-            fig, axarr = plt.subplots(self.nrows, self.ncols, squeeze = False)
+            fig, axarr = plt.subplots(
+                self.nrows, 
+                self.ncols, 
+                squeeze = False,
+                sharex = sharex,
+                sharey = sharey
+            )
 
+        self.fig = fig
         self.axarr = axarr
+        plt.tight_layout() # forces better default spacing to accomodate titles; could be tweaked
 
         idx = 0
         for row in range(self.nrows):
@@ -533,19 +542,24 @@ class VisualizerGrid(Visualizer):
 
         return self
 
+    def finalize(self):
+        # override me if necessary
+        pass
+
     def poof(self, outpath=None, **kwargs):
 
         if self.axarr is None: return
 
-        #Finalize all visualizers
+        #Finalize all visualizers, then the whole plot
         for idx in range(len(self.visualizers)):
             self.visualizers[idx].finalize()
+        self.finalize()
 
         #Choose a reasonable default size if the user has not manually specified one
         # self.size() uses pixels rather than matplotlib's default of inches
         if not hasattr(self, "_size") or self._size is None:
-            self._width = self.SUBPLOT_DEFAULT_PIXELS * self.ncols
-            self._height = self.SUBPLOT_DEFAULT_PIXELS * self.nrows
+            self._width = self.SUBPLOT_DEFAULT_WIDTH_PIXELS * self.ncols
+            self._height = self.SUBPLOT_DEFAULT_HEIGHT_PIXELS * self.nrows
             self.size = (self._width,self._height);
 
         if outpath is not None:
