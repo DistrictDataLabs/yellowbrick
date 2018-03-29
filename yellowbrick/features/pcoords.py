@@ -19,15 +19,14 @@ coordinates that optimize column order.
 ## Imports
 ##########################################################################
 
-import numpy as np
-import matplotlib.pyplot as plt
-from sklearn.preprocessing import (MinMaxScaler, MaxAbsScaler, Normalizer,
-                                   StandardScaler)
+from sklearn.preprocessing import MinMaxScaler, MaxAbsScaler
+from sklearn.preprocessing import Normalizer, StandardScaler
 
 from yellowbrick.utils import is_dataframe
 from yellowbrick.features.base import DataVisualizer
 from yellowbrick.exceptions import YellowbrickTypeError, YellowbrickValueError
-from yellowbrick.style.colors import resolve_colors, get_color_cycle
+from yellowbrick.style.colors import resolve_colors
+
 
 ##########################################################################
 ## Quick Methods
@@ -264,10 +263,9 @@ class ParallelCoordinates(DataVisualizer):
         # Create the colors
         # TODO: Allow both colormap, listed colors, and palette definition
         # TODO: Make this an independent function or property for override!
-        # color_values = resolve_colors(
-        #     num_colors=len(self.classes_), colormap=self.colormap, color=self.color
-        # )
-        color_values = get_color_cycle()
+        color_values = resolve_colors(
+            n_colors=len(self.classes_), colormap=self.colormap, colors=self.color
+        )
         colors = dict(zip(self.classes_, color_values))
 
         # Track which labels are already in the legend

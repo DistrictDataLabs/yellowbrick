@@ -18,64 +18,63 @@ Tests for the stand alone helper functions in Yellowbrick utils.
 ## Imports
 ##########################################################################
 
-import unittest
+import pytest
+import numpy as np
+import numpy.testing as npt
 
 from yellowbrick.utils.helpers import *
 
 from sklearn.pipeline import Pipeline
 from sklearn.decomposition import PCA
-from sklearn.neighbors import LSHForest
-from sklearn.linear_model import RidgeCV, LassoCV
+from sklearn.neighbors import KNeighborsClassifier
+from sklearn.linear_model import LassoCV
 from sklearn.linear_model import LinearRegression
-from sklearn.linear_model import LogisticRegression
 from sklearn.ensemble import RandomForestClassifier
-from sklearn.cluster import KMeans, MiniBatchKMeans
-from sklearn.cluster import AffinityPropagation, Birch
-
+from sklearn.cluster import KMeans
 
 
 ##########################################################################
 ## Helper Function Tests
 ##########################################################################
 
-class HelpersTests(unittest.TestCase):
+class TestHelpers(object):
+    """
+    Helper functions and utilities
+    """
 
-    ##////////////////////////////////////////////////////////////////////
-    ## get_model_name testing
-    ##////////////////////////////////////////////////////////////////////
-
-    def test_real_model(self):
+    @pytest.mark.parametrize("model, name", [
+        (LassoCV, 'LassoCV'),
+        (KNeighborsClassifier, 'KNeighborsClassifier'),
+        (KMeans, 'KMeans'),
+        (RandomForestClassifier, 'RandomForestClassifier'),
+    ], ids=lambda i: i[0])
+    def test_real_model(self, model, name):
         """
-        Test that model name works for sklearn estimators
+        Test getting model name for sklearn estimators
         """
-        model1 = LassoCV()
-        model2 = LSHForest()
-        model3 = KMeans()
-        model4 = RandomForestClassifier()
-        self.assertEqual(get_model_name(model1), 'LassoCV')
-        self.assertEqual(get_model_name(model2), 'LSHForest')
-        self.assertEqual(get_model_name(model3), 'KMeans')
-        self.assertEqual(get_model_name(model4), 'RandomForestClassifier')
+        assert get_model_name(model()) == name
 
     def test_pipeline(self):
         """
-        Test that model name works for sklearn pipelines
+        Test getting model name for sklearn pipelines
         """
         pipeline = Pipeline([('reduce_dim', PCA()),
                              ('linreg', LinearRegression())])
-        self.assertEqual(get_model_name(pipeline), 'LinearRegression')
+        assert get_model_name(pipeline) == 'LinearRegression'
 
     def test_int_input(self):
         """
-        Assert a type error is raised when an int is passed to model name.
+        Assert a type error is raised when an int is passed to model name
         """
-        self.assertRaises(TypeError, get_model_name, 1)
+        with pytest.raises(TypeError):
+            get_model_name(1)
 
     def test_str_input(self):
         """
-        Assert a type error is raised when a str is passed to model name.
+        Assert a type error is raised when a str is passed to model name
         """
-        self.assertRaises(TypeError, get_model_name, 'helloworld')
+        with pytest.raises(TypeError):
+            get_model_name('helloworld')
 
 
 ##########################################################################
@@ -83,64 +82,132 @@ class HelpersTests(unittest.TestCase):
 ##########################################################################
 
 
-class DivSafeTests(unittest.TestCase):
+class TestNumericFunctions(object):
+    """
+    Numeric helper functions
+    """
 
     def test_div_1d_by_scalar(self):
+        """
+        Test divide 1D vector by scalar
+        """
         result = div_safe( [-1, 0, 1], 0 )
-        self.assertTrue(result.all() == 0)
+        assert result.all() == 0
 
     def test_div_1d_by_1d(self):
-        result =div_safe( [-1, 0 , 1], [0,0,0])
-        self.assertTrue(result.all() == 0)
+        """
+        Test divide 1D vector by another 1D vector with same length
+        """
+        result = div_safe( [-1, 0 , 1], [0,0,0])
+        assert result.all() == 0
 
     def test_div_2d_by_1d(self):
+        """
+        Test divide 2D vector by 1D vector with similar shape component
+        """
         numerator = np.array([[-1,0,1,2],[1,-1,0,3]])
         denominator = [0,0,0,0]
-        result = div_safe(numerator, denominator)
+        npt.assert_array_equal(
+            div_safe(numerator, denominator),
+            np.array([[0,0,0,0], [0,0,0,0]])
+        )
 
     def test_invalid_dimensions(self):
-            numerator = np.array([[-1,0,1,2],[1,-1,0,3]])
-            denominator = [0,0]
-            with self.assertRaises(ValueError):
-                result = div_safe(numerator, denominator)
+        """
+        Assert an error is raised on division with invalid dimensions
+        """
+        numerator = np.array([[-1,0,1,2],[1,-1,0,3]])
+        denominator = [0,0]
+        with pytest.raises(ValueError):
+            div_safe(numerator, denominator)
 
     def test_div_scalar_by_scalar(self):
-        with self.assertRaises(ValueError):
-            result = div_safe(5, 0)
+        """
+        Assert a value error is raised when trying to divide two scalars
+        """
+        with pytest.raises(ValueError):
+            div_safe(5, 0)
 
 
 ##########################################################################
 ## Features/Array Tests
 ##########################################################################
 
-class NarrayIntColumnsTests(unittest.TestCase):
+class TestNarrayIntColumns(object):
+    """
+    Features and array helper tests
+    """
 
     def test_has_ndarray_int_columns_true_int_features(self):
+        """
+        Ensure ndarray with int features has int columns
+        """
         x = np.random.rand(3,5)
         features = [0, 1]
-        self.assertTrue(has_ndarray_int_columns(features, x))
+        assert has_ndarray_int_columns(features, x)
 
     def test_has_ndarray_int_columns_true_int_strings(self):
+        """
+        Ensure ndarray with str(int) features has int columns
+        """
         x = np.random.rand(3,5)
         features = ['0', '1']
-        self.assertTrue(has_ndarray_int_columns(features, x))
+        assert has_ndarray_int_columns(features, x)
 
     def test_has_ndarray_int_columns_false_not_numeric(self):
+        """
+        Ensure ndarray with str features does not have int columns
+        """
         x = np.random.rand(3,5)
         features = ['a', '1']
-        self.assertFalse(has_ndarray_int_columns(features, x))
+        assert not has_ndarray_int_columns(features, x)
 
     def test_has_ndarray_int_columns_false_outside_column_range(self):
+        """
+        Ensure ndarray with str(int) outside range does not have int columns
+        """
         x = np.random.rand(3,5)
         features = ['0', '10']
-        self.assertFalse(has_ndarray_int_columns(features, x))
+        assert not has_ndarray_int_columns(features, x)
+
+    @pytest.mark.parametrize("a, increasing", [
+        (np.array([0.8]), True),
+        (np.array([9]), False),
+        (np.array([0.2, 1.3, 1.4, 1.4, 1.4, 1.5, 8.3, 8.5]), True),
+        (np.array([8, 7, 6, 5, 5, 5, 5, 4, 3, -1, -5]), False),
+    ], ids=["increasing single", "decreasing single", "increasing", "decreasing"])
+    def test_is_monotonic(self, a, increasing):
+        """
+        Test if a vector is monotonic
+        """
+        assert is_monotonic(a, increasing)
+
+    @pytest.mark.parametrize("a, increasing", [
+        (np.array([0.2, 1.3, 1.3, 0.2, 1.8]), True),
+        (np.array([8, 7, 7, 8, 9, 6, 5]), False),
+    ], ids=["increasing", "decreasing"])
+    def test_not_is_monotonic(self, a, increasing):
+        """
+        Test if a vector is not monotonic
+        """
+        assert not is_monotonic(a, increasing)
+
+    def test_multi_dim_is_monotonic(self):
+        """
+        Assert monotonicity is not decidable on multi-dimensional array
+        """
+        with pytest.raises(ValueError):
+            is_monotonic(np.array([[1,2,3], [4,5,6], [7,8,9]]))
 
 
 ##########################################################################
 ## String Helpers Tests
 ##########################################################################
 
-class StringHelpersTests(unittest.TestCase):
+class TestStringHelpers(object):
+    """
+    String helper functions
+    """
 
     def test_slugifiy(self):
         """
@@ -153,12 +220,4 @@ class StringHelpersTests(unittest.TestCase):
         )
 
         for case, expected in cases:
-            self.assertEqual(expected, slugify(case))
-
-
-##########################################################################
-## Execute Tests
-##########################################################################
-
-if __name__ == "__main__":
-    unittest.main()
+            assert expected == slugify(case)

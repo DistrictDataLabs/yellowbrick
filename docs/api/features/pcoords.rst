@@ -16,17 +16,19 @@ different distributions.
 .. code:: python
 
     # Load the classification data set
-    data = load_data('occupancy')
+    data = load_data("occupancy")
 
     # Specify the features of interest and the classes of the target
     features = ["temperature", "relative humidity", "light", "C02", "humidity"]
-    classes = ['unoccupied', 'occupied']
+    classes = ["unoccupied", "occupied"]
 
     # Extract the numpy arrays from the data frame
     X = data[features].as_matrix()
     y = data.occupancy.as_matrix()
 
 .. code:: python
+    
+    from yellowbrick.features import ParallelCoordinates
 
     # Instantiate the visualizer
     visualizer = ParallelCoordinates(classes=classes, features=features)
@@ -43,6 +45,8 @@ Parallel coordinates can take a long time to draw since each instance is represe
 Additionally the domain of each feature may make the visualization hard to interpret. In the above visualization, the domain of the ``light`` feature is from in ``[0, 1600]``, far larger than the range of temperature in ``[50, 96]``. A normalization methodology can be applied to change the range of features to ``[0,1]``. Try using ``minmax``, ``minabs``, ``standard``, ``l1``, or ``l2`` normalization to change perspectives in the parallel coordinates:
 
 .. code:: python
+
+    from yellowbrick.features import ParallelCoordinates
 
     # Instantiate the visualizer
     visualizer = ParallelCoordinates(

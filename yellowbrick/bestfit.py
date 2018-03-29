@@ -131,7 +131,7 @@ def draw_best_fit(X, y, ax, estimator='linear', **kwargs):
 
     if X.ndim > 2:
         raise YellowbrickValueError(
-            "X must be a (1,) or (n,1) dimensional array not {}".format(x.shape)
+            "X must be a (1,) or (n,1) dimensional array not {}".format(X.shape)
         )
 
     # Verify that y is a (n,) dimensional array
@@ -284,7 +284,6 @@ def draw_identity_line(ax=None, dynamic=True, **kwargs):
 if __name__ == '__main__':
     import os
     import pandas as pd
-    import matplotlib.pyplot as plt
 
     path = os.path.join(os.path.dirname(__file__), "..", "examples", "data", "concrete.xls")
     if not os.path.exists(path):

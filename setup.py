@@ -20,7 +20,6 @@ See http://bbengfort.github.io/programmer/2016/01/20/packaging-with-pypi.html
 ##########################################################################
 
 import os
-import re
 import codecs
 
 from setuptools import setup
@@ -127,7 +126,10 @@ config = {
     "keywords": KEYWORDS,
     "zip_safe": False,
     "scripts": [],
+    "setup_requires":["pytest-runner"],
+    "tests_require":["pytest"],
 }
+
 
 ##########################################################################
 ## Run setup script

@@ -8,7 +8,7 @@ For more on the development path, goals, and motivations behind Yellowbrick, che
 
 Yellowbrick is an open source project that is supported by a community who will gratefully and humbly accept any contributions you might make to the project. Large or small, any contribution makes a big difference; and if you've never contributed to an open source project before, we hope you will start with Yellowbrick!
 
-Principally, Yellowbrick development is about the addition and creation of *visualizers* --- objects that learn from data and create a visual representation of the data or model. Visualizers integrate with Scikit-Learn estimators, transformers, and pipelines for specific purposes and as a result, can be simple to build and deploy. The most common contribution is therefore a new visualizer for a specific model or model family. We'll discuss in detail how to build visualizers later.
+Principally, Yellowbrick development is about the addition and creation of *visualizers* --- objects that learn from data and create a visual representation of the data or model. Visualizers integrate with scikit-learn estimators, transformers, and pipelines for specific purposes and as a result, can be simple to build and deploy. The most common contribution is therefore a new visualizer for a specific model or model family. We'll discuss in detail how to build visualizers later.
 
 Beyond creating visualizers, there are many ways to contribute:
 
@@ -74,7 +74,14 @@ Once forked, use the following steps to get your development environment set up 
     $ pip install -r requirements.txt
     ``
 
-    Note that there may be other dependencies required for development and testing, you can simply install them with `pip`.
+    Note that there may be other dependencies required for development and testing, you can simply install them with `pip`. For example to install
+    the additional dependencies for building the documentation or to run the
+    test suite, use the `requirements.txt` files in those directories:
+
+    ```
+    $ pip install -r tests/requirements.txt
+    $ pip install -r docs/requirements.txt
+    ```
 
 4. Switch to the develop branch.
 
@@ -124,23 +131,23 @@ Head back to Waffle and checkout another issue!
 
 In this section, we'll discuss the basics of developing visualizers. This of course is a big topic, but hopefully these simple tips and tricks will help make sense.
 
-One thing that is necessary is a good understanding of Scikit-Learn and Matplotlib. Because our API is intended to integrate with Scikit-Learn, a good start is to review ["APIs of Scikit-Learn objects"](http://scikit-learn.org/stable/developers/contributing.html#apis-of-scikit-learn-objects) and ["rolling your own estimator"](http://scikit-learn.org/stable/developers/contributing.html#rolling-your-own-estimator). In terms of matplotlib, check out [Nicolas P. Rougier's Matplotlib tutorial](https://www.labri.fr/perso/nrougier/teaching/matplotlib/).
+One thing that is necessary is a good understanding of scikit-learn and Matplotlib. Because our API is intended to integrate with scikit-learn, a good start is to review ["APIs of scikit-learn objects"](http://scikit-learn.org/stable/developers/contributing.html#apis-of-scikit-learn-objects) and ["rolling your own estimator"](http://scikit-learn.org/stable/developers/contributing.html#rolling-your-own-estimator). In terms of matplotlib, check out [Nicolas P. Rougier's Matplotlib tutorial](https://www.labri.fr/perso/nrougier/teaching/matplotlib/).
 
 ### Visualizer API
 
 There are two basic types of Visualizers:
 
 - **Feature Visualizers** are high dimensional data visualizations that are essentially transformers.
-- **Score Visualizers** wrap a Scikit-Learn regressor, classifier, or clusterer and visualize the behavior or performance of the model on test data.
+- **Score Visualizers** wrap a scikit-learn regressor, classifier, or clusterer and visualize the behavior or performance of the model on test data.
 
-These two basic types of visualizers map well to the two basic objects in Scikit-Learn:
+These two basic types of visualizers map well to the two basic objects in scikit-learn:
 
 - **Transformers** take input data and return a new data set.
 - **Estimators** are fit to training data and can make predictions.
 
-The Scikit-Learn API is object oriented, and estimators and transformers are initialized with parameters by instantiating their class. Hyperparameters can also be set using the `set_attrs()` method and retrieved with the corresponding `get_attrs()` method. All Scikit-Learn estimators have a `fit(X, y=None)` method that accepts a two dimensional data array, `X`, and optionally a vector `y` of target values. The `fit()` method trains the estimator, making it ready to transform data or make predictions. Transformers have an associated `transform(X)` method that returns a new dataset, `Xprime` and models have a `predict(X)` method that returns a vector of predictions, `yhat`. Models also have a `score(X, y)` method that evaluate the performance of the model.
+The scikit-learn API is object oriented, and estimators and transformers are initialized with parameters by instantiating their class. Hyperparameters can also be set using the `set_attrs()` method and retrieved with the corresponding `get_attrs()` method. All scikit-learn estimators have a `fit(X, y=None)` method that accepts a two dimensional data array, `X`, and optionally a vector `y` of target values. The `fit()` method trains the estimator, making it ready to transform data or make predictions. Transformers have an associated `transform(X)` method that returns a new dataset, `Xprime` and models have a `predict(X)` method that returns a vector of predictions, `yhat`. Models also have a `score(X, y)` method that evaluate the performance of the model.
 
-Visualizers interact with Scikit-Learn objects by intersecting with them at the methods defined above. Specifically, visualizers perform actions related to `fit()`, `transform()`, `predict()`, and `score()` then call a `draw()` method which initializes the underlying figure associated with the visualizer. The user calls the visualizer's `poof()` method, which in turn calls a `finalize()` method on the visualizer to draw legends, titles, etc. and then `poof()` renders the figure. The Visualizer API is therefore:
+Visualizers interact with scikit-learn objects by intersecting with them at the methods defined above. Specifically, visualizers perform actions related to `fit()`, `transform()`, `predict()`, and `score()` then call a `draw()` method which initializes the underlying figure associated with the visualizer. The user calls the visualizer's `poof()` method, which in turn calls a `finalize()` method on the visualizer to draw legends, titles, etc. and then `poof()` renders the figure. The Visualizer API is therefore:
 
 - `draw()`: add visual elements to the underlying axes object
 - `finalize()`: prepare the figure for rendering, adding final touches such as legends, titles, axis labels, etc.
@@ -172,7 +179,7 @@ class MyVisualizer(Visualizer):
         self.set_title("My Visualizer")
 ```
 
-This simple visualizer simply draws a line graph for some input dataset X, intersecting with the Scikit-Learn API at the `fit()` method. A user would use this visualizer in the typical style::
+This simple visualizer simply draws a line graph for some input dataset X, intersecting with the scikit-learn API at the `fit()` method. A user would use this visualizer in the typical style::
 
 ```python
 visualizer = MyVisualizer()
@@ -184,11 +191,13 @@ Score visualizers work on the same principle but accept an additional required `
 
 ### Testing
 
-The test package mirrors the yellowbrick package in structure and also contains several helper methods and base functionality. To add a test to your visualizer, find the corresponding file to add the test case, or create a new test file in the same place you added your code.
+The test package mirrors the `yellowbrick` package in structure and also contains several helper methods and base functionality. To add a test to your visualizer, find the corresponding file to add the test case, or create a new test file in the same place you added your code.
 
-Visual tests are notoriously difficult to create --- how do you test a visualization or figure? Moreover, testing Scikit-Learn models with real data can consume a lot of memory. Therefore the primary test you should create is simply to test your visualizer from end to end and make sure that no exceptions occur. To assist with this, we have two primary helpers, `VisualTestCase` and `DatasetMixin`. Create your unittest as follows::
+Visual tests are notoriously difficult to create --- how do you test a visualization or figure? Moreover, testing scikit-learn models with real data can consume a lot of memory. Therefore the primary test you should create is simply to test your visualizer from end to end and make sure that no exceptions occur. To assist with this, we have two primary helpers, `VisualTestCase` and `DatasetMixin`. Create your unit test as follows::
 
 ```python
+import pytest
+
 from tests.base import VisualTestCase
 from tests.dataset import DatasetMixin
 
@@ -212,26 +221,28 @@ class MyVisualizerTests(VisualTestCase, DatasetMixin):
             visualizer.fit(X)
             visualizer.poof()
         except Exception as e:
-            self.fail("my visualizer didn't work")
+            pytest.fail("my visualizer didn't work")
 ```
 
 The entire test suite can be run as follows::
 
 ```
-$ make test
+$ pytest
 ```
 
 You can also run your own test file as follows::
 
 ```
-$ nosetests tests/test_your_visualizer.py
+$ pytest tests/test_your_visualizer.py
 ```
 
-The Makefile uses the nosetest runner and testing suite as well as the coverage library, so make sure you have those dependencies installed! The `DatasetMixin` also requires requests.py to fetch data from our Amazon S3 account.
+The Makefile uses the pytest runner and testing suite as well as the coverage library, so make sure you have those dependencies installed! The `DatasetMixin` also requires [requests.py](http://docs.python-requests.org/en/master/) to fetch data from our Amazon S3 account.
+
+**Note**: Advanced developers can use our _image comparison tests_ to assert that an image generated matches a baseline image. Read more about this in our [testing documentation](http://www.scikit-yb.org/en/latest/contributing.html#testing)
 
 ### Documentation
 
-The initial documentation for your visualizer will be a well structured docstring. Yellowbrick uses Sphinx to build documentation, therefore docstrings should be written in reStructuredText in numpydoc format (similar to Scikit-Learn). The primary location of your docstring should be right under the class definition, here is an example::
+The initial documentation for your visualizer will be a well structured docstring. Yellowbrick uses Sphinx to build documentation, therefore docstrings should be written in reStructuredText in numpydoc format (similar to scikit-learn). The primary location of your docstring should be right under the class definition, here is an example::
 
 ```python
 class MyVisualizer(Visualizer):
@@ -245,7 +256,7 @@ class MyVisualizer(Visualizer):
     Parameters
     ----------
 
-    model : a Scikit-Learn regressor
+    model : a scikit-learn regressor
         Should be an instance of a regressor, and specifically one whose name
         ends with "CV" otherwise a will raise a YellowbrickTypeError exception
         on instantiation. To use non-CV regressors see:
@@ -273,7 +284,7 @@ class MyVisualizer(Visualizer):
     """
 ```
 
-You should also add your example to the `examples` directory of the documentation when you have the chance, as well as create a demonstration in a notebook in the `examples` directory of the repository.
+This is a very good start to producing a high quality visualizer, but unless it is part of the documentation on our website, it will not be visible. For details on including documentation in the `docs` directory see the [Contributing Documentation](http://www.scikit-yb.org/en/latest/contributing.html#documentation) section in the larger contributing guide.
 
 ## Throughput
 

@@ -6,11 +6,10 @@ from yellowbrick.features import ParallelCoordinates
 
 def pcoords(X, y, outpath, **kwargs):
     # Create a new figure and axes
-    fig = plt.figure()
-    ax = fig.add_subplot(111)
+    _, ax = plt.subplots()
 
     # Create the visualizer
-    visualizer = ParallelCoordinates(**kwargs)
+    visualizer = ParallelCoordinates(ax=ax, **kwargs)
     visualizer.fit(X, y)
     visualizer.transform(X)
 

@@ -21,11 +21,10 @@ import inspect
 import numpy as np
 
 from sklearn.base import BaseEstimator
-from yellowbrick.exceptions import YellowbrickTypeError
 
 
 ##########################################################################
-## Type checking utilities
+## Model Type checking utilities
 ##########################################################################
 
 def is_estimator(model):
@@ -128,6 +127,59 @@ def is_clusterer(estimator):
 # Alias for closer name to isinstance and issubclass
 isclusterer = is_clusterer
 
+
+def is_gridsearch(estimator):
+    """
+    Returns True if the given estimator is a clusterer.
+
+    Parameters
+    ----------
+    estimator : class or instance
+        The object to test if it is a Scikit-Learn clusterer, especially a
+        Scikit-Learn estimator or Yellowbrick visualizer
+    """
+    # TODO: once we make ScoreVisualizer and ModelVisualizer pass through
+    # wrappers as in Issue #90, these three lines become unnecessary.
+    # NOTE: This must be imported here to avoid recursive import.
+    from yellowbrick.base import Visualizer
+    if isinstance(estimator, Visualizer):
+        return is_gridsearch(estimator.estimator)
+
+    from sklearn.model_selection import GridSearchCV, RandomizedSearchCV
+
+    if inspect.isclass(estimator):
+        return issubclass(estimator, (GridSearchCV, RandomizedSearchCV))
+
+    return isinstance(estimator, (GridSearchCV, RandomizedSearchCV))
+
+
+# Alias for closer name to isinstance and issubclass
+isgridsearch = is_gridsearch
+
+
+def is_probabilistic(estimator):
+    """
+    Returns True if the given estimator returns a y_score for it's decision
+    function, e.g. has ``predict_proba`` or ``decision_function`` methods.
+
+    Parameters
+    ----------
+    estimator : class or instance
+        The object to test if is probabilistic, especially a Scikit-Learn
+        estimator or Yellowbrick visualizer.
+    """
+    return any([
+        hasattr(estimator, 'predict_proba'),
+        hasattr(estimator, 'decision_function'),
+    ])
+
+# Alias for closer name to isinstance and issubclass
+isprobabilistic = is_probabilistic
+
+
+##########################################################################
+## Data Type checking utilities
+##########################################################################
 
 def is_dataframe(obj):
     """

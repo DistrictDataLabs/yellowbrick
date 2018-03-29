@@ -5,14 +5,14 @@ Example Datasets
 
 Yellowbrick hosts several datasets wrangled from the `UCI Machine
 Learning Repository <http://archive.ics.uci.edu/ml/>`__ to present the
-examples in this section. If you haven't downloaded the data, you can do so by
+examples used throughout this documentation. If you haven't downloaded the data, you can do so by
 running:
 
 ::
 
     $ python -m yellowbrick.download
 
-This should create a folder called ``data`` in your current working directory with all of the datasets. You can load a specified dataset with ``pandas.read_csv`` as follows:
+This should create a folder named ``data`` in your current working directory that contains all of the datasets. You can load a specified dataset with ``pandas.read_csv`` as follows:
 
 .. code:: python
 
@@ -20,9 +20,11 @@ This should create a folder called ``data`` in your current working directory wi
 
     data = pd.read_csv('data/concrete/concrete.csv')
 
-The following code snippet can be found at the top of the ``examples/examples.ipynb`` notebok in Yellowbrick. Please reference this code when trying to load a specific data set:
+The following code snippet can be found at the top of the ``examples/examples.ipynb`` notebook in Yellowbrick. Please reference this code when trying to load a specific data set:
 
 .. code:: python
+
+    import os
 
     from yellowbrick.download import download_all
 
@@ -38,6 +40,7 @@ The following code snippet can be found at the top of the ``examples/examples.ip
         "game": os.path.join(FIXTURES, "game", "game.csv"),
         "mushroom": os.path.join(FIXTURES, "mushroom", "mushroom.csv"),
         "occupancy": os.path.join(FIXTURES, "occupancy", "occupancy.csv"),
+        "spam": os.path.join(FIXTURES, "spam", "spam.csv"),
     }
 
 
@@ -64,8 +67,8 @@ The following code snippet can be found at the top of the ``examples/examples.ip
         # Return the data frame
         return pd.read_csv(path)
 
-Note that most of the examples currently use one or more of the listed datasets for their examples (unless specifically shown otherwise). Each dataset has a ``README.md`` with detailed information about the data source, attributes, and target. Here is a complete listing of all datasets in Yellowbrick and their associated analytical tasks:
 
+Unless otherwise specified, most of the examples currently use one or more of the listed datasets. Each dataset has a ``README.md`` with detailed information about the data source, attributes, and target. Here is a complete listing of all datasets in Yellowbrick and their associated analytical tasks:
 - **bikeshare**: suitable for regression
 - **concrete**: suitable for regression
 - **credit**: suitable for classification/clustering
@@ -74,3 +77,4 @@ Note that most of the examples currently use one or more of the listed datasets 
 - **hobbies**: suitable for text analysis
 - **mushroom**: suitable for classification/clustering
 - **occupancy**: suitable for classification
+- **spam**: suitable for binary classification

@@ -30,15 +30,18 @@ Feature Visualization
 - **Parallel Coordinates**: horizontal visualization of instances
 - **Radial Visualization**: separation of instances around a circular plot
 - **PCA Projection**: projection of instances based on principal components
+- **Feature Importances**: rank features based on their in-model performance
 - **Scatter and Joint Plots**: direct data visualization with feature selection
 
 Classification Visualization
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 - **Class Balance**: see how the distribution of classes affects the model
+- **Class Prediction Error**: shows error and support in classification
 - **Classification Report**: visual representation of precision, recall, and F1
 - **ROC/AUC Curves**: receiver operator characteristics and area under the curve
 - **Confusion Matrices**: visual description of class decision making
+- **Discrimination Threshold**: find a threshold that best separates binary classes
 
 Regression Visualization
 ~~~~~~~~~~~~~~~~~~~~~~~~

@@ -19,11 +19,11 @@ Implements visualizers that use the silhouette metric for cluster evaluation.
 
 import numpy as np
 
+from ..style import color_palette
 from .base import ClusteringScoreVisualizer
-from ..exceptions import YellowbrickValueError
-from ..style import resolve_colors, color_palette
 
 from sklearn.metrics import silhouette_score, silhouette_samples
+
 
 ## Packages for export
 __all__ = [

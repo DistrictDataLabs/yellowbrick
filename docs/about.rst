@@ -5,11 +5,11 @@ About
 
 Image by QuatroCinco_, used with permission, Flickr Creative Commons.
 
-Yellowbrick is an open source, pure Python project that extends the Scikit-Learn API_ with visual analysis and diagnostic tools. The Yellowbrick API also wraps Matplotlib to create publication-ready figures and interactive data explorations while still allowing developers fine-grain control of figures. For users, Yellowbrick can help evaluate the performance, stability, and predictive value of machine learning models, and assist in diagnosing problems throughout the machine learning workflow.
+Yellowbrick is an open source, pure Python project that extends the scikit-learn API_ with visual analysis and diagnostic tools. The Yellowbrick API also wraps matplotlib to create publication-ready figures and interactive data explorations while still allowing developers fine-grain control of figures. For users, Yellowbrick can help evaluate the performance, stability, and predictive value of machine learning models and assist in diagnosing problems throughout the machine learning workflow.
 
 Recently, much of this workflow has been automated through grid search methods, standardized APIs, and GUI-based applications. In practice, however, human intuition and guidance can more effectively hone in on quality models than exhaustive search. By visualizing the model selection process, data scientists can steer towards final, explainable models and avoid pitfalls and traps.
 
-The Yellowbrick library is a diagnostic visualization platform for machine learning that allows data scientists to steer the model selection process. Yellowbrick extends the Scikit-Learn API with a new core object: the Visualizer. Visualizers allow visual models to be fit and transformed as part of the Scikit-Learn Pipeline process, providing visual diagnostics throughout the transformation of high dimensional data.
+The Yellowbrick library is a diagnostic visualization platform for machine learning that allows data scientists to steer the model selection process. It extends the scikit-learn API with a new core object: the Visualizer. Visualizers allow visual models to be fit and transformed as part of the scikit-learn pipeline process, providing visual diagnostics throughout the transformation of high-dimensional data.
 
 Model Selection
 ---------------
@@ -18,14 +18,10 @@ Discussions of machine learning are frequently characterized by a singular focus
 However, model selection is a bit more nuanced than simply picking the "right" or "wrong" algorithm. In practice, the workflow includes:
 
   1. selecting and/or engineering the smallest and most predictive feature set
-  2. choosing a set of algorithms from a model family, and
-  3. tuning the algorithm hyperparameters to optimize performance.
+  2. choosing a set of algorithms from a model family
+  3. tuning the algorithm hyperparameters to optimize performance
 
 The **model selection triple** was first described in a 2015 SIGMOD_ paper by Kumar et al. In their paper, which concerns the development of next-generation database systems built to anticipate predictive modeling, the authors cogently express that such systems are badly needed due to the highly experimental nature of machine learning in practice. "Model selection," they explain, "is iterative and exploratory because the space of [model selection triples] is usually infinite, and it is generally impossible for analysts to know a priori which [combination] will yield satisfactory accuracy and/or insights."
-
-Recently, much of this workflow has been automated through grid search methods, standardized APIs, and GUI-based applications. In practice, however, human intuition and guidance can more effectively hone in on quality models than exhaustive search. By visualizing the model selection process, data scientists can steer towards final, explainable models and avoid pitfalls and traps.
-
-The Yellowbrick library is a diagnostic visualization platform for machine learning that allows data scientists to steer the model selection process. Yellowbrick extends the Scikit-Learn API with a new core object: the Visualizer. Visualizers allow visual models to be fit and transformed as part of the Scikit-Learn Pipeline process, providing visual diagnostics throughout the transformation of high dimensional data.
 
 Name Origin
 -----------
@@ -37,9 +33,9 @@ From Wikipedia_:
 Team
 ----
 
-Yellowbrick is is developed by data scientists who believe in open source and the project enjoys contributions from Python developers all over the world. The project was started by `@rebeccabilbro`_ and `@bbengfort`_ as an attempt to better explain machine learning concepts to their students; they quickly realized, however, that the potential for visual steering could have a large impact on practical data science and developed it into a high-level Python library.
+Yellowbrick is developed by data scientists who believe in open source and the project enjoys contributions from Python developers all over the world. The project was started by `@rebeccabilbro`_ and `@bbengfort`_ as an attempt to better explain machine learning concepts to their students; they quickly realized, however, that the potential for visual steering could have a large impact on practical data science and developed it into a high-level Python library.
 
-Yellowbrick is incubated by `District Data Labs`_, an organization that is dedicated to collaboration and open source development. As part of District Data Labs, Yellowbrick was first introduced to the Python Community at `PyCon 2016 <https://youtu.be/c5DaaGZWQqY>`_ in both talks and during the development sprints. The project was then carried on through DDL Research Labs (semester-long sprints where members of the DDL community contribute to various data related projects).
+Yellowbrick is incubated by `District Data Labs`_, an organization that is dedicated to collaboration and open source development. As part of District Data Labs, Yellowbrick was first introduced to the Python Community at `PyCon 2016 <https://youtu.be/c5DaaGZWQqY>`_ in both talks and during the development sprints. The project was then carried on through DDL Research Labs (semester-long sprints where members of the DDL community contribute to various data-related projects).
 
 License
 -------
@@ -64,7 +60,6 @@ Yellowbrick has enjoyed the spotlight at a few conferences and in several presen
 
 Videos:
     - `Visual Diagnostics for More Informed Machine Learning: Within and Beyond Scikit-Learn (PyCon 2016) <https://youtu.be/c5DaaGZWQqY>`_
-    - `Visual Diagnostics for More Informed Machine Learning (PyData Carolinas 2016) <https://youtu.be/cgtNPx7fJUM>`_
     - `Yellowbrick: Steering Machine Learning with Visual Transformers (PyData London 2017) <https://youtu.be/2ZKng7pCB5k>`_
 
 Slides:
@@ -74,3 +69,40 @@ Slides:
 
 .. _QuatroCinco: https://flic.kr/p/2Yj9mj
 .. _API: http://scikit-learn.org/stable/modules/classes.html
+
+
+Citing Yellowbrick
+------------------
+
+.. image:: https://zenodo.org/badge/DOI/10.5281/zenodo.1206239.svg
+   :target: https://doi.org/10.5281/zenodo.1206239
+
+We hope that Yellowbrick facilitates machine learning of all kinds and we're particularly fond of academic work and research. If you're writing a scientific publication that uses Yellowbrick you can cite *Bengfort et al. (2018)* with the following BibTex:
+
+.. code-block:: bibtex
+
+    @software{bengfort_yellowbrick_2018,
+        title = {Yellowbrick},
+        rights = {Apache License 2.0},
+        url = {http://www.scikit-yb.org/en/latest/},
+        abstract = {Yellowbrick is an open source, pure Python project that
+            extends the Scikit-Learn {API} with visual analysis and
+            diagnostic tools. The Yellowbrick {API} also wraps Matplotlib to
+            create publication-ready figures and interactive data
+            explorations while still allowing developers fine-grain control
+            of figures. For users, Yellowbrick can help evaluate the
+            performance, stability, and predictive value of machine learning
+            models, and assist in diagnosing problems throughout the machine
+            learning workflow.},
+        version = {0.6},
+        author = {Bengfort, Benjamin and Danielsen, Nathan and
+            Bilbro, Rebecca and Gray, Larry and {McIntyre}, Kristen and
+            Richardson, George and Miller, Taylor and Mayfield, Gary and
+            Schafer, Phillip and Keung, Jason},
+        date = {2018-03-17},
+        doi = {10.5281/zenodo.1206264}
+    }
+
+You can also find DOI (digital object identifiers) for every version of Yellowbrick on `zenodo.org <https://doi.org/10.5281/zenodo.1206239>`_; use the BibTeX on this site to reference specific versions or changes made to the software.
+
+We're also currently working on a scientific paper that describes Yellowbrick in the context of *steering the model selection process*. Stay tuned for a pre-release of this paper on arXiv. 

@@ -18,7 +18,6 @@ Helper functions and generic utilities for use in Yellowbrick code.
 ##########################################################################
 
 import re
-import unicodedata
 import numpy as np
 
 from sklearn.pipeline import Pipeline
@@ -72,6 +71,32 @@ def has_ndarray_int_columns(features, X):
 
 # Alias for closer name to isinstance and issubclass
 hasndarrayintcolumns = has_ndarray_int_columns
+
+
+def is_monotonic(a, increasing=True):
+    """
+    Tests whether a vector a has monotonicity.
+
+    Parameters
+    ----------
+    a : array-like
+        Array that should be tested for monotonicity
+
+    increasing : bool, default: True
+        Test if the array is montonically increasing, otherwise test if the
+        array is montonically decreasing.
+    """
+    a = np.asarray(a) # ensure a is array-like 
+
+    if a.ndim > 1:
+        raise ValueError("not supported for multi-dimensonal arrays")
+
+    if len(a) <= 1:
+        return True
+
+    if increasing:
+        return np.all(a[1:] >= a[:-1], axis=0)
+    return np.all(a[1:] <= a[:-1], axis=0)
 
 
 ##########################################################################

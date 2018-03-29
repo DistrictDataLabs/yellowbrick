@@ -34,6 +34,11 @@ from .base import ClassificationScoreVisualizer
 ## Classification Report
 ##########################################################################
 
+CMAP_UNDERCOLOR = 'w'
+CMAP_OVERCOLOR = '#2a7d4f'
+SCORES_KEYS = ('precision', 'recall', 'f1')
+
+
 class ClassificationReport(ClassificationScoreVisualizer):
     """
     Classification report that shows the precision, recall, and F1 scores
@@ -41,7 +46,6 @@ class ClassificationReport(ClassificationScoreVisualizer):
 
     Parameters
     ----------
-
     ax : The axis to plot the figure on.
 
     model : the Scikit-Learn estimator
@@ -52,14 +56,14 @@ class ClassificationReport(ClassificationScoreVisualizer):
         If classes is None and a y value is passed to fit then the classes
         are selected from the target vector.
 
-    colormap : optional string or matplotlib cmap to colorize lines
-        Use sequential heatmap.
+    cmap : string, default: ``'YlOrRd'``
+        Specify a colormap to define the heatmap of the predicted class
+        against the actual class in the confusion matrix.
 
     kwargs : keyword arguments passed to the super class.
 
     Examples
     --------
-
     >>> from yellowbrick.classifier import ClassificationReport
     >>> from sklearn.linear_model import LogisticRegression
     >>> viz = ClassificationReport(LogisticRegression())
@@ -67,69 +71,91 @@ class ClassificationReport(ClassificationScoreVisualizer):
     >>> viz.score(X_test, y_test)
     >>> viz.poof()
 
+    Attributes
+    ----------
+    scores_ : dict of dicts
+        Outer dictionary composed of precision, recall, and f1 scores with
+        inner dictionaries specifiying the values for each class listed.
     """
-    def __init__(self, model, ax=None, classes=None, **kwargs):
+    def __init__(self, model, ax=None, classes=None, cmap='YlOrRd', **kwargs):
         super(ClassificationReport, self).__init__(
             model, ax=ax, classes=classes, **kwargs
         )
 
-        self.cmap = color_sequence(kwargs.pop('cmap', 'YlOrRd'))
+        self.cmap = color_sequence(cmap)
+        self.cmap.set_under(color=CMAP_UNDERCOLOR)
+        self.cmap.set_over(color=CMAP_OVERCOLOR)
 
     def score(self, X, y=None, **kwargs):
         """
-        Generates the Scikit-Learn classification_report
+        Generates the Scikit-Learn classification report.
 
         Parameters
         ----------
-
         X : ndarray or DataFrame of shape n x m
             A matrix of n instances with m features
 
         y : ndarray or Series of length n
             An array or series of target or class values
-
         """
         y_pred = self.predict(X)
-        keys   = ('precision', 'recall', 'f1')
-        self.scores = precision_recall_fscore_support(y, y_pred)
-        self.scores = map(lambda s: dict(zip(self.classes_, s)), self.scores[0:3])
-        self.scores = dict(zip(keys, self.scores))
 
-        return self.draw(y, y_pred)
+        scores = precision_recall_fscore_support(y, y_pred)
+        scores = map(lambda s: dict(zip(self.classes_, s)), scores[0:3])
+        self.scores_ = dict(zip(SCORES_KEYS, scores))
 
-    def draw(self, y, y_pred):
+        return self.draw()
+
+    def draw(self):
         """
         Renders the classification report across each axis.
-
-        Parameters
-        ----------
-
-        y : ndarray or Series of length n
-            An array or series of target or class values
-
-        y_pred : ndarray or Series of length n
-            An array or series of predicted target values
         """
-        self.matrix = []
-        for cls in self.classes_:
-            self.matrix.append([self.scores['precision'][cls],self.scores['recall'][cls],self.scores['f1'][cls]])
+        # Create display grid
+        cr_display = np.zeros((len(self.classes_), 3))
 
-        for column in range(0,3): #3 columns - prec,rec,f1
-            for row in range(len(self.classes_)):
-                current_score = self.matrix[row][column]
-                base_color = self.cmap(current_score)
-                text_color= find_text_color(base_color)
+        # For each class row, append columns for precision, recall, and f1
+        for idx, cls in enumerate(self.classes_):
+            for jdx, metric in enumerate(('precision', 'recall', 'f1')):
+                cr_display[idx, jdx] = self.scores_[metric][cls]
 
-                # Limit the current score to a precision of 3
-                current_score = "{:0.3f}".format(current_score)
+        # Set up the dimensions of the pcolormesh
+        # NOTE: pcolormesh accepts grids that are (N+1,M+1)
+        X, Y = np.arange(len(self.classes_)+1), np.arange(4)
+        self.ax.set_ylim(bottom=0, top=cr_display.shape[0])
+        self.ax.set_xlim(left=0, right=cr_display.shape[1])
 
-                self.ax.text(column,row,current_score,va='center',ha='center', color=text_color)
+        # Set data labels in the grid, enumerating over class, metric pairs
+        # NOTE: X and Y are one element longer than the classification report
+        # so skip the last element to label the grid correctly.
+        for x in X[:-1]:
+            for y in Y[:-1]:
 
-        fig = plt.imshow(self.matrix, interpolation='nearest', cmap=self.cmap, vmin=0, vmax=1, aspect='auto')
+                # Extract the value and the text label
+                value = cr_display[x,y]
+                svalue = "{:0.3f}".format(value)
+
+                # Determine the grid and text colors
+                base_color = self.cmap(value)
+                text_color = find_text_color(base_color)
+
+                # Add the label to the middle of the grid
+                cx, cy = x+0.5, y+0.5
+                self.ax.text(
+                    cy, cx, svalue, va='center', ha='center', color=text_color
+                )
+
+
+        # Draw the heatmap with colors bounded by the min and max of the grid
+        # NOTE: I do not understand why this is Y, X instead of X, Y it works
+        # in this order but raises an exception with the other order.
+        g = self.ax.pcolormesh(
+            Y, X, cr_display, vmin=0, vmax=1, cmap=self.cmap, edgecolor='w',
+        )
 
         # Add the color bar
-        plt.colorbar()
+        plt.colorbar(g, ax=self.ax)
 
+        # Return the axes being drawn on
         return self.ax
 
     def finalize(self, **kwargs):
@@ -145,20 +171,14 @@ class ClassificationReport(ClassificationScoreVisualizer):
         # Set the title of the classifiation report
         self.set_title('{} Classification Report'.format(self.name))
 
-        # Compute the tick marks for both x and y
-        x_tick_marks = np.arange(len(self.classes_)+1)
-        y_tick_marks = np.arange(len(self.classes_))
-
         # Set the tick marks appropriately
-        self.ax.set_xticks(x_tick_marks)
-        self.ax.set_yticks(y_tick_marks)
+        self.ax.set_xticks(np.arange(3)+0.5)
+        self.ax.set_yticks(np.arange(len(self.classes_))+0.5)
 
         self.ax.set_xticklabels(['precision', 'recall', 'f1-score'], rotation=45)
         self.ax.set_yticklabels(self.classes_)
 
-        # Set the labels for the two axes
-        self.ax.set_ylabel('Classes')
-        self.ax.set_xlabel('Measures')
+        plt.tight_layout()
 
 
 def classification_report(model, X, y=None, ax=None, classes=None, **kwargs):

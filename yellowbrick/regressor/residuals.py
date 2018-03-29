@@ -18,13 +18,10 @@ Regressor visualizers that score residuals: prediction vs. actual data.
 ## Imports
 ##########################################################################
 
-import matplotlib.pyplot as plt
-
 from sklearn.model_selection import train_test_split
 
 from ..style.palettes import LINE_COLOR
 from .base import RegressionScoreVisualizer
-from ..exceptions import YellowbrickTypeError
 from ..bestfit import draw_best_fit, draw_identity_line
 
 
@@ -64,7 +61,7 @@ class PredictionError(RegressionScoreVisualizer):
         shared_limits to False, but note that this will distort the figure
         and should be accounted for during analysis.
 
-    besfit : bool, default: True
+    bestfit : bool, default: True
         Draw a linear best fit line to estimate the correlation between the
         predicted and measured value of the target variable. The color of
         the bestfit line is determined by the ``line_color`` argument.
@@ -138,9 +135,11 @@ class PredictionError(RegressionScoreVisualizer):
         -------
         score : float
         """
+        self.score_ =  self.estimator.score(X, y, **kwargs)
+
         y_pred = self.predict(X)
         self.draw(y, y_pred)
-        self.score_ =  self.estimator.score(X, y, **kwargs)
+
         return self.score_
 
     def draw(self, y, y_pred):
@@ -157,7 +156,8 @@ class PredictionError(RegressionScoreVisualizer):
         ------
         ax : the axis with the plotted figure
         """
-        self.ax.scatter(y, y_pred, c=self.colors['point'])
+        label = "$R^2 = {:0.3f}$".format(self.score_)
+        self.ax.scatter(y, y_pred, c=self.colors['point'], alpha=0.75, label=label)
 
         # TODO If score is happening inside a loop, draw would get called multiple times.
         # Ideally we'd want the best fit line to be drawn only once
@@ -186,9 +186,7 @@ class PredictionError(RegressionScoreVisualizer):
         """
         # Set the title on the plot
         self.set_title(
-            'Prediction Error for {} ($r^2 = {:0.3f}$)'.format(
-                self.name, self.score_
-            )
+            'Prediction Error for {}'.format(self.name)
         )
 
         # Square the axes to ensure a 45 degree line
@@ -222,7 +220,8 @@ class PredictionError(RegressionScoreVisualizer):
         self.ax.set_xlabel('$y$')
 
         # Annotate the score
-        self.ax.annotate('$r^2={:0.3f}$'.format(self.score_), xy=(0,0), xytext=(0,0))
+        # NOTE: Couldn't get this to work so added to title instead (for now)
+        # self.ax.annotate('$r^2={:0.3f}$'.format(self.score_), xy=(0,0), xytext=(0,0))
 
         # Set the legend
         self.ax.legend(loc='best', frameon=True)
@@ -410,9 +409,17 @@ class ResidualsPlot(RegressionScoreVisualizer):
         ax : the axis with the plotted figure
 
         """
+        score = self.estimator.score(X, y, **kwargs)
+        if train:
+            self.train_score_ = score
+        else:
+            self.test_score_ = score
+
         y_pred = self.predict(X)
         scores = y_pred - y
         self.draw(y_pred, scores, train=train)
+
+        return score
 
     def draw(self, y_pred, residuals, train=False, **kwargs):
         """
@@ -436,11 +443,17 @@ class ResidualsPlot(RegressionScoreVisualizer):
         ax : the axis with the plotted figure
 
         """
-        color = self.colors['train_point'] if train else self.colors['test_point']
-        alpha = 0.5 if train else 1.0
 
-        self.ax.scatter(y_pred, residuals, c=color, s=40, alpha=alpha)
+        if train:
+            color = self.colors['train_point']
+            alpha = 0.5
+            label = "Train $R^2 = {:0.3f}$".format(self.train_score_)
+        else:
+            color = self.colors['test_point']
+            alpha = 0.9
+            label = "Test $R^2 = {:0.3f}$".format(self.test_score_)
 
+        self.ax.scatter(y_pred, residuals, c=color, alpha=alpha, label=label)
         return self.ax
 
     def finalize(self, **kwargs):
@@ -457,9 +470,7 @@ class ResidualsPlot(RegressionScoreVisualizer):
         self.set_title('Residuals for {} Model'.format(self.name))
 
         # Set the legend
-        # Assumes that the first set of points are training data, and the next are test
-        # Assumes that you want a box around legend
-        self.ax.legend(['Training Data', 'Test Data'], loc = 'best', frameon = True)
+        self.ax.legend(loc='best', frameon=True)
 
         # Create a full line across the figure at zero error.
         self.ax.axhline(y=0, c=self.colors['line'])

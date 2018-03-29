@@ -18,18 +18,24 @@ Helper functions for tests that utilize downloadable datasets.
 ##########################################################################
 
 import os
-import sys
 import shutil
 import hashlib
 import zipfile
 import numpy as np
 
+from collections import namedtuple
 from sklearn.datasets.base import Bunch
+
 
 try:
     import requests
 except ImportError:
     requests = None
+
+
+# Helpers for fixtures
+Dataset = namedtuple('Dataset', 'X,y')
+Split = namedtuple('Split', 'train,test')
 
 
 ##########################################################################
@@ -75,6 +81,11 @@ DATASETS = {
     'bikeshare': {
         'url': 'https://s3.amazonaws.com/ddl-data-lake/yellowbrick/bikeshare.zip',
         'signature': 'a9b440f65549746dff680c92ff8bdca3c7265f09db1cf09e708e6e26fc8aba44',
+        'type': 'numpy',
+    },
+    'spam': {
+        'url': 'https://s3.amazonaws.com/ddl-data-lake/yellowbrick/spam.zip',
+        'signature': '65be21196ba3d8448847409b70a67d761f873f30719c807600eb516d7aef1de1',
         'type': 'numpy',
     },
 }

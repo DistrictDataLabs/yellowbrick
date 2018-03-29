@@ -16,9 +16,10 @@ Test the ScatterViz feature analysis visualizers
 # Imports
 ##########################################################################
 
+import six
+import pytest
 import unittest
 import numpy as np
-import numpy.testing as npt
 import matplotlib as mptl
 
 from yellowbrick.features.scatter import *
@@ -38,7 +39,7 @@ except ImportError:
 # ScatterViz Base Tests
 ##########################################################################
 
-
+@pytest.mark.filterwarnings('ignore')
 class ScatterVizTests(VisualTestCase, DatasetMixin):
 
     # yapf: disable
@@ -65,6 +66,17 @@ class ScatterVizTests(VisualTestCase, DatasetMixin):
         features = ["temperature", "relative_humidity"]
         visualizer = ScatterVisualizer(features=features, markers=['*'])
         self.assertIsNotNone(visualizer.markers)
+
+    def test_deprecated(self):
+        with pytest.deprecated_call():
+            features = ["temperature", "relative_humidity"]
+            ScatterViz(features=features)
+
+    @pytest.mark.skipif(six.PY2, reason="deprecation warnings filtered in PY2")
+    def test_deprecated_message(self):
+        with pytest.warns(DeprecationWarning, match='Will be moved to yellowbrick.contrib in v0.7'):
+            features = ["temperature", "relative_humidity"]
+            ScatterViz(features=features)
 
     def test_scatter(self):
         """
@@ -100,9 +112,8 @@ class ScatterVizTests(VisualTestCase, DatasetMixin):
         """
         features = ["temperature", "relative_humidity", "light"]
 
-        with self.assertRaises(YellowbrickValueError) as context:
-            visualizer = ScatterViz(features=features)
-
+        with self.assertRaises(YellowbrickValueError):
+            ScatterViz(features=features)
 
     def test_scatter_xy_and_features_raise_error(self):
         """
@@ -110,8 +121,8 @@ class ScatterVizTests(VisualTestCase, DatasetMixin):
         """
         features = ["temperature", "relative_humidity", "light"]
 
-        with self.assertRaises(YellowbrickValueError) as context:
-            visualizer = ScatterViz(features=features, x='one', y='two')
+        with self.assertRaises(YellowbrickValueError):
+            ScatterViz(features=features, x='one', y='two')
 
     def test_scatter_xy_changes_to_features(self):
         """
@@ -138,10 +149,10 @@ class ScatterVizTests(VisualTestCase, DatasetMixin):
         X = self.occupancy[[
             "temperature", "relative_humidity", "light", "C02", "humidity"
         ]]
-        y = self.occupancy['occupancy'].astype(int)
 
-        # Convert X to an ndarray
-        X = X.view((float, len(X.dtype.names)))
+        # Convert to numpy arrays
+        X = X.copy().view((float, len(X.dtype.names)))
+        y = self.occupancy['occupancy'].astype(int)
 
         # Test the visualizer
         features = ["temperature", "relative_humidity"]
@@ -156,17 +167,17 @@ class ScatterVizTests(VisualTestCase, DatasetMixin):
         X = self.occupancy[[
             "temperature", "relative_humidity", "light", "C02", "humidity"
         ]]
-        y = self.occupancy['occupancy'].astype(int)
 
-        # Convert X to an ndarray
-        X = X.view((float, len(X.dtype.names)))
+        # Convert to numpy arrays
+        X = X.copy().view((float, len(X.dtype.names)))
+        y = self.occupancy['occupancy'].astype(int)
 
         # Test the visualizer
         features = ["temperature", "relative_humidity"]
         ax = scatterviz(X[:, :2], y=y, ax=None, features=features)
 
         # test that is returns a matplotlib obj with axes
-        self.assertIn('Axes', str(ax.properties()['axes']))
+        self.assertIsInstance(ax, mptl.axes.Axes)
 
     @unittest.skipUnless(pandas is not None,
                          "Pandas is not installed, could not run test.")
@@ -237,7 +248,7 @@ class ScatterVizTests(VisualTestCase, DatasetMixin):
 
     def test_scatter_image_fail(self):
         """
-        Assert bad image similarity on scatterviz errors 
+        Assert bad image similarity on scatterviz errors
         """
 
         X_two_cols = self.X[:, :2]

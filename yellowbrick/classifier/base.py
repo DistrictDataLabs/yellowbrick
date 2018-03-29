@@ -56,7 +56,12 @@ class ClassificationScoreVisualizer(ScoreVisualizer):
             classes = np.array(classes)
 
         # Set up classifier score visualization properties
-        self.colors    = color_palette(kwargs.pop('colors', None))
+        if classes is not None:
+            n_colors = len(classes)
+        else:
+            n_colors = None
+
+        self.colors    = color_palette(kwargs.pop('colors', None), n_colors)
         self.classes_  = classes
 
     @property

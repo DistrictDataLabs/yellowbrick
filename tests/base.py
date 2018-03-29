@@ -4,9 +4,6 @@
 # Author:   Benjamin Bengfort <bbengfort@districtdatalabs.com>
 # Created:  Sun Oct 09 12:23:13 2016 -0400
 #
-# Copyright (C) 2016 District Data Labs
-# For license information, see LICENSE.txt
-#
 # ID: base.py [b8e3318] benjamin@bengfort.com $
 
 """
@@ -17,8 +14,8 @@ Helper functions and cases for making assertions on visualizations.
 ## Imports
 ##########################################################################
 
-import inspect
 import os
+import inspect
 
 import unittest
 import matplotlib as mpl
@@ -52,8 +49,15 @@ class VisualTestCase(unittest.TestCase):
         """
         Assert tthat the backend is 'Agg' and close all previous plots
         """
+        # Reset the matplotlib environment
+        plt.cla()        # clear current axis
+        plt.clf()        # clear current figure
         plt.close("all") # close all existing plots
-        rcParams['font.family'] = 'DejaVu Sans' # Travis-CI does not have san-sarif
+
+        # Travis-CI does not have san-serif
+        rcParams['font.family'] = 'DejaVu Sans'
+
+        # Assert that the backend is agg
         self.assertEqual(self._backend, 'agg')
         super(VisualTestCase, self).setUp()
 
@@ -94,7 +98,7 @@ class VisualTestCase(unittest.TestCase):
         base_img = os.path.join(base_results, test_func_name + extension)
         return base_img
 
-    def assert_images_similar(self, visualizer, tol=0.01):
+    def assert_images_similar(self, visualizer=None, ax=None, tol=0.01):
         """Accessible testing method for testing generation of a Visualizer.
 
         Requires the placement of a baseline image for comparison in the
@@ -118,19 +122,26 @@ class VisualTestCase(unittest.TestCase):
             An instantiated yellowbrick visualizer that has been fitted,
             transformed and had all operations except for poof called on it.
 
+        ax : matplotlib Axes, default: None
+            The axis to plot the figure on.
+
         tol : float
             The tolerance (a color value difference, where 255 is the
             maximal difference).  The test fails if the average pixel
             difference is greater than this value.
-
         """
+        if visualizer is None and ax is None:
+            raise ValueError("must supply either a visualizer or axes")
+
+        ax = ax or visualizer.ax
+
         # inspect is used to locate and organize the baseline images and actual
         # test generated images for comparison
         inspect_obj = inspect.stack()
         module_path, test_func_name = self._setup_imagetest(inspect_obj=inspect_obj)
 
         # clean and remove the textual/ formatting elements from the visualizer
-        remove_ticks_and_titles(visualizer.ax)
+        remove_ticks_and_titles(ax)
 
         plt.savefig(self._actual_img_path())
         base_image = self._base_img_path()

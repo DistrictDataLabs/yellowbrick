@@ -23,7 +23,6 @@ import numpy as np
 from ..base import VisualTestCase
 
 from sklearn.svm import LinearSVC
-from sklearn.datasets import load_digits
 from sklearn.model_selection import ShuffleSplit
 from yellowbrick.classifier.learning_curve import LearningCurveVisualizer
 from yellowbrick.classifier.learning_curve import learning_curve_plot
@@ -54,8 +53,8 @@ class LearningCurveTests(VisualTestCase, DatasetMixin):
         """
 
         try:
-            visualizer = LearningCurveVisualizer(LinearSVC(random_state=0), train_sizes=np.linspace(.1, 1.0, 5), 
-                cv=ShuffleSplit(n_splits=100, test_size=0.2, random_state=0), 
+            visualizer = LearningCurveVisualizer(LinearSVC(random_state=0), train_sizes=np.linspace(.1, 1.0, 5),
+                cv=ShuffleSplit(n_splits=100, test_size=0.2, random_state=0),
                 n_jobs=4)
             visualizer.fit(X, y)
             visualizer.poof()
@@ -66,7 +65,7 @@ class LearningCurveTests(VisualTestCase, DatasetMixin):
 
     def test_learning_curve_model_only(self):
         """
-        Test learning curve with inputting model only. 
+        Test learning curve with inputting model only.
         """
 
         try:
@@ -95,7 +94,7 @@ class LearningCurveTests(VisualTestCase, DatasetMixin):
         """
 
         try:
-            visualizer = LearningCurveVisualizer(LinearSVC(), 
+            visualizer = LearningCurveVisualizer(LinearSVC(),
                 train_sizes=np.linspace(.1, 1.0, 5),
                 cv=ShuffleSplit(n_splits=100, test_size=0.2, random_state=0))
             visualizer.fit(X, y)
@@ -109,9 +108,26 @@ class LearningCurveTests(VisualTestCase, DatasetMixin):
         """
 
         with self.assertRaises(YellowbrickError):
-            visualizer = LearningCurveVisualizer(LinearSVC(), 
+            visualizer = LearningCurveVisualizer(LinearSVC(),
                 train_sizes=10000,
                 cv=ShuffleSplit(n_splits=100, test_size=0.2, random_state=0))
             visualizer.fit(X, y)
             visualizer.poof()
-        
+
+    def test_learning_curve_quick_method(self):
+        """
+        Test the learning curve quick method acts as expected
+        """
+        try:
+            learning_curve_plot(
+                X, y,
+                LinearSVC(random_state=0),
+                train_sizes=np.linspace(.1, 1.0, 5),
+                cv=ShuffleSplit(n_splits=100, test_size=0.2, random_state=0),
+                n_jobs=4
+            )
+        except Exception as e:
+            self.fail("error during learning curve: {}".format(e))
+
+        # TODO: assert images are similar
+        # self.assert_images_similar(visualizer)

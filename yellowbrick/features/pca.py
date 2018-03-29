@@ -17,10 +17,11 @@ Decomposition based feature visualization with PCA.
 ## Imports
 ##########################################################################
 
+# NOTE: must import mplot3d to load the 3D projection
+import mpl_toolkits.mplot3d # noqa
 import matplotlib.pyplot as plt
-from mpl_toolkits.mplot3d import Axes3D
 
-from yellowbrick.features.base import DataVisualizer
+from yellowbrick.features.base import FeatureVisualizer
 from yellowbrick.style import palettes
 from yellowbrick.exceptions import YellowbrickValueError
 
@@ -37,9 +38,9 @@ def pca_decomposition(X, y=None, ax=None, scale=True, proj_dim=2,
                       colormap=palettes.DEFAULT_SEQUENCE, color=None, **kwargs):
     """Produce a two or three dimensional principal component plot of the data array ``X``
     projected onto it's largest sequential principal components. It is common practice to scale the
-    data array ``X`` before applying a PC decomposition. Variable scaling can be controlled using 
+    data array ``X`` before applying a PC decomposition. Variable scaling can be controlled using
     the ``scale`` argument.
-    
+
     Parameters
     ----------
     X : ndarray or DataFrame of shape n x m
@@ -88,14 +89,16 @@ def pca_decomposition(X, y=None, ax=None, scale=True, proj_dim=2,
 
     # Return the axes object on the visualizer
     return visualizer.poof()
+
 ##########################################################################
 ##2D and #3D PCA Visualizer
 ##########################################################################
-class PCADecomposition(DataVisualizer):
+
+class PCADecomposition(FeatureVisualizer):
     """
     Produce a two or three dimensional principal component plot of the data array ``X``
     projected onto it's largest sequential principal components. It is common practice to scale the
-    data array ``X`` before applying a PC decomposition. Variable scaling can be controlled using 
+    data array ``X`` before applying a PC decomposition. Variable scaling can be controlled using
     the ``scale`` argument.
 
     Parameters
@@ -134,22 +137,22 @@ class PCADecomposition(DataVisualizer):
     >>> iris = datasets.load_iris()
     >>> X = iris.data
     >>> y = iris.target
-    >>> params = {'scale': True, 'center': False, 'col': y}
+    >>> params = {'scale': True, 'center': False, 'color': y}
     >>> visualizer = PCADecomposition(**params)
     >>> visualizer.fit(X)
     >>> visualizer.transform(X)
     >>> visualizer.poof()
 
     """
-    def __init__(self, X=None, y=None, ax=None, scale=True, color=None, proj_dim=2,
+    def __init__(self, ax=None, scale=True, color=None, proj_dim=2,
                  colormap=palettes.DEFAULT_SEQUENCE, **kwargs):
         super(PCADecomposition, self).__init__(ax=ax, **kwargs)
+
         # Data Parameters
         if proj_dim not in (2, 3):
             raise YellowbrickValueError("proj_dim object is not 2 or 3.")
 
         self.color = color
-        self.pca_features_ = None
         self.scale = scale
         self.proj_dim = proj_dim
         self.pca_transformer = Pipeline([('scale', StandardScaler(with_std=self.scale)),
