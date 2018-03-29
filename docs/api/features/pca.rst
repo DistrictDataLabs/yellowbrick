@@ -24,6 +24,8 @@ The PCA Decomposition visualizer utilizes principle component analysis to decomp
 
 .. code:: python
 
+    from yellowbrick.features.pca import PCADecomposition
+    
     visualizer = PCADecomposition(scale=True, center=False, color=y)
     visualizer.fit_transform(X,y)
     visualizer.poof()

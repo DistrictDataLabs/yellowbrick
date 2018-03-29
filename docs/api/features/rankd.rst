@@ -31,6 +31,8 @@ A one dimensional ranking of features utilizes a ranking algorithm that takes in
 
 .. code:: python
 
+    from yellowbrick.features import Rank1D
+
     # Instantiate the 1D visualizer with the Sharpiro ranking algorithm
     visualizer = Rank1D(features=features, algorithm='shapiro')
 
@@ -51,6 +53,8 @@ The default ranking algorithm is covariance, which attempts to compute the mean 
 
 .. code:: python
 
+    from yellowbrick.features import Rank2D
+
     # Instantiate the visualizer with the Covariance ranking algorithm
     visualizer = Rank2D(features=features, algorithm='covariance')
 
@@ -61,7 +65,7 @@ The default ranking algorithm is covariance, which attempts to compute the mean 
 
 .. image:: images/rank2d_covariance.png
 
-Alternatively we can utilize a linear correlation algorithm such as a Pearson score to similarly detect colinear relationships. Compare the output from Pearson below to the covariance ranking above.
+Alternatively, we can utilize a linear correlation algorithm such as a Pearson score to similarly detect colinear relationships. Compare the output from Pearson below to the covariance ranking above.
 
 .. code:: python
 

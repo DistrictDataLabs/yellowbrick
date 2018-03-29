@@ -41,6 +41,7 @@ Classification Visualization
 - **Classification Report**: visual representation of precision, recall, and F1
 - **ROC/AUC Curves**: receiver operator characteristics and area under the curve
 - **Confusion Matrices**: visual description of class decision making
+- **Discrimination Threshold**: find a threshold that best separates binary classes
 
 Regression Visualization
 ~~~~~~~~~~~~~~~~~~~~~~~~

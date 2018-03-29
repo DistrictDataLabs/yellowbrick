@@ -25,11 +25,11 @@ A good starting place is `scikit-learn Imputer. <http://scikit-learn.org/stable/
 .. code:: python
 
     # Load the classification data set
-    data = load_data('occupancy')
+    data = load_data("occupancy")
 
     # Specify the features of interest and the classes of the target
     features = ["temperature", "relative humidity", "light", "C02", "humidity"]
-    classes = ['unoccupied', 'occupied']
+    classes = ["unoccupied", "occupied"]
 
     # Extract the numpy arrays from the data frame
     X = data[features].as_matrix()

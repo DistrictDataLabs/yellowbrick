@@ -24,7 +24,7 @@ from sklearn.base import BaseEstimator
 
 
 ##########################################################################
-## Type checking utilities
+## Model Type checking utilities
 ##########################################################################
 
 def is_estimator(model):
@@ -145,14 +145,41 @@ def is_gridsearch(estimator):
     if isinstance(estimator, Visualizer):
         return is_gridsearch(estimator.estimator)
 
-    # Estimator type for a GridSearchCV object is the type of the model it
-    # searches over; we need a direct check.
-    from sklearn.model_selection import GridSearchCV
-    return isinstance(estimator, GridSearchCV)
+    from sklearn.model_selection import GridSearchCV, RandomizedSearchCV
+
+    if inspect.isclass(estimator):
+        return issubclass(estimator, (GridSearchCV, RandomizedSearchCV))
+
+    return isinstance(estimator, (GridSearchCV, RandomizedSearchCV))
+
 
 # Alias for closer name to isinstance and issubclass
 isgridsearch = is_gridsearch
 
+
+def is_probabilistic(estimator):
+    """
+    Returns True if the given estimator returns a y_score for it's decision
+    function, e.g. has ``predict_proba`` or ``decision_function`` methods.
+
+    Parameters
+    ----------
+    estimator : class or instance
+        The object to test if is probabilistic, especially a Scikit-Learn
+        estimator or Yellowbrick visualizer.
+    """
+    return any([
+        hasattr(estimator, 'predict_proba'),
+        hasattr(estimator, 'decision_function'),
+    ])
+
+# Alias for closer name to isinstance and issubclass
+isprobabilistic = is_probabilistic
+
+
+##########################################################################
+## Data Type checking utilities
+##########################################################################
 
 def is_dataframe(obj):
     """

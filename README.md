@@ -3,8 +3,9 @@
 [![Build Status](https://travis-ci.org/DistrictDataLabs/yellowbrick.svg?branch=master)](https://travis-ci.org/DistrictDataLabs/yellowbrick)
 [![Coverage Status](https://coveralls.io/repos/github/DistrictDataLabs/yellowbrick/badge.svg?branch=master)](https://coveralls.io/github/DistrictDataLabs/yellowbrick?branch=master)
 [![Code Health](https://landscape.io/github/DistrictDataLabs/yellowbrick/master/landscape.svg?style=flat)](https://landscape.io/github/DistrictDataLabs/yellowbrick/master)
+[![PyPI version](https://badge.fury.io/py/yellowbrick.svg)](https://badge.fury.io/py/yellowbrick)
 [![Documentation Status](https://readthedocs.org/projects/yellowbrick/badge/?version=latest)](http://yellowbrick.readthedocs.io/en/latest/?badge=latest)
-[![Stories in Ready](https://badge.waffle.io/DistrictDataLabs/yellowbrick.png?label=ready&title=Ready)](https://waffle.io/DistrictDataLabs/yellowbrick)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.1206239.svg)](https://doi.org/10.5281/zenodo.1206239)
 
 
 **Visual analysis and diagnostic tools to facilitate machine learning model selection.**
@@ -40,6 +41,7 @@ Visualizers are estimators (objects that learn from data) whose primary objectiv
 - **Classification Report**: visual representation of precision, recall, and F1
 - **Confusion Matrices**: visual description of class decision making
 - **ROC/AUC Curves**: receiver operator characteristics and area under the curve
+- **Discrimination Threshold**: find a threshold that best separates binary classes
 
 #### Regression Visualization
 

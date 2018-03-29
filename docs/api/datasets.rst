@@ -25,7 +25,7 @@ The following code snippet can be found at the top of the ``examples/examples.ip
 .. code:: python
 
     import os
-    
+
     from yellowbrick.download import download_all
 
     ## The path to the test data sets
@@ -40,6 +40,7 @@ The following code snippet can be found at the top of the ``examples/examples.ip
         "game": os.path.join(FIXTURES, "game", "game.csv"),
         "mushroom": os.path.join(FIXTURES, "mushroom", "mushroom.csv"),
         "occupancy": os.path.join(FIXTURES, "occupancy", "occupancy.csv"),
+        "spam": os.path.join(FIXTURES, "spam", "spam.csv"),
     }
 
 
@@ -76,3 +77,4 @@ Unless otherwise specified, most of the examples currently use one or more of th
 - **hobbies**: suitable for text analysis
 - **mushroom**: suitable for classification/clustering
 - **occupancy**: suitable for classification
+- **spam**: suitable for binary classification
