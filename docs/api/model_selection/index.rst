@@ -9,5 +9,13 @@ The ``yellowbrick.model_selection`` package provides visualizers for inspecting 
 
 The currently implemented model selection visualizers are as follows:
 
+-  :doc:`learning_curve`: shows how the size of training data influences the model to diagose if a model suffers more from variance error vs. bias error.
+
+Model selection makes heavy use of cross validation to measure the performance of an estimator. Cross validation splits a dataset into a training data set and a test data set; the model is fit on the training data and evaluated on the test data. This helps avoid a common pitfall, overfitting, where the model simply memorizes the training data and does not generalize well to new or unknown input.
+
+There are many ways to define how to split a dataset for cross validation. For more information on how scikit-learn implements these mechanisms, please review `Cross-validation: evaluating estimator performance <http://scikit-learn.org/stable/modules/cross_validation.html>`_ in the scikit-learn documentation.
+
 .. toctree::
    :maxdepth: 2
+
+   learning_curve

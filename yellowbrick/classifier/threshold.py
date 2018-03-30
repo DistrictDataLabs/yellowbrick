@@ -551,8 +551,8 @@ def discrimination_threshold(model, X, y, ax=None, n_trials=50, cv=0.1,
     """
     # Instantiate the visualizer
     visualizer = DiscriminationThreshold(
-        model, ax=None, n_trials=50, cv=0.1,  fbeta=1.0, argmax='fscore',
-        exclude=None,  quantiles=QUANTILES_MEDIAN_80, random_state=None,
+        model, ax=ax, n_trials=n_trials, cv=cv,  fbeta=fbeta, argmax=argmax,
+        exclude=exclude,  quantiles=quantiles, random_state=random_state,
         **kwargs
     )
 

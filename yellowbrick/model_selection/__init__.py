@@ -13,3 +13,5 @@ Visualizers that wrap the model selection libraries of Scikit-Learn
 ##########################################################################
 ## Imports
 ##########################################################################
+
+from .learning_curve import LearningCurve, learning_curve

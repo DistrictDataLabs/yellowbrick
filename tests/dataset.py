@@ -32,6 +32,11 @@ try:
 except ImportError:
     requests = None
 
+try:
+    import pandas as pd
+except ImportError:
+    pd = None
+
 
 # Helpers for fixtures
 Dataset = namedtuple('Dataset', 'X,y')
@@ -66,7 +71,7 @@ DATASETS = {
     'mushroom': {
         'url': 'https://s3.amazonaws.com/ddl-data-lake/yellowbrick/mushroom.zip',
         'signature': '884c43cb70db35d211c67b1cf6a3683b2b4569393d2789d5c07840da4dc85ba8',
-        'type': 'numpy',
+        'type': 'pandas',
     },
     'hobbies': {
         'url': 'https://s3.amazonaws.com/ddl-data-lake/yellowbrick/hobbies.zip',
@@ -76,7 +81,7 @@ DATASETS = {
     'game': {
         'url': 'https://s3.amazonaws.com/ddl-data-lake/yellowbrick/game.zip',
         'signature': 'b1bd85789a014a898daa34cb5f89ceab6d2cd6488a2e572187e34aa4ec21a43b',
-        'type': 'numpy',
+        'type': 'pandas',
     },
     'bikeshare': {
         'url': 'https://s3.amazonaws.com/ddl-data-lake/yellowbrick/bikeshare.zip',
@@ -191,10 +196,10 @@ class DatasetMixin(object):
         if DATASETS[name]['type'] == 'corpus':
             return DatasetMixin.load_corpus(name, fixtures)
 
-        path = os.path.join(fixtures, name, "{}.csv".format(name))
-        if not os.path.exists(path):
-            DatasetMixin.download_all(path=fixtures)
+        if DATASETS[name]['type'] == 'pandas':
+            return DatasetMixin.load_pandas(name, fixtures)
 
+        path = DatasetMixin._lookup_path(name, fixtures)
         return np.genfromtxt(path, dtype=float, delimiter=',', names=True)
 
     @staticmethod
@@ -203,9 +208,7 @@ class DatasetMixin(object):
         Loads a sklearn Bunch with the corpus and downloads it if it hasn't
         already been downloaded. Used to test text visualizers.
         """
-        path = os.path.join(fixtures, name)
-        if not os.path.exists(path):
-            DatasetMixin.download_all(path=fixtures)
+        path = DatasetMixin._lookup_path(name, fixtures, ext=None)
 
         # Read the directories in the directory as the categories.
         categories = [
@@ -233,3 +236,28 @@ class DatasetMixin(object):
             data=data,
             target=target,
         )
+
+    @staticmethod
+    def load_pandas(name, fixtures=FIXTURES):
+        """
+        Loads a pandas Dataframe with the specified
+        """
+        if pd is None:
+            raise ImportError("pandas is required to load this dataset")
+
+        path = DatasetMixin._lookup_path(name, fixtures)
+        return pd.read_csv(path)
+
+    @staticmethod
+    def _lookup_path(name, fixtures=FIXTURES, ext=".csv"):
+        """
+        Looks up the path to the dataset, downloading it if necessary
+        """
+        if ext is None:
+            path = os.path.join(fixtures, name)
+        else:
+            path = os.path.join(fixtures, name, "{}{}".format(name, ext))
+
+        if not os.path.exists(path):
+            DatasetMixin.download_all(path=fixtures)
+        return path
