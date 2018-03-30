@@ -14,6 +14,7 @@ Welcome to the API documentation for Yellowbrick! This section contains a comple
    regressor/index
    classifier/index
    cluster/index
+   model_selection/index
    text/index
    palettes
 
