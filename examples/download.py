@@ -65,12 +65,17 @@ DATASETS = {
     },
     'game': {
         'url': 'https://s3.amazonaws.com/ddl-data-lake/yellowbrick/game.zip',
+<<<<<<< HEAD
         'signature': 'b1bd85789a014a898daa34cb5f89ceab6d2cd6488a2e572187e34aa4ec21a43b',
     },
     'bikeshare': {
         'url': 'https://s3.amazonaws.com/ddl-data-lake/yellowbrick/bikeshare.zip',
         'signature': 'a9b440f65549746dff680c92ff8bdca3c7265f09db1cf09e708e6e26fc8aba44',
     },
+=======
+        'signature': 'b1bd85789a014a898daa34cb5f89ceab6d2cd6488a2e572187e34aa4ec21a43b', 
+    }
+>>>>>>> 5879ff2... added connect 4 dataset
 }
 
 
