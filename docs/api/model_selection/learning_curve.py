@@ -91,6 +91,7 @@ def learning_curve_regressor(path="images/learning_curve_regressor.png"):
     oz.fit(X, y)
     oz.poof(outpath=path)
 
+
 def learning_curve_clusterer(path="images/learning_curve_clusterer.png"):
 
     X, y = make_blobs(n_samples=1000, centers=5)
@@ -110,6 +111,6 @@ def learning_curve_clusterer(path="images/learning_curve_clusterer.png"):
 
 if __name__ == '__main__':
     learning_curve_sklearn_example()
-    # learning_curve_classifier()
-    # learning_curve_regressor()
-    # learning_curve_clusterer()
+    learning_curve_classifier()
+    learning_curve_regressor()
+    learning_curve_clusterer()

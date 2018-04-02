@@ -54,6 +54,11 @@ Visualizers are estimators (objects that learn from data) whose primary objectiv
 - **K-Elbow Plot**: select k using the elbow method and various metrics
 - **Silhouette Plot**: select k by visualizing silhouette coefficient values
 
+#### Model Selection Visualization
+
+-  **Validation Curve**: tune a model with respect to a single hyperparameter
+-  **Learning Curve**: show if a model might benefit from more data or less complexity
+
 #### Text Visualization
 
 - **Term Frequency**: visualize the frequency distribution of terms in the corpus

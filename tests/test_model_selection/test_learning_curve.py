@@ -36,6 +36,11 @@ try:
 except ImportError:
     pd = None
 
+try:
+    from unittest.mock import patch
+except ImportError:
+    from mock import patch
+
 
 ##########################################################################
 ## LearningCurve Test Cases
@@ -47,7 +52,8 @@ class TestLearningCurve(VisualTestCase, DatasetMixin):
     Test the LearningCurve visualizer
     """
 
-    def test_fit(self):
+    @patch.object(LearningCurve, 'draw')
+    def test_fit(self, mock_draw):
         """
         Assert that fit returns self and creates expected properties
         """
@@ -63,6 +69,8 @@ class TestLearningCurve(VisualTestCase, DatasetMixin):
             assert not hasattr(oz, param)
 
         assert oz.fit(X, y) is oz
+        mock_draw.assert_called_once()
+
         for param in params:
             assert hasattr(oz, param)
 
@@ -140,7 +148,8 @@ class TestLearningCurve(VisualTestCase, DatasetMixin):
 
         self.assert_images_similar(oz)
 
-    def test_reshape_scores(self):
+    @patch.object(LearningCurve, 'draw')
+    def test_reshape_scores(self, mock_draw):
         """
         Test supplying an alternate CV methodology and train_sizes
         """
@@ -151,6 +160,7 @@ class TestLearningCurve(VisualTestCase, DatasetMixin):
         oz.fit(X, y)
 
         assert oz.train_scores_.shape == (3, 12)
+        assert oz.test_scores_.shape == (3, 12)
 
     def test_bad_train_sizes(self):
         """
