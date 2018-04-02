@@ -111,7 +111,7 @@ class TestValidationCurve(VisualTestCase, DatasetMixin):
         oz.fit(X, y)
         oz.poof()
 
-        self.assert_images_similar(oz)
+        self.assert_images_similar(oz, tol=12.0)
 
     def test_quick_method(self):
         """
@@ -144,7 +144,7 @@ class TestValidationCurve(VisualTestCase, DatasetMixin):
         assert isinstance(y, pd.Series)
 
         cv = StratifiedKFold(n_splits=2, random_state=11)
-        pr = np.arange(3)
+        pr = np.linspace(0.1, 3.0, 6)
         oz = ValidationCurve(
             BernoulliNB(), cv=cv, param_range=pr, param_name='alpha'
         )
