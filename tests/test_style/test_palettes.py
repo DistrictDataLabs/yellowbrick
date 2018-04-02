@@ -17,7 +17,6 @@ Tests the palettes module of the yellowbrick library.
 ## Imports
 ##########################################################################
 
-import warnings
 import unittest
 import numpy as np
 import matplotlib as mpl
@@ -30,6 +29,7 @@ from yellowbrick.style.palettes import color_sequence, color_palette
 from yellowbrick.style.palettes import ColorPalette, PALETTES, SEQUENCES
 
 from tests.base import VisualTestCase
+
 
 ##########################################################################
 ## Color Palette Tests
@@ -271,16 +271,6 @@ class ColorPaletteFunctionTests(VisualTestCase):
         for rgb_e, rgb_v in zip(pal, pal.as_hex().as_rgb()):
             self.assertEqual(rgb_e, rgb_v)
 
-    def test_get_color_cycle(self):
-        """
-        Test getting the default color cycle
-        """
-        with warnings.catch_warnings():
-            warnings.simplefilter('ignore')
-            result = get_color_cycle()
-            expected = mpl.rcParams['axes.color_cycle']
-        self.assertEqual(result, expected)
-
     def test_preserved_palette_length(self):
         """
         Test palette length is preserved when modified
@@ -312,17 +302,17 @@ class ColorPaletteFunctionTests(VisualTestCase):
         Test value errors for unrecognized sequences
         """
         with self.assertRaises(YellowbrickValueError):
-            cmap = color_sequence('PepperBucks', 3)
+            color_sequence('PepperBucks', 3)
 
     def test_color_sequence_bounds(self):
         """
         Test color sequence out of bounds value error
         """
         with self.assertRaises(YellowbrickValueError):
-            cmap = color_sequence('RdBu', 18)
+            color_sequence('RdBu', 18)
 
         with self.assertRaises(YellowbrickValueError):
-            cmap = color_sequence('RdBu', 2)
+            color_sequence('RdBu', 2)
 
 if __name__ == "__main__":
     unittest.main()

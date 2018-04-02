@@ -17,7 +17,7 @@ Tests for the bestfit module.
 ## Imports
 ##########################################################################
 
-import unittest
+import pytest
 import numpy as np
 import matplotlib.pyplot as plt
 
@@ -61,6 +61,7 @@ class BestFitTests(VisualTestCase):
         with self.assertRaises(YellowbrickValueError):
             draw_best_fit(X[:,np.newaxis], y, axe, 'linear')
 
+    @pytest.mark.filterwarnings('ignore')
     def testdraw_best_fit(self):
         """
         Test that drawing a best fit line works.

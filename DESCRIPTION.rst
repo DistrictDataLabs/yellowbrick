@@ -13,7 +13,7 @@ Yellowbrick is a suite of visual analysis and diagnostic tools designed to facil
 
 Visualizers allow users to steer the model selection process, building intuition around feature engineering, algorithm selection, and hyperparameter tuning. For example, visualizers can help diagnose common problems surrounding model complexity and bias, heteroscedasticity, underfit and overtraining, or class balance issues. By applying visualizers to the model selection workflow, Yellowbrick allows you to steer predictive models to more successful results, faster.
 
-Please see the full documentation at: http://scikit-yb.org/
+Please see the full documentation at: http://scikit-yb.org/ particularly the `quick start guide <http://www.scikit-yb.org/en/latest/quickstart.html>`_
 
 Visualizers
 -----------
@@ -26,14 +26,18 @@ Visualizers are estimators (objects that learn from data) whose primary objectiv
 Feature Visualization
 ~~~~~~~~~~~~~~~~~~~~~
 
-- **Rank2D**: pairwise ranking of features to detect relationships
+- **Rank Features**: single or pairwise ranking of features to detect relationships
 - **Parallel Coordinates**: horizontal visualization of instances
 - **Radial Visualization**: separation of instances around a circular plot
+- **PCA Projection**: projection of instances based on principal components
+- **Feature Importances**: rank features based on their in-model performance
+- **Scatter and Joint Plots**: direct data visualization with feature selection
 
 Classification Visualization
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 - **Class Balance**: see how the distribution of classes affects the model
+- **Class Prediction Error**: shows error and support in classification
 - **Classification Report**: visual representation of precision, recall, and F1
 - **ROC/AUC Curves**: receiver operator characteristics and area under the curve
 - **Confusion Matrices**: visual description of class decision making
@@ -59,5 +63,5 @@ Text Visualization
 
 ... and more! Visualizers are being added all the time; be sure to check the examples_ (or even the develop_ branch) and feel free to contribute your ideas for new Visualizers!
 
-.. _examples: http://www.scikit-yb.org/en/latest/examples/examples.html
+.. _examples: http://www.scikit-yb.org/en/latest/api/index.html
 .. _develop: https://github.com/districtdatalabs/yellowbrick/tree/develop

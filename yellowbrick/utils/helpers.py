@@ -18,7 +18,6 @@ Helper functions and generic utilities for use in Yellowbrick code.
 ##########################################################################
 
 import re
-import unicodedata
 import numpy as np
 
 from sklearn.pipeline import Pipeline

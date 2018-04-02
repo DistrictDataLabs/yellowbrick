@@ -6,28 +6,29 @@
 #
 # Copyright (C) 2017 District Data Labs
 # For license information, see LICENSE.txt
-from collections import OrderedDict
+
 import itertools
 import numpy as np
 
-import matplotlib.pyplot as plt
-from matplotlib.colors import ListedColormap
+from collections import OrderedDict
+
+from sklearn.utils.deprecation import deprecated
+
 from matplotlib.patches import Patch
+from matplotlib.colors import ListedColormap
 
 from yellowbrick.exceptions import YellowbrickTypeError
 from yellowbrick.exceptions import YellowbrickValueError
 from yellowbrick.classifier.base import ClassificationScoreVisualizer
-from yellowbrick.utils import get_model_name
 from yellowbrick.style.colors import resolve_colors
-from yellowbrick.utils import is_dataframe, is_structured_array, has_ndarray_int_columns
-from yellowbrick.style.palettes import PALETTES
-
+from yellowbrick.utils import is_dataframe, is_structured_array
+from yellowbrick.utils import has_ndarray_int_columns
 
 
 ##########################################################################
 # Quick Methods
 ##########################################################################
-
+@deprecated("Will be moved to yellowbrick.contrib in v0.7")
 def decisionviz(model,
                 X,
                 y,
@@ -122,7 +123,7 @@ def decisionviz(model,
 ##########################################################################
 # Static ScatterVisualizer Visualizer
 ##########################################################################
-
+@deprecated("Will be moved to yellowbrick.contrib in v0.7")
 class DecisionBoundariesVisualizer(ClassificationScoreVisualizer):
     """
     DecisionBoundariesVisualizer is a bivariate data visualization algorithm
@@ -234,7 +235,7 @@ class DecisionBoundariesVisualizer(ClassificationScoreVisualizer):
         """ """
 
         if len(X.shape) == 1:
-            X_flat = X.view(np.float64).reshape(len(X), -1)
+            X_flat = X.copy().view(np.float64).reshape(len(X), -1)
         else:
             X_flat = X
 
@@ -252,7 +253,7 @@ class DecisionBoundariesVisualizer(ClassificationScoreVisualizer):
         # handle numpy named/ structured array
         elif self.features_ is not None and is_structured_array(X):
             X_selected = X[self.features_]
-            X_two_cols = X_selected.view(np.float64).reshape(len(X_selected), -1)
+            X_two_cols = X_selected.copy().view(np.float64).reshape(len(X_selected), -1)
 
         # handle features that are numeric columns in ndarray matrix
         elif self.features_ is not None and has_ndarray_int_columns(self.features_, X):
@@ -344,7 +345,7 @@ class DecisionBoundariesVisualizer(ClassificationScoreVisualizer):
         X = self._select_feature_columns(X)
 
         color_cycle = iter(
-            resolve_colors(color=self.colors, num_colors=len(self.classes_)))
+            resolve_colors(colors=self.colors, n_colors=len(self.classes_)))
         colors = OrderedDict([(c, next(color_cycle))
                               for c in self.classes_.keys()])
 

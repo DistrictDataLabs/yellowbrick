@@ -17,10 +17,9 @@ Tests for the frequency distribution text visualization
 ## Imports
 ##########################################################################
 
-import unittest
-
 from yellowbrick.text.freqdist import *
 from tests.dataset import DatasetMixin
+from tests.base import VisualTestCase
 from sklearn.feature_extraction.text import CountVectorizer
 
 
@@ -28,7 +27,8 @@ from sklearn.feature_extraction.text import CountVectorizer
 ## FreqDist Tests
 ##########################################################################
 
-class FreqDistTests(unittest.TestCase, DatasetMixin):
+class FreqDistTests(VisualTestCase, DatasetMixin):
+
 
     def test_integrated_freqdist(self):
         """
@@ -40,5 +40,8 @@ class FreqDistTests(unittest.TestCase, DatasetMixin):
         docs       = vectorizer.fit_transform(corpus.data)
         features   = vectorizer.get_feature_names()
 
-        visualizer = FreqDistVisualizer()
-        visualizer.fit(docs, features)
+        visualizer = FreqDistVisualizer(features)
+        visualizer.fit(docs)
+
+        visualizer.poof()
+        self.assert_images_similar(visualizer)

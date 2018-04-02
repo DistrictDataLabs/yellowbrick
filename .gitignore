@@ -49,61 +49,68 @@ coverage.xml
 *.mo
 *.pot
 
-# Django stuff:
-*.log
-
 # Sphinx documentation
 docs/_build/
 
 # PyBuilder
 target/
 
-#Ipython Notebook
+# Jupyter Notebook
 .ipynb_checkpoints
 
-# Making sure the team plays well together
-venv*
+# pyenv
+.python-version
+
+# IDE/editor droppings
+*.swp
+*.swo
+
+# OS droppings
 .DS_Store
-spad.py
 
-# Created by https://www.gitignore.io/api/pycharm
+# dotenv
+.env
 
-### PyCharm ###
-# Covers JetBrains IDEs: IntelliJ, RubyMine, PhpStorm, AppCode, PyCharm, CLion, Android Studio and Webstorm
-# Reference: https://intellij-support.jetbrains.com/hc/en-us/articles/206544839
+# virtualenv
+.venv
+venv/
+ENV/
 
-# User-specific stuff:
+# Spyder project settings
+.spyderproject
+.spyproject
+
+# Rope project settings
+.ropeproject
+
+# mkdocs documentation
+/site
+
+# mypy
+.mypy_cache/
+
+# PyTest
+.pytest_cache
+
+# PyCharm
 .idea/workspace.xml
 .idea/tasks.xml
 .idea/dictionaries
 .idea/vcs.xml
 .idea/jsLibraryMappings.xml
-
-# Sensitive or high-churn files:
 .idea/dataSources.ids
 .idea/dataSources.xml
 .idea/dataSources.local.xml
 .idea/sqlDataSources.xml
 .idea/dynamic.xml
 .idea/uiDesigner.xml
-
-# Gradle:
 .idea/gradle.xml
 .idea/libraries
-
-# Mongo Explorer plugin:
 .idea/mongoSettings.xml
-
-## File-based project format:
 *.iws
-
-## Plugin-specific files:
-
-# IntelliJ
 /out/
-
-# mpeltonen/sbt-idea plugin
 .idea_modules/
+.idea
 
 # JIRA plugin
 atlassian-ide-plugin.xml
@@ -114,15 +121,5 @@ crashlytics.properties
 crashlytics-build.properties
 fabric.properties
 
-### PyCharm Patch ###
-# Comment Reason: https://github.com/joeblau/gitignore.io/issues/186#issuecomment-215987721
-
-# *.iml
-# modules.xml
-# .idea/misc.xml
-# *.ipr
-
-.idea
-
-# VisualTestCase Outputs
-/tests/actual_images/*
+# Data downloaded from Yellowbrick
+data/

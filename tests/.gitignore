@@ -1,1 +1,5 @@
+# Dataset Fixture Downloads
 fixtures/*
+
+# VisualTestCase Outputs
+actual_images/*

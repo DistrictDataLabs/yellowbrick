@@ -18,12 +18,12 @@ Implements radviz for feature analysis.
 ##########################################################################
 
 import numpy as np
-import matplotlib.pyplot as plt
 import matplotlib.patches as patches
 
+from yellowbrick.utils import is_dataframe
 from yellowbrick.features.base import DataVisualizer
-from yellowbrick.exceptions import YellowbrickTypeError
-from yellowbrick.style.colors import resolve_colors, get_color_cycle
+import yellowbrick.utils.nan_warnings as nan_warnings
+from yellowbrick.style.colors import resolve_colors
 
 
 ##########################################################################
@@ -158,6 +158,13 @@ class RadialVisualizer(DataVisualizer):
         draws each instance as a class or target colored point, whose location
         is determined by the feature data set.
         """
+        # Convert from dataframe
+        if is_dataframe(X):
+            X = X.as_matrix()
+
+        # Clean out nans and warn that the user they aren't plotted
+        nan_warnings.warn_if_nans_exist(X)
+        X, y = nan_warnings.filter_missing(X, y)
 
         # Get the shape of the data
         nrows, ncols = X.shape
@@ -169,10 +176,9 @@ class RadialVisualizer(DataVisualizer):
         # Create the colors
         # TODO: Allow both colormap, listed colors, and palette definition
         # TODO: Make this an independent function or property for override!
-        # color_values = resolve_colors(
-        #     num_colors=len(self.classes_), colormap=self.colormap, color=self.color
-        # )
-        color_values = get_color_cycle()
+        color_values = resolve_colors(
+            n_colors=len(self.classes_), colormap=self.colormap, colors=self.color
+        )
         colors = dict(zip(self.classes_, color_values))
 
         # Create a data structure to hold scatter plot representations
@@ -208,7 +214,7 @@ class RadialVisualizer(DataVisualizer):
 
         # Add the circular axis path
         # TODO: Make this a seperate function (along with labeling)
-        self.ax.add_patch(patches.Circle((0.0, 0.0), radius=1.0, facecolor='none'))
+        self.ax.add_patch(patches.Circle((0.0, 0.0), radius=1.0, facecolor='none', edgecolor='grey', linewidth=.5 ))
 
         # Add the feature names
         for xy, name in zip(s, self.features_):

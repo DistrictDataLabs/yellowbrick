@@ -25,9 +25,10 @@ import warnings
 import unittest
 import numpy as np
 import matplotlib as mpl
-import numpy.testing as npt
+import matplotlib.pyplot as plt
 
 from tests.dataset import DatasetMixin
+from tests.base import VisualTestCase
 from yellowbrick.features.jointplot import *
 
 ##########################################################################
@@ -38,7 +39,7 @@ from yellowbrick.features.jointplot import *
 MPL_VERS_MAJ = int(mpl.__version__.split(".")[0])
 
 
-class JointPlotTests(unittest.TestCase, DatasetMixin):
+class JointPlotTests(VisualTestCase, DatasetMixin):
 
     X = np.array([1, 2, 3, 5, 8, 10])
 
@@ -56,13 +57,13 @@ class JointPlotTests(unittest.TestCase, DatasetMixin):
         Ensure that the jointplot warns if mpl version is < 2.0.0
         """
         # Note Python 3.2+ has a self.assertWarns ... but we need to be
-        # Python 2.7 compatible, so we're going to do this. 
+        # Python 2.7 compatible, so we're going to do this.
         with warnings.catch_warnings(record=True) as w:
             # Cause all warnings to always be triggered.
             warnings.simplefilter("always")
 
             # Trigger a warning.
-            visualizer = JointPlotVisualizer()
+            JointPlotVisualizer()
 
             # Ensure that a warning occurred
             self.assertEqual(len(w), 1)
@@ -78,10 +79,14 @@ class JointPlotTests(unittest.TestCase, DatasetMixin):
         """
         Assert no errors occur during jointplot visualizer integration
         """
+        fig = plt.figure()
+        ax = fig.add_subplot()
 
-        visualizer = JointPlotVisualizer()
+        visualizer = JointPlotVisualizer(ax=ax)
         visualizer.fit(self.X, self.y)
         visualizer.poof()
+
+        self.assert_images_similar(visualizer)
 
 
     @unittest.skipIf(MPL_VERS_MAJ < 2, "requires matplotlib 2.0.0 or greater")
@@ -90,6 +95,9 @@ class JointPlotTests(unittest.TestCase, DatasetMixin):
         Test jointplot on the concrete data set
         """
 
+        fig = plt.figure()
+        ax = fig.add_subplot()
+
         # Load the data from the fixture
         X = self.concrete['cement']
         y = self.concrete['strength']
@@ -97,16 +105,18 @@ class JointPlotTests(unittest.TestCase, DatasetMixin):
         target = 'strength'
 
         # Test the visualizer
-        visualizer = JointPlotVisualizer(feature=feature, target=target, joint_plot="hex")
-        visualizer.fit(X, y)                # Fit the data to the visualizer
-        g = visualizer.poof()
+        visualizer = JointPlotVisualizer(
+            feature=feature, target=target, joint_plot="hex", ax=ax)
+        visualizer.fit(X, y)
+        visualizer.poof()
+
+        self.assert_images_similar(visualizer)
 
 
     @unittest.skipIf(MPL_VERS_MAJ < 2, "requires matplotlib 2.0.0 or greater")
     def test_jointplot_no_matplotlib2_warning(self):
         """
         Assert no UserWarning occurs if matplotlib major version >= 2
-        (and not exactly 2.0.0).
         """
         with warnings.catch_warnings(record=True) as ws:
             # Filter on UserWarnings
@@ -123,4 +133,3 @@ class JointPlotTests(unittest.TestCase, DatasetMixin):
                     mpl_ver_cnt += 1
             self.assertEqual(0, mpl_ver_cnt, ws[-1].message \
                         if ws else "No error")
-

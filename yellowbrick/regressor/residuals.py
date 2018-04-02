@@ -18,13 +18,10 @@ Regressor visualizers that score residuals: prediction vs. actual data.
 ## Imports
 ##########################################################################
 
-import matplotlib.pyplot as plt
-
 from sklearn.model_selection import train_test_split
 
 from ..style.palettes import LINE_COLOR
 from .base import RegressionScoreVisualizer
-from ..exceptions import YellowbrickTypeError
 from ..bestfit import draw_best_fit, draw_identity_line
 
 
@@ -140,7 +137,8 @@ class PredictionError(RegressionScoreVisualizer):
         """
         y_pred = self.predict(X)
         self.draw(y, y_pred)
-        return self.estimator.score(X, y, **kwargs)
+        self.score_ =  self.estimator.score(X, y, **kwargs)
+        return self.score_
 
     def draw(self, y, y_pred):
         """
@@ -184,7 +182,11 @@ class PredictionError(RegressionScoreVisualizer):
         kwargs: generic keyword arguments.
         """
         # Set the title on the plot
-        self.set_title('Prediction Error for {}'.format(self.name))
+        self.set_title(
+            'Prediction Error for {} ($r^2 = {:0.3f}$)'.format(
+                self.name, self.score_
+            )
+        )
 
         # Square the axes to ensure a 45 degree line
         if self.shared_limits:
@@ -213,8 +215,11 @@ class PredictionError(RegressionScoreVisualizer):
             )
 
         # Set the axes labels
-        self.ax.set_ylabel('Predicted')
-        self.ax.set_xlabel('Measured')
+        self.ax.set_ylabel('$\hat{y}$')
+        self.ax.set_xlabel('$y$')
+
+        # Annotate the score
+        self.ax.annotate('$r^2={:0.3f}$'.format(self.score_), xy=(0,0), xytext=(0,0))
 
         # Set the legend
         self.ax.legend(loc='best', frameon=True)
