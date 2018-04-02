@@ -1,5 +1,5 @@
-# yellowbrick.cluster.silhouette
-# Implements visualizers using the silhouette metric for cluster evaluation.
+# yellowbrick.classifier.smallmultiples
+# Implements a small multiples visualizer.
 #
 # Author:   Benjamin Bengfort <bbengfort@districtdatalabs.com>
 # Created:  Mon Mar 27 10:09:24 2017 -0400
@@ -10,7 +10,7 @@
 # ID: silhouette.py [57b563b] benjamin@bengfort.com $
 
 """
-Implements an iterative labeling visualizer for unsupervised clustering algorithms.
+Implements a a small multiples visualizer for classifiers.
 """
 
 ##########################################################################
@@ -24,7 +24,7 @@ from numpy.lib.recfunctions import append_fields
 from scipy import ndimage
 import matplotlib.pyplot as plt
 from sklearn.utils import as_float_array
-from .base import ClusteringScoreVisualizer
+from ..base import Visualizer
 from ..exceptions import YellowbrickValueError
 from ..style import resolve_colors, color_palette
 from ..utils import is_dataframe, is_structured_array, has_ndarray_int_columns
@@ -34,25 +34,13 @@ from ..utils import is_dataframe, is_structured_array, has_ndarray_int_columns
 #     "IterLabelsVisualizer"
 # ]
 
-class IterLabelsVisualizer(ClusteringScoreVisualizer):
+class SmallMultiples(ClusteringScoreVisualizer):
     """
     TODO: Document this class!
     """
 
-    def __init__(self, model, ax=None, group_label=None, **kwargs):
-        super(IterLabelsVisualizer, self).__init__(model, ax=ax, **kwargs)
-
-        # Visual Properties
-        # TODO: Fix the color handling
-        self.colormap = kwargs.get('colormap', 'set1')
-        self.color = kwargs.get('color', None)
-        self.group_label_ = group_label if group_label else 'group_label'
-
-        # Required internal properties
-        self.X = None
-        self.y = None
-        self.label_slices = None
-        self.labels_ = None
+    def __init__(self, model, visualizer, ax=None, group_label=None, **kwargs):
+        super(SmallMultiples, self).__init__(model, ax=ax, **kwargs)
 
     def get_label_slices(self, label_array, **kargs):
         """
@@ -72,27 +60,6 @@ class IterLabelsVisualizer(ClusteringScoreVisualizer):
         return self.label_slices
 
     def transform(self, X, y=None, label_col=None, label_value=None, label_array=None, **kargs):
-
-        if label_col is None:
-            raise Exception("The tranform method requires a label_col")
-
-        if label_array is not None:
-            # if the label array is present then skip the other steps
-            pass
-
-        elif isinstance(X, np.ndarray) and isinstance(label_col, int):
-            label_array = X[:, label_col]
-
-        elif is_dataframe(X):
-            label_array = X[label_col].values
-            X = X.as_matrix()
-
-        # handle numpy named/ structured array
-        elif is_structured_array(X):
-            label_array = X[label_col]
-
-        else:
-            raise Exception("X is not a recognized data type")
 
         if label_value is not None:
             if label_value not in np.unique(label_array):
