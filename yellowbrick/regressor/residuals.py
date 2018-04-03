@@ -216,8 +216,8 @@ class PredictionError(RegressionScoreVisualizer):
             )
 
         # Set the axes labels
-        self.ax.set_ylabel('$\hat{y}$')
-        self.ax.set_xlabel('$y$')
+        self.ax.set_ylabel(r'$\hat{y}$')
+        self.ax.set_xlabel(r'$y$')
 
         # Annotate the score
         # NOTE: Couldn't get this to work so added to title instead (for now)

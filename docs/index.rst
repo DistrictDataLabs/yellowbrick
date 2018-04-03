@@ -36,7 +36,7 @@ Classification Visualization
 - :doc:`api/classifier/classification_report`: visual representation of precision, recall, and F1
 - :doc:`ROC/AUC Curves <api/classifier/rocauc>`: receiver operator characteristics and area under the curve
 - :doc:`Confusion Matrices <api/classifier/confusion_matrix>`: visual description of class decision making
-- :doc:`Discrimination Threshold <api/classifier/threshold>`: find a threshold that best separates binary classes 
+- :doc:`Discrimination Threshold <api/classifier/threshold>`: find a threshold that best separates binary classes
 
 Regression Visualization
 ~~~~~~~~~~~~~~~~~~~~~~~~
@@ -50,6 +50,12 @@ Clustering Visualization
 
 - :doc:`K-Elbow Plot <api/cluster/elbow>`: select k using the elbow method and various metrics
 - :doc:`Silhouette Plot <api/cluster/silhouette>`: select k by visualizing silhouette coefficient values
+
+Model Selection Visualization
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+-  :doc:`api/model_selection/validation_curve`: tune a model with respect to a single hyperparameter
+-  :doc:`api/model_selection/learning_curve`: show if a model might benefit from more data or less complexity
 
 Text Visualization
 ~~~~~~~~~~~~~~~~~~
