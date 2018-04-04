@@ -27,11 +27,12 @@ Visualizers are estimators (objects that learn from data) whose primary objectiv
 
 #### Feature Visualization
 
-- **Feature Importances**: rank features based on their in-model performance
 - **Parallel Coordinates**: horizontal visualization of instances
 - **PCA Projection**: projection of instances based on principal components
 - **RadViz**: separation of instances around a circular plot
 - **Rank Features**: single or pairwise ranking of features to detect relationships
+- **Feature Importances**: rank features based on their in-model performance
+- **Recursive Feature Elimination**: find the best subset of features by importance
 - **Scatter and Joint Plots**: direct data visualization with feature selection
 
 #### Classification Visualization
