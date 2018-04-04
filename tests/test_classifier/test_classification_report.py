@@ -57,7 +57,7 @@ class ClassificationReportTests(VisualTestCase, DatasetMixin):
         viz.fit(self.binary.X.train, self.binary.y.train)
         viz.score(self.binary.X.test, self.binary.y.test)
 
-        self.assert_images_similar(viz)
+        self.assert_images_similar(viz, tol=35)
 
         assert viz.scores_ == {
             'precision': {0: 0.7446808510638298, 1: 0.8490566037735849},
