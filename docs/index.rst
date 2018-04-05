@@ -36,6 +36,7 @@ Classification Visualization
 - :doc:`api/classifier/classification_report`: visual representation of precision, recall, and F1
 - :doc:`ROC/AUC Curves <api/classifier/rocauc>`: receiver operator characteristics and area under the curve
 - :doc:`Confusion Matrices <api/classifier/confusion_matrix>`: visual description of class decision making
+- :doc:`Discrimination Threshold <api/classifier/threshold>`: find a threshold that best separates binary classes
 
 Regression Visualization
 ~~~~~~~~~~~~~~~~~~~~~~~~
@@ -50,6 +51,12 @@ Clustering Visualization
 - :doc:`K-Elbow Plot <api/cluster/elbow>`: select k using the elbow method and various metrics
 - :doc:`Silhouette Plot <api/cluster/silhouette>`: select k by visualizing silhouette coefficient values
 
+Model Selection Visualization
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+-  :doc:`api/model_selection/validation_curve`: tune a model with respect to a single hyperparameter
+-  :doc:`api/model_selection/learning_curve`: show if a model might benefit from more data or less complexity
+
 Text Visualization
 ~~~~~~~~~~~~~~~~~~
 
@@ -61,9 +68,9 @@ Text Visualization
 Getting Help
 ------------
 
-Yellowbrick is a welcoming, inclusive project in the tradition of Matplotlib and Scikit-Learn. Similar to those projects, we try to follow the `Python Software Foundation Code of Conduct <http://www.python.org/psf/codeofconduct/>`_. Please don't hesitate to reach out to us for help or if you have any contributions or bugs to report!
+Yellowbrick is a welcoming, inclusive project in the tradition of Matplotlib and Scikit-Learn. Similar to those projects, we follow the `Python Software Foundation Code of Conduct <http://www.python.org/psf/codeofconduct/>`_. Please don't hesitate to reach out to us for help or if you have any contributions or bugs to report!
 
-The primary way to ask for help with Yellowbrick is to post on our `Google Groups Listserv <https://groups.google.com/forum/#!forum/yellowbrick>`_. This is an email list/forum that members of the community can join and respond to each other; you should be able to receive the quickest response here. Please also consider joining the group so you can respond to questions! You can also ask questions on `Stack Overflow <http://stackoverflow.com/questions/tagged/yellowbrick>`_ and tag them with "yellowbrick". Or you can add issues on GitHub. You can also tweet or direct message us on Twitter `@DistrictDataLab <https://twitter.com/districtdatalab>`_.
+The primary way to ask for help with Yellowbrick is to post on our `Google Groups Listserv <https://groups.google.com/forum/#!forum/yellowbrick>`_. This is an email list/forum that members of the community can join and respond to each other; you should be able to receive the quickest response here. Please also consider joining the group so you can respond to questions! You can also ask questions on `Stack Overflow <http://stackoverflow.com/questions/tagged/yellowbrick>`_ and tag them with "yellowbrick". Or you can add issues on GitHub. You can also tweet or direct message us on Twitter `@scikit_yb <https://twitter.com/scikit_yb>`_.
 
 Open Source
 -----------
@@ -88,6 +95,7 @@ The following is a complete listing of the Yellowbrick documentation for this ve
    contributing
    matplotlib
    about
+   code_of_conduct
    changelog
 
 Indices and tables

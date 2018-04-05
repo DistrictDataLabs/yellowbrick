@@ -27,4 +27,5 @@ cycler>=0.10.0
 #numpydoc>=0.7.0
 
 ## Build Requirements (uncomment for deployment)
-#wheel>=0.29.0
+#wheel>=0.30.0
+#twine>=1.10.0

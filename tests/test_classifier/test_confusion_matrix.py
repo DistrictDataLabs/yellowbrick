@@ -21,12 +21,10 @@ import yellowbrick as yb
 import numpy.testing as npt
 import matplotlib.pyplot as plt
 
-from collections import namedtuple
-
 from yellowbrick.classifier.confusion_matrix import *
 
 from tests.base import VisualTestCase
-from tests.dataset import DatasetMixin
+from tests.dataset import DatasetMixin, Dataset, Split
 
 from sklearn.svm import SVC
 from sklearn.datasets import load_digits
@@ -43,14 +41,10 @@ try:
 except ImportError:
     pd = None
 
+
 ##########################################################################
 ## Fixtures
 ##########################################################################
-
-# Helpers for fixtures
-Dataset = namedtuple('Dataset', 'X,y')
-Split = namedtuple('Split', 'train,test')
-
 
 @pytest.fixture(scope='class')
 def digits(request):

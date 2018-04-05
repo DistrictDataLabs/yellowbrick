@@ -12,7 +12,7 @@ then eliminate weak features or combinations of features and re-evalute to
 see if the model fairs better during cross-validation.
 
 Many model forms describe the underlying impact of features relative to each
-other. In Scikit-Learn, Decision Tree models and ensembles of trees such as
+other. In scikit-learn, Decision Tree models and ensembles of trees such as
 Random Forest, Gradient Boosting, and Ada Boost provide a
 ``feature_importances_`` attribute when fitted. The Yellowbrick
 ``FeatureImportances`` visualizer utilizes this attribute to rank and plot
@@ -22,7 +22,7 @@ classification dataset as follows:
 .. code:: python
 
     # Load the classification data set
-    data = load_data('occupancy')
+    data = load_data("occupancy")
 
     # Specify the features of interest
     features = [
@@ -40,8 +40,11 @@ with a ``GradientBoostingClassifier`` to visualize the ranked features:
 
 .. code:: python
 
+    import matplotlib.pyplot as plt
+
     from sklearn.ensemble import GradientBoostingClassifier
-    from yellowbrick.features import FeatureImportances
+
+    from yellowbrick.features.importances import FeatureImportances
 
     # Create a new matplotlib figure
     fig = plt.figure()
@@ -71,7 +74,7 @@ regression dataset:
 
     # Specify the features of interest
     features = [
-        'cement','slag','ash','water','splast','coarse','fine','age'
+        "cement","slag","ash","water","splast","coarse","fine","age"
     ]
 
     # Extract the instances and target
@@ -85,6 +88,12 @@ not have column names or to print better titles. In the example below we
 title case our features for better readability:
 
 .. code:: python
+
+    import matplotlib.pyplot as plt
+    
+    from sklearn.linear_model import Lasso
+    
+    from yellowbrick.features.importances import FeatureImportances
 
     # Create a new figure
     fig = plt.figure()

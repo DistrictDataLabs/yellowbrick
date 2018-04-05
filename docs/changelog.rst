@@ -31,6 +31,10 @@ Bug Fixes:
    - ``DataVisualizer`` updated to remove ``np.nan`` values and warn the user that nans are not plotted.
    - ``ClassificationReport`` no longer has lines that run through the numbers, is more grid-like
 
+Deprecation Warnings:
+   - ``ScatterPlotVisualizer`` is being moved to contrib in 0.7
+   - ``DecisionBoundaryVisualizer`` is being moved to contrib in 0.7
+
 .. _v0.6.0: https://github.com/DistrictDataLabs/yellowbrick/releases/tag/v0.6.0
 
 Version 0.5

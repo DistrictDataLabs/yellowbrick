@@ -1,9 +1,9 @@
+import numpy as np
 import pandas as pd
 
-from sklearn.linear_model import Lasso
-from sklearn.model_selection import train_test_split
+from sklearn.linear_model import LassoCV
 
-from yellowbrick.regressor import PredictionError
+from yellowbrick.regressor import AlphaSelection
 
 
 if __name__ == '__main__':
@@ -17,13 +17,9 @@ if __name__ == '__main__':
     X = df[feature_names].as_matrix()
     y = df[target_name].as_matrix()
 
-    # Create the train and test data
-    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2)
-
     # Instantiate the linear model and visualizer
-    lasso = Lasso()
-    visualizer = PredictionError(lasso)
+    alphas = np.logspace(-10, 1, 400)
+    visualizer = AlphaSelection(LassoCV(alphas=alphas))
 
-    visualizer.fit(X_train, y_train)  # Fit the training data to the visualizer
-    visualizer.score(X_test, y_test)  # Evaluate the model on the test data
-    g = visualizer.poof(outpath="images/prediction_error.png")             # Draw/show/poof the data
+    visualizer.fit(X, y)
+    g = visualizer.poof(outpath="images/alpha_selection.png")
