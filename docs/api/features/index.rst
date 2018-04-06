@@ -19,7 +19,8 @@ At the moment we have five feature analysis visualizers implemented:
 -  :doc:`pcoords`: plot instances as lines along vertical axes to
    detect classes or clusters
 -  :doc:`pca`: project higher dimensions into a visual space using PCA
--  :doc:`importances`: rank features by relative importance in a model 
+-  :doc:`importances`: rank features by relative importance in a model
+-  :doc:`rfecv`: select a subset of features by importance
 -  :doc:`scatter`: plot instances by selecting subsets of features
 
 Feature analysis visualizers implement the ``Transformer`` API from
@@ -39,6 +40,7 @@ is called which displays the image.
     from yellowbrick.features.jointplot import JointPlotVisualizer
     from yellowbrick.features.pca import PCADecomposition
     from yellowbrick.features.importances import FeatureImportances
+    from yellowbrick.features.rfecv import RFECV
     from yellowbrick.features.scatter import ScatterVisualizer
 
 
@@ -50,4 +52,5 @@ is called which displays the image.
    pcoords
    pca
    importances
+   rfecv
    scatter

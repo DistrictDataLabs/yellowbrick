@@ -31,6 +31,7 @@ Feature Visualization
 - **Radial Visualization**: separation of instances around a circular plot
 - **PCA Projection**: projection of instances based on principal components
 - **Feature Importances**: rank features based on their in-model performance
+- **Recursive Feature Elimination**: find the best subset of features by importance
 - **Scatter and Joint Plots**: direct data visualization with feature selection
 
 Classification Visualization
