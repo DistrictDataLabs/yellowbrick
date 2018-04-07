@@ -28,7 +28,7 @@ from yellowbrick.style import palettes
 
 from tests.dataset import DatasetMixin
 from tests.base import VisualTestCase
-from matplotlib.testing.exceptions import ImageComparisonFailure
+from yellowbrick.exceptions import ImageComparisonFailure
 
 try:
     import pandas
