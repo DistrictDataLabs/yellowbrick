@@ -9,7 +9,7 @@ Yellowbrick: Machine Learning Visualization
 
 .. image:: images/visualizers.png
 
-Yellowbrick is a suite of visual diagnostic tools called "Visualizers" that extend the Scikit-Learn API to allow human steering of the model selection process. In a nutshell, Yellowbrick combines Scikit-Learn with Matplotlib in the best tradition of the Scikit-Learn documentation, but to produce visualizations for *your* models! For more on Yellowbrick, please see the :doc:`about`.
+Yellowbrick is a suite of visual diagnostic tools called "Visualizers" that extend the Scikit-Learn API to allow human steering of the model selection process. In a nutshell, Yellowbrick combines scikit-learn with matplotlib in the best tradition of the scikit-learn documentation, but to produce visualizations for *your* models! For more on Yellowbrick, please see the :doc:`about`.
 
 If you're new to Yellowbrick, checkout the :doc:`quickstart` or skip ahead to the :doc:`tutorial`. Yellowbrick is a rich library with many Visualizers being added on a regular basis. For details on specific Visualizers and extended usage head over to the :doc:`api/index`. Interested in contributing to Yellowbrick? Checkout the :ref:`contributing guide <contributing>` . If you've signed up to do user testing, head over to the :doc:`evaluation` (and thank you!).
 
@@ -25,7 +25,8 @@ Feature Visualization
 - :doc:`api/features/pcoords`: horizontal visualization of instances
 - :doc:`Radial Visualization <api/features/radviz>`: separation of instances around a circular plot
 - :doc:`api/features/pca`: projection of instances based on principal components
-- :doc:`api/features/importances`: rank features by importance or linear coeficients for a specific model
+- :doc:`api/features/importances`: rank features by importance or linear coefficients for a specific model
+- :doc:`api/features/rfecv`: find the best subset of features based on importance
 - :doc:`Scatter and Joint Plots<api/features/scatter>`: direct data visualization with feature selection
 
 Classification Visualization
@@ -36,7 +37,7 @@ Classification Visualization
 - :doc:`api/classifier/classification_report`: visual representation of precision, recall, and F1
 - :doc:`ROC/AUC Curves <api/classifier/rocauc>`: receiver operator characteristics and area under the curve
 - :doc:`Confusion Matrices <api/classifier/confusion_matrix>`: visual description of class decision making
-- :doc:`Discrimination Threshold <api/classifier/threshold>`: find a threshold that best separates binary classes 
+- :doc:`Discrimination Threshold <api/classifier/threshold>`: find a threshold that best separates binary classes
 
 Regression Visualization
 ~~~~~~~~~~~~~~~~~~~~~~~~
@@ -51,6 +52,12 @@ Clustering Visualization
 - :doc:`K-Elbow Plot <api/cluster/elbow>`: select k using the elbow method and various metrics
 - :doc:`Silhouette Plot <api/cluster/silhouette>`: select k by visualizing silhouette coefficient values
 
+Model Selection Visualization
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+-  :doc:`api/model_selection/validation_curve`: tune a model with respect to a single hyperparameter
+-  :doc:`api/model_selection/learning_curve`: show if a model might benefit from more data or less complexity
+
 Text Visualization
 ~~~~~~~~~~~~~~~~~~
 
@@ -62,7 +69,7 @@ Text Visualization
 Getting Help
 ------------
 
-Yellowbrick is a welcoming, inclusive project in the tradition of Matplotlib and Scikit-Learn. Similar to those projects, we follow the `Python Software Foundation Code of Conduct <http://www.python.org/psf/codeofconduct/>`_. Please don't hesitate to reach out to us for help or if you have any contributions or bugs to report!
+Yellowbrick is a welcoming, inclusive project in the tradition of matplotlib and scikit-learn. Similar to those projects, we follow the `Python Software Foundation Code of Conduct <http://www.python.org/psf/codeofconduct/>`_. Please don't hesitate to reach out to us for help or if you have any contributions or bugs to report!
 
 The primary way to ask for help with Yellowbrick is to post on our `Google Groups Listserv <https://groups.google.com/forum/#!forum/yellowbrick>`_. This is an email list/forum that members of the community can join and respond to each other; you should be able to receive the quickest response here. Please also consider joining the group so you can respond to questions! You can also ask questions on `Stack Overflow <http://stackoverflow.com/questions/tagged/yellowbrick>`_ and tag them with "yellowbrick". Or you can add issues on GitHub. You can also tweet or direct message us on Twitter `@scikit_yb <https://twitter.com/scikit_yb>`_.
 

@@ -22,7 +22,7 @@ import numpy as np
 
 from tests.base import VisualTestCase
 
-from yellowbrick.classifier import *
+from yellowbrick.contrib.classifier import *
 from yellowbrick.exceptions import YellowbrickTypeError
 from yellowbrick.exceptions import YellowbrickValueError
 
@@ -207,7 +207,7 @@ class DecisionBoundariesVisualizerTest(VisualTestCase):
         fitted_viz = viz.fit(X_two_cols, y=y)
         self.assertEquals(fitted_viz.features_, ['one', 'two'])
 
-    @mock.patch("yellowbrick.classifier.boundaries.OrderedDict")
+    @mock.patch("yellowbrick.contrib.classifier.boundaries.OrderedDict")
     def test_draw_ordereddict_calls(self, mock_odict):
         """
         Test draw with calls to ordered dict
@@ -218,7 +218,7 @@ class DecisionBoundariesVisualizerTest(VisualTestCase):
         self.assertRaises(KeyError, viz.fit_draw, X_two_cols, y=y)
         self.assertEquals(len(mock_odict.mock_calls), 2)
 
-    @mock.patch("yellowbrick.classifier.boundaries.resolve_colors")
+    @mock.patch("yellowbrick.contrib.classifier.boundaries.resolve_colors")
     def test_draw_ordereddict_calls_one(self, mock_resolve_colors):
         """
         Test ordered dict calls resolve colors
