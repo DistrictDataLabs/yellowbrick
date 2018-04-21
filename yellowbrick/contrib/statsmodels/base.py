@@ -30,7 +30,7 @@ class StatsModelsWrapper(BaseEstimator):
     --------
     First import the external libraries and helper utilities:
 
-    >>> import statsmodels as sm
+    >>> import statsmodels.api as sm
     >>> from functools import partial
 
     Instantiate a partial with the statsmodels API:
