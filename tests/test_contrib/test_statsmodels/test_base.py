@@ -21,7 +21,7 @@ import numpy as np
 from yellowbrick.contrib.statsmodels import StatsModelsWrapper
 
 try:
-    import statsmodels as sm
+    import statsmodels.api as sm
 except ImportError:
     sm = None
 
