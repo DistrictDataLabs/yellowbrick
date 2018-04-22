@@ -12,7 +12,7 @@ Classification models attempt to predict a target in a discrete space, that is a
 -  :doc:`class_prediction_error`: An alternative to the confusion matrix that shows both support and the difference between actual and predicted classes.
 -  :doc:`threshold`: Shows precision, recall, f1, and queue rate over all thresholds for binary classifiers that use a discrimination probability or score.
 
-Estimator score visualizers wrap Scikit-Learn estimators and expose the
+Estimator score visualizers wrap scikit-learn estimators and expose the
 Estimator API such that they have fit(), predict(), and score() methods
 that call the appropriate estimator methods under the hood. Score
 visualizers can wrap an estimator and be passed in as the final step in

@@ -24,7 +24,7 @@ At the moment we have five feature analysis visualizers implemented:
 -  :doc:`scatter`: plot instances by selecting subsets of features
 
 Feature analysis visualizers implement the ``Transformer`` API from
-Scikit-Learn, meaning they can be used as intermediate transform steps
+scikit-learn, meaning they can be used as intermediate transform steps
 in a ``Pipeline`` (particularly a ``VisualPipeline``). They are
 instantiated in the same way, and then fit and transform are called on
 them, which draws the instances correctly. Finally ``poof`` or ``show``
@@ -33,7 +33,7 @@ is called which displays the image.
 .. code:: python
 
     # Feature Analysis Imports
-    # NOTE that all these are available for import directly from the `yellowbrick.features` module
+    # NOTE that all these are available for import directly from the ``yellowbrick.features`` module
     from yellowbrick.features.rankd import Rank1D, Rank2D
     from yellowbrick.features.radviz import RadViz
     from yellowbrick.features.pcoords import ParallelCoordinates
