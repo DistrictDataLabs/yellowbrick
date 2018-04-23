@@ -18,6 +18,7 @@ Testing for the ROCAUC visualizer
 ## Imports
 ##########################################################################
 
+import sys
 import pytest
 import numpy as np
 import numpy.testing as npt
@@ -221,6 +222,9 @@ class ROCAUCTests(VisualTestCase, DatasetMixin):
         visualizer.poof()
         self.assert_images_similar(visualizer)
 
+    @pytest.mark.skipif(
+        sys.platform == 'win32', reason="images not close on windows"
+    )
     def test_rocauc_no_macro_no_micro(self):
         """
         Test ROCAUC without a macro or micro average

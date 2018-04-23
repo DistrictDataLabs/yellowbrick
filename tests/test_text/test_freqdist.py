@@ -17,6 +17,9 @@ Tests for the frequency distribution text visualization
 ## Imports
 ##########################################################################
 
+import sys
+import pytest
+
 from yellowbrick.text.freqdist import *
 from tests.dataset import DatasetMixin
 from tests.base import VisualTestCase
@@ -29,7 +32,9 @@ from sklearn.feature_extraction.text import CountVectorizer
 
 class FreqDistTests(VisualTestCase, DatasetMixin):
 
-
+    @pytest.mark.skipif(
+        sys.platform == 'win32', reason="images not close on windows"
+    )
     def test_integrated_freqdist(self):
         """
         Assert no errors occur during freqdist integration

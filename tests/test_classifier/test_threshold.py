@@ -18,6 +18,7 @@ Ensure that the DiscriminationThreshold visualizations work.
 ## Imports
 ##########################################################################
 
+import sys
 import six
 import pytest
 import yellowbrick as yb
@@ -70,6 +71,9 @@ class TestDiscriminationThreshold(VisualTestCase, DatasetMixin):
             with pytest.deprecated_call():
                 alias(BernoulliNB())
 
+    @pytest.mark.skipif(
+        sys.platform == 'win32', reason="images not close on windows"
+    )
     def test_binary_discrimination_threshold(self):
         """
         Correctly generates viz for binary classification with BernoulliNB
@@ -104,6 +108,9 @@ class TestDiscriminationThreshold(VisualTestCase, DatasetMixin):
         with pytest.raises(ValueError, match=msg):
             visualizer.fit(X, y)
 
+    @pytest.mark.skipif(
+        sys.platform == 'win32', reason="images not close on windows"
+    )
     @pytest.mark.skipif(pd is None, reason="test requires pandas")
     def test_pandas_integration(self):
         """
@@ -175,6 +182,9 @@ class TestDiscriminationThreshold(VisualTestCase, DatasetMixin):
             assert "{}_lower".format(metric) in visualizer.cv_scores_
             assert "{}_upper".format(metric) in visualizer.cv_scores_
 
+    @pytest.mark.skipif(
+        sys.platform == 'win32', reason="images not close on windows"
+    )
     def test_binary_discrimination_threshold_alt_args(self):
         """
         Correctly generates visualization with alternate arguments

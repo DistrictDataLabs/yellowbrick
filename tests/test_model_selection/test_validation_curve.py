@@ -14,6 +14,7 @@ Tests for the ValidationCurve visualizer
 ## Imports
 ##########################################################################
 
+import sys
 import pytest
 import numpy as np
 
@@ -75,6 +76,9 @@ class TestValidationCurve(VisualTestCase, DatasetMixin):
         for param in params:
             assert hasattr(oz, param)
 
+    @pytest.mark.skipif(
+        sys.platform == 'win32', reason="images not close on windows"
+    )
     def test_classifier(self):
         """
         Test image closeness on a classification dataset with kNN
@@ -113,6 +117,9 @@ class TestValidationCurve(VisualTestCase, DatasetMixin):
 
         self.assert_images_similar(oz, tol=12.0)
 
+    @pytest.mark.skipif(
+        sys.platform == 'win32', reason="images not close on windows"
+    )
     def test_quick_method(self):
         """
         Test validation curve quick method with image closeness on SVC
@@ -127,6 +134,9 @@ class TestValidationCurve(VisualTestCase, DatasetMixin):
 
         self.assert_images_similar(ax=ax)
 
+    @pytest.mark.skipif(
+        sys.platform == 'win32', reason="images not close on windows"
+    )
     @pytest.mark.skipif(pd is None, reason="test requires pandas")
     def test_pandas_integration(self):
         """

@@ -16,6 +16,7 @@ Assertions for the base classes and abstract hierarchy.
 ## Imports
 ##########################################################################
 
+import sys
 import pytest
 import matplotlib.pyplot as plt
 
@@ -102,6 +103,9 @@ class TestVisualizerGrid(VisualTestCase):
     Tests for the VisualizerGrid layout class
     """
 
+    @pytest.mark.skipif(
+        sys.platform == 'win32', reason="images not close on windows"
+    )
     def test_draw_visualizer_grid(self):
         """
         Draw a 4 visualizers grid with default options
@@ -119,6 +123,9 @@ class TestVisualizerGrid(VisualTestCase):
 
         self.assert_images_similar(grid)
 
+    @pytest.mark.skipif(
+        sys.platform == 'win32', reason="images not close on windows"
+    )
     def test_draw_with_rows(self):
         """
         Draw 2 visualizers in their own row
@@ -136,6 +143,9 @@ class TestVisualizerGrid(VisualTestCase):
 
         self.assert_images_similar(grid)
 
+    @pytest.mark.skipif(
+        sys.platform == 'win32', reason="images not close on windows"
+    )
     def test_draw_with_cols(self):
         """
         Draw 2 visualizers in their own column

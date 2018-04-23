@@ -69,10 +69,13 @@ class TestMetaImageComparison(VisualTestCase):
         assert compare.test_func_name == "test_image_comparison"
         assert compare.test_module_path == "test_meta"
 
-        assert compare.actual_image_path.endswith(
-            "tests/actual_images/test_meta/test_image_comparison.png")
-        assert compare.baseline_image_path.endswith(
-            "tests/baseline_images/test_meta/test_image_comparison.png")
+        # Must use os.path.join for Windows/POSIX compatibility
+        assert compare.actual_image_path.endswith(os.path.join(
+            "tests", "actual_images", "test_meta", "test_image_comparison.png"
+        ))
+        assert compare.baseline_image_path.endswith(os.path.join(
+            "tests", "baseline_images", "test_meta", "test_image_comparison.png"
+        ))
 
     @patch.object(ImageComparison, "cleanup")
     @patch.object(ImageComparison, "save")
@@ -134,7 +137,7 @@ class TestMetaImageComparison(VisualTestCase):
         viz = RandomVisualizer(random_state=111).fit()
         viz.poof()
 
-        compare = self.assert_images_similar(viz)
+        compare = self.assert_images_similar(viz, tol=1.0)
         assert_path_exists(compare.actual_image_path)
         assert_path_exists(compare.baseline_image_path)
 

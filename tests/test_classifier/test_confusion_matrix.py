@@ -15,6 +15,7 @@ Tests for the confusion matrix visualizer
 ## Imports
 ##########################################################################
 
+import sys
 import six
 import pytest
 import yellowbrick as yb
@@ -73,6 +74,9 @@ class ConfusionMatrixTests(VisualTestCase, DatasetMixin):
     ConfusionMatrix visualizer tests
     """
 
+    @pytest.mark.skipif(
+        sys.platform == 'win32', reason="images not close on windows"
+    )
     def test_confusion_matrix(self):
         """
         Integration test on digits dataset with LogisticRegression

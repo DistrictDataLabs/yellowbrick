@@ -17,6 +17,7 @@ Test the feature importance visualizers
 ## Imports
 ##########################################################################
 
+import sys
 import pytest
 import numpy as np
 import numpy.testing as npt
@@ -53,6 +54,9 @@ class TestFeatureImportancesVisualizer(VisualTestCase, DatasetMixin):
     FeatureImportances visualizer
     """
 
+    @pytest.mark.skipif(
+        sys.platform == 'win32', reason="images not close on windows"
+    )
     def test_integration_feature_importances(self):
         """
         Integration test of visualizer with feature importances param
@@ -78,6 +82,9 @@ class TestFeatureImportancesVisualizer(VisualTestCase, DatasetMixin):
 
         self.assert_images_similar(viz)
 
+    @pytest.mark.skipif(
+        sys.platform == 'win32', reason="images not close on windows"
+    )
     def test_integration_coef(self):
         """
         Integration test of visualizer with coef param
@@ -102,6 +109,9 @@ class TestFeatureImportancesVisualizer(VisualTestCase, DatasetMixin):
 
         self.assert_images_similar(viz)
 
+    @pytest.mark.skipif(
+        sys.platform == 'win32', reason="images not close on windows"
+    )
     def test_integration_quick_method(self):
         """
         Integration test of quick method

@@ -14,6 +14,7 @@ Tests for the RFECV visualizer
 ## Imports
 ##########################################################################
 
+import sys
 import pytest
 
 from tests.base import VisualTestCase
@@ -97,6 +98,9 @@ class TestRFECV(VisualTestCase, DatasetMixin):
         assert oz._wrapped is not rf
         assert oz._wrapped is oz.rfe_estimator_
 
+    @pytest.mark.skipif(
+        sys.platform == 'win32', reason="images not close on windows"
+    )
     def test_rfecv_classification(self):
         """
         Test image closeness on a classification dataset with an SVM
@@ -108,6 +112,9 @@ class TestRFECV(VisualTestCase, DatasetMixin):
 
         self.assert_images_similar(oz)
 
+    @pytest.mark.skipif(
+        sys.platform == 'win32', reason="images not close on windows"
+    )
     @pytest.mark.filterwarnings('ignore:F-score is ill-defined')
     def test_quick_method(self):
         """
@@ -121,6 +128,9 @@ class TestRFECV(VisualTestCase, DatasetMixin):
 
         self.assert_images_similar(ax=ax)
 
+    @pytest.mark.skipif(
+        sys.platform == 'win32', reason="images not close on windows"
+    )
     @pytest.mark.skipif(pd is None, reason="test requires pandas")
     def test_pandas_integration(self):
         """
