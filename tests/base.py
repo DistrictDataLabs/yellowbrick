@@ -20,6 +20,7 @@ import inspect
 import unittest
 import matplotlib as mpl
 import matplotlib.pyplot as plt
+
 from matplotlib import ticker
 from matplotlib import rcParams
 

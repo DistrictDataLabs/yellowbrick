@@ -5,11 +5,12 @@ python:
 
 before_install:
   - sudo apt-get build-dep python-scipy
-  - pip install -r tests/requirements.txt
-  - python -c 'import nltk; nltk.download("popular");'
-  - pip install coveralls
 
-install: pip install -r requirements.txt
+install:
+  - pip install -r requirements.txt
+  - pip install -r tests/requirements.txt
+  - pip install coveralls
+  - python -m nltk.downloader popular
 
 script: make test
 
