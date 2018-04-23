@@ -14,6 +14,7 @@ Tests for the LearningCurve visualizer
 ## Imports
 ##########################################################################
 
+import sys
 import pytest
 import numpy as np
 
@@ -74,6 +75,9 @@ class TestLearningCurve(VisualTestCase, DatasetMixin):
         for param in params:
             assert hasattr(oz, param)
 
+    @pytest.mark.xfail(
+        sys.platform == 'win32', reason="images not close on windows"
+    )
     def test_classifier(self):
         """
         Test image closeness on a classification dataset
@@ -87,6 +91,9 @@ class TestLearningCurve(VisualTestCase, DatasetMixin):
 
         self.assert_images_similar(oz)
 
+    @pytest.mark.xfail(
+        sys.platform == 'win32', reason="images not close on windows"
+    )
     def test_regressor(self):
         """
         Test image closeness on a regression dataset
@@ -112,6 +119,9 @@ class TestLearningCurve(VisualTestCase, DatasetMixin):
 
         self.assert_images_similar(oz, tol=10)
 
+    @pytest.mark.xfail(
+        sys.platform == 'win32', reason="images not close on windows"
+    )
     def test_quick_method(self):
         """
         Test the learning curve quick method acts as expected
@@ -125,6 +135,9 @@ class TestLearningCurve(VisualTestCase, DatasetMixin):
 
         self.assert_images_similar(ax=ax)
 
+    @pytest.mark.xfail(
+        sys.platform == 'win32', reason="images not close on windows"
+    )
     @pytest.mark.skipif(pd is None, reason="test requires pandas")
     def test_pandas_integration(self):
         """

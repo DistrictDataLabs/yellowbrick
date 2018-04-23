@@ -17,6 +17,7 @@ Tests for the TSNE visual corpus embedding mechanism.
 ## Imports
 ##########################################################################
 
+import sys
 import six
 import pytest
 
@@ -67,6 +68,9 @@ class TestTSNE(VisualTestCase, DatasetMixin):
         none = tsne.make_transformer(None)
         assert len(none.steps) == 1
 
+    @pytest.mark.xfail(
+        sys.platform == 'win32', reason="unicode decode error"
+    )
     def test_integrated_tsne(self):
         """
         Check tSNE integrated visualization on the hobbies corpus

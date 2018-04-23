@@ -17,6 +17,7 @@ Tests for the KElbowVisualizer
 ## Imports
 ##########################################################################
 
+import sys
 import pytest
 import numpy as np
 import matplotlib.pyplot as plt
@@ -188,6 +189,9 @@ class TestKElbowVisualizer(VisualTestCase, DatasetMixin):
         with pytest.raises(YellowbrickValueError):
             KElbowVisualizer(KMeans(), k="foo")
 
+    @pytest.mark.xfail(
+        sys.platform == 'win32', reason="images not close on windows"
+    )
     def test_distortion_metric(self):
         """
         Test the distortion metric of the k-elbow visualizer
@@ -204,6 +208,9 @@ class TestKElbowVisualizer(VisualTestCase, DatasetMixin):
         self.assert_images_similar(visualizer)
         assert_array_almost_equal(visualizer.k_scores_, expected)
 
+    @pytest.mark.xfail(
+        sys.platform == 'win32', reason="images not close on windows"
+    )
     def test_silhouette_metric(self):
         """
         Test the silhouette metric of the k-elbow visualizer
@@ -220,6 +227,9 @@ class TestKElbowVisualizer(VisualTestCase, DatasetMixin):
         self.assert_images_similar(visualizer)
         assert_array_almost_equal(visualizer.k_scores_, expected)
 
+    @pytest.mark.xfail(
+        sys.platform == 'win32', reason="images not close on windows"
+    )
     def test_calinski_harabaz_metric(self):
         """
         Test the calinski-harabaz metric of the k-elbow visualizer
@@ -248,6 +258,9 @@ class TestKElbowVisualizer(VisualTestCase, DatasetMixin):
         with pytest.raises(YellowbrickValueError):
             KElbowVisualizer(KMeans(), k=5, metric="foo")
 
+    @pytest.mark.xfail(
+        sys.platform == 'win32', reason="images not close on windows"
+    )
     def test_timings(self):
         """
         Test the twinx double axes with k-elbow timings

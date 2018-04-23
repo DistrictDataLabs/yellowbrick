@@ -15,6 +15,7 @@ Tests for the classification report visualizer
 ## Imports
 ##########################################################################
 
+import sys
 import pytest
 import yellowbrick as yb
 import matplotlib.pyplot as plt
@@ -65,6 +66,9 @@ class ClassificationReportTests(VisualTestCase, DatasetMixin):
             'f1': {0: 0.7777777777777778, 1: 0.8181818181818182}
         }
 
+    @pytest.mark.xfail(
+        sys.platform == 'win32', reason="images not close on windows"
+    )
     def test_multiclass_class_report(self):
         """
         Correctly generates report for multi-class with LogisticRegression
@@ -90,6 +94,9 @@ class ClassificationReportTests(VisualTestCase, DatasetMixin):
                 4: 0.38709677419354843, 5: 0.6060606060606061
             }}
 
+    @pytest.mark.xfail(
+        sys.platform == 'win32', reason="images not close on windows"
+    )
     @pytest.mark.skipif(pd is None, reason="test requires pandas")
     def test_pandas_integration(self):
         """

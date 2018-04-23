@@ -78,6 +78,55 @@ def clear(path):
             print("removed {}".format(os.path.relpath(img)))
 
 
+def list_images(path):
+    """
+    List the associated files for the given test path
+    """
+    # Get contents of directories
+    bases = set(glob.glob(os.path.join(BASELINE, path, "*.png")))
+    actual = set(glob.glob(os.path.join(ACTUAL, path, "*.png")))
+    diffs = set(glob.glob(os.path.join(ACTUAL, path, "*-failed-diff.png")))
+
+    # Dedupe actual and diffs
+    actual -= diffs
+
+    # Get test file names without parent dirs
+    names = set(map(os.path.basename, bases)) | set(map(os.path.basename, actual))
+
+    # Build listing
+    output = []
+
+    for name in names:
+        bname, bext = os.path.splitext(name)
+
+        output.append(bname)
+        output.append("-"*len(bname))
+
+        # Handle base path
+        base_path = os.path.join(BASELINE, path, name)
+        if base_path in bases:
+            output.append("  - {}".format(os.path.relpath(base_path)))
+        else:
+            output.append("  - no baseline image")
+
+        # Handle actual path
+        actual_path = os.path.join(ACTUAL, path, name)
+        if actual_path in actual:
+            output.append("  - {}".format(os.path.relpath(actual_path)))
+        else:
+            output.append("  - no actual image")
+
+        # Handle diff path
+        diff_path = os.path.join(ACTUAL, path, '{}-failed-diff{}'.format(bname, bext))
+        if diff_path in diffs:
+            output.append("  - {}".format(os.path.relpath(diff_path)))
+
+        # Add breathing room
+        output.append("")
+
+    return "\n".join(output)
+
+
 def sync(path):
     """
     Move all non-diff images from actual to baseline
@@ -104,6 +153,12 @@ def main(args):
     # Validate directories and filter empty ones
     test_dirs = filter(validate, test_dirs)
 
+    # If list, simply list what is available and exit
+    if args.list:
+        output = [list_images(path) for path in test_dirs]
+        print("\n".join(output))
+        return
+
     # If clear, clear the baseline and actual directories
     if args.clear:
         for path in test_dirs:
@@ -120,7 +175,11 @@ if __name__ == '__main__':
     args = {
         ('-C', '--clear'): {
             'action': 'store_true',
-            'help': 'clear actual and baseline images in specified dirs',
+            'help': 'clear actual, diffs, and baseline images for test',
+        },
+        ('-L', '--list'): {
+            'action': 'store_true',
+            'help': 'list images images for tests and exit',
         },
         'test_dirs' : {
             'metavar': 'DIR', 'nargs': '+',
