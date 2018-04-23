@@ -52,7 +52,7 @@ class ParallelCoordinatesTests(VisualTestCase, DatasetMixin):
         visualizer.poof()
         self.assert_images_similar(visualizer, tol=0.25)
 
-    @pytest.mark.skipif(
+    @pytest.mark.xfail(
         sys.platform == 'win32', reason="images not close on windows"
     )
     def test_normalized_pcoords(self):
@@ -108,7 +108,7 @@ class ParallelCoordinatesTests(VisualTestCase, DatasetMixin):
         with self.assertRaises(YellowbrickTypeError):
             ParallelCoordinates(sample='foo')
 
-    @pytest.mark.skipif(
+    @pytest.mark.xfail(
         sys.platform == 'win32', reason="images not close on windows"
     )
     def test_integrated_pcoords(self):

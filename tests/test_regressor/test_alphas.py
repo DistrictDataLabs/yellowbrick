@@ -45,7 +45,7 @@ class TestAlphaSelection(VisualTestCase):
     Test the AlphaSelection visualizer
     """
 
-    @pytest.mark.skipif(
+    @pytest.mark.xfail(
         sys.platform == 'win32', reason="images not close on windows"
     )
     def test_similar_image(self):

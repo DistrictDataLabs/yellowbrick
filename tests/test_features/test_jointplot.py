@@ -75,7 +75,7 @@ class JointPlotTests(VisualTestCase, DatasetMixin):
                 "or greater. Please upgrade."
             )
 
-    @pytest.mark.skipif(
+    @pytest.mark.xfail(
         sys.platform == 'win32', reason="images not close on windows"
     )
     @unittest.skipIf(MPL_VERS_MAJ < 2, "requires matplotlib 2.0.0 or greater")
@@ -92,7 +92,9 @@ class JointPlotTests(VisualTestCase, DatasetMixin):
 
         self.assert_images_similar(visualizer)
 
-
+    @pytest.mark.xfail(
+        sys.platform == 'win32', reason="images not close on windows"
+    )
     @unittest.skipIf(MPL_VERS_MAJ < 2, "requires matplotlib 2.0.0 or greater")
     def test_jointplot_integrated_has_no_errors(self):
         """

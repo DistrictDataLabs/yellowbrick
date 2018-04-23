@@ -103,7 +103,7 @@ class TestVisualizerGrid(VisualTestCase):
     Tests for the VisualizerGrid layout class
     """
 
-    @pytest.mark.skipif(
+    @pytest.mark.xfail(
         sys.platform == 'win32', reason="images not close on windows"
     )
     def test_draw_visualizer_grid(self):
@@ -123,7 +123,7 @@ class TestVisualizerGrid(VisualTestCase):
 
         self.assert_images_similar(grid)
 
-    @pytest.mark.skipif(
+    @pytest.mark.xfail(
         sys.platform == 'win32', reason="images not close on windows"
     )
     def test_draw_with_rows(self):
@@ -143,7 +143,7 @@ class TestVisualizerGrid(VisualTestCase):
 
         self.assert_images_similar(grid)
 
-    @pytest.mark.skipif(
+    @pytest.mark.xfail(
         sys.platform == 'win32', reason="images not close on windows"
     )
     def test_draw_with_cols(self):

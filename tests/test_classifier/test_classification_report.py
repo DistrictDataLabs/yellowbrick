@@ -66,7 +66,7 @@ class ClassificationReportTests(VisualTestCase, DatasetMixin):
             'f1': {0: 0.7777777777777778, 1: 0.8181818181818182}
         }
 
-    @pytest.mark.skipif(
+    @pytest.mark.xfail(
         sys.platform == 'win32', reason="images not close on windows"
     )
     def test_multiclass_class_report(self):
@@ -94,7 +94,7 @@ class ClassificationReportTests(VisualTestCase, DatasetMixin):
                 4: 0.38709677419354843, 5: 0.6060606060606061
             }}
 
-    @pytest.mark.skipif(
+    @pytest.mark.xfail(
         sys.platform == 'win32', reason="images not close on windows"
     )
     @pytest.mark.skipif(pd is None, reason="test requires pandas")

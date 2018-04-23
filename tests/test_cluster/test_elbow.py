@@ -189,7 +189,7 @@ class TestKElbowVisualizer(VisualTestCase, DatasetMixin):
         with pytest.raises(YellowbrickValueError):
             KElbowVisualizer(KMeans(), k="foo")
 
-    @pytest.mark.skipif(
+    @pytest.mark.xfail(
         sys.platform == 'win32', reason="images not close on windows"
     )
     def test_distortion_metric(self):
@@ -208,7 +208,7 @@ class TestKElbowVisualizer(VisualTestCase, DatasetMixin):
         self.assert_images_similar(visualizer)
         assert_array_almost_equal(visualizer.k_scores_, expected)
 
-    @pytest.mark.skipif(
+    @pytest.mark.xfail(
         sys.platform == 'win32', reason="images not close on windows"
     )
     def test_silhouette_metric(self):
@@ -227,7 +227,7 @@ class TestKElbowVisualizer(VisualTestCase, DatasetMixin):
         self.assert_images_similar(visualizer)
         assert_array_almost_equal(visualizer.k_scores_, expected)
 
-    @pytest.mark.skipif(
+    @pytest.mark.xfail(
         sys.platform == 'win32', reason="images not close on windows"
     )
     def test_calinski_harabaz_metric(self):
@@ -258,7 +258,7 @@ class TestKElbowVisualizer(VisualTestCase, DatasetMixin):
         with pytest.raises(YellowbrickValueError):
             KElbowVisualizer(KMeans(), k=5, metric="foo")
 
-    @pytest.mark.skipif(
+    @pytest.mark.xfail(
         sys.platform == 'win32', reason="images not close on windows"
     )
     def test_timings(self):

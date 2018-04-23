@@ -54,7 +54,7 @@ class TestFeatureImportancesVisualizer(VisualTestCase, DatasetMixin):
     FeatureImportances visualizer
     """
 
-    @pytest.mark.skipif(
+    @pytest.mark.xfail(
         sys.platform == 'win32', reason="images not close on windows"
     )
     def test_integration_feature_importances(self):
@@ -82,7 +82,7 @@ class TestFeatureImportancesVisualizer(VisualTestCase, DatasetMixin):
 
         self.assert_images_similar(viz)
 
-    @pytest.mark.skipif(
+    @pytest.mark.xfail(
         sys.platform == 'win32', reason="images not close on windows"
     )
     def test_integration_coef(self):
@@ -109,7 +109,7 @@ class TestFeatureImportancesVisualizer(VisualTestCase, DatasetMixin):
 
         self.assert_images_similar(viz)
 
-    @pytest.mark.skipif(
+    @pytest.mark.xfail(
         sys.platform == 'win32', reason="images not close on windows"
     )
     def test_integration_quick_method(self):

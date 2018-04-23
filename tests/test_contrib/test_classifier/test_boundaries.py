@@ -320,7 +320,7 @@ class DecisionBoundariesVisualizerTest(VisualTestCase):
         viz.draw.assert_called_once_with(X_two_cols, y)
         viz.poof.assert_called_once_with()
 
-    @pytest.mark.skipif(
+    @pytest.mark.xfail(
         sys.platform == 'win32', reason="images not close on windows"
     )
     def test_integrated_plot_numpy_named_arrays(self):
@@ -360,7 +360,7 @@ class DecisionBoundariesVisualizerTest(VisualTestCase):
         visualizer.fit_draw_poof(X, y)
         self.assertEquals(visualizer.features_, [1, 2])
 
-    @pytest.mark.skipif(
+    @pytest.mark.xfail(
         sys.platform == 'win32', reason="images not close on windows"
     )
     @pytest.mark.skipif(pd is None, reason="test requires pandas")

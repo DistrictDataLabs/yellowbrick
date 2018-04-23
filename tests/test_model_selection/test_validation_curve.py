@@ -76,7 +76,7 @@ class TestValidationCurve(VisualTestCase, DatasetMixin):
         for param in params:
             assert hasattr(oz, param)
 
-    @pytest.mark.skipif(
+    @pytest.mark.xfail(
         sys.platform == 'win32', reason="images not close on windows"
     )
     def test_classifier(self):
@@ -117,7 +117,7 @@ class TestValidationCurve(VisualTestCase, DatasetMixin):
 
         self.assert_images_similar(oz, tol=12.0)
 
-    @pytest.mark.skipif(
+    @pytest.mark.xfail(
         sys.platform == 'win32', reason="images not close on windows"
     )
     def test_quick_method(self):
@@ -134,7 +134,7 @@ class TestValidationCurve(VisualTestCase, DatasetMixin):
 
         self.assert_images_similar(ax=ax)
 
-    @pytest.mark.skipif(
+    @pytest.mark.xfail(
         sys.platform == 'win32', reason="images not close on windows"
     )
     @pytest.mark.skipif(pd is None, reason="test requires pandas")

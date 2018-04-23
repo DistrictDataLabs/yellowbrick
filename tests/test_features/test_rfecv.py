@@ -98,7 +98,7 @@ class TestRFECV(VisualTestCase, DatasetMixin):
         assert oz._wrapped is not rf
         assert oz._wrapped is oz.rfe_estimator_
 
-    @pytest.mark.skipif(
+    @pytest.mark.xfail(
         sys.platform == 'win32', reason="images not close on windows"
     )
     def test_rfecv_classification(self):
@@ -112,7 +112,7 @@ class TestRFECV(VisualTestCase, DatasetMixin):
 
         self.assert_images_similar(oz)
 
-    @pytest.mark.skipif(
+    @pytest.mark.xfail(
         sys.platform == 'win32', reason="images not close on windows"
     )
     @pytest.mark.filterwarnings('ignore:F-score is ill-defined')
@@ -128,7 +128,7 @@ class TestRFECV(VisualTestCase, DatasetMixin):
 
         self.assert_images_similar(ax=ax)
 
-    @pytest.mark.skipif(
+    @pytest.mark.xfail(
         sys.platform == 'win32', reason="images not close on windows"
     )
     @pytest.mark.skipif(pd is None, reason="test requires pandas")

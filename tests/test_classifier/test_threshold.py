@@ -71,7 +71,7 @@ class TestDiscriminationThreshold(VisualTestCase, DatasetMixin):
             with pytest.deprecated_call():
                 alias(BernoulliNB())
 
-    @pytest.mark.skipif(
+    @pytest.mark.xfail(
         sys.platform == 'win32', reason="images not close on windows"
     )
     def test_binary_discrimination_threshold(self):
@@ -108,7 +108,7 @@ class TestDiscriminationThreshold(VisualTestCase, DatasetMixin):
         with pytest.raises(ValueError, match=msg):
             visualizer.fit(X, y)
 
-    @pytest.mark.skipif(
+    @pytest.mark.xfail(
         sys.platform == 'win32', reason="images not close on windows"
     )
     @pytest.mark.skipif(pd is None, reason="test requires pandas")
@@ -182,7 +182,7 @@ class TestDiscriminationThreshold(VisualTestCase, DatasetMixin):
             assert "{}_lower".format(metric) in visualizer.cv_scores_
             assert "{}_upper".format(metric) in visualizer.cv_scores_
 
-    @pytest.mark.skipif(
+    @pytest.mark.xfail(
         sys.platform == 'win32', reason="images not close on windows"
     )
     def test_binary_discrimination_threshold_alt_args(self):

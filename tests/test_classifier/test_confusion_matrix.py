@@ -74,7 +74,7 @@ class ConfusionMatrixTests(VisualTestCase, DatasetMixin):
     ConfusionMatrix visualizer tests
     """
 
-    @pytest.mark.skipif(
+    @pytest.mark.xfail(
         sys.platform == 'win32', reason="images not close on windows"
     )
     def test_confusion_matrix(self):
@@ -103,6 +103,9 @@ class ConfusionMatrixTests(VisualTestCase, DatasetMixin):
            [ 0,  2,  0,  0,  0,  0,  0,  0, 32,  0],
            [ 0,  0,  0,  0,  0,  0,  0,  1,  1, 35]]))
 
+    @pytest.mark.xfail(
+        sys.platform == 'win32', reason="images not close on windows"
+    )
     def test_no_classes_provided(self):
         """
         Integration test on digits dataset with GaussianNB, no classes

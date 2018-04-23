@@ -51,7 +51,7 @@ class PCADecompositionTests(VisualTestCase):
         y = np.array([1, 1, 0, 1, 0, 0])
         pca_decomposition(X=X, color=y, roj_dim=2, scale=True)
 
-    @pytest.mark.skipif(
+    @pytest.mark.xfail(
         sys.platform == 'win32', reason="images not close on windows"
     )
     def test_scale_true_2d(self):

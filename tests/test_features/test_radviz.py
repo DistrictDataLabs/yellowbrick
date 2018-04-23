@@ -99,7 +99,7 @@ class RadVizTests(VisualTestCase, DatasetMixin):
         visualizer.poof()
         self.assert_images_similar(visualizer, tol=0.25)
 
-    @pytest.mark.skipif(
+    @pytest.mark.xfail(
         sys.platform == 'win32', reason="images not close on windows"
     )
     @unittest.skipUnless(pandas is not None,
@@ -126,7 +126,7 @@ class RadVizTests(VisualTestCase, DatasetMixin):
         visualizer.fit_transform_poof(X, y)
         self.assert_images_similar(visualizer)
 
-    @pytest.mark.skipif(
+    @pytest.mark.xfail(
         sys.platform == 'win32', reason="images not close on windows"
     )
     @unittest.skipUnless(pandas is not None,
