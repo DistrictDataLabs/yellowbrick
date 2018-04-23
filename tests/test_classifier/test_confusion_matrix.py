@@ -283,6 +283,9 @@ class ConfusionMatrixTests(VisualTestCase, DatasetMixin):
         ylabels.reverse()
         assert  ylabels == classes
 
+    @pytest.mark.xfail(
+        sys.platform == 'win32', reason="images not close on windows"
+    )
     @pytest.mark.skipif(pd is None, reason="test requires pandas")
     def test_pandas_integration(self):
         """

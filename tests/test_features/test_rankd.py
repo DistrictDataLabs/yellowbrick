@@ -17,6 +17,7 @@ Test the Rankd feature analysis visualizers
 ## Imports
 ##########################################################################
 
+import sys
 import six
 import pytest
 
@@ -97,6 +98,9 @@ class TestRank2D(VisualTestCase, DatasetMixin):
     Test the Rank2D visualizer
     """
 
+    @pytest.mark.xfail(
+        sys.platform == 'win32', reason="images not close on windows"
+    )
     def test_rank2d_random(self):
         """
         Test Rank2D on a random binary classification dataset
@@ -108,6 +112,9 @@ class TestRank2D(VisualTestCase, DatasetMixin):
         tol = 10 if six.PY2 else 0.1
         self.assert_images_similar(visualizer, tol=tol)
 
+    @pytest.mark.xfail(
+        sys.platform == 'win32', reason="images not close on windows"
+    )
     @pytest.mark.skipif(pd is None, reason="requires pandas")
     def test_rank2d_integrated(self):
         """
