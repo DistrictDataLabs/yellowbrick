@@ -46,7 +46,7 @@ class MissingValuesDispersion(MissingDataVisualizer):
                                                 colormap, **kwargs)
 
     def get_nan_locs(self, X, y=None, **kwargs):
-        nan_matrix = X.astype(float)
+        nan_matrix = self.X.astype(float)
         return np.argwhere(np.isnan(nan_matrix))
 
     def draw(self, X, y, **kwargs):

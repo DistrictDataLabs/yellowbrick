@@ -43,33 +43,28 @@ class MissingValuesBar(MissingDataVisualizer):
     """
     """
 
-    def __init__(self,
-                 ax=None,
-                 x=None,
-                 y=None,
-                 features=None,
-                 classes=None,
-                 color=None,
-                 colormap=None,
-                 **kwargs):
+    def __init__(self, **kwargs):
         """
         """
 
-        super(MissingValuesBar, self).__init__(ax, features, classes, color,
-                                                colormap, **kwargs)
+        super(MissingValuesBar, self).__init__(**kwargs)
 
-    def get_nan_col_counts(self, X, y=None, **kwargs):
-        nan_matrix = X.astype(np.float)
-        return [np.count_nonzero(np.isnan(col)) for col in nan_matrix.T]
+    def get_nan_col_counts(self, **kwargs):
+        nan_matrix = self.X.astype(np.float)
+
+        nan_col_counts =  [np.count_nonzero(np.isnan(col)) for col in nan_matrix.T]
+        print(nan_col_counts)
+        return nan_col_counts
 
     def draw(self, X, y, **kwargs):
         """Called from the fit method, this method generated a bar plot.
         """
-        nan_col_counts = self.get_nan_col_counts(X, y=y)
+        nan_col_counts = self.get_nan_col_counts()
 
         width = 0.5  # the width of the bars
         self.ind = np.arange(len(self.features_))  # the x locations for the groups
-        self.ax.bar(self.ind - width/2, nan_col_counts, width,
+
+        self.ax.barh(self.ind - width / 2, nan_col_counts, width,
                         color='black')
 
     def finalize(self, **kwargs):

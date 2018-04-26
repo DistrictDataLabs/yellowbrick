@@ -16,13 +16,13 @@ Base classes for feature visualizers and feature selection tools.
 ##########################################################################
 ## Imports
 ##########################################################################
+import numpy as np
+
 
 import numpy as np
 
 from yellowbrick.features.base import DataVisualizer
-from yellowbrick.utils import is_dataframe, is_structured_array
-from sklearn.base import TransformerMixin
-
+from yellowbrick.utils import is_dataframe
 
 ##########################################################################
 ## Feature Visualizers
@@ -32,10 +32,46 @@ class MissingDataVisualizer(DataVisualizer):
     """
     """
 
-    def __init__(self, ax=None, features=None, classes=None, color=None,
-                 colormap=None, **kwargs):
+    def __init__(self,
+                ax=None,
+                features=None,
+                classes=None,
+                color=None,
+                colormap=None,
+                **kwargs):
         """
         Initialize the data visualization with many of the options required
         in order to make most visualizations work.
         """
         super(MissingDataVisualizer, self).__init__(ax=ax, features=features, **kwargs)
+
+    def fit(self, X, y=None, **kwargs):
+        """
+        The fit method is the primary drawing input for the
+        visualization since it has both the X and y data required for the
+        viz and the transform method does not.
+
+        Parameters
+        ----------
+        X : ndarray or DataFrame of shape n x m
+            A matrix of n instances with m features
+
+        y : ndarray or Series of length n
+            An array or series of target or class values
+
+        kwargs : dict
+            Pass generic arguments to the drawing method
+
+        Returns
+        -------
+        self : instance
+            Returns the instance of the transformer/visualizer
+        """
+        if is_dataframe(X):
+            self.X = X.as_matrix()
+        else:
+            self.X = X
+
+        self.y = y
+
+        super(MissingDataVisualizer, self).fit(X, y, **kwargs)
