@@ -9,18 +9,17 @@
 #
 # ID: dispersion.py [] nathan.danielsen@gmail.com.com $
 
+"""
+Dispersion visualizer for locations of missing values by column against index position.
+"""
+
 ##########################################################################
 ## Imports
 ##########################################################################
 
 import numpy as np
-import matplotlib.pyplot as plt
 
-from yellowbrick.utils import is_dataframe
-from yellowbrick.utils import is_structured_array
 from .base import MissingDataVisualizer
-
-# from yellowbrick.style.colors import resolve_colors
 
 ##########################################################################
 ## Feature Visualizer
@@ -28,25 +27,32 @@ from .base import MissingDataVisualizer
 
 class MissingValuesDispersion(MissingDataVisualizer):
     """
+    The Missing Values Dispersion visualizer shows the locations of missing (nan)
+    values in the feature dataset against the index column.
     """
+    # TODO - map missing values against another user selected column such as a
+    # datetime column.
 
-    def __init__(self,
-                 ax=None,
-                 x=None,
-                 y=None,
-                 features=None,
-                 classes=None,
-                 color=None,
-                 colormap=None,
-                 **kwargs):
+
+    def __init__(self, alpha=0.5, marker="|", **kwargs):
         """
         """
 
-        super(MissingValuesDispersion, self).__init__(ax, features, classes, color,
-                                                colormap, **kwargs)
+        super(MissingValuesDispersion, self).__init__(**kwargs)
+        self.alpha = alpha
+        self.marker = marker
 
-    def get_nan_locs(self, X, y=None, **kwargs):
-        nan_matrix = self.X.astype(float)
+    def get_nan_locs(self, **kwargs):
+        """Gets the locations of nans in feature data and returns
+        the coordinates in the matrix
+        """
+        if np.issubdtype(self.X.dtype, np.string_) or np.issubdtype(self.X.dtype, np.unicode_):
+            mask = np.where( self.X == '' )
+            nan_matrix = np.zeros(self.X.shape)
+            nan_matrix[mask] = np.nan
+
+        else:
+            nan_matrix = self.X.astype(float)
         return np.argwhere(np.isnan(nan_matrix))
 
     def draw(self, X, y, **kwargs):
@@ -54,10 +60,10 @@ class MissingValuesDispersion(MissingDataVisualizer):
         draws each instance as a class or target colored point, whose location
         is determined by the feature data set.
         """
-        width = 0.5  # the width of the bars
-        nan_locs = self.get_nan_locs(self, X, y=y)
+
+        nan_locs = self.get_nan_locs()
         x, y = list(zip(*nan_locs))
-        self.ax.scatter(x, y, alpha=0.5, marker="|")
+        self.ax.scatter(x, y, alpha=self.alpha, marker=self.marker)
 
     def finalize(self, **kwargs):
         """

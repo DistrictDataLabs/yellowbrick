@@ -16,12 +16,11 @@ Tests for the MissingValuesBar visualizations.
 ##########################################################################
 ## Imports
 ##########################################################################
-import unittest
-import numpy.testing as npt
-
 from tests.base import VisualTestCase
 from tests.dataset import DatasetMixin
+from sklearn.datasets import make_classification
 from yellowbrick.missing.bar import *
+
 
 try:
     import pandas as pd

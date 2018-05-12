@@ -10,15 +10,12 @@
 # ID: base.py [] nathan.danielsen@gmail.com.com $
 
 """
-Base classes for feature visualizers and feature selection tools.
+Base classes for missing values visualizers.
 """
 
 ##########################################################################
 ## Imports
 ##########################################################################
-import numpy as np
-
-
 import numpy as np
 
 from yellowbrick.features.base import DataVisualizer
@@ -29,21 +26,8 @@ from yellowbrick.utils import is_dataframe
 ##########################################################################
 
 class MissingDataVisualizer(DataVisualizer):
+    """Base class for MissingDataVisualizers.
     """
-    """
-
-    def __init__(self,
-                ax=None,
-                features=None,
-                classes=None,
-                color=None,
-                colormap=None,
-                **kwargs):
-        """
-        Initialize the data visualization with many of the options required
-        in order to make most visualizations work.
-        """
-        super(MissingDataVisualizer, self).__init__(ax=ax, features=features, **kwargs)
 
     def fit(self, X, y=None, **kwargs):
         """
