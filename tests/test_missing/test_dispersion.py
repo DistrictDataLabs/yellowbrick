@@ -67,7 +67,7 @@ class MissingValuesDispersionTestCase(VisualTestCase):
         # add nan values to a range of values in the matrix
         X[X > 1.5] = np.nan
 
-        X_ = pd.DataFrame(X)
+        X_ = pd.DataFrame(X).as_matrix()
         features = [str(n) for n in range(20)]
         viz = MissingValuesDispersion(features=features)
         viz.fit(X_, y=y)
