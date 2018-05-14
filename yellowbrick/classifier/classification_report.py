@@ -36,7 +36,7 @@ from .base import ClassificationScoreVisualizer
 
 CMAP_UNDERCOLOR = 'w'
 CMAP_OVERCOLOR = '#2a7d4f'
-SCORES_KEYS = ('precision', 'recall', 'f1')
+SCORES_KEYS = ('precision', 'recall', 'f1', 'support')
 
 
 class ClassificationReport(ClassificationScoreVisualizer):
@@ -101,7 +101,7 @@ class ClassificationReport(ClassificationScoreVisualizer):
         y_pred = self.predict(X)
 
         scores = precision_recall_fscore_support(y, y_pred)
-        scores = map(lambda s: dict(zip(self.classes_, s)), scores[0:3])
+        scores = map(lambda s: dict(zip(self.classes_, s)), scores[:])
         self.scores_ = dict(zip(SCORES_KEYS, scores))
 
         return self.draw()
@@ -111,11 +111,11 @@ class ClassificationReport(ClassificationScoreVisualizer):
         Renders the classification report across each axis.
         """
         # Create display grid
-        cr_display = np.zeros((len(self.classes_), 3))
-
+        cr_display = np.zeros((len(self.classes_), 4))
+ 
         # For each class row, append columns for precision, recall, and f1
         for idx, cls in enumerate(self.classes_):
-            for jdx, metric in enumerate(('precision', 'recall', 'f1')):
+            for jdx, metric in enumerate(('precision', 'recall', 'f1', 'support')):
                 cr_display[idx, jdx] = self.scores_[metric][cls]
 
         # Set up the dimensions of the pcolormesh
