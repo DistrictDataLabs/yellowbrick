@@ -169,6 +169,12 @@ class ParallelCoordinates(DataVisualizer):
         Keyword arguments that are passed to the base class and may influence
         the visualization as defined in other Visualizers.
 
+    Attributes
+    --------
+
+    n_samples : int
+        number of samples included in the visualization object
+
     Examples
     --------
 
@@ -230,6 +236,9 @@ class ParallelCoordinates(DataVisualizer):
         self.vlines_kwds = vlines_kwds or {
             'linewidth': 1, 'color': 'black'
         }
+
+        # Defaults for derived values
+        self.n_samples = None
 
     def draw(self, X, y, **kwargs):
         """
