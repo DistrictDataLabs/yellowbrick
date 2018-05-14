@@ -19,10 +19,12 @@ coordinates that optimize column order.
 ## Imports
 ##########################################################################
 
+from numpy.random import choice
+
 from sklearn.preprocessing import MinMaxScaler, MaxAbsScaler
 from sklearn.preprocessing import Normalizer, StandardScaler
 
-from yellowbrick.utils import is_dataframe
+from yellowbrick.utils import is_dataframe, is_series
 from yellowbrick.features.base import DataVisualizer
 from yellowbrick.exceptions import YellowbrickTypeError, YellowbrickValueError
 from yellowbrick.style.colors import resolve_colors
@@ -149,6 +151,9 @@ class ParallelCoordinates(DataVisualizer):
         If int, specifies the maximum number of samples to display.
         If float, specifies a fraction between 0 and 1 to display.
 
+    shuffle : boolean, default: True
+        specifies whether sample is drawn randomly
+
     color : list or tuple, default: None
         optional list or tuple of colors to colorize lines
         Use either color to colorize the lines on a per class basis or
@@ -199,7 +204,7 @@ class ParallelCoordinates(DataVisualizer):
     }
 
     def __init__(self, ax=None, features=None, classes=None, normalize=None,
-                 sample=1.0, color=None, colormap=None, vlines=True,
+                 sample=1.0, shuffle=True, color=None, colormap=None, vlines=True,
                  vlines_kwds=None, **kwargs):
         super(ParallelCoordinates, self).__init__(
             ax, features, classes, color, colormap, **kwargs
@@ -231,6 +236,9 @@ class ParallelCoordinates(DataVisualizer):
             )
         self.sample = sample
 
+        # Sample parameters
+        self.shuffle = shuffle
+
         # Visual Parameters
         self.show_vlines = vlines
         self.vlines_kwds = vlines_kwds or {
@@ -248,15 +256,22 @@ class ParallelCoordinates(DataVisualizer):
         # Convert from dataframe
         if is_dataframe(X):
             X = X.as_matrix()
+        if is_series(y):
+            y = y.as_matrix()
 
         # Choose a subset of samples
-        # TODO: allow selection of a random subset of samples instead of head
-
+        n_obs = len(X)
         if isinstance(self.sample, int):
-            self.n_samples = min([self.sample, len(X)])
+            self.n_samples = min([self.sample, n_obs])
         elif isinstance(self.sample, float):
-            self.n_samples = int(len(X) * self.sample)
-        X = X[:self.n_samples, :]
+            self.n_samples = int(n_obs * self.sample)
+
+        if (self.n_samples < n_obs) and self.shuffle:
+            indices = choice(n_obs, self.n_samples, replace=False)
+        else:
+            indices = slice(self.n_samples)
+        X = X[indices, :]
+        y = y[indices]
 
         # Normalize
         if self.normalize is not None:
