@@ -168,7 +168,9 @@ class FeatureImportances(ModelVisualizer):
         pos = np.arange(self.features_.shape[0]) + 0.5
 
         # Plot the bar chart
-        self.ax.barh(pos, self.feature_importances_, align='center')
+        colors = np.array(['b' if v > 0 else 'g' for v in self.feature_importances_])
+        self.ax.barh(pos, self.feature_importances_, color=colors, align='center')
+        #self.ax.barh(pos, self.feature_importances_, align='center')
 
         # Set the labels for the bars
         self.ax.set_yticks(pos)
