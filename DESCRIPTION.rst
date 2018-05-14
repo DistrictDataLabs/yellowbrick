@@ -31,6 +31,7 @@ Feature Visualization
 - **Radial Visualization**: separation of instances around a circular plot
 - **PCA Projection**: projection of instances based on principal components
 - **Feature Importances**: rank features based on their in-model performance
+- **Recursive Feature Elimination**: find the best subset of features by importance
 - **Scatter and Joint Plots**: direct data visualization with feature selection
 
 Classification Visualization
@@ -41,6 +42,7 @@ Classification Visualization
 - **Classification Report**: visual representation of precision, recall, and F1
 - **ROC/AUC Curves**: receiver operator characteristics and area under the curve
 - **Confusion Matrices**: visual description of class decision making
+- **Discrimination Threshold**: find a threshold that best separates binary classes
 
 Regression Visualization
 ~~~~~~~~~~~~~~~~~~~~~~~~
@@ -54,6 +56,12 @@ Clustering Visualization
 
 - **K-Elbow Plot**: select k using the elbow method and various metrics
 - **Silhouette Plot**: select k by visualizing silhouette coefficient values
+
+Model Selection Visualization
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+-  **Validation Curve**: tune a model with respect to a single hyperparameter
+-  **Learning Curve**: show if a model might benefit from more data or less complexity
 
 Text Visualization
 ~~~~~~~~~~~~~~~~~~

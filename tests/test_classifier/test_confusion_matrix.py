@@ -15,18 +15,17 @@ Tests for the confusion matrix visualizer
 ## Imports
 ##########################################################################
 
+import sys
 import six
 import pytest
 import yellowbrick as yb
 import numpy.testing as npt
 import matplotlib.pyplot as plt
 
-from collections import namedtuple
-
 from yellowbrick.classifier.confusion_matrix import *
 
 from tests.base import VisualTestCase
-from tests.dataset import DatasetMixin
+from tests.dataset import DatasetMixin, Dataset, Split
 
 from sklearn.svm import SVC
 from sklearn.datasets import load_digits
@@ -43,14 +42,10 @@ try:
 except ImportError:
     pd = None
 
+
 ##########################################################################
 ## Fixtures
 ##########################################################################
-
-# Helpers for fixtures
-Dataset = namedtuple('Dataset', 'X,y')
-Split = namedtuple('Split', 'train,test')
-
 
 @pytest.fixture(scope='class')
 def digits(request):
@@ -79,6 +74,9 @@ class ConfusionMatrixTests(VisualTestCase, DatasetMixin):
     ConfusionMatrix visualizer tests
     """
 
+    @pytest.mark.xfail(
+        sys.platform == 'win32', reason="images not close on windows"
+    )
     def test_confusion_matrix(self):
         """
         Integration test on digits dataset with LogisticRegression
@@ -105,6 +103,9 @@ class ConfusionMatrixTests(VisualTestCase, DatasetMixin):
            [ 0,  2,  0,  0,  0,  0,  0,  0, 32,  0],
            [ 0,  0,  0,  0,  0,  0,  0,  1,  1, 35]]))
 
+    @pytest.mark.xfail(
+        sys.platform == 'win32', reason="images not close on windows"
+    )
     def test_no_classes_provided(self):
         """
         Integration test on digits dataset with GaussianNB, no classes
@@ -282,6 +283,9 @@ class ConfusionMatrixTests(VisualTestCase, DatasetMixin):
         ylabels.reverse()
         assert  ylabels == classes
 
+    @pytest.mark.xfail(
+        sys.platform == 'win32', reason="images not close on windows"
+    )
     @pytest.mark.skipif(pd is None, reason="test requires pandas")
     def test_pandas_integration(self):
         """

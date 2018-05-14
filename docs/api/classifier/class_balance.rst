@@ -8,12 +8,14 @@ classification model.
 
 .. code:: python
 
+    from sklearn.model_selection import train_test_split
+
     # Load the classification data set
-    data = load_data('occupancy')
+    data = load_data("occupancy")
 
     # Specify the features of interest and the classes of the target
     features = ["temperature", "relative humidity", "light", "C02", "humidity"]
-    classes = ['unoccupied', 'occupied']
+    classes = ["unoccupied", "occupied"]
 
     # Extract the numpy arrays from the data frame
     X = data[features].as_matrix()
@@ -23,6 +25,10 @@ classification model.
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2)
 
 .. code:: python
+
+    from sklearn.ensemble import RandomForestClassifier
+
+    from yellowbrick.classifier import ClassBalance
 
     # Instantiate the classification model and visualizer
     forest = RandomForestClassifier()

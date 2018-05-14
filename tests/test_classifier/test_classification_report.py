@@ -15,14 +15,14 @@ Tests for the classification report visualizer
 ## Imports
 ##########################################################################
 
+import sys
 import pytest
 import yellowbrick as yb
 import matplotlib.pyplot as plt
 
-from collections import namedtuple
-
 from yellowbrick.classifier.classification_report import *
 
+from pytest import approx
 from tests.base import VisualTestCase
 from tests.dataset import DatasetMixin
 
@@ -37,52 +37,6 @@ try:
     import pandas as pd
 except ImportError:
     pd = None
-
-
-##########################################################################
-## Fixtures
-##########################################################################
-
-# Helpers for fixtures
-Dataset = namedtuple('Dataset', 'X,y')
-Split = namedtuple('Split', 'train,test')
-
-
-@pytest.fixture(scope='class')
-def binary(request):
-    """
-    Creates a random binary classification dataset fixture
-    """
-    X, y = make_classification(
-        n_samples=500, n_features=20, n_informative=8, n_redundant=2,
-        n_classes=2, n_clusters_per_class=3, random_state=87
-    )
-
-    X_train, X_test, y_train, y_test = tts(
-        X, y, test_size=0.2, random_state=93
-    )
-
-    dataset = Dataset(Split(X_train, X_test), Split(y_train, y_test))
-    request.cls.binary = dataset
-
-
-@pytest.fixture(scope='class')
-def multiclass(request):
-    """
-    Creates a random multiclass classification dataset fixture
-    """
-    X, y = make_classification(
-        n_samples=500, n_features=20, n_informative=8, n_redundant=2,
-        n_classes=6, n_clusters_per_class=3, random_state=87
-    )
-
-    X_train, X_test, y_train, y_test = tts(
-        X, y, test_size=0.2, random_state=93
-    )
-
-    dataset = Dataset(Split(X_train, X_test), Split(y_train, y_test))
-    request.cls.multiclass = dataset
-
 
 
 ##########################################################################
@@ -101,18 +55,21 @@ class ClassificationReportTests(VisualTestCase, DatasetMixin):
         """
         _, ax = plt.subplots()
 
-        viz = ClassificationReport(LinearSVC(), ax=ax)
+        viz = ClassificationReport(LinearSVC(random_state=42), ax=ax)
         viz.fit(self.binary.X.train, self.binary.y.train)
         viz.score(self.binary.X.test, self.binary.y.test)
 
-        self.assert_images_similar(viz)
+        self.assert_images_similar(viz, tol=35)
 
         assert viz.scores_ == {
-            'precision': {0: 0.7446808510638298, 1: 0.8490566037735849},
-            'recall': {0: 0.813953488372093, 1: 0.7894736842105263},
-            'f1': {0: 0.7777777777777778, 1: 0.8181818181818182}
+            'precision': {0: approx(0.7446808), 1: approx(0.8490566)},
+            'recall': {0: approx(0.8139534), 1: approx(0.7894736)},
+            'f1': {0: approx(0.7777777), 1: approx(0.8181818)}
         }
 
+    @pytest.mark.xfail(
+        sys.platform == 'win32', reason="images not close on windows"
+    )
     def test_multiclass_class_report(self):
         """
         Correctly generates report for multi-class with LogisticRegression
@@ -138,6 +95,9 @@ class ClassificationReportTests(VisualTestCase, DatasetMixin):
                 4: 0.38709677419354843, 5: 0.6060606060606061
             }}
 
+    @pytest.mark.xfail(
+        sys.platform == 'win32', reason="images not close on windows"
+    )
     @pytest.mark.skipif(pd is None, reason="test requires pandas")
     def test_pandas_integration(self):
         """

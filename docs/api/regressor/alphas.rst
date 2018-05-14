@@ -11,27 +11,31 @@ The AlphaSelection Visualizer demonstrates how different values of alpha influen
 
     # Load the data
     df = load_data('concrete')
-    feature_names = ['cement', 'slag', 'ash', 'water', 'splast', 'coarse', 'fine', 'age']
+    feature_names = [
+        'cement', 'slag', 'ash', 'water', 'splast', 'coarse', 'fine', 'age'
+    ]
     target_name = 'strength'
 
     # Get the X and y data from the DataFrame
     X = df[feature_names].as_matrix()
     y = df[target_name].as_matrix()
 
-    # Create the train and test data
-    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2)
-
 .. code:: python
 
+    import numpy as np
+
+    from sklearn.linear_model import LassoCV
+    from yellowbrick.regressor import AlphaSelection
+
     # Create a list of alphas to cross-validate against
-    alphas = np.logspace(-12, -0.5, 400)
+    alphas = np.logspace(-10, 1, 400)
 
     # Instantiate the linear model and visualizer
     model = LassoCV(alphas=alphas)
     visualizer = AlphaSelection(model)
 
-    visualizer.fit(X_train, y_train)  # Fit the training data to the visualizer
-    g = visualizer.poof()             # Draw/show/poof the data
+    visualizer.fit(X, y)
+    g = visualizer.poof()
 
 
 .. image:: images/alpha_selection.png

@@ -14,7 +14,9 @@ Welcome to the API documentation for Yellowbrick! This section contains a comple
    regressor/index
    classifier/index
    cluster/index
+   model_selection/index
    text/index
+   contrib/index
    palettes
 
 .. note:: Many examples utilize data from the UCI Machine Learning repository. In order to run the accompanying code, make sure to follow the instructions in :doc:`datasets` to download and load the required data.

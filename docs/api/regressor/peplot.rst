@@ -7,6 +7,8 @@ A prediction error plot shows the actual targets from the dataset against the pr
 
 .. code:: python
 
+    from sklearn.model_selection import train_test_split
+
     # Load the data
     df = load_data('concrete')
     feature_names = ['cement', 'slag', 'ash', 'water', 'splast', 'coarse', 'fine', 'age']
@@ -20,6 +22,10 @@ A prediction error plot shows the actual targets from the dataset against the pr
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2)
 
 .. code:: python
+
+    from sklearn.linear_model import Lasso
+
+    from yellowbrick.regressor import PredictionError
 
     # Instantiate the linear model and visualizer
     lasso = Lasso()

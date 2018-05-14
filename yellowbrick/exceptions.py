@@ -79,3 +79,17 @@ class DataWarning(YellowbrickWarning):
     The supplied data has an issue that may produce unexpected visualizations.
     """
     pass
+
+
+class YellowbrickAssertionError(YellowbrickError, AssertionError):
+    """
+    Used to indicate test failures.
+    """
+    pass
+
+
+class ImageComparisonFailure(YellowbrickAssertionError):
+    """
+    Provides a cleaner error when image comparison assertions fail.
+    """
+    pass

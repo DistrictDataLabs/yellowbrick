@@ -19,11 +19,12 @@ At the moment we have five feature analysis visualizers implemented:
 -  :doc:`pcoords`: plot instances as lines along vertical axes to
    detect classes or clusters
 -  :doc:`pca`: project higher dimensions into a visual space using PCA
--  :doc:`importances`: rank features by relative importance in a model 
+-  :doc:`importances`: rank features by relative importance in a model
+-  :doc:`rfecv`: select a subset of features by importance
 -  :doc:`scatter`: plot instances by selecting subsets of features
 
 Feature analysis visualizers implement the ``Transformer`` API from
-Scikit-Learn, meaning they can be used as intermediate transform steps
+scikit-learn, meaning they can be used as intermediate transform steps
 in a ``Pipeline`` (particularly a ``VisualPipeline``). They are
 instantiated in the same way, and then fit and transform are called on
 them, which draws the instances correctly. Finally ``poof`` or ``show``
@@ -32,13 +33,14 @@ is called which displays the image.
 .. code:: python
 
     # Feature Analysis Imports
-    # NOTE that all these are available for import directly from the `yellowbrick.features` module
+    # NOTE that all these are available for import directly from the ``yellowbrick.features`` module
     from yellowbrick.features.rankd import Rank1D, Rank2D
     from yellowbrick.features.radviz import RadViz
     from yellowbrick.features.pcoords import ParallelCoordinates
     from yellowbrick.features.jointplot import JointPlotVisualizer
     from yellowbrick.features.pca import PCADecomposition
     from yellowbrick.features.importances import FeatureImportances
+    from yellowbrick.features.rfecv import RFECV
     from yellowbrick.features.scatter import ScatterVisualizer
 
 
@@ -50,4 +52,5 @@ is called which displays the image.
    pcoords
    pca
    importances
+   rfecv
    scatter

@@ -22,6 +22,7 @@ Implements visual ROC/AUC curves for classification evaluation.
 import numpy as np
 
 from ..exceptions import ModelError
+from ..exceptions import YellowbrickValueError
 from ..style.palettes import LINE_COLOR
 from .base import ClassificationScoreVisualizer
 
@@ -129,6 +130,11 @@ class ROCAUC(ClassificationScoreVisualizer):
     def __init__(self, model, ax=None, classes=None,
                  micro=True, macro=True, per_class=True, **kwargs):
         super(ROCAUC, self).__init__(model, ax=ax, classes=classes, **kwargs)
+
+        if not micro and not macro and not per_class:
+            raise YellowbrickValueError(
+                "no curves will be drawn; specify micro, macro, or per_clss"
+            )
 
         # Set the visual parameters for ROCAUC
         self.micro = micro
