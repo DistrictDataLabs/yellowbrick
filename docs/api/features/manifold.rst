@@ -31,7 +31,7 @@ Manifold Visualization
     visualizer.poof()
 
 
-.. image:: images/manifold_2d.png
+.. image:: images/s_curve_isomap_manifold.png
 
 
 
