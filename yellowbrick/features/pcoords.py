@@ -259,15 +259,17 @@ class ParallelCoordinates(DataVisualizer):
         if is_series(y):
             y = y.as_matrix()
 
-        # Choose a subset of samples
-        n_obs = len(X)
-        if isinstance(self.sample, int):
-            self.n_samples = min([self.sample, n_obs])
-        elif isinstance(self.sample, float):
-            self.n_samples = int(n_obs * self.sample)
+        # Get the shape of the data
+        nrows, ncols = X.shape
 
-        if (self.n_samples < n_obs) and self.shuffle:
-            indices = choice(n_obs, self.n_samples, replace=False)
+        # Choose a subset of samples
+        if isinstance(self.sample, int):
+            self.n_samples = min([self.sample, nrows])
+        elif isinstance(self.sample, float):
+            self.n_samples = int(nrows * self.sample)
+
+        if (self.n_samples < nrows) and self.shuffle:
+            indices = choice(nrows, self.n_samples, replace=False)
         else:
             indices = slice(self.n_samples)
         X = X[indices, :]
@@ -276,9 +278,6 @@ class ParallelCoordinates(DataVisualizer):
         # Normalize
         if self.normalize is not None:
             X = self.normalizers[self.normalize].fit_transform(X)
-
-        # Get the shape of the data
-        nrows, ncols = X.shape
 
         # Create the xticks for each column
         # TODO: Allow the user to specify this feature
