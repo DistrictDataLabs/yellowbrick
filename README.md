@@ -8,7 +8,6 @@
 [![Documentation Status](https://readthedocs.org/projects/yellowbrick/badge/?version=latest)](http://yellowbrick.readthedocs.io/en/latest/?badge=latest)
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.1206239.svg)](https://doi.org/10.5281/zenodo.1206239)
 
-
 **Visual analysis and diagnostic tools to facilitate machine learning model selection.**
 
 ![Follow the yellow brick road](docs/images/yellowbrickroad.jpg)
