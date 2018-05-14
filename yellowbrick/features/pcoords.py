@@ -19,6 +19,7 @@ coordinates that optimize column order.
 ## Imports
 ##########################################################################
 
+from numpy import hstack, ones
 from numpy.random import choice
 
 from sklearn.preprocessing import MinMaxScaler, MaxAbsScaler
@@ -259,21 +260,24 @@ class ParallelCoordinates(DataVisualizer):
         if is_series(y):
             y = y.as_matrix()
 
-        # Get the shape of the data
-        nrows, ncols = X.shape
+        # Get the total number of observations
+        nobs = len(X)
 
         # Choose a subset of samples
         if isinstance(self.sample, int):
-            self.n_samples = min([self.sample, nrows])
+            self.n_samples = min([self.sample, nobs])
         elif isinstance(self.sample, float):
-            self.n_samples = int(nrows * self.sample)
+            self.n_samples = int(nobs * self.sample)
 
-        if (self.n_samples < nrows) and self.shuffle:
-            indices = choice(nrows, self.n_samples, replace=False)
+        if (self.n_samples < nobs) and self.shuffle:
+            indices = choice(nobs, self.n_samples, replace=False)
         else:
             indices = slice(self.n_samples)
         X = X[indices, :]
         y = y[indices]
+
+        # Get shape of the sampled data
+        nrows, ncols = X.shape
 
         # Normalize
         if self.normalize is not None:
@@ -281,7 +285,7 @@ class ParallelCoordinates(DataVisualizer):
 
         # Create the xticks for each column
         # TODO: Allow the user to specify this feature
-        x = list(range(ncols))
+        increments = list(range(ncols))
 
         # Create the colors
         # TODO: Allow both colormap, listed colors, and palette definition
@@ -291,32 +295,28 @@ class ParallelCoordinates(DataVisualizer):
         )
         colors = dict(zip(self.classes_, color_values))
 
-        # Track which labels are already in the legend
-        used_legends = set([])
-
         # TODO: Make this function compatible with DataFrames!
         # TODO: Make an independent function to allow addition of instances!
-        for idx, row in enumerate(X):
-            # TODO: How to map classmap to labels?
-            label = y[idx] # Get the label for the row
-            label = self.classes_[label]
-
-            if label not in used_legends:
-                used_legends.add(label)
-                self.ax.plot(x, row, color=colors[label], alpha=0.25, label=label, **kwargs)
-            else:
-                self.ax.plot(x, row, color=colors[label], alpha=0.25, **kwargs)
+        x_separated = hstack([X, ones((nrows, 1))])
+        increments_separated = increments.copy()
+        increments_separated.append(None)
+        for label, color in colors.items():
+            x_in_class = x_separated[y == label, :]
+            increments_in_class = increments_separated * len(x_in_class)
+            if len(x_in_class) > 0:
+                self.ax.plot(increments_in_class, x_in_class.flatten(), label=label, color=colors[label],
+                             alpha=0.5, linewidth=1, **kwargs)
 
         # Add the vertical lines
         # TODO: Make an independent function for override!
         if self.show_vlines:
-            for idx in x:
+            for idx in increments:
                 self.ax.axvline(idx, **self.vlines_kwds)
 
         # Set the limits
-        self.ax.set_xticks(x)
+        self.ax.set_xticks(increments)
         self.ax.set_xticklabels(self.features_)
-        self.ax.set_xlim(x[0], x[-1])
+        self.ax.set_xlim(increments[0], increments[-1])
 
     def finalize(self, **kwargs):
         """
