@@ -146,6 +146,20 @@ class TestPredictionError(VisualTestCase, DatasetMixin):
         raise NotImplementedError("not yet implemented")
 
 
+    @unittest.skip("not implemented yet")
+    def test_peplot_shared_limits(self):
+        """
+        Test shared limits on the peplot
+        """
+        raise NotImplementedError("not yet implemented")
+
+    @unittest.skip("not implemented yet")
+    def test_peplot_draw_bounds(self):
+        """
+        Test the peplot +/- one bounding in draw
+        """
+        raise NotImplementedError("not yet implemented")
+
 ##########################################################################
 ## Residuals Plot Test Cases
 ##########################################################################

@@ -35,6 +35,7 @@ from sklearn.feature_extraction.text import TfidfVectorizer
 from yellowbrick.cluster.elbow import distortion_score
 from yellowbrick.cluster.elbow import KElbowVisualizer
 from yellowbrick.exceptions import YellowbrickValueError
+from numpy.testing.utils import assert_array_almost_equal
 
 try:
     import pandas as pd

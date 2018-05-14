@@ -90,9 +90,9 @@ title case our features for better readability:
 .. code:: python
 
     import matplotlib.pyplot as plt
-    
+
     from sklearn.linear_model import Lasso
-    
+
     from yellowbrick.features.importances import FeatureImportances
 
     # Create a new figure
