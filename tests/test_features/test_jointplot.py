@@ -107,12 +107,12 @@ class JointPlotTests(VisualTestCase, DatasetMixin):
         # Load the data from the fixture
         X = self.concrete['cement']
         y = self.concrete['strength']
-        feature = 'cement'
+        label = 'cement'
         target = 'strength'
 
         # Test the visualizer
         visualizer = JointPlotVisualizer(
-            feature=feature, target=target, joint_plot="hex", ax=ax)
+            label=label, target=target, joint_plot="hex", ax=ax)
         visualizer.fit(X, y)
         visualizer.poof()
 

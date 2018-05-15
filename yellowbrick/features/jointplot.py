@@ -42,9 +42,9 @@ class JointPlotVisualizer(FeatureVisualizer):
         This is inherited from FeatureVisualizer but is defined within
         JointPlotVisualizer since there are three axes objects.
 
-    feature: string, default: None
+    label: string, default: None
         The name of the X variable
-        If a DataFrame is passed to fit and feature is None, feature
+        If a DataFrame is passed to fit and label is None, label
         is selected as the column of the DataFrame.  There must be only
         one column in the DataFrame.
 
@@ -124,7 +124,7 @@ class JointPlotVisualizer(FeatureVisualizer):
     process, but can and should be set as early as possible.
     """
 
-    def __init__(self, ax=None, feature=None, target=None,
+    def __init__(self, ax=None, label=None, target=None,
                  joint_plot='scatter', joint_args=None,
                  xy_plot='hist', xy_args=None,
                  size=600, ratio=5, space=.2, **kwargs):
@@ -139,7 +139,7 @@ class JointPlotVisualizer(FeatureVisualizer):
 
         super(JointPlotVisualizer, self).__init__(ax, **kwargs)
 
-        self.feature = feature
+        self.label = label
         self.target = target
         self.joint_plot = joint_plot
         self.joint_args = joint_args
@@ -176,8 +176,8 @@ class JointPlotVisualizer(FeatureVisualizer):
 
             if ncols > 1:
                 raise YellowbrickValueError((
-                    "X needs to be an ndarray or DataFrame with one feature, "
-                    "please select one feature from the DataFrame"
+                    "X needs to be an ndarray or DataFrame with one label, "
+                    "please select one feature label from the DataFrame"
                 ))
 
         #throw an error is y is None
@@ -188,15 +188,15 @@ class JointPlotVisualizer(FeatureVisualizer):
             ))
 
 
-        # Handle the feature name if it is None.
-        if self.feature is None:
+        # Handle the label name if it is None.
+        if self.label is None:
 
             # If X is a data frame, get the columns off it.
             if is_dataframe(X):
-                self.feature = X.columns
+                self.label = X.columns
 
             else:
-                self.feature = ['x']
+                self.label = ['x']
 
         # Handle the target name if it is None.
         if self.target is None:
@@ -294,10 +294,10 @@ class JointPlotVisualizer(FeatureVisualizer):
 
     def poof(self, **kwargs):
         """
-        Creates the labels for the feature and target variables
+        Creates the labels for the label and target variables
         """
 
-        self.joint_ax.set_xlabel(self.feature)
+        self.joint_ax.set_xlabel(self.label)
         self.joint_ax.set_ylabel(self.target)
         self.finalize(**kwargs)
 
@@ -323,4 +323,4 @@ class JointPlotVisualizer(FeatureVisualizer):
         self.x_ax.yaxis.grid(False)
         self.y_ax.xaxis.grid(False)
         self.fig.suptitle("Joint Plot of {} vs {}"
-                        .format(self.feature, self.target), y=1.05)
+                        .format(self.label, self.target), y=1.05)
