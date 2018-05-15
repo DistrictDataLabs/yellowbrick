@@ -140,6 +140,7 @@ class Visualizer(BaseEstimator):
         self : visualizer
             The fit method must always return self to support pipelines.
         """
+
         return self
 
     ##////////////////////////////////////////////////////////////////////

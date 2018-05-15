@@ -11,7 +11,7 @@
 # ID: base.py [2e898a6] benjamin@bengfort.com $
 
 """
-Base classes for feature visualizers and feature selection tools.
+Base classes and mixins for feature visualizers and feature selection tools.
 """
 
 ##########################################################################
@@ -19,6 +19,7 @@ Base classes for feature visualizers and feature selection tools.
 ##########################################################################
 
 import numpy as np
+import matplotlib.pyplot as plt
 
 from yellowbrick.base import Visualizer
 from yellowbrick.utils import is_dataframe
@@ -225,3 +226,35 @@ class DataVisualizer(MultiFeatureVisualizer):
 
         # Fit always returns self.
         return self
+
+##########################################################################
+## Data Visualizers
+##########################################################################
+
+class SingleFeatureVisualizerMixin(object):
+    '''
+    Mixin to add functionality for single feature visualizations.
+    '''
+
+    def poof(self, plotsingle=None, feature=None, *args, **kwargs):
+        '''
+        poof single feature visualization if passed, otherwise call parent
+        '''
+
+        if feature is not None:
+
+            if type(feature) is not int:
+                raise TypeError('feature arg must be of type int')
+
+            elif feature < 0 or feature >= len(self.X):
+                raise IndexError('feature must be an index 0-%s' % len(self.X))
+
+        else:
+            feature = 0
+
+        if plotsingle == 'hist':
+            plt.hist(self.X)
+            plt.show()
+
+        else:
+            super(SingleFeatureVisualizerMixin, self).poof(*args, **kwargs)
