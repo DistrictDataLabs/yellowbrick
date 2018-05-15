@@ -101,8 +101,18 @@ class ClassificationReport(ClassificationScoreVisualizer):
         y_pred = self.predict(X)
 
         scores = precision_recall_fscore_support(y, y_pred)
-        scores = map(lambda s: dict(zip(self.classes_, s)), scores[:])
+
+        # Calculate the percentage for support
+        self.support_score = scores[-1]
+        support_percent = scores[-1] / (sum(scores[-1]))
+
+        scores = map(lambda s: dict(zip(self.classes_, s)), scores)
         self.scores_ = dict(zip(SCORES_KEYS, scores))
+
+        # Change the support score from the actual support value to the percent
+        # value to be used in the Classification Report.
+        self.scores_['support'] = {'occupied': support_percent[0],
+                                   'unoccupied': support_percent[1]}
 
         return self.draw()
 
@@ -112,15 +122,17 @@ class ClassificationReport(ClassificationScoreVisualizer):
         """
         # Create display grid
         cr_display = np.zeros((len(self.classes_), 4))
- 
-        # For each class row, append columns for precision, recall, and f1
+
+        # For each class row, append columns for precision, recall, f1, and support
         for idx, cls in enumerate(self.classes_):
             for jdx, metric in enumerate(('precision', 'recall', 'f1', 'support')):
                 cr_display[idx, jdx] = self.scores_[metric][cls]
 
+        #print(cr_display)
+
         # Set up the dimensions of the pcolormesh
         # NOTE: pcolormesh accepts grids that are (N+1,M+1)
-        X, Y = np.arange(len(self.classes_)+1), np.arange(4)
+        X, Y = np.arange(len(self.classes_)+1), np.arange(5)
         self.ax.set_ylim(bottom=0, top=cr_display.shape[0])
         self.ax.set_xlim(left=0, right=cr_display.shape[1])
 
@@ -133,6 +145,13 @@ class ClassificationReport(ClassificationScoreVisualizer):
                 # Extract the value and the text label
                 value = cr_display[x,y]
                 svalue = "{:0.3f}".format(value)
+
+                # change the svalue for support (when y == 3) because we want
+                # to label it as the actual support value, not the percentage
+                if x == 0 and y == 3:
+                    svalue = self.support_score[1] #unoccupied
+                elif x == 1 and y == 3:
+                    svalue = self.support_score[0] #occupied
 
                 # Determine the grid and text colors
                 base_color = self.cmap(value)
@@ -148,6 +167,9 @@ class ClassificationReport(ClassificationScoreVisualizer):
         # Draw the heatmap with colors bounded by the min and max of the grid
         # NOTE: I do not understand why this is Y, X instead of X, Y it works
         # in this order but raises an exception with the other order.
+        print(Y)
+        print(X)
+
         g = self.ax.pcolormesh(
             Y, X, cr_display, vmin=0, vmax=1, cmap=self.cmap, edgecolor='w',
         )
@@ -172,10 +194,10 @@ class ClassificationReport(ClassificationScoreVisualizer):
         self.set_title('{} Classification Report'.format(self.name))
 
         # Set the tick marks appropriately
-        self.ax.set_xticks(np.arange(3)+0.5)
+        self.ax.set_xticks(np.arange(4)+0.5)
         self.ax.set_yticks(np.arange(len(self.classes_))+0.5)
 
-        self.ax.set_xticklabels(['precision', 'recall', 'f1-score'], rotation=45)
+        self.ax.set_xticklabels(['precision', 'recall', 'f1-score', 'support'], rotation=45)
         self.ax.set_yticklabels(self.classes_)
 
         plt.tight_layout()
