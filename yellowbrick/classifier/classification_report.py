@@ -4,6 +4,7 @@
 # Author:   Rebecca Bilbro <rbilbro@districtdatalabs.com>
 # Author:   Benjamin Bengfort <bbengfort@districtdatalabs.com>
 # Author:   Neal Humphrey
+# Author:   Allyssa Riley
 # Created:  Wed May 18 12:39:40 2016 -0400
 #
 # Copyright (C) 2017 District Data Labs

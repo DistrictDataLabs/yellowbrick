@@ -81,7 +81,7 @@ class ClassificationReportTests(VisualTestCase, DatasetMixin):
         viz.fit(self.multiclass.X.train, self.multiclass.y.train)
         viz.score(self.multiclass.X.test, self.multiclass.y.test)
 
-        self.assert_images_similar(viz)
+        self.assert_images_similar(viz, tol=6.0)
 
         assert viz.scores_ == {
             'precision': {
@@ -133,7 +133,7 @@ class ClassificationReportTests(VisualTestCase, DatasetMixin):
         viz.fit(X_train, y_train)
         viz.score(X_test, y_test)
 
-        self.assert_images_similar(viz, tol=0.1)
+        self.assert_images_similar(viz, tol=5.0)
 
         # Ensure correct classification scores under the hood
         assert viz.scores_ == {
@@ -164,7 +164,7 @@ class ClassificationReportTests(VisualTestCase, DatasetMixin):
         _, ax = plt.subplots()
         classification_report(DecisionTreeClassifier(), X, y, ax=ax)
 
-        self.assert_images_similar(ax=ax)
+        self.assert_images_similar(ax=ax, tol=6.0)
 
     def test_isclassifier(self):
         """
