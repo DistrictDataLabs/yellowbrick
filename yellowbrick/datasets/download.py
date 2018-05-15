@@ -4,6 +4,7 @@
 #
 # Author:   Rebecca Bilbro <rbilbro@districtdatalabs.com>
 # Author:   Benjamin Bengfort <bbengfort@districtdatalabs.com>
+# Author:   Raul Peralta <raulpl25@gmail.com>
 # Created:  Wed May 18 11:54:45 2016 -0400
 #
 # Copyright (C) 2016 District Data Labs
@@ -161,7 +162,7 @@ def _load_file_data(name, path='data', extract=True):
     with open(os.path.join(path, name, '{0}.csv'.format(name))) as csv_file:
         data_file = csv.reader(csv_file)
         # removing columns name
-        _ = next(data_file)
+        next(data_file)
         data = np.asarray([line for line in data_file])
     result = {'data': data, 'DESCR': description}
     for k, v in feature_names.items():
@@ -269,6 +270,6 @@ def load_spam(path='data', extract=True):
 
 
 if __name__ == '__main__':
-    path='data'
+    path = 'data'
     download_all(path)
     print("Downloaded datasets to {}".format(os.path.abspath(path)))
