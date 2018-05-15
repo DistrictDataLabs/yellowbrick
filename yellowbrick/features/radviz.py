@@ -138,7 +138,7 @@ class RadialVisualizer(DataVisualizer):
     """
 
     def __init__(self, ax=None, features=None, classes=None, color=None,
-                 colormap=None, alpha=0.1, **kwargs):
+                 colormap=None, alpha=1, **kwargs):
         super(RadialVisualizer, self).__init__(
             ax, features, classes, color, colormap, **kwargs
         )
