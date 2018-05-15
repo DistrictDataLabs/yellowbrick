@@ -4,6 +4,7 @@ python:
   - '3.6'
 
 before_install:
+  - sudo apt-get update
   - sudo apt-get build-dep python-scipy
 
 install:
