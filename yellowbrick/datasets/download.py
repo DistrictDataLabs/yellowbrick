@@ -27,7 +27,6 @@ import zipfile
 import json
 import csv
 import numpy as np
-from sklearn.utils import Bunch
 
 try:
     import requests
