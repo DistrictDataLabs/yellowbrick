@@ -79,6 +79,6 @@ class TestPosTag(object):
         Tests if nltk data is downloaded or is available
         """
         try:
-            nltk.data.find('treebank')
+            nltk.data.find('corpora/treebank')
         except LookupError:
             pytest.xfail("error occured because nltk postag data is not available")
