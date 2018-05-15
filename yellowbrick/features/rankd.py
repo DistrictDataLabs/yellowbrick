@@ -448,7 +448,7 @@ class Rank2D(RankDBase):
     ranking_methods = {
         'pearson': lambda X: np.corrcoef(X.transpose()),
         'covariance': lambda X: np.cov(X.transpose()),
-        'spearman': lambda X: spearmanr(X.transpose())[0],
+        'spearman': lambda X: spearmanr(X)[0],
     }
 
     def __init__(self, ax=None, algorithm='pearson', features=None,
