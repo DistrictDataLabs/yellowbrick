@@ -98,6 +98,7 @@ The following is a complete listing of the Yellowbrick documentation for this ve
    about
    code_of_conduct
    changelog
+   gallery
 
 Indices and tables
 ------------------
