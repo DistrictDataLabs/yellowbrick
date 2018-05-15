@@ -19,6 +19,7 @@ Implements 1D (histograms) and 2D (joint plot) feature rankings.
 
 import numpy as np
 from scipy.stats import shapiro
+from scipy.stats import spearmanr
 
 from yellowbrick.utils import is_dataframe
 from yellowbrick.features.base import MultiFeatureVisualizer
@@ -447,6 +448,7 @@ class Rank2D(RankDBase):
     ranking_methods = {
         'pearson': lambda X: np.corrcoef(X.transpose()),
         'covariance': lambda X: np.cov(X.transpose()),
+        'spearman': lambda X: spearmanr(X.transpose())[0],
     }
 
     def __init__(self, ax=None, algorithm='pearson', features=None,
