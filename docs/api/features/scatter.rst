@@ -56,7 +56,7 @@ A joint plot visualizer plots a feature against the target and shows the distrib
 
     from yellowbrick.features import JointPlotVisualizer
 
-    visualizer = JointPlotVisualizer(feature=feature, target=target)
+    visualizer = JointPlotVisualizer(label=feature, target=target)
 
     visualizer.fit(X, y)
     visualizer.poof()
@@ -69,7 +69,7 @@ The joint plot visualizer can also be plotted with hexbins in the case of many, 
 .. code:: python
 
     visualizer = JointPlotVisualizer(
-        feature=feature, target=target, joint_plot='hex'
+        label=feature, target=target, joint_plot='hex'
     )
 
     visualizer.fit(X, y)

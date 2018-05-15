@@ -30,10 +30,10 @@ if __name__ == '__main__':
     y = data.occupancy.as_matrix()
 
     # Draw the full, original parallel coordinates
-    pcoords(X, y, "images/parallel_coordinates.png", classes=classes, features=features)
+    pcoords(X, y, "images/parallel_coordinates.png", classes=classes, labels=features)
 
     # Draw the noramlized, sampled parallel coordinates
     pcoords(X, y, "images/normalized_sampled_parallel_coordinates.png",
-        classes=classes, features=features,
+        classes=classes, labels=features,
         normalize='standard', sample=0.1,
     )

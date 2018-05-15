@@ -17,7 +17,7 @@ def freqdist(docs, outpath, corpus_kwargs={}, **kwargs):
     features   = vectorizer.get_feature_names()
 
     # Visualize the frequency distribution
-    visualizer = FreqDistVisualizer(ax=ax, features=features, **kwargs)
+    visualizer = FreqDistVisualizer(ax=ax, labels=features, **kwargs)
     visualizer.fit(docs)
     visualizer.poof(outpath=outpath)
 

@@ -27,11 +27,11 @@ different distributions.
     y = data.occupancy.as_matrix()
 
 .. code:: python
-    
+
     from yellowbrick.features import ParallelCoordinates
 
     # Instantiate the visualizer
-    visualizer = ParallelCoordinates(classes=classes, features=features)
+    visualizer = ParallelCoordinates(classes=classes, labels=features)
 
     visualizer.fit(X, y)      # Fit the data to the visualizer
     visualizer.transform(X)   # Transform the data
@@ -50,7 +50,7 @@ Additionally the domain of each feature may make the visualization hard to inter
 
     # Instantiate the visualizer
     visualizer = ParallelCoordinates(
-        classes=classes, features=features,
+        classes=classes, labels=features,
         normalize='standard', sample=0.1,
     )
 

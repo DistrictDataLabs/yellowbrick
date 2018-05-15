@@ -59,7 +59,7 @@ if __name__ == '__main__':
     ys = data[target]
 
     # Draw the joint plot visualizer
-    jointplot(Xs, ys, "images/jointplot.png", feature=feature, target=target)
+    jointplot(Xs, ys, "images/jointplot.png", label=feature, target=target)
 
     # Draw the joint plot visualizer with hexadecimal scatter plot
-    jointplot(Xs, ys, "images/jointplot_hex.png", feature=feature, target=target, joint_plot='hex')
+    jointplot(Xs, ys, "images/jointplot_hex.png", label=feature, target=target, joint_plot='hex')

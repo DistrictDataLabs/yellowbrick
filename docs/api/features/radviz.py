@@ -14,7 +14,7 @@ X = data[features].as_matrix()
 y = data.occupancy.as_matrix()
 
 # Instantiate the visualizer
-visualizer = RadViz(classes=classes, features=features)
+visualizer = RadViz(classes=classes, labels=features)
 
 visualizer.fit(X, y)
 visualizer.transform(X)

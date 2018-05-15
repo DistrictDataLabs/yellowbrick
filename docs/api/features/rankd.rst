@@ -34,7 +34,7 @@ A one dimensional ranking of features utilizes a ranking algorithm that takes in
     from yellowbrick.features import Rank1D
 
     # Instantiate the 1D visualizer with the Sharpiro ranking algorithm
-    visualizer = Rank1D(features=features, algorithm='shapiro')
+    visualizer = Rank1D(labels=features, algorithm='shapiro')
 
     visualizer.fit(X, y)                # Fit the data to the visualizer
     visualizer.transform(X)             # Transform the data
@@ -56,7 +56,7 @@ The default ranking algorithm is covariance, which attempts to compute the mean 
     from yellowbrick.features import Rank2D
 
     # Instantiate the visualizer with the Covariance ranking algorithm
-    visualizer = Rank2D(features=features, algorithm='covariance')
+    visualizer = Rank2D(labels=features, algorithm='covariance')
 
     visualizer.fit(X, y)                # Fit the data to the visualizer
     visualizer.transform(X)             # Transform the data
@@ -70,7 +70,7 @@ Alternatively, we can utilize a linear correlation algorithm such as a Pearson s
 .. code:: python
 
     # Instantiate the visualizer with the Pearson ranking algorithm
-    visualizer = Rank2D(features=features, algorithm='pearson')
+    visualizer = Rank2D(labels=features, algorithm='pearson')
 
     visualizer.fit(X, y)                # Fit the data to the visualizer
     visualizer.transform(X)             # Transform the data

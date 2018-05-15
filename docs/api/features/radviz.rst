@@ -41,7 +41,7 @@ A good starting place is `scikit-learn Imputer. <http://scikit-learn.org/stable/
     from yellowbrick.features import RadViz
 
     # Instantiate the visualizer
-    visualizer = RadViz(classes=classes, features=features)
+    visualizer = RadViz(classes=classes, labels=features)
 
     visualizer.fit(X, y)      # Fit the data to the visualizer
     visualizer.transform(X)   # Transform the data
