@@ -138,10 +138,11 @@ class RadialVisualizer(DataVisualizer):
     """
 
     def __init__(self, ax=None, features=None, classes=None, color=None,
-                 colormap=None, **kwargs):
+                 colormap=None, alpha=0.1, **kwargs):
         super(RadialVisualizer, self).__init__(
             ax, features, classes, color, colormap, **kwargs
         )
+        self.alpha = alpha
 
     @staticmethod
     def normalize(X):
@@ -210,7 +211,7 @@ class RadialVisualizer(DataVisualizer):
         # TODO: store these plots to add more instances to later
         # TODO: make this a separate function
         for i, kls in enumerate(self.classes_):
-            self.ax.scatter(to_plot[kls][0], to_plot[kls][1], color=colors[kls], label=str(kls), **kwargs)
+            self.ax.scatter(to_plot[kls][0], to_plot[kls][1], color=colors[kls], label=str(kls), alpha=self.alpha, **kwargs)
 
         # Add the circular axis path
         # TODO: Make this a seperate function (along with labeling)
