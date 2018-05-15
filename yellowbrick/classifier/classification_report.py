@@ -41,7 +41,7 @@ SCORES_KEYS = ('precision', 'recall', 'f1', 'support')
 
 class ClassificationReport(ClassificationScoreVisualizer):
     """
-    Classification report that shows the precision, recall, and F1 scores
+    Classification report that shows the precision, recall, F1, and support scores
     for the model. Integrates numerical scores as well as a color-coded heatmap.
 
     Parameters
@@ -74,7 +74,7 @@ class ClassificationReport(ClassificationScoreVisualizer):
     Attributes
     ----------
     scores_ : dict of dicts
-        Outer dictionary composed of precision, recall, and f1 scores with
+        Outer dictionary composed of precision, recall, f1, and support scores with
         inner dictionaries specifiying the values for each class listed.
     """
     def __init__(self, model, ax=None, classes=None, cmap='YlOrRd', **kwargs):
@@ -199,8 +199,8 @@ class ClassificationReport(ClassificationScoreVisualizer):
 def classification_report(model, X, y=None, ax=None, classes=None, **kwargs):
     """Quick method:
 
-    Displays precision, recall, and F1 scores for the model.
-    Integrates numerical scores as well color-coded heatmap.
+    Displays precision, recall, F1, and support scores for the model.
+    Integrates numerical scores as well as color-coded heatmap.
 
     This helper function is a quick wrapper to utilize the ClassificationReport
     ScoreVisualizer for one-off analysis.
