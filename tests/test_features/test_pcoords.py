@@ -78,6 +78,19 @@ class ParallelCoordinatesTests(VisualTestCase, DatasetMixin):
         visualizer = ParallelCoordinates(sample=10)
         visualizer.fit_transform(self.X, self.y)
 
+    def test_pcoords_sample_int_shuffle(self):
+        """
+        Assert no errors occur using integer 'sample' argument and shuffle, with different random_state args
+        """
+        visualizer = ParallelCoordinates(sample=3, shuffle=True)
+        visualizer.fit_transform(self.X, self.y)
+
+        visualizer = ParallelCoordinates(sample=3, shuffle=True, random_state=444)
+        visualizer.fit_transform(self.X, self.y)
+
+        visualizer = ParallelCoordinates(sample=3, shuffle=True, random_state=np.random.RandomState())
+        visualizer.fit_transform(self.X, self.y)
+
     def test_pcoords_sample_int_invalid(self):
         """
         Negative int values should raise
@@ -90,6 +103,19 @@ class ParallelCoordinatesTests(VisualTestCase, DatasetMixin):
         Assert no errors occur using float 'sample' argument
         """
         visualizer = ParallelCoordinates(sample=0.5)
+        visualizer.fit_transform(self.X, self.y)
+
+    def test_pcoords_sample_float_shuffle(self):
+        """
+        Assert no errors occur using float 'sample' argument and shuffle, with different random_state args
+        """
+        visualizer = ParallelCoordinates(sample=0.5, shuffle=True)
+        visualizer.fit_transform(self.X, self.y)
+
+        visualizer = ParallelCoordinates(sample=0.5, shuffle=True, random_state=444)
+        visualizer.fit_transform(self.X, self.y)
+
+        visualizer = ParallelCoordinates(sample=0.5, shuffle=True, random_state=np.random.RandomState())
         visualizer.fit_transform(self.X, self.y)
 
     def test_pcoords_sample_float_invalid(self):
@@ -131,3 +157,65 @@ class ParallelCoordinatesTests(VisualTestCase, DatasetMixin):
         visualizer.fit_transform(X, y)
         visualizer.poof()
         self.assert_images_similar(visualizer)
+
+    @staticmethod
+    def test_static_subsample():
+        """
+        Assert output of subsampling method against expectations
+        """
+
+        ntotal = 100
+        ncols = 50
+
+        y = np.arange(ntotal).reshape(ntotal, 1)
+        X = np.ones((ntotal, ncols)) * y
+
+        visualizer = ParallelCoordinates(sample=1.0, random_state=None, shuffle=False)
+        Xprime, yprime = visualizer._subsample(X, y)
+        assert np.array_equal(Xprime, X)
+        assert np.array_equal(yprime, y)
+
+        visualizer = ParallelCoordinates(sample=200, random_state=None, shuffle=False)
+        Xprime, yprime = visualizer._subsample(X, y)
+        assert np.array_equal(Xprime, X)
+        assert np.array_equal(yprime, y)
+
+        sample = 50
+        visualizer = ParallelCoordinates(sample=sample, random_state=None, shuffle=False)
+        Xprime, yprime = visualizer._subsample(X, y)
+        assert np.array_equal(Xprime, X[:sample, :])
+        assert np.array_equal(yprime, y[:sample])
+
+        sample = 50
+        visualizer = ParallelCoordinates(sample=sample, random_state=None, shuffle=True)
+        Xprime, yprime = visualizer._subsample(X, y)
+        assert np.array_equal(Xprime, X[yprime.flatten(), :])
+        assert len(Xprime) == sample
+        assert len(yprime) == sample
+
+        visualizer = ParallelCoordinates(sample=0.5, random_state=None, shuffle=False)
+        Xprime, yprime = visualizer._subsample(X, y)
+        assert np.array_equal(Xprime, X[:int(ntotal/2), :])
+        assert np.array_equal(yprime, y[:int(ntotal/2)])
+
+        sample = 0.5
+        visualizer = ParallelCoordinates(sample=sample, random_state=None, shuffle=True)
+        Xprime, yprime = visualizer._subsample(X, y)
+        assert np.array_equal(Xprime, X[yprime.flatten(), :])
+        assert len(Xprime) == ntotal * sample
+        assert len(yprime) == ntotal * sample
+
+        sample = 0.25
+        visualizer = ParallelCoordinates(sample=sample, random_state=444, shuffle=True)
+        Xprime, yprime = visualizer._subsample(X, y)
+        assert np.array_equal(Xprime, X[yprime.flatten(), :])
+        assert len(Xprime) == ntotal * sample
+        assert len(yprime) == ntotal * sample
+
+        sample = 0.99
+        visualizer = ParallelCoordinates(sample=sample, random_state=np.random.RandomState(), shuffle=True)
+        Xprime, yprime = visualizer._subsample(X, y)
+        assert np.array_equal(Xprime, X[yprime.flatten(), :])
+        assert len(Xprime) == ntotal * sample
+        assert len(yprime) == ntotal * sample
+

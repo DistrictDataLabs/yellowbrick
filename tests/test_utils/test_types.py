@@ -523,6 +523,40 @@ class TestDataTypeChecking(object):
         assert not is_dataframe(obj)
 
     ##////////////////////////////////////////////////////////////////////
+    ## is_series testing
+    ##////////////////////////////////////////////////////////////////////
+
+    def test_series_alias(self):
+        """
+        Assert isseries aliases is_series
+        """
+        assert isseries is is_series
+
+    @pytest.mark.skipif(pd is None, reason="requires pandas")
+    def test_is_series(self):
+        """
+        Test that is_series works correctly
+        """
+        df = pd.Series([1, 2, 3])
+
+        assert is_series(df)
+
+    @pytest.mark.parametrize("obj", [
+        np.array([
+            (1,2.,'Hello'), (2,3.,"World")],
+            dtype=[('foo', 'i4'),('bar', 'f4'), ('baz', 'S10')]
+        ),
+        np.array([1,2,3]),
+        [1, 2, 3],
+    ],
+    ids=["structured array", "array", "list"])
+    def test_not_is_series(self, obj):
+        """
+        Test that is_series does not match non-dataframes
+        """
+        assert not is_series(obj)
+
+    ##////////////////////////////////////////////////////////////////////
     ## is_structured_array testing
     ##////////////////////////////////////////////////////////////////////
 
