@@ -107,11 +107,7 @@ class ExplainedVariance(FeatureVisualizer):
 
     def __init__(self, n_components=None, ax=None, scale=True, center=True, 
                  colormap=palettes.DEFAULT_SEQUENCE, **kwargs):
-
-        super(ExplainedVariance, self).__init__(
-            ax=ax, **kwargs
-        )
-
+        super(ExplainedVariance, self).__init__(ax=ax, **kwargs)
         self.colormap = colormap
         self.n_components = n_components
         self.center = center
