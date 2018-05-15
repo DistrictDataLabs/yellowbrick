@@ -102,15 +102,12 @@ class ClassificationReport(ClassificationScoreVisualizer):
 
         scores = precision_recall_fscore_support(y, y_pred)
 
-        # Calculate the percentage for support
+        # Calculate the percentage for the support metric
         self.support_score = scores[-1]
         support_percent = self.support_score / (sum(self.support_score))
 
-
-
         scores = map(lambda s: dict(zip(self.classes_, s)), scores)
         self.scores_ = dict(zip(SCORES_KEYS, scores))
-        print('scores_:', self.scores_)
 
         # Change the support score from the actual support value to the percent
         # value to be used in the Classification Report.
@@ -129,15 +126,7 @@ class ClassificationReport(ClassificationScoreVisualizer):
         # For each class row, append columns for precision, recall, f1, and support
         for idx, cls in enumerate(self.classes_):
             for jdx, metric in enumerate(('precision', 'recall', 'f1', 'support')):
-
-                print('metric:', metric)
-                print('idx', idx)
-                print('jdx', jdx)
-                print('cls', cls)
-                #print(self.scores_['support'][0])
                 cr_display[idx, jdx] = self.scores_[metric][cls]
-
-        #print(cr_display)
 
         # Set up the dimensions of the pcolormesh
         # NOTE: pcolormesh accepts grids that are (N+1,M+1)
@@ -157,8 +146,7 @@ class ClassificationReport(ClassificationScoreVisualizer):
 
                 # change the svalue for support (when y == 3) because we want
                 # to label it as the actual support value, not the percentage
-
-                if y == 3: #support
+                if y == 3:
                     svalue = self.support_score[x]
 
                 # Determine the grid and text colors
@@ -175,9 +163,6 @@ class ClassificationReport(ClassificationScoreVisualizer):
         # Draw the heatmap with colors bounded by the min and max of the grid
         # NOTE: I do not understand why this is Y, X instead of X, Y it works
         # in this order but raises an exception with the other order.
-        print(Y)
-        print(X)
-
         g = self.ax.pcolormesh(
             Y, X, cr_display, vmin=0, vmax=1, cmap=self.cmap, edgecolor='w',
         )

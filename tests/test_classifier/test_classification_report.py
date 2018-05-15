@@ -64,7 +64,8 @@ class ClassificationReportTests(VisualTestCase, DatasetMixin):
         assert viz.scores_ == {
             'precision': {0: approx(0.7446808), 1: approx(0.8490566)},
             'recall': {0: approx(0.8139534), 1: approx(0.7894736)},
-            'f1': {0: approx(0.7777777), 1: approx(0.8181818)}
+            'f1': {0: approx(0.7777777), 1: approx(0.8181818)},
+            'support': {0: approx(0.42999999999999999), 1: approx(0.56999999999999995)}
             }
 
     @pytest.mark.xfail(
@@ -93,6 +94,10 @@ class ClassificationReportTests(VisualTestCase, DatasetMixin):
                 0: 0.47058823529411764, 1: 0.5294117647058824,
                 2: 0.5294117647058824, 3: 0.35294117647058826,
                 4: 0.38709677419354843, 5: 0.6060606060606061
+            }, 'support': {
+                0: 0.19, 1: 0.16,
+                2: 0.14000000000000001, 3: 0.19,
+                4: 0.16, 5: 0.16
             }}
 
     @pytest.mark.xfail(
