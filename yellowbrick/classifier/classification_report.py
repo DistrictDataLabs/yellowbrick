@@ -104,15 +104,17 @@ class ClassificationReport(ClassificationScoreVisualizer):
 
         # Calculate the percentage for support
         self.support_score = scores[-1]
-        support_percent = scores[-1] / (sum(scores[-1]))
+        support_percent = self.support_score / (sum(self.support_score))
+
+
 
         scores = map(lambda s: dict(zip(self.classes_, s)), scores)
         self.scores_ = dict(zip(SCORES_KEYS, scores))
+        print('scores_:', self.scores_)
 
         # Change the support score from the actual support value to the percent
         # value to be used in the Classification Report.
-        self.scores_['support'] = {'occupied': support_percent[0],
-                                   'unoccupied': support_percent[1]}
+        self.scores_['support'] = dict(zip(self.classes_, support_percent))
 
         return self.draw()
 
@@ -123,9 +125,16 @@ class ClassificationReport(ClassificationScoreVisualizer):
         # Create display grid
         cr_display = np.zeros((len(self.classes_), 4))
 
+
         # For each class row, append columns for precision, recall, f1, and support
         for idx, cls in enumerate(self.classes_):
             for jdx, metric in enumerate(('precision', 'recall', 'f1', 'support')):
+
+                print('metric:', metric)
+                print('idx', idx)
+                print('jdx', jdx)
+                print('cls', cls)
+                #print(self.scores_['support'][0])
                 cr_display[idx, jdx] = self.scores_[metric][cls]
 
         #print(cr_display)
@@ -148,10 +157,9 @@ class ClassificationReport(ClassificationScoreVisualizer):
 
                 # change the svalue for support (when y == 3) because we want
                 # to label it as the actual support value, not the percentage
-                if x == 0 and y == 3:
-                    svalue = self.support_score[1] #unoccupied
-                elif x == 1 and y == 3:
-                    svalue = self.support_score[0] #occupied
+
+                if y == 3: #support
+                    svalue = self.support_score[x]
 
                 # Determine the grid and text colors
                 base_color = self.cmap(value)

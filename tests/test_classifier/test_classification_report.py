@@ -65,7 +65,7 @@ class ClassificationReportTests(VisualTestCase, DatasetMixin):
             'precision': {0: approx(0.7446808), 1: approx(0.8490566)},
             'recall': {0: approx(0.8139534), 1: approx(0.7894736)},
             'f1': {0: approx(0.7777777), 1: approx(0.8181818)}
-        }
+            }
 
     @pytest.mark.xfail(
         sys.platform == 'win32', reason="images not close on windows"
@@ -141,6 +141,9 @@ class ClassificationReportTests(VisualTestCase, DatasetMixin):
             }, 'f1': {
                 'unoccupied': 0.9800031994880819,
                 'occupied': 0.9366447034972124
+            }, 'support': {
+                'occupied': 0.22519455252918288,
+                'unoccupied': 0.77480544747081714
             }}
 
     @pytest.mark.skip(reason="requires random state in quick method")
