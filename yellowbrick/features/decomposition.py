@@ -4,7 +4,6 @@
 
 from .base import FeatureVisualizer
 from yellowbrick.style import palettes
-
 from sklearn.pipeline import Pipeline
 from sklearn.decomposition import PCA
 from sklearn.preprocessing import StandardScaler
@@ -70,11 +69,28 @@ def explained_variance_visualizer(X, y=None, ax=None, scale=True,
 
 class ExplainedVariance(FeatureVisualizer):
     """
+    ExplainedVariance is a feature visualization algorithm
+    that fits PCA on the data and plots the explained variance
+    of each of the principal components.
 
     Parameters
     ----------
-    
-    
+    n_components : int, default: None
+        Number of components to use for PCA
+
+    ax : matplotlib Axes, default: None
+        The axis to plot the figure on. If None is passed in the current axes
+        will be used (or generated if required).
+
+    features : list, default: None
+        a list of feature names to use
+        If a DataFrame is passed to fit and features is None, feature
+        names are selected as the columns of the DataFrame.
+
+    colormap : string or cmap, default: None
+        optional string or matplotlib cmap to colorize lines
+        Use either color to colorize the lines on a per class basis or
+        colormap to color them on a continuous scale.
 
     Examples
     --------
@@ -92,15 +108,17 @@ class ExplainedVariance(FeatureVisualizer):
     def __init__(self, n_components=None, ax=None, scale=True, center=True, 
                  colormap=palettes.DEFAULT_SEQUENCE, **kwargs):
 
-        super(ExplainedVariance, self).__init__(ax=ax, **kwargs)
+        super(ExplainedVariance, self).__init__(
+            ax=ax, **kwargs
+        )
 
         self.colormap = colormap
         self.n_components = n_components
         self.center = center
         self.scale = scale
-        self.pipeline = Pipeline([('scale', StandardScaler(with_mean=self.center,
-                                                           with_std=self.scale)), 
-                                  ('pca', PCA(n_components=self.n_components))])
+        self.pipeline = Pipeline(
+            [('scale', StandardScaler(with_mean=self.center, with_std=self.scale)),
+             ('pca', PCA(n_components=self.n_components))])
         self.pca_features = None
 
     @property
@@ -117,8 +135,14 @@ class ExplainedVariance(FeatureVisualizer):
         return self.pca_features
 
     def draw(self):
+        if self.ax is None:
+            self.ax = self.gca()
         X = self.explained_variance_
-        self.ax.plot(X)
+        if self.n_components:
+            self.ax.bar(self.n_components, X)
+        else:
+            n_components = X.shape[0]
+            self.ax.bar(list(range(n_components)), X)
         return self.ax
 
     def finalize(self, **kwargs):
