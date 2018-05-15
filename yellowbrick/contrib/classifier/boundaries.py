@@ -34,7 +34,7 @@ def decisionviz(model,
                 y,
                 colors=None,
                 classes=None,
-                features=None,
+                labels=None,
                 show_scatter=True,
                 step_size=0.0025,
                 markers=None,
@@ -66,8 +66,8 @@ def decisionviz(model,
         If classes is None and a y value is passed to fit then the classes
         are selected from the target vector.
 
-    features : list of strings, default: None
-        The names of the features or columns
+    labels : list of strings, default: None
+        The names of the labels or columns
 
     show_scatter : boolean, default: True
         If boolean is True, then a scatter plot with points will be drawn
@@ -105,7 +105,7 @@ def decisionviz(model,
                     y,
                     colors=colors,
                     classes=classes,
-                    features=features,
+                    labels=labels,
                     show_scatter=show_scatter,
                     step_size=step_size,
                     markers=markers,
@@ -148,8 +148,8 @@ class DecisionBoundariesVisualizer(ClassificationScoreVisualizer):
         If classes is None and a y value is passed to fit then the classes
         are selected from the target vector.
 
-    features : list of strings, default: None
-        The names of the features or columns
+    labels : list of strings, default: None
+        The names of the labels or columns
 
     show_scatter : boolean, default: True
         If boolean is True, then a scatter plot with points will be drawn
@@ -185,7 +185,7 @@ class DecisionBoundariesVisualizer(ClassificationScoreVisualizer):
                  model,
                  x=None,
                  y=None,
-                 features=None,
+                 labels=None,
                  show_scatter=True,
                  step_size=0.0025,
                  markers=None,
@@ -202,7 +202,7 @@ class DecisionBoundariesVisualizer(ClassificationScoreVisualizer):
 
         self.x = x
         self.y = y
-        self.features_ = features
+        self.labels_ = labels
         self.estimator = model
         self.show_scatter = show_scatter
         self.step_size = step_size
@@ -218,18 +218,18 @@ class DecisionBoundariesVisualizer(ClassificationScoreVisualizer):
         self.yy = None
         self.class_labels = None
 
-        if self.x is not None and self.y is not None and self.features_ is not None:
+        if self.x is not None and self.y is not None and self.labels_ is not None:
             raise YellowbrickValueError(
-                'Please specify x,y or features, not both.')
+                'Please specify x,y or labels, not both.')
 
-        if self.x is not None and self.y is not None and self.features_ is None:
-            self.features_ = [self.x, self.y]
+        if self.x is not None and self.y is not None and self.labels_ is None:
+            self.labels_ = [self.x, self.y]
 
-        # Ensure with init that features doesn't have more than two features
-        if features is not None:
-            if len(features) != 2:
+        # Ensure with init that labels doesn't have more than two labels
+        if labels is not None:
+            if len(labels) != 2:
                 raise YellowbrickValueError(
-                    'DecisionBoundariesVisualizer only accepts two features.')
+                    'DecisionBoundariesVisualizer only accepts two labels.')
 
     def _select_feature_columns(self, X):
         """ """
@@ -243,27 +243,27 @@ class DecisionBoundariesVisualizer(ClassificationScoreVisualizer):
 
         if ncols == 2:
             X_two_cols = X
-            if self.features_ is None:
-                self.features_ = ["Feature One", "Feature Two"]
+            if self.labels_ is None:
+                self.labels_ = ["Feature One", "Feature Two"]
 
-        # Handle the feature names if they're None.
-        elif self.features_ is not None and is_dataframe(X):
-            X_two_cols = X[self.features_].as_matrix()
+        # Handle the label names if they're None.
+        elif self.labels_ is not None and is_dataframe(X):
+            X_two_cols = X[self.labels_].as_matrix()
 
         # handle numpy named/ structured array
-        elif self.features_ is not None and is_structured_array(X):
-            X_selected = X[self.features_]
+        elif self.labels_ is not None and is_structured_array(X):
+            X_selected = X[self.labels_]
             X_two_cols = X_selected.copy().view(np.float64).reshape(len(X_selected), -1)
 
-        # handle features that are numeric columns in ndarray matrix
-        elif self.features_ is not None and has_ndarray_int_columns(self.features_, X):
-            f_one, f_two = self.features_
+        # handle labels that are numeric columns in ndarray matrix
+        elif self.labels_ is not None and has_ndarray_int_columns(self.labels_, X):
+            f_one, f_two = self.labels_
             X_two_cols = X[:, [int(f_one), int(f_two)]]
 
         else:
             raise YellowbrickValueError("""
-                ScatterVisualizer only accepts two features, please
-                explicitly set these two features in the init kwargs or
+                ScatterVisualizer only accepts two labels, please
+                explicitly set these two labels in the init kwargs or
                 pass a matrix/ dataframe in with only two columns.""")
 
         return X_two_cols
@@ -341,7 +341,7 @@ class DecisionBoundariesVisualizer(ClassificationScoreVisualizer):
         is determined by the feature data set.
         """
         # ensure that if someone is passing in another X such as X_test, that
-        # features will be properly handled
+        # labels will be properly handled
         X = self._select_feature_columns(X)
 
         color_cycle = iter(
@@ -407,8 +407,8 @@ class DecisionBoundariesVisualizer(ClassificationScoreVisualizer):
         kwargs: generic keyword arguments.
 
         """
-        # Divide out the two features
-        feature_one, feature_two = self.features_
+        # Divide out the two labels
+        feature_one, feature_two = self.labels_
 
         self.set_title(self.title)
         # Add the legend

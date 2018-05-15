@@ -32,7 +32,7 @@ from yellowbrick.style.colors import resolve_colors
 ## Quick Methods
 ##########################################################################
 
-def parallel_coordinates(X, y, ax=None, features=None, classes=None,
+def parallel_coordinates(X, y, ax=None, labels=None, classes=None,
                          normalize=None, sample=1.0, color=None, colormap=None,
                          vlines=True, vlines_kwds=None, **kwargs):
     """Displays each feature as a vertical axis and each instance as a line.
@@ -53,9 +53,9 @@ def parallel_coordinates(X, y, ax=None, features=None, classes=None,
         The axis to plot the figure on. If None is passed in the current axes
         will be used (or generated if required).
 
-    features : list, default: None
-        a list of feature names to use
-        If a DataFrame is passed to fit and features is None, feature
+    labels : list, default: None
+        a list of label names to use
+        If a DataFrame is passed to fit and labels is None, label
         names are selected as the columns of the DataFrame.
 
     classes : list, default: None
@@ -100,7 +100,7 @@ def parallel_coordinates(X, y, ax=None, features=None, classes=None,
     """
     # Instantiate the visualizer
     visualizer = ParallelCoordinates(
-        ax, features, classes, normalize, sample, color, colormap, vlines,
+        ax, labels, classes, normalize, sample, color, colormap, vlines,
         vlines_kwds, **kwargs
     )
 
@@ -129,9 +129,9 @@ class ParallelCoordinates(DataVisualizer):
         The axis to plot the figure on. If None is passed in the current axes
         will be used (or generated if required).
 
-    features : list, default: None
-        a list of feature names to use
-        If a DataFrame is passed to fit and features is None, feature
+    labels : list, default: None
+        a list of label names to use
+        If a DataFrame is passed to fit and labels is None, label
         names are selected as the columns of the DataFrame.
 
     classes : list, default: None
@@ -192,11 +192,11 @@ class ParallelCoordinates(DataVisualizer):
         'l2': Normalizer('l2'),
     }
 
-    def __init__(self, ax=None, features=None, classes=None, normalize=None,
+    def __init__(self, ax=None, labels=None, classes=None, normalize=None,
                  sample=1.0, color=None, colormap=None, vlines=True,
                  vlines_kwds=None, **kwargs):
         super(ParallelCoordinates, self).__init__(
-            ax, features, classes, color, colormap, **kwargs
+            ax, labels, classes, color, colormap, **kwargs
         )
 
         # Validate 'normalize' argument
@@ -292,7 +292,7 @@ class ParallelCoordinates(DataVisualizer):
 
         # Set the limits
         self.ax.set_xticks(x)
-        self.ax.set_xticklabels(self.features_)
+        self.ax.set_xticklabels(self.labels_)
         self.ax.set_xlim(x[0], x[-1])
 
     def finalize(self, **kwargs):
@@ -307,7 +307,7 @@ class ParallelCoordinates(DataVisualizer):
         """
         # Set the title
         self.set_title(
-            'Parallel Coordinates for {} Features'.format(len(self.features_))
+            'Parallel Coordinates for {} Features'.format(len(self.labels_))
         )
 
         # Set the legend and the grid

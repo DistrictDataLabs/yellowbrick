@@ -139,11 +139,11 @@ class TestRFECV(VisualTestCase, DatasetMixin):
         df = self.load_pandas("occupancy")
 
         target = "occupancy"
-        features = [
+        labels = [
             'temperature', 'relative humidity', 'light', 'C02', 'humidity'
         ]
 
-        X = df[features]
+        X = df[labels]
         y = df[target]
 
         assert isinstance(X, pd.DataFrame)

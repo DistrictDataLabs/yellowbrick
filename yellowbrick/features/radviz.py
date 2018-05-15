@@ -30,7 +30,7 @@ from yellowbrick.style.colors import resolve_colors
 ## Quick Methods
 ##########################################################################
 
-def radviz(X, y=None, ax=None, features=None, classes=None,
+def radviz(X, y=None, ax=None, labels=None, classes=None,
            color=None, colormap=None, **kwargs):
     """
     Displays each feature as an axis around a circle surrounding a scatter
@@ -51,8 +51,8 @@ def radviz(X, y=None, ax=None, features=None, classes=None,
     ax : matplotlib Axes, default: None
         The axes to plot the figure on.
 
-    features : list of strings, default: None
-        The names of the features or columns
+    labels : list of strings, default: None
+        A list of label names.
 
     classes : list of strings, default: None
         The names of the classes in the target
@@ -70,7 +70,7 @@ def radviz(X, y=None, ax=None, features=None, classes=None,
     """
     # Instantiate the visualizer
     visualizer = RadialVisualizer(
-        ax, features, classes, color, colormap, **kwargs
+        ax, labels, classes, color, colormap, **kwargs
     )
 
     # Fit and transform the visualizer (calls draw)
@@ -99,9 +99,9 @@ class RadialVisualizer(DataVisualizer):
         The axis to plot the figure on. If None is passed in the current axes
         will be used (or generated if required).
 
-    features : list, default: None
-        a list of feature names to use
-        If a DataFrame is passed to fit and features is None, feature
+    labels : list, default: None
+        A list of label names to use.
+        If a DataFrame is passed to fit and labels is None, label
         names are selected as the columns of the DataFrame.
 
     classes : list, default: None
@@ -137,10 +137,10 @@ class RadialVisualizer(DataVisualizer):
     process, but can and should be set as early as possible.
     """
 
-    def __init__(self, ax=None, features=None, classes=None, color=None,
+    def __init__(self, ax=None, labels=None, classes=None, color=None,
                  colormap=None, **kwargs):
         super(RadialVisualizer, self).__init__(
-            ax, features, classes, color, colormap, **kwargs
+            ax, labels, classes, color, colormap, **kwargs
         )
 
     @staticmethod
@@ -217,7 +217,7 @@ class RadialVisualizer(DataVisualizer):
         self.ax.add_patch(patches.Circle((0.0, 0.0), radius=1.0, facecolor='none', edgecolor='grey', linewidth=.5 ))
 
         # Add the feature names
-        for xy, name in zip(s, self.features_):
+        for xy, name in zip(s, self.labels_):
             # Add the patch indicating the location of the axis
             self.ax.add_patch(patches.Circle(xy, radius=0.025, facecolor='#777777'))
 
@@ -245,7 +245,7 @@ class RadialVisualizer(DataVisualizer):
         """
         # Set the title
         self.set_title(
-            'RadViz for {} Features'.format(len(self.features_))
+            'RadViz for {} Features'.format(len(self.labels_))
         )
 
         # Remove the ticks from the graph
