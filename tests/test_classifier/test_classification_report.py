@@ -135,7 +135,7 @@ class ClassificationReportTests(VisualTestCase, DatasetMixin):
 
         self.assert_images_similar(viz, tol=43.0)
 
-        # Ensure correct classification scores under the hood
+        # Ensure correct classification scores under the hood!
         assert viz.scores_ == {
             'precision': {
                 'unoccupied': 0.999347471451876,
