@@ -59,7 +59,7 @@ class ClassificationReportTests(VisualTestCase, DatasetMixin):
         viz.fit(self.binary.X.train, self.binary.y.train)
         viz.score(self.binary.X.test, self.binary.y.test)
 
-        self.assert_images_similar(viz, tol=35)
+        self.assert_images_similar(viz, tol=40)
 
         assert viz.scores_ == {
             'precision': {0: approx(0.7446808), 1: approx(0.8490566)},
@@ -81,7 +81,7 @@ class ClassificationReportTests(VisualTestCase, DatasetMixin):
         viz.fit(self.multiclass.X.train, self.multiclass.y.train)
         viz.score(self.multiclass.X.test, self.multiclass.y.test)
 
-        self.assert_images_similar(viz, tol=6.0)
+        self.assert_images_similar(viz, tol=11.0)
 
         assert viz.scores_ == {
             'precision': {
@@ -133,7 +133,7 @@ class ClassificationReportTests(VisualTestCase, DatasetMixin):
         viz.fit(X_train, y_train)
         viz.score(X_test, y_test)
 
-        self.assert_images_similar(viz, tol=5.0)
+        self.assert_images_similar(viz, tol=43.0)
 
         # Ensure correct classification scores under the hood
         assert viz.scores_ == {
