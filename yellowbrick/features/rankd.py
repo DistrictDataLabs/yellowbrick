@@ -102,7 +102,7 @@ def rank2d(X, y=None, ax=None, algorithm='pearson', features=None,
     ax : matplotlib axes
         the axis to plot the figure on.
 
-    algorithm : one of {pearson, covariance}
+    algorithm : one of {pearson, covariance, spearman}
         the ranking algorithm to use, default is Pearson correlation.
 
     features : list
@@ -404,7 +404,7 @@ class Rank2D(RankDBase):
         The axis to plot the figure on. If None is passed in the current axes
         will be used (or generated if required).
 
-    algorithm : one of {'pearson', 'covariance'}, default: 'pearson'
+    algorithm : one of {'pearson', 'covariance', 'spearman'}, default: 'pearson'
         The ranking algorithm to use, default is Pearson correlation.
 
     features : list
