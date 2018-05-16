@@ -121,8 +121,8 @@ class RadVizTests(VisualTestCase, DatasetMixin):
         ]
 
         # Test the visualizer
-        features = ["temperature", "relative_humidity"]
-        visualizer = RadViz(features=features)
+        labels = ["temperature", "relative_humidity"]
+        visualizer = RadViz(labels=labels)
         visualizer.fit_transform_poof(X, y)
         self.assert_images_similar(visualizer)
 
@@ -150,7 +150,7 @@ class RadVizTests(VisualTestCase, DatasetMixin):
         ]
 
         # Test the visualizer
-        features = ["temperature", "relative_humidity"]
-        visualizer = RadViz(features=features, classes=classes)
+        labels = ["temperature", "relative_humidity"]
+        visualizer = RadViz(labels=labels, classes=classes)
         visualizer.fit_transform_poof(X, y)
         self.assert_images_similar(visualizer)

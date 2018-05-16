@@ -63,28 +63,28 @@ class ScatterVizTests(VisualTestCase, DatasetMixin):
         super(ScatterVizTests, self).tearDown()
 
     def test_init_alias(self):
-        features = ["temperature", "relative_humidity"]
-        visualizer = ScatterVisualizer(features=features, markers=['*'])
+        labels = ["temperature", "relative_humidity"]
+        visualizer = ScatterVisualizer(labels=labels, markers=['*'])
         self.assertIsNotNone(visualizer.markers)
 
     def test_deprecated(self):
         with pytest.deprecated_call():
-            features = ["temperature", "relative_humidity"]
-            ScatterViz(features=features)
+            labels = ["temperature", "relative_humidity"]
+            ScatterViz(labels=labels)
 
     @pytest.mark.skipif(six.PY2, reason="deprecation warnings filtered in PY2")
     def test_deprecated_message(self):
         with pytest.warns(DeprecationWarning, match='Will be moved to yellowbrick.contrib in v0.7'):
-            features = ["temperature", "relative_humidity"]
-            ScatterViz(features=features)
+            labels = ["temperature", "relative_humidity"]
+            ScatterViz(labels=labels)
 
     def test_scatter(self):
         """
         Assert no errors occur during scatter visualizer integration
         """
         X_two_cols = self.X[:, :2]
-        features = ["temperature", "relative_humidity"]
-        visualizer = ScatterViz(features=features)
+        labels = ["temperature", "relative_humidity"]
+        visualizer = ScatterViz(labels=labels)
         visualizer.fit_transform(X_two_cols, self.y)
 
     def test_color_builds(self):
@@ -93,53 +93,53 @@ class ScatterVizTests(VisualTestCase, DatasetMixin):
         """
         colors = palettes.PALETTES['pastel']
         X_two_cols = self.X[:, :2]
-        features = ["temperature", "relative_humidity"]
-        visualizer = ScatterViz(features=features, color=colors)
+        labels = ["temperature", "relative_humidity"]
+        visualizer = ScatterViz(labels=labels, color=colors)
         visualizer.fit_transform(X_two_cols, self.y)
 
-    def test_scatter_no_features(self):
+    def test_scatter_no_labels(self):
         """
-        Assert no errors during scatter visualizer integration - no features
+        Assert no errors during scatter visualizer integration - no labels
         """
         X_two_cols = self.X[:, :2]
         visualizer = ScatterViz()
         visualizer.fit_transform_poof(X_two_cols, self.y)
-        self.assertEquals(visualizer.features_, ['Feature One', 'Feature Two'])
+        self.assertEquals(visualizer.labels_, ['Feature One', 'Feature Two'])
 
-    def test_scatter_only_two_features_allowed_init(self):
+    def test_scatter_only_two_labels_allowed_init(self):
         """
-        Assert that only two features are allowed for scatter visualizer init
+        Assert that only two labels are allowed for scatter visualizer init
         """
-        features = ["temperature", "relative_humidity", "light"]
-
-        with self.assertRaises(YellowbrickValueError):
-            ScatterViz(features=features)
-
-    def test_scatter_xy_and_features_raise_error(self):
-        """
-        Assert that x,y and features will raise scatterviz error
-        """
-        features = ["temperature", "relative_humidity", "light"]
+        labels = ["temperature", "relative_humidity", "light"]
 
         with self.assertRaises(YellowbrickValueError):
-            ScatterViz(features=features, x='one', y='two')
+            ScatterViz(labels=labels)
 
-    def test_scatter_xy_changes_to_features(self):
+    def test_scatter_xy_and_labels_raise_error(self):
         """
-        Assert that x,y with no features will not raise scatterviz error
+        Assert that x,y and labels will raise scatterviz error
+        """
+        labels = ["temperature", "relative_humidity", "light"]
+
+        with self.assertRaises(YellowbrickValueError):
+            ScatterViz(labels=labels, x='one', y='two')
+
+    def test_scatter_xy_changes_to_labels(self):
+        """
+        Assert that x,y with no labels will not raise scatterviz error
         """
         visualizer = ScatterViz(x='one', y='two')
-        self.assertEquals(visualizer.features_, ['one', 'two'])
+        self.assertEquals(visualizer.labels_, ['one', 'two'])
 
-    def test_scatter_requires_two_features_in_numpy_matrix(self):
+    def test_scatter_requires_two_labels_in_numpy_matrix(self):
         """
-        Assert only two features allowed for scatter visualizer if not in init
+        Assert only two labels allowed for scatter visualizer if not in init
         """
         visualizer = ScatterViz()
         with self.assertRaises(YellowbrickValueError) as context:
             visualizer.fit_transform(self.X, self.y)
             self.assertTrue(
-                'only accepts two features' in str(context.exception))
+                'only accepts two labels' in str(context.exception))
 
     def test_integrated_scatter(self):
         """
@@ -155,8 +155,8 @@ class ScatterVizTests(VisualTestCase, DatasetMixin):
         y = self.occupancy['occupancy'].astype(int)
 
         # Test the visualizer
-        features = ["temperature", "relative_humidity"]
-        visualizer = ScatterViz(features=features)
+        labels = ["temperature", "relative_humidity"]
+        visualizer = ScatterViz(labels=labels)
         visualizer.fit_transform_poof(X[:, :2], y)
 
     def test_scatter_quick_method(self):
@@ -173,8 +173,8 @@ class ScatterVizTests(VisualTestCase, DatasetMixin):
         y = self.occupancy['occupancy'].astype(int)
 
         # Test the visualizer
-        features = ["temperature", "relative_humidity"]
-        ax = scatterviz(X[:, :2], y=y, ax=None, features=features)
+        labels = ["temperature", "relative_humidity"]
+        ax = scatterviz(X[:, :2], y=y, ax=None, labels=labels)
 
         # test that is returns a matplotlib obj with axes
         self.assertIsInstance(ax, mptl.axes.Axes)
@@ -198,8 +198,8 @@ class ScatterVizTests(VisualTestCase, DatasetMixin):
         ]
 
         # Test the visualizer
-        features = ["temperature", "relative_humidity"]
-        visualizer = ScatterViz(features=features)
+        labels = ["temperature", "relative_humidity"]
+        visualizer = ScatterViz(labels=labels)
         visualizer.fit_transform_poof(X, y)
 
     def test_integrated_scatter_numpy_named_arrays(self):
@@ -218,18 +218,18 @@ class ScatterVizTests(VisualTestCase, DatasetMixin):
         })
 
         X_named = self.X.astype(dt, casting='unsafe')
-        visualizer = ScatterViz(features=['one', 'two'])
+        visualizer = ScatterViz(labels=['one', 'two'])
         visualizer.fit_transform_poof(X_named, self.y)
-        self.assertEquals(visualizer.features_, ['one', 'two'])
+        self.assertEquals(visualizer.labels_, ['one', 'two'])
 
 
     def test_integrated_scatter_numpy_arrays_no_names(self):
         """
         Test scaterviz on regular numpy arrays
         """
-        visualizer = ScatterViz(features=[1, 2])
+        visualizer = ScatterViz(labels=[1, 2])
         visualizer.fit_transform_poof(self.X, self.y)
-        self.assertEquals(visualizer.features_, [1, 2])
+        self.assertEquals(visualizer.labels_, [1, 2])
 
     def test_scatter_image(self):
         """
@@ -238,8 +238,8 @@ class ScatterVizTests(VisualTestCase, DatasetMixin):
         # self.setUp_ImageTest()
 
         X_two_cols = self.X[:, :2]
-        features = ["temperature", "relative_humidity"]
-        visualizer = ScatterViz(features=features)
+        labels = ["temperature", "relative_humidity"]
+        visualizer = ScatterViz(labels=labels)
         visualizer.fit(X_two_cols, self.y)
         visualizer.draw(X_two_cols, self.y)
 
@@ -252,8 +252,8 @@ class ScatterVizTests(VisualTestCase, DatasetMixin):
         """
 
         X_two_cols = self.X[:, :2]
-        features = ["temperature", "relative_humidity"]
-        visualizer = ScatterViz(features=features)
+        labels = ["temperature", "relative_humidity"]
+        visualizer = ScatterViz(labels=labels)
         visualizer.fit(X_two_cols, self.y)
         visualizer.draw(X_two_cols, self.y)
 

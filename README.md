@@ -9,7 +9,6 @@
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.1206239.svg)](https://doi.org/10.5281/zenodo.1206239)
 [![Binder](https://mybinder.org/badge.svg)](https://mybinder.org/v2/gh/DistrictDataLabs/yellowbrick/develop?filepath=examples%2Fexamples.ipynb)
 
-
 **Visual analysis and diagnostic tools to facilitate machine learning model selection.**
 
 ![Follow the yellow brick road](docs/images/yellowbrickroad.jpg)

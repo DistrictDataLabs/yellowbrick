@@ -58,7 +58,7 @@ class FeatureVisualizer(Visualizer, TransformerMixin):
         """
         Fit to data, transform it, then visualize it.
 
-        Fits the visualizer to X and y with opetional parameters by passing in
+        Fits the visualizer to X and y with optional parameters by passing in
         all of kwargs, then calls poof with the same kwargs. This method must
         return the result of the transform method.
         """
@@ -71,7 +71,7 @@ class MultiFeatureVisualizer(FeatureVisualizer):
     """
     MultiFeatureVisualiers are a subclass of FeatureVisualizer that visualize
     several features at once. This class provides base functionality for
-    getting the names of features for use in plot annotation.
+    getting the names of features for use in plot annotation as labels.
 
     Parameters
     ----------
@@ -80,9 +80,9 @@ class MultiFeatureVisualizer(FeatureVisualizer):
         The axis to plot the figure on. If None is passed in the current axes
         will be used (or generated if required).
 
-    features: list, default: None
-        a list of feature names to use
-        If a DataFrame is passed to fit and features is None, feature
+    labels: list, default: None
+        A list of label names to use.
+        If a DataFrame is passed to fit and labels is None, label
         names are selected as the columns of the DataFrame.
 
     kwargs : dict
@@ -91,11 +91,11 @@ class MultiFeatureVisualizer(FeatureVisualizer):
 
     """
 
-    def __init__(self, ax=None, features=None, **kwargs):
+    def __init__(self, ax=None, labels=None, **kwargs):
         super(MultiFeatureVisualizer, self).__init__(ax=ax, **kwargs)
 
         # Data Parameters
-        self.features_ = features
+        self.labels_ = labels
 
     def fit(self, X, y=None, **fit_params):
         """
@@ -107,16 +107,16 @@ class MultiFeatureVisualizer(FeatureVisualizer):
         """
 
         # Handle the feature names if they're None.
-        if self.features_ is None:
+        if self.labels_ is None:
 
             # If X is a data frame, get the columns off it.
             if is_dataframe(X):
-                self.features_ = np.array(X.columns)
+                self.labels_ = np.array(X.columns)
 
             # Otherwise create numeric labels for each column.
             else:
                 _, ncols = X.shape
-                self.features_ = np.arange(0, ncols)
+                self.labels_ = np.arange(0, ncols)
 
         return self
 
@@ -146,9 +146,9 @@ class DataVisualizer(MultiFeatureVisualizer):
         The axis to plot the figure on. If None is passed in the current axes
         will be used (or generated if required).
 
-    features: list, default: None
-        a list of feature names to use
-        If a DataFrame is passed to fit and features is None, feature
+    labels: list, default: None
+        A list of label names to use.
+        If a DataFrame is passed to fit and labels is None, label
         names are selected as the columns of the DataFrame.
 
     classes: list, default: None
@@ -176,13 +176,13 @@ class DataVisualizer(MultiFeatureVisualizer):
         process, but can and should be set as early as possible.
     """
 
-    def __init__(self, ax=None, features=None, classes=None, color=None,
+    def __init__(self, ax=None, labels=None, classes=None, color=None,
                  colormap=None, **kwargs):
         """
         Initialize the data visualization with many of the options required
         in order to make most visualizations work.
         """
-        super(DataVisualizer, self).__init__(ax=ax, features=features, **kwargs)
+        super(DataVisualizer, self).__init__(ax=ax, labels=labels, **kwargs)
 
         # Data Parameters
         self.classes_  = classes

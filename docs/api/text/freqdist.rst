@@ -20,7 +20,7 @@ We first instantiate a ``FreqDistVisualizer`` object, and then call ``fit()`` on
     docs       = vectorizer.fit_transform(corpus.data)
     features   = vectorizer.get_feature_names()
 
-    visualizer = FreqDistVisualizer(features=features)
+    visualizer = FreqDistVisualizer(labels=features)
     visualizer.fit(docs)
     visualizer.poof()
 
@@ -34,7 +34,7 @@ It is interesting to compare the results of the ``FreqDistVisualizer`` before an
     docs       = vectorizer.fit_transform(corpus.data)
     features   = vectorizer.get_feature_names()
 
-    visualizer = FreqDistVisualizer(features=features)
+    visualizer = FreqDistVisualizer(labels=features)
     visualizer.fit(docs)
     visualizer.poof()
 
@@ -56,7 +56,7 @@ It is also interesting to explore the differences in tokens across a corpus. The
     docs       = vectorizer.fit_transform(text for text in hobbies['cooking'])
     features   = vectorizer.get_feature_names()
 
-    visualizer = FreqDistVisualizer(features=features)
+    visualizer = FreqDistVisualizer(labels=features)
     visualizer.fit(docs)
     visualizer.poof()
 
@@ -68,7 +68,7 @@ It is also interesting to explore the differences in tokens across a corpus. The
     docs       = vectorizer.fit_transform(text for text in hobbies['gaming'])
     features   = vectorizer.get_feature_names()
 
-    visualizer = FreqDistVisualizer(features=features)
+    visualizer = FreqDistVisualizer(labels=features)
     visualizer.fit(docs)
     visualizer.poof()
 

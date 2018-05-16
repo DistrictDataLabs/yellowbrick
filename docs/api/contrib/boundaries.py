@@ -21,12 +21,12 @@ X, y = data_set
 X = StandardScaler().fit_transform(X)
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=.4, random_state=42)
 
-viz = DecisionViz(KNeighborsClassifier(3), title="Nearest Neighbors", features=['Feature One', 'Feature Two'], classes=['A', 'B'])
+viz = DecisionViz(KNeighborsClassifier(3), title="Nearest Neighbors", labels=['Feature One', 'Feature Two'], classes=['A', 'B'])
 viz.fit(X_train, y_train)
 viz.draw(X_test, y_test)
 viz.poof(outpath="images/knn_decisionviz.png")
 
-viz = DecisionViz(SVC(kernel="linear", C=0.025), title="Linear SVM", features=['Feature One', 'Feature Two'], classes=['A', 'B'])
+viz = DecisionViz(SVC(kernel="linear", C=0.025), title="Linear SVM", labels=['Feature One', 'Feature Two'], classes=['A', 'B'])
 viz.fit(X_train, y_train)
 viz.draw(X_test, y_test)
 viz.poof(outpath="images/svc_decisionviz.png")

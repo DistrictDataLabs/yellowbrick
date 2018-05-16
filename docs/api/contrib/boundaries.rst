@@ -30,7 +30,7 @@ The DecisionBoundariesVisualizer is a bivariate data visualization algorithm tha
     from sklearn.neighbors import KNeighborsClassifier
     from yellowbrick.contrib.classifier import DecisionViz
 
-    viz = DecisionViz(KNeighborsClassifier(3), title="Nearest Neighbors", features=['Feature One', 'Feature Two'], classes=['A', 'B'])
+    viz = DecisionViz(KNeighborsClassifier(3), title="Nearest Neighbors", labels=['Feature One', 'Feature Two'], classes=['A', 'B'])
     viz.fit(X_train, y_train)
     viz.draw(X_test, y_test)
     viz.poof(outpath="images/knn_decisionviz.png")

@@ -63,12 +63,12 @@ class TestFeatureImportancesVisualizer(VisualTestCase, DatasetMixin):
         """
 
         occupancy = self.load_data('occupancy')
-        features = [
+        labels = [
             "temperature", "relative_humidity", "light", "C02", "humidity"
         ]
 
         # Extract X and y as numpy arrays
-        X = occupancy[features].copy()
+        X = occupancy[labels].copy()
         X = X.view((float, len(X.dtype.names)))
         y = occupancy['occupancy'].astype(int)
 
@@ -118,12 +118,12 @@ class TestFeatureImportancesVisualizer(VisualTestCase, DatasetMixin):
         """
 
         occupancy = self.load_data('occupancy')
-        features = [
+        labels = [
             "temperature", "relative_humidity", "light", "C02", "humidity"
         ]
 
         # Create X and y datasets as numpy arrays
-        X = occupancy[features].copy()
+        X = occupancy[labels].copy()
         X = X.view((float, len(X.dtype.names)))
         y = occupancy['occupancy'].astype(int)
 
@@ -150,7 +150,7 @@ class TestFeatureImportancesVisualizer(VisualTestCase, DatasetMixin):
 
     def test_fit_sorted_params(self):
         """
-        On fit, sorted features_ and feature_importances_ params are created
+        On fit, sorted labels_ and feature_importances_ params are created
         """
         coefs = np.array([0.4, 0.2, 0.08, 0.07, 0.16, .23, 0.38, 0.1, 0.05])
         names = np.array(['a', 'b',  'c',  'd',  'e', 'f',  'g', 'h',  'i'])
@@ -161,14 +161,14 @@ class TestFeatureImportancesVisualizer(VisualTestCase, DatasetMixin):
         visualizer = FeatureImportances(model, labels=names)
         visualizer.fit(np.random.rand(100, len(names)), np.random.rand(100))
 
-        assert hasattr(visualizer, 'features_')
+        assert hasattr(visualizer, 'labels_')
         assert hasattr(visualizer, 'feature_importances_')
 
         # get the expected sort index
         sort_idx = np.argsort(coefs)
 
         # assert sorted
-        npt.assert_array_equal(names[sort_idx], visualizer.features_)
+        npt.assert_array_equal(names[sort_idx], visualizer.labels_)
         npt.assert_array_equal(coefs[sort_idx], visualizer.feature_importances_)
 
     def test_fit_relative(self):
@@ -243,8 +243,8 @@ class TestFeatureImportancesVisualizer(VisualTestCase, DatasetMixin):
         visualizer = FeatureImportances(model)
         visualizer.fit(df, s)
 
-        assert hasattr(visualizer, 'features_')
-        npt.assert_array_equal(visualizer.features_, np.array(df.columns))
+        assert hasattr(visualizer, 'labels_')
+        npt.assert_array_equal(visualizer.labels_, np.array(df.columns))
 
     def test_fit_makes_labels(self):
         """
@@ -257,8 +257,8 @@ class TestFeatureImportancesVisualizer(VisualTestCase, DatasetMixin):
         visualizer.fit(np.random.rand(100, 10), np.random.rand(100))
 
         # Don't have to worry about label space since importances are linspace
-        assert hasattr(visualizer, 'features_')
-        npt.assert_array_equal(np.arange(10), visualizer.features_)
+        assert hasattr(visualizer, 'labels_')
+        npt.assert_array_equal(np.arange(10), visualizer.labels_)
 
     def test_fit_calls_draw(self):
         """
@@ -373,13 +373,13 @@ class TestFeatureImportancesVisualizer(VisualTestCase, DatasetMixin):
         visualizer = FeatureImportances(Lasso())
         assert not visualizer._is_fitted()
 
-        visualizer.features_ = "foo"
+        visualizer.labels_ = "foo"
         assert not visualizer._is_fitted()
 
         visualizer.feature_importances_ = "bar"
         assert visualizer._is_fitted()
 
-        del visualizer.features_
+        del visualizer.labels_
         assert not visualizer._is_fitted()
 
 

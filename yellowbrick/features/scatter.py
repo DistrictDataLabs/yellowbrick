@@ -34,7 +34,7 @@ from yellowbrick.style.colors import resolve_colors
 def scatterviz(X,
                y=None,
                ax=None,
-               features=None,
+               labels=None,
                classes=None,
                color=None,
                colormap=None,
@@ -57,8 +57,8 @@ def scatterviz(X,
     ax : matplotlib axes, default: None
         The axes to plot the figure on.
 
-    features : list of strings, default: None
-        The names of two features or columns.
+    labels : list of strings, default: None
+        The names of two labels or columns.
         More than that will raise an error.
 
     classes : list of strings, default: None
@@ -79,7 +79,7 @@ def scatterviz(X,
         Returns the axes that the parallel coordinates were drawn on.
     """
     # Instantiate the visualizer
-    visualizer = ScatterVisualizer(ax, features, classes, color, colormap,
+    visualizer = ScatterVisualizer(ax, labels, classes, color, colormap,
                                    markers, **kwargs)
 
     # Fit and transform the visualizer (calls draw)
@@ -113,11 +113,11 @@ class ScatterVisualizer(DataVisualizer):
             The feature name that corresponds to a column name or index postion
             in the matrix that will be plotted against the y-axis
 
-        features : a list of two feature names to use, default: None
-            List of two features that correspond to the columns in the array.
-            The order of the two features correspond to X and Y axes on the
-            graph. More than two feature names or columns will raise an error.
-            If a DataFrame is passed to fit and features is None, feature names
+        labels : a list of two label names to use, default: None
+            List of two labels that correspond to the columns in the array.
+            The order of the two labels correspond to X and Y axes on the
+            graph. More than two label names or columns will raise an error.
+            If a DataFrame is passed to fit and labels is None, label names
             are selected that are the columns of the DataFrame.
 
         classes : a list of class names for the legend, default: None
@@ -145,7 +145,7 @@ class ScatterVisualizer(DataVisualizer):
                  ax=None,
                  x=None,
                  y=None,
-                 features=None,
+                 labels=None,
                  classes=None,
                  color=None,
                  colormap=None,
@@ -155,7 +155,7 @@ class ScatterVisualizer(DataVisualizer):
         Initialize the base scatter with many of the options required in order
         to make the visualization work.
         """
-        super(ScatterVisualizer, self).__init__(ax, features, classes, color,
+        super(ScatterVisualizer, self).__init__(ax, labels, classes, color,
                                                 colormap, **kwargs)
 
         self.x = x
@@ -166,18 +166,18 @@ class ScatterVisualizer(DataVisualizer):
         self.color = color
         self.colormap = colormap
 
-        if self.x is not None and self.y is not None and self.features_ is not None:
+        if self.x is not None and self.y is not None and self.labels_ is not None:
             raise YellowbrickValueError(
-                'Please specify x,y or features, not both.')
+                'Please specify x,y or labels, not both.')
 
-        if self.x is not None and self.y is not None and self.features_ is None:
-            self.features_ = [self.x, self.y]
+        if self.x is not None and self.y is not None and self.labels_ is None:
+            self.labels_ = [self.x, self.y]
 
-        # Ensure with init that features doesn't have more than two features
-        if features is not None:
-            if len(features) != 2:
+        # Ensure with init that labels doesn't have more than two labels
+        if labels is not None:
+            if len(labels) != 2:
                 raise YellowbrickValueError(
-                    'ScatterVisualizer only accepts two features.')
+                    'ScatterVisualizer only accepts two labels.')
 
     def fit(self, X, y=None, **kwargs):
         """
@@ -205,27 +205,27 @@ class ScatterVisualizer(DataVisualizer):
 
         if ncols == 2:
             X_two_cols = X
-            if self.features_ is None:
-                self.features_ = ["Feature One", "Feature Two"]
+            if self.labels_ is None:
+                self.labels_ = ["Feature One", "Feature Two"]
 
-        # Handle the feature names if they're None.
-        elif self.features_ is not None and is_dataframe(X):
-            X_two_cols = X[self.features_].as_matrix()
+        # Handle the label names if they're None.
+        elif self.labels_ is not None and is_dataframe(X):
+            X_two_cols = X[self.labels_].as_matrix()
 
         # handle numpy named/ structured array
-        elif self.features_ is not None and is_structured_array(X):
-            X_selected = X[self.features_]
+        elif self.labels_ is not None and is_structured_array(X):
+            X_selected = X[self.labels_]
             X_two_cols = X_selected.copy().view((np.float64, len(X_selected.dtype.names)))
 
-        # handle features that are numeric columns in ndarray matrix
-        elif self.features_ is not None and has_ndarray_int_columns(self.features_, X):
-            f_one, f_two = self.features_
+        # handle labels that are numeric columns in ndarray matrix
+        elif self.labels_ is not None and has_ndarray_int_columns(self.labels_, X):
+            f_one, f_two = self.labels_
             X_two_cols = X[:, [int(f_one), int(f_two)]]
 
         else:
             raise YellowbrickValueError("""
-                ScatterVisualizer only accepts two features, please
-                explicitly set these two features in the init kwargs or
+                ScatterVisualizer only accepts two labels, please
+                explicitly set these two labels in the init kwargs or
                 pass a matrix/ dataframe in with only two columns.""")
 
         # Store the classes for the legend if they're None.
@@ -296,8 +296,8 @@ class ScatterVisualizer(DataVisualizer):
         kwargs: generic keyword arguments.
 
         """
-        # Divide out the two features
-        feature_one, feature_two = self.features_
+        # Divide out the two labels
+        feature_one, feature_two = self.labels_
 
         # Set the title
         self.set_title('Scatter Plot: {0} vs {1}'.format(

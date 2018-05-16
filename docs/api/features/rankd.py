@@ -46,10 +46,10 @@ if __name__ == '__main__':
     y = data.default.as_matrix()
 
     # Instantiate the visualizer with the Shapiro-Wilk ranking algorithm
-    rank1d(X, y, "images/rank1d_shapiro.png", features=features, algorithm='shapiro')
+    rank1d(X, y, "images/rank1d_shapiro.png", labels=features, algorithm='shapiro')
 
     # Instantiate the visualizer with the Covariance ranking algorithm
-    rank2d(X, y, "images/rank2d_covariance.png", features=features, algorithm='covariance')
+    rank2d(X, y, "images/rank2d_covariance.png", labels=features, algorithm='covariance')
 
     # Instantiate the visualizer with the Pearson ranking algorithm
-    rank2d(X, y, "images/rank2d_pearson.png", features=features, algorithm='pearson')
+    rank2d(X, y, "images/rank2d_pearson.png", labels=features, algorithm='pearson')

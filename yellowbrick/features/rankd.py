@@ -33,7 +33,7 @@ __all__ = ["rank1d", "rank2d", "Rank1D", "Rank2D"]
 ## Quick Methods
 ##########################################################################
 
-def rank1d(X, y=None, ax=None, algorithm='shapiro', features=None,
+def rank1d(X, y=None, ax=None, algorithm='shapiro', labels=None,
            orient='h', show_feature_names=True, **kwargs):
     """Scores each feature with the algorithm and ranks them in a bar plot.
 
@@ -54,9 +54,9 @@ def rank1d(X, y=None, ax=None, algorithm='shapiro', features=None,
     algorithm : one of {'shapiro', }, default: 'shapiro'
         The ranking algorithm to use, default is 'Shapiro-Wilk.
 
-    features : list
-        A list of feature names to use.
-        If a DataFrame is passed to fit and features is None, feature
+    labels : list
+        A list of label names to use.
+        If a DataFrame is passed to fit and labels is None, label
         names are selected as the columns of the DataFrame.
 
     orient : 'h' or 'v'
@@ -73,7 +73,7 @@ def rank1d(X, y=None, ax=None, algorithm='shapiro', features=None,
 
     """
     # Instantiate the visualizer
-    visualizer = Rank1D(ax, algorithm, features, orient, show_feature_names,
+    visualizer = Rank1D(ax, algorithm, labels, orient, show_feature_names,
                         **kwargs)
 
     # Fit and transform the visualizer (calls draw)
@@ -83,7 +83,7 @@ def rank1d(X, y=None, ax=None, algorithm='shapiro', features=None,
     # Return the axes object on the visualizer
     return visualizer.ax
 
-def rank2d(X, y=None, ax=None, algorithm='pearson', features=None,
+def rank2d(X, y=None, ax=None, algorithm='pearson', labels=None,
            show_feature_names=True, colormap='RdBu_r', **kwargs):
     """Displays pairwise comparisons of features with the algorithm and ranks
     them in a lower-left triangle heatmap plot.
@@ -105,9 +105,9 @@ def rank2d(X, y=None, ax=None, algorithm='pearson', features=None,
     algorithm : one of {pearson, covariance, spearman}
         the ranking algorithm to use, default is Pearson correlation.
 
-    features : list
-        A list of feature names to use.
-        If a DataFrame is passed to fit and features is None, feature
+    labels : list
+        A list of label names to use.
+        If a DataFrame is passed to fit and labels is None, label
         names are selected as the columns of the DataFrame.
 
     show_feature_names : boolean, default: True
@@ -126,7 +126,7 @@ def rank2d(X, y=None, ax=None, algorithm='pearson', features=None,
 
     """
     # Instantiate the visualizer
-    visualizer = Rank2D(ax, algorithm, features, colormap, show_feature_names,
+    visualizer = Rank2D(ax, algorithm, labels, colormap, show_feature_names,
                         **kwargs)
 
     # Fit and transform the visualizer (calls draw)
@@ -154,9 +154,9 @@ class RankDBase(MultiFeatureVisualizer):
     algorithm : string
         The ranking algorithm to use; options and defaults vary by subclass
 
-    features : list
-        A list of feature names to use.
-        If a DataFrame is passed to fit and features is None, feature
+    labels : list
+        A list of label names to use.
+        If a DataFrame is passed to fit and labels is None, label
         names are selected as the columns of the DataFrame.
 
     show_feature_names : boolean, default: True
@@ -190,13 +190,13 @@ class RankDBase(MultiFeatureVisualizer):
 
     ranking_methods = {}
 
-    def __init__(self, ax=None, algorithm=None, features=None,
+    def __init__(self, ax=None, algorithm=None, labels=None,
                  show_feature_names=True, **kwargs):
         """
         Initialize the class with the options required to rank and
         order features as well as visualize the result.
         """
-        super(RankDBase, self).__init__(ax=ax, features=features, **kwargs)
+        super(RankDBase, self).__init__(ax=ax, labels=labels, **kwargs)
 
         # Data Parameters
         self.ranking_ = algorithm
@@ -277,7 +277,7 @@ class RankDBase(MultiFeatureVisualizer):
         # Set the title
         self.set_title(
             "{} Ranking of {} Features".format(
-                self.ranking_.title(), len(self.features_)
+                self.ranking_.title(), len(self.labels_)
             )
         )
 
@@ -301,9 +301,9 @@ class Rank1D(RankDBase):
     algorithm : one of {'shapiro', }, default: 'shapiro'
         The ranking algorithm to use, default is 'Shapiro-Wilk.
 
-    features : list
-        A list of feature names to use.
-        If a DataFrame is passed to fit and features is None, feature
+    labels : list
+        A list of label names to use.
+        If a DataFrame is passed to fit and labels is None, label
         names are selected as the columns of the DataFrame.
 
     orient : 'h' or 'v'
@@ -335,14 +335,14 @@ class Rank1D(RankDBase):
         'shapiro': lambda X: np.array([shapiro(x)[0] for x in X.T]),
     }
 
-    def __init__(self, ax=None, algorithm='shapiro', features=None,
+    def __init__(self, ax=None, algorithm='shapiro', labels=None,
                  orient='h', show_feature_names=True, **kwargs):
         """
         Initialize the class with the options required to rank and
         order features as well as visualize the result.
         """
         super(Rank1D, self).__init__(
-            ax=ax, algorithm=algorithm, features=features,
+            ax=ax, algorithm=algorithm, labels=labels,
             show_feature_names=show_feature_names, **kwargs
         )
         self.orientation_ = orient
@@ -358,7 +358,7 @@ class Rank1D(RankDBase):
             # Add ticks and tick labels
             self.ax.set_yticks(np.arange(len(self.ranks_)))
             if self.show_feature_names_:
-                self.ax.set_yticklabels(self.features_)
+                self.ax.set_yticklabels(self.labels_)
             else:
                 self.ax.set_yticklabels([])
 
@@ -375,7 +375,7 @@ class Rank1D(RankDBase):
             # Add ticks and tick labels
             self.ax.set_xticks(np.arange(len(self.ranks_)))
             if self.show_feature_names_:
-                self.ax.set_xticklabels(self.features_, rotation=90)
+                self.ax.set_xticklabels(self.labels_, rotation=90)
             else:
                 self.ax.set_xticklabels([])
 
@@ -407,9 +407,9 @@ class Rank2D(RankDBase):
     algorithm : one of {'pearson', 'covariance', 'spearman'}, default: 'pearson'
         The ranking algorithm to use, default is Pearson correlation.
 
-    features : list
-        A list of feature names to use.
-        If a DataFrame is passed to fit and features is None, feature
+    labels : list
+        A list of label names to use.
+        If a DataFrame is passed to fit and labels is None, label
         names are selected as the columns of the DataFrame.
 
     colormap : string or cmap, default: 'RdBu_r'
@@ -451,14 +451,14 @@ class Rank2D(RankDBase):
         'spearman': lambda X: spearmanr(X)[0],
     }
 
-    def __init__(self, ax=None, algorithm='pearson', features=None,
+    def __init__(self, ax=None, algorithm='pearson', labels=None,
                  colormap='RdBu_r', show_feature_names=True, **kwargs):
         """
         Initialize the class with the options required to rank and
-        order features as well as visualize the result.
+        order labels as well as visualize the result.
         """
         super(Rank2D, self).__init__(
-            ax=ax, algorithm=algorithm, features=features,
+            ax=ax, algorithm=algorithm, labels=labels,
             show_feature_names=show_feature_names, **kwargs
         )
         self.colormap=colormap
@@ -495,8 +495,8 @@ class Rank2D(RankDBase):
         self.ax.set_xticks(np.arange(len(self.ranks_)) + 0.5)
         self.ax.set_yticks(np.arange(len(self.ranks_)) + 0.5)
         if self.show_feature_names_:
-            self.ax.set_xticklabels(self.features_, rotation=90)
-            self.ax.set_yticklabels(self.features_)
+            self.ax.set_xticklabels(self.labels_, rotation=90)
+            self.ax.set_yticklabels(self.labels_)
         else:
             self.ax.set_xticklabels([])
             self.ax.set_yticklabels([])

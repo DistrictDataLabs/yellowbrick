@@ -49,8 +49,8 @@ class FeatureImportances(ModelVisualizer):
         will be used (or generated if required).
 
     labels : list, default: None
-        A list of feature names to use. If a DataFrame is passed to fit and
-        features is None, feature names are selected as the column names.
+        A list of label names to use. If a DataFrame is passed to fit and
+         is None, label names are selected as the column names.
 
     relative : bool, default: True
         If true, the features are described by their relative importance as a
@@ -71,7 +71,7 @@ class FeatureImportances(ModelVisualizer):
 
     Attributes
     ----------
-    features_ : np.array
+    labels_ : np.array
         The feature labels ranked according to their importance
 
     feature_importances_ : np.array
@@ -137,18 +137,18 @@ class FeatureImportances(ModelVisualizer):
         if self.labels is None:
             # Use column names if a dataframe
             if is_dataframe(X):
-                self.features_ = np.array(X.columns)
+                self.labels_ = np.array(X.columns)
 
             # Otherwise use the column index as the labels
             else:
                 _, ncols = X.shape
-                self.features_ = np.arange(0, ncols)
+                self.labels_ = np.arange(0, ncols)
         else:
-            self.features_ = np.array(self.labels)
+            self.labels_ = np.array(self.labels)
 
         # Sort the features and their importances
         sort_idx = np.argsort(self.feature_importances_)
-        self.features_ = self.features_[sort_idx]
+        self.labels_ = self.labels_[sort_idx]
         self.feature_importances_ = self.feature_importances_[sort_idx]
 
         # Draw the feature importances
@@ -160,19 +160,19 @@ class FeatureImportances(ModelVisualizer):
         Draws the feature importances as a bar chart; called from fit.
         """
         # Quick validation
-        for param in ('feature_importances_', 'features_'):
+        for param in ('feature_importances_', 'labels_'):
             if not hasattr(self, param):
                 raise NotFitted("missing required param '{}'".format(param))
 
         # Find the positions for each bar
-        pos = np.arange(self.features_.shape[0]) + 0.5
+        pos = np.arange(self.labels_.shape[0]) + 0.5
 
         # Plot the bar chart
         self.ax.barh(pos, self.feature_importances_, align='center')
 
         # Set the labels for the bars
         self.ax.set_yticks(pos)
-        self.ax.set_yticklabels(self.features_)
+        self.ax.set_yticklabels(self.labels_)
 
         return self.ax
 
@@ -182,7 +182,7 @@ class FeatureImportances(ModelVisualizer):
         """
         # Set the title
         self.set_title('Feature Importances of {} Features using {}'.format(
-                len(self.features_), self.name))
+                len(self.labels_), self.name))
 
         # Set the xlabel
         self.ax.set_xlabel(self._get_xlabel())
@@ -232,7 +232,7 @@ class FeatureImportances(ModelVisualizer):
         """
         Returns true if the visualizer has been fit.
         """
-        return hasattr(self, 'feature_importances_') and hasattr(self, 'features_')
+        return hasattr(self, 'feature_importances_') and hasattr(self, 'labels_')
 
 
 ##########################################################################
@@ -264,8 +264,8 @@ def feature_importances(model, X, y=None, ax=None, labels=None,
         will be used (or generated if required).
 
     labels : list, default: None
-        A list of feature names to use. If a DataFrame is passed to fit and
-        features is None, feature names are selected as the column names.
+        A list of label names to use. If a DataFrame is passed to fit and
+        labels is None, label names are selected as the column names.
 
     relative : bool, default: True
         If true, the features are described by their relative importance as a
