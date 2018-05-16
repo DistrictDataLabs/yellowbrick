@@ -18,8 +18,6 @@ Base classes and mixins for feature visualizers and feature selection tools.
 ## Imports
 ##########################################################################
 
-from builtins import str
-
 import numpy as np
 import matplotlib.pyplot as plt
 
@@ -235,15 +233,16 @@ class DataVisualizer(MultiFeatureVisualizer):
 
 class SingleFeatureVisualizerMixin(object):
     '''
-    Mixin to add functionality for single feature visualizations.
-    To use this mixin, simply create a new class with this mixin and
-    the visualizer you want to work with, like so:
+    Mixin to add functionality for single feature visualizations. To use
+    this mixin, simply create a new class that inherits both the
+    visualizer you want to work with and the single feature mixin,
+    like so:
 
     class SomeVizWithSFV(SingleFeatureVisualizerMixin, SomeViz):
         pass
 
     Continue with your workflow as usual, replacing SomeViz with
-    SomeVizWithSFV in your code.  Then if you want a vizualize a
+    SomeVizWithSFV in your code.  Then if you want a visualize a
     feature along with whatever SomeViz produces, call poof with
     plotsingle set to one of 'box', 'hist', or 'violin' and
     optionally set feature to the appropriate 0index of the feature you
