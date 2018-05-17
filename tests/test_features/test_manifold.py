@@ -118,9 +118,8 @@ class TestManifold(VisualTestCase):
 
         oz = Manifold(manifold="spectral", target="discrete", random_state=108)
         oz.fit(X, y)
-        oz.poof()
 
-        self.assert_images_similar(oz)
+        self.assert_images_similar(oz, tol=0.5)
 
     def test_manifold_regression(self):
         """
@@ -132,9 +131,8 @@ class TestManifold(VisualTestCase):
 
         oz = Manifold(manifold="lle", target="continuous", random_state=1)
         oz.fit(X, y)
-        oz.poof()
 
-        self.assert_images_similar(oz)
+        self.assert_images_similar(oz, tol=0.5)
 
     def test_manifold_single(self):
         """
@@ -146,9 +144,8 @@ class TestManifold(VisualTestCase):
 
         oz = Manifold(manifold="modified", random_state=139973)
         oz.fit(X)
-        oz.poof()
 
-        self.assert_images_similar(oz)
+        self.assert_images_similar(oz, tol=5.0)
 
     @pytest.mark.skipif(pd is None, reason="requires pandas")
     def test_manifold_pandas(self):
@@ -164,7 +161,6 @@ class TestManifold(VisualTestCase):
             manifold='ltsa', colors='nipy_spectral',
             target='continuous', random_state=223
         ).fit(X, y)
-        oz.poof()
 
         self.assert_images_similar(oz)
 
