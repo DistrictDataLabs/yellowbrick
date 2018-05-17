@@ -83,14 +83,14 @@ class Manifold(FeatureVisualizer):
         ============== ==========================
         Manifold       Description
         -------------- --------------------------
-        ``"lle"``      `Locally Linear Embedding <http://scikit-learn.org/stable/modules/manifold.html#locally-linear-embedding>`_
-        ``"ltsa"``     `LTSA LLE <http://scikit-learn.org/stable/modules/manifold.html#local-tangent-space-alignment>`_
-        ``"hessian"``  `Hessian LLE <http://scikit-learn.org/stable/modules/manifold.html#hessian-eigenmapping>`_
-        ``"modified"`` `Modified LLE <http://scikit-learn.org/stable/modules/manifold.html#modified-locally-linear-embedding>`_
-        ``"isomap"``   `Isomap <http://scikit-learn.org/stable/modules/manifold.html#isomap>`_
-        ``"mds"``      `Multi-Dimensional Scaling <http://scikit-learn.org/stable/modules/manifold.html#multi-dimensional-scaling-mds>`_
-        ``"spectral"`` `Spectral Embedding <http://scikit-learn.org/stable/modules/manifold.html#spectral-embedding>`_
-        ``"tsne"``     `t-SNE <http://scikit-learn.org/stable/modules/manifold.html#t-distributed-stochastic-neighbor-embedding-t-sne>`_
+        ``"lle"``      `Locally Linear Embedding`_
+        ``"ltsa"``     `LTSA LLE`_
+        ``"hessian"``  `Hessian LLE`_
+        ``"modified"`` `Modified LLE`_
+        ``"isomap"``   `Isomap`_
+        ``"mds"``      `Multi-Dimensional Scaling`_
+        ``"spectral"`` `Spectral Embedding`_
+        ``"tsne"``     `t-SNE`_
         ============== ==========================
 
     Each of these algorithms embeds non-linear relationships in different ways,
@@ -185,6 +185,15 @@ class Manifold(FeatureVisualizer):
 
     .. seealso::
         The Scikit-Learn discussion on `Manifold Learning <http://scikit-learn.org/stable/modules/manifold.html>`_.
+
+    .. _`Locally Linear Embedding`: http://scikit-learn.org/stable/modules/manifold.html#locally-linear-embedding
+    .. _`LTSA LLE`: http://scikit-learn.org/stable/modules/manifold.html#local-tangent-space-alignment
+    .. _`Hessian LLE`: http://scikit-learn.org/stable/modules/manifold.html#hessian-eigenmapping>
+    .. _`Modified LLE`: http://scikit-learn.org/stable/modules/manifold.html#modified-locally-linear-embedding
+    .. _`Isomap`: http://scikit-learn.org/stable/modules/manifold.html#isomap
+    .. _`Multi-Dimensional Scaling`: http://scikit-learn.org/stable/modules/manifold.html#multi-dimensional-scaling-mds
+    .. _`Spectral Embedding`: http://scikit-learn.org/stable/modules/manifold.html#spectral-embedding
+    .. _`t-SNE`: http://scikit-learn.org/stable/modules/manifold.html#t-distributed-stochastic-neighbor-embedding-t-sne
     """
 
     ALGORITHMS = MANIFOLD_ALGORITHMS

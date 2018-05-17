@@ -21,8 +21,10 @@ import pandas as pd
 import matplotlib.pyplot as plt
 
 from sklearn import datasets
+from sklearn.pipeline import Pipeline
+from sklearn.feature_selection import SelectKBest
+from sklearn.feature_selection import f_classif#, mutual_info_classif
 from yellowbrick.features.manifold import Manifold, MANIFOLD_ALGORITHMS
-
 
 SKIP = (
     'ltsa', # produces no result
@@ -44,7 +46,7 @@ def load_occupancy_data():
     features = ["temperature", "relative humidity", "light", "C02", "humidity"]
 
     X = data[features]
-    y = data.occupancy
+    y = pd.Series(['occupied' if y == 1 else 'unoccupied' for y in data.occupancy])
 
     return X, y
 
@@ -98,6 +100,18 @@ def dataset_example(dataset="occupancy", manifold="all", path="images/"):
     oz.fit(X, y)
     oz.poof(outpath=path)
 
+
+def select_features_example(algorithm='isomap', path="images/occupancy_select_k_best_isomap_manifold.png"):
+    _, ax = plt.subplots(figsize=(9,6))
+
+    model = Pipeline([
+        ("selectk", SelectKBest(k=3, score_func=f_classif)),
+        ("viz", Manifold(ax=ax, manifold=algorithm)),
+    ])
+
+    X, y = load_occupancy_data()
+    model.fit(X, y)
+    model.named_steps['viz'].poof(outpath=path)
 
 
 class SCurveExample(object):
@@ -155,5 +169,7 @@ if __name__ == '__main__':
     # curve = SCurveExample()
     # curve.plot_all_manifolds()
 
-    dataset_example('occupancy', 'all')
-    dataset_example('concrete', 'all')
+    dataset_example('occupancy', 'tsne', path="images/occupancy_tsne_manifold.png")
+    # dataset_example('concrete', 'all')
+
+    # select_features_example()
