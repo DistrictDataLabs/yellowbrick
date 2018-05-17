@@ -24,6 +24,7 @@ from sklearn.pipeline import Pipeline
 from sklearn.decomposition import PCA
 from sklearn.manifold import LocallyLinearEmbedding
 from sklearn.datasets.samples_generator import make_s_curve
+from sklearn.datasets import make_classification, make_regression, make_blobs
 
 from tests.base import VisualTestCase
 
@@ -31,6 +32,11 @@ try:
     from unittest.mock import patch
 except ImportError:
     from mock import patch
+
+try:
+    import pandas as pd
+except ImportError:
+    pd = None
 
 
 ##########################################################################
@@ -100,11 +106,72 @@ class TestManifold(VisualTestCase):
         assert hasattr(manifold, 'fit_time_')
         assert manifold._target_color_type == CONTINUOUS
 
-
-    @pytest.mark.skip(reason="requires parametrize")
-    def test_manifold_image_similarity(self):
+    @pytest.mark.filterwarnings("ignore:Conversion of the second argument")
+    def test_manifold_classification(self):
         """
-        Perform image similarity test on default manifold dataset
+        Image similarity test for classification dataset (discrete y)
+        """
+        X, y = make_classification(
+            n_samples=300, n_features=7, n_informative=4, n_redundant=2,
+            n_classes=4, n_clusters_per_class=2, random_state=78
+        )
+
+        oz = Manifold(manifold="spectral", target="discrete", random_state=108)
+        oz.fit(X, y)
+        oz.poof()
+
+        self.assert_images_similar(oz)
+
+    def test_manifold_regression(self):
+        """
+        Image similarity test for regression dataset (continuous y)
+        """
+        X, y = make_regression(
+            n_samples=300, n_features=7, n_informative=4, random_state=87
+        )
+
+        oz = Manifold(manifold="lle", target="continuous", random_state=1)
+        oz.fit(X, y)
+        oz.poof()
+
+        self.assert_images_similar(oz)
+
+    def test_manifold_single(self):
+        """
+        Image similarity test for simple dataset (no y)
+        """
+        X, _ = make_blobs(
+            n_samples=300, n_features=7, centers=3, random_state=1112,
+        )
+
+        oz = Manifold(manifold="modified", random_state=139973)
+        oz.fit(X)
+        oz.poof()
+
+        self.assert_images_similar(oz)
+
+    @pytest.mark.skipif(pd is None, reason="requires pandas")
+    def test_manifold_pandas(self):
+        """
+        Test manifold on a dataset made up of a pandas DataFrame and Series
+        """
+        X, y = make_s_curve(200, random_state=888)
+
+        X = pd.DataFrame(X)
+        y = pd.Series(y)
+
+        oz = Manifold(
+            manifold='ltsa', colors='nipy_spectral',
+            target='continuous', random_state=223
+        ).fit(X, y)
+        oz.poof()
+
+        self.assert_images_similar(oz)
+
+    @pytest.mark.filterwarnings("ignore:Conversion of the second argument")
+    def test_manifold_algorithm_fit(self):
+        """
+        Test that all algorithms can be fitted correctly
         """
         # TODO: parametrize this once unittest.TestCase dependency removed.
         algorithms = [
@@ -112,12 +179,11 @@ class TestManifold(VisualTestCase):
             "isomap", "mds", "spectral", "tsne",
         ]
 
-        X, y = make_s_curve(1000, random_state=888)
+        X, y = make_s_curve(200, random_state=888)
 
         for algorithm in algorithms:
             oz = Manifold(manifold=algorithm, random_state=223)
             oz.fit(X, y)
-            self.assert_images_similar(oz, tol=1.0)
 
     def test_determine_target_color_type(self):
         """

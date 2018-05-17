@@ -40,7 +40,7 @@ is called which displays the image.
     from yellowbrick.features.pcoords import ParallelCoordinates
     from yellowbrick.features.jointplot import JointPlotVisualizer
     from yellowbrick.features.pca import PCADecomposition
-    from yellowbrick.features.manifold import Manifold2D
+    from yellowbrick.features.manifold import Manifold
     from yellowbrick.features.importances import FeatureImportances
     from yellowbrick.features.rfecv import RFECV
     from yellowbrick.features.scatter import ScatterVisualizer
