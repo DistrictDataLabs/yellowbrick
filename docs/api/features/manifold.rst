@@ -6,7 +6,7 @@ Manifold Visualization
 - classification manifold
 - select k best features
 - regression manifold
-- warnings about time and memory consumption 
+- warnings about time and memory consumption
 
 
 .. code:: python
@@ -43,6 +43,6 @@ API Reference
 -------------
 
 .. automodule:: yellowbrick.features.manifold
-    :members: Manifold2D
+    :members: Manifold
     :undoc-members:
     :show-inheritance:
