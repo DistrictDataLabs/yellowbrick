@@ -24,41 +24,60 @@ from sklearn import datasets
 from yellowbrick.features.manifold import Manifold, MANIFOLD_ALGORITHMS
 
 
+SKIP = (
+    'ltsa', # produces no result
+    'hessian', # errors because of matrix
+    'mds', # uses way too much memory
+)
+
 FIXTURES = os.path.normpath(os.path.join(
     os.path.dirname(__file__),
     "..", "..", "..", "examples", "data"
 ))
 
 
-def load_credit_data():
+def load_occupancy_data():
     # Load the classification data set
-    data = pd.read_csv(os.path.join(FIXTURES, 'credit', 'credit.csv'))
+    data = pd.read_csv(os.path.join(FIXTURES, 'occupancy', 'occupancy.csv'))
 
-    # Specify the features of interest
-    features = [
-        'limit', 'sex', 'edu', 'married', 'age', 'apr_delay', 'may_delay',
-        'jun_delay', 'jul_delay', 'aug_delay', 'sep_delay', 'apr_bill', 'may_bill',
-        'jun_bill', 'jul_bill', 'aug_bill', 'sep_bill', 'apr_pay', 'may_pay', 'jun_pay',
-        'jul_pay', 'aug_pay', 'sep_pay',
-    ]
+    # Specify the features of interest and the classes of the target
+    features = ["temperature", "relative humidity", "light", "C02", "humidity"]
 
-    # Extract the numpy arrays from the data frame
     X = data[features]
-    y = data.default
+    y = data.occupancy
+
     return X, y
 
 
-def credit_example(manifold="all", path="images/"):
+def load_concrete_data():
+    # Load a regression data set
+    data = pd.read_csv(os.path.join(FIXTURES, 'concrete', 'concrete.csv'))
+
+    # Specify the features of interest
+    feature_names = ['cement', 'slag', 'ash', 'water', 'splast', 'coarse', 'fine', 'age']
+    target_name = 'strength'
+
+    # Get the X and y data from the DataFrame
+    X = data[feature_names]
+    y = data[target_name]
+
+    return X, y
+
+
+def dataset_example(dataset="occupancy", manifold="all", path="images/"):
     if manifold == "all":
         if path is not None and not os.path.isdir(path):
-            "please specify a directory to save example to"
+            "please specify a directory to save examples to"
 
         for algorithm in MANIFOLD_ALGORITHMS:
-            fpath = os.path.join(path, "credit_{}_manifold.png".format(algorithm))
+            if algorithm in SKIP: continue
+
+            print("generating {} {} manifold".format(dataset, algorithm))
+            fpath = os.path.join(path, "{}_{}_manifold.png".format(dataset, algorithm))
             try:
-                credit_example(algorithm, fpath)
+                dataset_example(dataset, algorithm, fpath)
             except Exception as e:
-                print("could not visualize {} manifold on credit data: {}".format(algorithm, e))
+                print("could not visualize {} manifold on {} data: {}".format(algorithm, dataset, e))
                 continue
 
 
@@ -66,10 +85,17 @@ def credit_example(manifold="all", path="images/"):
         return
 
     # Create single example
-
     _, ax = plt.subplots(figsize=(9,6))
     oz = Manifold(ax=ax, manifold=manifold)
-    oz.fit(*load_credit_data())
+
+    if dataset == "occupancy":
+        X, y = load_occupancy_data()
+    elif dataset == "concrete":
+        X, y = load_concrete_data()
+    else:
+        raise Exception("unknown dataset '{}'".format(dataset))
+
+    oz.fit(X, y)
     oz.poof(outpath=path)
 
 
@@ -108,13 +134,26 @@ class SCurveExample(object):
         """
         _, ax = plt.subplots(figsize=(9,6))
         path = self._make_path(path, "s_curve_{}_manifold.png".format(algorithm))
-        oz = Manifold(ax=ax, manifold=algorithm)
+
+        oz = Manifold(
+            ax=ax, manifold=algorithm,
+            target='continuous', colors='nipy_spectral'
+        )
+
         oz.fit(self.X, self.y)
         oz.poof(outpath=path)
+
+    def plot_all_manifolds(self, path="images"):
+        """
+        Plot all s-curve examples
+        """
+        for algorithm in MANIFOLD_ALGORITHMS:
+            self.plot_manifold_embedding(algorithm)
 
 
 if __name__ == '__main__':
     # curve = SCurveExample()
-    # for algorithm in MANIFOLD_ALGORITHMS:
-    #     curve.plot_manifold_embedding(algorithm)
-    credit_example()
+    # curve.plot_all_manifolds()
+
+    dataset_example('occupancy', 'all')
+    dataset_example('concrete', 'all')

@@ -15,12 +15,16 @@ Use manifold algorithms for high dimensional visualization.
 ##########################################################################
 
 import time
+import numpy as np
+import matplotlib.pyplot as plt
 
-from matplotlib.pyplot import cm
+from six import string_types
+from matplotlib import patches
 
 from yellowbrick.utils.types import is_estimator
+from yellowbrick.style import palettes, resolve_colors
 from yellowbrick.features.base import FeatureVisualizer
-from yellowbrick.exceptions import YellowbrickValueError
+from yellowbrick.exceptions import YellowbrickValueError, NotFitted
 
 from sklearn.base import clone
 from sklearn.manifold import LocallyLinearEmbedding
@@ -53,15 +57,29 @@ MANIFOLD_NAMES = {
     "tsne": "t-SNE",
 }
 
+# Target type constants
+AUTO = "auto"
+SINGLE = "single"
+DISCRETE = "discrete"
+CONTINUOUS = "continuous"
 
 
 ##########################################################################
-## 2D Manifold Projections
+## Manifold Embeddings
 ##########################################################################
 
 class Manifold(FeatureVisualizer):
     """
+    The Manifold visualizer provides high dimensional visualization for feature
+    analysis by embedding data into 2 dimensions using the sklearn.manifold
+    package for manifold learning. In brief, manifold learning algorithms are
+    unsuperivsed approaches to non-linear dimensionality reduction (unlike PCA
+    or SVD) that help visualize latent structures in data.
 
+
+    Notes
+    -----
+    ..see-also:: http://scikit-learn.org/stable/modules/manifold.html
     """
 
     ALGORITHMS = MANIFOLD_ALGORITHMS
@@ -71,12 +89,21 @@ class Manifold(FeatureVisualizer):
         ax=None,
         manifold="lle",
         n_neighbors=10,
+        colors=None,
+        target=AUTO,
+        alpha=0.7,
         random_state=None,
         **kwargs
     ):
-        super().__init__(ax, **kwargs)
+        super(Manifold, self).__init__(ax, **kwargs)
         self._name = None
+        self._manifold = None
+        self._target_color_type = None
+
         self.n_neighbors = n_neighbors
+        self.colors = colors
+        self.target = target
+        self.alpha = alpha
         self.random_state = random_state
         self.manifold = manifold # must be set last
 
@@ -120,10 +147,33 @@ class Manifold(FeatureVisualizer):
         Fits the manifold on X and transforms the data to plot it on the axes.
         The optional y specified can be used to declare discrete colors.
         """
+        # Determine target type
+        self._determine_target_color_type(y)
+
+        # Compute classes and colors if target type is discrete
+        if self._target_color_type == DISCRETE:
+            self.classes_ = np.unique(y)
+
+            color_kwargs = {'n_colors': len(self.classes_)}
+
+            if isinstance(self.colors, string_types):
+                color_kwargs['colormap'] = self.colors
+            else:
+                color_kwargs['colors'] = self.colors
+
+            self._colors = resolve_colors(**color_kwargs)
+
+        # Compute target range if colors are continuous
+        elif self._target_color_type == CONTINUOUS:
+            y = np.asarray(y)
+            self.range_ = (y.min(), y.max())
+
         start = time.time()
         Xp = self.manifold.fit_transform(X)
         self.fit_time_ = time.time() - start
+
         self.draw(Xp, y)
+        return self
 
     def transform(self, X):
         """
@@ -131,16 +181,86 @@ class Manifold(FeatureVisualizer):
         """
         return self.manifold.transform(X)
 
-    def draw(self, X, y):
+    def draw(self, X, y=None):
         """
         Draws the points X on the axes.
         """
-        self.ax.scatter(X[:,0], X[:,1], c=y, alpha=0.7, cmap=cm.Spectral)
+        scatter_kwargs = {"alpha": self.alpha}
+
+        # Determine the colors
+        if self._target_color_type == SINGLE:
+            scatter_kwargs["c"] = "b"
+
+        elif self._target_color_type == DISCRETE:
+            if y is None:
+                raise YellowbrickValueError("y is required for discrete target")
+
+            scatter_kwargs["c"] = [
+                self._colors[np.searchsorted(self.classes_, (yi))] for yi in y
+            ]
+
+        elif self._target_color_type == CONTINUOUS:
+            if y is None:
+                raise YellowbrickValueError("y is required for continuous target")
+
+            # TODO manually make colorbar so we can draw it in finalize
+            scatter_kwargs["c"] = y
+            scatter_kwargs["cmap"] = self.colors or palettes.DEFAULT_SEQUENCE
+
+        else:
+            # Technically this should never be raised
+            raise NotFitted("could not determine target color type")
+
+        # Draw the scatter plot with the associated colors and alpha
+        self._scatter = self.ax.scatter(X[:,0], X[:,1], **scatter_kwargs)
 
     def finalize(self):
         """
         Add title and modify axes to make the image ready for display
         """
-        self.set_title('{} Manifold (fit in {:0.2f} seconds)'.format(self._name, self.fit_time_))
+        self.set_title(
+            '{} Manifold (fit in {:0.2f} seconds)'.format(
+                self._name, self.fit_time_
+            )
+        )
         self.ax.set_xticklabels([])
         self.ax.set_yticklabels([])
+
+        if self._target_color_type == DISCRETE:
+            # Add the legend
+            handles = [
+                patches.Patch(color=self._colors[idx], label=self.classes_[idx])
+                for idx in range(len(self.classes_))
+            ]
+            self.ax.legend(handles=handles)
+
+        elif self._target_color_type == CONTINUOUS:
+            # Add the color bar
+            plt.colorbar(self._scatter, ax=self.ax)
+
+    def _determine_target_color_type(self, y):
+        """
+        Determines the target color type from the vector y as follows:
+
+            - if y is None: only a single color is used
+            - if target is auto: determine if y is continuous or discrete
+            - otherwise specify supplied target type
+
+        This property will be used to compute the colors for each point.
+        """
+        if y is None:
+            self._target_color_type = SINGLE
+        elif self.target == "auto":
+            # NOTE: See #73 for a generalization to use when implemented
+            if len(np.unique(y)) < 10:
+                self._target_color_type = DISCRETE
+            else:
+                self._target_color_type = CONTINUOUS
+        else:
+            self._target_color_type = self.target
+
+        if self._target_color_type not in {SINGLE, DISCRETE, CONTINUOUS}:
+            raise YellowbrickValueError((
+                "could not determine target color type "
+                "from target='{}' to '{}'"
+            ).format(self.target, self._target_color_type))

@@ -3,6 +3,10 @@
 Manifold Visualization
 ======================
 
+- classification manifold
+- select k best features
+- regression manifold
+- warnings about time and memory consumption 
 
 
 .. code:: python
@@ -24,9 +28,9 @@ Manifold Visualization
 
 .. code:: python
 
-    from yellowbrick.features.manifold import Manifold2D
+    from yellowbrick.features.manifold import Manifold
 
-    visualizer = Manifold2D()
+    visualizer = Manifold()
     visualizer.fit_transform(X,y)
     visualizer.poof()
 
