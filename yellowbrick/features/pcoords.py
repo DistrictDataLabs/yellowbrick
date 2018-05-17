@@ -187,9 +187,6 @@ class ParallelCoordinates(DataVisualizer):
     n_samples_ : int
         number of samples included in the visualization object
 
-    rng_ : np.random.RandomState
-        random number generator used in subsampling
-
     Examples
     --------
 
@@ -255,15 +252,15 @@ class ParallelCoordinates(DataVisualizer):
             )
         if self.shuffle:
             if (random_state is None) or isinstance(random_state, int):
-                self.rng_ = RandomState(random_state)
+                self._rng = RandomState(random_state)
             elif isinstance(random_state, RandomState):
-                self.rng_ = random_state
+                self._rng = random_state
             else:
                 raise YellowbrickTypeError(
                     "`random_state` parameter must be None, int, or np.random.RandomState"
                 )
         else:
-            self.rng_ = None
+            self._rng = None
 
         # Visual Parameters
         self.show_vlines = vlines
@@ -307,6 +304,7 @@ class ParallelCoordinates(DataVisualizer):
         if self.normalize is not None:
             X = self.normalizers[self.normalize].fit_transform(X)
 
+        # the super method calls draw and returns self 
         super(ParallelCoordinates, self).fit(X, y, **kwargs)
 
         # Fit always returns self.
@@ -403,7 +401,7 @@ class ParallelCoordinates(DataVisualizer):
             n_samples = int(len(X) * self.sample)
 
         if (n_samples < len(X)) and self.shuffle:
-            indices = self.rng_.choice(len(X), n_samples, replace=False)
+            indices = self._rng.choice(len(X), n_samples, replace=False)
         else:
             indices = slice(n_samples)
         X = X[indices, :]

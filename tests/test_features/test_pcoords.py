@@ -91,6 +91,19 @@ class ParallelCoordinatesTests(VisualTestCase, DatasetMixin):
         visualizer = ParallelCoordinates(sample=3, shuffle=True, random_state=np.random.RandomState())
         visualizer.fit_transform(self.X, self.y)
 
+    def test_pcoords_sample_int_shuffle_false(self):
+        """
+        Assert no errors occur using integer 'sample' argument and shuffle, with different random_state args
+        """
+        visualizer = ParallelCoordinates(sample=3, shuffle=False)
+        visualizer.fit_transform(self.X, self.y)
+
+        visualizer = ParallelCoordinates(sample=3, shuffle=False, random_state=444)
+        visualizer.fit_transform(self.X, self.y)
+
+        visualizer = ParallelCoordinates(sample=3, shuffle=False, random_state=np.random.RandomState())
+        visualizer.fit_transform(self.X, self.y)
+
     def test_pcoords_sample_int_invalid(self):
         """
         Negative int values should raise
@@ -116,6 +129,19 @@ class ParallelCoordinatesTests(VisualTestCase, DatasetMixin):
         visualizer.fit_transform(self.X, self.y)
 
         visualizer = ParallelCoordinates(sample=0.5, shuffle=True, random_state=np.random.RandomState())
+        visualizer.fit_transform(self.X, self.y)
+
+    def test_pcoords_sample_float_shuffle_false(self):
+        """
+        Assert no errors occur using float 'sample' argument and shuffle, with different random_state args
+        """
+        visualizer = ParallelCoordinates(sample=0.5, shuffle=False)
+        visualizer.fit_transform(self.X, self.y)
+
+        visualizer = ParallelCoordinates(sample=0.5, shuffle=False, random_state=444)
+        visualizer.fit_transform(self.X, self.y)
+
+        visualizer = ParallelCoordinates(sample=0.5, shuffle=False, random_state=np.random.RandomState())
         visualizer.fit_transform(self.X, self.y)
 
     def test_pcoords_sample_float_invalid(self):
@@ -167,8 +193,8 @@ class ParallelCoordinatesTests(VisualTestCase, DatasetMixin):
         ntotal = 100
         ncols = 50
 
-        y = np.arange(ntotal).reshape(ntotal, 1)
-        X = np.ones((ntotal, ncols)) * y
+        y = np.arange(ntotal)
+        X = np.ones((ntotal, ncols)) * y.reshape(ntotal, 1)
 
         visualizer = ParallelCoordinates(sample=1.0, random_state=None, shuffle=False)
         Xprime, yprime = visualizer._subsample(X, y)
