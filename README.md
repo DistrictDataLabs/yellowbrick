@@ -7,6 +7,7 @@
 [![PyPI version](https://badge.fury.io/py/yellowbrick.svg)](https://badge.fury.io/py/yellowbrick)
 [![Documentation Status](https://readthedocs.org/projects/yellowbrick/badge/?version=latest)](http://yellowbrick.readthedocs.io/en/latest/?badge=latest)
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.1206239.svg)](https://doi.org/10.5281/zenodo.1206239)
+[![Binder](https://mybinder.org/badge.svg)](https://mybinder.org/v2/gh/DistrictDataLabs/yellowbrick/develop?filepath=examples%2Fexamples.ipynb)
 
 
 **Visual analysis and diagnostic tools to facilitate machine learning model selection.**
@@ -28,10 +29,11 @@ Visualizers are estimators (objects that learn from data) whose primary objectiv
 
 #### Feature Visualization
 
-- **Parallel Coordinates**: horizontal visualization of instances
-- **PCA Projection**: projection of instances based on principal components
-- **RadViz**: separation of instances around a circular plot
 - **Rank Features**: single or pairwise ranking of features to detect relationships
+- **Parallel Coordinates**: horizontal visualization of instances
+- **Radial Visualization**: separation of instances around a circular plot
+- **PCA Projection**: projection of instances based on principal components
+- **Manifold Visualization**: high dimensional visualization with manifold learning
 - **Feature Importances**: rank features based on their in-model performance
 - **Recursive Feature Elimination**: find the best subset of features by importance
 - **Scatter and Joint Plots**: direct data visualization with feature selection
@@ -41,15 +43,15 @@ Visualizers are estimators (objects that learn from data) whose primary objectiv
 - **Class Balance**: see how the distribution of classes affects the model
 - **Class Prediction Error**: shows error and support in classification
 - **Classification Report**: visual representation of precision, recall, and F1
-- **Confusion Matrices**: visual description of class decision making
 - **ROC/AUC Curves**: receiver operator characteristics and area under the curve
+- **Confusion Matrices**: visual description of class decision making
 - **Discrimination Threshold**: find a threshold that best separates binary classes
 
 #### Regression Visualization
 
-- **Alpha Selection**: show how the choice of alpha influences regularization
 - **Prediction Error Plots**: find model breakdowns along the domain of the target
 - **Residuals Plot**: show the difference in residuals of training and test data
+- **Alpha Selection**: show how the choice of alpha influences regularization
 
 #### Clustering Visualization
 
@@ -58,13 +60,13 @@ Visualizers are estimators (objects that learn from data) whose primary objectiv
 
 #### Model Selection Visualization
 
--  **Validation Curve**: tune a model with respect to a single hyperparameter
--  **Learning Curve**: show if a model might benefit from more data or less complexity
+- **Validation Curve**: tune a model with respect to a single hyperparameter
+- **Learning Curve**: show if a model might benefit from more data or less complexity
 
 #### Text Visualization
 
 - **Term Frequency**: visualize the frequency distribution of terms in the corpus
-- **TSNE**: use stochastic neighbor embedding to project documents.
+- **t-SNE Corpus Visualization**: use stochastic neighbor embedding to project documents.
 
 And more! Visualizers are being added all the time, so be sure to check the examples (or even the develop branch) and feel free to contribute your ideas for Visualizers!
 

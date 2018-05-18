@@ -25,6 +25,7 @@ Feature Visualization
 - :doc:`api/features/pcoords`: horizontal visualization of instances
 - :doc:`Radial Visualization <api/features/radviz>`: separation of instances around a circular plot
 - :doc:`api/features/pca`: projection of instances based on principal components
+- :doc:`api/features/manifold`: high dimensional visualization with manifold learning
 - :doc:`api/features/importances`: rank features by importance or linear coefficients for a specific model
 - :doc:`api/features/rfecv`: find the best subset of features based on importance
 - :doc:`Scatter and Joint Plots<api/features/scatter>`: direct data visualization with feature selection
