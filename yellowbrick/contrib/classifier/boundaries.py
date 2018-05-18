@@ -28,7 +28,7 @@ from yellowbrick.utils import has_ndarray_int_columns
 ##########################################################################
 # Quick Methods
 ##########################################################################
-@deprecated("Will be moved to yellowbrick.contrib in v0.7")
+@deprecated("Will be moved to yellowbrick.contrib in v0.8")
 def decisionviz(model,
                 X,
                 y,
@@ -123,7 +123,7 @@ def decisionviz(model,
 ##########################################################################
 # Static ScatterVisualizer Visualizer
 ##########################################################################
-@deprecated("Will be moved to yellowbrick.contrib in v0.7")
+@deprecated("Will be moved to yellowbrick.contrib in v0.8")
 class DecisionBoundariesVisualizer(ClassificationScoreVisualizer):
     """
     DecisionBoundariesVisualizer is a bivariate data visualization algorithm
