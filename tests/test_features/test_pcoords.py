@@ -111,9 +111,9 @@ class ParallelCoordinatesTests(VisualTestCase, DatasetMixin):
     @pytest.mark.xfail(
         sys.platform == 'win32', reason="images not close on windows"
     )
-    def test_integrated_pcoords(self):
+    def test_integrated_pcoords_occupancy(self):
         """
-        Test parallel coordinates on a real data set (downsampled for speed)
+        Test parallel coordinates on a real data set: occupancy (downsampled for speed)
         """
         occupancy = self.load_data('occupancy')
 
@@ -128,6 +128,37 @@ class ParallelCoordinatesTests(VisualTestCase, DatasetMixin):
 
         # Test the visualizer
         visualizer = ParallelCoordinates(sample=200)
+        visualizer.fit_transform(X, y)
+        visualizer.poof()
+        self.assert_images_similar(visualizer)
+
+
+
+    @pytest.mark.xfail(
+        sys.platform == 'win32', reason="images not close on windows"
+    )
+    def test_integrated_pcoords_bikeshare(self):
+        """
+        Test parallel coordinates on a real data set: bikeshare (downsampled for speed)
+        """
+        bikeshare = self.load_data('bikeshare')
+
+        features = [
+            "season", "month", "hour", "holiday", "weekday", "workingday",
+            "weather", "temp", "feelslike", "humidity", "windspeed"
+        ]
+
+        X = bikeshare[features]
+        y = bikeshare['riders'].astype(int)
+
+        # Convert X to an ndarray
+        X = X.copy().view((float, len(X.dtype.names)))
+
+        N = 20
+        X, y = X[:N], y[:N]
+
+        # Test the visualizer
+        visualizer = ParallelCoordinates()
         visualizer.fit_transform(X, y)
         visualizer.poof()
         self.assert_images_similar(visualizer)
