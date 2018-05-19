@@ -11,6 +11,8 @@ appropriate.
 
 .. code:: python
 
+    from sklearn.model_selection import train_test_split
+
     # Load the data
     df = load_data('concrete')
     feature_names = ['cement', 'slag', 'ash', 'water', 'splast', 'coarse', 'fine', 'age']
@@ -25,6 +27,10 @@ appropriate.
 
 .. code:: python
 
+    from sklearn.linear_model import Ridge
+
+    from yellowbrick.regressor import ResidualsPlot
+    
     # Instantiate the linear model and visualizer
     ridge = Ridge()
     visualizer = ResidualsPlot(ridge)

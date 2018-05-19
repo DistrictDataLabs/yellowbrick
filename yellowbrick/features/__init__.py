@@ -25,3 +25,4 @@ from .scatter import ScatterViz, ScatterVisualizer, scatterviz
 from .jointplot import  JointPlotVisualizer
 from .pca import PCADecomposition, pca_decomposition
 from .importances import FeatureImportances, feature_importances
+from .rfecv import RFECV, rfecv

@@ -49,7 +49,11 @@ def pytest_itemcollected(item):
     # so that pytest-spec will correctly parse the information.
     path = os.path.relpath(str(item.fspath))
     prefix = parent.__doc__ or getattr(parent, '__name__', parent.__class__.__name__)
-    suffix = node.__doc__ if node.__doc__ else node.__name__
+    suffix = node.__doc__.strip() if node.__doc__ else node.__name__
+
+    # Add parametrize or test generation id to distinguish it in output
+    if item._genid:
+        suffix += " ({})".format(item._genid)
 
     if prefix or suffix:
         item._nodeid = '::'.join((path, prefix.strip(), suffix.strip()))

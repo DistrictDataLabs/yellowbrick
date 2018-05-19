@@ -13,11 +13,11 @@ A scatter visualizer simply plots two features against each other and colors the
 .. code:: python
 
     # Load the classification data set
-    data = load_data('occupancy')
+    data = load_data("occupancy")
 
     # Specify the features of interest and the classes of the target
     features = ["temperature", "relative humidity", "light", "C02", "humidity"]
-    classes = ['unoccupied', 'occupied']
+    classes = ["unoccupied", "occupied"]
 
     # Extract the numpy arrays from the data frame
     X = data[features]
@@ -27,7 +27,7 @@ A scatter visualizer simply plots two features against each other and colors the
 
     from yellowbrick.features import ScatterVisualizer
 
-    visualizer = ScatterVisualizer(x='light', y='C02', classes=classes)
+    visualizer = ScatterVisualizer(x="light", y="C02", classes=classes)
 
     visualizer.fit(X, y)
     visualizer.transform(X)
@@ -44,15 +44,17 @@ A joint plot visualizer plots a feature against the target and shows the distrib
 .. code:: python
 
     # Load the data
-    df = load_data('concrete')
-    feature = 'cement'
-    target = 'strength'
+    df = load_data("concrete")
+    feature = "cement"
+    target = "strength"
 
     # Get the X and y data from the DataFrame
     X = df[feature]
     y = df[target]
 
 .. code:: python
+
+    from yellowbrick.features import JointPlotVisualizer
 
     visualizer = JointPlotVisualizer(feature=feature, target=target)
 

@@ -50,3 +50,17 @@ class RegressionScoreVisualizer(ScoreVisualizer):
         )
 
         super(RegressionScoreVisualizer, self).__init__(model, ax=ax, **kwargs)
+
+    def score(self, X, y, **kwargs):
+        """
+        The score method is the primary entry point for drawing.
+
+        Returns
+        -------
+        score : float
+            The R^2 score of the underlying regressor
+        """
+        raise NotImplementedError(
+            "Subclasses of RegressionScoreVisualizer must implement score "
+            " and return an R^2 score of the underlying estimator"
+        )

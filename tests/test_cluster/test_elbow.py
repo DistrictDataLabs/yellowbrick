@@ -17,20 +17,29 @@ Tests for the KElbowVisualizer
 ## Imports
 ##########################################################################
 
+import sys
 import pytest
-import unittest
 import numpy as np
 import matplotlib.pyplot as plt
 
 from ..base import VisualTestCase
 from ..dataset import DatasetMixin
 
+from scipy.sparse import csc_matrix, csr_matrix
+from numpy.testing.utils import assert_array_almost_equal
+
 from sklearn.datasets import make_blobs
 from sklearn.cluster import KMeans, MiniBatchKMeans
+from sklearn.feature_extraction.text import TfidfVectorizer
+
 from yellowbrick.cluster.elbow import distortion_score
 from yellowbrick.cluster.elbow import KElbowVisualizer
 from yellowbrick.exceptions import YellowbrickValueError
-from numpy.testing.utils import assert_array_almost_equal
+
+try:
+    import pandas as pd
+except ImportError:
+    pd = None
 
 
 ##########################################################################
@@ -61,7 +70,7 @@ X = np.array(
 y = np.array([0, 0, 1, 1, 0, 0, 1, 1, 0, 1, 0, 0, 1, 1, 1, 1, 0, 0])
 
 
-class KElbowHelperTests(unittest.TestCase):
+class TestKElbowHelper(object):
     """
     Helper functions for K-Elbow Visualizer
     """
@@ -71,19 +80,40 @@ class KElbowHelperTests(unittest.TestCase):
         Test the distortion score metric function
         """
         score = distortion_score(X, y)
-        self.assertEqual(score, 7.6777850157143783)
+        assert score == 7.6777850157143783
+
+    @pytest.mark.parametrize("Xs", [
+        csc_matrix(X), csr_matrix(X),
+    ], ids=["csc", "csr"])
+    def test_distortion_score_sparse_matrix_input(self, Xs):
+        """
+        Test the distortion score metric on a sparse array
+        """
+        score = distortion_score(Xs, y)
+        assert score == pytest.approx(7.6777850157143783)
+
+    @pytest.mark.skipif(pd is None, reason="pandas is required")
+    def test_distortion_score_pandas_input(self):
+        """
+        Test the distortion score metric on pandas DataFrame and Series
+        """
+        df = pd.DataFrame(X)
+        s = pd.Series(y)
+
+        score = distortion_score(df, s)
+        assert score == pytest.approx(7.6777850157143783)
 
 
 ##########################################################################
 ## KElbowVisualizer Test Cases
 ##########################################################################
 
-class KElbowVisualizerTests(VisualTestCase, DatasetMixin):
+class TestKElbowVisualizer(VisualTestCase, DatasetMixin):
     """
     K-Elbow Visualizer Tests
     """
 
-    @pytest.mark.skip("images not close due to timing lines")
+    @pytest.mark.xfail(reason="images not close due to timing lines")
     def test_integrated_kmeans_elbow(self):
         """
         Test no exceptions for kmeans k-elbow visualizer on blobs dataset
@@ -92,12 +122,12 @@ class KElbowVisualizerTests(VisualTestCase, DatasetMixin):
 
         # Generate a blobs data set
         X,y = make_blobs(
-            n_samples=1000, n_features=12, centers=6, shuffle=True, random_state=42
+            n_samples=1000, n_features=12, centers=6,
+            shuffle=True, random_state=42
         )
 
         try:
-            fig = plt.figure()
-            ax = fig.add_subplot()
+            _, ax = plt.subplots()
 
             visualizer = KElbowVisualizer(KMeans(random_state=42), k=4, ax=ax)
             visualizer.fit(X)
@@ -105,9 +135,9 @@ class KElbowVisualizerTests(VisualTestCase, DatasetMixin):
 
             self.assert_images_similar(visualizer)
         except Exception as e:
-            self.fail("error during k-elbow: {}".format(e))
+            pytest.fail("error during k-elbow: {}".format(e))
 
-    @pytest.mark.skip("images not close due to timing lines")
+    @pytest.mark.xfail(reason="images not close due to timing lines")
     def test_integrated_mini_batch_kmeans_elbow(self):
         """
         Test no exceptions for mini-batch kmeans k-elbow visualizer
@@ -120,67 +150,103 @@ class KElbowVisualizerTests(VisualTestCase, DatasetMixin):
         )
 
         try:
-            fig = plt.figure()
-            ax = fig.add_subplot()
+            _, ax = plt.subplots()
 
-            visualizer = KElbowVisualizer(MiniBatchKMeans(random_state=42), k=4, ax=ax)
+            visualizer = KElbowVisualizer(
+                MiniBatchKMeans(random_state=42), k=4, ax=ax
+            )
             visualizer.fit(X)
             visualizer.poof()
 
             self.assert_images_similar(visualizer)
         except Exception as e:
-            self.fail("error during k-elbow: {}".format(e))
+            pytest.fail("error during k-elbow: {}".format(e))
+
+    @pytest.mark.skip(reason="takes over 20 seconds to run")
+    def test_topic_modeling_k_means(self):
+        """
+        Test topic modeling k-means on the hobbies corpus
+        """
+        corpus = self.load_corpus("hobbies")
+
+        tfidf  = TfidfVectorizer()
+        docs   = tfidf.fit_transform(corpus.data)
+        visualizer = KElbowVisualizer(KMeans(), k=(4, 8))
+
+        visualizer.fit(docs)
+        visualizer.poof()
+
+        self.assert_images_similar(visualizer)
 
     def test_invalid_k(self):
         """
         Assert that invalid values of K raise exceptions
         """
 
-        with self.assertRaises(YellowbrickValueError):
+        with pytest.raises(YellowbrickValueError):
             KElbowVisualizer(KMeans(), k=(1,2,3,4,5))
 
-        with self.assertRaises(YellowbrickValueError):
+        with pytest.raises(YellowbrickValueError):
             KElbowVisualizer(KMeans(), k="foo")
 
+    @pytest.mark.xfail(
+        sys.platform == 'win32', reason="images not close on windows"
+    )
     def test_distortion_metric(self):
         """
         Test the distortion metric of the k-elbow visualizer
         """
-        visualizer = KElbowVisualizer(KMeans(random_state=0), k=5, metric="distortion", timings=False)
+        visualizer = KElbowVisualizer(
+            KMeans(random_state=0), k=5, metric="distortion", timings=False
+        )
         visualizer.fit(X)
 
         expected = np.array([ 7.677785,  8.364319,  8.893634,  8.013021])
-        self.assertEqual(len(visualizer.k_scores_), 4)
+        assert len(visualizer.k_scores_) == 4
+
         visualizer.poof()
         self.assert_images_similar(visualizer)
         assert_array_almost_equal(visualizer.k_scores_, expected)
 
+    @pytest.mark.xfail(
+        sys.platform == 'win32', reason="images not close on windows"
+    )
     def test_silhouette_metric(self):
         """
         Test the silhouette metric of the k-elbow visualizer
         """
-        visualizer = KElbowVisualizer(KMeans(random_state=0), k=5, metric="silhouette", timings=False)
+        visualizer = KElbowVisualizer(
+            KMeans(random_state=0), k=5, metric="silhouette", timings=False
+        )
         visualizer.fit(X)
 
         expected = np.array([ 0.691636,  0.456646,  0.255174,  0.239842])
-        self.assertEqual(len(visualizer.k_scores_), 4)
+        assert len(visualizer.k_scores_) == 4
+
         visualizer.poof()
         self.assert_images_similar(visualizer)
         assert_array_almost_equal(visualizer.k_scores_, expected)
 
+    @pytest.mark.xfail(
+        sys.platform == 'win32', reason="images not close on windows"
+    )
     def test_calinski_harabaz_metric(self):
         """
         Test the calinski-harabaz metric of the k-elbow visualizer
         """
-        visualizer = KElbowVisualizer(KMeans(random_state=0), k=5, metric="calinski_harabaz", timings=False)
+        visualizer = KElbowVisualizer(
+            KMeans(random_state=0), k=5,
+            metric="calinski_harabaz", timings=False
+        )
         visualizer.fit(X)
+        assert len(visualizer.k_scores_) == 4
 
         expected = np.array([
             81.662726256035683, 50.992378259195554,
             40.952179227847012, 35.939494
         ])
 
-        self.assertEqual(len(visualizer.k_scores_), 4)
+
         visualizer.poof()
         self.assert_images_similar(visualizer)
         assert_array_almost_equal(visualizer.k_scores_, expected)
@@ -189,28 +255,36 @@ class KElbowVisualizerTests(VisualTestCase, DatasetMixin):
         """
         Assert KElbow raises an exception when a bad metric is supplied
         """
-        with self.assertRaises(YellowbrickValueError):
+        with pytest.raises(YellowbrickValueError):
             KElbowVisualizer(KMeans(), k=5, metric="foo")
 
+    @pytest.mark.xfail(
+        sys.platform == 'win32', reason="images not close on windows"
+    )
     def test_timings(self):
         """
         Test the twinx double axes with k-elbow timings
         """
-        visualizer = KElbowVisualizer(KMeans(random_state=0), k=5, timings=True)
+        visualizer = KElbowVisualizer(
+            KMeans(random_state=0), k=5, timings=True
+        )
         visualizer.fit(X)
 
         # Check that we kept track of time
-        self.assertEqual(len(visualizer.k_timers_), 4)
-        self.assertTrue(all([t > 0 for t in visualizer.k_timers_]))
+        assert len(visualizer.k_timers_) == 4
+        assert all([t > 0 for t in visualizer.k_timers_])
 
         # Check that we plotted time on a twinx
-        self.assertTrue(hasattr(visualizer, "axes"))
-        self.assertEqual(len(visualizer.axes), 2)
+        assert hasattr(visualizer, "axes")
+        assert len(visualizer.axes) == 2
 
         # delete the timings axes and
         # overwrite k_timers_, k_values_ for image similarity Tests
         visualizer.axes[1].remove()
-        visualizer.k_timers_ = [0.01084589958190918, 0.011144161224365234, 0.017028093338012695, 0.010634183883666992]
+        visualizer.k_timers_ = [
+            0.01084589958190918, 0.011144161224365234,
+            0.017028093338012695, 0.010634183883666992
+        ]
         visualizer.k_values_ = [2, 3, 4, 5]
 
         # call draw again which is normally called in fit

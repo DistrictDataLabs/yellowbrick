@@ -18,6 +18,7 @@ Testing for the ROCAUC visualizer
 ## Imports
 ##########################################################################
 
+import sys
 import pytest
 import numpy as np
 import numpy.testing as npt
@@ -25,7 +26,7 @@ import numpy.testing as npt
 from tests.base import VisualTestCase
 from tests.dataset import DatasetMixin
 from yellowbrick.classifier.rocauc import *
-from yellowbrick.exceptions import ModelError
+from yellowbrick.exceptions import ModelError, YellowbrickValueError
 
 from sklearn.svm import LinearSVC
 from sklearn.naive_bayes import MultinomialNB
@@ -221,6 +222,9 @@ class ROCAUCTests(VisualTestCase, DatasetMixin):
         visualizer.poof()
         self.assert_images_similar(visualizer)
 
+    @pytest.mark.xfail(
+        sys.platform == 'win32', reason="images not close on windows"
+    )
     def test_rocauc_no_macro_no_micro(self):
         """
         Test ROCAUC without a macro or micro average
@@ -280,20 +284,11 @@ class ROCAUCTests(VisualTestCase, DatasetMixin):
         """
         Test ROCAUC with no curves specified at all
         """
-        # Load the Data
-        X_train, X_test, y_train, y_test = self.load_binary_data()
-
         # Create and fit the visualizer
-        visualizer = ROCAUC(
-            LogisticRegression(), per_class=False, macro=False, micro=False
-        )
-        visualizer.fit(X_train, y_train)
-
-        # TODO: Raise an exception in this case.
-
-        # Compare the images - should be blank
-        visualizer.poof()
-        self.assert_images_similar(visualizer)
+        with pytest.raises(YellowbrickValueError, match="no curves will be drawn"):
+            ROCAUC(
+                LogisticRegression(), per_class=False, macro=False, micro=False
+            )
 
     @pytest.mark.skip(reason="not implemented yet")
     def test_rocauc_label_encoded(self):

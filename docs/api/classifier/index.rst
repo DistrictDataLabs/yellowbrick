@@ -3,19 +3,16 @@
 Classification Visualizers
 ==========================
 
-Classification models attempt to predict a target in a discrete space, that is assign an instance of dependent variables one or more categories. Classification score visualizers display the differences between classes as well as a number of classifier-specific visual evaluations. We currently have implemented four classifier evaluations:
+Classification models attempt to predict a target in a discrete space, that is assign an instance of dependent variables one or more categories. Classification score visualizers display the differences between classes as well as a number of classifier-specific visual evaluations. We currently have implemented the following classifier evaluations:
 
--  :doc:`classification_report`: Presents the classification report of the classifier
-   as a heatmap
--  :doc:`confusion_matrix`: Presents the confusion matrix of the classifier
-   as a heatmap
--  :doc:`rocauc`: Presents the graph of receiver operating characteristics
-   along with area under the curve
--  :doc:`class_balance`: Displays the difference between the class balances and support
--  :doc:`class_prediction_error`: An alternative to the confusion matrix that shows both support and the difference between actual and predicted classes
--  :doc:`threshold`: Shows the bounds of precision, recall and queue rate after a number of trials.
+-  :doc:`classification_report`: A visual classification report that displays precision, recall, and F1 per-class as a heatmap.
+-  :doc:`confusion_matrix`: A heatmap view of the confusion matrix of pairs of classes in multi-class classification.
+-  :doc:`rocauc`: Graphs the receiver operating characteristics and area under the curve.
+-  :doc:`class_balance`: Visual inspection of the target to show the support of each class to the final estimator.
+-  :doc:`class_prediction_error`: An alternative to the confusion matrix that shows both support and the difference between actual and predicted classes.
+-  :doc:`threshold`: Shows precision, recall, f1, and queue rate over all thresholds for binary classifiers that use a discrimination probability or score.
 
-Estimator score visualizers wrap Scikit-Learn estimators and expose the
+Estimator score visualizers wrap scikit-learn estimators and expose the
 Estimator API such that they have fit(), predict(), and score() methods
 that call the appropriate estimator methods under the hood. Score
 visualizers can wrap an estimator and be passed in as the final step in
@@ -30,7 +27,9 @@ a Pipeline or VisualPipeline.
     from sklearn.ensemble import RandomForestClassifier
     from sklearn.model_selection import train_test_split
 
-    from yellowbrick.classifier import ClassificationReport, ROCAUC, ClassBalance, ThresholdViz
+    from yellowbrick.classifier import ClassificationReport, ROCAUC
+    from yellowbrick.classifier import ClassBalance, ClassPredictionError
+    from yellowbrick.classifier import DiscriminationThreshold
 
 .. toctree::
    :maxdepth: 2
