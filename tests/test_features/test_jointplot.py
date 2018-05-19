@@ -21,6 +21,8 @@ execute, otherwise most will skip and only the warning will be tested.
 ## Imports
 ##########################################################################
 
+import sys
+import pytest
 import warnings
 import unittest
 import numpy as np
@@ -73,7 +75,9 @@ class JointPlotTests(VisualTestCase, DatasetMixin):
                 "or greater. Please upgrade."
             )
 
-
+    @pytest.mark.xfail(
+        sys.platform == 'win32', reason="images not close on windows"
+    )
     @unittest.skipIf(MPL_VERS_MAJ < 2, "requires matplotlib 2.0.0 or greater")
     def test_jointplot_has_no_errors(self):
         """
@@ -88,7 +92,9 @@ class JointPlotTests(VisualTestCase, DatasetMixin):
 
         self.assert_images_similar(visualizer)
 
-
+    @pytest.mark.xfail(
+        sys.platform == 'win32', reason="images not close on windows"
+    )
     @unittest.skipIf(MPL_VERS_MAJ < 2, "requires matplotlib 2.0.0 or greater")
     def test_jointplot_integrated_has_no_errors(self):
         """

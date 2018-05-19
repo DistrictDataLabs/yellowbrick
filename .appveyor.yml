@@ -1,0 +1,71 @@
+# AppVeyor is a CI service to build and run tests under Windows
+# https://ci.appveyor.com/project/districtdatalabs/yellowbrick
+
+environment:
+
+    matrix:
+        # Tests failing on 32 bit architectures
+        # https://github.com/numpy/numpy/issues/4384
+        # - PYTHON: "C:\\Python27"
+        #   PYTHON_VERSION: "2.7.14"
+        #   PYTHON_ARCH: "32"
+
+        - PYTHON: "C:\\Python27-x64"
+          PYTHON_VERSION: "2.7.14"
+          PYTHON_ARCH: "64"
+
+        # - PYTHON: "C:\\Python36"
+        #   PYTHON_VERSION: "3.6.4"
+        #   PYTHON_ARCH: "32"
+
+        - PYTHON: "C:\\Python36-x64"
+          PYTHON_VERSION: "3.6.4"
+          PYTHON_ARCH: "64"
+
+        # - PYTHON: "C:\\Miniconda3"
+        #   PYTHON_VERSION: "3.6.4"
+        #   MINICONDA_VERSION: "4.4.10"
+        #   PYTHON_ARCH: "32"
+
+        - PYTHON: "C:\\Miniconda3-x64"
+          PYTHON_VERSION: "3.6.4"
+          MINICONDA_VERSION: "4.4.10"
+          PYTHON_ARCH: "64"
+
+
+# Cancel pending jobs after first job failure
+matrix:
+    fast_finish: true
+
+install:
+    - "%PYTHON%\\python.exe -m pip install wheel"
+    - "%PYTHON%\\python.exe -m pip install -r requirements.txt"
+    - "%PYTHON%\\python.exe -m pip install -r tests/requirements.txt"
+    - "%PYTHON%\\python.exe -m nltk.downloader popular"
+
+# No requirement to build any C libraries
+build: off
+
+test_script:
+    - "%PYTHON%\\python.exe setup.py test"
+
+after_test:
+    - "%PYTHON%\\python.exe setup.py bdist_wheel"
+
+artifacts:
+    - path: dist\*
+
+cache:
+    # Use the appveryor cache to avoid redownload of numpy and scipy wheels
+    - '%APPDATA%\pip\Cache'
+
+notifications:
+    - provider: Email
+      to:
+        - bbengfort@districtdatalabs.com
+        - rbilbro@districtdatalabs.com
+        - nathan.danielsen@gmail.com
+        - tojeda@districtdatalabs.com
+      on_build_success: false
+      on_build_failure: true
+      on_build_status_changed: true

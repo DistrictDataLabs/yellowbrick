@@ -15,6 +15,7 @@ Tests for the confusion matrix visualizer
 ## Imports
 ##########################################################################
 
+import sys
 import six
 import pytest
 import yellowbrick as yb
@@ -73,6 +74,9 @@ class ConfusionMatrixTests(VisualTestCase, DatasetMixin):
     ConfusionMatrix visualizer tests
     """
 
+    @pytest.mark.xfail(
+        sys.platform == 'win32', reason="images not close on windows"
+    )
     def test_confusion_matrix(self):
         """
         Integration test on digits dataset with LogisticRegression
@@ -99,6 +103,9 @@ class ConfusionMatrixTests(VisualTestCase, DatasetMixin):
            [ 0,  2,  0,  0,  0,  0,  0,  0, 32,  0],
            [ 0,  0,  0,  0,  0,  0,  0,  1,  1, 35]]))
 
+    @pytest.mark.xfail(
+        sys.platform == 'win32', reason="images not close on windows"
+    )
     def test_no_classes_provided(self):
         """
         Integration test on digits dataset with GaussianNB, no classes
@@ -276,6 +283,9 @@ class ConfusionMatrixTests(VisualTestCase, DatasetMixin):
         ylabels.reverse()
         assert  ylabels == classes
 
+    @pytest.mark.xfail(
+        sys.platform == 'win32', reason="images not close on windows"
+    )
     @pytest.mark.skipif(pd is None, reason="test requires pandas")
     def test_pandas_integration(self):
         """

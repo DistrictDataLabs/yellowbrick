@@ -16,6 +16,7 @@ Ensure that the Decision Boundary visualizations work.
 # Imports
 ##########################################################################
 
+import sys
 import six
 import pytest
 import numpy as np
@@ -90,7 +91,7 @@ class DecisionBoundariesVisualizerTest(VisualTestCase):
 
     @pytest.mark.skipif(six.PY2, reason="deprecation warnings filtered in PY2")
     def test_deprecated_message(self):
-        with pytest.warns(DeprecationWarning, match='Will be moved to yellowbrick.contrib in v0.7'):
+        with pytest.warns(DeprecationWarning, match='Will be moved to yellowbrick.contrib in v0.8'):
             model = neighbors.KNeighborsClassifier(3)
             DecisionViz(model)
 
@@ -319,7 +320,9 @@ class DecisionBoundariesVisualizerTest(VisualTestCase):
         viz.draw.assert_called_once_with(X_two_cols, y)
         viz.poof.assert_called_once_with()
 
-
+    @pytest.mark.xfail(
+        sys.platform == 'win32', reason="images not close on windows"
+    )
     def test_integrated_plot_numpy_named_arrays(self):
         """
         Test integration of visualizer with numpy named arrays
@@ -357,6 +360,9 @@ class DecisionBoundariesVisualizerTest(VisualTestCase):
         visualizer.fit_draw_poof(X, y)
         self.assertEquals(visualizer.features_, [1, 2])
 
+    @pytest.mark.xfail(
+        sys.platform == 'win32', reason="images not close on windows"
+    )
     @pytest.mark.skipif(pd is None, reason="test requires pandas")
     def test_real_data_set_viz(self):
         """

@@ -32,4 +32,3 @@ from .threshold import DiscriminationThreshold, discrimination_threshold
 
 # Deprecated and moved to contrib
 from .boundaries import decisionviz, DecisionBoundariesVisualizer, DecisionViz
-from .threshold import ThreshViz, ThresholdVisualizer, thresholdviz
