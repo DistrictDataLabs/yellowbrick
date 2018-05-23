@@ -244,4 +244,3 @@ class ParallelCoordinatesTests(VisualTestCase, DatasetMixin):
         assert np.array_equal(Xprime, X[yprime.flatten(), :])
         assert len(Xprime) == ntotal * sample
         assert len(yprime) == ntotal * sample
-

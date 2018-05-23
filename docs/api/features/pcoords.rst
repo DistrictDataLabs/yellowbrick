@@ -27,7 +27,7 @@ different distributions.
     y = data.occupancy.as_matrix()
 
 .. code:: python
-    
+
     from yellowbrick.features import ParallelCoordinates
 
     # Instantiate the visualizer
@@ -59,6 +59,19 @@ Additionally the domain of each feature may make the visualization hard to inter
     visualizer.poof()         # Draw/show/poof the data
 
 .. image:: images/normalized_sampled_parallel_coordinates.png
+
+
+Faster Parallel Coordinates
+---------------------------
+
+The ``ParallelCoordinates`` visualizer provides a ``fast`` argument, which can be supplied to improve the performance of the visualizer, particularly when there are many instances to be drawn.
+
+.. image:: images/slow_parallel_coordinates.png
+
+.. image:: images/fast_parallel_coordinates.png
+
+.. image:: images/fast_parallel_coordinates_speedup.png
+
 
 API Reference
 -------------

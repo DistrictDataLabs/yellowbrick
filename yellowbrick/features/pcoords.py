@@ -38,7 +38,8 @@ from yellowbrick.style.colors import resolve_colors
 
 def parallel_coordinates(X, y, ax=None, features=None, classes=None,
                          normalize=None, sample=1.0, color=None, colormap=None,
-                         vlines=True, vlines_kwds=None, **kwargs):
+                         alpha=None, fast=False, vlines=True, vlines_kwds=None,
+                         **kwargs):
     """Displays each feature as a vertical axis and each instance as a line.
 
     This helper function is a quick wrapper to utilize the ParallelCoordinates
@@ -87,6 +88,17 @@ def parallel_coordinates(X, y, ax=None, features=None, classes=None,
         Use either color to colorize the lines on a per class basis or
         colormap to color them on a continuous scale.
 
+    alpha : float, default: None
+        Specify a transparency where 1 is completely opaque and 0 is completely
+        transparent. This property makes densely clustered lines more visible.
+        If None, the alpha is set to 0.5 in "fast" mode and 0.25 otherwise.
+
+    fast : bool, default: False
+        Fast mode improves the performance of the drawing time of parallel
+        coordinates but produces an image that does not show the overlap of
+        instances in the same class. Fast mode should be used when drawing all
+        instances is too burdensome and sampling is not an option.
+
     vlines : boolean, default: True
         flag to determine vertical line display
 
@@ -104,8 +116,8 @@ def parallel_coordinates(X, y, ax=None, features=None, classes=None,
     """
     # Instantiate the visualizer
     visualizer = ParallelCoordinates(
-        ax, features, classes, normalize, sample, color, colormap, vlines,
-        vlines_kwds, **kwargs
+        ax, features, classes, normalize, sample, color, colormap, alpha,
+        fast, vlines, vlines_kwds, **kwargs
     )
 
     # Fit and transform the visualizer (calls draw)
@@ -172,6 +184,17 @@ class ParallelCoordinates(DataVisualizer):
         Use either color to colorize the lines on a per class basis or
         colormap to color them on a continuous scale.
 
+    alpha : float, default: None
+        Specify a transparency where 1 is completely opaque and 0 is completely
+        transparent. This property makes densely clustered lines more visible.
+        If None, the alpha is set to 0.5 in "fast" mode and 0.25 otherwise.
+
+    fast : bool, default: False
+        Fast mode improves the performance of the drawing time of parallel
+        coordinates but produces an image that does not show the overlap of
+        instances in the same class. Fast mode should be used when drawing all
+        instances is too burdensome and sampling is not an option.
+
     vlines : boolean, default: True
         flag to determine vertical line display
 
@@ -211,9 +234,22 @@ class ParallelCoordinates(DataVisualizer):
         'l2': Normalizer('l2'),
     }
 
-    def __init__(self, ax=None, features=None, classes=None, normalize=None,
-                 sample=1.0, random_state=None, shuffle=False, color=None, colormap=None, vlines=True,
-                 vlines_kwds=None, **kwargs):
+    def __init__(self,
+                 ax=None,
+                 features=None,
+                 classes=None,
+                 normalize=None,
+                 sample=1.0,
+                 random_state=None,
+                 shuffle=False,
+                 color=None,
+                 colormap=None,
+                 alpha=None,
+                 fast=False,
+                 vlines=True,
+                 vlines_kwds=None,
+                 **kwargs):
+
         super(ParallelCoordinates, self).__init__(
             ax, features, classes, color, colormap, **kwargs
         )
@@ -263,7 +299,9 @@ class ParallelCoordinates(DataVisualizer):
         else:
             self._rng = None
 
-        # Visual Parameters
+        # Visual and drawing parameters
+        self.fast = fast
+        self.alpha = alpha
         self.show_vlines = vlines
         self.vlines_kwds = vlines_kwds or {
             'linewidth': 1, 'color': 'black'
@@ -373,6 +411,47 @@ class ParallelCoordinates(DataVisualizer):
         self.ax.set_xticks(increments)
         self.ax.set_xticklabels(self.features_)
         self.ax.set_xlim(increments[0], increments[-1])
+
+    def draw_instances(self, X, y):
+        """
+        Draw the instances colored by the target y such that each line is a
+        single instance. This is the "slow" mode of drawing, since each
+        instance has to be drawn individually. However, in so doing, the
+        density of instances in braids is more apparent since lines have an
+        independent alpha that is compounded in the figure.
+
+        This is the default method of drawing.
+
+        Parameters
+        ----------
+        X : ndarray of shape n x m
+            A matrix of n instances with m features
+
+        y : ndarray of length n
+            An array or series of target or class values
+
+        Notes
+        -----
+        This method can be used to draw additional instances onto the parallel
+        coordinates before the figure is finalized.
+        """
+
+    def draw_classes(self, X, y):
+        """
+        Draw the instances colored by the target y such that each line is a
+        single class. This is the "fast" mode of drawing, since the number of
+        lines drawn equals the number of classes, rather than the number of
+        instances. However, this drawing method sacrifices inter-class density
+        of points using the alpha parameter.
+
+        Parameters
+        ----------
+        X : ndarray of shape n x m
+            A matrix of n instances with m features
+
+        y : ndarray of length n
+            An array or series of target or class values
+        """
 
     def finalize(self, **kwargs):
         """
