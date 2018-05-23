@@ -45,6 +45,8 @@ extensions = [
     'sphinx.ext.viewcode',
     'sphinx.ext.todo',
     'numpydoc',
+    'matplotlib.sphinxext.only_directives',
+    'matplotlib.sphinxext.plot_directive',
 ]
 
 # Add any paths that contain templates here, relative to this directory.
@@ -55,6 +57,15 @@ templates_path = ['_templates']
 #
 # source_suffix = ['.rst', '.md']
 source_suffix = '.rst'
+
+# Auto-plot settings
+plot_formats = [
+    'png',
+#     'pdf',
+#     ('hires.png', 350),  # (file format, dpi)
+]
+#
+plot_include_source = True
 
 # The encoding of source files.
 #
