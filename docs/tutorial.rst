@@ -346,7 +346,7 @@ Visual Model Evaluation
 Now let's refactor our model evaluation function to use Yellowbrick's
 ``ClassificationReport`` class, a model visualizer that displays the
 precision, recall, and F1 scores. This visual model analysis tool
-integrates numerical scores as well color-coded heatmap in order to
+integrates numerical scores as well as color-coded heatmaps in order to
 support easy interpretation and detection, particularly the nuances of
 Type I and Type II error, which are very relevant (lifesaving, even) to
 our use case!
