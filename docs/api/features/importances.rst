@@ -17,28 +17,32 @@ Random Forest, Gradient Boosting, and Ada Boost provide a
 ``feature_importances_`` attribute when fitted. The Yellowbrick
 ``FeatureImportances`` visualizer utilizes this attribute to rank and plot
 relative importances. Let's start with an example; first load a
-classification dataset as follows:
+classification dataset.
 
-.. code:: python
+Then we can create a new figure (this is
+optional, if an ``Axes`` isn't specified, Yellowbrick will use the current
+figure or create one). We can then fit a ``FeatureImportances`` visualizer
+with a ``GradientBoostingClassifier`` to visualize the ranked features.
+
+.. plot::
 
     # Load the classification data set
-    data = load_data("occupancy")
+    from yellowbrick.datasets import load_occupancy
+    occupancy = load_occupancy()
+    data = occupancy['data']
+    feature_names = occupancy['feature_names']
 
     # Specify the features of interest
     features = [
         "temperature", "relative humidity", "light", "C02", "humidity"
     ]
 
+    # Map features to column indices
+    indices = [feature_names.index(feature) for feature in features]
+
     # Extract the instances and target
-    X = data[features]
-    y = data.occupancy
-
-Once the dataset has been loaded, we can create a new figure (this is
-optional, if an ``Axes`` isn't specified, Yellowbrick will use the current
-figure or create one). We can then fit a ``FeatureImportances`` visualizer
-with a ``GradientBoostingClassifier`` to visualize the ranked features:
-
-.. code:: python
+    X = data[:, indices]
+    y = data[:, -1]
 
     import matplotlib.pyplot as plt
 
@@ -54,7 +58,6 @@ with a ``GradientBoostingClassifier`` to visualize the ranked features:
     viz.fit(X, y)
     viz.poof()
 
-.. image:: images/feature_importances.png
 
 The above figure shows the features ranked according to the explained variance
 each feature contributes to the model. In this case the features are plotted
