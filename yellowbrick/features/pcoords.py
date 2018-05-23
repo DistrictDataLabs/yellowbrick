@@ -19,6 +19,7 @@ coordinates that optimize column order.
 ## Imports
 ##########################################################################
 
+from copy import copy
 from numpy import hstack, ones
 from numpy.random import RandomState
 
@@ -304,7 +305,7 @@ class ParallelCoordinates(DataVisualizer):
         if self.normalize is not None:
             X = self.normalizers[self.normalize].fit_transform(X)
 
-        # the super method calls draw and returns self 
+        # the super method calls draw and returns self
         super(ParallelCoordinates, self).fit(X, y, **kwargs)
 
         # Fit always returns self.
@@ -350,7 +351,7 @@ class ParallelCoordinates(DataVisualizer):
         #   introduce separation between individual data points using None in x-values and arbitrary value (one) in
         #   y-values
         X_separated = hstack([X, ones((nrows, 1))])
-        increments_separated = increments.copy()
+        increments_separated = copy(increments)
         increments_separated.append(None)
 
         # Plot each class
