@@ -1,8 +1,9 @@
 # yellowbrick.features.pcoords
 # Implementations of parallel coordinates for feature analysis.
 #
-# Author:   Benjamin Bengfort <bbengfort@districtdatalabs.com>
-# Created:  Mon Oct 03 21:46:06 2016 -0400
+# Author:  Benjamin Bengfort <bbengfort@districtdatalabs.com>
+# Author:  @thekylesaurus
+# Created: Mon Oct 03 21:46:06 2016 -0400
 #
 # Copyright (C) 2016 District Data Labs
 # For license information, see LICENSE.txt
@@ -10,19 +11,19 @@
 # ID: pcoords.py [0f4b236] benjamin@bengfort.com $
 
 """
-Implementations of parallel coordinates for multi-dimensional feature
-analysis. There are a variety of parallel coordinates from Andrews Curves to
-coordinates that optimize column order.
+Implementation of parallel coordinates for multi-dimensional feature analysis.
 """
 
 ##########################################################################
 ## Imports
 ##########################################################################
 
-from copy import copy
-from numpy import hstack, ones
-from numpy.random import RandomState
+import numpy as np
 
+from six import string_types
+from matplotlib import patches
+from operator import itemgetter
+from numpy.random import RandomState
 from sklearn.preprocessing import MinMaxScaler, MaxAbsScaler
 from sklearn.preprocessing import Normalizer, StandardScaler
 
@@ -136,7 +137,8 @@ class ParallelCoordinates(DataVisualizer):
     """
     Parallel coordinates displays each feature as a vertical axis spaced
     evenly along the horizontal, and each instance as a line drawn between
-    each individual axis.
+    each individual axis. This allows you to detect braids of similar instances
+    and separability that suggests a good classification problem. 
 
     Parameters
     ----------
@@ -207,7 +209,6 @@ class ParallelCoordinates(DataVisualizer):
 
     Attributes
     --------
-
     n_samples_ : int
         number of samples included in the visualization object
 
@@ -226,7 +227,7 @@ class ParallelCoordinates(DataVisualizer):
     process, but can and should be set as early as possible.
     """
 
-    normalizers = {
+    NORMALIZERS = {
         'minmax': MinMaxScaler(),
         'maxabs': MaxAbsScaler(),
         'standard': StandardScaler(),
@@ -255,7 +256,7 @@ class ParallelCoordinates(DataVisualizer):
         )
 
         # Validate 'normalize' argument
-        if normalize in self.normalizers or normalize is None:
+        if normalize in self.NORMALIZERS or normalize is None:
             self.normalize = normalize
         else:
             raise YellowbrickValueError(
@@ -307,6 +308,10 @@ class ParallelCoordinates(DataVisualizer):
             'linewidth': 1, 'color': 'black'
         }
 
+        # Internal properties
+        self._increments = None
+        self._colors = None
+
     def fit(self, X, y=None, **kwargs):
         """
         The fit method is the primary drawing input for the
@@ -330,24 +335,45 @@ class ParallelCoordinates(DataVisualizer):
             Returns the instance of the transformer/visualizer
         """
 
-        # Convert from dataframe
+        # Convert from pandas data types
         if is_dataframe(X):
+            # Get column names before reverting to an np.ndarray
+            if self.features_ is None:
+                self.features_ = np.array(X.columns)
+
             X = X.as_matrix()
         if is_series(y):
             y = y.as_matrix()
 
-        # Subsample
+        # Assign integer labels to the feature columns from the input
+        if self.features_ is None:
+            self.features_ = np.arange(0, X.shape[1])
+
+        # Ensure that all classes are represented in the color mapping (before sample)
+        # NOTE: np.unique also specifies the ordering of the classes
+        if self.classes_ is None:
+            self.classes_ = [str(label) for label in np.unique(y)]
+
+        # Create the color mapping for each class
+        # TODO: Allow both colormap, listed colors, and palette definition
+        # TODO: Make this an independent function or property for override!
+        color_values = resolve_colors(
+            n_colors=len(self.classes_), colormap=self.colormap, colors=self.color
+        )
+        self._colors = dict(zip(self.classes_, color_values))
+
+        # Ticks for each feature specified
+        self._increments = np.arange(len(self.features_))
+
+        # Subsample instances
         X, y = self._subsample(X, y)
 
-        # Normalize
+        # Normalize instances
         if self.normalize is not None:
-            X = self.normalizers[self.normalize].fit_transform(X)
+            X = self.NORMALIZERS[self.normalize].fit_transform(X)
 
         # the super method calls draw and returns self
-        super(ParallelCoordinates, self).fit(X, y, **kwargs)
-
-        # Fit always returns self.
-        return self
+        return super(ParallelCoordinates, self).fit(X, y, **kwargs)
 
     def draw(self, X, y, **kwargs):
         """
@@ -366,53 +392,11 @@ class ParallelCoordinates(DataVisualizer):
             Pass generic arguments to the drawing method
 
         """
+        if self.fast:
+            return self.draw_classes(X, y, **kwargs)
+        return self.draw_instances(X, y, **kwargs)
 
-        # Get shape of the sampled data
-        nrows, ncols = X.shape
-
-        # Create the xticks for each column
-        # TODO: Allow the user to specify this feature
-        increments = list(range(ncols))
-
-        # Create the colors
-        # TODO: Allow both colormap, listed colors, and palette definition
-        # TODO: Make this an independent function or property for override!
-        color_values = resolve_colors(
-            n_colors=len(self.classes_), colormap=self.colormap, colors=self.color
-        )
-        colors = dict(zip(self.classes_, color_values))
-
-        # TODO: Make this function compatible with DataFrames!
-        # TODO: Make an independent function to allow addition of instances!
-
-        # Prepare to flatten data within each class
-        #   introduce separation between individual data points using None in x-values and arbitrary value (one) in
-        #   y-values
-        X_separated = hstack([X, ones((nrows, 1))])
-        increments_separated = copy(increments)
-        increments_separated.append(None)
-
-        # Plot each class
-        for label, color in sorted(colors.items()):
-            y_as_str = y.astype('str')  # must be consistent with class conversion in DataVisualizer.fit()
-            X_in_class = X_separated[y_as_str == label, :]
-            increments_in_class = increments_separated * len(X_in_class)
-            if len(X_in_class) > 0:
-                self.ax.plot(increments_in_class, X_in_class.flatten(),
-                             label=label, color=colors[label], alpha=0.25, linewidth=1, **kwargs)
-
-        # Add the vertical lines
-        # TODO: Make an independent function for override!
-        if self.show_vlines:
-            for idx in increments:
-                self.ax.axvline(idx, **self.vlines_kwds)
-
-        # Set the limits
-        self.ax.set_xticks(increments)
-        self.ax.set_xticklabels(self.features_)
-        self.ax.set_xlim(increments[0], increments[-1])
-
-    def draw_instances(self, X, y):
+    def draw_instances(self, X, y, **kwargs):
         """
         Draw the instances colored by the target y such that each line is a
         single instance. This is the "slow" mode of drawing, since each
@@ -435,8 +419,28 @@ class ParallelCoordinates(DataVisualizer):
         This method can be used to draw additional instances onto the parallel
         coordinates before the figure is finalized.
         """
+        # Get alpha from param or default
+        alpha = self.alpha or 0.25
 
-    def draw_classes(self, X, y):
+        for idx in range(len(X)):
+            Xi = X[idx]
+            yi = y[idx]
+
+            # TODO: generalize this duplicated code into a single function
+            if isinstance(yi, string_types):
+                label = yi
+            else:
+                # TODO: what happens if yi is not in classes?!
+                label = self.classes_[yi]
+
+            self.ax.plot(
+                self._increments, Xi,
+                color=self._colors[label], alpha=alpha, **kwargs
+            )
+
+        return self.ax
+
+    def draw_classes(self, X, y, **kwargs):
         """
         Draw the instances colored by the target y such that each line is a
         single class. This is the "fast" mode of drawing, since the number of
@@ -452,6 +456,36 @@ class ParallelCoordinates(DataVisualizer):
         y : ndarray of length n
             An array or series of target or class values
         """
+        # Get alpha from param or default
+        alpha = self.alpha or 0.5
+
+        # Prepare to flatten data within each class:
+        #   introduce separation between individual data points using None in
+        #   x-values and arbitrary value (one) in y-values
+        X_separated = np.hstack([X, np.ones((X.shape[0], 1))])
+        increments_separated = self._increments.tolist()
+        increments_separated.append(None)
+
+        # Get the classes that exist in the dataset, y
+        y_values = np.unique(y)
+
+        # Plot each class as a single line plot
+        for yi in y_values:
+            if isinstance(yi, string_types):
+                label = yi
+            else:
+                # TODO: what happens if yi is not in classes?!
+                label = self.classes_[yi]
+
+            X_in_class = X_separated[y == yi, :]
+            increments_in_class = increments_separated * len(X_in_class)
+            if len(X_in_class) > 0:
+                self.ax.plot(
+                    increments_in_class, X_in_class.flatten(), linewidth=1,
+                    color=self._colors[label], alpha=alpha, **kwargs
+                )
+
+        return self.ax
 
     def finalize(self, **kwargs):
         """
@@ -468,8 +502,25 @@ class ParallelCoordinates(DataVisualizer):
             'Parallel Coordinates for {} Features'.format(len(self.features_))
         )
 
-        # Set the legend and the grid
-        self.ax.legend(loc='best')
+        # Add the vertical lines
+        # TODO: Make an independent function for override!
+        if self.show_vlines:
+            for idx in self._increments:
+                self.ax.axvline(idx, **self.vlines_kwds)
+
+        # Set the limits
+        self.ax.set_xticks(self._increments)
+        self.ax.set_xticklabels(self.features_)
+        self.ax.set_xlim(self._increments[0], self._increments[-1])
+
+        # Add the legend
+        handles = [
+            patches.Patch(color=color, label=label)
+            for label, color in sorted(self._colors.items(), key=itemgetter(0))
+        ]
+        self.ax.legend(handles=handles, loc='best', frameon=True)
+
+        # Add the grid view
         self.ax.grid()
 
     def _subsample(self, X, y):
