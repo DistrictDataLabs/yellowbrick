@@ -18,7 +18,6 @@ Testing for the parallel coordinates feature visualizers
 ## Imports
 ##########################################################################
 
-# import sys
 import pytest
 import numpy as np
 
@@ -83,9 +82,6 @@ class TestParallelCoordinates(VisualTestCase, DatasetMixin):
         visualizer.poof()
         self.assert_images_similar(visualizer, tol=0.25)
 
-    # @pytest.mark.xfail(
-    #     sys.platform == 'win32', reason="images not close on windows"
-    # )
     def test_alpha(self):
         """
         Test image closeness on opaque alpha for random 3 class dataset
@@ -93,11 +89,8 @@ class TestParallelCoordinates(VisualTestCase, DatasetMixin):
         visualizer = ParallelCoordinates(alpha=1.0)
         visualizer.fit_transform(self.dataset.X, self.dataset.y)
         visualizer.poof()
-        self.assert_images_similar(visualizer)
+        self.assert_images_similar(visualizer, tol=0.25)
 
-    # @pytest.mark.xfail(
-    #     sys.platform == 'win32', reason="images not close on windows"
-    # )
     def test_alpha_fast(self):
         """
         Test image closeness on opaque alpha for random 3 class dataset in fast mode
@@ -105,11 +98,8 @@ class TestParallelCoordinates(VisualTestCase, DatasetMixin):
         visualizer = ParallelCoordinates(alpha=1.0, fast=True)
         visualizer.fit_transform(self.dataset.X, self.dataset.y)
         visualizer.poof()
-        self.assert_images_similar(visualizer)
+        self.assert_images_similar(visualizer, tol=0.25)
 
-    # @pytest.mark.xfail(
-    #     sys.platform == 'win32', reason="images not close on windows"
-    # )
     def test_labels(self):
         """
         Test image closeness when class and feature labels are supplied
@@ -121,9 +111,6 @@ class TestParallelCoordinates(VisualTestCase, DatasetMixin):
         visualizer.poof()
         self.assert_images_similar(visualizer)
 
-    # @pytest.mark.xfail(
-    #     sys.platform == 'win32', reason="images not close on windows"
-    # )
     def test_labels_fast(self):
         """
         Test image closeness when class and feature labels are supplied in fast mode
@@ -135,9 +122,6 @@ class TestParallelCoordinates(VisualTestCase, DatasetMixin):
         visualizer.poof()
         self.assert_images_similar(visualizer)
 
-    # @pytest.mark.xfail(
-    #     sys.platform == 'win32', reason="images not close on windows"
-    # )
     def test_normalized_l2(self):
         """
         Test image closeness on l2 normalized 3 class dataset
@@ -145,11 +129,8 @@ class TestParallelCoordinates(VisualTestCase, DatasetMixin):
         visualizer = ParallelCoordinates(normalize='l2')
         visualizer.fit_transform(self.dataset.X, self.dataset.y)
         visualizer.poof()
-        self.assert_images_similar(visualizer)
+        self.assert_images_similar(visualizer, tol=0.25)
 
-    # @pytest.mark.xfail(
-    #     sys.platform == 'win32', reason="images not close on windows"
-    # )
     def test_normalized_l2_fast(self):
         """
         Test image closeness on l2 normalized 3 class dataset in fast mode
@@ -157,11 +138,8 @@ class TestParallelCoordinates(VisualTestCase, DatasetMixin):
         visualizer = ParallelCoordinates(normalize='l2', fast=True)
         visualizer.fit_transform(self.dataset.X, self.dataset.y)
         visualizer.poof()
-        self.assert_images_similar(visualizer)
+        self.assert_images_similar(visualizer, tol=0.25)
 
-    # @pytest.mark.xfail(
-    #     sys.platform == 'win32', reason="images not close on windows"
-    # )
     def test_normalized_minmax(self):
         """
         Test image closeness on minmax normalized 3 class dataset
@@ -169,11 +147,8 @@ class TestParallelCoordinates(VisualTestCase, DatasetMixin):
         visualizer = ParallelCoordinates(normalize='minmax')
         visualizer.fit_transform(self.dataset.X, self.dataset.y)
         visualizer.poof()
-        self.assert_images_similar(visualizer)
+        self.assert_images_similar(visualizer, tol=0.25)
 
-    # @pytest.mark.xfail(
-    #     sys.platform == 'win32', reason="images not close on windows"
-    # )
     def test_normalized_minmax_fast(self):
         """
         Test image closeness on minmax normalized 3 class dataset in fast mode
@@ -181,11 +156,8 @@ class TestParallelCoordinates(VisualTestCase, DatasetMixin):
         visualizer = ParallelCoordinates(normalize='minmax', fast=True)
         visualizer.fit_transform(self.dataset.X, self.dataset.y)
         visualizer.poof()
-        self.assert_images_similar(visualizer)
+        self.assert_images_similar(visualizer, tol=0.25)
 
-    # @pytest.mark.xfail(
-    #     sys.platform == 'win32', reason="images not close on windows"
-    # )
     @pytest.mark.skipif(pd is None, reason="test requires pandas")
     def test_pandas_integration_sampled(self):
         """
@@ -210,11 +182,8 @@ class TestParallelCoordinates(VisualTestCase, DatasetMixin):
         oz.fit_transform(X, y)
         oz.poof()
 
-        self.assert_images_similar(oz)
+        self.assert_images_similar(oz, tol=0.1)
 
-    # @pytest.mark.xfail(
-    #     sys.platform == 'win32', reason="images not close on windows"
-    # )
     @pytest.mark.skipif(pd is None, reason="test requires pandas")
     def test_pandas_integration_fast(self):
         """
@@ -239,7 +208,7 @@ class TestParallelCoordinates(VisualTestCase, DatasetMixin):
         oz.fit_transform(X, y)
         oz.poof()
 
-        self.assert_images_similar(oz)
+        self.assert_images_similar(oz, tol=0.1)
 
     def test_normalized_invalid_arg(self):
         """
