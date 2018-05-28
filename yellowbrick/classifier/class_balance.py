@@ -25,6 +25,8 @@ import numpy as np
 
 from .base import ClassificationScoreVisualizer
 
+from ..style.palettes import color_palette
+
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import precision_recall_fscore_support
 from sklearn.utils.multiclass import unique_labels
