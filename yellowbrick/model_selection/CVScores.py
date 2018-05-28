@@ -35,50 +35,72 @@ class CVScores(ModelVisualizer):
     """
     CVScores displays cross validation scores as a bar chart and the 
     average of the scores as a horizontal line
+
+    Parameters
+    ---------- 
+
+    model : a scikit-learn estimator
+            An object that implements ``fit`` and ``predict``, can be a
+            classifier, regressor, or clusterer so long as there is also a valid
+            associated scoring metric.
+            Note that the object is cloned for each validation.
+
+    ax : matplotlib.Axes object, optional
+            The axes object to plot the figure on.
+
+    cv : int, cross-validation generator or an iterable, optional
+            Determines the cross-validation splitting strategy.
+            Possible inputs for cv are:
+                - None, to use the default 3-fold cross-validation,
+                - integer, to specify the number of folds.
+                - An object to be used as a cross-validation generator.
+                - An iterable yielding train/test splits.
+
+            see the scikit-learn
+            `cross-validation guide <http://scikit-learn.org/stable/modules/cross_validation.html>`_
+            for more information on the possible strategies that can be used here.
+
+    scoring : string, callable or None, optional, default: None
+            A string or scorer callable object / function with signature
+            ``scorer(estimator, X, y)``. 
+    
+            See scikit-learn model evaluation documentation for names of possible metrics.
+
+    kwargs : dict
+            Keyword arguments that are passed to the base class and may influence
+            the visualization as defined in other Visualizers.    
+                 
+    Examples
+    --------
+    
+    >>> from sklearn.model_selection import KFold, cross_val_score, 
+    >>> ShuffleSplit, StratifiedKFold
+    >>> from sklearn import datasets, svm, linear_model 
+
+    >>> iris = datasets.load_iris()
+    >>> clf = svm.SVC(kernel='linear', C=1)
+
+    >>> X = iris.data
+    >>> y = iris.target
+
+    >>> visualizer = CVScores(model=clf, cv=5, scoring='f1_macro')
+    >>> visualizer.fit(X,y)
+    >>> visualizer.poof()
+    
+    Notes
+    -----
+    
+    This visualizer is a wrapper around for the ``sklearn.model_selection.cross_val_score``
+    <<http://scikit-learn.org/stable/modules/generated/sklearn.model_selection.cross_val_score.html>>
+    
+    Refer to the scikit-learn
+    `cross-validation guide <http://scikit-learn.org/stable/modules/cross_validation.html>`
+    for more details
+    
     """
+
     def __init__(self, model, ax=None, cv=None, scoring=None, **kwargs):    
-        """
-        Initialize the visualization with many of the options required
-        in order to make most visualizations work.
-
-        These parameters can be influenced later on in the visualization
-        process, but can and should be set as early as possible.
-
-        Parameters
-        ---------- 
-
-        model : a scikit-learn estimator
-                An object that implements ``fit`` and ``predict``, can be a
-                classifier, regressor, or clusterer so long as there is also a valid
-                associated scoring metric.
-                Note that the object is cloned for each validation.
-
-        ax : matplotlib.Axes object, optional
-                The axes object to plot the figure on.
-
-        cv : int, cross-validation generator or an iterable, optional
-                Determines the cross-validation splitting strategy.
-                Possible inputs for cv are:
-                    - None, to use the default 3-fold cross-validation,
-                    - integer, to specify the number of folds.
-                    - An object to be used as a cross-validation generator.
-                    - An iterable yielding train/test splits.
-
-                see the scikit-learn
-                `cross-validation guide <http://scikit-learn.org/stable/modules/cross_validation.html>`_
-                for more information on the possible strategies that can be used here.
-
-        scoring : string, callable or None, optional, default: None
-                A string or scorer callable object / function with signature
-                ``scorer(estimator, X, y)``. 
-        
-                See scikit-learn model evaluation documentation for names of possible metrics.
-
-        kwargs : dict
-                Keyword arguments that are passed to the base class and may influence
-                the visualization as defined in other Visualizers.            
-
-        """
+                
         super(CVScores, self).__init__(model, ax=ax, **kwargs)
     
         self.cv = cv
@@ -103,7 +125,7 @@ class CVScores(ModelVisualizer):
         Returns
         -------
         self : instance
-
+        
         """
 
         self.cv_scores_ = cross_val_score(self.estimator, X, y, cv=self.cv, scoring=self.scoring)
@@ -114,7 +136,8 @@ class CVScores(ModelVisualizer):
 
     def draw(self, **kwargs):
         """
-        creates the bar chart of cv scores
+        creates the bar chart of the CV scores generated from the fit method and places 
+        a dashed horizontal line that represents the average value of the CV scores
         """
         minimum = min(self.cv_scores_)
         if minimum > 0.05:
