@@ -88,6 +88,7 @@ Table of Contents
 The following is a complete listing of the Yellowbrick documentation for this version of the library:
 
 .. toctree::
+   :glob:
    :maxdepth: 2
 
    quickstart
@@ -96,6 +97,7 @@ The following is a complete listing of the Yellowbrick documentation for this ve
    evaluation
    contributing
    matplotlib
+   gallery
    about
    code_of_conduct
    changelog

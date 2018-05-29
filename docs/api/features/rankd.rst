@@ -67,6 +67,8 @@ The default ranking algorithm is covariance, which attempts to compute the mean 
 
 Alternatively, we can utilize a linear correlation algorithm such as a Pearson score to similarly detect colinear relationships. Compare the output from Pearson below to the covariance ranking above.
 
+{{ShortAnchor}}
+
 .. code:: python
 
     # Instantiate the visualizer with the Pearson ranking algorithm
