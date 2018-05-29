@@ -71,3 +71,14 @@ class TestPosTag(object):
 
         visualizer = PosTagVisualizer()
         visualizer.transform(tagged)
+        
+        
+    @pytest.mark.xfail(reason="nltk data is not downloaded")
+    def test_nltk_downloads(self):
+        """
+        Tests if nltk data is downloaded or is available
+        """
+        try:
+            nltk.data.find('corpora/treebank')
+        except LookupError:
+            pytest.xfail("error occured because nltk postag data is not available")
