@@ -1,13 +1,14 @@
 # tests.test_text.test_freqdist
 # Tests for the frequency distribution visualization
 #
-# Author:   Rebecca Bilbro <rbilbro@districtdatalabs.com>
+# Author:   Rebecca Bilbro
+# Github:   @rebeccabilbro
 # Created:  2017-03-22 15:27
 #
-# Copyright (C) 2017 District Data Labs
+# Copyright (C) 2018
 # For license information, see LICENSE.txt
 #
-# ID: test_freqdist.py [bd9cbb9] rebecca.bilbro@bytecubed.com $
+# ID: test_freqdist.py [bd9cbb9] rbilbro@districtdatalabs.com $
 
 """
 Tests for the frequency distribution text visualization
