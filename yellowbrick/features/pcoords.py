@@ -19,10 +19,14 @@ coordinates that optimize column order.
 ## Imports
 ##########################################################################
 
+from copy import copy
+from numpy import hstack, ones
+from numpy.random import RandomState
+
 from sklearn.preprocessing import MinMaxScaler, MaxAbsScaler
 from sklearn.preprocessing import Normalizer, StandardScaler
 
-from yellowbrick.utils import is_dataframe
+from yellowbrick.utils import is_dataframe, is_series
 from yellowbrick.features.base import DataVisualizer
 from yellowbrick.exceptions import YellowbrickTypeError, YellowbrickValueError
 from yellowbrick.style.colors import resolve_colors
@@ -149,6 +153,15 @@ class ParallelCoordinates(DataVisualizer):
         If int, specifies the maximum number of samples to display.
         If float, specifies a fraction between 0 and 1 to display.
 
+    random_state : int, RandomState instance or None
+        If int, random_state is the seed used by the random number generator;
+        If RandomState instance, random_state is the random number generator;
+        If None, the random number generator is the RandomState instance used
+        by np.random; only used if shuffle is True and sample < 1.0
+
+    shuffle : boolean, default: True
+        specifies whether sample is drawn randomly
+
     color : list or tuple, default: None
         optional list or tuple of colors to colorize lines
         Use either color to colorize the lines on a per class basis or
@@ -168,6 +181,12 @@ class ParallelCoordinates(DataVisualizer):
     kwargs : dict
         Keyword arguments that are passed to the base class and may influence
         the visualization as defined in other Visualizers.
+
+    Attributes
+    --------
+
+    n_samples_ : int
+        number of samples included in the visualization object
 
     Examples
     --------
@@ -193,7 +212,7 @@ class ParallelCoordinates(DataVisualizer):
     }
 
     def __init__(self, ax=None, features=None, classes=None, normalize=None,
-                 sample=1.0, color=None, colormap=None, vlines=True,
+                 sample=1.0, random_state=None, shuffle=False, color=None, colormap=None, vlines=True,
                  vlines_kwds=None, **kwargs):
         super(ParallelCoordinates, self).__init__(
             ax, features, classes, color, colormap, **kwargs
@@ -225,40 +244,97 @@ class ParallelCoordinates(DataVisualizer):
             )
         self.sample = sample
 
+        # Set sample parameters
+        if isinstance(shuffle, bool):
+            self.shuffle = shuffle
+        else:
+            raise YellowbrickTypeError(
+                "`shuffle` parameter must be boolean"
+            )
+        if self.shuffle:
+            if (random_state is None) or isinstance(random_state, int):
+                self._rng = RandomState(random_state)
+            elif isinstance(random_state, RandomState):
+                self._rng = random_state
+            else:
+                raise YellowbrickTypeError(
+                    "`random_state` parameter must be None, int, or np.random.RandomState"
+                )
+        else:
+            self._rng = None
+
         # Visual Parameters
         self.show_vlines = vlines
         self.vlines_kwds = vlines_kwds or {
             'linewidth': 1, 'color': 'black'
         }
 
-    def draw(self, X, y, **kwargs):
+    def fit(self, X, y=None, **kwargs):
         """
-        Called from the fit method, this method creates the parallel
-        coordinates canvas and draws each instance and vertical lines on it.
+        The fit method is the primary drawing input for the
+        visualization since it has both the X and y data required for the
+        viz and the transform method does not.
+
+        Parameters
+        ----------
+        X : ndarray or DataFrame of shape n x m
+            A matrix of n instances with m features
+
+        y : ndarray or Series of length n
+            An array or series of target or class values
+
+        kwargs : dict
+            Pass generic arguments to the drawing method
+
+        Returns
+        -------
+        self : instance
+            Returns the instance of the transformer/visualizer
         """
+
         # Convert from dataframe
         if is_dataframe(X):
             X = X.as_matrix()
+        if is_series(y):
+            y = y.as_matrix()
 
-        # Choose a subset of samples
-        # TODO: allow selection of a random subset of samples instead of head
-
-        if isinstance(self.sample, int):
-            self.n_samples = min([self.sample, len(X)])
-        elif isinstance(self.sample, float):
-            self.n_samples = int(len(X) * self.sample)
-        X = X[:self.n_samples, :]
+        # Subsample
+        X, y = self._subsample(X, y)
 
         # Normalize
         if self.normalize is not None:
             X = self.normalizers[self.normalize].fit_transform(X)
 
-        # Get the shape of the data
+        # the super method calls draw and returns self
+        super(ParallelCoordinates, self).fit(X, y, **kwargs)
+
+        # Fit always returns self.
+        return self
+
+    def draw(self, X, y, **kwargs):
+        """
+        Called from the fit method, this method creates the parallel
+        coordinates canvas and draws each instance and vertical lines on it.
+
+        Parameters
+        ----------
+        X : ndarray of shape n x m
+            A matrix of n instances with m features
+
+        y : ndarray of length n
+            An array or series of target or class values
+
+        kwargs : dict
+            Pass generic arguments to the drawing method
+
+        """
+
+        # Get shape of the sampled data
         nrows, ncols = X.shape
 
         # Create the xticks for each column
         # TODO: Allow the user to specify this feature
-        x = list(range(ncols))
+        increments = list(range(ncols))
 
         # Create the colors
         # TODO: Allow both colormap, listed colors, and palette definition
@@ -268,32 +344,35 @@ class ParallelCoordinates(DataVisualizer):
         )
         colors = dict(zip(self.classes_, color_values))
 
-        # Track which labels are already in the legend
-        used_legends = set([])
-
         # TODO: Make this function compatible with DataFrames!
         # TODO: Make an independent function to allow addition of instances!
-        for idx, row in enumerate(X):
-            # TODO: How to map classmap to labels?
-            label = y[idx] # Get the label for the row
-            label = self.classes_[label]
 
-            if label not in used_legends:
-                used_legends.add(label)
-                self.ax.plot(x, row, color=colors[label], alpha=0.25, label=label, **kwargs)
-            else:
-                self.ax.plot(x, row, color=colors[label], alpha=0.25, **kwargs)
+        # Prepare to flatten data within each class
+        #   introduce separation between individual data points using None in x-values and arbitrary value (one) in
+        #   y-values
+        X_separated = hstack([X, ones((nrows, 1))])
+        increments_separated = copy(increments)
+        increments_separated.append(None)
+
+        # Plot each class
+        for label, color in sorted(colors.items()):
+            y_as_str = y.astype('str')  # must be consistent with class conversion in DataVisualizer.fit()
+            X_in_class = X_separated[y_as_str == label, :]
+            increments_in_class = increments_separated * len(X_in_class)
+            if len(X_in_class) > 0:
+                self.ax.plot(increments_in_class, X_in_class.flatten(),
+                             label=label, color=colors[label], alpha=0.25, linewidth=1, **kwargs)
 
         # Add the vertical lines
         # TODO: Make an independent function for override!
         if self.show_vlines:
-            for idx in x:
+            for idx in increments:
                 self.ax.axvline(idx, **self.vlines_kwds)
 
         # Set the limits
-        self.ax.set_xticks(x)
+        self.ax.set_xticks(increments)
         self.ax.set_xticklabels(self.features_)
-        self.ax.set_xlim(x[0], x[-1])
+        self.ax.set_xlim(increments[0], increments[-1])
 
     def finalize(self, **kwargs):
         """
@@ -313,3 +392,21 @@ class ParallelCoordinates(DataVisualizer):
         # Set the legend and the grid
         self.ax.legend(loc='best')
         self.ax.grid()
+
+    def _subsample(self, X, y):
+
+        # Choose a subset of samples
+        if isinstance(self.sample, int):
+            n_samples = min([self.sample, len(X)])
+        elif isinstance(self.sample, float):
+            n_samples = int(len(X) * self.sample)
+
+        if (n_samples < len(X)) and self.shuffle:
+            indices = self._rng.choice(len(X), n_samples, replace=False)
+        else:
+            indices = slice(n_samples)
+        X = X[indices, :]
+        y = y[indices]
+
+        self.n_samples_ = n_samples
+        return X, y
