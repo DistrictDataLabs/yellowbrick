@@ -359,6 +359,13 @@ fact edible).
 effect that is present (e.g. believing a mushroom is edible when it is
 in fact poisonous).
 
+Quick Note for Jupyter Notebook users:
+When running in a Jupyter Notebook, you need add the following line:
+
+%matplotlib inline
+
+in order for the charts to show up when you run the line of code. 
+
 .. code:: python
 
     from sklearn.pipeline import Pipeline
