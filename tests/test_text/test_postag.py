@@ -31,7 +31,7 @@ except ImportError:
 
 
 ##########################################################################
-## Data
+## Fixtures
 ##########################################################################
 
 pie =  """
@@ -52,6 +52,17 @@ whipped cream and chocolate curls if desired.
 """
 
 
+def check_nltk_data():
+    """
+    Returns True if NLTK data has been downloaded, False otherwise
+    """
+    try:
+        nltk.data.find('corpora/treebank')
+        return True
+    except LookupError:
+        pytest.xfail("error occured because nltk postag data is not available")
+
+
 ##########################################################################
 ## PosTag Tests
 ##########################################################################
@@ -66,19 +77,12 @@ class TestPosTag(object):
         """
         Assert no errors occur during postag integration
         """
+
+        # Fail if data hasn't been downloaded
+        check_nltk_data()
+
         tokens = word_tokenize(pie)
         tagged = pos_tag(tokens)
 
         visualizer = PosTagVisualizer()
         visualizer.transform(tagged)
-        
-        
-    @pytest.mark.xfail(reason="nltk data is not downloaded")
-    def test_nltk_downloads(self):
-        """
-        Tests if nltk data is downloaded or is available
-        """
-        try:
-            nltk.data.find('corpora/treebank')
-        except LookupError:
-            pytest.xfail("error occured because nltk postag data is not available")
