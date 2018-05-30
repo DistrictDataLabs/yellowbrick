@@ -66,7 +66,7 @@ Let's load the data with Pandas.
     dataset.head()
 
 = =========  =========  ===========  =========
-  class      cap-shape  cap-surface  cap-color
+. class      cap-shape  cap-surface  cap-color
 = =========  =========  ===========  =========
 0 edible     bell       smooth       white
 1 poisonous  convex     scaly        white

@@ -7,10 +7,10 @@ import matplotlib.pyplot as plt
 
 from yellowbrick.classifier import ClassificationReport
 
-from sklearn.metrics import f1_score
 from sklearn.pipeline import Pipeline
 from sklearn.base import BaseEstimator, TransformerMixin
 from sklearn.preprocessing import LabelEncoder, OneHotEncoder
+
 from sklearn.svm import LinearSVC, NuSVC, SVC
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.linear_model import LogisticRegressionCV, LogisticRegression, SGDClassifier
@@ -95,7 +95,7 @@ def visual_model_selection(X, y, estimator, path):
          ('estimator', estimator)
     ])
 
-    _, ax = plt.subplots() 
+    _, ax = plt.subplots()
 
     # Instantiate the classification model and visualizer
     visualizer = ClassificationReport(model, ax=ax, classes=['edible', 'poisonous'])
