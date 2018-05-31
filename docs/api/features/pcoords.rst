@@ -71,7 +71,7 @@ Faster Parallel Coordinates
 
 Parallel coordinates can take a long time to draw since each instance is represented by a line for each feature. Worse, this time is not well spent since a lot of overlap in the visualization makes the parallel coordinates less understandable. We propose two solutions to this:
 
-1. Use ``sample=0.2`` and ``shufle=True`` parameters to shuffle and sample the dataset being drawn on the figure. The sample parameter will perform a uniform random sample of the data, selecting the percent specified.
+1. Use ``sample=0.2`` and ``shuffle=True`` parameters to shuffle and sample the dataset being drawn on the figure. The sample parameter will perform a uniform random sample of the data, selecting the percent specified.
 
 2. Use the ``fast=True`` parameter to enable "fast drawing mode".
 
