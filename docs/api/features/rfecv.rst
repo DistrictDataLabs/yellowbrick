@@ -31,6 +31,7 @@ To show how this works in practice, we'll start with a contrived example using a
 
 This figure shows an ideal RFECV curve, the curve jumps to an excellent accuracy when the three informative features are captured, then gradually decreases in accuracy as the non informative features are added into the model. The shaded area represents the variability of cross-validation, one standard deviation above and below the mean accuracy score drawn by the curve.
 
+
 Exploring a real dataset, we can see the impact of RFECV on a credit default binary classifier.
 
 .. code:: python
