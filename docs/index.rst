@@ -88,7 +88,6 @@ Table of Contents
 The following is a complete listing of the Yellowbrick documentation for this version of the library:
 
 .. toctree::
-   :glob:
    :maxdepth: 2
 
    quickstart
