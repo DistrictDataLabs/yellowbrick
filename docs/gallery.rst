@@ -6,8 +6,6 @@ Example Gallery
 Gallery
 ====================
 
-Yellowbrick Examples
-
 Features Analysis
 -----------------
 
@@ -146,7 +144,7 @@ Clasification Visualizers
     :target: api/classifier/threshold.html#discrimination-threshold
 
 Clustering Visualizers
---------------------------
+----------------------
 
 .. image:: api/cluster/images/elbow.png
     :width: 200px
@@ -159,3 +157,48 @@ Clustering Visualizers
     :height: 100px
     :alt: Silhoutte Plot of Mini Batch Kmeans Clustering
     :target: api/cluster/silhouette.html#silhouette-visualizer
+
+Model Selection Visualizers
+---------------------------
+
+.. image:: api/model_selection/images/validation_curve_regressor.png
+    :width: 200px
+    :height: 100px
+    :alt: Validation Curve for Decision Tree Regresor
+    :target: api/model_selection/validation_curve.html#validation-curve
+
+.. image:: api/model_selection/images/learning_curve_classifier.png
+    :width: 200px
+    :height: 100px
+    :alt: Learning Curve for MultinomialNB
+    :target: api/model_selection/learning_curve.html#classification
+
+.. image:: api/model_selection/images/learning_curve_clusterer.png
+    :width: 200px
+    :height: 100px
+    :alt: Learning Curve for KMeans
+    :target: api/model_selection/learning_curve.html#clustering
+
+Text Modeling Visualizers
+---------------------------
+
+.. image:: api/text/images/freqdist_corpus.png
+    :width: 200px
+    :height: 100px
+    :alt: Validation Curve for Decision Tree Regresor
+    :target: api/text/freqdist.html#token-frequency-distribution
+
+.. image:: api/text/images/tsne_all_docs.png
+    :width: 200px
+    :height: 100px
+    :alt: TSNE Projection of Documents
+    :target: api/text/tsne.html#t-sne-corpus-visualization
+
+Decision Boundaries Vizualizer
+------------------------------
+
+.. image:: api/contrib/images/knn_decisionviz.png
+    :width: 200px
+    :height: 100px
+    :alt: Nearest Neighbor Boundary Visualizer
+    :target: api/contrib/boundaries.html#decisionboundaries-vizualizer
