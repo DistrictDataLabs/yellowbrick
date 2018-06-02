@@ -4,6 +4,7 @@
 # Author:   Rebecca Bilbro <rbilbro@districtdatalabs.com>
 # Author:   Benjamin Bengfort <bbengfort@districtdatalabs.com>
 # Author:   Neal Humphrey
+# Author:   Allyssa Riley
 # Created:  Wed May 18 12:39:40 2016 -0400
 #
 # Copyright (C) 2017 District Data Labs
@@ -14,11 +15,12 @@
 """
 Visual classification report for classifier scoring.
 """
-
+ 
 ##########################################################################
 ## Imports
 ##########################################################################
 
+from __future__ import division
 import numpy as np
 import matplotlib.pyplot as plt
 
@@ -36,12 +38,12 @@ from .base import ClassificationScoreVisualizer
 
 CMAP_UNDERCOLOR = 'w'
 CMAP_OVERCOLOR = '#2a7d4f'
-SCORES_KEYS = ('precision', 'recall', 'f1')
+SCORES_KEYS = ('precision', 'recall', 'f1', 'support')
 
 
 class ClassificationReport(ClassificationScoreVisualizer):
     """
-    Classification report that shows the precision, recall, and F1 scores
+    Classification report that shows the precision, recall, F1, and support scores
     for the model. Integrates numerical scores as well as a color-coded heatmap.
 
     Parameters
@@ -74,7 +76,7 @@ class ClassificationReport(ClassificationScoreVisualizer):
     Attributes
     ----------
     scores_ : dict of dicts
-        Outer dictionary composed of precision, recall, and f1 scores with
+        Outer dictionary composed of precision, recall, f1, and support scores with
         inner dictionaries specifiying the values for each class listed.
     """
     def __init__(self, model, ax=None, classes=None, cmap='YlOrRd', **kwargs):
@@ -101,8 +103,17 @@ class ClassificationReport(ClassificationScoreVisualizer):
         y_pred = self.predict(X)
 
         scores = precision_recall_fscore_support(y, y_pred)
-        scores = map(lambda s: dict(zip(self.classes_, s)), scores[0:3])
+
+        # Calculate the percentage for the support metric
+        self.support_score = scores[-1]
+        support_percent = self.support_score / (sum(self.support_score))
+
+        scores = map(lambda s: dict(zip(self.classes_, s)), scores)
         self.scores_ = dict(zip(SCORES_KEYS, scores))
+
+        # Change the support score from the actual support value to the percent
+        # value to be used in the Classification Report.
+        self.scores_['support'] = dict(zip(self.classes_, support_percent))
 
         return self.draw()
 
@@ -111,16 +122,17 @@ class ClassificationReport(ClassificationScoreVisualizer):
         Renders the classification report across each axis.
         """
         # Create display grid
-        cr_display = np.zeros((len(self.classes_), 3))
+        cr_display = np.zeros((len(self.classes_), 4))
 
-        # For each class row, append columns for precision, recall, and f1
+
+        # For each class row, append columns for precision, recall, f1, and support
         for idx, cls in enumerate(self.classes_):
-            for jdx, metric in enumerate(('precision', 'recall', 'f1')):
+            for jdx, metric in enumerate(('precision', 'recall', 'f1', 'support')):
                 cr_display[idx, jdx] = self.scores_[metric][cls]
 
         # Set up the dimensions of the pcolormesh
         # NOTE: pcolormesh accepts grids that are (N+1,M+1)
-        X, Y = np.arange(len(self.classes_)+1), np.arange(4)
+        X, Y = np.arange(len(self.classes_)+1), np.arange(5)
         self.ax.set_ylim(bottom=0, top=cr_display.shape[0])
         self.ax.set_xlim(left=0, right=cr_display.shape[1])
 
@@ -133,6 +145,11 @@ class ClassificationReport(ClassificationScoreVisualizer):
                 # Extract the value and the text label
                 value = cr_display[x,y]
                 svalue = "{:0.3f}".format(value)
+
+                # change the svalue for support (when y == 3) because we want
+                # to label it as the actual support value, not the percentage
+                if y == 3:
+                    svalue = self.support_score[x]
 
                 # Determine the grid and text colors
                 base_color = self.cmap(value)
@@ -172,20 +189,21 @@ class ClassificationReport(ClassificationScoreVisualizer):
         self.set_title('{} Classification Report'.format(self.name))
 
         # Set the tick marks appropriately
-        self.ax.set_xticks(np.arange(3)+0.5)
+        self.ax.set_xticks(np.arange(4)+0.5)
         self.ax.set_yticks(np.arange(len(self.classes_))+0.5)
 
-        self.ax.set_xticklabels(['precision', 'recall', 'f1-score'], rotation=45)
+        self.ax.set_xticklabels(['precision', 'recall', 'f1-score', 'support'], rotation=45)
         self.ax.set_yticklabels(self.classes_)
 
         plt.tight_layout()
 
 
-def classification_report(model, X, y=None, ax=None, classes=None, **kwargs):
+def classification_report(model, X, y=None, ax=None, classes=None,
+                          random_state=None,**kwargs):
     """Quick method:
 
-    Displays precision, recall, and F1 scores for the model.
-    Integrates numerical scores as well color-coded heatmap.
+    Displays precision, recall, F1, and support scores for the model.
+    Integrates numerical scores as well as color-coded heatmap.
 
     This helper function is a quick wrapper to utilize the ClassificationReport
     ScoreVisualizer for one-off analysis.
@@ -206,6 +224,9 @@ def classification_report(model, X, y=None, ax=None, classes=None, **kwargs):
     classes : list of strings
         The names of the classes in the target
 
+    random_state: integer
+        The seed value for a random generator
+
     Returns
     -------
     ax : matplotlib axes
@@ -215,7 +236,9 @@ def classification_report(model, X, y=None, ax=None, classes=None, **kwargs):
     visualizer = ClassificationReport(model, ax, classes, **kwargs)
 
     # Create the train and test splits
-    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2)
+    X_train, X_test, y_train, y_test = train_test_split(
+        X, y, test_size=0.2, random_state=random_state
+    )
 
     # Fit and transform the visualizer (calls draw)
     visualizer.fit(X_train, y_train, **kwargs)

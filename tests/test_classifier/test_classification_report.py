@@ -59,13 +59,14 @@ class ClassificationReportTests(VisualTestCase, DatasetMixin):
         viz.fit(self.binary.X.train, self.binary.y.train)
         viz.score(self.binary.X.test, self.binary.y.test)
 
-        self.assert_images_similar(viz, tol=35)
+        self.assert_images_similar(viz, tol=40)
 
         assert viz.scores_ == {
             'precision': {0: approx(0.7446808), 1: approx(0.8490566)},
             'recall': {0: approx(0.8139534), 1: approx(0.7894736)},
-            'f1': {0: approx(0.7777777), 1: approx(0.8181818)}
-        }
+            'f1': {0: approx(0.7777777), 1: approx(0.8181818)},
+            'support': {0: approx(0.42999999999999999), 1: approx(0.56999999999999995)}
+            }
 
     @pytest.mark.xfail(
         sys.platform == 'win32', reason="images not close on windows"
@@ -80,7 +81,7 @@ class ClassificationReportTests(VisualTestCase, DatasetMixin):
         viz.fit(self.multiclass.X.train, self.multiclass.y.train)
         viz.score(self.multiclass.X.test, self.multiclass.y.test)
 
-        self.assert_images_similar(viz)
+        self.assert_images_similar(viz, tol=11.0)
 
         assert viz.scores_ == {
             'precision': {
@@ -93,6 +94,10 @@ class ClassificationReportTests(VisualTestCase, DatasetMixin):
                 0: 0.47058823529411764, 1: 0.5294117647058824,
                 2: 0.5294117647058824, 3: 0.35294117647058826,
                 4: 0.38709677419354843, 5: 0.6060606060606061
+            }, 'support': {
+                0: 0.19, 1: 0.16,
+                2: 0.14000000000000001, 3: 0.19,
+                4: 0.16, 5: 0.16
             }}
 
     @pytest.mark.xfail(
@@ -128,9 +133,9 @@ class ClassificationReportTests(VisualTestCase, DatasetMixin):
         viz.fit(X_train, y_train)
         viz.score(X_test, y_test)
 
-        self.assert_images_similar(viz, tol=0.1)
+        self.assert_images_similar(viz, tol=43.0)
 
-        # Ensure correct classification scores under the hood
+        # Ensure correct classification scores under the hood!
         assert viz.scores_ == {
             'precision': {
                 'unoccupied': 0.999347471451876,
@@ -141,9 +146,11 @@ class ClassificationReportTests(VisualTestCase, DatasetMixin):
             }, 'f1': {
                 'unoccupied': 0.9800031994880819,
                 'occupied': 0.9366447034972124
+            }, 'support': {
+                'occupied': 0.22519455252918288,
+                'unoccupied': 0.77480544747081714
             }}
 
-    @pytest.mark.skip(reason="requires random state in quick method")
     def test_quick_method(self):
         """
         Test the quick method with a random dataset
@@ -154,9 +161,10 @@ class ClassificationReportTests(VisualTestCase, DatasetMixin):
         )
 
         _, ax = plt.subplots()
-        classification_report(DecisionTreeClassifier(), X, y, ax=ax)
+        classification_report(DecisionTreeClassifier(), X, y,
+                              ax=ax, random_state=42)
 
-        self.assert_images_similar(ax=ax)
+        self.assert_images_similar(ax=ax, tol=20.0)
 
     def test_isclassifier(self):
         """
