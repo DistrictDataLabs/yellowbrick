@@ -198,7 +198,8 @@ class ClassificationReport(ClassificationScoreVisualizer):
         plt.tight_layout()
 
 
-def classification_report(model, X, y=None, ax=None, classes=None, **kwargs):
+def classification_report(model, X, y=None, ax=None, classes=None,
+                          random_state=None,**kwargs):
     """Quick method:
 
     Displays precision, recall, F1, and support scores for the model.
@@ -223,6 +224,9 @@ def classification_report(model, X, y=None, ax=None, classes=None, **kwargs):
     classes : list of strings
         The names of the classes in the target
 
+    random_state: integer
+        The seed value for a random generator
+
     Returns
     -------
     ax : matplotlib axes
@@ -232,8 +236,9 @@ def classification_report(model, X, y=None, ax=None, classes=None, **kwargs):
     visualizer = ClassificationReport(model, ax, classes, **kwargs)
 
     # Create the train and test splits
-    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2,
-                                                        random_state=42)
+    X_train, X_test, y_train, y_test = train_test_split(
+        X, y, test_size=0.2, random_state=random_state
+    )
 
     # Fit and transform the visualizer (calls draw)
     visualizer.fit(X_train, y_train, **kwargs)
