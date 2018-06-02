@@ -62,6 +62,10 @@ class ClassificationReport(ClassificationScoreVisualizer):
         Specify a colormap to define the heatmap of the predicted class
         against the actual class in the confusion matrix.
 
+    support: {True, False, None, 'percent', 'count'}, default: None
+        Specify if support will be displayed. It can be further defined by
+        whether support should be reported as a raw count or percentage.
+
     kwargs : keyword arguments passed to the super class.
 
     Examples
@@ -79,7 +83,8 @@ class ClassificationReport(ClassificationScoreVisualizer):
         Outer dictionary composed of precision, recall, f1, and support scores with
         inner dictionaries specifiying the values for each class listed.
     """
-    def __init__(self, model, ax=None, classes=None, cmap='YlOrRd', **kwargs):
+    def __init__(self, model, ax=None, classes=None, cmap='YlOrRd',
+                 support=None, **kwargs):
         super(ClassificationReport, self).__init__(
             model, ax=ax, classes=classes, **kwargs
         )
@@ -87,6 +92,8 @@ class ClassificationReport(ClassificationScoreVisualizer):
         self.cmap = color_sequence(cmap)
         self.cmap.set_under(color=CMAP_UNDERCOLOR)
         self.cmap.set_over(color=CMAP_OVERCOLOR)
+        self.support = support
+        self.measurements = ['precision', 'recall', 'f1', 'support']
 
     def score(self, X, y=None, **kwargs):
         """
@@ -106,14 +113,21 @@ class ClassificationReport(ClassificationScoreVisualizer):
 
         # Calculate the percentage for the support metric
         self.support_score = scores[-1]
-        support_percent = self.support_score / (sum(self.support_score))
+        self.support_percent = self.support_score / (sum(self.support_score))
 
+        # Create a mapping composed of precision,recall, presion, and support
+        # to their respective values
         scores = map(lambda s: dict(zip(self.classes_, s)), scores)
         self.scores_ = dict(zip(SCORES_KEYS, scores))
 
         # Change the support score from the actual support value to the percent
         # value to be used in the Classification Report.
-        self.scores_['support'] = dict(zip(self.classes_, support_percent))
+        if self.support is None or self.support is False:
+            self.scores_.pop('support')
+            self.measurements.remove('support')
+        else:
+            self.scores_['support'] = dict(zip(self.classes_,
+                                               self.support_percent))
 
         return self.draw()
 
@@ -122,17 +136,17 @@ class ClassificationReport(ClassificationScoreVisualizer):
         Renders the classification report across each axis.
         """
         # Create display grid
-        cr_display = np.zeros((len(self.classes_), 4))
+        cr_display = np.zeros((len(self.classes_), len(self.measurements)))
 
 
         # For each class row, append columns for precision, recall, f1, and support
         for idx, cls in enumerate(self.classes_):
-            for jdx, metric in enumerate(('precision', 'recall', 'f1', 'support')):
+            for jdx, metric in enumerate(self.measurements):
                 cr_display[idx, jdx] = self.scores_[metric][cls]
 
         # Set up the dimensions of the pcolormesh
         # NOTE: pcolormesh accepts grids that are (N+1,M+1)
-        X, Y = np.arange(len(self.classes_)+1), np.arange(5)
+        X, Y = np.arange(len(self.classes_)+1), np.arange(len(self.measurements)+1)
         self.ax.set_ylim(bottom=0, top=cr_display.shape[0])
         self.ax.set_xlim(left=0, right=cr_display.shape[1])
 
@@ -149,7 +163,10 @@ class ClassificationReport(ClassificationScoreVisualizer):
                 # change the svalue for support (when y == 3) because we want
                 # to label it as the actual support value, not the percentage
                 if y == 3:
-                    svalue = self.support_score[x]
+                    if self.support == 'count':
+                        svalue = self.support_score[x]
+                    if self.support == 'percent':
+                        svalue = "{:0.3f}".format(self.support_percent[x])
 
                 # Determine the grid and text colors
                 base_color = self.cmap(value)
@@ -189,10 +206,10 @@ class ClassificationReport(ClassificationScoreVisualizer):
         self.set_title('{} Classification Report'.format(self.name))
 
         # Set the tick marks appropriately
-        self.ax.set_xticks(np.arange(4)+0.5)
+        self.ax.set_xticks(np.arange(len(self.measurements))+0.5)
         self.ax.set_yticks(np.arange(len(self.classes_))+0.5)
 
-        self.ax.set_xticklabels(['precision', 'recall', 'f1-score', 'support'], rotation=45)
+        self.ax.set_xticklabels(self.measurements, rotation=45)
         self.ax.set_yticklabels(self.classes_)
 
         plt.tight_layout()
