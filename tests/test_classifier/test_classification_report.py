@@ -151,7 +151,6 @@ class ClassificationReportTests(VisualTestCase, DatasetMixin):
                 'unoccupied': 0.77480544747081714
             }}
 
-    @pytest.mark.skip(reason="requires random state in quick method")
     def test_quick_method(self):
         """
         Test the quick method with a random dataset
@@ -164,7 +163,7 @@ class ClassificationReportTests(VisualTestCase, DatasetMixin):
         _, ax = plt.subplots()
         classification_report(DecisionTreeClassifier(), X, y, ax=ax)
 
-        self.assert_images_similar(ax=ax, tol=6.0)
+        self.assert_images_similar(ax=ax, tol=12.0)
 
     def test_isclassifier(self):
         """

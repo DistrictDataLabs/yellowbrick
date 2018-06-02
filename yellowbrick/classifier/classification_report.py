@@ -20,6 +20,7 @@ Visual classification report for classifier scoring.
 ## Imports
 ##########################################################################
 
+from __future__ import division
 import numpy as np
 import matplotlib.pyplot as plt
 
@@ -231,7 +232,8 @@ def classification_report(model, X, y=None, ax=None, classes=None, **kwargs):
     visualizer = ClassificationReport(model, ax, classes, **kwargs)
 
     # Create the train and test splits
-    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2)
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2,
+                                                        random_state=42)
 
     # Fit and transform the visualizer (calls draw)
     visualizer.fit(X_train, y_train, **kwargs)
