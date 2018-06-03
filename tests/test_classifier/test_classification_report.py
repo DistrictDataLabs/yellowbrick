@@ -64,8 +64,7 @@ class ClassificationReportTests(VisualTestCase, DatasetMixin):
         assert viz.scores_ == {
             'precision': {0: approx(0.7446808), 1: approx(0.8490566)},
             'recall': {0: approx(0.8139534), 1: approx(0.7894736)},
-            'f1': {0: approx(0.7777777), 1: approx(0.8181818)},
-            'support': {0: approx(0.42999999999999999), 1: approx(0.56999999999999995)}
+            'f1': {0: approx(0.7777777), 1: approx(0.8181818)}
             }
 
     @pytest.mark.xfail(
@@ -94,10 +93,6 @@ class ClassificationReportTests(VisualTestCase, DatasetMixin):
                 0: 0.47058823529411764, 1: 0.5294117647058824,
                 2: 0.5294117647058824, 3: 0.35294117647058826,
                 4: 0.38709677419354843, 5: 0.6060606060606061
-            }, 'support': {
-                0: 0.19, 1: 0.16,
-                2: 0.14000000000000001, 3: 0.19,
-                4: 0.16, 5: 0.16
             }}
 
     @pytest.mark.xfail(
@@ -146,9 +141,6 @@ class ClassificationReportTests(VisualTestCase, DatasetMixin):
             }, 'f1': {
                 'unoccupied': 0.9800031994880819,
                 'occupied': 0.9366447034972124
-            }, 'support': {
-                'occupied': 0.22519455252918288,
-                'unoccupied': 0.77480544747081714
             }}
 
     def test_quick_method(self):
@@ -178,3 +170,46 @@ class ClassificationReportTests(VisualTestCase, DatasetMixin):
 
         with pytest.raises(yb.exceptions.YellowbrickError, match=message):
             ClassificationReport(LassoCV())
+
+    def test_support_count_class_report(self):
+        """
+        Correctly generates a report showing support as a raw count
+        """
+        _, ax = plt.subplots()
+
+        viz = ClassificationReport(LinearSVC(random_state=42), ax=ax,
+                                   support='count')
+        viz.fit(self.binary.X.train, self.binary.y.train)
+        viz.score(self.binary.X.test, self.binary.y.test)
+
+        self.assert_images_similar(viz, tol=40)
+
+        assert viz.scores_ == {
+            'precision': {0: approx(0.7446808), 1: approx(0.8490566)},
+            'recall': {0: approx(0.8139534), 1: approx(0.7894736)},
+            'f1': {0: approx(0.7777777), 1: approx(0.8181818)},
+            'support': {0: approx(0.42999999999999999),
+                        1: approx(0.56999999999999995)}
+            }
+
+    def test_support_percent_class_report(self):
+        """
+        Correctly generates a report showing support as a percent
+        """
+        _, ax = plt.subplots()
+
+        viz = ClassificationReport(LinearSVC(random_state=42), ax=ax,
+                                   support='percent')
+        viz.fit(self.binary.X.train, self.binary.y.train)
+        viz.score(self.binary.X.test, self.binary.y.test)
+
+        self.assert_images_similar(viz, tol=40)
+
+        assert viz.scores_ == {
+            'precision': {0: approx(0.7446808), 1: approx(0.8490566)},
+            'recall': {0: approx(0.8139534), 1: approx(0.7894736)},
+            'f1': {0: approx(0.7777777), 1: approx(0.8181818)},
+            'support': {0: approx(0.42999999999999999),
+                        1: approx(0.56999999999999995)}
+            }
+
