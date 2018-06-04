@@ -213,3 +213,10 @@ class ClassificationReportTests(VisualTestCase, DatasetMixin):
                         1: approx(0.56999999999999995)}
             }
 
+    def test_invalid_support(self):
+        """
+        Ensure that bad support arguments raise exception
+        """
+        with pytest.raises(YellowbrickValueError, match="bad support argument"):
+            ClassificationReport(LinearSVC(), support="foo")
+
