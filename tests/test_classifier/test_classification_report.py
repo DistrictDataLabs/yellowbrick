@@ -153,8 +153,8 @@ class ClassificationReportTests(VisualTestCase, DatasetMixin):
         )
 
         _, ax = plt.subplots()
-        classification_report(DecisionTreeClassifier(), X, y,
-                              ax=ax, random_state=42)
+        model = DecisionTreeClassifier(random_state=19)
+        classification_report(model, X, y, ax=ax, random_state=42)
 
         self.assert_images_similar(ax=ax, tol=20.0)
 
