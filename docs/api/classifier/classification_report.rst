@@ -32,7 +32,7 @@ The classification report visualizer displays the precision, recall, F1, and sup
 
     # Instantiate the classification model and visualizer
     bayes = GaussianNB()
-    visualizer = ClassificationReport(bayes, classes=classes)
+    visualizer = ClassificationReport(bayes, classes=classes, support=True)
 
     visualizer.fit(X_train, y_train)  # Fit the visualizer and the model
     visualizer.score(X_test, y_test)  # Evaluate the model on the test data
