@@ -153,7 +153,7 @@ class ClassificationReportTests(VisualTestCase, DatasetMixin):
         )
 
         _, ax = plt.subplots()
-        classification_report(DecisionTreeClassifier(), X, y,
+        classification_report(DecisionTreeClassifier(random_state=19), X, y,
                               ax=ax, random_state=42)
 
         self.assert_images_similar(ax=ax, tol=20.0)
@@ -217,6 +217,7 @@ class ClassificationReportTests(VisualTestCase, DatasetMixin):
         """
         Ensure that bad support arguments raise exception
         """
-        with pytest.raises(YellowbrickValueError, match="bad support argument"):
+        with pytest.raises(YellowbrickValueError,
+                match="'foo' is an invalid argument for support, use None, " \
+                      "True, False, 'percent', or 'count'"):
             ClassificationReport(LinearSVC(), support="foo")
-

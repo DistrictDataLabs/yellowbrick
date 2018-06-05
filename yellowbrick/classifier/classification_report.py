@@ -98,7 +98,10 @@ class ClassificationReport(ClassificationScoreVisualizer):
         self.support = support
 
         if support not in {None, True, False, "percent", "count"}:
-            raise YellowbrickValueError("bad support argument")
+            raise YellowbrickValueError(
+                "'{}' is an invalid argument for support, use None, True, " \
+                "False, 'percent', or 'count'".format(support)
+            )
 
         if not support:
             self._displayed_scores.remove("support")
@@ -121,7 +124,7 @@ class ClassificationReport(ClassificationScoreVisualizer):
 
         # Calculate the percentage for the support metric
         # and store the percent in place of raw support counts
-        self._support_score = scores[-1]
+        self.support_score_ = scores[-1]
 
         scores = list(scores)
         scores[-1] = scores[-1] / scores[-1].sum()
@@ -131,7 +134,7 @@ class ClassificationReport(ClassificationScoreVisualizer):
         scores = map(lambda s: dict(zip(self.classes_, s)), scores)
         self.scores_ = dict(zip(SCORES_KEYS, scores))
 
-        # Remove support scores
+        # Remove support scores if not required
         if not self.support:
             self.scores_.pop('support')
 
@@ -163,14 +166,14 @@ class ClassificationReport(ClassificationScoreVisualizer):
             for y in Y[:-1]:
 
                 # Extract the value and the text label
-                value = cr_display[x,y]
+                value = cr_display[x, y]
                 svalue = "{:0.3f}".format(value)
 
                 # change the svalue for support (when y == 3) because we want
                 # to label it as the actual support value, not the percentage
                 if y == 3:
                     if self.support != PERCENT:
-                        svalue = self._support_score[x]
+                        svalue = self.support_score_[x]
 
                 # Determine the grid and text colors
                 base_color = self.cmap(value)
