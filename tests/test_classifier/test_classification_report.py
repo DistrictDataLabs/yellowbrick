@@ -156,7 +156,7 @@ class ClassificationReportTests(VisualTestCase, DatasetMixin):
         model = DecisionTreeClassifier(random_state=19)
         classification_report(model, X, y, ax=ax, random_state=42)
 
-        self.assert_images_similar(ax=ax, tol=20.0)
+        self.assert_images_similar(ax=ax, tol=25.0)
 
     def test_isclassifier(self):
         """

@@ -5,6 +5,7 @@
 # Author:   Benjamin Bengfort <bbengfort@districtdatalabs.com>
 # Author:   Neal Humphrey
 # Author:   Allyssa Riley
+# Author:   Larry Gray
 # Created:  Wed May 18 12:39:40 2016 -0400
 #
 # Copyright (C) 2017 District Data Labs
@@ -40,7 +41,6 @@ CMAP_UNDERCOLOR = 'w'
 CMAP_OVERCOLOR = '#2a7d4f'
 SCORES_KEYS = ('precision', 'recall', 'f1', 'support')
 PERCENT = 'percent'
-COUNT = 'count'
 
 
 class ClassificationReport(ClassificationScoreVisualizer):
