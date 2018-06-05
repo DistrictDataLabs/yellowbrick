@@ -3,7 +3,7 @@
 Classification Report
 =====================
 
-The classification report visualizer displays the precision, recall, and F1 scores for the model. In order to support easier interpretation and problem detection, the report integrates numerical scores with a color-coded heatmap. All heatmaps are in the range ``(0.0, 1.0)`` to facilitate easy comparison of classification models across different classification reports.
+The classification report visualizer displays the precision, recall, F1, and support scores for the model. In order to support easier interpretation and problem detection, the report integrates numerical scores with a color-coded heatmap. All heatmaps are in the range ``(0.0, 1.0)`` to facilitate easy comparison of classification models across different classification reports.
 
 .. code:: python
 
@@ -32,7 +32,7 @@ The classification report visualizer displays the precision, recall, and F1 scor
 
     # Instantiate the classification model and visualizer
     bayes = GaussianNB()
-    visualizer = ClassificationReport(bayes, classes=classes)
+    visualizer = ClassificationReport(bayes, classes=classes, support=True)
 
     visualizer.fit(X_train, y_train)  # Fit the visualizer and the model
     visualizer.score(X_test, y_test)  # Evaluate the model on the test data
@@ -56,8 +56,9 @@ The metrics are defined in terms of true and false positives, and true and false
 **f1 score**
     The F\ :sub:`1` score is a weighted harmonic mean of precision and recall such that the best score is 1.0 and the worst is 0.0. Generally speaking, F\ :sub:`1` scores are lower than accuracy measures as they embed precision and recall into their computation. As a rule of thumb, the weighted average of F\ :sub:`1` should be used to compare classifier models, not global accuracy.
 
-.. caution::
-    Support is omitted from the classification metrics because it is difficult to scale this on a heatmap. In a future release we will add a support feature that describes the support as the percentage of the total number of instances.
+
+**support**
+    Support is the number of actual occurrences of the class in the specified dataset. Imbalanced support in the training data may indicate structural weaknesses in the reported scores of the classifier and could indicate the need for stratified sampling or rebalancing. Support doesn't change between models but instead diagnoses the evaluation process.
 
 
 API Reference

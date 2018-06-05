@@ -91,7 +91,7 @@ class DecisionBoundariesVisualizerTest(VisualTestCase):
 
     @pytest.mark.skipif(six.PY2, reason="deprecation warnings filtered in PY2")
     def test_deprecated_message(self):
-        with pytest.warns(DeprecationWarning, match='Will be moved to yellowbrick.contrib in v0.7'):
+        with pytest.warns(DeprecationWarning, match='Will be moved to yellowbrick.contrib in v0.8'):
             model = neighbors.KNeighborsClassifier(3)
             DecisionViz(model)
 

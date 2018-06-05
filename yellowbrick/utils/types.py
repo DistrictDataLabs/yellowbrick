@@ -178,6 +178,27 @@ def is_dataframe(obj):
 isdataframe = is_dataframe
 
 
+def is_series(obj):
+    """
+    Returns True if the given object is a Pandas Series.
+
+    Parameters
+    ----------
+    obj: instance
+        The object to test whether or not is a Pandas Series.
+    """
+    try:
+        # This is the best method of type checking
+        from pandas import Series
+        return isinstance(obj, Series)
+    except ImportError:
+        # Pandas is not a dependency, so this is scary
+        return obj.__class__.__name__ == "Series"
+
+# Alias for closer name to isinstance and issubclass
+isseries = is_series
+
+
 def is_structured_array(obj):
     """
     Returns True if the given object is a Numpy Structured Array.
