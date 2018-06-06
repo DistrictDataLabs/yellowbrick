@@ -61,12 +61,6 @@ def is_classifier(estimator):
     is_classifier
         `sklearn.is_classifier() <https://github.com/scikit-learn/scikit-learn/blob/master/sklearn/base.py#L518>`_
     """
-    # TODO: once we make ScoreVisualizer and ModelVisualizer pass through
-    # wrappers as in Issue #90, these three lines become unnecessary.
-    # NOTE: This must be imported here to avoid recursive import.
-    from yellowbrick.base import Visualizer
-    if isinstance(estimator, Visualizer):
-        return is_classifier(estimator.estimator)
 
     # Test the _estimator_type property
     return getattr(estimator, "_estimator_type", None) == "classifier"
@@ -90,12 +84,6 @@ def is_regressor(estimator):
     is_regressor
         `sklearn.is_regressor() <https://github.com/scikit-learn/scikit-learn/blob/master/sklearn/base.py#L531>`_
     """
-    # TODO: once we make ScoreVisualizer and ModelVisualizer pass through
-    # wrappers as in Issue #90, these three lines become unnecessary.
-    # NOTE: This must be imported here to avoid recursive import.
-    from yellowbrick.base import Visualizer
-    if isinstance(estimator, Visualizer):
-        return is_regressor(estimator.estimator)
 
     # Test the _estimator_type property
     return getattr(estimator, "_estimator_type", None) == "regressor"
@@ -114,12 +102,6 @@ def is_clusterer(estimator):
         The object to test if it is a Scikit-Learn clusterer, especially a
         Scikit-Learn estimator or Yellowbrick visualizer
     """
-    # TODO: once we make ScoreVisualizer and ModelVisualizer pass through
-    # wrappers as in Issue #90, these three lines become unnecessary.
-    # NOTE: This must be imported here to avoid recursive import.
-    from yellowbrick.base import Visualizer
-    if isinstance(estimator, Visualizer):
-        return is_clusterer(estimator.estimator)
 
     # Test the _estimator_type property
     return getattr(estimator, "_estimator_type", None) == "clusterer"
@@ -138,12 +120,6 @@ def is_gridsearch(estimator):
         The object to test if it is a Scikit-Learn clusterer, especially a
         Scikit-Learn estimator or Yellowbrick visualizer
     """
-    # TODO: once we make ScoreVisualizer and ModelVisualizer pass through
-    # wrappers as in Issue #90, these three lines become unnecessary.
-    # NOTE: This must be imported here to avoid recursive import.
-    from yellowbrick.base import Visualizer
-    if isinstance(estimator, Visualizer):
-        return is_gridsearch(estimator.estimator)
 
     from sklearn.model_selection import GridSearchCV, RandomizedSearchCV
 
@@ -200,6 +176,27 @@ def is_dataframe(obj):
 
 # Alias for closer name to isinstance and issubclass
 isdataframe = is_dataframe
+
+
+def is_series(obj):
+    """
+    Returns True if the given object is a Pandas Series.
+
+    Parameters
+    ----------
+    obj: instance
+        The object to test whether or not is a Pandas Series.
+    """
+    try:
+        # This is the best method of type checking
+        from pandas import Series
+        return isinstance(obj, Series)
+    except ImportError:
+        # Pandas is not a dependency, so this is scary
+        return obj.__class__.__name__ == "Series"
+
+# Alias for closer name to isinstance and issubclass
+isseries = is_series
 
 
 def is_structured_array(obj):
