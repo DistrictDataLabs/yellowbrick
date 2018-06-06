@@ -359,7 +359,11 @@ fact edible).
 effect that is present (e.g. believing a mushroom is edible when it is
 in fact poisonous).
 
+.. note:: When running in a Jupyter Notebook, be sure to add the following line at the top of the notebook: ``%matplotlib notebook``. This will ensure the figures are rendered correctly. For those running this code with a Python script, the figure should appear in a secondary window.
+
 .. code:: python
+
+    import matplotlib.pyplot as plt
 
     from sklearn.pipeline import Pipeline
     from yellowbrick.classifier import ClassificationReport
@@ -376,10 +380,18 @@ in fact poisonous).
              ('estimator', estimator)
         ])
 
+        # Create a new figure to draw the classification report on
+        _, ax = plt.subplots()
+
         # Instantiate the classification model and visualizer
-        visualizer = ClassificationReport(model, classes=['edible', 'poisonous'])
+        visualizer = ClassificationReport(
+            model, ax=ax, classes=['edible', 'poisonous']
+        )
         visualizer.fit(X, y)
         visualizer.score(X, y)
+
+        # Note that to save the figure to disk, you can specify an outpath
+        # argument to the poof method!
         visualizer.poof()
 
 
