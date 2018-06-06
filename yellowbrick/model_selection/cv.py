@@ -176,62 +176,62 @@ class CVScores(ModelVisualizer):
 ## Quick Method
 ##########################################################################
         
-    def cv_scores(model, X, y, ax=None, cv=None, scoring=None, **kwargs):
-        
-        """
-        Displays cross validation scores as a bar chart and the 
-        average of the scores as a horizontal line
-        
-        This helper function is a quick wrapper to utilize the
-        CVScores visualizer for one-off analysis.
+def cv_scores(model, X, y, ax=None, cv=None, scoring=None, **kwargs):
+    
+    """
+    Displays cross validation scores as a bar chart and the 
+    average of the scores as a horizontal line
+    
+    This helper function is a quick wrapper to utilize the
+    CVScores visualizer for one-off analysis.
 
-        Parameters
-        ---------- 
+    Parameters
+    ---------- 
 
-        model : a scikit-learn estimator
-                An object that implements ``fit`` and ``predict``, can be a
-                classifier, regressor, or clusterer so long as there is also a valid
-                associated scoring metric.
-                Note that the object is cloned for each validation.
+    model : a scikit-learn estimator
+            An object that implements ``fit`` and ``predict``, can be a
+            classifier, regressor, or clusterer so long as there is also a valid
+            associated scoring metric.
+            Note that the object is cloned for each validation.
 
-        ax : matplotlib.Axes object, optional
-                The axes object to plot the figure on.
+    ax : matplotlib.Axes object, optional
+            The axes object to plot the figure on.
 
-        cv : int, cross-validation generator or an iterable, optional
-                Determines the cross-validation splitting strategy.
-                Possible inputs for cv are:
-                    - None, to use the default 3-fold cross-validation,
-                    - integer, to specify the number of folds.
-                    - An object to be used as a cross-validation generator.
-                    - An iterable yielding train/test splits.
+    cv : int, cross-validation generator or an iterable, optional
+            Determines the cross-validation splitting strategy.
+            Possible inputs for cv are:
+                - None, to use the default 3-fold cross-validation,
+                - integer, to specify the number of folds.
+                - An object to be used as a cross-validation generator.
+                - An iterable yielding train/test splits.
 
-                see the scikit-learn
-                `cross-validation guide <http://scikit-learn.org/stable/modules/cross_validation.html>`_
-                for more information on the possible strategies that can be used here.
+            see the scikit-learn
+            `cross-validation guide <http://scikit-learn.org/stable/modules/cross_validation.html>`_
+            for more information on the possible strategies that can be used here.
 
-        scoring : string, callable or None, optional, default: None
-                     A string or scorer callable object / function with signature
-                     ``scorer(estimator, X, y)``. 
-        
-                     See scikit-learn `cross-validation guide <http://scikit-learn.org/stable/modules/cross_validation.html>`_
-                     for more information on the possible metrics that can be used.
+    scoring : string, callable or None, optional, default: None
+                A string or scorer callable object / function with signature
+                ``scorer(estimator, X, y)``. 
+    
+                See scikit-learn `cross-validation guide <http://scikit-learn.org/stable/modules/cross_validation.html>`_
+                for more information on the possible metrics that can be used.
 
-        kwargs : dict
-                Keyword arguments that are passed to the base class and may influence
-                the visualization as defined in other Visualizers. 
-        
-        Returns
-        -------
-        ax : matplotlib.Axes
-            The axes object that the validation curves were drawn on.
-                    
-        """
-        # Initialize the visualizer
-        visualizer = cv_scores(model, X, y, ax=ax, cv=cv, scoring=scoring)
-        
-        # Fit and poof the visualizer
-        visualizer.fit(X, y)
-        visualizer.poof(**kwargs)
-        return visualizer.ax
+    kwargs : dict
+            Keyword arguments that are passed to the base class and may influence
+            the visualization as defined in other Visualizers. 
+    
+    Returns
+    -------
+    ax : matplotlib.Axes
+        The axes object that the validation curves were drawn on.
+                
+    """
+    # Initialize the visualizer
+    visualizer = cv_scores(model, X, y, ax=ax, cv=cv, scoring=scoring)
+    
+    # Fit and poof the visualizer
+    visualizer.fit(X, y)
+    visualizer.poof(**kwargs)
+    return visualizer.ax
 
 
