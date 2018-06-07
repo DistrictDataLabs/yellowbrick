@@ -64,7 +64,7 @@ Once forked, use the following steps to get your development environment set up 
     $ git remote add upstream https://github.com/DistrictDataLabs/yellowbrick
     ```
 
-    See "Branching Conventions" for more on this topic.
+    See "Branching Conventions" below for more on this topic.
 
 2. Create a virtual environment.
 
