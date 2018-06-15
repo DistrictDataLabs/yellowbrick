@@ -26,4 +26,5 @@ if __name__ == '__main__':
 
     visualizer.fit(X_train, y_train)  # Fit the training data to the visualizer
     visualizer.score(X_test, y_test)  # Evaluate the model on the test data
-    g = visualizer.poof(outpath="images/residuals.png")             # Draw/show/poof the data
+    # g = visualizer.poof(outpath="images/residuals.png")             # Draw/show/poof the data
+    visualizer.poof()

@@ -18,10 +18,22 @@ Regressor visualizers that score residuals: prediction vs. actual data.
 ## Imports
 ##########################################################################
 
+
+import matplotlib.pyplot as plt
+
+try:
+    # Only available in Matplotlib >= 2.0.2
+    from mpl_toolkits.axes_grid1 import make_axes_locatable
+except ImportError:
+    make_axes_locatable = None
+
 from sklearn.model_selection import train_test_split
 
-from ..style.palettes import LINE_COLOR
 from .base import RegressionScoreVisualizer
+
+from ..style.palettes import LINE_COLOR
+from ..utils.decorators import memoized
+from ..exceptions import YellowbrickValueError
 from ..bestfit import draw_best_fit, draw_identity_line
 
 
@@ -30,6 +42,7 @@ __all__ = [
     "PredictionError", "prediction_error",
     "ResidualsPlot", "residuals_plot"
 ]
+
 
 ##########################################################################
 ## Prediction Error Plots
@@ -313,7 +326,6 @@ class ResidualsPlot(RegressionScoreVisualizer):
 
     Parameters
     ----------
-
     model : a Scikit-Learn regressor
         Should be an instance of a regressor, otherwise a will raise a
         YellowbrickTypeError exception on instantiation.
@@ -321,6 +333,10 @@ class ResidualsPlot(RegressionScoreVisualizer):
     ax : matplotlib Axes, default: None
         The axes to plot the figure on. If None is passed in the current axes
         will be used (or generated if required).
+
+    hist : bool, default: True
+        Draw a histogram showing the distribution of the residuals on the
+        right side of the figure. Requires Matplotlib >= 2.0.2.
 
     train_color : color, default: 'b'
         Residuals for training data are ploted with this color but also
@@ -352,28 +368,51 @@ class ResidualsPlot(RegressionScoreVisualizer):
 
     Notes
     -----
-
     ResidualsPlot is a ScoreVisualizer, meaning that it wraps a model and
     its primary entry point is the `score()` method.
+
+    The residuals histogram feature requires matplotlib 2.0.2 or greater.
     """
-    def __init__(self, model, ax=None, **kwargs):
+    def __init__(self, model, ax=None, hist=True, train_color='b',
+                 test_color='g', line_color=LINE_COLOR, **kwargs):
 
         super(ResidualsPlot, self).__init__(model, ax=ax, **kwargs)
 
-        # TODO Is there a better way to differentiate between train and test points?
-        # We'd like to color them differently in draw...
-        # Can the user pass those in as keyword arguments?
+        # TODO: allow more scatter plot arguments for train and test points
+        # See #475 (RE: ScatterPlotMixin)
         self.colors = {
-            'train_point': kwargs.pop('train_color', 'b'),
-            'test_point': kwargs.pop('test_color', 'g'),
-            'line': kwargs.pop('line_color', LINE_COLOR),
+            'train_point': train_color,
+            'test_point': test_color,
+            'line': line_color,
         }
 
-    def fit(self, X, y=None, **kwargs):
+        self.hist = hist
+        if self.hist:
+            self.hax # If hist is True, test the version availability
+
+    @memoized
+    def hax(self):
+        """
+        Returns the histogram axes, creating it only on demand.
+        """
+        if make_axes_locatable is None:
+            raise YellowbrickValueError((
+                "residuals histogram requires matplotlib 2.0.2 or greater "
+                "please upgrade matplotlib or set hist=False on the visualizer"
+            ))
+
+        divider = make_axes_locatable(self.ax)
+
+        hax = divider.append_axes("right", size=1, pad=0.1, sharey=self.ax)
+        hax.yaxis.tick_right()
+        hax.grid(False, axis='x')
+
+        return hax
+
+    def fit(self, X, y, **kwargs):
         """
         Parameters
         ----------
-
         X : ndarray or DataFrame of shape n x m
             A matrix of n instances with m features
 
@@ -381,9 +420,14 @@ class ResidualsPlot(RegressionScoreVisualizer):
             An array or series of target values
 
         kwargs: keyword arguments passed to Scikit-Learn API.
+
+        Returns
+        -------
+        self : visualizer instance
         """
         super(ResidualsPlot, self).fit(X, y, **kwargs)
         self.score(X, y, train=True)
+        return self
 
     def score(self, X, y=None, train=False, **kwargs):
         """
@@ -405,9 +449,9 @@ class ResidualsPlot(RegressionScoreVisualizer):
 
         Returns
         ------
-
-        ax : the axis with the plotted figure
-
+        score : float
+            The score of the underlying estimator, usually the R-squared score
+            for regression estimators.
         """
         score = self.estimator.score(X, y, **kwargs)
         if train:
@@ -423,6 +467,11 @@ class ResidualsPlot(RegressionScoreVisualizer):
 
     def draw(self, y_pred, residuals, train=False, **kwargs):
         """
+        Draw the residuals against the predicted value for the specified split.
+        It is best to draw the training split first, then the test split so
+        that the test split (usually smaller) is above the training split;
+        particularly if the histogram is turned on.
+
         Parameters
         ----------
         y_pred : ndarray or Series of length n
@@ -432,16 +481,14 @@ class ResidualsPlot(RegressionScoreVisualizer):
             An array or series of the difference between the predicted and the
             target values
 
-        train : boolean
+        train : boolean, default: False
             If False, `draw` assumes that the residual points being plotted
             are from the test data; if True, `draw` assumes the residuals
             are the train data.
 
         Returns
         ------
-
         ax : the axis with the plotted figure
-
         """
 
         if train:
@@ -453,7 +500,15 @@ class ResidualsPlot(RegressionScoreVisualizer):
             alpha = 0.9
             label = "Test $R^2 = {:0.3f}$".format(self.test_score_)
 
+        # Draw the residuals scatter plot
         self.ax.scatter(y_pred, residuals, c=color, alpha=alpha, label=label)
+
+        # Add residuals histogram histogram
+        if self.hist:
+            self.hax.hist(residuals, bins=50, orientation="horizontal")
+
+        # Ensure the current axes is always the main residuals axes
+        plt.sca(self.ax)
         return self.ax
 
     def finalize(self, **kwargs):
@@ -464,7 +519,6 @@ class ResidualsPlot(RegressionScoreVisualizer):
         Parameters
         ----------
         kwargs: generic keyword arguments.
-
         """
         # Add the title to the plot
         self.set_title('Residuals for {} Model'.format(self.name))
@@ -479,28 +533,77 @@ class ResidualsPlot(RegressionScoreVisualizer):
         self.ax.set_ylabel('Residuals')
         self.ax.set_xlabel("Predicted Value")
 
+        # Finalize the histogram axes
+        if self.hist:
+            self.hax.axhline(y=0, c=self.colors['line'])
+            self.hax.set_xlabel("Distribution")
 
-def residuals_plot(model, X, y=None, ax=None, **kwargs):
+
+def residuals_plot(model,
+                   X,
+                   y,
+                   ax=None,
+                   hist=True,
+                   test_size=0.25,
+                   train_color='b',
+                   test_color='g',
+                   line_color=LINE_COLOR,
+                   random_state=None,
+                   **kwargs):
     """Quick method:
 
-    Plot  the residuals on the vertical axis and the
-    independent variable on the horizontal axis.
+    Divides the dataset X, y into a train and test split (the size of the
+    splits determined by test_size) then plots the training and test residuals
+    agains the predicted value for the given model.
 
     This helper function is a quick wrapper to utilize the ResidualsPlot
     ScoreVisualizer for one-off analysis.
 
     Parameters
     ----------
+    model : a Scikit-Learn regressor
+        Should be an instance of a regressor, otherwise a will raise a
+        YellowbrickTypeError exception on instantiation.
+
     X  : ndarray or DataFrame of shape n x m
         A matrix of n instances with m features.
 
     y  : ndarray or Series of length n
         An array or series of target or class values.
 
-    ax : matplotlib axes
-        The axes to plot the figure on.
+    ax : matplotlib Axes, default: None
+        The axes to plot the figure on. If None is passed in the current axes
+        will be used (or generated if required).
 
-    model : the Scikit-Learn estimator (should be a regressor)
+    hist : bool, default: True
+        Draw a histogram showing the distribution of the residuals on the
+        right side of the figure. Requires Matplotlib >= 2.0.2.
+
+    test_size : float, int default: 0.25
+        If float, should be between 0.0 and 1.0 and represent the proportion
+        of the dataset to include in the test split. If int, represents the
+        absolute number of test samples.
+
+    train_color : color, default: 'b'
+        Residuals for training data are ploted with this color but also
+        given an opacity of 0.5 to ensure that the test data residuals
+        are more visible. Can be any matplotlib color.
+
+    test_color : color, default: 'g'
+        Residuals for test data are plotted with this color. In order to
+        create generalizable models, reserved test data residuals are of
+        the most analytical interest, so these points are highlighted by
+        hvaing full opacity. Can be any matplotlib color.
+
+    line_color : color, default: dark grey
+        Defines the color of the zero error line, can be any matplotlib color.
+
+    random_state : int, RandomState instance or None, optional
+        Passed to the train_test_split function.
+
+    kwargs : dict
+        Keyword arguments that are passed to the base class and may influence
+        the visualization as defined in other Visualizers.
 
     Returns
     -------
@@ -508,13 +611,18 @@ def residuals_plot(model, X, y=None, ax=None, **kwargs):
         Returns the axes that the residuals plot was drawn on.
     """
     # Instantiate the visualizer
-    visualizer = ResidualsPlot(model, ax, **kwargs)
+    visualizer = ResidualsPlot(
+        model=model, ax=ax, hist=hist, train_color=train_color,
+        test_color=train_color, line_color=line_color, **kwargs
+    )
 
     # Create the train and test splits
-    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2)
+    X_train, X_test, y_train, y_test = train_test_split(
+        X, y, test_size=test_size, random_state=random_state
+    )
 
     # Fit and transform the visualizer (calls draw)
-    visualizer.fit(X_train, y_train, **kwargs)
+    visualizer.fit(X_train, y_train)
     visualizer.score(X_test, y_test)
     visualizer.finalize()
 

@@ -25,9 +25,9 @@ from yellowbrick.regressor.residuals import *
 from tests.base import VisualTestCase
 from tests.dataset import DatasetMixin, Dataset, Split
 
-from sklearn.svm import SVR
 from sklearn.linear_model import Ridge, Lasso
 from sklearn.linear_model import LinearRegression
+from sklearn.ensemble import RandomForestRegressor
 
 from sklearn.datasets import make_regression
 from sklearn.model_selection import train_test_split as tts
@@ -50,7 +50,8 @@ def data(request):
     For ease of use returns a Dataset named tuple composed of two Split tuples.
     """
     X, y = make_regression(
-        n_samples=500, n_features=22, n_informative=8, random_state=42
+        n_samples=500, n_features=22, n_informative=8, random_state=42,
+        noise=0.2, bias=0.2,
     )
 
     X_train, X_test, y_train, y_test = tts(
@@ -74,22 +75,23 @@ class TestPredictionError(VisualTestCase, DatasetMixin):
     Test the PredictionError visualizer
     """
 
-    def test_pred_error_integration(self):
+    def test_prediction_error(self):
         """
-        Integration test with image similarity on random data with SVR
+        Test image similarity of prediction error on random data with SVR
         """
         _, ax = plt.subplots()
 
-        visualizer = PredictionError(SVR(), ax=ax)
+        model = RandomForestRegressor(random_state=229)
+        visualizer = PredictionError(model, ax=ax)
 
         visualizer.fit(self.data.X.train, self.data.y.train)
         visualizer.score(self.data.X.test, self.data.y.test)
         visualizer.finalize()
 
-        self.assert_images_similar(visualizer, tol=10)
+        self.assert_images_similar(visualizer, tol=1)
 
     @pytest.mark.skipif(pd is None, reason="pandas is required")
-    def test_pred_error_integration_pandas(self):
+    def test_prediction_error_pandas(self):
         """
         Test Pandas real world dataset with image similarity on Ridge
         """
@@ -112,12 +114,12 @@ class TestPredictionError(VisualTestCase, DatasetMixin):
         splits = tts(X, y, test_size=0.2, random_state=8873)
         X_train, X_test, y_train, y_test = splits
 
-        visualizer = PredictionError(Ridge(), ax=ax)
+        visualizer = PredictionError(Ridge(random_state=22), ax=ax)
         visualizer.fit(X_train, y_train)
         visualizer.score(X_test, y_test)
         visualizer.finalize()
 
-        self.assert_images_similar(visualizer, tol=10)
+        self.assert_images_similar(visualizer, tol=1)
 
     def test_score(self):
         """
@@ -128,7 +130,7 @@ class TestPredictionError(VisualTestCase, DatasetMixin):
         visualizer.fit(self.data.X.train, self.data.y.train)
         score = visualizer.score(self.data.X.test, self.data.y.test)
 
-        assert score == pytest.approx(1.0)
+        assert score == pytest.approx(0.9999983124154965)
         assert visualizer.score_ == score
 
     @pytest.mark.skip(reason="not implemented yet")
@@ -156,9 +158,9 @@ class TestResidualsPlot(VisualTestCase, DatasetMixin):
     Test ResidualPlot visualizer
     """
 
-    def test_residuals_plot_integration(self):
+    def test_residuals_plot(self):
         """
-        Integration test with image similarity on random data with OLS
+        Image similarity of residuals plot on random data with OLS
         """
         _, ax = plt.subplots()
 
@@ -168,10 +170,52 @@ class TestResidualsPlot(VisualTestCase, DatasetMixin):
         visualizer.score(self.data.X.test, self.data.y.test)
         visualizer.finalize()
 
-        self.assert_images_similar(visualizer, tol=10)
+        self.assert_images_similar(visualizer, tol=1)
+
+    def test_residuals_plot_no_histogram(self):
+        """
+        Image similarity test when hist=False
+        """
+        _, ax = plt.subplots()
+
+        model = RandomForestRegressor(random_state=19)
+        visualizer = ResidualsPlot(model, ax=ax, hist=False)
+
+        visualizer.fit(self.data.X.train, self.data.y.train)
+        visualizer.score(self.data.X.test, self.data.y.test)
+        visualizer.finalize()
+
+        self.assert_images_similar(visualizer, tol=1)
+
+    @pytest.mark.skip(reason="not implemented yet")
+    def test_hist_matplotlib_version(self):
+        """
+        ValueError is raised when matplotlib version is incorrect and hist=True
+        """
+        pass
+
+    @pytest.mark.skip(reason="not implemented yet")
+    def test_no_hist_matplotlib_version(self):
+        """
+        No error is raised when matplotlib version is incorrect and hist=False
+        """
+        pass
+
+    def test_residuals_quick_method(self):
+        """
+        Image similarity test using the residuals plot quick method
+        """
+        _, ax = plt.subplots()
+
+        model = Lasso(random_state=19)
+        ax = residuals_plot(
+            model, self.data.X.train, self.data.y.train, ax=ax, random_state=23
+        )
+
+        self.assert_images_similar(ax=ax, tol=1)
 
     @pytest.mark.skipif(pd is None, reason="pandas is required")
-    def test_residuals_plot_integration_pandas(self):
+    def test_residuals_plot_pandas(self):
         """
         Test Pandas real world dataset with image similarity on Lasso
         """
@@ -194,22 +238,22 @@ class TestResidualsPlot(VisualTestCase, DatasetMixin):
         splits = tts(X, y, test_size=0.2, random_state=231)
         X_train, X_test, y_train, y_test = splits
 
-        visualizer = ResidualsPlot(Lasso(), ax=ax)
+        visualizer = ResidualsPlot(Lasso(random_state=44), ax=ax)
         visualizer.fit(X_train, y_train)
         visualizer.score(X_test, y_test)
         visualizer.finalize()
 
-        self.assert_images_similar(visualizer, tol=10)
+        self.assert_images_similar(visualizer, tol=1)
 
     def test_score(self):
         """
         Assert returns R2 score
         """
-        visualizer = ResidualsPlot(SVR())
+        visualizer = ResidualsPlot(RandomForestRegressor(random_state=8893))
 
         visualizer.fit(self.data.X.train, self.data.y.train)
         score = visualizer.score(self.data.X.test, self.data.y.test)
 
-        assert score == pytest.approx(0.03344393985277794)
-        assert visualizer.train_score_ == pytest.approx(0.04743502276335876)
+        assert score == pytest.approx(0.6187552505733338)
+        assert visualizer.train_score_ == pytest.approx(0.9361553099241242)
         assert visualizer.test_score_ == score
