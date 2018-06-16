@@ -21,7 +21,7 @@ Decomposition based feature visualization with PCA.
 import mpl_toolkits.mplot3d # noqa
 import matplotlib.pyplot as plt
 
-from yellowbrick.features.base import FeatureVisualizer
+from yellowbrick.features.base import MultiFeatureVisualizer
 from yellowbrick.style import palettes
 from yellowbrick.exceptions import YellowbrickValueError
 
@@ -81,7 +81,7 @@ def pca_decomposition(X, y=None, ax=None, scale=True, proj_dim=2,
     """
     # Instantiate the visualizer
     visualizer = PCADecomposition(X=X, y=y, ax=ax, scale=scale, proj_dim=proj_dim,
-                                  colormap= colormap, color=color)
+                                  colormap=colormap, color=color)
 
     # Fit and transform the visualizer (calls draw)
     visualizer.fit(X, y, **kwargs)
@@ -94,7 +94,7 @@ def pca_decomposition(X, y=None, ax=None, scale=True, proj_dim=2,
 ##2D and #3D PCA Visualizer
 ##########################################################################
 
-class PCADecomposition(FeatureVisualizer):
+class PCADecomposition(MultiFeatureVisualizer):
     """
     Produce a two or three dimensional principal component plot of the data array ``X``
     projected onto it's largest sequential principal components. It is common practice to scale the
@@ -127,6 +127,10 @@ class PCADecomposition(FeatureVisualizer):
         Use either color to colorize the lines on a per class basis or
         colormap to color them on a continuous scale.
 
+    proj_features : bool, default: False
+        Boolean that indicates if the user wants to project the features
+        in the projected space. If True the plot will be similar to a biplot.
+
     kwargs : dict
         Keyword arguments that are passed to the base class and may influence
         the visualization as defined in other Visualizers.
@@ -144,25 +148,30 @@ class PCADecomposition(FeatureVisualizer):
     >>> visualizer.poof()
 
     """
-    def __init__(self, ax=None, scale=True, color=None, proj_dim=2,
-                 colormap=palettes.DEFAULT_SEQUENCE, **kwargs):
-        super(PCADecomposition, self).__init__(ax=ax, **kwargs)
-
+    def __init__(self, features=None, ax=None, scale=True, color=None,
+                 proj_dim=2, colormap=palettes.DEFAULT_SEQUENCE,
+                 proj_features=False, **kwargs):
+        super(PCADecomposition, self).__init__(ax=ax,
+                                               features=features,
+                                               **kwargs)
         # Data Parameters
         if proj_dim not in (2, 3):
             raise YellowbrickValueError("proj_dim object is not 2 or 3.")
-
         self.color = color
         self.scale = scale
         self.proj_dim = proj_dim
-        self.pca_transformer = Pipeline([('scale', StandardScaler(with_std=self.scale)),
-                                         ('pca', PCA(self.proj_dim, ))
-                                         ])
+        self.pca_transformer = Pipeline(
+            [('scale', StandardScaler(with_std=self.scale)),
+             ('pca', PCA(self.proj_dim, ))]
+        )
+        self.proj_features = proj_features
         # Visual Parameters
         self.colormap = colormap
 
     def fit(self, X, y=None, **kwargs):
+        super(PCADecomposition, self).fit(X=X, y=y, **kwargs)
         self.pca_transformer.fit(X)
+        self.pca_components_ = self.pca_transformer.steps[1][1].components_
         return self
 
     def transform(self, X, y=None, **kwargs):
@@ -172,26 +181,57 @@ class PCADecomposition(FeatureVisualizer):
 
     def draw(self, **kwargs):
         X = self.pca_features_
-
         if self.proj_dim == 2:
             self.ax.scatter(X[:, 0], X[:, 1], c=self.color, cmap=self.colormap)
+            if self.proj_features:
+                x_vector = self.pca_components_[0]
+                y_vector = self.pca_components_[1]
+                max_x = max(X[:, 0])
+                max_y = max(X[:, 1])
+                for i in range(self.pca_components_.shape[1]):
+                    plt.arrow(
+                        x=0, y=0,
+                        dx=x_vector[i] * max_x,
+                        dy=y_vector[i] * max_y,
+                        color='r', head_width=0.05,
+                        width=0.005,
+                    )
+                    plt.text(
+                        x_vector[i] * max_x * 1.05,
+                        y_vector[i] * max_y * 1.05,
+                        self.features_[i], color='r'
+                    )
         if self.proj_dim == 3:
             self.fig = plt.figure()
-            self.fig = self.fig.add_subplot(111, projection='3d')
-
-            self.ax = self.fig.scatter(X[:, 0], X[:, 1], X[:, 2], c=self.color,
-                                       cmap=self.colormap)
+            self.ax = self.fig.add_subplot(111, projection='3d')
+            self.ax.scatter(X[:, 0], X[:, 1], X[:, 2],
+                            c=self.color, cmap=self.colormap)
+            if self.proj_features:
+                x_vector = self.pca_components_[0]
+                y_vector = self.pca_components_[1]
+                z_vector = self.pca_components_[2]
+                max_x = max(X[:, 0])
+                max_y = max(X[:, 1])
+                max_z = max(X[:, 1])
+                for i in range(self.pca_components_.shape[1]):
+                    self.ax.plot(
+                        [0, x_vector[i] * max_x],
+                        [0, y_vector[i] * max_y],
+                        [0, z_vector[i] * max_z],
+                        color='r'
+                    )
+                    self.ax.text(
+                        x_vector[i] * max_x * 1.05,
+                        y_vector[i] * max_y * 1.05,
+                        z_vector[i] * max_z * 1.05,
+                        self.features_[i], color='r'
+                    )
         return self.ax
 
     def finalize(self, **kwargs):
         # Set the title
-        if self.proj_dim == 2:
-            self.set_title('Principal Component Plot')
-            self.ax.set_ylabel('Principal Component 2')
-            self.ax.set_xlabel('Principal Component 1')
-
-        else:
-            self.fig.set_title('Principal Component Plot')
-            self.fig.set_xlabel('Principal Component 1')
-            self.fig.set_ylabel('Principal Component 2')
-            self.fig.set_zlabel('Principal Component 3')
+        self.ax.set_title('Principal Component Plot')
+        self.ax.set_xlabel('Principal Component 1')
+        self.ax.set_ylabel('Principal Component 2')
+        if self.proj_dim == 3:
+            self.ax.set_zlabel('Principal Component 3')
