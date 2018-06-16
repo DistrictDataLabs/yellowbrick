@@ -22,26 +22,21 @@ def explained_variance_visualizer(X, y=None, ax=None, scale=True,
     reduction algorithm using n=1 to n=n_components dimensions. This is a single
     plot to help identify the best trade off between number of dimensions
     and amount of information retained within the data.
-
     Parameters
     ----------
     X : ndarray or DataFrame of shape n x m
         A matrix of n rows with m features
-
     y : ndarray or Series of length n
         An array or Series of target or class values
 
     ax : matplotlib Axes, default: None
         The aces to plot the figure on
-
     scale : bool, default: True
         Boolean that indicates if the values of X should be scaled.
-
     colormap : string or cmap, default: None
         optional string or matplotlib cmap to colorize lines
         Use either color to colorize the lines on a per class basis or
         colormap to color them on a continuous scale.
-
     kwargs : dict
         Keyword arguments that are passed to the base class and may influence
         the visualization as defined in other Visualizers.
@@ -72,20 +67,16 @@ def explained_variance_visualizer(X, y=None, ax=None, scale=True,
 
 class ExplainedVariance(FeatureVisualizer):
     """
-
     Parameters
     ----------
 
 
-
     Examples
     --------
-
     >>> visualizer = ExplainedVariance()
     >>> visualizer.fit(X)
     >>> visualizer.transform(X)
     >>> visualizer.poof()
-
     Notes
     -----
 
