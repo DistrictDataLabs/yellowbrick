@@ -4,63 +4,66 @@
 
 from .base import FeatureVisualizer
 from yellowbrick.style import palettes
+
 from sklearn.pipeline import Pipeline
 from sklearn.decomposition import PCA
 from sklearn.preprocessing import StandardScaler
+
 
 ##########################################################################
 ## Quick Methods
 ##########################################################################
 
-def explained_variance_visualizer(X, y=None, ax=None, scale=True, 
-                                  center=True, colormap=palettes.DEFAULT_SEQUENCE,
+def explained_variance_visualizer(X, y=None, ax=None, scale=True,
+                                  center=True,
+                                  colormap=palettes.DEFAULT_SEQUENCE,
                                   **kwargs):
-        """Produce a plot of the explained variance produced by a dimensionality 
-        reduction algorithm using n=1 to n=n_components dimensions. This is a single 
-        plot to help identify the best trade off between number of dimensions
-        and amount of information retained within the data.
+    """Produce a plot of the explained variance produced by a dimensionality
+    reduction algorithm using n=1 to n=n_components dimensions. This is a single
+    plot to help identify the best trade off between number of dimensions
+    and amount of information retained within the data.
 
-        Parameters
-        ----------
-        X : ndarray or DataFrame of shape n x m
-            A matrix of n rows with m features
+    Parameters
+    ----------
+    X : ndarray or DataFrame of shape n x m
+        A matrix of n rows with m features
 
-        y : ndarray or Series of length n
-            An array or Series of target or class values
-        
-        ax : matplotlib Axes, default: None
-            The aces to plot the figure on
+    y : ndarray or Series of length n
+        An array or Series of target or class values
 
-        scale : bool, default: True
-            Boolean that indicates if the values of X should be scaled.
+    ax : matplotlib Axes, default: None
+        The aces to plot the figure on
 
-        colormap : string or cmap, default: None
-            optional string or matplotlib cmap to colorize lines
-            Use either color to colorize the lines on a per class basis or
-            colormap to color them on a continuous scale.
+    scale : bool, default: True
+        Boolean that indicates if the values of X should be scaled.
 
-        kwargs : dict
-            Keyword arguments that are passed to the base class and may influence
-            the visualization as defined in other Visualizers.
-        
-        Examples
-        --------
-        >>> from sklearn import datasets
-        >>> bc = datasets.load_breast_cancer()
-        >>> X = bc = bc.data
-        >>> explained_variance_visualizer(X, scale=True, center=True, colormap='RdBu_r')
-        
-        """
+    colormap : string or cmap, default: None
+        optional string or matplotlib cmap to colorize lines
+        Use either color to colorize the lines on a per class basis or
+        colormap to color them on a continuous scale.
 
-        # Instantiate the visualizer
-        visualizer = ExplainedVariance(X=X)
+    kwargs : dict
+        Keyword arguments that are passed to the base class and may influence
+        the visualization as defined in other Visualizers.
 
-        # Fit and transform the visualizer (calls draw)
-        visualizer.fit(X, y, **kwargs)
-        visualizer.transform(X)
+    Examples
+    --------
+    >>> from sklearn import datasets
+    >>> bc = datasets.load_breast_cancer()
+    >>> X = bc = bc.data
+    >>> explained_variance_visualizer(X, scale=True, center=True, colormap='RdBu_r')
 
-        # Return the axes object on the visualizer
-        return visualizer.poof()
+    """
+
+    # Instantiate the visualizer
+    visualizer = ExplainedVariance(X=X)
+
+    # Fit and transform the visualizer (calls draw)
+    visualizer.fit(X, y, **kwargs)
+    visualizer.transform(X)
+
+    # Return the axes object on the visualizer
+    return visualizer.poof()
 
 
 ##########################################################################
@@ -69,28 +72,11 @@ def explained_variance_visualizer(X, y=None, ax=None, scale=True,
 
 class ExplainedVariance(FeatureVisualizer):
     """
-    ExplainedVariance is a feature visualization algorithm
-    that fits PCA on the data and plots the explained variance
-    of each of the principal components.
 
     Parameters
     ----------
-    n_components : int, default: None
-        Number of components to use for PCA
 
-    ax : matplotlib Axes, default: None
-        The axis to plot the figure on. If None is passed in the current axes
-        will be used (or generated if required).
 
-    features : list, default: None
-        a list of feature names to use
-        If a DataFrame is passed to fit and features is None, feature
-        names are selected as the columns of the DataFrame.
-
-    colormap : string or cmap, default: None
-        optional string or matplotlib cmap to colorize lines
-        Use either color to colorize the lines on a per class basis or
-        colormap to color them on a continuous scale.
 
     Examples
     --------
@@ -102,18 +88,20 @@ class ExplainedVariance(FeatureVisualizer):
 
     Notes
     -----
-    
+
     """
 
-    def __init__(self, n_components=None, ax=None, scale=True, center=True, 
+    def __init__(self, n_components=None, ax=None, scale=True, center=True,
                  colormap=palettes.DEFAULT_SEQUENCE, **kwargs):
         super(ExplainedVariance, self).__init__(ax=ax, **kwargs)
+
         self.colormap = colormap
         self.n_components = n_components
         self.center = center
         self.scale = scale
         self.pipeline = Pipeline(
-            [('scale', StandardScaler(with_mean=self.center, with_std=self.scale)),
+            [('scale', StandardScaler(with_mean=self.center,
+                                      with_std=self.scale)),
              ('pca', PCA(n_components=self.n_components))])
         self.pca_features = None
 
@@ -131,14 +119,8 @@ class ExplainedVariance(FeatureVisualizer):
         return self.pca_features
 
     def draw(self):
-        if self.ax is None:
-            self.ax = self.gca()
         X = self.explained_variance_
-        if self.n_components:
-            self.ax.bar(self.n_components, X)
-        else:
-            n_components = X.shape[0]
-            self.ax.bar(list(range(n_components)), X)
+        self.ax.plot(X)
         return self.ax
 
     def finalize(self, **kwargs):
