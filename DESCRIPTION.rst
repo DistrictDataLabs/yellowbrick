@@ -33,7 +33,7 @@ Feature Visualization
 - **Manifold Visualization**: high dimensional visualization with manifold learning
 - **Feature Importances**: rank features based on their in-model performance
 - **Recursive Feature Elimination**: find the best subset of features by importance
-- **Scatter and Joint Plots**: direct data visualization with feature selection
+- **Joint Plots**: direct data visualization with feature selection
 
 Classification Visualization
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~

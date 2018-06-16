@@ -69,17 +69,17 @@ Features Analysis
     :alt: Feature Importance using Gradient Boosting Classifier
     :target: api/features/rfecv.html#recursive-feature-elimination
 
-.. image:: api/features/images/scatter.png
+.. image:: api/contrib/images/scatter.png
     :width: 200px
     :height: 100px
     :alt: Scatter Visualization
-    :target: api/features/scatter.html#scatter-visualization
+    :target: api/contrib/scatter.html#scatter-visualization
 
 .. image:: api/features/images/jointplot.png
     :width: 200px
     :height: 100px
     :alt: Joint Point Visualization
-    :target: api/features/scatter.html#joint-plot-visualization
+    :target: api/features/jointplot.html#joint-plot-visualization
 
 
 Regression Visualizers
