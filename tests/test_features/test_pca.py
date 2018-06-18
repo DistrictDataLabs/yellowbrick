@@ -58,6 +58,9 @@ class PCADecompositionTests(VisualTestCase):
     Test the PCADecomposition visualizer
     """
 
+    @pytest.mark.xfail(
+        sys.platform == 'win32', reason="images not close on windows (RMSE=4)"
+    )
     def test_pca_decomposition_quick_method(self):
         """
         Test the quick method PCADecomposition visualizer 2 dimensions scaled.
@@ -68,7 +71,7 @@ class PCADecompositionTests(VisualTestCase):
         self.assert_images_similar(ax=ax)
 
     @pytest.mark.xfail(
-        sys.platform == 'win32', reason="images not close on windows"
+        sys.platform == 'win32', reason="images not close on windows (RMSE=?)"
     )
     def test_scale_true_2d(self):
         """
@@ -98,6 +101,9 @@ class PCADecompositionTests(VisualTestCase):
         # Assert PCA transformation occurred successfully
         assert pca_array.shape == (self.dataset.X.shape[0], 2)
 
+    @pytest.mark.xfail(
+        sys.platform == 'win32', reason="images not close on windows (RMSE=3)"
+    )
     def test_biplot_2d(self):
         """
         Test the PCADecomposition 2D biplot (proj_features).
@@ -143,6 +149,9 @@ class PCADecompositionTests(VisualTestCase):
         # Assert PCA transformation occurred successfully
         assert pca_array.shape == (self.dataset.X.shape[0], 3)
 
+    @pytest.mark.xfail(
+        sys.platform == 'win32', reason="images not close on windows (RMSE=3)"
+    )
     def test_biplot_3d(self):
         """
         Test the PCADecomposition 3D biplot (proj_features).
