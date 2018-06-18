@@ -1,11 +1,11 @@
+# -*- coding: utf-8 -*-
 # tests.test_features.test_pca
 # Tests for the PCA based feature visualizer.
 #
 # Author:   Carlo Morales <@cjmorale>
+# Author:   Raúl Peralta Lozada <@RaulPL>
+# Author:   Benjamin Bengfort <@bbengfort>
 # Created:  Tue May 23 18:34:27 2017 -0400
-#
-# Copyright (C) 2017 District Data Labs
-# For license information, see LICENSE.txt
 #
 # ID: test_pca.py [] cmorales@pacificmetrics.com $
 
@@ -20,197 +20,160 @@ Tests for the PCA based feature visualizer.
 import sys
 import pytest
 import numpy as np
-import numpy.testing as npt
 
+from tests.dataset import Dataset
 from tests.base import VisualTestCase
 from yellowbrick.features.pca import *
 from yellowbrick.exceptions import YellowbrickError
+from sklearn.datasets import make_classification
+
+
+##########################################################################
+## Fixtures
+##########################################################################
+
+@pytest.fixture(scope='class')
+def binary(request):
+    """
+    Creates a fixture of train and test splits for the sklearn digits dataset
+    For ease of use returns a Dataset named tuple composed of two Split tuples.
+    """
+    X, y = make_classification(
+        n_samples=400, n_features=12, n_informative=8, n_redundant=0,
+        n_classes=2, n_clusters_per_class=1, class_sep=1.8, random_state=854,
+        scale=[14.2, 2.1, 0.32, 0.001, 32.3, 44.1, 102.3, 2.3, 2.4, 38.2, 0.05, 1.0],
+    )
+
+    # Set a class attribute for digits
+    request.cls.dataset = Dataset(X, y)
 
 
 ##########################################################################
 ##PCA Tests
 ##########################################################################
 
+@pytest.mark.usefixtures("binary")
 class PCADecompositionTests(VisualTestCase):
     """
-    Test the PCADecomposition visualizer (scaled or non-scaled) for 2 and 3 dimensions.
+    Test the PCADecomposition visualizer
     """
-    def test_pca_decomposition(self):
+
+    @pytest.mark.xfail(
+        sys.platform == 'win32', reason="images not close on windows (RMSE=4)"
+    )
+    def test_pca_decomposition_quick_method(self):
         """
         Test the quick method PCADecomposition visualizer 2 dimensions scaled.
         """
-        X = np.array(
-                [[ 2.318, 2.727, 4.260, 7.212, 4.792],
-                 [ 2.315, 2.726, 4.295, 7.140, 4.783,],
-                 [ 2.315, 2.724, 4.260, 7.135, 4.779,],
-                 [ 2.110, 3.609, 4.330, 7.985, 5.595,],
-                 [ 2.110, 3.626, 4.330, 8.203, 5.621,],
-                 [ 2.110, 3.620, 4.470, 8.210, 5.612,]]
-            )
-
-        y = np.array([1, 1, 0, 1, 0, 0])
-        pca_decomposition(X=X, color=y, roj_dim=2, scale=True)
+        ax = pca_decomposition(
+            X=self.dataset.X, proj_dim=2, scale=True, random_state=28
+        )
+        self.assert_images_similar(ax=ax)
 
     @pytest.mark.xfail(
-        sys.platform == 'win32', reason="images not close on windows"
+        sys.platform == 'win32', reason="images not close on windows (RMSE=?)"
     )
     def test_scale_true_2d(self):
         """
         Test the PCADecomposition visualizer 2 dimensions scaled.
         """
-        X = np.array(
-                [[ 2.318, 2.727, 4.260, 7.212, 4.792],
-                 [ 2.315, 2.726, 4.295, 7.140, 4.783,],
-                 [ 2.315, 2.724, 4.260, 7.135, 4.779,],
-                 [ 2.110, 3.609, 4.330, 7.985, 5.595,],
-                 [ 2.110, 3.626, 4.330, 8.203, 5.621,],
-                 [ 2.110, 3.620, 4.470, 8.210, 5.612,]]
-            )
+        params = {'scale': True, 'proj_dim': 2, 'random_state': 9932}
+        visualizer = PCADecomposition(**params).fit(self.dataset.X)
+        pca_array = visualizer.transform(self.dataset.X)
 
-        y = np.array([1, 1, 0, 1, 0, 0])
-
-        params = {'scale': True, 'proj_dim': 2, 'col': y}
-        visualizer = PCADecomposition(**params)
-        visualizer.fit(X)
-        pca_array = visualizer.transform(X)
-        visualizer.poof()
-        X_pca_decomp = np.array(
-            [[-2.13928666, -0.07820484],
-            [-2.0162836, 0.38910195],
-            [-2.21597319, -0.05875371],
-            [1.70792744, -0.6411635],
-            [1.95978109, -0.71265712],
-            [2.70383492, 1.10167722]]
-            )
-        npt.assert_array_almost_equal(pca_array, X_pca_decomp)
-
-
-        params = {'scale': True, 'proj_dim': 2}
-        visualizer = PCADecomposition(**params)
-        visualizer.fit(X)
-        pca_array = visualizer.transform(X)
-        visualizer.poof()
-        npt.assert_array_almost_equal(pca_array, X_pca_decomp)
+        # Image comparison tests
         self.assert_images_similar(visualizer)
 
+        # Assert PCA transformation occurred successfully
+        assert pca_array.shape == (self.dataset.X.shape[0], 2)
 
     def test_scale_false_2d(self):
         """
         Test the PCADecomposition visualizer 2 dimensions non-scaled.
         """
-        X = np.array(
-            [[2.318, 2.727, 4.260, 7.212, 4.792],
-             [2.315, 2.726, 4.295, 7.140, 4.783, ],
-             [2.315, 2.724, 4.260, 7.135, 4.779, ],
-             [2.110, 3.609, 4.330, 7.985, 5.595, ],
-             [2.110, 3.626, 4.330, 8.203, 5.621, ],
-             [2.110, 3.620, 4.470, 8.210, 5.612, ]]
-        )
+        params = {'scale': False, 'proj_dim': 2, 'random_state': 1229}
+        visualizer = PCADecomposition(**params).fit(self.dataset.X)
+        pca_array = visualizer.transform(self.dataset.X)
 
-        y = np.array([1, 1, 0, 1, 0, 0])
+        # Image comparison tests
+        self.assert_images_similar(visualizer)
 
-        params = {'scale': False, 'proj_dim': 2, 'col': y}
-        visualizer = PCADecomposition(**params)
-        visualizer.fit(X)
-        pca_array = visualizer.transform(X)
-        visualizer.poof()
-        X_pca_decomp = np.array(
-            [[-0.75173446, -0.02639709],
-             [-0.79893433, -0.0028735],
-             [-0.80765629, 0.01702425],
-             [0.67843399, 0.11408186],
-             [0.83702734, -0.00802634],
-             [0.84286375, -0.09380918]]
-        )
-        npt.assert_array_almost_equal(pca_array, X_pca_decomp)
+        # Assert PCA transformation occurred successfully
+        assert pca_array.shape == (self.dataset.X.shape[0], 2)
 
-        params = {'scale': False, 'proj_dim': 2}
-        visualizer = PCADecomposition(**params)
-        visualizer.fit(X)
-        pca_array = visualizer.transform(X)
-        visualizer.poof()
-        npt.assert_array_almost_equal(pca_array, X_pca_decomp)
+    @pytest.mark.xfail(
+        sys.platform == 'win32', reason="images not close on windows (RMSE=3)"
+    )
+    def test_biplot_2d(self):
+        """
+        Test the PCADecomposition 2D biplot (proj_features).
+        """
+        params = {
+            'features': 'ABCDEFGHIKLM', 'random_state': 67,
+            'proj_features': True, 'proj_dim': 2,
+        }
+        visualizer = PCADecomposition(**params).fit(self.dataset.X)
+        pca_array = visualizer.transform(self.dataset.X)
+
+        # Image comparison tests
+        self.assert_images_similar(visualizer)
+
+        # Assert PCA transformation occurred successfully
+        assert pca_array.shape == (self.dataset.X.shape[0], 2)
 
     def test_scale_true_3d(self):
         """
         Test the PCADecomposition visualizer 3 dimensions scaled.
         """
-        X = np.array(
-                [[ 2.318, 2.727, 4.260, 7.212, 4.792],
-                 [ 2.315, 2.726, 4.295, 7.140, 4.783,],
-                 [ 2.315, 2.724, 4.260, 7.135, 4.779,],
-                 [ 2.110, 3.609, 4.330, 7.985, 5.595,],
-                 [ 2.110, 3.626, 4.330, 8.203, 5.621,],
-                 [ 2.110, 3.620, 4.470, 8.210, 5.612,]]
-            )
+        params = {'scale': True, 'proj_dim': 3, 'random_state': 7382}
+        visualizer = PCADecomposition(**params).fit(self.dataset.X)
+        pca_array = visualizer.transform(self.dataset.X)
 
-        y = np.array([1, 1, 0, 1, 0, 0])
+        # Image comparison tests
+        self.assert_images_similar(visualizer)
 
-        params = {'scale': True, 'proj_dim': 3, 'col': y}
-        visualizer = PCADecomposition(**params)
-        visualizer.fit(X)
-        pca_array = visualizer.transform(X)
-        visualizer.poof()
-        X_pca_decomp = np.array(
-            [[-2.13928666, -0.07820484, -0.11005612],
-            [-2.0162836, 0.38910195, 0.06538246],
-            [-2.21597319, -0.05875371, 0.03015729],
-            [1.70792744, -0.6411635, 0.20001772],
-            [1.95978109, -0.71265712, -0.16553243],
-            [2.70383492, 1.10167722,  -0.01996893]]
-            )
-        npt.assert_array_almost_equal(pca_array, X_pca_decomp)
-
-        params = {'scale': True, 'proj_dim': 3}
-        visualizer = PCADecomposition(**params)
-        visualizer.fit(X)
-        pca_array = visualizer.transform(X)
-        visualizer.poof()
-
-        npt.assert_array_almost_equal(pca_array, X_pca_decomp)
+        # Assert PCA transformation occurred successfully
+        assert pca_array.shape == (self.dataset.X.shape[0], 3)
 
     def test_scale_false_3d(self):
         """
         Test the PCADecomposition visualizer 3 dimensions non-scaled.
         """
-        X = np.array(
-                [[ 2.318, 2.727, 4.260, 7.212, 4.792],
-                 [ 2.315, 2.726, 4.295, 7.140, 4.783,],
-                 [ 2.315, 2.724, 4.260, 7.135, 4.779,],
-                 [ 2.110, 3.609, 4.330, 7.985, 5.595,],
-                 [ 2.110, 3.626, 4.330, 8.203, 5.621,],
-                 [ 2.110, 3.620, 4.470, 8.210, 5.612,]]
-            )
+        params = {'scale': False, 'proj_dim': 3, 'random_state': 98}
+        visualizer = PCADecomposition(**params).fit(self.dataset.X)
+        pca_array = visualizer.transform(self.dataset.X)
 
-        y = np.array([1, 1, 0, 1, 0, 0])
+        # Image comparison tests
+        self.assert_images_similar(visualizer)
 
-        params = {'scale': False, 'proj_dim': 3, 'col': y}
-        visualizer = PCADecomposition(**params)
-        visualizer.fit(X)
-        pca_array = visualizer.transform(X)
-        visualizer.poof()
-        X_pca_decomp = np.array(
-                [[ -7.51734458e-01,  -2.63970949e-02,   3.23270821e-02],
-                 [ -7.98934328e-01,  -2.87350350e-03,  -2.86110098e-02],
-                 [ -8.07656292e-01,   1.70242492e-02,  -4.98720042e-04],
-                 [  6.78433990e-01,   1.14081863e-01,  -2.51825210e-02],
-                 [  8.37027339e-01,  -8.02633755e-03,   6.65986453e-02],
-                 [  8.42863750e-01,  -9.38091760e-02,  -4.46334766e-02]]
-            )
-        npt.assert_array_almost_equal(pca_array, X_pca_decomp)
+        # Assert PCA transformation occurred successfully
+        assert pca_array.shape == (self.dataset.X.shape[0], 3)
 
+    @pytest.mark.xfail(
+        sys.platform == 'win32', reason="images not close on windows (RMSE=3)"
+    )
+    def test_biplot_3d(self):
+        """
+        Test the PCADecomposition 3D biplot (proj_features).
+        """
+        params = {
+            'features': 'ABCDEFGHIKLM', 'random_state': 800,
+            'proj_features': True, 'proj_dim': 3,
+        }
+        visualizer = PCADecomposition(**params).fit(self.dataset.X)
+        pca_array = visualizer.transform(self.dataset.X)
 
-        params = {'scale': False, 'proj_dim': 3}
-        visualizer = PCADecomposition(**params)
-        visualizer.fit(X)
-        pca_array = visualizer.transform(X)
-        npt.assert_array_almost_equal(pca_array, X_pca_decomp)
+        # Image comparison tests
+        self.assert_images_similar(visualizer)
+
+        # Assert PCA transformation occurred successfully
+        assert pca_array.shape == (self.dataset.X.shape[0], 3)
 
     def test_scale_true_4d_execption(self):
         """
         Test the PCADecomposition visualizer 4 dimensions scaled (catch YellowbrickError).
         """
-        params = {'scale': True, 'center': False, 'proj_dim': 4}
+        params = {'scale': True, 'proj_dim': 4}
         with pytest.raises(YellowbrickError, match="proj_dim object is not 2 or 3"):
             PCADecomposition(**params)
 
@@ -218,19 +181,8 @@ class PCADecompositionTests(VisualTestCase):
         """
         Test the PCADecomposition visualizer 3 dims scaled on 2 dim data set (catch ValueError).
         """
-        X = np.array(
-            [[2.318, 2.727],
-             [2.315, 2.726],
-             [2.315, 2.724],
-             [2.110, 3.609],
-             [2.110, 3.626],
-             [2.110, 3.620]]
-        )
-
-        y = np.array([1, 0])
-
-        params = {'scale': True, 'center': False, 'proj_dim': 3, 'col': y}
-
+        X = np.random.normal(loc=2, size=(100, 2))
+        params = {'scale': True, 'proj_dim': 3}
 
         with pytest.raises(ValueError, match="n_components=3 must be between 0 and n_features"):
             pca = PCADecomposition(**params)
