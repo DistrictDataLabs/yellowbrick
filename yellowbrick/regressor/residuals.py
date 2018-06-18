@@ -59,7 +59,7 @@ class PredictionError(RegressionScoreVisualizer):
     ----------
 
     model : a Scikit-Learn regressor
-        Should be an instance of a regressor, otherwise a will raise a
+        Should be an instance of a regressor, otherwise will raise a
         YellowbrickTypeError exception on instantiation.
 
     ax : matplotlib Axes, default: None
@@ -327,7 +327,7 @@ class ResidualsPlot(RegressionScoreVisualizer):
     Parameters
     ----------
     model : a Scikit-Learn regressor
-        Should be an instance of a regressor, otherwise a will raise a
+        Should be an instance of a regressor, otherwise will raise a
         YellowbrickTypeError exception on instantiation.
 
     ax : matplotlib Axes, default: None
@@ -347,7 +347,7 @@ class ResidualsPlot(RegressionScoreVisualizer):
         Residuals for test data are plotted with this color. In order to
         create generalizable models, reserved test data residuals are of
         the most analytical interest, so these points are highlighted by
-        hvaing full opacity. Can be any matplotlib color.
+        having full opacity. Can be any matplotlib color.
 
     line_color : color, default: dark grey
         Defines the color of the zero error line, can be any matplotlib color.
@@ -562,7 +562,7 @@ def residuals_plot(model,
     Parameters
     ----------
     model : a Scikit-Learn regressor
-        Should be an instance of a regressor, otherwise a will raise a
+        Should be an instance of a regressor, otherwise will raise a
         YellowbrickTypeError exception on instantiation.
 
     X  : ndarray or DataFrame of shape n x m
@@ -593,7 +593,7 @@ def residuals_plot(model,
         Residuals for test data are plotted with this color. In order to
         create generalizable models, reserved test data residuals are of
         the most analytical interest, so these points are highlighted by
-        hvaing full opacity. Can be any matplotlib color.
+        having full opacity. Can be any matplotlib color.
 
     line_color : color, default: dark grey
         Defines the color of the zero error line, can be any matplotlib color.

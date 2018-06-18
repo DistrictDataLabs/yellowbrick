@@ -88,7 +88,7 @@ class TestPredictionError(VisualTestCase, DatasetMixin):
         visualizer.score(self.data.X.test, self.data.y.test)
         visualizer.finalize()
 
-        self.assert_images_similar(visualizer, tol=1)
+        self.assert_images_similar(visualizer, tol=1, remove_legend=True)
 
     @pytest.mark.skipif(pd is None, reason="pandas is required")
     def test_prediction_error_pandas(self):
@@ -119,7 +119,7 @@ class TestPredictionError(VisualTestCase, DatasetMixin):
         visualizer.score(X_test, y_test)
         visualizer.finalize()
 
-        self.assert_images_similar(visualizer, tol=1)
+        self.assert_images_similar(visualizer, tol=1, remove_legend=True)
 
     def test_score(self):
         """
@@ -170,7 +170,7 @@ class TestResidualsPlot(VisualTestCase, DatasetMixin):
         visualizer.score(self.data.X.test, self.data.y.test)
         visualizer.finalize()
 
-        self.assert_images_similar(visualizer, tol=1)
+        self.assert_images_similar(visualizer, tol=1, remove_legend=True)
 
     def test_residuals_plot_no_histogram(self):
         """
@@ -185,7 +185,7 @@ class TestResidualsPlot(VisualTestCase, DatasetMixin):
         visualizer.score(self.data.X.test, self.data.y.test)
         visualizer.finalize()
 
-        self.assert_images_similar(visualizer, tol=1)
+        self.assert_images_similar(visualizer, tol=1, remove_legend=True)
 
     @pytest.mark.skip(reason="not implemented yet")
     def test_hist_matplotlib_version(self):
@@ -212,7 +212,7 @@ class TestResidualsPlot(VisualTestCase, DatasetMixin):
             model, self.data.X.train, self.data.y.train, ax=ax, random_state=23
         )
 
-        self.assert_images_similar(ax=ax, tol=1)
+        self.assert_images_similar(ax=ax, tol=1, remove_legend=True)
 
     @pytest.mark.skipif(pd is None, reason="pandas is required")
     def test_residuals_plot_pandas(self):
@@ -243,17 +243,17 @@ class TestResidualsPlot(VisualTestCase, DatasetMixin):
         visualizer.score(X_test, y_test)
         visualizer.finalize()
 
-        self.assert_images_similar(visualizer, tol=1)
+        self.assert_images_similar(visualizer, tol=1, remove_legend=True)
 
     def test_score(self):
         """
         Assert returns R2 score
         """
-        visualizer = ResidualsPlot(RandomForestRegressor(random_state=8893))
+        visualizer = ResidualsPlot(Ridge(random_state=8893))
 
         visualizer.fit(self.data.X.train, self.data.y.train)
         score = visualizer.score(self.data.X.test, self.data.y.test)
 
-        assert score == pytest.approx(0.6187552505733338)
-        assert visualizer.train_score_ == pytest.approx(0.9361553099241242)
+        assert score == pytest.approx(0.9999888484, rel=1e-4)
+        assert visualizer.train_score_ == pytest.approx(0.9999906, rel=1e-4)
         assert visualizer.test_score_ == score
