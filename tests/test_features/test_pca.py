@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 # tests.test_features.test_pca
 # Tests for the PCA based feature visualizer.
 #
@@ -163,7 +164,7 @@ class PCADecompositionTests(VisualTestCase):
         """
         Test the PCADecomposition visualizer 4 dimensions scaled (catch YellowbrickError).
         """
-        params = {'scale': True, 'center': False, 'proj_dim': 4}
+        params = {'scale': True, 'proj_dim': 4}
         with pytest.raises(YellowbrickError, match="proj_dim object is not 2 or 3"):
             PCADecomposition(**params)
 
@@ -172,7 +173,7 @@ class PCADecompositionTests(VisualTestCase):
         Test the PCADecomposition visualizer 3 dims scaled on 2 dim data set (catch ValueError).
         """
         X = np.random.normal(loc=2, size=(100, 2))
-        params = {'scale': True, 'center': False, 'proj_dim': 3}
+        params = {'scale': True, 'proj_dim': 3}
 
         with pytest.raises(ValueError, match="n_components=3 must be between 0 and n_features"):
             pca = PCADecomposition(**params)

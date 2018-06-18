@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 # yellowbrick.features.pca
 # Decomposition based feature visualization with PCA.
 #
@@ -85,10 +86,8 @@ class PCADecomposition(MultiFeatureVisualizer):
     >>> iris = datasets.load_iris()
     >>> X = iris.data
     >>> y = iris.target
-    >>> params = {'scale': True, 'center': False, 'color': y}
-    >>> visualizer = PCADecomposition(**params)
-    >>> visualizer.fit(X)
-    >>> visualizer.transform(X)
+    >>> visualizer = PCADecomposition()
+    >>> visualizer.fit_transform(X)
     >>> visualizer.poof()
 
     """
@@ -144,7 +143,7 @@ class PCADecomposition(MultiFeatureVisualizer):
         """
         super(PCADecomposition, self).fit(X=X, y=y, **kwargs)
         self.pca_transformer.fit(X)
-        self.pca_components_ = self.pca_transformer.steps[1][1].components_
+        self.pca_components_ = self.pca_transformer.named_steps['pca'].components_
         return self
 
     def transform(self, X, y=None, **kwargs):
@@ -162,14 +161,14 @@ class PCADecomposition(MultiFeatureVisualizer):
                 max_x = max(X[:, 0])
                 max_y = max(X[:, 1])
                 for i in range(self.pca_components_.shape[1]):
-                    plt.arrow(
+                    self.ax.arrow(
                         x=0, y=0,
                         dx=x_vector[i] * max_x,
                         dy=y_vector[i] * max_y,
                         color='r', head_width=0.05,
                         width=0.005,
                     )
-                    plt.text(
+                    self.ax.text(
                         x_vector[i] * max_x * 1.05,
                         y_vector[i] * max_y * 1.05,
                         self.features_[i], color='r'
