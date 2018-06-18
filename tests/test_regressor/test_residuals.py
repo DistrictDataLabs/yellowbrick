@@ -2,6 +2,7 @@
 # Ensure that the regressor residuals visualizations work.
 #
 # Author:   Rebecca Bilbro <rbilbro@districtdatalabs.com>
+# Author:   Benjamin Bengfort <bbengfort@districtdatalabs.com>
 # Created:  Sat Oct 8 16:30:39 2016 -0400
 #
 # Copyright (C) 2016 District Data Labs
@@ -17,11 +18,13 @@ Ensure that the regressor residuals visualizations work.
 ## Imports
 ##########################################################################
 
-# import sys
+import sys
 import pytest
+import matplotlib as mpl
 import matplotlib.pyplot as plt
 
 from yellowbrick.regressor.residuals import *
+from yellowbrick.exceptions import YellowbrickValueError
 
 from tests.base import VisualTestCase
 from tests.dataset import DatasetMixin, Dataset, Split
@@ -38,6 +41,10 @@ try:
     import pandas as pd
 except ImportError:
     pd = None
+
+
+# Determine version of matplotlib
+MPL_VERS_MAJ = int(mpl.__version__.split(".")[0])
 
 
 ##########################################################################
@@ -76,6 +83,8 @@ class TestPredictionError(VisualTestCase, DatasetMixin):
     Test the PredictionError visualizer
     """
 
+    @pytest.mark.filterwarnings("ignore:Stochastic Optimizer")
+    @pytest.mark.filterwarnings("ignore:internal gelsd driver lwork query error")
     def test_prediction_error(self):
         """
         Test image similarity of prediction error on random data
@@ -134,19 +143,50 @@ class TestPredictionError(VisualTestCase, DatasetMixin):
         assert score == pytest.approx(0.9999983124154965)
         assert visualizer.score_ == score
 
-    @pytest.mark.skip(reason="not implemented yet")
     def test_peplot_shared_limits(self):
         """
         Test shared limits on the peplot
         """
-        raise NotImplementedError("not yet implemented")
+        visualizer = PredictionError(LinearRegression(), shared_limits=False)
 
-    @pytest.mark.skip(reason="not implemented yet")
-    def test_peplot_draw_bounds(self):
+        visualizer.fit(self.data.X.train, self.data.y.train)
+        visualizer.score(self.data.X.test, self.data.y.test)
+        visualizer.finalize()
+
+        xlim = tuple(map(int, visualizer.ax.get_xlim()))
+        ylim = tuple(map(int, visualizer.ax.get_ylim()))
+        assert xlim == ylim
+
+    @pytest.mark.filterwarnings("ignore:internal gelsd driver lwork query error")
+    def test_peplot_no_shared_limits(self):
         """
-        Test the peplot +/- one bounding in draw
+        Test image similarity with no shared limits on the peplot
         """
-        raise NotImplementedError("not yet implemented")
+        visualizer = PredictionError(Ridge(random_state=43), shared_limits=False)
+
+        visualizer.fit(self.data.X.train, self.data.y.train)
+        visualizer.score(self.data.X.test, self.data.y.test)
+        visualizer.finalize()
+
+        xlim = tuple(map(int, visualizer.ax.get_xlim()))
+        ylim = tuple(map(int, visualizer.ax.get_ylim()))
+        assert not xlim == ylim
+
+        self.assert_images_similar(visualizer, remove_legend=True)
+
+    def test_peplot_no_lines(self):
+        """
+        Test image similarity with no lines drawn on the plot
+        """
+        visualizer = PredictionError(
+            Lasso(random_state=23, alpha=10), bestfit=False, identity=False
+        )
+
+        visualizer.fit(self.data.X.train, self.data.y.train)
+        visualizer.score(self.data.X.test, self.data.y.test)
+        visualizer.finalize()
+
+        self.assert_images_similar(visualizer, remove_legend=True)
 
 
 ##########################################################################
@@ -159,6 +199,9 @@ class TestResidualsPlot(VisualTestCase, DatasetMixin):
     Test ResidualPlot visualizer
     """
 
+    @pytest.mark.xfail(
+        sys.platform == 'win32', reason="images not close on windows (RMSE=32)"
+    )
     def test_residuals_plot(self):
         """
         Image similarity of residuals plot on random data with OLS
@@ -173,9 +216,10 @@ class TestResidualsPlot(VisualTestCase, DatasetMixin):
 
         self.assert_images_similar(visualizer, tol=1, remove_legend=True)
 
-    # @pytest.mark.xfail(
-    #     sys.platform == 'win32', reason="images not close on windows (RMSE=32)"
-    # )
+    @pytest.mark.xfail(
+        sys.platform == 'win32', reason="images not close on windows (RMSE=32)"
+    )
+    @pytest.mark.filterwarnings("ignore:Stochastic Optimizer")
     def test_residuals_plot_no_histogram(self):
         """
         Image similarity test when hist=False
@@ -191,20 +235,35 @@ class TestResidualsPlot(VisualTestCase, DatasetMixin):
 
         self.assert_images_similar(visualizer, tol=1, remove_legend=True)
 
-    @pytest.mark.skip(reason="not implemented yet")
-    def test_hist_matplotlib_version(self):
+    @pytest.mark.skipif(MPL_VERS_MAJ >= 2, reason="test requires mpl earlier than 2.0.2")
+    def test_hist_matplotlib_version(self, mock_toolkit):
         """
         ValueError is raised when matplotlib version is incorrect and hist=True
         """
-        pass
+        with pytst.raises(ImportError):
+            from mpl_toolkits.axes_grid1 import make_axes_locatable
+            assert not make_axes_locatable
 
-    @pytest.mark.skip(reason="not implemented yet")
-    def test_no_hist_matplotlib_version(self):
+        with pytest.raises(YellowbrickValueError, match="requires matplotlib 2.0.2"):
+            ResidualsPlot(LinearRegression(), hist=True)
+
+    @pytest.mark.skipif(MPL_VERS_MAJ >= 2, reason="test requires mpl earlier than 2.0.2")
+    def test_no_hist_matplotlib_version(self, mock_toolkit):
         """
         No error is raised when matplotlib version is incorrect and hist=False
         """
-        pass
+        with pytst.raises(ImportError):
+            from mpl_toolkits.axes_grid1 import make_axes_locatable
+            assert not make_axes_locatable
 
+        try:
+            ResidualsPlot(LinearRegression(), hist=False)
+        except YellowbrickValueError as e:
+            self.fail(e)
+
+    @pytest.mark.xfail(
+        sys.platform == 'win32', reason="images not close on windows (RMSE=32)"
+    )
     def test_residuals_quick_method(self):
         """
         Image similarity test using the residuals plot quick method
@@ -218,6 +277,9 @@ class TestResidualsPlot(VisualTestCase, DatasetMixin):
 
         self.assert_images_similar(ax=ax, tol=1, remove_legend=True)
 
+    @pytest.mark.xfail(
+        sys.platform == 'win32', reason="images not close on windows (RMSE=32)"
+    )
     @pytest.mark.skipif(pd is None, reason="pandas is required")
     def test_residuals_plot_pandas(self):
         """

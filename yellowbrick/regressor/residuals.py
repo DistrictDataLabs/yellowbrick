@@ -369,7 +369,7 @@ class ResidualsPlot(RegressionScoreVisualizer):
     Notes
     -----
     ResidualsPlot is a ScoreVisualizer, meaning that it wraps a model and
-    its primary entry point is the `score()` method.
+    its primary entry point is the ``score()`` method.
 
     The residuals histogram feature requires matplotlib 2.0.2 or greater.
     """
