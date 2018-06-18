@@ -17,6 +17,7 @@ Ensure that the regressor residuals visualizations work.
 ## Imports
 ##########################################################################
 
+# import sys
 import pytest
 import matplotlib.pyplot as plt
 
@@ -27,7 +28,7 @@ from tests.dataset import DatasetMixin, Dataset, Split
 
 from sklearn.linear_model import Ridge, Lasso
 from sklearn.linear_model import LinearRegression
-from sklearn.ensemble import RandomForestRegressor
+from sklearn.neural_network import MLPRegressor
 
 from sklearn.datasets import make_regression
 from sklearn.model_selection import train_test_split as tts
@@ -77,11 +78,11 @@ class TestPredictionError(VisualTestCase, DatasetMixin):
 
     def test_prediction_error(self):
         """
-        Test image similarity of prediction error on random data with SVR
+        Test image similarity of prediction error on random data
         """
         _, ax = plt.subplots()
 
-        model = RandomForestRegressor(random_state=229)
+        model = MLPRegressor(random_state=229)
         visualizer = PredictionError(model, ax=ax)
 
         visualizer.fit(self.data.X.train, self.data.y.train)
@@ -172,13 +173,16 @@ class TestResidualsPlot(VisualTestCase, DatasetMixin):
 
         self.assert_images_similar(visualizer, tol=1, remove_legend=True)
 
+    # @pytest.mark.xfail(
+    #     sys.platform == 'win32', reason="images not close on windows (RMSE=32)"
+    # )
     def test_residuals_plot_no_histogram(self):
         """
         Image similarity test when hist=False
         """
         _, ax = plt.subplots()
 
-        model = RandomForestRegressor(random_state=19)
+        model = MLPRegressor(random_state=19)
         visualizer = ResidualsPlot(model, ax=ax, hist=False)
 
         visualizer.fit(self.data.X.train, self.data.y.train)
