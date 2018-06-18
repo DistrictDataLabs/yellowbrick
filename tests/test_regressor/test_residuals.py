@@ -172,7 +172,7 @@ class TestPredictionError(VisualTestCase, DatasetMixin):
         ylim = tuple(map(int, visualizer.ax.get_ylim()))
         assert not xlim == ylim
 
-        self.assert_images_similar(visualizer, remove_legend=True)
+        self.assert_images_similar(visualizer, tol=1.0, remove_legend=True)
 
     def test_peplot_no_lines(self):
         """
@@ -186,7 +186,7 @@ class TestPredictionError(VisualTestCase, DatasetMixin):
         visualizer.score(self.data.X.test, self.data.y.test)
         visualizer.finalize()
 
-        self.assert_images_similar(visualizer, remove_legend=True)
+        self.assert_images_similar(visualizer, tol=1.0, remove_legend=True)
 
 
 ##########################################################################
