@@ -1,7 +1,6 @@
 # yellowbrick.datasaurus
 # Plots a Datasaurus Quartet as an illustration of the importance of visualization.
 #
-# Author:   Benjamin Bengfort <bbengfort@districtdatalabs.com>
 # Author:   Larry Gray
 # Created:  Wed May 18 11:38:25 2016 -0400
 #
@@ -281,4 +280,3 @@ def datasaurus():
 if __name__ == '__main__':
     datasaurus()
     plt.show()
-
