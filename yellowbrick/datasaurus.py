@@ -2,12 +2,12 @@
 # Plots a Datasaurus Quartet as an illustration of the importance of visualization.
 #
 # Author:   Larry Gray
-# Created:  Wed May 18 11:38:25 2016 -0400
+# Created:  Wed Jun 20 15:17:35 2018 -0400
 #
 # Copyright (C) 2018 District Data Labs
 # For license information, see LICENSE.txt
 #
-# ID: datasaurus.py [0bfa366] benjamin@bengfort.com $
+# ID: datasaurus.py [] lwgray@gmail.com $
 
 """
 Plots a Datasaurus Quartet as an illustration of the importance of visualization.
