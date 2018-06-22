@@ -18,14 +18,11 @@ Implementation of lexical dispersion for text visualization
 ## Imports
 ##########################################################################
 
-import numpy as np
 from yellowbrick.text.base import TextVisualizer
-from yellowbrick.exceptions import YellowbrickValueError
 
 ##########################################################################
 ## Dispersion Plot Visualizer
 ##########################################################################
-
 
 class DispersionPlotVisualizer(TextVisualizer):
     """
@@ -36,8 +33,8 @@ class DispersionPlotVisualizer(TextVisualizer):
     
     Parameters
     ----------
-    words : list, default: None
-        The list of words to examine their dispersion
+    words : list
+        A list of words whose dispersion will be examined within a corpus 
     
     ax : matplotlib axes, default: None
         The axes to plot the figure on.
@@ -66,7 +63,7 @@ class DispersionPlotVisualizer(TextVisualizer):
         
         Parameters
         ----------
-        X : List
+        X : list
             A list of words in the order they appear in the corpus.
         """
             
@@ -117,3 +114,49 @@ class DispersionPlotVisualizer(TextVisualizer):
         self.ax.set_title("Lexical Dispersion Plot")
         self.ax.set_xlabel("Word Offset")
         self.ax.grid(False)
+
+
+##########################################################################
+## Quick Method
+##########################################################################
+
+def dispersion(words, corpus, ax=None, color=None, ignore_case=False, **kwargs):
+    """ Displays lexical dispersion plot for words in a corpus
+    
+    This helper function is a quick wrapper to utilize the DisperstionPlot
+    Visualizer for one-off analysis
+    
+    Parameters
+    ----------
+    
+    words : list
+        A list of words whose dispersion will be examined within a corpus
+        
+    corpus : list
+        A list of words in the order they appear in the corpus
+
+    ax : matplotlib axes, default: None
+        The axes to plot the figure on.
+
+    color : list or tuple of colors
+        Specify color for bars
+
+    kwargs : dict
+        Pass any additional keyword arguments to the super class.
+        
+    Returns
+    -------
+    ax: matplotlib axes
+        Returns the axes that the plot was drawn on
+    """
+    
+    # Instantiate the visualizer
+    visualizer = DispersionPlotVisualizer(
+        words, ax=ax, color=color, ignore_case=ignore_case, **kwargs
+    )
+
+    # Fit and transform the visualizer (calls draw)
+    visualizer.fit(corpus)
+
+    # Return the axes object on the visualizer
+    return visualizer.ax
