@@ -3,6 +3,8 @@
 #
 # Author:  Benjamin Bengfort <benjamin@bengfort.com>
 # Created: Fri Mar 02 15:21:36 2018 -0500
+# Author:  Rebecca Bilbro <rbilbro@districtdatalabs.com>
+# Updated: Sun Jun 24 10:53:36 2018 -0500
 #
 # Copyright (C) 2018 District Data Labs
 # For license information, see LICENSE.txt
@@ -121,6 +123,10 @@ class FeatureImportances(ModelVisualizer):
 
         # Get the feature importances from the model
         self.feature_importances_ = self._find_importances_param()
+
+        # Check if feature importances is a multidim array & if so flatten
+        if self.feature_importances_.ndim > 1:
+            self.feature_importances_ = np.mean(self.feature_importances_, axis=0)
 
         # Apply absolute value filter before normalization
         if self.absolute:
