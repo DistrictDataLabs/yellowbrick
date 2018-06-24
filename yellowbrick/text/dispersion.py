@@ -84,10 +84,8 @@ class DispersionPlot(TextVisualizer):
             A list of words in the order they appear in the corpus.
         """
             
-        self.words.reverse()
-
         # Create an index (e.g. the y position) for the target words
-        self.target_words_ = np.array(self.words)
+        self.target_words_ = np.flip(self.words, axis=0)
         if self.ignore_case:
             self.target_words_ = np.array([w.lower() for w in self.target_words_])
         
@@ -106,8 +104,8 @@ class DispersionPlot(TextVisualizer):
         """
         
         self.ax.scatter(points[:,0], points[:,1], marker='|', color=self.color)
-        self.ax.set_yticks(list(range(len(self.words))))
-        self.ax.set_yticklabels(self.words)
+        self.ax.set_yticks(list(range(len(self.target_words_))))
+        self.ax.set_yticklabels(self.target_words_)
         
     def finalize(self, **kwargs):
         """
@@ -118,7 +116,7 @@ class DispersionPlot(TextVisualizer):
         kwargs: generic keyword arguments.
         """
         
-        self.ax.set_ylim(-1, len(self.words))
+        self.ax.set_ylim(-1, len(self.target_words_))
         self.ax.set_title("Lexical Dispersion Plot")
         self.ax.set_xlabel("Word Offset")
         self.ax.grid(False)
