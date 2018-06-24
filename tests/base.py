@@ -72,7 +72,7 @@ class VisualTestCase(unittest.TestCase):
         self.assertEqual(self._backend, 'agg')
         super(VisualTestCase, self).setUp()
 
-    def assert_images_similar(self, visualizer=None, ax=None, tol=0.01):
+    def assert_images_similar(self, visualizer=None, ax=None, tol=0.01, **kwargs):
         """Accessible testing method for testing generation of a Visualizer.
 
         Requires the placement of a baseline image for comparison in the
@@ -103,13 +103,16 @@ class VisualTestCase(unittest.TestCase):
             The tolerance (a color value difference, where 255 is the
             maximal difference).  The test fails if the average pixel
             difference is greater than this value.
+
+        kwargs : dict
+            Options to pass to the ImageComparison class.
         """
         # Hide this method from the pytest traceback on test failure.
         __tracebackhide__ = True
 
         # Build and execute the image comparison
         compare = ImageComparison(
-            inspect.stack(), visualizer=visualizer, ax=ax, tol=tol
+            inspect.stack(), visualizer=visualizer, ax=ax, tol=tol, **kwargs
         )
         compare()
 
@@ -167,7 +170,7 @@ class ImageComparison(object):
     """
 
     def __init__(self, stack, visualizer=None, ax=None, tol=0.01, ext=".png",
-                 remove_ticks=True, remove_title=True):
+                 remove_ticks=True, remove_title=True, remove_legend=False):
 
         # Ensure we have something to draw on
         if visualizer is None and ax is None:
@@ -201,6 +204,7 @@ class ImageComparison(object):
         self.ext = ext
         self.remove_ticks = remove_ticks
         self.remove_title = remove_title
+        self.remove_legend = remove_legend
 
     def __call__(self):
         """
@@ -266,6 +270,9 @@ class ImageComparison(object):
                     axis.set_minor_formatter(null_formatter)
                 except AttributeError:
                     continue
+
+        if self.remove_legend:
+            self.ax.legend_.remove()
 
     def save(self):
         """
