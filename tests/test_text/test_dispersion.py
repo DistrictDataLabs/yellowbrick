@@ -18,6 +18,8 @@ Tests for the dispersion plot text visualization
 ## Imports
 ##########################################################################
 
+import sys
+import pytest
 
 from yellowbrick.text.dispersion import *
 from tests.dataset import DatasetMixin
