@@ -116,7 +116,6 @@ class DispersionPlot(TextVisualizer):
         kwargs: generic keyword arguments.
         """
         
-        self.ax.set_yticklabels(self.target_words_)
         self.ax.set_ylim(-1, len(self.target_words_))
         self.ax.set_title("Lexical Dispersion Plot")
         self.ax.set_xlabel("Word Offset")
