@@ -3,6 +3,8 @@
 #
 # Author:  Benjamin Bengfort <benjamin@bengfort.com>
 # Created: Fri Mar 02 15:23:22 2018 -0500
+# Author:  Rebecca Bilbro <rbilbro@districtdatalabs.com>
+# Updated: Sun Jun 24 12:10:43 2018 -0500
 #
 # Copyright (C) 2018 District Data Labs
 # For license information, see LICENSE.txt
@@ -225,6 +227,26 @@ class TestFeatureImportancesVisualizer(VisualTestCase, DatasetMixin):
         expected = np.array([-0.38, -0.08, -0.05, 0.07, 0.1, 0.16, 0.2, .23, 0.4])
         npt.assert_array_equal(visualizer.feature_importances_, expected)
 
+    def test_multi_coefs(self):
+        """
+        Test fit with multidimensional coefficients
+        """
+        coefs = np.array([
+            [0.4, 0.2, -0.08, 0.07, 0.16, 0.23, -0.38, 0.1, -0.05],
+            [0.41, 0.12, -0.1, 0.1, 0.14, 0.21, 0.01, 0.31, -0.15],
+            [0.31, 0.2, -0.01, 0.1, 0.22, 0.23, 0.01, 0.12, -0.15]
+            ]
+        )
+
+        model = MockEstimator()
+        model.make_importance_param(value=coefs)
+
+        visualizer = FeatureImportances(model)
+        visualizer.fit(
+            np.random.rand(100, len(np.mean(coefs, axis=0))), np.random.rand(100)
+        )
+
+        npt.assert_equal(visualizer.feature_importances_.ndim, 1)
 
     @pytest.mark.skipif(pd is None, reason="pandas is required for this test")
     def test_fit_dataframe(self):

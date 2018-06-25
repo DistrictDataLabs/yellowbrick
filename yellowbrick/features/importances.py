@@ -3,6 +3,8 @@
 #
 # Author:  Benjamin Bengfort <benjamin@bengfort.com>
 # Created: Fri Mar 02 15:21:36 2018 -0500
+# Author:  Rebecca Bilbro <rbilbro@districtdatalabs.com>
+# Updated: Sun Jun 24 10:53:36 2018 -0500
 #
 # Copyright (C) 2018 District Data Labs
 # For license information, see LICENSE.txt
@@ -37,6 +39,11 @@ class FeatureImportances(ModelVisualizer):
     of features ranked by their importances. Although primarily a feature
     engineering mechanism, this visualizer requires a model that has either a
     ``coef_`` or ``feature_importances_`` parameter after fit.
+
+    Note: Some classification models such as ``LogisticRegression``, return
+    ``coef_`` as a multidimensional array of shape ``(n_classes, n_features)``.
+    In this case, the ``FeatureImportances`` visualizer computes the mean of the
+    ``coefs_`` by class for each feature.
 
     Parameters
     ----------
@@ -121,6 +128,16 @@ class FeatureImportances(ModelVisualizer):
 
         # Get the feature importances from the model
         self.feature_importances_ = self._find_importances_param()
+
+        # If feature importances is a multidim array, we're expecting a shape of
+        # (n_classes, n_features) therefore we flatten by taking the average by
+        # column to get shape (n_features,)  (see LogisticRegression)
+        if self.feature_importances_.ndim > 1:
+            self.feature_importances_ = np.mean(self.feature_importances_, axis=0)
+
+        # TODO - as an alternative to the above flattening approach, explore an
+        # alternative visualize that uses the array shape to create a stacked bar chart
+        # of feature importances for each class/feature combination
 
         # Apply absolute value filter before normalization
         if self.absolute:
