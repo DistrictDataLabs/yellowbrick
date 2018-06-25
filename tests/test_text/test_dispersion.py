@@ -28,6 +28,7 @@ from itertools import chain
 ## DispersionPlot Tests
 ##########################################################################
 
+@pytest.mark.xfail(sys.platform == "win32", reason="Issue #491")
 class DispersionPlotTests(VisualTestCase, DatasetMixin):
 
     def test_integrated_dispersionplot(self):
