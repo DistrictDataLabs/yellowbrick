@@ -46,7 +46,7 @@ class DispersionPlotTests(VisualTestCase, DatasetMixin):
         visualizer.fit(text)
         visualizer.ax.grid(False)
 
-        self.assert_images_similar(visualizer, tol=12)
+        self.assert_images_similar(visualizer, tol=25)
 
     def test_dispersionplot_ignore_case(self):
         """
@@ -62,7 +62,7 @@ class DispersionPlotTests(VisualTestCase, DatasetMixin):
         visualizer.fit(text)
         visualizer.ax.grid(False)
 
-        self.assert_images_similar(visualizer, tol=12)
+        self.assert_images_similar(visualizer, tol=25)
 
     def test_dispersionplot_generator_input(self):
         """
@@ -78,5 +78,5 @@ class DispersionPlotTests(VisualTestCase, DatasetMixin):
         visualizer.fit(text)
         visualizer.ax.grid(False)
 
-        self.assert_images_similar(visualizer, tol=12)
+        self.assert_images_similar(visualizer, tol=25)
         
