@@ -105,6 +105,7 @@ class DispersionPlot(TextVisualizer):
         
         self.ax.scatter(points[:,0], points[:,1], marker='|', color=self.color)
         self.ax.set_yticks(list(range(len(self.target_words_))))
+        self.ax.set_yticklabels(self.target_words_)
         
     def finalize(self, **kwargs):
         """
