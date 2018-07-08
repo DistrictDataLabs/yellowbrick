@@ -19,6 +19,8 @@ https://bl.ocks.org/rpgove/0060ff3b656618e9136b
 ##########################################################################
 
 import time
+import numpy as np
+import scipy.sparse as sp
 
 from .base import ClusteringScoreVisualizer
 from ..exceptions import YellowbrickValueError
@@ -83,8 +85,16 @@ def distortion_score(X, labels, metric='euclidean'):
         # Compute the center of these instances
         center = instances.mean(axis=0)
 
+        # NOTE: csc_matrix and csr_matrix mean returns a 2D array, numpy.mean
+        # returns an array of 1 dimension less than the input. We expect
+        # instances to be a 2D array, therefore to do pairwise computation we
+        # require center to be a 2D array with a single row (the center).
+        # See #370 for more detail.
+        if not sp.issparse(instances):
+            center = np.array([center])
+
         # Compute the square distances from the instances to the center
-        distances = pairwise_distances(instances, [center], metric=metric)
+        distances = pairwise_distances(instances, center, metric=metric)
         distances = distances ** 2
 
         # Add the mean square distance to the distortion

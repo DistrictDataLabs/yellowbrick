@@ -4,9 +4,6 @@
 # Author:   Benjamin Bengfort <bbengfort@districtdatalabs.com>
 # Created:  Sun Oct 09 12:23:13 2016 -0400
 #
-# Copyright (C) 2016 District Data Labs
-# For license information, see LICENSE.txt
-#
 # ID: base.py [b8e3318] benjamin@bengfort.com $
 
 """
@@ -17,17 +14,28 @@ Helper functions and cases for making assertions on visualizations.
 ## Imports
 ##########################################################################
 
-import inspect
 import os
+import inspect
 
 import unittest
 import matplotlib as mpl
 import matplotlib.pyplot as plt
+
 from matplotlib import ticker
 from matplotlib import rcParams
 
 from matplotlib.testing.compare import compare_images
-from matplotlib.testing.exceptions import ImageComparisonFailure
+from yellowbrick.exceptions import ImageComparisonFailure
+
+
+##########################################################################
+## Module Constants
+##########################################################################
+
+# The root directory for all tests
+TESTS = os.path.dirname(__file__)
+ACTUAL_IMAGES = os.path.join(TESTS, "actual_images")
+BASELINE_IMAGES = os.path.join(TESTS, "baseline_images")
 
 
 ##########################################################################
@@ -64,44 +72,7 @@ class VisualTestCase(unittest.TestCase):
         self.assertEqual(self._backend, 'agg')
         super(VisualTestCase, self).setUp()
 
-    def _setup_imagetest(self, inspect_obj=None):
-        """Parses the module path and test function name from an inspect call obj
-        that is triggered in the unittest specific "assert_images_similar"
-        """
-        if inspect_obj is not None:
-            full_path = inspect_obj[1][1][:-3]
-            self._module_path =  full_path.split('yellowbrick')[1].split('/')[2:]
-            self._test_func_name = inspect_obj[1][3]
-        return self._module_path, self._test_func_name
-
-    def _actual_img_path(self, extension='.png'):
-        """Determines the correct outpath for drawing a matplotlib image that
-        corresponds to the unittest module path.
-        """
-        module_path, test_func_name = self._setup_imagetest()
-        module_path = os.path.join(*module_path)
-        actual_images = os.path.join('tests', 'actual_images', module_path)
-
-        if not os.path.exists(actual_images):
-            mpl.cbook.mkdirs(actual_images)
-
-        self._test_img_outpath = os.path.join(actual_images, test_func_name + extension)
-        return self._test_img_outpath
-
-    def _base_img_path(self, extension='.png'):
-        """Gets the baseline_image path for comparison that corresponds to the
-        unittest module path.
-        """
-
-        module_path, test_func_name = self._setup_imagetest()
-        module_path = os.path.join(*module_path)
-        base_results = os.path.join('tests', 'baseline_images', module_path)
-        if not os.path.exists(base_results):
-            mpl.cbook.mkdirs(base_results)
-        base_img = os.path.join(base_results, test_func_name + extension)
-        return base_img
-
-    def assert_images_similar(self, visualizer=None, ax=None, tol=0.01):
+    def assert_images_similar(self, visualizer=None, ax=None, tol=0.01, **kwargs):
         """Accessible testing method for testing generation of a Visualizer.
 
         Requires the placement of a baseline image for comparison in the
@@ -132,68 +103,217 @@ class VisualTestCase(unittest.TestCase):
             The tolerance (a color value difference, where 255 is the
             maximal difference).  The test fails if the average pixel
             difference is greater than this value.
+
+        kwargs : dict
+            Options to pass to the ImageComparison class.
         """
+        # Hide this method from the pytest traceback on test failure.
+        __tracebackhide__ = True
+
+        # Build and execute the image comparison
+        compare = ImageComparison(
+            inspect.stack(), visualizer=visualizer, ax=ax, tol=tol, **kwargs
+        )
+        compare()
+
+        # Return the compare object for meta testing
+        return compare
+
+
+##########################################################################
+## Image Comparison Test
+##########################################################################
+
+class ImageComparison(object):
+    """
+    An image comparison wraps a single ``assert_images_similar`` statement to
+    compose the actual and baseline image paths based on the stack the
+    assertion was called in. It contains all properties that were formerly
+    set on the test case (to facilitate our transition to pytest) so that they
+    are immutable with respect to the single image comparison. By
+    encapsulating these details, it is easier to debug image comparisons in
+    meta tests.
+
+    Parameters
+    ----------
+    stack : list of FrameInfo
+        The list of the frame records for the caller's stack obtained from the
+        ``inspect.stack()`` function. Must be called from the entry point to
+        the image comparison (e.g. the next function from the test function).
+
+    visualizer : Yellowbrick Visualizer instance, optional
+        An instantiated Yellowbrick visualizer that wraps a matplotlib Axes
+        and has been drawn on via the Yellowbrick API.
+
+    ax : matplotlib Axes, optional
+        A direct reference to a matplotlib Axes that has been drawn on.
+
+    tol : float, default: 0.01
+        The tolerance as a color value difference, where 255 is the maximal
+        difference. The test fails if the average pixel difference is greater
+        than this value.
+
+    ext : string, default: ".png"
+        The file extension to save the actual and baseline images as.
+
+    remove_ticks : bool, default: True
+        Remove the major and minor ticks on both the y and x axis to make the
+        image comparison simpler (since different OS may have varying fonts or
+        system level preferences).
+
+    remove_title : bool, default: True
+        Remove the title since different OS may have varying fonts.
+
+    Raises
+    ------
+    ValueError : at least one of visualizer or ax must be specified.
+    """
+
+    def __init__(self, stack, visualizer=None, ax=None, tol=0.01, ext=".png",
+                 remove_ticks=True, remove_title=True, remove_legend=False):
+
+        # Ensure we have something to draw on
         if visualizer is None and ax is None:
-            raise ValueError("must supply either a visualizer or axes")
+            raise ValueError(
+                "at least one of visualizer or ax must be specified"
+            )
 
-        ax = ax or visualizer.ax
+        # Save the ax being drawn on
+        self.ax = ax or visualizer.ax
 
-        # inspect is used to locate and organize the baseline images and actual
-        # test generated images for comparison
-        inspect_obj = inspect.stack()
-        module_path, test_func_name = self._setup_imagetest(inspect_obj=inspect_obj)
+        # Parse the stack for the test and module name, element 0 should be
+        # the assertion function (or whatever called this init), element 1
+        # should be the test function and start with the test.
+        frame = stack[1]
 
-        # clean and remove the textual/ formatting elements from the visualizer
-        remove_ticks_and_titles(ax)
+        # FrameInfo(frame, filename, lineno, function, code_context, index)
+        self.test_func_name = frame[3]
+        if not self.test_func_name.startswith('test'):
+            raise ValueError(
+                "{} is not a test function".format(self.test_func_name)
+            )
 
-        plt.savefig(self._actual_img_path())
-        base_image = self._base_img_path()
-        test_img = self._actual_img_path()
-        # test it!
-        yb_compare_images(base_image, test_img, tol)
+        # Find the relative path to the Yellowbrick tests to compute the
+        # module name for storing images in the actual and baseline dirs.
+        root = os.path.commonprefix((TESTS, frame[1]))
+        module_path = os.path.relpath(frame[1], root)
+        self.test_module_path = os.path.splitext(module_path)[0]
 
+        # Save other image comparison properties
+        self.tol = tol
+        self.ext = ext
+        self.remove_ticks = remove_ticks
+        self.remove_title = remove_title
+        self.remove_legend = remove_legend
 
-def remove_ticks_and_titles(ax):
-    """Removes tickets and formatting on sub ax object that is useful for the
-    assert_images_similar as different OS having varying font styles and other
-    system level differences
-    """
-    null_formatter = ticker.NullFormatter()
-    ax.set_title("")
-    ax.xaxis.set_major_formatter(null_formatter)
-    ax.xaxis.set_minor_formatter(null_formatter)
-    ax.yaxis.set_major_formatter(null_formatter)
-    ax.yaxis.set_minor_formatter(null_formatter)
-    try:
-        ax.zaxis.set_major_formatter(null_formatter)
-        ax.zaxis.set_minor_formatter(null_formatter)
-    except AttributeError:
-        pass
+    def __call__(self):
+        """
+        Executes the image comparison by cleaning up the actual figure, saving
+        the actual figure, then comparing the actual figure to the baseline.
+        """
+        # Hide this method from the pytest traceback on test failure.
+        __tracebackhide__ = True
 
-def yb_compare_images(expected, actual, tol):
-    """ Compares a baseline image and test generated actual image
-    using a matplotlib's built-in imagine comparison function
+        self.cleanup()
+        self.save()
+        self.compare()
 
-    expected : string, imagepath
-        The image filepath to the baseline image
+    @property
+    def actual_image_path(self):
+        """
+        Computes the path in ACTUAL_IMAGES to the test image based on the test
+        name and module. Creates any required parent dirs along the way.
+        """
+        return self._image_path(ACTUAL_IMAGES)
 
-    actual : string, imagepath
-        The image filepath to the actual test generated image
+    @property
+    def baseline_image_path(self):
+        """
+        Computes the path in BASELINE_IMAGES to the expected location of the
+        file to compare the actual image against. Creates any required parent
+        dirs along the way.
+        """
+        return self._image_path(BASELINE_IMAGES)
 
-    tol : float
-        The tolerance (a color value difference, where 255 is the
-        maximal difference).  The test fails if the average pixel
-        difference is greater than this value.
-    """
-    __tracebackhide__ = True
+    def _image_path(self, root):
+        """
+        Computes the image path from the specified root directory (shared
+        functionality for both actual and baseline image paths).
+        """
+        # Directory the images for this module are stored in.
+        imgdir = os.path.join(root, self.test_module_path)
 
-    if not os.path.exists(expected):
-        raise ImageComparisonFailure('image does not exist: %s' % expected)
+        # Create directory if it doesn't exist
+        # TODO: remove dependency on mpl.cbook
+        if not os.path.exists(imgdir):
+            mpl.cbook.mkdirs(imgdir)
 
-    # method from matplotlib.testing.compare
-    err = compare_images(expected, actual, tol, in_decorator=True)
+        # Create the image path from the test name
+        return os.path.join(imgdir, self.test_func_name + self.ext)
 
-    if err:
-        raise ImageComparisonFailure(
-            'images not close (RMS %(rms).3f):\n\t%(actual)s\n\t%(expected)s '
-             % err)
+    def cleanup(self):
+        """
+        Cleanup the image by removing textual/formatting elements.
+        """
+        # Hide this method from the pytest traceback on test failure.
+        __tracebackhide__ = True
+
+        if self.remove_title:
+            self.ax.set_title("")
+
+        if self.remove_ticks:
+            null_formatter = ticker.NullFormatter()
+            for axis in ("xaxis", "yaxis", "zaxis"):
+                try:
+                    axis = getattr(self.ax, axis)
+                    axis.set_major_formatter(null_formatter)
+                    axis.set_minor_formatter(null_formatter)
+                except AttributeError:
+                    continue
+
+        if self.remove_legend:
+            self.ax.legend_.remove()
+
+    def save(self):
+        """
+        Save the actual image to disk after cleaning it up.
+        """
+        # Hide this method from the pytest traceback on test failure.
+        __tracebackhide__ = True
+
+        assert self.ax.has_data(), "nothing has been drawn on the Axes"
+        self.ax.get_figure().savefig(self.actual_image_path)
+
+    def compare(self):
+        """
+        Compare the actual image to the baseline image, raising an exception
+        if the baseline image does not exist or if the image is not close.
+        """
+        # Hide this method from the pytest traceback on test failure.
+        __tracebackhide__ = True
+
+        # Get expected and actual paths
+        expected = self.baseline_image_path
+        actual = self.actual_image_path
+
+        # Assert that we have an actual image already saved
+        assert os.path.exists(actual), "actual image hasn't been saved yet"
+
+        # Ensure we have an image to compare against (common failure)
+        if not os.path.exists(expected):
+            raise ImageComparisonFailure(
+                'baseline image does not exist:\n{}'.format(os.path.relpath(expected))
+            )
+
+        # Perform the comparison
+        err = compare_images(expected, actual, self.tol, in_decorator=True)
+
+        # Raise image comparison failure if not close
+        if err:
+            for key in ('actual', 'expected'):
+                err[key] = os.path.relpath(err[key])
+
+            raise ImageComparisonFailure((
+                "images not close (RMS {rms:0.3f})"
+                "\n{actual}\n\tvs\n{expected}"
+            ).format(**err))

@@ -17,116 +17,122 @@ Test the Rankd feature analysis visualizers
 ## Imports
 ##########################################################################
 
+import sys
+import six
 import pytest
-import numpy as np
 
 from tests.base import VisualTestCase
-from tests.dataset import DatasetMixin
+from tests.dataset import DatasetMixin, Dataset
+
 from yellowbrick.features.rankd import *
+from sklearn.datasets import make_classification
+
+try:
+    import pandas as pd
+except ImportError:
+    pd = None
+
+
+@pytest.fixture(scope='class')
+def dataset(request):
+    """
+    Creates a binary classification dataset for use in RankD tests
+    """
+    X, y = make_classification(
+        n_samples=700, n_features=10, n_informative=8, n_redundant=2,
+        n_classes=2, n_clusters_per_class=2, random_state=6483
+    )
+
+    request.cls.dataset = Dataset(X, y)
+
 
 ##########################################################################
 ## Rank1D Base Tests
 ##########################################################################
 
+@pytest.mark.usefixtures("dataset")
+class TestRank1D(VisualTestCase, DatasetMixin):
+    """
+    Test the Rank1D visualizer
+    """
 
-class Rank1DTests(VisualTestCase, DatasetMixin):
-    X = np.array(
-            [[ 2.318, 2.727, 4.260, 7.212, 4.792],
-             [ 2.315, 2.726, 4.295, 7.140, 4.783,],
-             [ 2.315, 2.724, 4.260, 7.135, 4.779,],
-             [ 2.110, 3.609, 4.330, 7.985, 5.595,],
-             [ 2.110, 3.626, 4.330, 8.203, 5.621,],
-             [ 2.110, 3.620, 4.470, 8.210, 5.612,]]
-        )
-
-    y = np.array([1, 1, 0, 1, 0, 0])
-
-    def setUp(self):
-        super(Rank1DTests, self).setUp()
-        self.occupancy = self.load_data('occupancy')
-
-    def tearDown(self):
-        super(Rank1DTests, self).tearDown()
-        self.occupancy = None
-
-
-    def test_rankd1(self):
+    def test_rank1d_random(self):
         """
-        Assert no errors occur during rand1 visualizer integration
+        Test Rank1D on a random binary classification dataset
         """
         visualizer = Rank1D()
-        visualizer.fit_transform(self.X, self.y)
+        visualizer.fit_transform(self.dataset.X, self.dataset.y)
         visualizer.poof()
+
         self.assert_images_similar(visualizer)
 
-    def test_integrated_rankd1(self):
+    @pytest.mark.skipif(pd is None, reason="requires pandas")
+    @pytest.mark.filterwarnings("ignore:p-value")
+    def test_rank1d_integrated(self):
         """
-        Test rand1 on the real, occupancy data set
+        Test Rank1D on occupancy dataset with pandas DataFrame and Series
         """
+        df = self.load_pandas("occupancy")
 
         # Load the data from the fixture
-        X = self.occupancy[[
-            "temperature", "relative_humidity", "light", "C02", "humidity"
+        X = df[[
+            "temperature", "relative humidity", "light", "C02", "humidity"
         ]]
-        X = X.copy().view((float, len(X.dtype.names)))
-        y = self.occupancy['occupancy'].astype(int)
+        y = df['occupancy']
 
         # Test the visualizer
         visualizer = Rank1D()
         visualizer.fit_transform(X, y)
         visualizer.poof()
+
         self.assert_images_similar(visualizer)
 
 
 ##########################################################################
-## Rank2D Base Tests
+## Rank2D Test Cases
 ##########################################################################
 
-class Rank2DTests(VisualTestCase, DatasetMixin):
-    X = np.array(
-            [[ 2.318, 2.727, 4.260, 7.212, 4.792],
-             [ 2.315, 2.726, 4.295, 7.140, 4.783,],
-             [ 2.315, 2.724, 4.260, 7.135, 4.779,],
-             [ 2.110, 3.609, 4.330, 7.985, 5.595,],
-             [ 2.110, 3.626, 4.330, 8.203, 5.621,],
-             [ 2.110, 3.620, 4.470, 8.210, 5.612,]]
-        )
+@pytest.mark.usefixtures("dataset")
+class TestRank2D(VisualTestCase, DatasetMixin):
+    """
+    Test the Rank2D visualizer
+    """
 
-    y = np.array([1, 1, 0, 1, 0, 0])
-
-    def setUp(self):
-        super(Rank2DTests, self).setUp()
-        self.occupancy = self.load_data('occupancy')
-
-    def tearDown(self):
-        super(Rank2DTests, self).tearDown()
-        self.occupancy = None
-
-    def test_rankd2(self):
+    @pytest.mark.xfail(
+        sys.platform == 'win32', reason="images not close on windows"
+    )
+    def test_rank2d_random(self):
         """
-        Assert no errors occur during rand2 visualizer integration
+        Test Rank2D on a random binary classification dataset
         """
         visualizer = Rank2D()
-        visualizer.fit_transform(self.X, self.y)
+        visualizer.fit_transform(self.dataset.X, self.dataset.y)
         visualizer.poof()
 
+        tol = 10 if six.PY2 else 0.1
+        self.assert_images_similar(visualizer, tol=tol)
 
-    @pytest.mark.xfail
-    def test_integrated_rankd2(self):
+    @pytest.mark.xfail(
+        sys.platform == 'win32', reason="images not close on windows"
+    )
+    @pytest.mark.skipif(pd is None, reason="requires pandas")
+    def test_rank2d_integrated(self):
         """
-        Test rand2 on the real, occupancy data set
+        Test Rank2D on occupancy dataset with pandas DataFrame and Series
         """
+        df = self.load_pandas("occupancy")
 
         # Load the data from the fixture
-        X = self.occupancy[[
-            "temperature", "relative_humidity", "light", "C02", "humidity"
+        X = df[[
+            "temperature", "relative humidity", "light", "C02", "humidity"
         ]]
-        X = X.copy().view((float, len(X.dtype.names)))
-        y = self.occupancy['occupancy'].astype(int)
+        y = df['occupancy']
 
         # Test the visualizer
         visualizer = Rank2D()
         visualizer.fit_transform(X, y)
         visualizer.poof()
-        self.assert_images_similar(visualizer)
+
+        tol = 10 if six.PY2 else 0.1
+        self.assert_images_similar(visualizer, tol=tol)
 #

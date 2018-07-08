@@ -14,8 +14,10 @@ This is a list of the primary project maintainers. Feel free to @ message them i
 
 - [bbengfort](https://github.com/bbengfort)
 - [ndanielsen](https://github.com/ndanielsen)
+- [lwgray](https://github.com/lwgray)
 - [NealHumphrey](https://github.com/NealHumphrey)
 - [jkeung](https://github.com/jkeung)
+- [pdamodaran](https://github.com/pdamodaran)
 
 ## Core Contributors
 
@@ -23,8 +25,15 @@ This is a list of the core-contributors of the project. Core contributors set th
 
 - [rebeccabilbro](https://github.com/rebeccabilbro)
 - [mattandahalfew](https://github.com/mattandahalfew)
-- [pdamodaran](https://github.com/pdamodaran)
 - [tuulihill](https://github.com/tuulihill)
 - [balavenkatesan](https://github.com/balavenkatesan)
 - [morganmendis](https://github.com/morganmendis)
-- [lwgray](https://github.com/lwgray)
+- [yzyzy](https://github.com/yzyzy)
+- [wagner2010](https://github.com/wagner2010)
+- [Juan0001](https://github.com/Juan0001)
+- [ccjolley](https://github.com/ccjolley)
+- [justjess](https://github.com/justjess)
+- [kbelita](https://github.com/kbelita)
+- [sanemkabaca](https://github.com/sanemkabaca)
+- [Kautumn06](https://github.com/Kautumn06)
+- [Zeynepelabiad](https://github.com/Zeynepelabiad)

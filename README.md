@@ -1,10 +1,13 @@
 # Yellowbrick
 
-[![Build Status](https://travis-ci.org/DistrictDataLabs/yellowbrick.svg?branch=master)](https://travis-ci.org/DistrictDataLabs/yellowbrick)
+[![Build Status](https://travis-ci.com/DistrictDataLabs/yellowbrick.svg?branch=develop)](https://travis-ci.com/DistrictDataLabs/yellowbrick)
+[![Build status](https://ci.appveyor.com/api/projects/status/11abg00ollbdf4oy?svg=true)](https://ci.appveyor.com/project/districtdatalabs/yellowbrick)
 [![Coverage Status](https://coveralls.io/repos/github/DistrictDataLabs/yellowbrick/badge.svg?branch=master)](https://coveralls.io/github/DistrictDataLabs/yellowbrick?branch=master)
 [![Code Health](https://landscape.io/github/DistrictDataLabs/yellowbrick/master/landscape.svg?style=flat)](https://landscape.io/github/DistrictDataLabs/yellowbrick/master)
+[![PyPI version](https://badge.fury.io/py/yellowbrick.svg)](https://badge.fury.io/py/yellowbrick)
 [![Documentation Status](https://readthedocs.org/projects/yellowbrick/badge/?version=latest)](http://yellowbrick.readthedocs.io/en/latest/?badge=latest)
-[![Stories in Ready](https://badge.waffle.io/DistrictDataLabs/yellowbrick.png?label=ready&title=Ready)](https://waffle.io/DistrictDataLabs/yellowbrick)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.1206239.svg)](https://doi.org/10.5281/zenodo.1206239)
+[![Binder](https://mybinder.org/badge.svg)](https://mybinder.org/v2/gh/DistrictDataLabs/yellowbrick/develop?filepath=examples%2Fexamples.ipynb)
 
 
 **Visual analysis and diagnostic tools to facilitate machine learning model selection.**
@@ -26,36 +29,44 @@ Visualizers are estimators (objects that learn from data) whose primary objectiv
 
 #### Feature Visualization
 
-- **Feature Importances**: rank features based on their in-model performance
-- **Parallel Coordinates**: horizontal visualization of instances
-- **PCA Projection**: projection of instances based on principal components
-- **RadViz**: separation of instances around a circular plot
 - **Rank Features**: single or pairwise ranking of features to detect relationships
-- **Scatter and Joint Plots**: direct data visualization with feature selection
+- **Parallel Coordinates**: horizontal visualization of instances
+- **Radial Visualization**: separation of instances around a circular plot
+- **PCA Projection**: projection of instances based on principal components
+- **Manifold Visualization**: high dimensional visualization with manifold learning
+- **Feature Importances**: rank features based on their in-model performance
+- **Recursive Feature Elimination**: find the best subset of features by importance
+- **Joint Plots**: direct data visualization with feature selection
 
 #### Classification Visualization
 
 - **Class Balance**: see how the distribution of classes affects the model
 - **Class Prediction Error**: shows error and support in classification
 - **Classification Report**: visual representation of precision, recall, and F1
-- **Confusion Matrices**: visual description of class decision making
 - **ROC/AUC Curves**: receiver operator characteristics and area under the curve
+- **Confusion Matrices**: visual description of class decision making
+- **Discrimination Threshold**: find a threshold that best separates binary classes
 
 #### Regression Visualization
 
-- **Alpha Selection**: show how the choice of alpha influences regularization
 - **Prediction Error Plots**: find model breakdowns along the domain of the target
 - **Residuals Plot**: show the difference in residuals of training and test data
+- **Alpha Selection**: show how the choice of alpha influences regularization
 
 #### Clustering Visualization
 
 - **K-Elbow Plot**: select k using the elbow method and various metrics
 - **Silhouette Plot**: select k by visualizing silhouette coefficient values
 
+#### Model Selection Visualization
+
+- **Validation Curve**: tune a model with respect to a single hyperparameter
+- **Learning Curve**: show if a model might benefit from more data or less complexity
+
 #### Text Visualization
 
 - **Term Frequency**: visualize the frequency distribution of terms in the corpus
-- **TSNE**: use stochastic neighbor embedding to project documents.
+- **t-SNE Corpus Visualization**: use stochastic neighbor embedding to project documents.
 
 And more! Visualizers are being added all the time, so be sure to check the examples (or even the develop branch) and feel free to contribute your ideas for Visualizers!
 
