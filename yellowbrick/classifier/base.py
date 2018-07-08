@@ -110,6 +110,15 @@ class ClassificationScoreVisualizer(ScoreVisualizer):
         # Always return self from fit
         return self
 
+    def score(self, X, y, **kwargs):
+        """
+        The primary entry point for score visualizers is the score method,
+        which makes predictions based on X and scores them relative to y.
+        """
+        raise NotImplementedError(
+            "ClassificationScoreVisualizer score function not implemented"
+        )
+
     #TODO during refactoring this can be used to generalize ClassBalance
     def class_counts(self, y):
         unique, counts = np.unique(y, return_counts=True)
