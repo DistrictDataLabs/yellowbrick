@@ -110,14 +110,29 @@ class ClassificationScoreVisualizer(ScoreVisualizer):
         # Always return self from fit
         return self
 
+
     def score(self, X, y, **kwargs):
         """
-        The primary entry point for score visualizers is the score method,
-        which makes predictions based on X and scores them relative to y.
+        The score function is the hook for visual interaction. Pass in test
+        data and the visualizer will create predictions on the data and
+        evaluate them with respect to the test values. The evaluation will
+        then be passed to draw() and the result of the estimator score will
+        be returned.
+        Parameters
+        ----------
+        X : array-like
+            X (also X_test) are the dependent variables of test set to predict
+        y : array-like
+            y (also y_test) is the independent actual variables to score against
+        Returns
+        -------
+        score : float
         """
-        raise NotImplementedError(
-            "ClassificationScoreVisualizer score function not implemented"
-        )
+        self.score_ =  self.estimator.score(X, y, **kwargs)
+
+        y_pred = self.predict(X)
+
+        return self.score_
 
     #TODO during refactoring this can be used to generalize ClassBalance
     def class_counts(self, y):
