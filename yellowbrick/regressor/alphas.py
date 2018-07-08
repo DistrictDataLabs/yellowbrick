@@ -134,6 +134,12 @@ class AlphaSelection(RegressionScoreVisualizer):
         self.draw()
         return self
 
+    def score(self, X, y, **kwargs):
+        """
+        Simply returns the score of the underlying CV model
+        """
+        return self.estimator.score(X, y, **kwargs)
+
     def draw(self):
         """
         Draws the alpha plot based on the values on the estimator.
@@ -170,7 +176,7 @@ class AlphaSelection(RegressionScoreVisualizer):
         self.ax.set_ylabel("error (or score)")
 
         # Set the legend
-        self.ax.legend(loc='best')
+        self.ax.legend(loc='best', frameon=True)
 
     def _find_alphas_param(self):
         """
@@ -327,6 +333,12 @@ class ManualAlphaSelection(AlphaSelection):
 
         # Always make sure to return self from fit
         return self
+
+    def score(self, X, y, **kwargs):
+        """
+        Simply returns the score of the underlying CV model
+        """
+        return self.estimator.score(X, y, **kwargs)
 
     def draw(self):
         """

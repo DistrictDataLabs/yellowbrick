@@ -17,11 +17,10 @@ Testing for the wrapping utility.
 ## Imports
 ##########################################################################
 
-import unittest
-
 from yellowbrick.base import Visualizer
 from yellowbrick.utils.wrapper import *
 from sklearn.naive_bayes import MultinomialNB
+from sklearn.naive_bayes import GaussianNB
 
 try:
     from unittest import mock
@@ -70,7 +69,10 @@ class WrappedEstimator(MockVisualizer, Wrapper):
 ## Wrapper Test Case
 ##########################################################################
 
-class WrapperTests(unittest.TestCase):
+class TestWrapper(object):
+    """
+    Test the object Wrapper mixin utility
+    """
 
     def test_wrapper_methods(self):
         """
@@ -79,9 +81,9 @@ class WrapperTests(unittest.TestCase):
         obj = WrappedEstimator()
 
         # Assert that all the wrapper methods are called
-        self.assertTrue(obj.draw())
-        self.assertEqual(obj.foo(2,2), 4)
-        self.assertIsNotNone(obj.estimator)
+        assert obj.draw()
+        assert obj.foo(2,2) == 4
+        assert obj.estimator is not None
 
     def test_super_methods(self):
         """
@@ -96,7 +98,7 @@ class WrapperTests(unittest.TestCase):
         obj.poof()
         obj.set_title()
 
-        self.assertIsNone(obj.ax)
+        assert obj.ax is None
         obj.fit.assert_called_once_with()
         obj.finalize.assert_called_once_with()
         obj.poof.assert_called_once_with()
@@ -104,7 +106,7 @@ class WrapperTests(unittest.TestCase):
 
     def test_wrapped_methods(self):
         """
-        Assert that wrapped estimator methods are calle d
+        Assert that wrapped estimator methods are called
         """
         obj = WrappedEstimator()
 
@@ -116,3 +118,21 @@ class WrapperTests(unittest.TestCase):
         obj._wrapped.predict.assert_called_once_with()
         obj._wrapped.predict_proba.assert_called_once_with()
         obj._wrapped.score.assert_called_once_with()
+
+    def test_rewrap_object(self):
+        """
+        Test the ability to "rewrap" an object on demand
+        """
+        obj = WrappedEstimator()
+        old = obj._wrapped
+        new = mock.MagicMock(spec=GaussianNB())
+
+        obj.predict()
+        old.predict.assert_called_once()
+        new.assert_not_called()
+
+        # rewrap
+        obj._wrapped = new
+        obj.predict()
+        old.predict.assert_called_once()
+        new.predict.assert_called_once()

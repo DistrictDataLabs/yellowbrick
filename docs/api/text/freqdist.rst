@@ -7,7 +7,7 @@ A method for visualizing the frequency of tokens within and across corpora is fr
 
 .. code:: python
 
-    from yellowbrick.text.freqdist import FreqDistVisualizer
+    from yellowbrick.text import FreqDistVisualizer
     from sklearn.feature_extraction.text import CountVectorizer
 
 Note that the ``FreqDistVisualizer`` does not perform any normalization or vectorization, and it expects text that has already be count vectorized.

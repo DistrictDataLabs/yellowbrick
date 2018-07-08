@@ -17,6 +17,9 @@ Tests for the SilhouetteVisualizer
 ## Imports
 ##########################################################################
 
+import sys
+import pytest
+
 import matplotlib.pyplot as plt
 
 from ..base import VisualTestCase
@@ -36,6 +39,9 @@ class SilhouetteVisualizerTests(VisualTestCase):
     Silhouette Visualizer
     """
 
+    @pytest.mark.xfail(
+        sys.platform == 'win32', reason="images not close on windows"
+    )
     def test_integrated_kmeans_silhouette(self):
         """
         Test no exceptions for kmeans silhouette visualizer on blobs dataset
@@ -59,6 +65,9 @@ class SilhouetteVisualizerTests(VisualTestCase):
         except Exception as e:
             self.fail("error during silhouette: {}".format(e))
 
+    @pytest.mark.xfail(
+        sys.platform == 'win32', reason="images not close on windows"
+    )
     def test_integrated_mini_batch_kmeans_silhouette(self):
         """
         Test no exceptions for mini-batch kmeans silhouette visualizer

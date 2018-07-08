@@ -42,18 +42,17 @@ class TestHelpers(object):
     Helper functions and utilities
     """
 
-    def test_real_model(self):
+    @pytest.mark.parametrize("model, name", [
+        (LassoCV, 'LassoCV'),
+        (KNeighborsClassifier, 'KNeighborsClassifier'),
+        (KMeans, 'KMeans'),
+        (RandomForestClassifier, 'RandomForestClassifier'),
+    ], ids=lambda i: i[0])
+    def test_real_model(self, model, name):
         """
         Test getting model name for sklearn estimators
         """
-        model1 = LassoCV()
-        model2 = KNeighborsClassifier()
-        model3 = KMeans()
-        model4 = RandomForestClassifier()
-        assert get_model_name(model1) == 'LassoCV'
-        assert get_model_name(model2) == 'KNeighborsClassifier'
-        assert get_model_name(model3) == 'KMeans'
-        assert get_model_name(model4) == 'RandomForestClassifier'
+        assert get_model_name(model()) == name
 
     def test_pipeline(self):
         """
@@ -170,6 +169,35 @@ class TestNarrayIntColumns(object):
         x = np.random.rand(3,5)
         features = ['0', '10']
         assert not has_ndarray_int_columns(features, x)
+
+    @pytest.mark.parametrize("a, increasing", [
+        (np.array([0.8]), True),
+        (np.array([9]), False),
+        (np.array([0.2, 1.3, 1.4, 1.4, 1.4, 1.5, 8.3, 8.5]), True),
+        (np.array([8, 7, 6, 5, 5, 5, 5, 4, 3, -1, -5]), False),
+    ], ids=["increasing single", "decreasing single", "increasing", "decreasing"])
+    def test_is_monotonic(self, a, increasing):
+        """
+        Test if a vector is monotonic
+        """
+        assert is_monotonic(a, increasing)
+
+    @pytest.mark.parametrize("a, increasing", [
+        (np.array([0.2, 1.3, 1.3, 0.2, 1.8]), True),
+        (np.array([8, 7, 7, 8, 9, 6, 5]), False),
+    ], ids=["increasing", "decreasing"])
+    def test_not_is_monotonic(self, a, increasing):
+        """
+        Test if a vector is not monotonic
+        """
+        assert not is_monotonic(a, increasing)
+
+    def test_multi_dim_is_monotonic(self):
+        """
+        Assert monotonicity is not decidable on multi-dimensional array
+        """
+        with pytest.raises(ValueError):
+            is_monotonic(np.array([[1,2,3], [4,5,6], [7,8,9]]))
 
 
 ##########################################################################
