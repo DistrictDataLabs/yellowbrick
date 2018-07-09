@@ -63,7 +63,8 @@ Text Visualization
 ~~~~~~~~~~~~~~~~~~
 
 - :doc:`Term Frequency <api/text/freqdist>`: visualize the frequency distribution of terms in the corpus
-- :doc:`api/text/tsne`: use stochastic neighbor embedding to project documents.
+- :doc:`api/text/tsne`: use stochastic neighbor embedding to project documents
+- :doc:`api/text/dispersion`: visualize how key terms are dispersed throughout a corpus
 
 ... and more! Visualizers are being added all the time; be sure to check the examples (or even the `develop branch <https://github.com/DistrictDataLabs/yellowbrick/tree/develop>`_) and feel free to contribute your ideas for new Visualizers!
 

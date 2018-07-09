@@ -67,6 +67,7 @@ Visualizers are estimators (objects that learn from data) whose primary objectiv
 
 - **Term Frequency**: visualize the frequency distribution of terms in the corpus
 - **t-SNE Corpus Visualization**: use stochastic neighbor embedding to project documents.
+- **Dispersion Plot**: visualize how key terms are dispersed throughout a corpus
 
 And more! Visualizers are being added all the time, so be sure to check the examples (or even the develop branch) and feel free to contribute your ideas for Visualizers!
 
