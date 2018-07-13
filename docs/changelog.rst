@@ -3,6 +3,38 @@
 Changelog
 =========
 
+Version 0.8
+-----------
+* Tag: v0.8_
+* Deployed: Thursday, July 12, 2018
+* Contributors: Rebecca Bilbro, Benjamin Bengfort, Nathan Danielsen, Larry Gray, Prema Roman, Adam Morris, Kristen McIntyre, Raul Peralta, Sayali Sonawane, Alyssa Riley, Petr Mitev, Chris Stehlik, @thekylesaurus, Luis Carlos Mejia Garcia, Raul Samayoa, Carlo Mazzaferro
+
+Major Changes:
+    - Added Support to ``ClassificationReport`` - @ariley1472
+    - We have an updated Image Gallery - @ralle123
+    - Improved performance of ``ParallelCoordinates`` Visualizer @ thekylesaurus
+    - Added Alpha Transparency to ``RadViz`` Visualizer @lumega
+    - ``CVScores`` Visualizer - @pdamodaran
+    - Added fast and alpha parameters to ``ParallelCoordinates`` visualizer @bbengfort
+    - Make support an optional parameter for ``ClassificationReport`` @lwgray
+    - Bug Fix for Usage of multidimensional arrays in ``FeatureImportance`` visualizer @rebeccabilbro
+    - Deprecate ``ScatterVisualizer`` to contrib @bbengfort
+    - Implements histogram alongside ``ResidualsPlot`` @bbengfort
+    - Adds biplot to the ``PCADecomposition`` visualizer @RaulPL
+    - Adds Datasaurus Dataset to show importance of visualizing data @lwgray
+    - Add ``DispersionPlot`` Plot @lwgray
+
+Minor Changes:
+    - Fix grammar in tutorial.rst - @chrisfs
+    - Added Note to tutorial indicating subtle differences when working in Jupyter notebook - @chrisfs
+    - Update Issue template @bbengfort
+    - Added Test to check for NLTK postag data availability - @Sayali
+    - Clarify quick start documentation @mitevpi
+    - Deprecated ``DecisionBoundary``
+    - Threshold Visualization aliases deprecated
+
+.. _v0.8: https://github.com/DistrictDataLabs/yellowbrick/releases/tag/v0.8.0
+
 Version 0.7.0
 -------------
 
@@ -12,7 +44,7 @@ Version 0.7.0
 
 Changes:
 
-    - *New Feature!* Manifold visualizers implement high-dimensional visualization for non-linear structural feature analysis. 
+    - *New Feature!* Manifold visualizers implement high-dimensional visualization for non-linear structural feature analysis.
     - *New Feature!*  There is now a  ``model_selection`` module with ``LearningCurve`` and ``ValidationCurve`` visualizers.
     - *New Feature!* The ``RFECV`` (recursive feature elimination)  visualizer with cross-validation visualizes how removing the least performing features improves the overall model.
     - *New Feature!* The ``VisualizerGrid`` is an implementation of the ``MultipleVisualizer`` that creates axes for each visualizer using ``plt.subplots``, laying the visualizers out as a grid.
