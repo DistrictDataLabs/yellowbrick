@@ -27,7 +27,8 @@ import matplotlib.pyplot as plt
 from yellowbrick.utils import is_dataframe
 from yellowbrick.base import ModelVisualizer
 from yellowbrick.exceptions import YellowbrickTypeError, NotFitted
-
+from yellowbrick.style import resolve_colors
+from yellowbrick.exceptions import YellowbrickValueError
 
 ##########################################################################
 ## Feature Visualizer
@@ -72,6 +73,9 @@ class FeatureImportances(ModelVisualizer):
         The label for the X-axis. If None is automatically determined by the
         underlying model and options provided.
 
+    color: str, default: None
+        Specify color for bars
+
     kwargs : dict
         Keyword arguments that are passed to the base class and may influence
         the visualization as defined in other Visualizers.
@@ -94,7 +98,7 @@ class FeatureImportances(ModelVisualizer):
     """
 
     def __init__(self, model, ax=None, labels=None, relative=True,
-                 absolute=False, xlabel=None, **kwargs):
+                 absolute=False, xlabel=None, color=None, **kwargs):
         super(FeatureImportances, self).__init__(model, ax, **kwargs)
 
         # Data Parameters
@@ -102,6 +106,8 @@ class FeatureImportances(ModelVisualizer):
             labels=labels, relative=relative, absolute=absolute,
             xlabel=xlabel,
         )
+
+        self.color = color
 
     def fit(self, X, y=None, **kwargs):
         """
@@ -176,16 +182,49 @@ class FeatureImportances(ModelVisualizer):
         """
         Draws the feature importances as a bar chart; called from fit.
         """
+
         # Quick validation
         for param in ('feature_importances_', 'features_'):
             if not hasattr(self, param):
                 raise NotFitted("missing required param '{}'".format(param))
 
+        # Determine if coefs contain both positive and negative values
+        contains_negative = min(self.feature_importances_) < 0
+        contains_positive = max(self.feature_importances_) >= 0
+
+        # Define the number of colors a graph can support
+        if contains_negative and contains_positive:
+            n_colors = 2
+        else:
+            n_colors = 1
+
+        # Handle the mismatch when user inputs a single color string eventhough
+        # the graph requires two colors to be specified
+        if self.color is not None:
+            if len(self.color) == 1 and n_colors > 1:
+                raise YellowbrickValueError("Specify colors for both positive "
+                                            "and negative coefficients")
+
+        # Assign different colors for positive and negative coefficients
+        if n_colors == 2:
+            positive_color, negative_color = resolve_colors(n_colors=n_colors,
+                                                            colors=self.color)
+        else:
+            # Repeat color string when there are solely positive or negative coefs
+            positive_color, negative_color = list(resolve_colors(
+                n_colors=n_colors,
+                colors=self.color
+                )
+            ) * 2
+
+        colors = np.array([positive_color if coefs > 0 else negative_color
+                           for coefs in self.feature_importances_])
+
         # Find the positions for each bar
         pos = np.arange(self.features_.shape[0]) + 0.5
 
         # Plot the bar chart
-        self.ax.barh(pos, self.feature_importances_, align='center')
+        self.ax.barh(pos, self.feature_importances_, color=colors, align='center')
 
         # Set the labels for the bars
         self.ax.set_yticks(pos)
@@ -257,7 +296,8 @@ class FeatureImportances(ModelVisualizer):
 ##########################################################################
 
 def feature_importances(model, X, y=None, ax=None, labels=None,
-                        relative=True, absolute=False, xlabel=None, **kwargs):
+                        relative=True, absolute=False, xlabel=None,
+                        color=None, **kwargs):
     """
     Displays the most informative features in a model by showing a bar chart
     of features ranked by their importances. Although primarily a feature
@@ -297,6 +337,9 @@ def feature_importances(model, X, y=None, ax=None, labels=None,
         The label for the X-axis. If None is automatically determined by the
         underlying model and options provided.
 
+    color: str, default: None
+        Specify color for bars
+
     kwargs : dict
         Keyword arguments that are passed to the base class and may influence
         the visualization as defined in other Visualizers.
@@ -308,7 +351,7 @@ def feature_importances(model, X, y=None, ax=None, labels=None,
     """
     # Instantiate the visualizer
     visualizer = FeatureImportances(
-        model, ax, labels, relative, absolute, xlabel, **kwargs)
+        model, ax, labels, relative, absolute, xlabel, color, **kwargs)
 
     # Fit and transform the visualizer (calls draw)
     visualizer.fit(X, y)

@@ -303,6 +303,16 @@ class TestFeatureImportancesVisualizer(VisualTestCase, DatasetMixin):
         with pytest.raises(NotFitted):
             visualizer.draw()
 
+    @pytest.mark.skip(reason="not implemented yet")
+    def test_draw_raises_color_mismatch_YellowbrickValueError(self):
+        """
+        Test mismatch between the input of a single color string
+        and the number of colors the graph requires.  This occurs
+        when there are both postive and negative coefs and the user
+        only specifies a single color.
+        """
+        pass
+
     def test_find_importances_param(self):
         """
         Test the expected parameters can be found
