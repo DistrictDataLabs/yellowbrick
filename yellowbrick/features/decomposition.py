@@ -128,3 +128,4 @@ class ExplainedVariance(FeatureVisualizer):
         # Set the axes labels
         self.ax.set_ylabel('Explained Variance')
         self.ax.set_xlabel('Number of Components')
+

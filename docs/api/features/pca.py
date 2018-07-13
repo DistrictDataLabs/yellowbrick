@@ -1,3 +1,4 @@
+import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 
@@ -13,24 +14,44 @@ def pca(X, y, outpath, **kwargs):
     viz.poof(outpath=outpath)
 
 
-if __name__ == '__main__':
-
+def load_credit():
     # Load the credit data set
     data = pd.read_csv("../../../examples/data/credit/credit.csv")
 
     # Specify the features of interest
-    features = [
-            'limit', 'sex', 'edu', 'married', 'age', 'apr_delay', 'may_delay',
-            'jun_delay', 'jul_delay', 'aug_delay', 'sep_delay', 'apr_bill', 'may_bill',
-            'jun_bill', 'jul_bill', 'aug_bill', 'sep_bill', 'apr_pay', 'may_pay', 'jun_pay',
-            'jul_pay', 'aug_pay', 'sep_pay',
-        ]
+    target = "default"
+    features = [col for col in data.columns if col != target]
 
     # Extract the numpy arrays from the data frame
-    X = data[features].as_matrix()
-    y = data.default.as_matrix()
+    X = data[features]
+    y = data[target]
+    return X, y
 
-    # Instantiate the visualizer
-    pca(X, y, "images/pca_projection_2d.png", scale=True, center=False, col=y)
 
-    pca(X, y, "images/pca_projection_3d.png", scale=True, center=False, col=y, proj_dim=3)
+def load_concrete():
+    # Load the credit data set
+    data = pd.read_csv("../../../examples/data/concrete/concrete.csv")
+
+    # Specify the features of interest
+    feature_names = ['cement', 'slag', 'ash', 'water', 'splast', 'coarse', 'fine', 'age']
+    target_name = 'strength'
+
+    # Get the X and y data from the DataFrame
+    X = data[feature_names]
+    y = data[target_name]
+
+    return X, y
+
+
+if __name__ == '__main__':
+
+    # Draw PCA with credit data set
+    X, y = load_credit()
+    colors = np.array(['r' if yi else 'b' for yi in y])
+    pca(X, y, "images/pca_projection_2d.png", scale=True, color=colors)
+    pca(X, y, "images/pca_projection_3d.png", scale=True, color=colors, proj_dim=3)
+
+    # Draw biplots with concrete data set
+    X, y = load_concrete()
+    pca(X, y, "images/pca_biplot_2d.png", scale=True, proj_features=True)
+    pca(X, y, "images/pca_biplot_3d.png", scale=True, proj_features=True, proj_dim=3)

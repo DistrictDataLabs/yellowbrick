@@ -33,7 +33,7 @@ Feature Visualization
 - **Manifold Visualization**: high dimensional visualization with manifold learning
 - **Feature Importances**: rank features based on their in-model performance
 - **Recursive Feature Elimination**: find the best subset of features by importance
-- **Scatter and Joint Plots**: direct data visualization with feature selection
+- **Joint Plots**: direct data visualization with feature selection
 
 Classification Visualization
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -68,7 +68,8 @@ Text Visualization
 ~~~~~~~~~~~~~~~~~~
 
 - **Term Frequency**: visualize the frequency distribution of terms in the corpus
-- **t-SNE Corpus Visualization**: use stochastic neighbor embedding to project documents.
+- **t-SNE Corpus Visualization**: use stochastic neighbor embedding to project documents
+- **Dispersion Plot**: visualize how key terms are dispersed throughout a corpus
 
 ... and more! Visualizers are being added all the time; be sure to check the examples_ (or even the develop_ branch) and feel free to contribute your ideas for new Visualizers!
 
