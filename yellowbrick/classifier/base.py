@@ -130,8 +130,6 @@ class ClassificationScoreVisualizer(ScoreVisualizer):
         """
         self.score_ =  self.estimator.score(X, y, **kwargs)
 
-        y_pred = self.predict(X)
-
         return self.score_
 
     #TODO during refactoring this can be used to generalize ClassBalance
