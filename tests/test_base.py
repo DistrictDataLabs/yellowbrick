@@ -73,6 +73,14 @@ class TestBaseClasses(VisualTestCase):
         viz = Visualizer()
         assert viz.finalize() is viz.ax
 
+    def test_poof_interface(self):
+        """
+        Assert poof returns the finalized axes
+        """
+        viz = Visualizer()
+        viz.ax = "foo"
+        assert viz.poof() is viz.ax
+
     def test_size_property(self):
         """
         Test the size property on the base Visualizer
