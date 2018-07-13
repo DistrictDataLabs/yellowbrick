@@ -11,7 +11,7 @@
 # ID: base.py [2e898a6] benjamin@bengfort.com $
 
 """
-Base classes for feature visualizers and feature selection tools.
+Base classes and mixins for feature visualizers and feature selection tools.
 """
 
 ##########################################################################
@@ -19,6 +19,7 @@ Base classes for feature visualizers and feature selection tools.
 ##########################################################################
 
 import numpy as np
+import matplotlib.pyplot as plt
 
 from yellowbrick.base import Visualizer
 from yellowbrick.utils import is_dataframe
@@ -225,3 +226,77 @@ class DataVisualizer(MultiFeatureVisualizer):
 
         # Fit always returns self.
         return self
+
+##########################################################################
+## Data Visualizer Mixins
+##########################################################################
+
+class SingleFeatureVisualizerMixin(object):
+    '''
+    Mixin to add functionality for single feature visualizations. To use
+    this mixin, simply create a new class that inherits both the
+    visualizer you want to work with and the single feature mixin,
+    like so:
+
+    class SomeVizWithSFV(SingleFeatureVisualizerMixin, SomeViz):
+        pass
+
+    Continue with your workflow as usual, replacing SomeViz with
+    SomeVizWithSFV in your code.  Then if you want a visualize a
+    feature along with whatever SomeViz produces, call poof with
+    plotsingle set to one of 'box', 'hist', or 'violin' and
+    optionally set feature to the appropriate 0index of the feature you
+    are interested in (otherwise the first feature will be selected).
+    '''
+
+    boxplot_params = {}
+
+    hist_params = {
+        'bins': 50,
+        'normed': 1,
+        'facecolor': 'g',
+        'alpha': 0.75,
+    }
+
+    violinplot_params = {}
+
+    def fit(self, X, *args, **kwargs):
+        '''
+        store X from fit method on object for later use and call parent
+        '''
+
+        self.X = X
+
+        super(SingleFeatureVisualizerMixin, self).fit(X, *args, **kwargs)
+
+    def poof(self, plotsingle=None, feature=None, *args, **kwargs):
+        '''
+        poof single feature visualization if passed, otherwise call parent
+        '''
+
+        if feature is not None:
+
+            if type(feature) is not int:
+
+                raise TypeError('feature arg must be of type int')
+
+            elif feature < 0 or feature >= len(self.X[0,:]):
+
+                raise IndexError('feature index is out of range')
+
+        else:
+            feature = 0
+
+        if plotsingle == 'box':
+            plt.figure()
+            plt.boxplot(self.X[:,feature], **self.boxplot_params)
+
+        elif plotsingle == 'hist':
+            plt.figure()
+            plt.hist(self.X[:,feature], **self.hist_params)
+
+        elif plotsingle == 'violin':
+            plt.figure()
+            plt.violinplot(self.X[:,feature], **self.violinplot_params)
+
+        super(SingleFeatureVisualizerMixin, self).poof(*args, **kwargs)
