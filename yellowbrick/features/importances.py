@@ -93,7 +93,7 @@ class FeatureImportances(ModelVisualizer):
     >>> visualizer.poof()
     """
 
-    def __init__(self, model, ax=None, labels=None, relative=True,
+    def __init__(self, model, ax=None, labels=None, relative=True, color_neg='b', color_pos='g',
                  absolute=False, xlabel=None, **kwargs):
         super(FeatureImportances, self).__init__(model, ax, **kwargs)
 
@@ -102,6 +102,9 @@ class FeatureImportances(ModelVisualizer):
             labels=labels, relative=relative, absolute=absolute,
             xlabel=xlabel,
         )
+        self.color_neg = color_neg
+        self.color_pos =color_pos
+
 
     def fit(self, X, y=None, **kwargs):
         """
@@ -185,7 +188,12 @@ class FeatureImportances(ModelVisualizer):
         pos = np.arange(self.features_.shape[0]) + 0.5
 
         # Plot the bar chart
-        self.ax.barh(pos, self.feature_importances_, align='center')
+        #raise Exception(self.feature_importances_)
+        # Plot the bar chart
+
+
+        colors = np.array([self.color_pos if v > 0 else self.color_neg for v in self.feature_importances_])
+        self.ax.barh(pos, self.feature_importances_, color=colors, align='center')
 
         # Set the labels for the bars
         self.ax.set_yticks(pos)
