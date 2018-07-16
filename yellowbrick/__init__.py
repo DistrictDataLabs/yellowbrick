@@ -33,6 +33,7 @@ from .style.palettes import color_palette, set_color_codes
 # Import yellowbrick functionality to the top level
 # TODO: review top-level functionality
 from .anscombe import anscombe
+from .datasaurus import datasaurus
 from .classifier import ROCAUC, ClassBalance, ClassificationScoreVisualizer
 # from .classifier import crplot, rocplot
 # from .regressor import peplot, residuals_plot
