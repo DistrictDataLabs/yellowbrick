@@ -189,16 +189,18 @@ class ROCAUC(ClassificationScoreVisualizer):
         # Draw the Curves
         self.draw()
 
-        # Return micro average if specified
+        # Set score to micro average if specified
         if self.micro:
-            return self.roc_auc[MICRO]
+            self.score_ = self.roc_auc[MICRO]
 
-        # Return macro average if not micro
+        # Set score to  macro average if not micro
         if self.macro:
-            return self.roc_auc[MACRO]
+            self.score_ = self.roc_auc[MACRO]
 
-        # Return the base score if neither macro nor micro
-        return self.estimator.score(X, y)
+        # Set score to the base score if neither macro nor micro
+        self.score_ = self.estimator.score(X, y)
+
+        return self.score_
 
     def draw(self):
         """
