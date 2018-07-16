@@ -22,11 +22,13 @@ Testing for the ClassPredictionError visualizer
 import pytest
 import matplotlib.pyplot as plt
 
+from tests.dataset import DatasetMixin
 from yellowbrick.classifier.class_balance import *
 from yellowbrick.exceptions import ModelError
 
 from sklearn.svm import LinearSVC
 from sklearn.ensemble import RandomForestClassifier
+from sklearn.model_selection import train_test_split as tts
 from sklearn.datasets import make_multilabel_classification, make_classification
 
 from tests.base import VisualTestCase
@@ -44,7 +46,7 @@ X, y = make_classification(
 ##########################################################################
 
 
-class ClassPredictionErrorTests(VisualTestCase):
+class ClassPredictionErrorTests(VisualTestCase, DatasetMixin):
 
     def test_integration_class_prediction_error_(self):
         """
@@ -108,3 +110,26 @@ class ClassPredictionErrorTests(VisualTestCase):
         with self.assertRaises(YellowbrickValueError):
             visualizer = ClassPredictionError(model)
             visualizer.score(X, y)
+
+    def test_score_returns_score(self):
+        """
+        Test that ClassPredictionError score method returns self.score_
+        """
+        data = self.load_data("occupancy")
+        X = data[[
+            "temperature", "relative_humidity", "light", "C02", "humidity"
+        ]]
+
+        y = data['occupancy']
+
+        # Convert X to an ndarray
+        X = X.copy().view((float, len(X.dtype.names)))
+
+        X_train, X_test, y_train, y_test = tts(X, y, test_size=0.2, random_state=42)
+        # Create and fit the visualizer
+        visualizer = ClassPredictionError(LinearSVC())
+        visualizer.fit(X_train, y_train)
+
+        # Score the visualizer
+        s = visualizer.score(X_test, y_test)
+        self.assertAlmostEqual(s, 0.9880836575875487, places=2)

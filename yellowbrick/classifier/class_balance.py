@@ -89,7 +89,10 @@ class ClassBalance(ClassificationScoreVisualizer):
         y_pred = self.predict(X)
         self.scores  = precision_recall_fscore_support(y, y_pred)
         self.support = dict(zip(self.classes_, self.scores[-1]))
-        return self.draw()
+        self.draw()
+        self.score_ = self.estimator.score(X, y)
+
+        return self.score_
 
     def draw(self):
         """
@@ -255,7 +258,10 @@ class ClassPredictionError(ClassificationScoreVisualizer):
             for label_t in indices
         ])
 
-        return self.draw()
+        self.draw()
+        self.score_ = self.estimator.score(X, y)
+
+        return self.score_
 
     def draw(self):
         """
