@@ -189,7 +189,10 @@ class ConfusionMatrix(ClassificationScoreVisualizer):
                 selected_class_counts.append(0)
         self.class_counts_ = np.array(selected_class_counts)
 
-        return self.draw()
+        self.draw()
+        self.score_ = self.estimator.score(X, y)
+
+        return self.score_
 
     def draw(self):
         """
