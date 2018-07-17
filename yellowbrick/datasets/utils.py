@@ -123,7 +123,7 @@ def download_data(name, data_dir=None, signature=None, extract=True):
     # Fetch the response in a streaming fashion and write it to disk.
     response = urlopen(url)
     CHUNK = 16 * 1024
-    with open(dlpath, 'wb', encoding="utf8") as f:
+    with open(dlpath, 'wb') as f:
 
         while True:
             chunk = response.read(CHUNK)
