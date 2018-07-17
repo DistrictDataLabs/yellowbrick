@@ -14,7 +14,6 @@ Use manifold algorithms for high dimensional visualization.
 ## Imports
 ##########################################################################
 
-import time
 import numpy as np
 import matplotlib.pyplot as plt
 
