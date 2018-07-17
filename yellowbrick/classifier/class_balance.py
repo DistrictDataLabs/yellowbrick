@@ -229,7 +229,7 @@ class ClassPredictionError(ClassificationScoreVisualizer):
         ax : the axis with the plotted figure
         """
 
-        # We're replying on predict to raise NotFitted
+        # We're relying on predict to raise NotFitted
         y_pred = self.predict(X)
 
         y_type, y_true, y_pred = _check_targets(y, y_pred)
@@ -246,11 +246,11 @@ class ClassPredictionError(ClassificationScoreVisualizer):
             raise NotImplementedError("filtering classes is "
                                         "currently not supported")
 
-        # Create a table of scores whose rows are the true classes
+        # Create a table of predictions whose rows are the true classes
         # and whose columns are the predicted classes; each element
         # is the count of predictions for that class that match the true
         # value of that class.
-        self.scores_ = np.array([
+        self.predictions_ = np.array([
             [
                 (y_pred[y == label_t] == label_p).sum()
                 for label_p in indices
@@ -278,7 +278,7 @@ class ClassPredictionError(ClassificationScoreVisualizer):
             colors=self.colors,
             n_colors=len(self.classes_))
 
-        for idx, row in enumerate(self.scores_):
+        for idx, row in enumerate(self.predictions_):
             self.ax.bar(indices, row, label=self.classes_[idx],
                         bottom=prev, color=colors[idx])
             prev += row
@@ -309,7 +309,7 @@ class ClassPredictionError(ClassificationScoreVisualizer):
         self.ax.set_ylabel("number of predicted class")
 
         # Compute the ceiling for the y limit
-        cmax = max([sum(scores) for scores in self.scores_])
+        cmax = max([sum(predictions) for predictions in self.predictions_])
         self.ax.set_ylim(0, cmax + cmax * 0.1)
 
         # Put the legend outside of the graph
