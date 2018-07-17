@@ -22,6 +22,7 @@ from six import string_types
 from matplotlib import patches
 
 from yellowbrick.utils.types import is_estimator
+from yellowbrick.utils.timer import Timer
 from yellowbrick.style import palettes, resolve_colors
 from yellowbrick.features.base import FeatureVisualizer
 from yellowbrick.exceptions import YellowbrickValueError, NotFitted
@@ -306,9 +307,9 @@ class Manifold(FeatureVisualizer):
             y = np.asarray(y)
             self.range_ = (y.min(), y.max())
 
-        start = time.time()
-        Xp = self.manifold.fit_transform(X)
-        self.fit_time_ = time.time() - start
+        with Timer() as timer:
+            Xp = self.manifold.fit_transform(X)
+        self.fit_time_ = timer.interval
 
         self.draw(Xp, y)
         return self
