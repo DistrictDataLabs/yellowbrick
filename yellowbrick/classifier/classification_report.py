@@ -141,7 +141,12 @@ class ClassificationReport(ClassificationScoreVisualizer):
         if not self.support:
             self.scores_map_.pop('support')
 
-        return self.draw()
+        self.draw()
+
+        # Retrieve and store the score attribute from the sklearn classifier
+        self.score_ = self.estimator.score(X, y)
+
+        return self.score_
 
     def draw(self):
         """

@@ -221,3 +221,14 @@ class ClassificationReportTests(VisualTestCase, DatasetMixin):
                 match="'foo' is an invalid argument for support, use None, " \
                       "True, False, 'percent', or 'count'"):
             ClassificationReport(LinearSVC(), support="foo")
+
+    def test_score_returns_score(self):
+        """
+        Test that ClassificationReport score() returns a score between 0 and 1
+        """
+        viz = ClassificationReport(LinearSVC(random_state=42))
+        
+        viz.fit(self.binary.X.train, self.binary.y.train)
+        s = viz.score(self.binary.X.test, self.binary.y.test)
+
+        assert 0 <= s <= 1
