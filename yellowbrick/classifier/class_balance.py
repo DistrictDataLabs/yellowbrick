@@ -62,6 +62,11 @@ class ClassBalance(ClassificationScoreVisualizer):
         Keyword arguments passed to the super class. Here, used
         to colorize the bars in the histogram.
 
+    Attributes
+    ----------
+    score_ : float
+        Global accuracy score
+
     Notes
     -----
     These parameters can be influenced later on in the visualization
@@ -89,7 +94,10 @@ class ClassBalance(ClassificationScoreVisualizer):
         y_pred = self.predict(X)
         self.scores  = precision_recall_fscore_support(y, y_pred)
         self.support = dict(zip(self.classes_, self.scores[-1]))
+
         self.draw()
+        
+        # Retrieve and store the score attribute from the sklearn classifier
         self.score_ = self.estimator.score(X, y)
 
         return self.score_
@@ -205,6 +213,16 @@ class ClassPredictionError(ClassificationScoreVisualizer):
     kwargs: dict
         Keyword arguments passed to the super class. Here, used
         to colorize the bars in the histogram.
+
+    Attributes
+    ----------
+    score_ : float
+        Global accuracy score
+
+    predictions_ : ndarray
+        An ndarray of predictions whose rows are the true classes and
+        whose columns are the predicted classes
+
     Notes
     -----
     These parameters can be influenced later on in the visualization
