@@ -61,7 +61,7 @@ class ClassificationReportTests(VisualTestCase, DatasetMixin):
 
         self.assert_images_similar(viz, tol=40)
 
-        assert viz.scores_ == {
+        assert viz.scores_map_ == {
             'precision': {0: approx(0.7446808), 1: approx(0.8490566)},
             'recall': {0: approx(0.8139534), 1: approx(0.7894736)},
             'f1': {0: approx(0.7777777), 1: approx(0.8181818)}
@@ -82,7 +82,7 @@ class ClassificationReportTests(VisualTestCase, DatasetMixin):
 
         self.assert_images_similar(viz, tol=11.0)
 
-        assert viz.scores_ == {
+        assert viz.scores_map_ == {
             'precision': {
                 0: 0.5333333333333333, 1: 0.5, 2: 0.45,
                 3: 0.4, 4: 0.4, 5: 0.5882352941176471
@@ -131,7 +131,7 @@ class ClassificationReportTests(VisualTestCase, DatasetMixin):
         self.assert_images_similar(viz, tol=43.0)
 
         # Ensure correct classification scores under the hood!
-        assert viz.scores_ == {
+        assert viz.scores_map_ == {
             'precision': {
                 'unoccupied': 0.999347471451876,
                 'occupied': 0.8825214899713467
@@ -184,7 +184,7 @@ class ClassificationReportTests(VisualTestCase, DatasetMixin):
 
         self.assert_images_similar(viz, tol=40)
 
-        assert viz.scores_ == {
+        assert viz.scores_map_ == {
             'precision': {0: approx(0.7446808), 1: approx(0.8490566)},
             'recall': {0: approx(0.8139534), 1: approx(0.7894736)},
             'f1': {0: approx(0.7777777), 1: approx(0.8181818)},
@@ -205,7 +205,7 @@ class ClassificationReportTests(VisualTestCase, DatasetMixin):
 
         self.assert_images_similar(viz, tol=40)
 
-        assert viz.scores_ == {
+        assert viz.scores_map_ == {
             'precision': {0: approx(0.7446808), 1: approx(0.8490566)},
             'recall': {0: approx(0.8139534), 1: approx(0.7894736)},
             'f1': {0: approx(0.7777777), 1: approx(0.8181818)},
