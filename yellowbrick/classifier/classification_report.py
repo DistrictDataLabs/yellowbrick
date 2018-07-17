@@ -120,6 +120,12 @@ class ClassificationReport(ClassificationScoreVisualizer):
 
         y : ndarray or Series of length n
             An array or series of target or class values
+
+        Returns
+        -------
+
+        score_ : float
+            Global accuracy score
         """
         y_pred = self.predict(X)
 

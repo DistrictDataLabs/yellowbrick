@@ -89,14 +89,15 @@ class ClassBalance(ClassificationScoreVisualizer):
         Returns
         -------
 
-        ax : the axis with the plotted figure
+        score_ : float
+            Global accuracy score
         """
         y_pred = self.predict(X)
         self.scores  = precision_recall_fscore_support(y, y_pred)
         self.support = dict(zip(self.classes_, self.scores[-1]))
 
         self.draw()
-        
+
         # Retrieve and store the score attribute from the sklearn classifier
         self.score_ = self.estimator.score(X, y)
 
@@ -244,7 +245,8 @@ class ClassPredictionError(ClassificationScoreVisualizer):
         Returns
         -------
 
-        ax : the axis with the plotted figure
+        score_ : float
+            Global accuracy score
         """
 
         # We're relying on predict to raise NotFitted

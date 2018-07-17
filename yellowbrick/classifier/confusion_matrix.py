@@ -150,6 +150,12 @@ class ConfusionMatrix(ClassificationScoreVisualizer):
 
         y : ndarray or Series of length n
             An array or series of target or class values
+
+        Returns
+        -------
+
+        score_ : float
+            Global accuracy score
         """
         # Perform deprecation warnings for attributes to score
         # TODO: remove this in v0.9
