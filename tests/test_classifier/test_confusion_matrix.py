@@ -353,7 +353,7 @@ class ConfusionMatrixTests(VisualTestCase, DatasetMixin):
 
     def test_score_returns_score(self):
         """
-        Test that ConfusionMatrix score method returns self.score_
+        Test that ConfusionMatrix score() returns a score between 0 and 1
         """
         data = self.load_data("occupancy")
         X = data[[
@@ -372,4 +372,5 @@ class ConfusionMatrixTests(VisualTestCase, DatasetMixin):
 
         # Score the visualizer
         s = visualizer.score(X_test, y_test)
-        self.assertAlmostEqual(s, 0.9897859922178989, places=2)
+        
+        assert 0 <= s <= 1
