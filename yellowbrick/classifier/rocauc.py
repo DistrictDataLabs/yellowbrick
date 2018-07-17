@@ -92,6 +92,11 @@ class ROCAUC(ClassificationScoreVisualizer):
         Characteristic curve and the diagonal.
         These will be refactored to a default Yellowbrick style.
 
+    Attributes
+    ----------
+    score_ : float
+        Global accuracy score, unless micro or macro scores are requested
+
     Notes
     -----
     ROC curves are typically used in binary classification, and in fact the
@@ -156,8 +161,8 @@ class ROCAUC(ClassificationScoreVisualizer):
 
         Returns
         -------
-        score : float
-            The micro-average area under the curve of all classes.
+        score_ : float
+            Global accuracy unless micro or macro scores are requested.
         """
 
         # Compute the predictions for the test data
@@ -193,7 +198,7 @@ class ROCAUC(ClassificationScoreVisualizer):
         if self.micro:
             self.score_ = self.roc_auc[MICRO]
 
-        # Set score to  macro average if not micro
+        # Set score to macro average if not micro
         if self.macro:
             self.score_ = self.roc_auc[MACRO]
 
