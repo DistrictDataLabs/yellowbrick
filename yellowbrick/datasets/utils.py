@@ -8,12 +8,16 @@ Utils for downloading datasets for running the examples.
 ##########################################################################
 
 import os
+import six
 import hashlib
 import zipfile
 import numpy as np
 
 from sklearn.datasets.base import Bunch
 
+if six.PY2:
+    # backport for encoding in open for python2
+    from io import open
 
 try:
     from urllib.request import urlopen
@@ -177,7 +181,7 @@ def load_corpus(name, data_path=None):
             files.append(os.path.join(path, cat, name))
             target.append(cat)
 
-            with open(os.path.join(path, cat, name), 'r', encoding="utf8") as f:
+            with open(os.path.join(path, cat, name), 'r', encoding='UTF-8') as f:
                 data.append(f.read())
 
     # Return the data bunch for use similar to the newsgroups example
