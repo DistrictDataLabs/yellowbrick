@@ -124,3 +124,5 @@ fabric.properties
 # Data downloaded from Yellowbrick
 data/
 .vscode/settings.json
+
+yellowbrick/datasets/fixtures
