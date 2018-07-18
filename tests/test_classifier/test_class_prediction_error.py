@@ -28,7 +28,6 @@ from yellowbrick.exceptions import ModelError
 
 from sklearn.svm import LinearSVC
 from sklearn.ensemble import RandomForestClassifier
-from sklearn.model_selection import train_test_split as tts
 from sklearn.datasets import make_multilabel_classification, make_classification
 
 from tests.base import VisualTestCase
@@ -115,21 +114,10 @@ class ClassPredictionErrorTests(VisualTestCase, DatasetMixin):
         """
         Test that ClassPredictionError score() returns a score between 0 and 1
         """
-        data = self.load_data("occupancy")
-        X = data[[
-            "temperature", "relative_humidity", "light", "C02", "humidity"
-        ]]
-
-        y = data['occupancy']
-
-        # Convert X to an ndarray
-        X = X.copy().view((float, len(X.dtype.names)))
-
-        X_train, X_test, y_train, y_test = tts(X, y, test_size=0.2, random_state=42)
         # Create and fit the visualizer
         visualizer = ClassPredictionError(LinearSVC())
-        visualizer.fit(X_train, y_train)
+        visualizer.fit(X, y)
 
         # Score the visualizer
-        s = visualizer.score(X_test, y_test)
+        s = visualizer.score(X, y)
         assert 0 <= s <= 1
