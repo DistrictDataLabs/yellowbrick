@@ -113,9 +113,6 @@ class ROCAUCTests(VisualTestCase, DatasetMixin):
         # Test that score method successfully returns a value between 0 and 1
         assert 0 <= s <= 1
 
-        # Test that the score method returns a value close to that expected
-        self.assertAlmostEqual(s, 0.93230159261495249)
-
         # Check the scores
         self.assertEqual(len(visualizer.fpr.keys()), 4)
         self.assertEqual(len(visualizer.tpr.keys()), 4)
@@ -151,9 +148,6 @@ class ROCAUCTests(VisualTestCase, DatasetMixin):
 
         # Test that score method successfully returns a value between 0 and 1
         assert 0 <= s <= 1
-
-        # Test that the score method returns a value close to that expected
-        self.assertAlmostEqual(s, 0.93230159261495249)
 
         # Check the scores
         self.assertEqual(len(visualizer.fpr.keys()), 4)
