@@ -81,6 +81,9 @@ class ClassificationReport(ClassificationScoreVisualizer):
 
     Attributes
     ----------
+    score_ : float
+        Global accuracy score
+
     scores_ : dict of dicts
         Outer dictionary composed of precision, recall, f1, and support scores with
         inner dictionaries specifiying the values for each class listed.
@@ -117,7 +120,13 @@ class ClassificationReport(ClassificationScoreVisualizer):
 
         y : ndarray or Series of length n
             An array or series of target or class values
-        """ 
+
+        Returns
+        -------
+
+        score_ : float
+            Global accuracy score
+        """
         y_pred = self.predict(X)
 
         scores = precision_recall_fscore_support(y, y_pred)
@@ -129,7 +138,7 @@ class ClassificationReport(ClassificationScoreVisualizer):
         scores = list(scores)
         scores[-1] = scores[-1] / scores[-1].sum()
 
-        # Create a mapping composed of precision,recall, presion, and support
+        # Create a mapping composed of precision, recall, F1, and support
         # to their respective values
         scores = map(lambda s: dict(zip(self.classes_, s)), scores)
         self.scores_ = dict(zip(SCORES_KEYS, scores))
@@ -138,7 +147,12 @@ class ClassificationReport(ClassificationScoreVisualizer):
         if not self.support:
             self.scores_.pop('support')
 
-        return self.draw()
+        self.draw()
+
+        # Retrieve and store the score attribute from the sklearn classifier
+        self.score_ = self.estimator.score(X, y)
+
+        return self.score_
 
     def draw(self):
         """

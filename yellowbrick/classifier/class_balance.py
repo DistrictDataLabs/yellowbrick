@@ -62,6 +62,11 @@ class ClassBalance(ClassificationScoreVisualizer):
         Keyword arguments passed to the super class. Here, used
         to colorize the bars in the histogram.
 
+    Attributes
+    ----------
+    score_ : float
+        Global accuracy score
+
     Notes
     -----
     These parameters can be influenced later on in the visualization
@@ -84,12 +89,19 @@ class ClassBalance(ClassificationScoreVisualizer):
         Returns
         -------
 
-        ax : the axis with the plotted figure
+        score_ : float
+            Global accuracy score
         """
         y_pred = self.predict(X)
         self.scores  = precision_recall_fscore_support(y, y_pred)
         self.support = dict(zip(self.classes_, self.scores[-1]))
-        return self.draw()
+
+        self.draw()
+
+        # Retrieve and store the score attribute from the sklearn classifier
+        self.score_ = self.estimator.score(X, y)
+
+        return self.score_
 
     def draw(self):
         """
@@ -202,6 +214,16 @@ class ClassPredictionError(ClassificationScoreVisualizer):
     kwargs: dict
         Keyword arguments passed to the super class. Here, used
         to colorize the bars in the histogram.
+
+    Attributes
+    ----------
+    score_ : float
+        Global accuracy score
+
+    predictions_ : ndarray
+        An ndarray of predictions whose rows are the true classes and
+        whose columns are the predicted classes
+
     Notes
     -----
     These parameters can be influenced later on in the visualization
@@ -223,10 +245,11 @@ class ClassPredictionError(ClassificationScoreVisualizer):
         Returns
         -------
 
-        ax : the axis with the plotted figure
+        score_ : float
+            Global accuracy score
         """
 
-        # We're replying on predict to raise NotFitted
+        # We're relying on predict to raise NotFitted
         y_pred = self.predict(X)
 
         y_type, y_true, y_pred = _check_targets(y, y_pred)
@@ -243,11 +266,11 @@ class ClassPredictionError(ClassificationScoreVisualizer):
             raise NotImplementedError("filtering classes is "
                                         "currently not supported")
 
-        # Create a table of scores whose rows are the true classes
+        # Create a table of predictions whose rows are the true classes
         # and whose columns are the predicted classes; each element
         # is the count of predictions for that class that match the true
         # value of that class.
-        self.scores_ = np.array([
+        self.predictions_ = np.array([
             [
                 (y_pred[y == label_t] == label_p).sum()
                 for label_p in indices
@@ -255,7 +278,10 @@ class ClassPredictionError(ClassificationScoreVisualizer):
             for label_t in indices
         ])
 
-        return self.draw()
+        self.draw()
+        self.score_ = self.estimator.score(X, y)
+
+        return self.score_
 
     def draw(self):
         """
@@ -272,7 +298,7 @@ class ClassPredictionError(ClassificationScoreVisualizer):
             colors=self.colors,
             n_colors=len(self.classes_))
 
-        for idx, row in enumerate(self.scores_):
+        for idx, row in enumerate(self.predictions_):
             self.ax.bar(indices, row, label=self.classes_[idx],
                         bottom=prev, color=colors[idx])
             prev += row
@@ -303,7 +329,7 @@ class ClassPredictionError(ClassificationScoreVisualizer):
         self.ax.set_ylabel("number of predicted class")
 
         # Compute the ceiling for the y limit
-        cmax = max([sum(scores) for scores in self.scores_])
+        cmax = max([sum(predictions) for predictions in self.predictions_])
         self.ax.set_ylim(0, cmax + cmax * 0.1)
 
         # Put the legend outside of the graph

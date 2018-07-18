@@ -350,3 +350,27 @@ class ConfusionMatrixTests(VisualTestCase, DatasetMixin):
 
         with pytest.raises(yb.exceptions.YellowbrickError, match=message):
             ConfusionMatrix(model)
+
+    def test_score_returns_score(self):
+        """
+        Test that ConfusionMatrix score() returns a score between 0 and 1
+        """
+        data = self.load_data("occupancy")
+        X = data[[
+            "temperature", "relative_humidity", "light", "C02", "humidity"
+        ]]
+
+        y = data['occupancy']
+
+        # Convert X to an ndarray
+        X = X.copy().view((float, len(X.dtype.names)))
+
+        X_train, X_test, y_train, y_test = tts(X, y, test_size=0.2, random_state=42)
+        # Create and fit the visualizer
+        visualizer = ConfusionMatrix(LogisticRegression())
+        visualizer.fit(X_train, y_train)
+
+        # Score the visualizer
+        s = visualizer.score(X_test, y_test)
+        
+        assert 0 <= s <= 1
