@@ -264,6 +264,14 @@ class Manifold(FeatureVisualizer):
     def fit(self, X, y=None):
         """
         Fits the manifold on X and transforms the data to plot it on the axes.
+        See fit_transform() for more details.
+        """
+        self.fit_transform(X, y)
+        return self
+
+    def fit_transform(self, X, y=None):
+        """
+        Fits the manifold on X and transforms the data to plot it on the axes.
         The optional y specified can be used to declare discrete colors. If
         the target is set to 'auto', this method also determines the target
         type, and therefore what colors will be used.
@@ -311,7 +319,7 @@ class Manifold(FeatureVisualizer):
         self.fit_time_ = timer.interval
 
         self.draw(Xp, y)
-        return self
+        return Xp
 
     def transform(self, X):
         """
@@ -327,7 +335,10 @@ class Manifold(FeatureVisualizer):
         Xprime : array-like of shape (n, 2)
             Returns the 2-dimensional embedding of the instances.
         """
-        return self.manifold.transform(X)
+        try:
+            return self.manifold.transform(X)
+        except AttributeError as e:
+            raise AttributeError(str(e) + " try using fit_transform instead.")
 
     def draw(self, X, y=None):
         """
