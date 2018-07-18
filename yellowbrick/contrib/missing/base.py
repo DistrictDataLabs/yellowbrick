@@ -1,4 +1,4 @@
-# yellowbrick.missing.base
+# yellowbrick.contrib.missing.base
 # Base Visualizer for missing values
 #
 # Author:  Nathan Danielsen <nathan.danielsen@gmail.com>

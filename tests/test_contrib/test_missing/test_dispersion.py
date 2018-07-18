@@ -1,4 +1,4 @@
-# tests.test_missing.test_dispersion
+# tests.test_contrib.test_missing.test_dispersion
 # Tests for the alpha selection visualizations.
 #
 # Author:  Nathan Danielsen <nathan.danielsen@gmail.com>
@@ -16,10 +16,13 @@ Tests for the MissingValuesDispersion visualizations.
 ##########################################################################
 ## Imports
 ##########################################################################
+import pytest
+
 from sklearn.datasets import make_classification
 
 from tests.base import VisualTestCase
-from yellowbrick.missing.dispersion import *
+from tests.dataset import DatasetMixin
+from yellowbrick.contrib.missing.dispersion import *
 
 try:
     import pandas as pd
@@ -30,7 +33,7 @@ except ImportError:
 ## Feature Importances Tests
 ##########################################################################
 
-class MissingValuesDispersionTestCase(VisualTestCase):
+class MissingValuesDispersionTestCase(VisualTestCase, DatasetMixin):
     """
     MissingValuesDispersion visualizer
     """
@@ -39,15 +42,12 @@ class MissingValuesDispersionTestCase(VisualTestCase):
         """
         Integration test of visualizer with feature importances param
         """
-        X, y = make_classification(
-            n_samples=400, n_features=20, n_informative=8, n_redundant=8,
-            n_classes=2, n_clusters_per_class=4, random_state=854
-        )
+        mushrooms = self.load_data('mushroom')
+        features = ['shape', 'surface', 'color']
+        target   = ['target']
+        X = mushrooms[features].as_matrix()
+        y = mushrooms[target].as_matrix()
 
-        # add nan values to a range of values in the matrix
-        X[X > 1.5] = np.nan
-
-        features = [str(n) for n in range(20)]
         viz = MissingValuesDispersion(features=features)
         viz.fit(X, y=y)
         viz.poof()

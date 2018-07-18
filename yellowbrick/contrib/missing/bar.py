@@ -1,4 +1,4 @@
-# yellowbrick.missing.bar
+# yellowbrick.contrib.missing.bar
 # Missing Values Bar Visualizer
 #
 # Author:  Nathan Danielsen <nathan.danielsen@gmail.com>

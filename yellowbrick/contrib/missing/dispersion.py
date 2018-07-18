@@ -1,4 +1,4 @@
-# yellowbrick.missing.dispersion
+# yellowbrick.contrib.missing.dispersion
 # Missing Values Dispersion Visualizer
 #
 # Author:  Nathan Danielsen <nathan.danielsen@gmail.com>
