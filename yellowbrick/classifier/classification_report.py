@@ -84,7 +84,7 @@ class ClassificationReport(ClassificationScoreVisualizer):
     score_ : float
         Global accuracy score
 
-    scores_map_ : dict of dicts
+    scores_ : dict of dicts
         Outer dictionary composed of precision, recall, f1, and support scores with
         inner dictionaries specifiying the values for each class listed.
     """
@@ -141,11 +141,11 @@ class ClassificationReport(ClassificationScoreVisualizer):
         # Create a mapping composed of precision, recall, F1, and support
         # to their respective values
         scores = map(lambda s: dict(zip(self.classes_, s)), scores)
-        self.scores_map_ = dict(zip(SCORES_KEYS, scores))
+        self.scores_ = dict(zip(SCORES_KEYS, scores))
 
         # Remove support scores if not required
         if not self.support:
-            self.scores_map_.pop('support')
+            self.scores_.pop('support')
 
         self.draw()
 
@@ -165,7 +165,7 @@ class ClassificationReport(ClassificationScoreVisualizer):
         # For each class row, append columns for precision, recall, f1, and support
         for idx, cls in enumerate(self.classes_):
             for jdx, metric in enumerate(self._displayed_scores):
-                cr_display[idx, jdx] = self.scores_map_[metric][cls]
+                cr_display[idx, jdx] = self.scores_[metric][cls]
 
         # Set up the dimensions of the pcolormesh
         # NOTE: pcolormesh accepts grids that are (N+1,M+1)
