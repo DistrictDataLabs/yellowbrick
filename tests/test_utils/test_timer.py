@@ -14,7 +14,7 @@ Tests for the stand alone timer functions in Yellowbrick utils.
 ## Imports
 ##########################################################################
 
-import unittest
+import pytest
 try:
     from unittest import mock
 except ImportError:
@@ -26,21 +26,24 @@ from yellowbrick.utils.timer import *
 ## Helper Function Tests
 ##########################################################################
 
-class TestTimer(unittest.TestCase):
+class TestTimer(object):
     """
     Timer functions and utilities
     """
 
-    @mock.patch('time.time', mock.MagicMock(return_value=1234.))
+    @mock.patch('time.time', mock.Mock(side_effect=[1234.2, 1242.8]))
     def test_timer(self):
         with Timer() as timer:
-            timer.time = mock.MagicMock(return_value=1236.)
-        self.assertIsInstance(timer.interval, float)
-        self.assertEqual(timer.interval, 2)
+            pass
+        assert isinstance(timer.interval, float)
+        assert timer.interval == pytest.approx(8.6)
 
 
-    def test_human_readable_time(self):
-        self.assertEqual(human_readable_time(1.01), '00:00:01.0100')
-        self.assertEqual(human_readable_time(61.01), '00:01:01.0100')
-        self.assertEqual(human_readable_time(3661.01), '01:01:01.0100')
-        self.assertEqual(human_readable_time(360061.01), '100:01:01.0100')
+@pytest.mark.parametrize('s,expected', [
+    (1.01, '00:00:01.0100'),
+    (61.01, '00:01:01.0100'),
+    (3661.01, '01:01:01.0100'),
+    (360061.01, '100:01:01.0100')
+])
+def test_human_readable_time(s, expected):
+    assert human_readable_time(s) == expected
