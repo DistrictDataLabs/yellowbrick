@@ -52,7 +52,7 @@ class MissingDataVisualizer(DataVisualizer):
             Returns the instance of the transformer/visualizer
         """
         if is_dataframe(X):
-            self.X = X.as_matrix()
+            self.X = X.values
         else:
             self.X = X
 

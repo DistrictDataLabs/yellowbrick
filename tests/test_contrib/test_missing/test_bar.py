@@ -17,9 +17,7 @@ Tests for the MissingValuesBar visualizations.
 ## Imports
 ##########################################################################
 
-import pytest
 from tests.base import VisualTestCase
-from tests.dataset import DatasetMixin
 from sklearn.datasets import make_classification
 from yellowbrick.contrib.missing.bar import *
 
@@ -33,31 +31,14 @@ except ImportError:
 ## Feature Importances Tests
 ##########################################################################
 
-class TestFeatureImportancesVisualizer(VisualTestCase, DatasetMixin):
+class TestFeatureImportancesVisualizer(VisualTestCase):
     """
     FeatureImportances visualizer
     """
 
-    @pytest.mark.xfail
-    def test_integration_feature_importances(self):
-        """
-        Integration test of visualizer with mixed data types
-        """
-        mushrooms = self.load_data('mushroom')
-        features = ['shape', 'surface', 'color']
-        target   = ['target']
-        X = mushrooms[features].as_matrix()
-        y = mushrooms[target].as_matrix()
-
-        viz = MissingValuesBar(features=features)
-        viz.fit(X, y=y)
-        viz.poof()
-
-        self.assert_images_similar(viz)
-
     def test_missingvaluesbar_pandas(self):
         """
-        Integration test of visualizer clean dataset
+        Integration test of visualizer with pandas
         """
         X, y = make_classification(
             n_samples=400, n_features=20, n_informative=8, n_redundant=8,
@@ -71,6 +52,26 @@ class TestFeatureImportancesVisualizer(VisualTestCase, DatasetMixin):
         features = [str(n) for n in range(20)]
         viz = MissingValuesBar(features=features)
         viz.fit(X_)
+        viz.poof()
+
+        self.assert_images_similar(viz)
+
+
+    def test_missingvaluesbar_numpy(self):
+        """
+        Integration test of visualizer with numpy
+        """
+        X, y = make_classification(
+            n_samples=400, n_features=20, n_informative=8, n_redundant=8,
+            n_classes=2, n_clusters_per_class=4, random_state=856
+        )
+
+        # add nan values to a range of values in the matrix
+        X[X > 1.5] = np.nan
+
+        features = [str(n) for n in range(20)]
+        viz = MissingValuesBar(features=features)
+        viz.fit(X)
         viz.poof()
 
         self.assert_images_similar(viz)

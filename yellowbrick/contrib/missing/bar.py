@@ -22,12 +22,13 @@ import numpy as np
 from .base import MissingDataVisualizer
 
 ##########################################################################
-## MissingValuesBar Visualizer
+## MissingValues Visualizer
 ##########################################################################
 
 
 class MissingValuesBar(MissingDataVisualizer):
-    """
+    """The MissingValues Bar visualizer creates a bar graph that lists the total
+    count of missing values for each selected feature column.
     """
 
     def __init__(self, width=0.5, color='black', **kwargs):
@@ -82,3 +83,25 @@ class MissingValuesBar(MissingDataVisualizer):
         self.ax.set_xticklabels(self.features_, rotation='vertical')
         # Add the legend
         self.ax.legend(loc='best')
+
+
+##########################################################################
+## Quick Method
+##########################################################################
+
+def missing_bar(X, y=None, ax=None, features=None, width=0.5, color='black', **kwargs):
+    """The MissingValues Bar visualizer creates a bar graph that lists the total
+    count of missing values for each selected feature column.
+    """
+    # Instantiate the visualizer
+    visualizer = MissingValuesBar(
+        ax=ax, features=features, width=width, color=color, **kwargs
+    )
+
+    # Fit and transform the visualizer (calls draw)
+    visualizer.fit(X, y)
+    visualizer.transform(X)
+    visualizer.poof()
+
+    # Return the axes object on the visualizer
+    return visualizer.ax

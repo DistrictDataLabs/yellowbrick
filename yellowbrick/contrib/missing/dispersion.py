@@ -22,7 +22,7 @@ import numpy as np
 from .base import MissingDataVisualizer
 
 ##########################################################################
-## Feature Visualizer
+## MissingValues Visualizer
 ##########################################################################
 
 class MissingValuesDispersion(MissingDataVisualizer):
@@ -32,7 +32,6 @@ class MissingValuesDispersion(MissingDataVisualizer):
     """
     # TODO - map missing values against another user selected column such as a
     # datetime column.
-
 
     def __init__(self, alpha=0.5, marker="|", **kwargs):
         """
@@ -86,3 +85,26 @@ class MissingValuesDispersion(MissingDataVisualizer):
         self.ax.set_yticklabels(self.features_)
         # Add the legend
         self.ax.legend(loc='best')
+
+
+##########################################################################
+## Quick Method
+##########################################################################
+
+def missing_dispersion(X, y=None, ax=None, features=None, alpha=0.5, marker="|", **kwargs):
+    """
+    The Missing Values Dispersion visualizer shows the locations of missing (nan)
+    values in the feature dataset against the index column.
+    """
+    # Instantiate the visualizer
+    visualizer = MissingValuesDispersion(
+        ax=ax, features=features, alpha=alpha, marker=marker, **kwargs
+    )
+
+    # Fit and transform the visualizer (calls draw)
+    visualizer.fit(X, y)
+    visualizer.transform(X)
+    visualizer.poof()
+
+    # Return the axes object on the visualizer
+    return visualizer.ax
