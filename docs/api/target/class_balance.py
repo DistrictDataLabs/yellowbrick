@@ -14,8 +14,6 @@ Generates images for the class balance documentation.
 ## Imports
 ##########################################################################
 
-import pandas as pd
-
 from yellowbrick.target import ClassBalance
 from yellowbrick.datasets import load_occupancy, load_game
 

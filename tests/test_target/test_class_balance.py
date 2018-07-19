@@ -197,4 +197,4 @@ class ClassBalanceTests(VisualTestCase, DatasetMixin):
         dataset = make_fixture(binary=False, split=False)
 
         ax = class_balance(dataset.y)
-        self.assert_images_similar(ax=ax)
+        self.assert_images_similar(ax=ax, tol=0.5)
