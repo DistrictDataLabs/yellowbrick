@@ -1,6 +1,9 @@
 
 from yellowbrick.classifier.class_balance import *
+
 from tests.base import VisualTestCase
+from tests.dataset import DatasetMixin
+
 from sklearn.svm import LinearSVC
 
 ##########################################################################
@@ -22,7 +25,7 @@ y = np.array([1, 1, 0, 1, 0, 0])
 ##  Tests
 ##########################################################################
 
-class ClassBalanceTests(VisualTestCase):
+class ClassBalanceTests(VisualTestCase, DatasetMixin):
 
     def test_class_report(self):
         """
@@ -33,3 +36,26 @@ class ClassBalanceTests(VisualTestCase):
         visualizer = ClassBalance(model, classes=["A", "B"])
         visualizer.score(X,y)
         self.assert_images_similar(visualizer)
+
+    def test_score_returns_score(self):
+        """
+        Test that ClassBalance score() returns a score between 0 and 1
+        """
+        data = self.load_data("occupancy")
+        X = data[[
+            "temperature", "relative_humidity", "light", "C02", "humidity"
+        ]]
+
+        y = data['occupancy']
+
+        # Convert X to an ndarray
+        X = X.copy().view((float, len(X.dtype.names)))
+
+        # Create and fit the visualizer
+        visualizer = ClassBalance(LinearSVC())
+        visualizer.fit(X, y)
+
+        # Score the visualizer
+        s = visualizer.score(X, y)
+
+        assert 0 <= s <= 1

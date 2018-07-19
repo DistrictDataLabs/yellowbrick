@@ -92,16 +92,30 @@ class TestManifold(VisualTestCase):
         oz = Manifold(manifold=manifold)
         assert oz.manifold is manifold
 
-    @patch('yellowbrick.features.manifold.Manifold.draw', spec=True)
-    def test_manifold_fit(self, mock_draw):
+    @patch('yellowbrick.features.manifold.Manifold.fit_transform', spec=True)
+    def test_manifold_fit(self, mock_fit_transform):
         """
         Test manifold fit method
         """
         X, y = make_s_curve(1000, random_state=888)
         manifold = Manifold(target="auto")
 
-        assert not hasattr(manifold, 'fit_time_')
         assert manifold.fit(X, y) is manifold, "fit did not return self"
+        mock_fit_transform.assert_called_once()
+
+    @patch('yellowbrick.features.manifold.Manifold.draw', spec=True)
+    def test_manifold_fit_transform(self, mock_draw):
+        """
+        Test manifold fit_transform method
+        """
+        X, y = make_s_curve(1000, random_state=888)
+        manifold = Manifold(target="auto")
+
+        assert not hasattr(manifold, 'fit_time_')
+
+        Xp = manifold.fit_transform(X, y)
+        assert Xp.shape == (X.shape[0], 2)
+
         mock_draw.assert_called_once()
         assert hasattr(manifold, 'fit_time_')
         assert manifold._target_color_type == CONTINUOUS
@@ -117,8 +131,12 @@ class TestManifold(VisualTestCase):
         )
 
         oz = Manifold(manifold="spectral", target="discrete", random_state=108)
+        assert not hasattr(oz, 'classes_')
+
         oz.fit(X, y)
 
+        assert hasattr(oz, 'classes_')
+        assert not hasattr(oz, 'range_')
         self.assert_images_similar(oz, tol=0.5)
 
     def test_manifold_regression(self):
@@ -130,8 +148,12 @@ class TestManifold(VisualTestCase):
         )
 
         oz = Manifold(manifold="lle", target="continuous", random_state=1)
+        assert not hasattr(oz, 'range_')
+
         oz.fit(X, y)
 
+        assert not hasattr(oz, 'classes_')
+        assert hasattr(oz, 'range_')
         self.assert_images_similar(oz, tol=1.5)
 
     def test_manifold_single(self):
@@ -233,3 +255,15 @@ class TestManifold(VisualTestCase):
         msg = "could not determine target color type"
         with pytest.raises(YellowbrickValueError, match=msg):
             manifold._determine_target_color_type([])
+
+    def test_manifold_no_transform(self):
+        """
+        Test the exception when manifold doesn't implement transform.
+        """
+        X, _ = make_s_curve(1000, random_state=888)
+        manifold = Manifold(manifold='mds', target="auto")
+
+        assert not hasattr(manifold._manifold, 'transform')
+
+        with pytest.raises(AttributeError, match="try using fit_transform instead"):
+            manifold.transform(X)
