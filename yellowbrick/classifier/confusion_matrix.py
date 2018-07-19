@@ -96,6 +96,9 @@ class ConfusionMatrix(ClassificationScoreVisualizer):
 
     Attributes
     ----------
+    score_ : float
+        Global accuracy score
+
     confusion_matrix_ : array, shape = [n_classes, n_classes]
         The numeric scores of the confusion matrix
 
@@ -147,6 +150,12 @@ class ConfusionMatrix(ClassificationScoreVisualizer):
 
         y : ndarray or Series of length n
             An array or series of target or class values
+
+        Returns
+        -------
+
+        score_ : float
+            Global accuracy score
         """
         # Perform deprecation warnings for attributes to score
         # TODO: remove this in v0.9
@@ -189,7 +198,12 @@ class ConfusionMatrix(ClassificationScoreVisualizer):
                 selected_class_counts.append(0)
         self.class_counts_ = np.array(selected_class_counts)
 
-        return self.draw()
+        self.draw()
+
+        # Retrieve and store the score attribute from the sklearn classifier
+        self.score_ = self.estimator.score(X, y)
+
+        return self.score_
 
     def draw(self):
         """
