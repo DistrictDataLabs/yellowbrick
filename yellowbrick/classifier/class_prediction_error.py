@@ -1,192 +1,31 @@
-# yellowbrick.classifier.class_balance
-# Class balance visualizer for showing per-class support.
+# yellowbrick.classifier.class_prediction_error
+# Shows the balance of classes and their associated predictions.
 #
-# Author:   Rebecca Bilbro <rbilbro@districtdatalabs.com>
-# Author:   Benjamin Bengfort <bbengfort@districtdatalabs.com>
-# Author:   Neal Humphrey
 # Author:   Larry Gray
+# Author:   Benjamin Bengfort <bbengfort@districtdatalabs.com>
 # Created:  Wed May 18 12:39:40 2016 -0400
 #
-# Copyright (C) 2017 District Data Labs
-# For license information, see LICENSE.txt
-#
-# ID: class_balance.py [5388065] neal@nhumphrey.com $
+# ID: class_prediction_error.py [] lwgray@gmail.com $
 
 """
-Class balance visualizer for showing per-class support.
+Shows the balance of classes and their associated predictions.
 """
 
 ##########################################################################
 ## Imports
 ##########################################################################
 
-import matplotlib.pyplot as plt
 import numpy as np
+import matplotlib.pyplot as plt
 
 from .base import ClassificationScoreVisualizer
 
-from sklearn.model_selection import train_test_split
-from sklearn.metrics import precision_recall_fscore_support
 from sklearn.utils.multiclass import unique_labels
 from sklearn.metrics.classification import _check_targets
+from sklearn.model_selection import train_test_split as tts
 
 from ..exceptions import ModelError, YellowbrickValueError
 from ..style.colors import resolve_colors
-
-
-##########################################################################
-## Class Balance Chart
-##########################################################################
-
-class ClassBalance(ClassificationScoreVisualizer):
-    """
-    Class balance chart that shows the support for each class in the
-    fitted classification model displayed as a bar plot. It is initialized
-    with a fitted model and generates a class balance chart on draw.
-
-    Parameters
-    ----------
-
-    ax: axes
-        the axis to plot the figure on.
-
-    model: estimator
-        Scikit-Learn estimator object. Should be an instance of a classifier,
-        else ``__init__()`` will raise an exception.
-
-    classes: list
-        A list of class names for the legend. If classes is None and a y value
-        is passed to fit then the classes are selected from the target vector.
-
-    kwargs: dict
-        Keyword arguments passed to the super class. Here, used
-        to colorize the bars in the histogram.
-
-    Attributes
-    ----------
-    score_ : float
-        Global accuracy score
-
-    Notes
-    -----
-    These parameters can be influenced later on in the visualization
-    process, but can and should be set as early as possible.
-    """
-
-    def score(self, X, y=None, **kwargs):
-        """
-        Generates the Scikit-Learn precision_recall_fscore_support
-
-        Parameters
-        ----------
-
-        X : ndarray or DataFrame of shape n x m
-            A matrix of n instances with m features
-
-        y : ndarray or Series of length n
-            An array or series of target or class values
-
-        Returns
-        -------
-
-        score_ : float
-            Global accuracy score
-        """
-        y_pred = self.predict(X)
-        self.scores  = precision_recall_fscore_support(y, y_pred)
-        self.support = dict(zip(self.classes_, self.scores[-1]))
-
-        self.draw()
-
-        # Retrieve and store the score attribute from the sklearn classifier
-        self.score_ = self.estimator.score(X, y)
-
-        return self.score_
-
-    def draw(self):
-        """
-        Renders the class balance chart across the axis.
-
-        Returns
-        -------
-        ax : the axis with the plotted figure
-
-        """
-        #TODO: Would rather not have to set the colors with this method.
-        # Refactor to make better use of yb_palettes module?
-
-        colors = self.colors[0:len(self.classes_)]
-        self.ax.bar(
-            np.arange(len(self.support)), self.support.values(),
-            color=colors, align='center', width=0.5
-        )
-
-        return self.ax
-
-    def finalize(self, **kwargs):
-        """
-        Finalize executes any subclass-specific axes finalization steps.
-        The user calls poof and poof calls finalize.
-
-        Parameters
-        ----------
-        kwargs: generic keyword arguments.
-
-        """
-        # Set the title
-        self.set_title('Class Balance for {}'.format(self.name))
-
-        # Set the x ticks with the class names
-        self.ax.set_xticks(np.arange(len(self.support)))
-        self.ax.set_xticklabels(self.support.keys())
-
-        # Compute the ceiling for the y limit
-        cmax = max(self.support.values())
-        self.ax.set_ylim(0, cmax + cmax* 0.1)
-
-
-def class_balance(model, X, y=None, ax=None, classes=None, **kwargs):
-    """Quick method:
-
-    Displays the support for each class in the
-    fitted classification model displayed as a bar plot.
-
-    This helper function is a quick wrapper to utilize the ClassBalance
-    ScoreVisualizer for one-off analysis.
-
-    Parameters
-    ----------
-    X  : ndarray or DataFrame of shape n x m
-        A matrix of n instances with m features.
-
-    y  : ndarray or Series of length n
-        An array or series of target or class values.
-
-    ax : matplotlib axes
-        The axes to plot the figure on.
-
-    model : the Scikit-Learn estimator (should be a classifier)
-
-    classes : list of strings
-        The names of the classes in the target
-
-    Returns
-    -------
-    ax : matplotlib axes
-        Returns the axes that the class balance plot was drawn on.
-    """
-    # Instantiate the visualizer
-    visualizer = ClassBalance(model, ax, classes, **kwargs)
-
-    # Create the train and test splits
-    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2)
-
-    # Fit and transform the visualizer (calls draw)
-    visualizer.fit(X_train, y_train, **kwargs)
-    visualizer.score(X_test, y_test)
-
-    # Return the axes object on the visualizer
-    return visualizer.ax
 
 
 ##########################################################################
@@ -205,12 +44,15 @@ class ClassPredictionError(ClassificationScoreVisualizer):
     ----------
     ax: axes
         the axis to plot the figure on.
+
     model: estimator
         Scikit-Learn estimator object. Should be an instance of a classifier,
         else ``__init__()`` will raise an exception.
+
     classes: list
         A list of class names for the legend. If classes is None and a y value
         is passed to fit then the classes are selected from the target vector.
+
     kwargs: dict
         Keyword arguments passed to the super class. Here, used
         to colorize the bars in the histogram.
@@ -239,12 +81,12 @@ class ClassPredictionError(ClassificationScoreVisualizer):
         ----------
         X : ndarray or DataFrame of shape n x m
             A matrix of n instances with m features
+
         y : ndarray or Series of length n
             An array or series of target or class values
 
         Returns
         -------
-
         score_ : float
             Global accuracy score
         """
@@ -286,9 +128,6 @@ class ClassPredictionError(ClassificationScoreVisualizer):
     def draw(self):
         """
         Renders the class prediction error across the axis.
-        Returns
-        -------
-        ax : the axis with the plotted figure
         """
 
         indices = np.arange(len(self.classes_))
@@ -309,10 +148,6 @@ class ClassPredictionError(ClassificationScoreVisualizer):
         """
         Finalize executes any subclass-specific axes finalization steps.
         The user calls poof and poof calls finalize.
-        Parameters
-        ----------
-        kwargs: generic keyword arguments.
-
         """
 
         indices = np.arange(len(self.classes_))
@@ -337,27 +172,51 @@ class ClassPredictionError(ClassificationScoreVisualizer):
         plt.tight_layout(rect=[0, 0, 0.85, 1])
 
 
-def class_prediction_error(model, X, y=None, ax=None, classes=None,
-                           test_size=0.2, **kwargs):
+##########################################################################
+## Quick Method
+##########################################################################
+
+def class_prediction_error(
+    model,
+    X,
+    y=None,
+    ax=None,
+    classes=None,
+    test_size=0.2,
+    random_state=None,
+    **kwargs):
     """Quick method:
-    Displays the support for each class in the
-    fitted classification model displayed as a stacked bar plot.
-    Each bar is segmented to show the distribution of predicted
-    classes for each class.
+    Divides the dataset X and y into train and test splits, fits the model on
+    the train split, then scores the model on the test split. The visualizer
+    displays the support for each class in the fitted classification model
+    displayed as a stacked bar plot Each bar is segmented to show the
+    distribution of predicted classes for each class.
 
     This helper function is a quick wrapper to utilize the ClassPredictionError
     ScoreVisualizer for one-off analysis.
+
     Parameters
     ----------
+    model : the Scikit-Learn estimator (should be a classifier)
+
     X  : ndarray or DataFrame of shape n x m
         A matrix of n instances with m features.
+
     y  : ndarray or Series of length n
         An array or series of target or class values.
+
     ax : matplotlib axes
         The axes to plot the figure on.
-    model : the Scikit-Learn estimator (should be a classifier)
+
     classes : list of strings
         The names of the classes in the target
+
+    test_size : float, default=0.2
+        The percentage of the data to reserve as test data.
+
+    random_state : int or None, default=None
+        The value to seed the random number generator for shuffling data.
+
     Returns
     -------
     ax : matplotlib axes
@@ -367,9 +226,9 @@ def class_prediction_error(model, X, y=None, ax=None, classes=None,
     visualizer = ClassPredictionError(model, ax, classes, **kwargs)
 
     # Create the train and test splits
-    X_train, X_test, y_train, y_test = train_test_split(X, y,
-                                                        test_size=test_size,
-                                                        random_state=42)
+    X_train, X_test, y_train, y_test = tts(
+        X, y, test_size=test_size, random_state=random_state
+    )
 
     # Fit and transform the visualizer (calls draw)
     visualizer.fit(X_train, y_train, **kwargs)
