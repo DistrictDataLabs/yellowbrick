@@ -74,16 +74,15 @@ class MissingValuesBar(MissingDataVisualizer):
         """
         # Set the title
         self.set_title(
-            'Missing Values by Column'
+            'Count of Missing Values by Column'
         )
         tick_locations = np.arange(len(self.features_))  # the x locations for the groups
+        self.ax.set_yticks(tick_locations)
+        self.ax.set_yticklabels(self.get_feature_names())
         # Remove the ticks from the graph
-        self.ax.set_ylabel('Count')
-        self.ax.set_xticks(tick_locations)
-        self.ax.set_xticklabels(self.features_, rotation='vertical')
-        # Add the legend
-        self.ax.legend(loc='best')
+        self.ax.set_xlabel('Count')
 
+        self.ax.legend()
 
 ##########################################################################
 ## Quick Method

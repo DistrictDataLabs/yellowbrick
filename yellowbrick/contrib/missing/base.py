@@ -53,9 +53,18 @@ class MissingDataVisualizer(DataVisualizer):
         """
         if is_dataframe(X):
             self.X = X.values
+            if self.features_ is None:
+                self.features_ = X.columns
         else:
             self.X = X
 
         self.y = y
 
         super(MissingDataVisualizer, self).fit(X, y, **kwargs)
+
+
+    def get_feature_names(self):
+        print(len(self.features_))
+        if self.features_ is None:
+            return ["Feature {}".format(str(n)) for n in np.arange(len(self.features_))]
+        return self.features_

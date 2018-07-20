@@ -80,11 +80,11 @@ class MissingValuesDispersion(MissingDataVisualizer):
         )
         tick_locations = np.arange(len(self.features_))  # the x locations for the groups
         # Remove the ticks from the graph
-        self.ax.set_xlabel('Count')
+        self.ax.set_xlabel('Position by index')
         self.ax.set_yticks(tick_locations)
-        self.ax.set_yticklabels(self.features_)
+        self.ax.set_yticklabels(self.get_feature_names())
         # Add the legend
-        self.ax.legend(loc='best')
+        self.ax.legend()
 
 
 ##########################################################################
