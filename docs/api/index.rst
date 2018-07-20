@@ -11,6 +11,7 @@ Welcome to the API documentation for Yellowbrick! This section contains a comple
    datasets
    anscombe
    features/index
+   target/index
    regressor/index
    classifier/index
    cluster/index

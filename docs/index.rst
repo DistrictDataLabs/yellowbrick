@@ -33,7 +33,7 @@ Feature Visualization
 Classification Visualization
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-- :doc:`api/classifier/class_balance`: see how the distribution of classes affects the model
+- :doc:`api/target/class_balance`: see how the distribution of classes affects the model
 - :doc:`api/classifier/class_prediction_error`: shows error and support in classification
 - :doc:`api/classifier/classification_report`: visual representation of precision, recall, and F1
 - :doc:`ROC/AUC Curves <api/classifier/rocauc>`: receiver operator characteristics and area under the curve

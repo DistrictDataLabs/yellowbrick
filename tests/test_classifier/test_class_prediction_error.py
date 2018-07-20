@@ -23,7 +23,7 @@ import pytest
 import matplotlib.pyplot as plt
 
 from tests.dataset import DatasetMixin
-from yellowbrick.classifier.class_balance import *
+from yellowbrick.classifier.class_prediction_error import *
 from yellowbrick.exceptions import ModelError
 
 from sklearn.svm import LinearSVC
@@ -65,7 +65,7 @@ class ClassPredictionErrorTests(VisualTestCase, DatasetMixin):
         ax = fig.add_subplot()
 
         clf = LinearSVC(random_state=42)
-        g = class_prediction_error(clf, X, y, ax)
+        g = class_prediction_error(clf, X, y, ax, random_state=42)
 
         self.assert_images_similar(ax=g)
 
