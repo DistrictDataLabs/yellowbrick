@@ -48,7 +48,14 @@ class MissingValuesBar(MissingDataVisualizer):
         else:
             nan_matrix = self.X.astype(np.float)
 
-        nan_col_counts =  [np.count_nonzero(np.isnan(col)) for col in nan_matrix.T]
+        if self.y is None:
+            nan_col_counts = [np.count_nonzero(np.isnan(col)) for col in nan_matrix.T]
+        else:
+            # add in counting of np.nan per target y by column
+
+            pass
+
+
         return nan_col_counts
 
     def draw(self, X, y, **kwargs):
