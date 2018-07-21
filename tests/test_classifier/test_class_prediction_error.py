@@ -22,7 +22,8 @@ Testing for the ClassPredictionError visualizer
 import pytest
 import matplotlib.pyplot as plt
 
-from yellowbrick.classifier.class_balance import *
+from tests.dataset import DatasetMixin
+from yellowbrick.classifier.class_prediction_error import *
 from yellowbrick.exceptions import ModelError
 
 from sklearn.svm import LinearSVC
@@ -44,7 +45,7 @@ X, y = make_classification(
 ##########################################################################
 
 
-class ClassPredictionErrorTests(VisualTestCase):
+class ClassPredictionErrorTests(VisualTestCase, DatasetMixin):
 
     def test_integration_class_prediction_error_(self):
         """
@@ -64,7 +65,7 @@ class ClassPredictionErrorTests(VisualTestCase):
         ax = fig.add_subplot()
 
         clf = LinearSVC(random_state=42)
-        g = class_prediction_error(clf, X, y, ax)
+        g = class_prediction_error(clf, X, y, ax, random_state=42)
 
         self.assert_images_similar(ax=g)
 
@@ -108,3 +109,15 @@ class ClassPredictionErrorTests(VisualTestCase):
         with self.assertRaises(YellowbrickValueError):
             visualizer = ClassPredictionError(model)
             visualizer.score(X, y)
+
+    def test_score_returns_score(self):
+        """
+        Test that ClassPredictionError score() returns a score between 0 and 1
+        """
+        # Create and fit the visualizer
+        visualizer = ClassPredictionError(LinearSVC())
+        visualizer.fit(X, y)
+
+        # Score the visualizer
+        s = visualizer.score(X, y)
+        assert 0 <= s <= 1

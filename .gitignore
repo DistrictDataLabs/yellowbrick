@@ -54,6 +54,8 @@ docs/_build/
 
 # PyBuilder
 target/
+!yellowbrick/target/
+!docs/api/target/
 
 # Jupyter Notebook
 .ipynb_checkpoints
@@ -124,3 +126,5 @@ fabric.properties
 # Data downloaded from Yellowbrick
 data/
 .vscode/settings.json
+
+yellowbrick/datasets/fixtures
