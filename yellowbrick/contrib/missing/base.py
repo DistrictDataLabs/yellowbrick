@@ -64,7 +64,6 @@ class MissingDataVisualizer(DataVisualizer):
 
 
     def get_feature_names(self):
-        print(len(self.features_))
         if self.features_ is None:
             return ["Feature {}".format(str(n)) for n in np.arange(len(self.features_))]
         return self.features_

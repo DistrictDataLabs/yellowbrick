@@ -59,7 +59,7 @@ class TestFeatureImportancesVisualizer(VisualTestCase):
 
     def test_missingvaluesbar_numpy(self):
         """
-        Integration test of visualizer with numpy
+        Integration test of visualizer with numpy without target y passed in
         """
         X, y = make_classification(
             n_samples=400, n_features=20, n_informative=8, n_redundant=8,
@@ -72,6 +72,46 @@ class TestFeatureImportancesVisualizer(VisualTestCase):
         features = [str(n) for n in range(20)]
         viz = MissingValuesBar(features=features)
         viz.fit(X)
+        viz.poof()
+
+        self.assert_images_similar(viz)
+
+    def test_missingvaluesbar_numpy_with_y_target(self):
+        """
+        Integration test of visualizer with numpy without target y passed in
+        but no class labels
+        """
+        X, y = make_classification(
+            n_samples=400, n_features=20, n_informative=8, n_redundant=8,
+            n_classes=2, n_clusters_per_class=4, random_state=856
+        )
+
+        # add nan values to a range of values in the matrix
+        X[X > 1.5] = np.nan
+
+        features = [str(n) for n in range(20)]
+        viz = MissingValuesBar(features=features)
+        viz.fit(X, y)
+        viz.poof()
+
+        self.assert_images_similar(viz)
+
+    def test_missingvaluesbar_numpy_with_y_target_with_labels(self):
+        """
+        Integration test of visualizer with numpy without target y passed in
+        but no class labels
+        """
+        X, y = make_classification(
+            n_samples=400, n_features=20, n_informative=8, n_redundant=8,
+            n_classes=2, n_clusters_per_class=4, random_state=856
+        )
+
+        # add nan values to a range of values in the matrix
+        X[X > 1.5] = np.nan
+
+        features = [str(n) for n in range(20)]
+        viz = MissingValuesBar(features=features, classes=['class A', 'class B'])
+        viz.fit(X, y)
         viz.poof()
 
         self.assert_images_similar(viz)
