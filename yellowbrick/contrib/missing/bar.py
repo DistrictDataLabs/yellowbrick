@@ -19,8 +19,9 @@ Bar visualizer of missing values by column.
 
 import numpy as np
 
-from .base import MissingDataVisualizer
 from yellowbrick.style.palettes import color_palette
+from .base import MissingDataVisualizer
+
 
 ##########################################################################
 ## MissingValues Visualizer
@@ -30,14 +31,57 @@ from yellowbrick.style.palettes import color_palette
 class MissingValuesBar(MissingDataVisualizer):
     """The MissingValues Bar visualizer creates a bar graph that lists the total
     count of missing values for each selected feature column.
+
+    When y targets are supplied to fit, the output is a stacked bar chart where
+    each color corresponds to the total NaNs for the feature in that column.
+
+    Parameters
+    ----------
+    alpha : float, default: 0.5
+        A value for bending elments with the background.
+
+    marker : matplotlib marker, default: |
+        The marker used for each element coordinate in the plot
+
+    color : string, default: black
+        The color for drawing the bar chart when the y targets are not passed to
+        fit.
+
+    colors : list, default: None
+        The color pallette for drawing a stack bar chart when the y targets
+        are passed to fit.
+
+    classes : list, default: None
+        A list of class names for the legend.
+        If classes is None and a y value is passed to fit then the classes
+        are selected from the target vector.
+
+    kwargs : dict
+        Keyword arguments that are passed to the base class and may influence
+        the visualization as defined in other Visualizers.
+
+    Attributes
+    ----------
+    features_ : np.array
+        The feature labels ranked according to their importance
+
+    classes_ : np.array
+        The class labels for each of the target values
+
+    Examples
+    --------
+
+    >>> from yellowbrick.contrib.missing import MissingValuesBar
+    >>> visualizer = MissingValuesBar()
+    >>> visualizer.fit(X, y)
+    >>> visualizer.poof()
     """
 
-    def __init__(self, width=0.5, color='black', classes=None, **kwargs):
-        """
-        """
+    def __init__(self, width=0.5, color='black', colors=None, classes=None, **kwargs):
         super(MissingValuesBar, self).__init__(**kwargs)
         self.width = width  # the width of the bars
         self.classes_ = classes
+        self.ind = None
 
         # Convert to array if necessary to match estimator.classes_
         if self.classes_ is not None:
@@ -90,8 +134,8 @@ class MissingValuesBar(MissingDataVisualizer):
         self.ind = np.arange(len(self.features_))
 
         if y is None:
-           self.ax.barh(self.ind - self.width / 2, nan_col_counts, self.width,
-                            color=self.color)
+            self.ax.barh(self.ind - self.width / 2, nan_col_counts, self.width,
+                            color=self.color, label=None)
         else:
             self.draw_stacked_bar(nan_col_counts)
 
@@ -109,7 +153,6 @@ class MissingValuesBar(MissingDataVisualizer):
             # if features passed in then, label as such
             if self.classes_ is not None:
                 label = self.classes_[index]
-                print(label)
 
             color = self.colors[index]
 
@@ -148,6 +191,48 @@ class MissingValuesBar(MissingDataVisualizer):
 def missing_bar(X, y=None, ax=None, classes=None, width=0.5, color='black', **kwargs):
     """The MissingValues Bar visualizer creates a bar graph that lists the total
     count of missing values for each selected feature column.
+
+    When y targets are supplied to fit, the output is a stacked bar chart where
+    each color corresponds to the total NaNs for the feature in that column.
+
+    Parameters
+    ----------
+    alpha : float, default: 0.5
+        A value for bending elments with the background.
+
+    marker : matplotlib marker, default: |
+        The marker used for each element coordinate in the plot
+
+    color : string, default: black
+        The color for drawing the bar chart when the y targets are not passed to
+        fit.
+
+    colors : list, default: None
+        The color pallette for drawing a stack bar chart when the y targets
+        are passed to fit.
+
+    classes : list, default: None
+        A list of class names for the legend.
+        If classes is None and a y value is passed to fit then the classes
+        are selected from the target vector.
+
+    kwargs : dict
+        Keyword arguments that are passed to the base class and may influence
+        the visualization as defined in other Visualizers.
+
+    Attributes
+    ----------
+    features_ : np.array
+        The feature labels ranked according to their importance
+
+    classes_ : np.array
+        The class labels for each of the target values
+
+    Examples
+    --------
+
+    >>> from yellowbrick.contrib.missing import missing_bar
+    >>> visualizer = missing_bar(X, y=y)
     """
     # Instantiate the visualizer
     visualizer = MissingValuesBar(
@@ -156,7 +241,6 @@ def missing_bar(X, y=None, ax=None, classes=None, width=0.5, color='black', **kw
 
     # Fit and transform the visualizer (calls draw)
     visualizer.fit(X, y)
-    visualizer.transform(X)
     visualizer.poof()
 
     # Return the axes object on the visualizer

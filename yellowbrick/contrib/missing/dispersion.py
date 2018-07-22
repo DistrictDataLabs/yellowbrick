@@ -19,8 +19,9 @@ Dispersion visualizer for locations of missing values by column against index po
 
 import numpy as np
 
-from .base import MissingDataVisualizer
 from yellowbrick.style.palettes import color_palette
+from .base import MissingDataVisualizer
+
 
 ##########################################################################
 ## MissingValues Visualizer
@@ -29,14 +30,46 @@ from yellowbrick.style.palettes import color_palette
 class MissingValuesDispersion(MissingDataVisualizer):
     """
     The Missing Values Dispersion visualizer shows the locations of missing (nan)
-    values in the feature dataset against the index column.
+    values in the feature dataset by the order of the index.
+
+    When y targets are supplied to fit, the output dispersion plot is color
+    coded according to the target y that the element refers to.
+
+    Parameters
+    ----------
+    alpha : float, default: 0.5
+        A value for bending elments with the background.
+
+    marker : matplotlib marker, default: |
+        The marker used for each element coordinate in the plot
+
+    classes : list, default: None
+        A list of class names for the legend.
+        If classes is None and a y value is passed to fit then the classes
+        are selected from the target vector.
+
+    kwargs : dict
+        Keyword arguments that are passed to the base class and may influence
+        the visualization as defined in other Visualizers.
+
+    Attributes
+    ----------
+    features_ : np.array
+        The feature labels ranked according to their importance
+
+    classes_ : np.array
+        The class labels for each of the target values
+
+    Examples
+    --------
+
+    >>> from yellowbrick.contrib.missing import MissingValuesDispersion
+    >>> visualizer = MissingValuesDispersion()
+    >>> visualizer.fit(X, y)
+    >>> visualizer.poof()
     """
-    # TODO - map missing values against another user selected column such as a
-    # datetime column.
 
     def __init__(self, alpha=0.5, marker="|", classes=None, **kwargs):
-        """
-        """
 
         super(MissingValuesDispersion, self).__init__(**kwargs)
         self.alpha = alpha
@@ -92,7 +125,7 @@ class MissingValuesDispersion(MissingDataVisualizer):
         nan_locs = self.get_nan_locs()
         if y is None:
             x_, y_ = list(zip(*nan_locs))
-            self.ax.scatter(x_, y_, alpha=self.alpha, marker=self.marker)
+            self.ax.scatter(x_, y_, alpha=self.alpha, marker=self.marker, label=None)
         else:
             self.draw_multi_dispersion_chart(nan_locs)
 
@@ -126,33 +159,67 @@ class MissingValuesDispersion(MissingDataVisualizer):
         self.set_title(
             'Dispersion of Missing Values by Feature'
         )
-        tick_locations = np.arange(len(self.features_))  # the x locations for the groups
-        # Remove the ticks from the graph
+        # the x locations for the groups
+        tick_locations = np.arange(len(self.features_))
+
         self.ax.set_xlabel('Position by index')
         self.ax.set_yticks(tick_locations)
         self.ax.set_yticklabels(self.get_feature_names())
-        # Add the legend
-        legend = self.ax.legend(loc='lower right', facecolor="grey")
-        legend.get_frame().set_edgecolor('b')
+        self.ax.legend(loc='upper left', prop={'size':5}, bbox_to_anchor=(1,1))
+
 
 
 ##########################################################################
 ## Quick Method
 ##########################################################################
 
-def missing_dispersion(X, y=None, ax=None, features=None, alpha=0.5, marker="|", **kwargs):
+def missing_dispersion(X, y=None, ax=None, classes=None, alpha=0.5, marker="|", **kwargs):
     """
     The Missing Values Dispersion visualizer shows the locations of missing (nan)
-    values in the feature dataset against the index column.
+    values in the feature dataset by the order of the index.
+
+    When y targets are supplied to fit, the output dispersion plot is color
+    coded according to the target y that the element refers to.
+
+    Parameters
+    ----------
+    alpha : float, default: 0.5
+        A value for bending elments with the background.
+
+    marker : matplotlib marker, default: |
+        The marker used for each element coordinate in the plot
+
+    classes : list, default: None
+        A list of class names for the legend.
+        If classes is None and a y value is passed to fit then the classes
+        are selected from the target vector.
+
+    kwargs : dict
+        Keyword arguments that are passed to the base class and may influence
+        the visualization as defined in other Visualizers.
+
+    Attributes
+    ----------
+    features_ : np.array
+        The feature labels ranked according to their importance
+
+    classes_ : np.array
+        The class labels for each of the target values
+
+    Examples
+    --------
+
+    >>> from yellowbrick.contrib.missing import missing_dispersion
+    >>> visualizer = missing_dispersion(X, y=y)
+
     """
     # Instantiate the visualizer
     visualizer = MissingValuesDispersion(
-        ax=ax, features=features, alpha=alpha, marker=marker, **kwargs
+        ax=ax, classes=classes, alpha=alpha, marker=marker, **kwargs
     )
 
     # Fit and transform the visualizer (calls draw)
     visualizer.fit(X, y)
-    visualizer.transform(X)
     visualizer.poof()
 
     # Return the axes object on the visualizer
