@@ -20,6 +20,7 @@ Dispersion visualizer for locations of missing values by column against index po
 import numpy as np
 
 from .base import MissingDataVisualizer
+from yellowbrick.style.palettes import color_palette
 
 ##########################################################################
 ## MissingValues Visualizer
@@ -33,13 +34,28 @@ class MissingValuesDispersion(MissingDataVisualizer):
     # TODO - map missing values against another user selected column such as a
     # datetime column.
 
-    def __init__(self, alpha=0.5, marker="|", **kwargs):
+    def __init__(self, alpha=0.5, marker="|", classes=None, **kwargs):
         """
         """
 
         super(MissingValuesDispersion, self).__init__(**kwargs)
         self.alpha = alpha
         self.marker = marker
+
+        self.classes_ = classes
+
+        # Convert to array if necessary to match estimator.classes_
+        if self.classes_ is not None:
+            self.classes_ = np.array(classes)
+
+        # Set up classifier score visualization properties
+        if self.classes_ is not None:
+            n_colors = len(self.classes_)
+        else:
+            n_colors = None
+
+        self.colors = color_palette(kwargs.pop('colors', None), n_colors)
+
 
     def get_nan_locs(self, **kwargs):
         """Gets the locations of nans in feature data and returns
@@ -52,17 +68,49 @@ class MissingValuesDispersion(MissingDataVisualizer):
 
         else:
             nan_matrix = self.X.astype(float)
-        return np.argwhere(np.isnan(nan_matrix))
+
+        if self.y is None:
+            return np.argwhere(np.isnan(nan_matrix))
+        else:
+            nan_locs = []
+            for target_value in np.unique(self.y):
+                indices = np.argwhere(self.y == target_value)
+                target_matrix = nan_matrix[indices.flatten()]
+                nan_target_locs = np.argwhere(np.isnan(target_matrix))
+                nan_locs.append((target_value, nan_target_locs))
+
+            return nan_locs
 
     def draw(self, X, y, **kwargs):
         """Called from the fit method, this method creates a scatter plot that
         draws each instance as a class or target colored point, whose location
         is determined by the feature data set.
-        """
 
+        If y is not None, then it draws a scatter plot where each class is in a
+        different color.
+        """
         nan_locs = self.get_nan_locs()
-        x, y = list(zip(*nan_locs))
-        self.ax.scatter(x, y, alpha=self.alpha, marker=self.marker)
+        if y is None:
+            x_, y_ = list(zip(*nan_locs))
+            self.ax.scatter(x_, y_, alpha=self.alpha, marker=self.marker)
+        else:
+            self.draw_multi_dispersion_chart(nan_locs)
+
+    def draw_multi_dispersion_chart(self, nan_locs):
+        """Draws a multi dimensional dispersion chart, each color corresponds
+        to a different target variable.
+        """
+        for index, nan_values in enumerate(nan_locs):
+            label, nan_locations = nan_values
+
+            # if features passed in then, label as such
+            if self.classes_ is not None:
+                label = self.classes_[index]
+
+            color = self.colors[index]
+
+            x_, y_ = list(zip(*nan_locations))
+            self.ax.scatter(x_, y_, alpha=self.alpha, marker=self.marker, color=color, label=label)
 
     def finalize(self, **kwargs):
         """
@@ -84,7 +132,8 @@ class MissingValuesDispersion(MissingDataVisualizer):
         self.ax.set_yticks(tick_locations)
         self.ax.set_yticklabels(self.get_feature_names())
         # Add the legend
-        self.ax.legend()
+        legend = self.ax.legend(loc='lower right', facecolor="grey")
+        legend.get_frame().set_edgecolor('b')
 
 
 ##########################################################################

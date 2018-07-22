@@ -139,7 +139,7 @@ class MissingValuesBar(MissingDataVisualizer):
         # Remove the ticks from the graph
         self.ax.set_xlabel('Count')
 
-        self.ax.legend()
+        self.ax.legend(loc='best')
 
 ##########################################################################
 ## Quick Method
