@@ -29,12 +29,11 @@ from yellowbrick.classifier.rocauc import *
 from yellowbrick.exceptions import ModelError, YellowbrickValueError
 
 from sklearn.svm import LinearSVC
-from sklearn.naive_bayes import MultinomialNB
+from sklearn.naive_bayes import GaussianNB, MultinomialNB
 from sklearn.tree import DecisionTreeClassifier
 from sklearn.datasets import load_breast_cancer
 from sklearn.linear_model import LogisticRegression
 from sklearn.base import BaseEstimator, ClassifierMixin
-from sklearn.model_selection import train_test_split as tts
 
 
 ##########################################################################
@@ -69,46 +68,20 @@ class FakeClassifier(BaseEstimator, ClassifierMixin):
 ##  Tests
 ##########################################################################
 
+@pytest.mark.usefixtures("binary", "multiclass")
 class ROCAUCTests(VisualTestCase, DatasetMixin):
-
-    def load_binary_data(self):
-        """
-        Returns the binary test data set.
-        """
-        # Load the Data
-        data = self.load_data("occupancy")
-
-        X = data[[
-            "temperature", "relative_humidity", "light", "C02", "humidity"
-        ]]
-
-        y = data['occupancy'].astype(int)
-
-        # Convert X to an ndarray
-        X = X.copy().view((float, len(X.dtype.names)))
-
-        # Return train/test splits
-        return tts(X, y, test_size=0.2, random_state=42)
-
-    def load_multiclass_data(self):
-        """
-        Returns the multiclass test data set.
-        """
-        raise NotImplementedError("Need to add multiclass data soon!")
 
     @pytest.mark.skip(reason="binary classifiers don't currently work as expected")
     def test_binary_rocauc(self):
         """
         Test ROCAUC with a binary classifier
         """
-        X_train, X_test, y_train, y_test = self.load_binary_data()
-
         # Create and fit the visualizer
         visualizer = ROCAUC(LinearSVC())
-        visualizer.fit(X_train, y_train)
+        visualizer.fit(self.binary.X.train, self.binary.y.train)
 
         # Score the visualizer
-        s = visualizer.score(X_test, y_test)
+        s = visualizer.score(self.binary.X.test, self.binary.y.test)
 
         # Test that score method successfully returns a value between 0 and 1
         assert 0 <= s <= 1
@@ -135,16 +108,12 @@ class ROCAUCTests(VisualTestCase, DatasetMixin):
         """
         Test ROCAUC with a multiclass classifier
         """
-        # Load the Data
-        # TODO: Switch to a true multi-class dataset
-        X_train, X_test, y_train, y_test = self.load_binary_data()
-
         # Create and fit the visualizer
-        visualizer = ROCAUC(MultinomialNB())
-        visualizer.fit(X_train, y_train)
+        visualizer = ROCAUC(GaussianNB())
+        visualizer.fit(self.multiclass.X.train, self.multiclass.y.train)
 
         # Score the visualizer
-        s = visualizer.score(X_test, y_test)
+        s = visualizer.score(self.multiclass.X.test, self.multiclass.y.test)
 
         # Test that score method successfully returns a value between 0 and 1
         assert 0 <= s <= 1
@@ -176,21 +145,17 @@ class ROCAUCTests(VisualTestCase, DatasetMixin):
         # TODO: impage comparison of the quick method
         roc_auc(model, data.data, data.target)
 
-    @pytest.mark.xfail(reason="see issue #315")
     def test_rocauc_no_micro(self):
         """
         Test ROCAUC without a micro average
         """
-        # Load the Data
-        X_train, X_test, y_train, y_test = self.load_binary_data()
-
         # Create and fit the visualizer
         visualizer = ROCAUC(LogisticRegression(), micro=False)
-        visualizer.fit(X_train, y_train)
+        visualizer.fit(self.binary.X.train, self.binary.y.train)
 
         # Score the visualizer (should be the macro average)
-        s = visualizer.score(X_test, y_test)
-        self.assertAlmostEqual(s, 0.99578564759755916)
+        s = visualizer.score(self.binary.X.test, self.binary.y.test)
+        self.assertAlmostEqual(s, 0.8)
 
         # Assert that there is no micro score
         self.assertNotIn("micro", visualizer.fpr)
@@ -201,21 +166,17 @@ class ROCAUCTests(VisualTestCase, DatasetMixin):
         visualizer.poof()
         self.assert_images_similar(visualizer)
 
-    @pytest.mark.xfail(reason="see issue #315")
     def test_rocauc_no_macro(self):
         """
         Test ROCAUC without a macro average
         """
-        # Load the Data
-        X_train, X_test, y_train, y_test = self.load_binary_data()
-
         # Create and fit the visualizer
         visualizer = ROCAUC(LogisticRegression(), macro=False)
-        visualizer.fit(X_train, y_train)
+        visualizer.fit(self.binary.X.train, self.binary.y.train)
 
         # Score the visualizer (should be the micro average)
-        s = visualizer.score(X_test, y_test)
-        self.assertAlmostEqual(s, 0.99766508576965574)
+        s = visualizer.score(self.binary.X.test, self.binary.y.test)
+        self.assertAlmostEqual(s, 0.8)
 
         # Assert that there is no macro score
         self.assertNotIn("macro", visualizer.fpr)
@@ -233,16 +194,13 @@ class ROCAUCTests(VisualTestCase, DatasetMixin):
         """
         Test ROCAUC without a macro or micro average
         """
-        # Load the Data
-        X_train, X_test, y_train, y_test = self.load_binary_data()
-
         # Create and fit the visualizer
         visualizer = ROCAUC(LogisticRegression(), macro=False, micro=False)
-        visualizer.fit(X_train, y_train)
+        visualizer.fit(self.binary.X.train, self.binary.y.train)
 
         # Score the visualizer (should be the F1 score)
-        s = visualizer.score(X_test, y_test)
-        self.assertAlmostEqual(s, 0.98978599221789887)
+        s = visualizer.score(self.binary.X.test, self.binary.y.test)
+        self.assertAlmostEqual(s, 0.8)
 
         # Assert that there is no macro score
         self.assertNotIn("macro", visualizer.fpr)
@@ -263,15 +221,15 @@ class ROCAUCTests(VisualTestCase, DatasetMixin):
         """
         Test ROCAUC without per-class curves
         """
-        # Load the Data
-        X_train, X_test, y_train, y_test = self.load_binary_data()
+        # # Load the Data
+        # X_train, X_test, y_train, y_test = self.load_binary_data()
 
         # Create and fit the visualizer
         visualizer = ROCAUC(LogisticRegression(), per_class=False)
-        visualizer.fit(X_train, y_train)
+        visualizer.fit(self.binary.X.train, self.binary.y.train)
 
         # Score the visualizer (should be the micro average)
-        s = visualizer.score(X_test, y_test)
+        s = visualizer.score(self.binary.X.test, self.binary.y.test)
         self.assertAlmostEqual(s, 0.99766508576965574)
 
         # Assert that there still are per-class scores
