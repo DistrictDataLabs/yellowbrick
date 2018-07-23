@@ -28,6 +28,8 @@ import matplotlib.pyplot as plt
 from yellowbrick.utils import is_dataframe
 from yellowbrick.base import ModelVisualizer
 from yellowbrick.exceptions import YellowbrickTypeError, NotFitted
+from ..style.colors import resolve_colors
+from ..style.palettes import color_palette
 
 
 ##########################################################################
@@ -95,13 +97,13 @@ class FeatureImportances(ModelVisualizer):
     """
 
     def __init__(self, model, ax=None, labels=None, relative=True,
-                 absolute=False, xlabel=None, **kwargs):
+                 absolute=False, xlabel=None, stack=False, **kwargs):
         super(FeatureImportances, self).__init__(model, ax, **kwargs)
 
         # Data Parameters
         self.set_params(
             labels=labels, relative=relative, absolute=absolute,
-            xlabel=xlabel,
+            xlabel=xlabel, stack=stack,
         )
 
     def fit(self, X, y=None, **kwargs):
@@ -130,10 +132,14 @@ class FeatureImportances(ModelVisualizer):
         # Get the feature importances from the model
         self.feature_importances_ = self._find_importances_param()
 
+        # Get the classes from the model
+        self.classes_ = self._find_classes_param(y)
+
         # If feature importances is a multidim array, we're expecting a shape of
         # (n_classes, n_features) therefore we flatten by taking the average by
         # column to get shape (n_features,)  (see LogisticRegression)
-        if self.feature_importances_.ndim > 1:
+        #if self.feature_importances_.ndim > 1:
+        if not self.stack and self.feature_importances_.ndim > 1:
             self.feature_importances_ = np.mean(self.feature_importances_, axis=0)
 
         # TODO - as an alternative to the above flattening approach, explore an
@@ -165,9 +171,14 @@ class FeatureImportances(ModelVisualizer):
             self.features_ = np.array(self.labels)
 
         # Sort the features and their importances
-        sort_idx = np.argsort(self.feature_importances_)
-        self.features_ = self.features_[sort_idx]
-        self.feature_importances_ = self.feature_importances_[sort_idx]
+        if self.stack:
+            sort_idx = np.argsort(np.mean(self.feature_importances_, 0))
+            self.features_ = self.features_[sort_idx]
+            self.feature_importances_ = self.feature_importances_[:, sort_idx]
+        else:
+            sort_idx = np.argsort(self.feature_importances_)
+            self.features_ = self.features_[sort_idx]
+            self.feature_importances_ = self.feature_importances_[sort_idx]
 
         # Draw the feature importances
         self.draw()
@@ -186,7 +197,25 @@ class FeatureImportances(ModelVisualizer):
         pos = np.arange(self.features_.shape[0]) + 0.5
 
         # Plot the bar chart
-        self.ax.barh(pos, self.feature_importances_, align='center')
+        if self.stack:
+            colors = color_palette(kwargs.pop('colors', None),
+                                   len(self.classes_))
+            zeros = np.zeros(self.feature_importances_.shape[1])
+            left_arr = np.zeros((self.feature_importances_.shape[1], 2))
+
+            for idx in range(len(self.feature_importances_)):
+                left = [left_arr[j, int(self.feature_importances_[idx][j]>0)]
+                        for j in range(len(self.feature_importances_[idx]))]
+
+                self.ax.barh(pos, self.feature_importances_[idx], left=left,
+                             color=colors[idx], label=self.classes_[idx])
+
+                left_arr[:, 0] += np.minimum(self.feature_importances_[idx],
+                                             zeros)
+                left_arr[:, 1] += np.maximum(self.feature_importances_[idx],
+                                             zeros)
+        else:
+            self.ax.barh(pos, self.feature_importances_, align='center')
 
         # Set the labels for the bars
         self.ax.set_yticks(pos)
@@ -208,8 +237,28 @@ class FeatureImportances(ModelVisualizer):
         # Remove the ygrid
         self.ax.grid(False, axis='y')
 
+        if self.stack:
+            plt.legend(bbox_to_anchor=(1.04, 0.5), loc="center left")
         # Ensure we have a tight fit
         plt.tight_layout()
+
+    def _find_classes_param(self, y):
+        """
+        Searches the wrapped model for the classes_ parameter.
+        """
+        for attr in ["classes_"]:
+            try:
+                return getattr(self.estimator, attr)
+            except AttributeError:
+                continue
+
+        self.stack = False
+        return np.unique(y)
+        #raise YellowbrickTypeError(
+        #    "could not find classes_ param on {}".format(
+        #        self.estimator.__class__.__name__
+        #    )
+        #)
 
     def _find_importances_param(self):
         """
@@ -258,7 +307,8 @@ class FeatureImportances(ModelVisualizer):
 ##########################################################################
 
 def feature_importances(model, X, y=None, ax=None, labels=None,
-                        relative=True, absolute=False, xlabel=None, **kwargs):
+                        relative=True, absolute=False, xlabel=None,
+                        stack=False, **kwargs):
     """
     Displays the most informative features in a model by showing a bar chart
     of features ranked by their importances. Although primarily a feature
@@ -309,7 +359,7 @@ def feature_importances(model, X, y=None, ax=None, labels=None,
     """
     # Instantiate the visualizer
     visualizer = FeatureImportances(
-        model, ax, labels, relative, absolute, xlabel, **kwargs)
+        model, ax, labels, relative, absolute, xlabel, stack, **kwargs)
 
     # Fit and transform the visualizer (calls draw)
     visualizer.fit(X, y)
