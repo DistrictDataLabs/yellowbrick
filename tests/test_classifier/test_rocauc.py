@@ -230,19 +230,35 @@ class ROCAUCTests(VisualTestCase, DatasetMixin):
                 LogisticRegression(), per_class=False, macro=False, micro=False
             )
 
-    @pytest.mark.skip(reason="not implemented yet")
     def test_rocauc_label_encoded(self):
         """
-        Test ROCAUC with label encoding before scoring
+        Test ROCAUC with a target specifying a list of classes as strings
         """
-        pass
+        class_labels = ['a', 'b', 'c', 'd', 'e', 'f']
 
-    @pytest.mark.skip(reason="not implemented yet")
+        # Create and fit the visualizer
+        visualizer = ROCAUC(LogisticRegression(), classes=class_labels)
+        visualizer.fit(self.multiclass.X.train, self.multiclass.y.train)
+
+        # Score the visualizer
+        visualizer.score(self.multiclass.X.test, self.multiclass.y.test)
+        self.assertEqual(list(visualizer.classes_), class_labels)
+
     def test_rocauc_not_label_encoded(self):
         """
-        Test ROCAUC without label encoding before scoring
+        Test ROCAUC with a target whose classes are unencoded strings before scoring
         """
-        pass
+        # Map numeric targets to strings
+        classes = {0: 'a', 1: 'b', 2: 'c', 3: 'd', 4: 'e', 5: 'f'}
+        y_train = np.array([classes[yi] for yi in self.multiclass.y.train])
+        y_test = np.array([classes[yi] for yi in self.multiclass.y.test])
+
+        # Create and fit the visualizer
+        visualizer = ROCAUC(LogisticRegression())
+        visualizer.fit(self.multiclass.X.train, y_train)
+
+        # Confirm that y_train and y_test have the same targets before calling score
+        self.assertEqual(set(y_train), set(y_test))
 
     def test_binary_decision_function_rocauc(self):
         """
