@@ -15,7 +15,6 @@
 Implementation of a feature importances visualizer. This visualizer sits in
 kind of a weird place since it is technically a model scoring visualizer, but
 is generally used for feature engineering.
-
 """
 
 ##########################################################################
@@ -28,7 +27,6 @@ import matplotlib.pyplot as plt
 from yellowbrick.utils import is_dataframe
 from yellowbrick.base import ModelVisualizer
 from yellowbrick.exceptions import YellowbrickTypeError, NotFitted
-from ..style.colors import resolve_colors
 from ..style.palettes import color_palette
 
 
