@@ -16,3 +16,8 @@ from yellowbrick.contrib.missing import MissingValuesBar
 viz = MissingValuesBar(features=features)
 viz.fit(X)
 viz.poof(outpath="images/missingbar.png")
+
+
+viz = MissingValuesBar(features=features)
+viz.fit(X, y=y)
+viz.poof(outpath="images/missingbar_with_targets.png")

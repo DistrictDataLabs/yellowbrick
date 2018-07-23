@@ -73,7 +73,7 @@ class MissingValuesBar(MissingDataVisualizer):
 
     >>> from yellowbrick.contrib.missing import MissingValuesBar
     >>> visualizer = MissingValuesBar()
-    >>> visualizer.fit(X, y)
+    >>> visualizer.fit(X, y=y)
     >>> visualizer.poof()
     """
 

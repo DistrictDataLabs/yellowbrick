@@ -16,3 +16,8 @@ from yellowbrick.contrib.missing import MissingValuesDispersion
 viz = MissingValuesDispersion(features=features)
 viz.fit(X)
 viz.poof(outpath="images/missingdispersion.png")
+
+
+viz = MissingValuesDispersion(features=features)
+viz.fit(X, y=y)
+viz.poof(outpath="images/missingdispersion_with_targets.png")

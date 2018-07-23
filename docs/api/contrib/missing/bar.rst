@@ -5,6 +5,10 @@ MissingValues Bar
 
 The MissingValues Bar visualizer creates a bar graph that counts the number of missing values per feature column.
 
+If the target y is supplied to fit, then produces a stacked bar chart.
+
+**Setup**
+
 .. code:: python
 
     import numpy as np
@@ -18,6 +22,10 @@ The MissingValues Bar visualizer creates a bar graph that counts the number of m
     X[X > 1.5] = np.nan
     features = ["Feature {}".format(str(n)) for n in range(10)]
 
+-------------------------------------------
+Without Targets Supplied
+-------------------------------------------
+
 .. code:: python
 
     from yellowbrick.contrib.missing import MissingValuesBar
@@ -27,6 +35,20 @@ The MissingValues Bar visualizer creates a bar graph that counts the number of m
     viz.poof()
 
 .. image:: images/missingbar.png
+
+-------------------------------------------
+With Targets (y) Supplied
+-------------------------------------------
+
+.. code:: python
+
+    from yellowbrick.contrib.missing import MissingValuesBar
+
+    viz = MissingValuesBar(features=features)
+    viz.fit(X, y=y) # supply the targets via y
+    viz.poof()
+
+.. image:: images/missingbar_with_targets.png
 
 
 API Reference

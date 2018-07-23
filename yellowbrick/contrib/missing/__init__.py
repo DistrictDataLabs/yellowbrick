@@ -9,5 +9,5 @@
 #
 # ID: __init__.py [5eee25b] nathan.danielsen@gmail.com $
 
-from .bar import MissingValuesBar
-from .dispersion import MissingValuesDispersion
+from .bar import MissingValuesBar, missing_bar
+from .dispersion import MissingValuesDispersion, missing_dispersion

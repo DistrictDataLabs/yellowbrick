@@ -65,7 +65,7 @@ class MissingValuesDispersion(MissingDataVisualizer):
 
     >>> from yellowbrick.contrib.missing import MissingValuesDispersion
     >>> visualizer = MissingValuesDispersion()
-    >>> visualizer.fit(X, y)
+    >>> visualizer.fit(X, y=y)
     >>> visualizer.poof()
     """
 
