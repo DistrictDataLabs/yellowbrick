@@ -14,7 +14,6 @@ Use manifold algorithms for high dimensional visualization.
 ## Imports
 ##########################################################################
 
-import time
 import numpy as np
 import matplotlib.pyplot as plt
 
@@ -22,6 +21,7 @@ from six import string_types
 from matplotlib import patches
 
 from yellowbrick.utils.types import is_estimator
+from yellowbrick.utils.timer import Timer
 from yellowbrick.style import palettes, resolve_colors
 from yellowbrick.features.base import FeatureVisualizer
 from yellowbrick.exceptions import YellowbrickValueError, NotFitted
@@ -151,7 +151,7 @@ class Manifold(FeatureVisualizer):
 
     Attributes
     ----------
-    fit_time_ : float
+    fit_time_ : yellowbrick.utils.timer.Timer
         The amount of time in seconds it took to fit the Manifold.
 
     classes_ : np.ndarray, optional
@@ -314,9 +314,8 @@ class Manifold(FeatureVisualizer):
             y = np.asarray(y)
             self.range_ = (y.min(), y.max())
 
-        start = time.time()
-        Xp = self.manifold.fit_transform(X)
-        self.fit_time_ = time.time() - start
+        with Timer() as self.fit_time_:
+            Xp = self.manifold.fit_transform(X)
 
         self.draw(Xp, y)
         return Xp
@@ -395,7 +394,7 @@ class Manifold(FeatureVisualizer):
         """
         self.set_title(
             '{} Manifold (fit in {:0.2f} seconds)'.format(
-                self._name, self.fit_time_
+                self._name, self.fit_time_.interval
             )
         )
         self.ax.set_xticklabels([])
