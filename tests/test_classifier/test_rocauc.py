@@ -216,21 +216,17 @@ class ROCAUCTests(VisualTestCase, DatasetMixin):
         visualizer.poof()
         self.assert_images_similar(visualizer)
 
-    @pytest.mark.xfail(reason="see issue #315")
     def test_rocauc_no_classes(self):
         """
         Test ROCAUC without per-class curves
         """
-        # # Load the Data
-        # X_train, X_test, y_train, y_test = self.load_binary_data()
-
         # Create and fit the visualizer
         visualizer = ROCAUC(LogisticRegression(), per_class=False)
         visualizer.fit(self.binary.X.train, self.binary.y.train)
 
         # Score the visualizer (should be the micro average)
         s = visualizer.score(self.binary.X.test, self.binary.y.test)
-        self.assertAlmostEqual(s, 0.99766508576965574)
+        self.assertAlmostEqual(s, 0.8)
 
         # Assert that there still are per-class scores
         for c in (0, 1):
