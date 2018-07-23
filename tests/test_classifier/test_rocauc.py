@@ -103,7 +103,6 @@ class ROCAUCTests(VisualTestCase, DatasetMixin):
         visualizer.poof()
         self.assert_images_similar(visualizer)
 
-    @pytest.mark.xfail(reason="see issue #315")
     def test_multiclass_rocauc(self):
         """
         Test ROCAUC with a multiclass classifier
@@ -119,9 +118,9 @@ class ROCAUCTests(VisualTestCase, DatasetMixin):
         assert 0 <= s <= 1
 
         # Check the scores
-        self.assertEqual(len(visualizer.fpr.keys()), 4)
-        self.assertEqual(len(visualizer.tpr.keys()), 4)
-        self.assertEqual(len(visualizer.roc_auc.keys()), 4)
+        self.assertEqual(len(visualizer.fpr.keys()), 8)
+        self.assertEqual(len(visualizer.tpr.keys()), 8)
+        self.assertEqual(len(visualizer.roc_auc.keys()), 8)
 
         for k in (0, 1, "micro", "macro"):
             self.assertIn(k, visualizer.fpr)
