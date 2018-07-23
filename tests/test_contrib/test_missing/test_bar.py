@@ -17,10 +17,10 @@ Tests for the MissingValuesBar visualizations.
 ## Imports
 ##########################################################################
 
+import os
 from tests.base import VisualTestCase
 from sklearn.datasets import make_classification
 from yellowbrick.contrib.missing.bar import *
-
 
 try:
     import pandas as pd
@@ -31,10 +31,16 @@ except ImportError:
 ## Feature Importances Tests
 ##########################################################################
 
-class TestFeatureImportancesVisualizer(VisualTestCase):
+class TestMissingBarVisualizer(VisualTestCase):
     """
     FeatureImportances visualizer
     """
+
+    def setUp(self):
+        super(TestMissingBarVisualizer, self).setUp()
+        self.tol = 0.01
+        if os.name == 'nt': # Windows
+            self.tol = 0.5
 
     def test_missingvaluesbar_pandas(self):
         """
@@ -54,7 +60,7 @@ class TestFeatureImportancesVisualizer(VisualTestCase):
         viz.fit(X_)
         viz.poof()
 
-        self.assert_images_similar(viz)
+        self.assert_images_similar(viz, tol=self.tol)
 
 
     def test_missingvaluesbar_numpy(self):
@@ -74,7 +80,7 @@ class TestFeatureImportancesVisualizer(VisualTestCase):
         viz.fit(X)
         viz.poof()
 
-        self.assert_images_similar(viz)
+        self.assert_images_similar(viz, tol=self.tol)
 
     def test_missingvaluesbar_numpy_with_y_target(self):
         """
@@ -94,7 +100,7 @@ class TestFeatureImportancesVisualizer(VisualTestCase):
         viz.fit(X, y)
         viz.poof()
 
-        self.assert_images_similar(viz)
+        self.assert_images_similar(viz, tol=self.tol)
 
     def test_missingvaluesbar_numpy_with_y_target_with_labels(self):
         """
@@ -114,4 +120,4 @@ class TestFeatureImportancesVisualizer(VisualTestCase):
         viz.fit(X, y)
         viz.poof()
 
-        self.assert_images_similar(viz)
+        self.assert_images_similar(viz, tol=self.tol)

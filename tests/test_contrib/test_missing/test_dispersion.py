@@ -16,6 +16,7 @@ Tests for the MissingValuesDispersion visualizations.
 ##########################################################################
 ## Imports
 ##########################################################################
+import os
 from sklearn.datasets import make_classification
 from tests.base import VisualTestCase
 
@@ -34,6 +35,11 @@ class MissingValuesDispersionTestCase(VisualTestCase):
     """
     MissingValuesDispersion visualizer
     """
+    def setUp(self):
+        super(MissingValuesDispersionTestCase, self).setUp()
+        self.tol = 0.01
+        if os.name == 'nt': # Windows
+            self.tol = 5.0
 
 
     def test_missingvaluesdispersion_with_pandas(self):
@@ -54,7 +60,7 @@ class MissingValuesDispersionTestCase(VisualTestCase):
         viz.fit(X_)
         viz.poof()
 
-        self.assert_images_similar(viz)
+        self.assert_images_similar(viz, tol=self.tol)
 
     def test_missingvaluesdispersion_with_pandas_with_y_targets(self):
         """
@@ -75,7 +81,7 @@ class MissingValuesDispersionTestCase(VisualTestCase):
         viz.fit(X_, y=y)
         viz.poof()
 
-        self.assert_images_similar(viz)
+        self.assert_images_similar(viz, tol=self.tol)
 
 
     def test_missingvaluesdispersion_with_numpy(self):
@@ -95,7 +101,7 @@ class MissingValuesDispersionTestCase(VisualTestCase):
         viz.fit(X)
         viz.poof()
 
-        self.assert_images_similar(viz)
+        self.assert_images_similar(viz, tol=self.tol)
 
     def test_missingvaluesdispersion_with_numpy_with_y_targets(self):
         """
@@ -115,4 +121,4 @@ class MissingValuesDispersionTestCase(VisualTestCase):
         viz.fit(X, y=y)
         viz.poof()
 
-        self.assert_images_similar(viz)
+        self.assert_images_similar(viz, tol=self.tol)
