@@ -19,9 +19,12 @@ Downloads the example datasets for running the examples.
 ##########################################################################
 ## Imports
 ##########################################################################
+
 import os
+import numpy as np
 
 from .utils import load_numpy, load_corpus, download_data, DATASETS
+from .utils import _lookup_path
 
 ##########################################################################
 ## Functions
@@ -113,8 +116,9 @@ def load_game(data_path=FIXTURES):
     """
     # name of the dataset
     name = 'game'
-    data = load_numpy(name, data_path=data_path)
-    return data
+    path = _lookup_path(name, data_path=data_path)
+    dtype = np.array(['S1']*42+['|S4'])
+    return np.genfromtxt(path, dtype=dtype, delimiter=',', names=True)
 
 
 def load_bikeshare(data_path=FIXTURES):
