@@ -29,7 +29,7 @@ from yellowbrick.classifier.rocauc import *
 from yellowbrick.exceptions import ModelError, YellowbrickValueError
 
 from sklearn.svm import LinearSVC
-from sklearn.naive_bayes import GaussianNB, MultinomialNB
+from sklearn.naive_bayes import GaussianNB
 from sklearn.tree import DecisionTreeClassifier
 from sklearn.datasets import load_breast_cancer
 from sklearn.linear_model import LogisticRegression
@@ -318,26 +318,33 @@ class ROCAUCTests(VisualTestCase, DatasetMixin):
         Test ROCAUC with classifiers that utilize predict_proba
         """
         # Load the model and assert there is no decision_function method.
-        model = MultinomialNB()
+        model = GaussianNB()
         with self.assertRaises(AttributeError):
             model.decision_function
 
         # Fit model and visualizer
         visualizer = ROCAUC(model)
-        visualizer.fit(X, yb)
+        visualizer.fit(self.binary.X.train, self.binary.y.train)
 
-        expected = np.asarray([
-            [0.493788,  0.506212],
-            [0.493375,  0.506625],
-            [0.493572,  0.506428],
-            [0.511063,  0.488936],
-            [0.511887,  0.488112],
-            [0.510841,  0.489158],
+        # First 10 expected arrays in the y_scores
+        first_ten_expected = np.asarray([
+            [0.595, 0.405],
+            [0.161, 0.839],
+            [0.990, 0.010],
+            [0.833, 0.167],
+            [0.766, 0.234],
+            [0.996, 0.004],
+            [0.592, 0.408],
+            [0.007, 0.993],
+            [0.035, 0.965],
+            [0.764, 0.236]
         ])
 
         # Get the predict_proba scores and evaluate
-        y_scores = visualizer._get_y_scores(X)
-        npt.assert_array_almost_equal(y_scores, expected)
+        y_scores = visualizer._get_y_scores(self.binary.X.train)
+
+        # Check to see if the first 10 y_score arrays match the expected
+        npt.assert_array_almost_equal(y_scores[:10], first_ten_expected, decimal=1)
 
     def test_no_scoring_function(self):
         """
