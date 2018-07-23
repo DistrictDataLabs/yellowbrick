@@ -266,10 +266,9 @@ class ROCAUCTests(VisualTestCase, DatasetMixin):
         """
         pass
 
-    @pytest.mark.xfail(reason="not working with expected precision")
-    def test_decision_function_rocauc(self):
+    def test_binary_decision_function_rocauc(self):
         """
-        Test ROCAUC with classifiers that have a decision function
+        Test ROCAUC with binary classifiers that have a decision function
         """
         # Load the model and assert there is no predict_proba method.
         model = LinearSVC()
@@ -278,15 +277,46 @@ class ROCAUCTests(VisualTestCase, DatasetMixin):
 
         # Fit model and visualizer
         visualizer = ROCAUC(model)
-        visualizer.fit(X, yb)
+        visualizer.fit(self.binary.X.train, self.binary.y.train)
 
-        expected = np.asarray([
-            0.204348,  0.228593,  0.219908, -0.211756, -0.26155 , -0.221405
+        # First 10 expected values in the y_scores
+        first_ten_expected = np.asarray([
+            -0.092, 0.019, -0.751, -0.838, 0.183, -0.344, -1.019, 2.203, 1.415, -0.529
         ])
 
         # Get the predict_proba scores and evaluate
-        y_scores = visualizer._get_y_scores(X)
-        npt.assert_array_almost_equal(y_scores, expected, decimal=1)
+        y_scores = visualizer._get_y_scores(self.binary.X.train)
+
+        # Check to see if the first 10 y_scores match the expected
+        npt.assert_array_almost_equal(y_scores[:10], first_ten_expected, decimal=1)
+
+    def test_multi_decision_function_rocauc(self):
+        """
+        Test ROCAUC with multiclass classifiers that have a decision function
+        """
+        # Load the model and assert there is no predict_proba method.
+        model = LinearSVC()
+        with self.assertRaises(AttributeError):
+            model.predict_proba
+
+        # Fit model and visualizer
+        visualizer = ROCAUC(model)
+        visualizer.fit(self.multiclass.X.train, self.multiclass.y.train)
+
+        # First 5 expected arrays in the y_scores
+        first_five_expected = [
+             [-0.370, -0.543, -1.059, -0.466, -0.743, -1.156],
+             [-0.445, -0.693, -0.362, -1.002, -0.815, -0.878],
+             [-1.058, -0.808, -0.291, -0.767, -0.651, -0.586],
+             [-0.446, -1.255, -0.489, -0.961, -0.807, -0.126],
+             [-1.066, -0.493, -0.639, -0.442, -0.639, -1.017]
+        ]
+
+        # Get the predict_proba scores and evaluate
+        y_scores = visualizer._get_y_scores(self.multiclass.X.train)
+
+        # Check to see if the first 5 y_score arrays match the expected
+        npt.assert_array_almost_equal(y_scores[:5], first_five_expected, decimal=1)
 
     def test_predict_proba_rocauc(self):
         """
