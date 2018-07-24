@@ -10,11 +10,11 @@
       "affiliation": "University of Maryland"
     },
     {
-      "@id": "",
+      "@id": "https://orcid.org/0000-0002-1143-044X",
       "@type": "Person",
       "email": "bilbro@gmail.com",
       "name": "Rebecca Bilbro",
-      "affiliation": ""
+      "affiliation": "Georgetown University"
     }
   ],
   "identifier": "https://doi.org/10.5281/zenodo.1249057",
