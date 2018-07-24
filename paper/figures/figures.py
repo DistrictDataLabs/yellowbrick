@@ -8,9 +8,9 @@ import pandas as pd
 import matplotlib.pyplot as plt
 
 from yellowbrick.features import Rank2D, RadViz
+from yellowbrick.regressor import ResidualsPlot, PredictionError
 from yellowbrick.cluster import KElbowVisualizer, SilhouetteVisualizer
 from yellowbrick.classifier import ClassificationReport, DiscriminationThreshold
-from yellowbrick.regressor import AlphaSelection, ResidualsPlot, PredictionError
 
 from collections import namedtuple
 from sklearn.datasets import make_blobs
