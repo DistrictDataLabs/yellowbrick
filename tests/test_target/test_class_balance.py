@@ -72,6 +72,17 @@ class ClassBalanceTests(VisualTestCase, DatasetMixin):
     Test ClassBalance visualizer
     """
 
+    def test_signature_exception(self):
+        """
+        An exception is raised if X and y are put into the visualizer
+        """
+        oz = ClassBalance()
+        dataset = make_fixture(split=False)
+
+        message = "fit has changed to only require a 1D array, y"
+        with pytest.raises(YellowbrickValueError, match=message):
+            oz.fit(dataset.X, dataset.y)
+
     def test_invalid_target(self):
         """
         A value error should be raised on invalid train or test target
