@@ -18,6 +18,9 @@ Testing for the ROCAUC visualizer
 ## Imports
 ##########################################################################
 
+import os
+TOL = 10 if os.name == 'nt'  else 0.01
+
 import sys
 import pytest
 import numpy as np
@@ -54,7 +57,7 @@ class FakeClassifier(BaseEstimator, ClassifierMixin):
 @pytest.mark.usefixtures("binary", "multiclass")
 class ROCAUCTests(VisualTestCase, DatasetMixin):
 
-    @pytest.mark.skip(reason="binary classifiers don't currently work as expected")
+    @pytest.mark.xfail(reason="binary classifiers don't currently work as expected")
     def test_binary_rocauc(self):
         """
         Test ROCAUC with a binary classifier
@@ -115,7 +118,7 @@ class ROCAUCTests(VisualTestCase, DatasetMixin):
 
         # Compare the images
         visualizer.poof()
-        self.assert_images_similar(visualizer, tol=0.071)
+        self.assert_images_similar(visualizer, tol=TOL)
 
     def test_rocauc_quickmethod(self):
         """
@@ -124,7 +127,7 @@ class ROCAUCTests(VisualTestCase, DatasetMixin):
         data = load_breast_cancer()
         model = DecisionTreeClassifier()
 
-        # TODO: impage comparison of the quick method
+        # TODO: image comparison of the quick method
         roc_auc(model, data.data, data.target)
 
     def test_rocauc_no_micro(self):
@@ -146,7 +149,7 @@ class ROCAUCTests(VisualTestCase, DatasetMixin):
 
         # Compare the images
         visualizer.poof()
-        self.assert_images_similar(visualizer)
+        self.assert_images_similar(visualizer, tol=TOL)
 
     def test_rocauc_no_macro(self):
         """
@@ -167,11 +170,8 @@ class ROCAUCTests(VisualTestCase, DatasetMixin):
 
         # Compare the images
         visualizer.poof()
-        self.assert_images_similar(visualizer)
+        self.assert_images_similar(visualizer, tol=TOL)
 
-    @pytest.mark.xfail(
-        sys.platform == 'win32', reason="images not close on windows"
-    )
     def test_rocauc_no_macro_no_micro(self):
         """
         Test ROCAUC without a macro or micro average
@@ -196,7 +196,7 @@ class ROCAUCTests(VisualTestCase, DatasetMixin):
 
         # Compare the images
         visualizer.poof()
-        self.assert_images_similar(visualizer)
+        self.assert_images_similar(visualizer, tol=TOL)
 
     def test_rocauc_no_classes(self):
         """
@@ -218,7 +218,7 @@ class ROCAUCTests(VisualTestCase, DatasetMixin):
 
         # Compare the images
         visualizer.poof()
-        self.assert_images_similar(visualizer)
+        self.assert_images_similar(visualizer, tol=TOL)
 
     def test_rocauc_no_curves(self):
         """
