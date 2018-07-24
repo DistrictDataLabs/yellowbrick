@@ -1,10 +1,7 @@
 .. -*- mode: rst -*-
 
-====================
-Example Gallery
-=======
 Gallery
-====================
+=======
 
 Features Analysis
 -----------------
@@ -104,7 +101,7 @@ Regression Visualizers
     :target: api/regressor/alphas.html#alpha-selection
 
 
-Clasification Visualizers
+Classification Visualizers
 --------------------------
 
 .. image:: api/classifier/images/classification_report.png
@@ -125,11 +122,11 @@ Clasification Visualizers
     :alt: ROC Curves for Logistic Regression
     :target: api/classifier/rocauc.html#rocauc
 
-.. image:: api/classifier/images/class_balance.png
+.. image:: api/target/images/class_balance_compare.png
     :width: 200px
     :height: 100px
-    :alt: Class Balance for Random Forest Classifier
-    :target: api/classifier/class_balance.html#class-balance
+    :alt: Class Balance
+    :target: api/target/class_balance.html#class-balance
 
 .. image:: api/classifier/images/class_prediction_error.png
     :width: 200px
@@ -194,7 +191,7 @@ Text Modeling Visualizers
     :alt: TSNE Projection of Documents
     :target: api/text/tsne.html#t-sne-corpus-visualization
 
-Decision Boundaries Vizualizer
+Decision Boundaries Visualizer
 ------------------------------
 
 .. image:: api/contrib/images/knn_decisionviz.png

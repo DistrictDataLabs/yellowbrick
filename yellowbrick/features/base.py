@@ -218,7 +218,7 @@ class DataVisualizer(MultiFeatureVisualizer):
         # Store the classes for the legend if they're None.
         if self.classes_ is None:
             # TODO: Is this the most efficient method?
-            self.classes_ = [str(label) for label in set(y)]
+            self.classes_ = [str(label) for label in np.unique(y)]
 
         # Draw the instances
         self.draw(X, y, **kwargs)
