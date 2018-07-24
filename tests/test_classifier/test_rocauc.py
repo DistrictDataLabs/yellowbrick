@@ -21,7 +21,6 @@ Testing for the ROCAUC visualizer
 import os
 TOL = 10 if os.name == 'nt'  else 0.01
 
-import sys
 import pytest
 import numpy as np
 import numpy.testing as npt
