@@ -248,6 +248,28 @@ class TestFeatureImportancesVisualizer(VisualTestCase, DatasetMixin):
 
         npt.assert_equal(visualizer.feature_importances_.ndim, 1)
 
+    def test_multi_coefs_stacked(self):
+        """
+        Test fit with multidimensional coefficients
+        """
+        coefs = np.array([
+            [0.4, 0.2, -0.08, 0.07, 0.16, 0.23, -0.38, 0.1, -0.05],
+            [0.41, 0.12, -0.1, 0.1, 0.14, 0.21, 0.01, 0.31, -0.15],
+            [0.31, 0.2, -0.01, 0.1, 0.22, 0.23, 0.01, 0.12, -0.15]
+            ]
+        )
+
+        model = MockEstimator()
+        model.make_importance_param(value=coefs)
+        model.make_classes(value=np.arange(coefs.shape[0]))
+
+        visualizer = FeatureImportances(model, relative=False, stack=True)
+        visualizer.fit(coefs, np.random.rand(100))
+        visualizer.poof()
+
+        npt.assert_equal(visualizer.feature_importances_.shape, (3, 9))
+        assert hasattr(visualizer.ax, 'legend')
+
     @pytest.mark.skipif(pd is None, reason="pandas is required for this test")
     def test_fit_dataframe(self):
         """
@@ -417,6 +439,11 @@ class MockEstimator(BaseEstimator):
     def make_importance_param(self, name='feature_importances_', value=None):
         if value is None:
             value = np.random.rand(42)
+        setattr(self, name, value)
+
+    def make_classes(self, name='classes_', value=None):
+        if value is None:
+            value = 2
         setattr(self, name, value)
 
     def fit(self, X, y=None, **kwargs):

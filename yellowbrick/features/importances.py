@@ -101,7 +101,7 @@ class FeatureImportances(ModelVisualizer):
         # Data Parameters
         self.set_params(
             labels=labels, relative=relative, absolute=absolute,
-            xlabel=xlabel, stack=stack,
+            xlabel=xlabel, stack=stack
         )
 
     def fit(self, X, y=None, **kwargs):
@@ -136,13 +136,8 @@ class FeatureImportances(ModelVisualizer):
         # If feature importances is a multidim array, we're expecting a shape of
         # (n_classes, n_features) therefore we flatten by taking the average by
         # column to get shape (n_features,)  (see LogisticRegression)
-        #if self.feature_importances_.ndim > 1:
         if not self.stack and self.feature_importances_.ndim > 1:
             self.feature_importances_ = np.mean(self.feature_importances_, axis=0)
-
-        # TODO - as an alternative to the above flattening approach, explore an
-        # alternative visualize that uses the array shape to create a stacked bar chart
-        # of feature importances for each class/feature combination
 
         # Apply absolute value filter before normalization
         if self.absolute:
@@ -150,7 +145,7 @@ class FeatureImportances(ModelVisualizer):
 
         # Normalize features relative to the maximum
         if self.relative:
-            maxv = self.feature_importances_.max()
+            maxv = np.abs(self.feature_importances_).max()
             self.feature_importances_ /= maxv
             self.feature_importances_ *= 100.0
 
@@ -252,11 +247,6 @@ class FeatureImportances(ModelVisualizer):
 
         self.stack = False
         return np.unique(y)
-        #raise YellowbrickTypeError(
-        #    "could not find classes_ param on {}".format(
-        #        self.estimator.__class__.__name__
-        #    )
-        #)
 
     def _find_importances_param(self):
         """
