@@ -1,5 +1,5 @@
 
-# yellowbrick.features.histogram
+# yellowbrick.target.binning
 # Implementations of histogram with vertical lines to help with balanced binning.
 #
 # Author:   Juan L. Kehoe (juanluo2008@gmail.com)
@@ -10,7 +10,7 @@
 # Copyright (C) 2018 District Data Labs
 # For license information, see LICENSE.txt
 #
-# ID: histogram.py
+# ID: binning.py
 
 """
 Implements histogram with vertical lines to help with balanced binning.
@@ -22,7 +22,7 @@ Implements histogram with vertical lines to help with balanced binning.
 import matplotlib.pyplot as plt
 import numpy as np
 
-from yellowbrick.features.base import FeatureVisualizer
+from .base import TargetVisualizer
 from yellowbrick.exceptions import YellowbrickValueError
 from yellowbrick.utils import is_dataframe
 
@@ -30,7 +30,7 @@ from yellowbrick.utils import is_dataframe
 ## Balanced Binning Reference
 ##########################################################################
 
-class BalancedBinningReference(FeatureVisualizer):
+class BalancedBinningReference(TargetVisualizer):
     """
     BalancedBinningReference allows to generate a histogram with vertical lines
     showing the recommended value point to bin your data so they can be evenly
@@ -41,23 +41,21 @@ class BalancedBinningReference(FeatureVisualizer):
     ax : matplotlib Axes, default: None
         This is inherited from FeatureVisualizer and is defined within
         BalancedBinningReference.
-    feature : string, default: None
-        The name of the X variable
-        If a DataFrame is passed to fit and feature is None, feature
-        is selected as the column of the DataFrame.  There must be only
-        one column in the DataFrame.
-    target : string, default: None
-        The name of the Y variable
-        Default: Counts
-    bins : number of bins to generate the histogram
+    target : string, default: "Frequency"
+        The name of the y variable
+    bins : number of bins to generate the histogram, default: 4
     kwargs : dict
         Keyword arguments that are passed to the base class and may influence
         the visualization as defined in other Visualizers.
+        
+    Attributes
+    ----------
+    bin_edges : binning reference values
 
     Examples
     --------
     >>> visualizer = BalancedBinningReference()
-    >>> visualizer.fit(X)
+    >>> visualizer.fit(y)
     >>> visualizer.poof()
 
 
@@ -67,67 +65,50 @@ class BalancedBinningReference(FeatureVisualizer):
     process, but can and should be set as early as possible.
     """
 
-    def __init__(self, ax=None, feature=None, target='Counts', bins=4, **kwargs):
+    def __init__(self, ax=None, target=None, bins=4, **kwargs):
 
         super(BalancedBinningReference, self).__init__(ax, **kwargs)
 
-        self.feature = feature
         self.target = target
         self.bins = bins
 
-    def draw(self, X, **kwargs):
+    def draw(self, y, **kwargs):
         """
         Draws a histogram with the reference value for binning as vetical lines
         Parameters
         ----------
-        X : ndarray or DataFrame of shape n x 1
-            A matrix of n instances with 1 feature
+        y : an array of one dimension or a pandas Series
         """
 
         # draw the histogram
-        hist, bin_edges = np.histogram(X, bins=self.bins)
-        self.ax.hist(X, bins=self.bins, color=kwargs.pop("color", "#6897bb"), **kwargs)
+        hist, bin_edges = np.histogram(y, bins=self.bins)
+        self.bin_edges_ = bin_edges
+        self.ax.hist(y, bins=self.bins, color=kwargs.pop("color", "#6897bb"), **kwargs)
 
         # add vetical line with binning reference values
         plt.vlines(bin_edges,0,max(hist),colors=kwargs.pop("colors", "r"))
 
-        #print the binning reference values
-        print("The binning reference values are:", bin_edges)
-
-    def fit(self, X, **kwargs):
+    def fit(self, y, **kwargs):
         """
-        Sets up X for the histogram and checks to
-        ensure that X is of the correct data type
+        Sets up y for the histogram and checks to
+        ensure that y is of the correct data type
         Fit calls draw
         Parameters
         ----------
-        X : ndarray or DataFrame of shape n x 1
-            A matrix of n instances with 1 feature
+        y : an array of one dimension or a pandas Series
         kwargs : dict
             keyword arguments passed to Scikit-Learn API.
         """
 
-        #throw an error if X has more than 1 column
-        if is_dataframe(X):
-            nrows, ncols = X.shape
+        #throw an error if y has more than 1 column
+        if y.ndim > 1:
+            raise YellowbrickValueError("y needs to be an array or Series with one dimension") 
 
-            if ncols > 1:
-                raise YellowbrickValueError((
-                    "X needs to be an ndarray or DataFrame with one feature, "
-                    "please select one feature from the DataFrame"
-                ))
+        # Handle the target name if it is None.
+        if self.target is None:
+            self.target = 'Frequency'
 
-        # Handle the feature name if it is None.
-        if self.feature is None:
-
-            # If X is a data frame, get the columns off it.
-            if is_dataframe(X):
-                self.feature = X.columns
-
-            else:
-                self.feature = ['X']
-
-        self.draw(X)
+        self.draw(y)
         return self
 
 
@@ -136,8 +117,7 @@ class BalancedBinningReference(FeatureVisualizer):
         Creates the labels for the feature and target variables
         """
 
-        self.ax.set_xlabel(self.feature)
-        self.ax.set_ylabel(self.target)
+        self.ax.set_xlabel(self.target)
         self.finalize(**kwargs)
 
     def finalize(self, **kwargs):
@@ -160,7 +140,7 @@ class BalancedBinningReference(FeatureVisualizer):
 ## Quick Method
 ##########################################################################
         
-def balanced_binning_reference(ax=None, feature=None, target='Counts', bins=4, **kwargs):
+def balanced_binning_reference(ax=None, target='Frequency', bins=4, **kwargs):
     
     """
     BalancedBinningReference allows to generate a histogram with vertical lines
@@ -172,15 +152,9 @@ def balanced_binning_reference(ax=None, feature=None, target='Counts', bins=4, *
     ax : matplotlib Axes, default: None
         This is inherited from FeatureVisualizer and is defined within
         BalancedBinningReference.
-    feature : string, default: None
-        The name of the X variable
-        If a DataFrame is passed to fit and feature is None, feature
-        is selected as the column of the DataFrame.  There must be only
-        one column in the DataFrame.
-    target : string, default: None
-        The name of the Y variable
-        Default: Counts
-    bins : number of bins to generate the histogram
+    target : string, default: "Frequency"
+        The name of the y variable
+    bins : number of bins to generate the histogram, default: 4
     kwargs : dict
         Keyword arguments that are passed to the base class and may influence
         the visualization as defined in other Visualizers.
@@ -188,10 +162,10 @@ def balanced_binning_reference(ax=None, feature=None, target='Counts', bins=4, *
     """
     
     # Initialize the visualizer
-    visualizer = balanced_binning_reference(ax=ax, X, y, bins=bins)
+    visualizer = balanced_binning_reference(ax=ax, y=y, bins=bins)
     
     # Fit and poof the visualizer
-    visualizer.fit(X)
+    visualizer.fit(y)
     visualizer.poof()
     
     

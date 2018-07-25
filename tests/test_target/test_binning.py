@@ -1,7 +1,16 @@
+# tests.test_target.test_binning
+# Tests for the BalancedBinningReference visualizer
+#
+# Author:   Juan L. Kehoe (juanluo2008@gmail.com)
+# Author:  Prema Damodaran Roman (pdamo24@gmail.com)
+# Created: Thu Jul 20 10:21:49 2018 -0400
+#
+# ID: test_binning.py
+
 import pytest
 from tests.base import VisualTestCase
 from tests.dataset import DatasetMixin
-from yellowbrick.features.histogram import *
+from yellowbrick.target.binning import *
 
 ##########################################################################
 ## BalancedBinningReference Tests
@@ -20,11 +29,11 @@ class TestBalancedBinningReference(VisualTestCase, DatasetMixin):
 		dataset = self.load_data('occupancy')
 
 		# Get the data
-		X = dataset["temperature"]
+		y = dataset["temperature"]
 
 		
 		visualizer = BalancedBinningReference()
-		visualizer.fit(X)
+		visualizer.fit(y)
 		visualizer.poof()
 		self.assert_images_similar(visualizer)
 			
