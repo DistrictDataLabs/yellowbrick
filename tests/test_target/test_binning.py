@@ -7,7 +7,6 @@
 #
 # ID: test_binning.py
 
-import pytest
 from tests.base import VisualTestCase
 from tests.dataset import DatasetMixin
 from yellowbrick.target.binning import *
@@ -35,6 +34,6 @@ class TestBalancedBinningReference(VisualTestCase, DatasetMixin):
 		visualizer = BalancedBinningReference()
 		visualizer.fit(y)
 		visualizer.poof()
-		self.assert_images_similar(visualizer)
+		self.assert_images_similar(visualizer, tol=0.5)
 			
 		

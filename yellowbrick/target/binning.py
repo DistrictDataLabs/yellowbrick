@@ -24,7 +24,6 @@ import numpy as np
 
 from .base import TargetVisualizer
 from yellowbrick.exceptions import YellowbrickValueError
-from yellowbrick.utils import is_dataframe
 
 ##########################################################################
 ## Balanced Binning Reference
@@ -140,7 +139,7 @@ class BalancedBinningReference(TargetVisualizer):
 ## Quick Method
 ##########################################################################
         
-def balanced_binning_reference(ax=None, target='Frequency', bins=4, **kwargs):
+def balanced_binning_reference(y, ax=None, target='Frequency', bins=4, **kwargs):
     
     """
     BalancedBinningReference allows to generate a histogram with vertical lines
@@ -149,6 +148,8 @@ def balanced_binning_reference(ax=None, target='Frequency', bins=4, **kwargs):
 
     Parameters
     ----------
+    y : an array of one dimension or a pandas Series
+    
     ax : matplotlib Axes, default: None
         This is inherited from FeatureVisualizer and is defined within
         BalancedBinningReference.
@@ -162,7 +163,7 @@ def balanced_binning_reference(ax=None, target='Frequency', bins=4, **kwargs):
     """
     
     # Initialize the visualizer
-    visualizer = balanced_binning_reference(ax=ax, y=y, bins=bins)
+    visualizer = BalancedBinningReference(ax=ax, bins=bins, target=target, **kwargs)
     
     # Fit and poof the visualizer
     visualizer.fit(y)
