@@ -31,13 +31,13 @@ except ImportError:
 ## Feature Importances Tests
 ##########################################################################
 
-class TestMissingBarVisualizer(VisualTestCase):
+class MissingBarVisualizerTestCase(VisualTestCase):
     """
-    FeatureImportances visualizer
+    MissingBar Visualizer
     """
 
     def setUp(self):
-        super(TestMissingBarVisualizer, self).setUp()
+        super(MissingBarVisualizerTestCase, self).setUp()
         self.tol = 0.01
         if os.name == 'nt': # Windows
             self.tol = 0.5
