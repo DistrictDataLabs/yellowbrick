@@ -24,7 +24,7 @@ is generally used for feature engineering.
 import numpy as np
 import matplotlib.pyplot as plt
 
-from yellowbrick.utils import is_dataframe
+from yellowbrick.utils import is_dataframe, is_classifier
 from yellowbrick.base import ModelVisualizer
 from yellowbrick.exceptions import YellowbrickTypeError, NotFitted
 from ..style.palettes import color_palette
@@ -73,6 +73,11 @@ class FeatureImportances(ModelVisualizer):
         The label for the X-axis. If None is automatically determined by the
         underlying model and options provided.
 
+    stack : bool, default: False
+        If true and the classifier returns multi-class feature importance,
+        then a stacked bar plot is plotted; otherwise the mean of the
+        feature importance across classes are plotted.
+
     kwargs : dict
         Keyword arguments that are passed to the base class and may influence
         the visualization as defined in other Visualizers.
@@ -84,6 +89,9 @@ class FeatureImportances(ModelVisualizer):
 
     feature_importances_ : np.array
         The numeric value of the feature importance computed by the model
+
+    classes_ : np.array
+        The classees labeled. Is not None only for classifier.
 
     Examples
     --------
@@ -131,13 +139,19 @@ class FeatureImportances(ModelVisualizer):
         self.feature_importances_ = self._find_importances_param()
 
         # Get the classes from the model
-        self.classes_ = self._find_classes_param(y)
+        if is_classifier(self):
+            self.classes_ = self._find_classes_param()
+        else:
+            self.classes_ = None
+            self.stack = False
 
-        # If feature importances is a multidim array, we're expecting a shape of
-        # (n_classes, n_features) therefore we flatten by taking the average by
+        # If self.stack = True and feature importances is a multidim array,
+        # we're expecting a shape of (n_classes, n_features)
+        # therefore we flatten by taking the average by
         # column to get shape (n_features,)  (see LogisticRegression)
         if not self.stack and self.feature_importances_.ndim > 1:
-            self.feature_importances_ = np.mean(self.feature_importances_, axis=0)
+            self.feature_importances_ = np.mean(self.feature_importances_,
+                                                axis=0)
 
         # Apply absolute value filter before normalization
         if self.absolute:
@@ -197,8 +211,10 @@ class FeatureImportances(ModelVisualizer):
             left_arr = np.zeros((self.feature_importances_.shape[1], 2))
 
             for idx in range(len(self.feature_importances_)):
-                left = [left_arr[j, int(self.feature_importances_[idx][j]>0)]
-                        for j in range(len(self.feature_importances_[idx]))]
+                left = [
+                    left_arr[j, int(self.feature_importances_[idx][j] > 0)]
+                    for j in range(len(self.feature_importances_[idx]))
+                ]
 
                 self.ax.barh(pos, self.feature_importances_[idx], left=left,
                              color=colors[idx], label=self.classes_[idx])
@@ -235,7 +251,7 @@ class FeatureImportances(ModelVisualizer):
         # Ensure we have a tight fit
         plt.tight_layout()
 
-    def _find_classes_param(self, y):
+    def _find_classes_param(self):
         """
         Searches the wrapped model for the classes_ parameter.
         """
@@ -245,8 +261,11 @@ class FeatureImportances(ModelVisualizer):
             except AttributeError:
                 continue
 
-        self.stack = False
-        return np.unique(y)
+        raise YellowbrickTypeError(
+            "could not find classes_ param on {}".format(
+                self.estimator.__class__.__name__
+            )
+        )
 
     def _find_importances_param(self):
         """
@@ -335,6 +354,11 @@ def feature_importances(model, X, y=None, ax=None, labels=None,
     xlabel : str, default: None
         The label for the X-axis. If None is automatically determined by the
         underlying model and options provided.
+
+    stack : bool, default: False
+        If true and the classifier returns multi-class feature importance,
+        then a stacked bar plot is plotted; otherwise the mean of the
+        feature importance across classes are plotted.
 
     kwargs : dict
         Keyword arguments that are passed to the base class and may influence
