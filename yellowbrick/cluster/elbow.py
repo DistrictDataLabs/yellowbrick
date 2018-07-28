@@ -125,11 +125,11 @@ class KElbowVisualizer(ClusteringScoreVisualizer):
 
     The elbow method runs k-means clustering on the dataset for a range of
     values for k (say from 1-10) and then for each value of k computes an
-    average score for all clusters. By default, the ``distortion_score`` is
+    average score for all clusters. By default, the ``distortion`` score is
     computed, the sum of square distances from each point to its assigned
-    center. Other metrics can also be used such as the ``silhouette_score``,
+    center. Other metrics can also be used such as the ``silhouette`` score,
     the mean silhouette  coefficient for all samples or the
-    ``calinski_harabaz_score``, which computes the ratio of dispersion between
+    ``calinski_harabaz`` score, which computes the ratio of dispersion between
     and within clusters.
 
     When these overall metrics for each model are plotted, it is possible to
