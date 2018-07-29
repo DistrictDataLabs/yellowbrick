@@ -20,3 +20,4 @@ correlation visualizations.
 
 # Hoist visualizers into the top level of the target package
 from .class_balance import ClassBalance, class_balance
+from .binning import BalancedBinningReference, balanced_binning_reference
