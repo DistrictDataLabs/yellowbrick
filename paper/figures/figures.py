@@ -8,13 +8,15 @@ import pandas as pd
 import matplotlib.pyplot as plt
 
 from yellowbrick.features import Rank2D, RadViz
-from yellowbrick.regressor import ResidualsPlot, PredictionError
+from yellowbrick.model_selection import LearningCurve
 from yellowbrick.cluster import KElbowVisualizer, SilhouetteVisualizer
 from yellowbrick.classifier import ClassificationReport, DiscriminationThreshold
+from yellowbrick.regressor import ResidualsPlot, PredictionError, AlphaSelection
 
 from collections import namedtuple
 from sklearn.datasets import make_blobs
 from sklearn.naive_bayes import MultinomialNB
+from sklearn.ensemble import RandomForestRegressor
 from sklearn.cluster import MiniBatchKMeans, Birch
 from sklearn.model_selection import train_test_split as tts
 from sklearn.linear_model import LassoCV, RidgeCV, LogisticRegression
@@ -169,6 +171,32 @@ def clustering(fname="clustering.png"):
     plt.tight_layout()
     plt.savefig(path)
 
+def hyperparameter_tuning(fname="hyperparameter_tuning.png"):
+    # Create side-by-side axes grid
+    _, axes = plt.subplots(ncols=2, figsize=(18,6))
+
+    # Load the concrete dataset
+    data = load_concrete(split=False)
+
+    # Create a list of alphas to cross-validate against
+    alphas = np.logspace(-10, 1, 400)
+
+    # Add AlphaSelection to the left
+    oz = AlphaSelection(LassoCV(alphas=alphas), ax=axes[0])
+    oz.fit(data.X, data.y)
+    oz.finalize()
+
+    # Add LearningCurve to the right
+    oz = LearningCurve(RandomForestRegressor(), scoring='r2', ax=axes[1])
+    oz.fit(data.X, data.y)
+    oz.finalize()
+
+    # Save figure
+    path = os.path.join(FIGURES, fname)
+    plt.tight_layout()
+    plt.savefig(path)
+
+
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(
@@ -180,3 +208,4 @@ if __name__ == '__main__':
     regression()
     classification()
     clustering()
+    hyperparameter_tuning()
