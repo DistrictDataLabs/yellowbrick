@@ -1,0 +1,30 @@
+{
+  "@context": "https://raw.githubusercontent.com/codemeta/codemeta/master/codemeta.jsonld",
+  "@type": "Code",
+  "author": [
+    {
+      "@id": "https://orcid.org/0000-0003-0660-7682",
+      "@type": "Person",
+      "email": "benjamin@bengfort.com",
+      "name": "Benjamin Bengfort",
+      "affiliation": "Georgetown University"
+    },
+    {
+      "@id": "https://orcid.org/0000-0002-1143-044X",
+      "@type": "Person",
+      "email": "bilbro@gmail.com",
+      "name": "Rebecca Bilbro",
+      "affiliation": "Georgetown University"
+    }
+  ],
+  "identifier": "https://doi.org/10.5281/zenodo.1249057",
+  "codeRepository": "https://github.com/DistrictDataLabs/yellowbrick",
+  "datePublished": "2018-07-12",
+  "dateModified": "2018-07-23",
+  "dateCreated": "2016-05-18",
+  "description": "Visual analysis and diagnostic tools to facilitate machine learning model selection.",
+  "keywords": "machine learning, visual analysis, model selection, python, scikit-learn, matplotlib",
+  "license": "Apache 2.0",
+  "title": "Yellowbrick",
+  "version": "v0.8"
+}
