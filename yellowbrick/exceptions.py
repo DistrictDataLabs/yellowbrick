@@ -46,6 +46,13 @@ class NotFitted(ModelError):
     pass
 
 
+class DataError(YellowbrickError):
+    """
+    A problem occured when interacting with data.
+    """
+    pass
+
+
 class YellowbrickTypeError(YellowbrickError, TypeError):
     """
     There was an unexpected type or none for a property or input.

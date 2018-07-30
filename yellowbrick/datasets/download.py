@@ -1,14 +1,10 @@
-#!/usr/bin/env python
-# download
+# yellowbrick.datasets.download
 # Downloads the example datasets for running the examples.
 #
 # Author:   Rebecca Bilbro <rbilbro@districtdatalabs.com>
 # Author:   Benjamin Bengfort <bbengfort@districtdatalabs.com>
 # Author:   Raul Peralta <raulpl25@gmail.com>
 # Created:  Wed May 18 11:54:45 2016 -0400
-#
-# Copyright (C) 2016 District Data Labs
-# For license information, see LICENSE.txt
 #
 # ID: download.py [1f73d2b] benjamin@bengfort.com $
 
@@ -21,123 +17,99 @@ Downloads the example datasets for running the examples.
 ##########################################################################
 
 import os
-import numpy as np
+import six
+import zipfile
+import hashlib
 
-from .utils import load_numpy, load_corpus, download_data, DATASETS
-from .utils import _lookup_path
+if six.PY2:
+    # backport for encoding in open for python2
+    from io import open
+
+try:
+    from urllib.request import urlopen
+except ImportError:
+    # python 2
+    from urllib2 import urlopen
+
+from .base import DATASETS, FIXTURES
 
 ##########################################################################
 ## Functions
 ##########################################################################
 
-FIXTURES = os.path.join(os.path.dirname(__file__), "fixtures")
-
-
-def download_all(data_path=FIXTURES, verify=True):
+def download(path=FIXTURES):
     """
-    Downloads all the example datasets. If verify is True then compare the
-    download signature with the hardcoded signature. If extract is True then
-    extract the contents of the zipfile to the given path.
+    Downloads all the example datasets to the specified path.
     """
     for name, meta in DATASETS.items():
         download_data(name, data_dir=data_path)
 
 
-def load_concrete(data_path=FIXTURES):
+##########################################################################
+## Download functions
+##########################################################################
+
+def download_data(name, data_dir=None, signature=None, extract=True):
     """
-    Downloads the 'concrete' dataset, saving it to the output
-    path specified and returns the data.
+    Downloads the zipped data set specified at the given URL, saving it to
+    the output path specified. This function verifies the download with the
+    given signature (if supplied) and extracts the zip file if requested.
     """
-    # name of the dataset
-    name = 'concrete'
-    data = load_numpy(name, data_path=data_path)
-    return data
+
+    # Create the fixture directory
+    if not os.path.exists(data_dir):
+        os.mkdir(data_dir)
+
+    dataset = DATASETS[name]
+    url = dataset['url']
+
+    # Get the name of the file from the URL
+    filename = os.path.basename(url)
+    dlpath = os.path.join(data_dir, filename)
+    dataset_path = os.path.join(data_dir, name)
+
+    #Create the output directory if it does not exist
+    if not os.path.exists(dataset_path):
+        os.mkdir(dataset_path)
+
+    # Fetch the response in a streaming fashion and write it to disk.
+    response = urlopen(url)
+    CHUNK = 16 * 1024
+    with open(dlpath, 'wb') as f:
+
+        while True:
+            chunk = response.read(CHUNK)
+            if not chunk:
+                break
+            f.write(chunk)
+
+    # If verify, compare the signature
+    if signature is not None:
+        dlsignature = sha256sum(dlpath)
+        if signature != dlsignature:
+            raise ValueError(
+                "Download signature does not match hardcoded signature!"
+            )
+
+    # If extract, extract the zipfile.
+    if extract:
+        zf = zipfile.ZipFile(dlpath)
+        zf.extractall(path=data_dir)
 
 
-def load_energy(data_path=FIXTURES):
-    """
-    Downloads the 'energy' dataset, saving it to the output
-    path specified and returns the data.
-    """
-    # name of the dataset
-    name = 'energy'
-    data = load_numpy(name, data_path=data_path)
-    return data
+##########################################################################
+## Signature checking utility
+##########################################################################
 
-
-def load_credit(data_path=FIXTURES):
+def sha256sum(path, blocksize=65536):
     """
-    Downloads the 'credit' dataset, saving it to the output
-    path specified and returns the data.
+    Computes the SHA256 signature of a file to verify that the file has not
+    been modified in transit and that it is the correct version of the data.
     """
-    # name of the dataset
-    name = 'credit'
-    data = load_numpy(name, data_path=data_path)
-    return data
-
-
-def load_occupancy(data_path=FIXTURES):
-    """
-    Downloads the 'occupancy' dataset, saving it to the output
-    path specified and returns the data.
-    """
-    # name of the dataset
-    name = 'occupancy'
-    data = load_numpy(name, data_path=data_path)
-    return data
-
-
-def load_mushroom(data_path=FIXTURES):
-    """
-    Downloads the 'mushroom' dataset, saving it to the output
-    path specified and returns the data.
-    """
-    # name of the dataset
-    name = 'mushroom'
-    data = load_numpy(name, data_path=data_path)
-    return data
-
-
-def load_hobbies(data_path=FIXTURES):
-    """
-    Downloads the 'hobbies' dataset, saving it to the output
-    path specified and returns the data.
-    """
-    # name of the dataset
-    name = 'hobbies'
-    data = load_corpus(name, data_path=data_path)
-    return data
-
-
-def load_game(data_path=FIXTURES):
-    """
-    Downloads the 'game' dataset, saving it to the output
-    path specified and returns the data.
-    """
-    # name of the dataset
-    name = 'game'
-    path = _lookup_path(name, data_path=data_path)
-    dtype = np.array(['S1']*42+['|S4'])
-    return np.genfromtxt(path, dtype=dtype, delimiter=',', names=True)
-
-
-def load_bikeshare(data_path=FIXTURES):
-    """
-    Downloads the 'bikeshare' dataset, saving it to the output
-    path specified and returns the data.
-    """
-    # name of the dataset
-    name = 'bikeshare'
-    data = load_numpy(name, data_path=data_path)
-    return data
-
-
-def load_spam(data_path=FIXTURES):
-    """
-    Downloads the 'spam' dataset, saving it to the output
-    path specified and returns the data.
-    """
-    # name of the dataset
-    name = 'spam'
-    data = load_numpy(name, skip_header=True, data_path=data_path)
-    return data
+    sig = hashlib.sha256()
+    with open(path, 'rb') as f:
+        buf = f.read(blocksize)
+        while len(buf) > 0:
+            sig.update(buf)
+            buf = f.read(blocksize)
+    return sig.hexdigest()

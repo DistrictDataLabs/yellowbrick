@@ -1,6 +1,15 @@
-#!/usr/bin/env python
+# yellowbrick.datasets.base
+# Loading utilities for the yellowbrick datasets.
+#
+# Author:   Rebecca Bilbro <rbilbro@districtdatalabs.com>
+# Author:   Benjamin Bengfort <bbengfort@districtdatalabs.com>
+# Author:   Raul Peralta <raulpl25@gmail.com>
+# Created: Thu Jul 26 13:53:01 2018 -0400
+#
+# ID: base.py [] benjamin@bengfort.com $
+
 """
-Utils for downloading datasets for running the examples.
+Loading utilities for the yellowbrick datasets.
 """
 
 ##########################################################################
@@ -8,27 +17,12 @@ Utils for downloading datasets for running the examples.
 ##########################################################################
 
 import os
-import six
-import hashlib
-import zipfile
 import numpy as np
 
 from sklearn.datasets.base import Bunch
 
-if six.PY2:
-    # backport for encoding in open for python2
-    from io import open
+from .path import find_dataset_path, FIXTURES
 
-try:
-    from urllib.request import urlopen
-except ImportError:
-    # python 2
-    from urllib2 import urlopen
-
-try:
-    import pandas as pd
-except ImportError:
-    pd = None
 
 ##########################################################################
 ## Links and MD5 hash of datasets
@@ -84,86 +78,25 @@ DATASETS = {
 
 
 ##########################################################################
-## Download functions
+## General loading utilities
 ##########################################################################
 
-def sha256sum(path, blocksize=65536):
-    """
-    Computes the SHA256 signature of a file to verify that the file has not
-    been modified in transit and that it is the correct version of the data.
-    """
-    sig = hashlib.sha256()
-    with open(path, 'rb') as f:
-        buf = f.read(blocksize)
-        while len(buf) > 0:
-            sig.update(buf)
-            buf = f.read(blocksize)
-    return sig.hexdigest()
-
-
-def download_data(name, data_dir=None, signature=None, extract=True):
-    """
-    Downloads the zipped data set specified at the given URL, saving it to
-    the output path specified. This function verifies the download with the
-    given signature (if supplied) and extracts the zip file if requested.
-    """
-
-    # Create the fixture directory
-    if not os.path.exists(data_dir):
-        os.mkdir(data_dir)
-
-    dataset = DATASETS[name]
-    url = dataset['url']
-
-    # Get the name of the file from the URL
-    filename = os.path.basename(url)
-    dlpath = os.path.join(data_dir, filename)
-    dataset_path = os.path.join(data_dir, name)
-
-    #Create the output directory if it does not exist
-    if not os.path.exists(dataset_path):
-        os.mkdir(dataset_path)
-
-    # Fetch the response in a streaming fashion and write it to disk.
-    response = urlopen(url)
-    CHUNK = 16 * 1024
-    with open(dlpath, 'wb') as f:
-
-        while True:
-            chunk = response.read(CHUNK)
-            if not chunk:
-                break
-            f.write(chunk)
-
-    # If verify, compare the signature
-    if signature is not None:
-        dlsignature = sha256sum(dlpath)
-        if signature != dlsignature:
-            raise ValueError(
-                "Download signature does not match hardcoded signature!"
-            )
-
-    # If extract, extract the zipfile.
-    if extract:
-        zf = zipfile.ZipFile(dlpath)
-        zf.extractall(path=data_dir)
-
-def load_numpy(name, data_path=None, **kwargs):
+def load_numpy(name, data_home=None, **kwargs):
     """
     Loads the numpy matrix from the specified data set, downloads it if
     it hasn't already been downloaded.
     """
 
-    path = _lookup_path(name, data_path=data_path)
+    path = find_dataset_path(name, data_home=data_home)
     return np.genfromtxt(path, dtype=float, delimiter=',', names=True, **kwargs)
 
 
-def load_corpus(name, data_path=None):
+def load_corpus(name, data_home=None):
     """
     Loads a sklearn Bunch with the corpus and downloads it if it hasn't
     already been downloaded. Used to test text visualizers.
     """
-    path = _lookup_path(name, data_path=data_path, ext=None)
+    path = find_dataset_path(name, data_home=data_home, ext=None)
 
     # Read the directories in the directory as the categories.
     categories = [
@@ -192,16 +125,106 @@ def load_corpus(name, data_path=None):
         target=target,
     )
 
-def _lookup_path(name, data_path=None, ext=".csv"):
-    """
-    Looks up the path to the dataset, downloading it if necessary
-    """
-    if ext is None:
-        path = os.path.join(data_path, name)
-    else:
-        path = os.path.join(data_path, name, "{}{}".format(name, ext))
 
-    if not os.path.exists(path):
-        download_data(name, signature=None, extract=True, data_dir=data_path)
+##########################################################################
+## Specific loading utilities
+##########################################################################
 
-    return path
+def load_concrete(data_home=FIXTURES):
+    """
+    Downloads the 'concrete' dataset, saving it to the output
+    path specified and returns the data.
+    """
+    # name of the dataset
+    name = 'concrete'
+    data = load_numpy(name, data_home=data_home)
+    return data
+
+
+def load_energy(data_home=FIXTURES):
+    """
+    Downloads the 'energy' dataset, saving it to the output
+    path specified and returns the data.
+    """
+    # name of the dataset
+    name = 'energy'
+    data = load_numpy(name, data_home=data_home)
+    return data
+
+
+def load_credit(data_home=FIXTURES):
+    """
+    Downloads the 'credit' dataset, saving it to the output
+    path specified and returns the data.
+    """
+    # name of the dataset
+    name = 'credit'
+    data = load_numpy(name, data_home=data_home)
+    return data
+
+
+def load_occupancy(data_home=FIXTURES):
+    """
+    Downloads the 'occupancy' dataset, saving it to the output
+    path specified and returns the data.
+    """
+    # name of the dataset
+    name = 'occupancy'
+    data = load_numpy(name, data_home=data_home)
+    return data
+
+
+def load_mushroom(data_home=FIXTURES):
+    """
+    Downloads the 'mushroom' dataset, saving it to the output
+    path specified and returns the data.
+    """
+    # name of the dataset
+    name = 'mushroom'
+    data = load_numpy(name, data_home=data_home)
+    return data
+
+
+def load_hobbies(data_home=FIXTURES):
+    """
+    Downloads the 'hobbies' dataset, saving it to the output
+    path specified and returns the data.
+    """
+    # name of the dataset
+    name = 'hobbies'
+    data = load_corpus(name, data_home=data_home)
+    return data
+
+
+def load_game(data_home=FIXTURES):
+    """
+    Downloads the 'game' dataset, saving it to the output
+    path specified and returns the data.
+    """
+    # name of the dataset
+    name = 'game'
+    path = find_dataset_path(name, data_home=data_home)
+    dtype = np.array(['S1']*42+['|S4'])
+    return np.genfromtxt(path, dtype=dtype, delimiter=',', names=True)
+
+
+def load_bikeshare(data_home=FIXTURES):
+    """
+    Downloads the 'bikeshare' dataset, saving it to the output
+    path specified and returns the data.
+    """
+    # name of the dataset
+    name = 'bikeshare'
+    data = load_numpy(name, data_home=data_home)
+    return data
+
+
+def load_spam(data_home=FIXTURES):
+    """
+    Downloads the 'spam' dataset, saving it to the output
+    path specified and returns the data.
+    """
+    # name of the dataset
+    name = 'spam'
+    data = load_numpy(name, skip_header=True, data_home=data_home)
+    return data
