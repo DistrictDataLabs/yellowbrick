@@ -62,7 +62,7 @@ class ROCAUCTests(VisualTestCase, DatasetMixin):
         Test ROCAUC with a binary classifier with a predict_proba function
         """
         # Create and fit the visualizer
-        visualizer = ROCAUC(RandomForestClassifier())
+        visualizer = ROCAUC(RandomForestClassifier(random_state=42))
         visualizer.fit(self.binary.X.train, self.binary.y.train)
 
         # Score the visualizer
@@ -124,7 +124,7 @@ class ROCAUCTests(VisualTestCase, DatasetMixin):
         Test ROCAUC with a binary classifier with a decision_function
         """
         # Create and fit the visualizer
-        visualizer = ROCAUC(LinearSVC(), micro=False, macro=False, per_class=False)
+        visualizer = ROCAUC(LinearSVC(random_state=42), micro=False, macro=False, per_class=False)
         visualizer.fit(self.binary.X.train, self.binary.y.train)
 
         # Score the visualizer
