@@ -115,6 +115,13 @@ class ClassBalance(TargetVisualizer):
             specified, the bar chart will be drawn in compare mode.
         """
 
+        # check to make sure that y_train is not a 2D array, e.g. X
+        if y_train.ndim == 2:
+            raise YellowbrickValueError((
+                "fit has changed to only require a 1D array, y "
+                "since version 0.9; please see the docs for more info"
+            ))
+
         # Check the target types for the y variables
         self._validate_target(y_train)
         self._validate_target(y_test)
