@@ -3,6 +3,8 @@
 #
 # Author:  Benjamin Bengfort <benjamin@bengfort.com>
 # Created: Fri Mar 02 15:23:22 2018 -0500
+# Author:  Rebecca Bilbro <rbilbro@districtdatalabs.com>
+# Updated: Sun Jun 24 12:10:43 2018 -0500
 #
 # Copyright (C) 2018 District Data Labs
 # For license information, see LICENSE.txt
@@ -26,8 +28,9 @@ import matplotlib.pyplot as plt
 from yellowbrick.exceptions import NotFitted
 from yellowbrick.features.importances import *
 
-from sklearn.base import BaseEstimator
-from sklearn.linear_model import Lasso
+from sklearn.datasets import load_iris
+from sklearn.base import BaseEstimator, ClassifierMixin
+from sklearn.linear_model import LogisticRegression, Lasso
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.ensemble import GradientBoostingClassifier
 
@@ -225,6 +228,44 @@ class TestFeatureImportancesVisualizer(VisualTestCase, DatasetMixin):
         expected = np.array([-0.38, -0.08, -0.05, 0.07, 0.1, 0.16, 0.2, .23, 0.4])
         npt.assert_array_equal(visualizer.feature_importances_, expected)
 
+    def test_multi_coefs(self):
+        """
+        Test fit with multidimensional coefficients
+        """
+        coefs = np.array([
+            [0.4, 0.2, -0.08, 0.07, 0.16, 0.23, -0.38, 0.1, -0.05],
+            [0.41, 0.12, -0.1, 0.1, 0.14, 0.21, 0.01, 0.31, -0.15],
+            [0.31, 0.2, -0.01, 0.1, 0.22, 0.23, 0.01, 0.12, -0.15]
+            ]
+        )
+
+        model = MockEstimator()
+        model.make_importance_param(value=coefs)
+
+        visualizer = FeatureImportances(model)
+        visualizer.fit(
+            np.random.rand(100, len(np.mean(coefs, axis=0))), np.random.rand(100)
+        )
+
+        npt.assert_equal(visualizer.feature_importances_.ndim, 1)
+
+    @pytest.mark.xfail(
+        sys.platform == 'win32', reason="images not close on windows"
+    )
+    def test_multi_coefs_stacked(self):
+        """
+        Test stack plot with multidimensional coefficients
+        """
+        X_iris, y_iris = load_iris(True)
+        X_iris_pd = pd.DataFrame(X_iris, columns=['f1', 'f2', 'f3', 'f4'])
+
+        viz = FeatureImportances(LogisticRegression(), stack=True)
+        viz.fit(X_iris_pd, y_iris)
+        viz.poof()
+
+        npt.assert_equal(viz.feature_importances_.shape, (3, 4))
+        self.assert_images_similar(viz)
+
 
     @pytest.mark.skipif(pd is None, reason="pandas is required for this test")
     def test_fit_dataframe(self):
@@ -328,6 +369,21 @@ class TestFeatureImportancesVisualizer(VisualTestCase, DatasetMixin):
         with pytest.raises(YellowbrickTypeError):
             visualizer._find_importances_param()
 
+    def test_find_classes_param_not_found(self):
+        """
+        Raises an exception when classes param not found
+        """
+        model = MockClassifier()
+        visualizer = FeatureImportances(model)
+
+        assert not hasattr(model, 'classes_')
+
+        e = 'could not find classes_ param on {}'.format(
+            visualizer.estimator.__class__.__name__
+        )
+        with pytest.raises(YellowbrickTypeError, match=e):
+            visualizer._find_classes_param()
+
     def test_xlabel(self):
         """
         Check the various xlabels are sensical
@@ -399,3 +455,10 @@ class MockEstimator(BaseEstimator):
 
     def fit(self, X, y=None, **kwargs):
         return self
+
+
+class MockClassifier(BaseEstimator, ClassifierMixin):
+    """
+    Creates empty classifier.
+    """
+    pass

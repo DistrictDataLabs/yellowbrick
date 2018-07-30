@@ -33,7 +33,7 @@ Feature Visualization
 Classification Visualization
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-- :doc:`api/classifier/class_balance`: see how the distribution of classes affects the model
+- :doc:`api/target/class_balance`: see how the distribution of classes affects the model
 - :doc:`api/classifier/class_prediction_error`: shows error and support in classification
 - :doc:`api/classifier/classification_report`: visual representation of precision, recall, and F1
 - :doc:`ROC/AUC Curves <api/classifier/rocauc>`: receiver operator characteristics and area under the curve
@@ -63,7 +63,8 @@ Text Visualization
 ~~~~~~~~~~~~~~~~~~
 
 - :doc:`Term Frequency <api/text/freqdist>`: visualize the frequency distribution of terms in the corpus
-- :doc:`api/text/tsne`: use stochastic neighbor embedding to project documents.
+- :doc:`api/text/tsne`: use stochastic neighbor embedding to project documents
+- :doc:`api/text/dispersion`: visualize how key terms are dispersed throughout a corpus
 
 ... and more! Visualizers are being added all the time; be sure to check the examples (or even the `develop branch <https://github.com/DistrictDataLabs/yellowbrick/tree/develop>`_) and feel free to contribute your ideas for new Visualizers!
 

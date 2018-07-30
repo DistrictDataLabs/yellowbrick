@@ -3,7 +3,9 @@
 [![Build Status](https://travis-ci.com/DistrictDataLabs/yellowbrick.svg?branch=develop)](https://travis-ci.com/DistrictDataLabs/yellowbrick)
 [![Build status](https://ci.appveyor.com/api/projects/status/11abg00ollbdf4oy?svg=true)](https://ci.appveyor.com/project/districtdatalabs/yellowbrick)
 [![Coverage Status](https://coveralls.io/repos/github/DistrictDataLabs/yellowbrick/badge.svg?branch=master)](https://coveralls.io/github/DistrictDataLabs/yellowbrick?branch=master)
-[![Code Health](https://landscape.io/github/DistrictDataLabs/yellowbrick/master/landscape.svg?style=flat)](https://landscape.io/github/DistrictDataLabs/yellowbrick/master)
+[![Total Alerts](https://img.shields.io/lgtm/alerts/g/DistrictDataLabs/yellowbrick.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/DistrictDataLabs/yellowbrick/alerts/)
+[![Language Grade: Python](https://img.shields.io/lgtm/grade/python/g/DistrictDataLabs/yellowbrick.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/DistrictDataLabs/yellowbrick/context:python)
+
 [![PyPI version](https://badge.fury.io/py/yellowbrick.svg)](https://badge.fury.io/py/yellowbrick)
 [![Documentation Status](https://readthedocs.org/projects/yellowbrick/badge/?version=latest)](http://yellowbrick.readthedocs.io/en/latest/?badge=latest)
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.1206239.svg)](https://doi.org/10.5281/zenodo.1206239)
@@ -67,6 +69,7 @@ Visualizers are estimators (objects that learn from data) whose primary objectiv
 
 - **Term Frequency**: visualize the frequency distribution of terms in the corpus
 - **t-SNE Corpus Visualization**: use stochastic neighbor embedding to project documents.
+- **Dispersion Plot**: visualize how key terms are dispersed throughout a corpus
 
 And more! Visualizers are being added all the time, so be sure to check the examples (or even the develop branch) and feel free to contribute your ideas for Visualizers!
 
