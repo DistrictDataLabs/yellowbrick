@@ -17,7 +17,7 @@ authors:
 affiliations:
  - name: Georgetown University
    index: 1
-date: 23 July 2018
+date: 30 July 2018
 bibliography: paper.bib
 ---
 
@@ -29,7 +29,7 @@ Treating model selection as search has led to automation through grid search met
 
 Yellowbrick is a response to the call for open source visual steering tools. For data scientists, Yellowbrick helps evaluate the stability and predictive value of machine learning models and improves the speed of the experimental workflow. For data engineers, Yellowbrick provides visual tools for monitoring model performance in real world applications. For users of models, Yellowbrick provides visual interpretation of the behavior of the model in high dimensional feature space. Finally, for students, Yellowbrick is a framework for understanding a large variety of algorithms and methods.
 
-The Yellowbrick Python visualization package achieves steering by extending both scikit-learn [@sklearn] and Matplotlib [@matplotlib]. Like Yellowbrick, both scikit-learn and Matplotlib are extensions of SciPy [@scipy], libraries intended to facilitate scientific computing. Scikit-learn provides a generalized API for machine learning by exposing the concept of an `Estimator`, an object that learns from data. Yellowbrick in turn extends this concept with the idea of a `Visualizer`, an object that both learns from data and visualizes the result. Visualizers wrap Matplotlib procedures to produce publication-ready figures and rich visual analytics.
+Implemented in Python, the Yellowbrick visualization package achieves steering by extending both scikit-learn [@sklearn] and Matplotlib [@matplotlib]. Like Yellowbrick, both scikit-learn and Matplotlib are extensions of SciPy [@scipy], libraries intended to facilitate scientific computing. Scikit-learn provides a generalized API for machine learning by exposing the concept of an `Estimator`, an object that learns from data. Yellowbrick in turn extends this concept with the idea of a `Visualizer`, an object that both learns from data and visualizes the result. Visualizers wrap Matplotlib procedures to produce publication-ready figures and rich visual analytics.
 
 Because Yellowbrick is part of a rich visual and machine learning ecosystem, it provides visualizations for feature and target analysis, classification, regression, and clustering model visualization, hyperparameter tuning, and text analysis. A few selected examples of visual diagnostics for model selection and their interpretations follow.
 
@@ -39,19 +39,19 @@ Because “more data beats better algorithms” [@rajaraman2008more], the first 
 
 ![Regression Model Tuning](figures/regression.png)
 
-Regression models hypothesize some underlying function influenced by noise whose central tendency can be inferred. The `PredictionError` shows the relationship of actual to predicted values, giving a sense of heteroskedasticity in the target, or regions of more or less error as predictions deviate from the 45 degree line. The `ResidualsPlot` shows the relationship of error in the training and test data and can also show regions of increased variability.
+Regression models hypothesize some underlying function influenced by noise whose central tendency can be inferred. The `PredictionError` visualizer shows the relationship of actual to predicted values, giving a sense of heteroskedasticity in the target, or regions of more or less error as predictions deviate from the 45 degree line. The `ResidualsPlot` shows the relationship of error in the training and test data and can also show regions of increased variability in the predictive model.
 
 ![Classification Model Tuning](figures/classification.png)
 
-Classifier analysis focuses on the precision and recall of the model against individual classes. The `ClassificationReport` allows for rapid comparison between models in a visual heatmap of these metrics. The `DiscriminationThreshold` for binary classifiers shows how adjusting the threshold for positive classification may influence precision and recall globally, as well as the number of points that may require manual checking for stricter determination.
+Classification analysis focuses on the precision and recall of the model's prediction of individual classes. The `ClassificationReport` visualizer allows for rapid comparison between models as a visual heatmap of these metrics. The `DiscriminationThreshold` visualizer for binary classifiers shows how adjusting the threshold for positive classification may influence precision and recall globally, as well as the number of points that may require manual checking for stricter determination.
 
 ![Clustering Model Tuning](figures/clustering.png)
 
-Searching for structure in unlabelled data can be challenging because evaluation is largely qualitative. When using K-Means models, choosing K has a large impact on the quality of the analysis; `KElbowVisualizer` can help select the best K given computational constraints, and `SilhouetteVisualizer` shows relationships of points in each cluster relative to other clusters.
+Searching for structure in unlabelled data can be challenging because evaluation is largely qualitative. When using K-Means models, choosing K has a large impact on the quality of the analysis; the `KElbowVisualizer` can help select the best K given computational constraints. The `SilhouetteVisualizer` shows the relationship of points in each cluster relative to other clusters and gives an overview of the composition and size of each cluster which may hint at how models group similar data points.
 
 ![Hyperparameter Tuning](figures/hyperparameter_tuning.png)
 
-Yellowbrick offers several other techniques for hyperparameter tuning, for instance `AlphaSelection` and `LearningCurve`, which help diagnose model error due to bias and variance, and demonstrate the impact of tuning.
+Yellowbrick also offers several other techniques for hyperparameter tuning. Model and regression-specific `AlphaSelection` visualizers help identify the impact of regularization on linear models and the influence of complexity on the trade-off between error due to bias or variance. More generally, the `LearningCurve` visualizer shows how sensitive models are to the amount of data the model is trained on.
 
 Yellowbrick includes many more visualizations, intended to fit directly into the machine learning workflow, and many more are being added in each new release. From text analysis-specific visualizations to missing data analysis, to a `contrib` module that focus on other machine learning libraries, Yellowbrick has tools to facilitate all parts of hypothesis driven development. The source code for Yellowbrick has been archived to Zenodo and the most recent version can be obtained with the linked DOI: [@zenodo].
 
