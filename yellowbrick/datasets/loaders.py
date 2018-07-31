@@ -297,9 +297,9 @@ def load_game(data_home=None):
         The Yellowbrick Dataset object provides an interface to accessing the
         data and metadata associated with the dataset.
     """
-    raise NotImplemented("requires specialized datatype")
+    raise NotImplementedError("requires specialized datatype")
     # name of the dataset
-    name = 'game'
+    # name = 'game'
     # path = find_dataset_path(name, data_home=data_home)
     # dtype = np.array(['S1']*42+['|S4'])
     # return np.genfromtxt(path, dtype=dtype, delimiter=',', names=True)

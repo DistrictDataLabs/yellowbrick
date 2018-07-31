@@ -100,7 +100,7 @@ class BaseDataset(object):
             self.name, data_home=self.data_home, fname="meta.json", raises=False
         )
         if path is None:
-            return None 
+            return None
 
         with open(path, 'r') as f:
             return json.load(f)
@@ -211,8 +211,8 @@ class Corpus(BaseDataset):
     @memoized
     def categories(self):
         return [
-            cat for cat in os.listdir(path)
-            if os.path.isdir(os.path.join(path, cat))
+            cat for cat in os.listdir(self.path)
+            if os.path.isdir(os.path.join(self.path, cat))
         ]
 
     @property
