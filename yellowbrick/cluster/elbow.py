@@ -194,14 +194,13 @@ class KElbowVisualizer(ClusteringScoreVisualizer):
     `Robert Gove's Block <https://bl.ocks.org/rpgove/0060ff3b656618e9136b>`_.
     
     .. seealso:: The scikit-learn documentation for the `silhouette_score
-    <https://bit.ly/2LYWjYb>`_ and `calinski_harabaz_score
-    <https://bit.ly/2LYWjYb>`_ scoring functions. The default, `distortion_score
-    <https://github.com/DistrictDataLabs/yellowbrick/blob/develop/yellowbrick/cluster/elbow.py#L44>`_,
-    is implemented in Yellowbrick.
+        <https://bit.ly/2LYWjYb>`_ and `calinski_harabaz_score
+        <https://bit.ly/2LW3Zu9>`_. The default, `distortion_score`, is
+        implemented in`yellowbrick.cluster.elbow`.
 
     .. todo:: add parallelization option for performance
-    .. todo:: add different metrics for scores and silhoutte
-    .. todo:: add timing information about how long its taking
+    .. todo:: add different metrics for scores and silhouette
+    .. todo:: add timing information about how long it's taking
     """
 
     def __init__(self, model, ax=None, k=10,
