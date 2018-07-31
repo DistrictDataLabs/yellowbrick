@@ -125,11 +125,11 @@ class KElbowVisualizer(ClusteringScoreVisualizer):
 
     The elbow method runs k-means clustering on the dataset for a range of
     values for k (say from 1-10) and then for each value of k computes an
-    average score for all clusters. By default, the ``distortion_score`` is
+    average score for all clusters. By default, the ``distortion`` score is
     computed, the sum of square distances from each point to its assigned
-    center. Other metrics can also be used such as the ``silhouette_score``,
+    center. Other metrics can also be used such as the ``silhouette`` score,
     the mean silhouette  coefficient for all samples or the
-    ``calinski_harabaz_score``, which computes the ratio of dispersion between
+    ``calinski_harabaz`` score, which computes the ratio of dispersion between
     and within clusters.
 
     When these overall metrics for each model are plotted, it is possible to
@@ -186,16 +186,21 @@ class KElbowVisualizer(ClusteringScoreVisualizer):
 
     If you get a visualizer that doesn't have an elbow or inflection point,
     then this method may not be working. The elbow method does not work well
-    if the data is not very clustered; in this case you might see a smooth
-    curve and the value of k is unclear. Other scoring methods such as BIC or
-    SSE also can be used to explore if clustering is a correct choice.
+    if the data is not very clustered; in this case, you might see a smooth
+    curve and the value of k is unclear. Other scoring methods, such as BIC or
+    SSE, also can be used to explore if clustering is a correct choice.
 
     For a discussion on the Elbow method, read more at
     `Robert Gove's Block <https://bl.ocks.org/rpgove/0060ff3b656618e9136b>`_.
+    
+    .. seealso:: The scikit-learn documentation for the `silhouette_score
+        <https://bit.ly/2LYWjYb>`_ and `calinski_harabaz_score
+        <https://bit.ly/2LW3Zu9>`_. The default, `distortion_score`, is
+        implemented in`yellowbrick.cluster.elbow`.
 
     .. todo:: add parallelization option for performance
-    .. todo:: add different metrics for scores and silhoutte
-    .. todo:: add timing information about how long its taking
+    .. todo:: add different metrics for scores and silhouette
+    .. todo:: add timing information about how long it's taking
     """
 
     def __init__(self, model, ax=None, k=10,
