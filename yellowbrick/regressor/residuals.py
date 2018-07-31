@@ -625,7 +625,7 @@ def residuals_plot(model,
     # Instantiate the visualizer
     visualizer = ResidualsPlot(
         model=model, ax=ax, hist=hist, train_color=train_color,
-        test_color=train_color, line_color=line_color, **kwargs
+        test_color=test_color, line_color=line_color, **kwargs
     )
 
     # Create the train and test splits
