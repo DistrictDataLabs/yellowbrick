@@ -169,8 +169,13 @@ class ROCAUC(ClassificationScoreVisualizer):
         # Compute the predictions for the test data
         y_pred = self._get_y_scores(X)
 
-        # Check to see if shape of predictions signals a binary decision
-        if len(y_pred.shape) == 1:
+        # Note: In the above, _get_y_scores calls either a decision_function or
+        # predict_proba, which should return a 2D array. But in a binary
+        # classification using an estimator with only a decision_function, y_pred
+        # will instead be 1D, meaning only one curve can be plotted. In this case,
+        # we set the _binary_decision attribute to True to ensure only one curve is
+        # computed and plotted later on.
+        if y_pred.ndim == 1:
             self._binary_decision = True
 
             # Raise an error if it's a binary decision and user has set micro,
