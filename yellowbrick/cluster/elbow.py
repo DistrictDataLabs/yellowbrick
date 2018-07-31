@@ -186,12 +186,18 @@ class KElbowVisualizer(ClusteringScoreVisualizer):
 
     If you get a visualizer that doesn't have an elbow or inflection point,
     then this method may not be working. The elbow method does not work well
-    if the data is not very clustered; in this case you might see a smooth
-    curve and the value of k is unclear. Other scoring methods such as BIC or
-    SSE also can be used to explore if clustering is a correct choice.
+    if the data is not very clustered; in this case, you might see a smooth
+    curve and the value of k is unclear. Other scoring methods, such as BIC or
+    SSE, also can be used to explore if clustering is a correct choice.
 
     For a discussion on the Elbow method, read more at
     `Robert Gove's Block <https://bl.ocks.org/rpgove/0060ff3b656618e9136b>`_.
+    
+    .. seealso:: The scikit-learn documentation for the `silhouette_score
+    <https://bit.ly/2LYWjYb>`_ and `calinski_harabaz_score
+    <https://bit.ly/2LYWjYb>`_ scoring functions. The default, `distortion_score
+    <https://github.com/DistrictDataLabs/yellowbrick/blob/develop/yellowbrick/cluster/elbow.py#L44>`_,
+    is implemented in Yellowbrick.
 
     .. todo:: add parallelization option for performance
     .. todo:: add different metrics for scores and silhoutte
