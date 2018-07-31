@@ -19,7 +19,6 @@ Downloads the example datasets for running the examples.
 import os
 import six
 import zipfile
-import hashlib
 
 if six.PY2:
     # backport for encoding in open for python2
@@ -31,85 +30,85 @@ except ImportError:
     # python 2
     from urllib2 import urlopen
 
-from .base import DATASETS, FIXTURES
+from .signature import sha256sum
+from .path import get_data_home, cleanup_dataset
 
-##########################################################################
-## Functions
-##########################################################################
+from yellowbrick.exceptions import DataError
 
-def download(path=FIXTURES):
-    """
-    Downloads all the example datasets to the specified path.
-    """
-    for name, meta in DATASETS.items():
-        download_data(name, data_dir=data_path)
 
+# Downlod chunk size
+CHUNK = 49152
 
 ##########################################################################
 ## Download functions
 ##########################################################################
 
-def download_data(name, data_dir=None, signature=None, extract=True):
+def download_data(url, signature, data_home=None, replace=False, extract=True):
     """
     Downloads the zipped data set specified at the given URL, saving it to
-    the output path specified. This function verifies the download with the
-    given signature (if supplied) and extracts the zip file if requested.
+    the data directory specified by ``get_data_home``. This function verifies
+    the download with the given signature and extracts the archive.
+
+    Parameters
+    ----------
+    url : str
+        The URL of the dataset on the Internet to GET
+
+    signature : str
+        The SHA 256 hash of the dataset archive being downloaded to verify
+        that the dataset has been correctly downloaded
+
+    data_home : str, optional
+        The path on disk where data is stored. If not passed in, it is looked
+        up from YELLOWBRICK_DATA or the default returned by ``get_data_home``.
+
+    replace : bool, default: False
+        If the data archive already exists, replace the dataset. If this is
+        False and the dataset exists, an exception is raised.
+
+    extract : bool, default: True
+        Extract the archive file after downloading it
     """
-
-    # Create the fixture directory
-    if not os.path.exists(data_dir):
-        os.mkdir(data_dir)
-
-    dataset = DATASETS[name]
-    url = dataset['url']
+    data_home = get_data_home(data_home)
 
     # Get the name of the file from the URL
-    filename = os.path.basename(url)
-    dlpath = os.path.join(data_dir, filename)
-    dataset_path = os.path.join(data_dir, name)
+    basename = os.path.basename(url)
+    name, _ = os.path.splitext(basename)
 
-    #Create the output directory if it does not exist
-    if not os.path.exists(dataset_path):
-        os.mkdir(dataset_path)
+    # Get the archive and data directory paths
+    archive = os.path.join(data_home, basename)
+    datadir = os.path.join(data_home, name)
+
+    # If the archive exists cleanup or raise override exception
+    if os.path.exists(archive):
+        if not replace:
+            raise DataError((
+                "dataset already exists at {}, set replace=False to overwrite"
+            ).format(archive))
+
+        cleanup_dataset(name, data_home=data_home)
+
+    # Create the output directory if it does not exist
+    if not os.path.exists(datadir):
+        os.mkdir(datadir)
 
     # Fetch the response in a streaming fashion and write it to disk.
     response = urlopen(url)
-    CHUNK = 16 * 1024
-    with open(dlpath, 'wb') as f:
 
+    with open(archive, 'wb') as f:
         while True:
             chunk = response.read(CHUNK)
             if not chunk:
                 break
             f.write(chunk)
 
-    # If verify, compare the signature
-    if signature is not None:
-        dlsignature = sha256sum(dlpath)
-        if signature != dlsignature:
-            raise ValueError(
-                "Download signature does not match hardcoded signature!"
-            )
+    # Compare the signature of the archive to the expected one
+    if sha256sum(archive) != signature:
+        raise ValueError(
+            "Download signature does not match hardcoded signature!"
+        )
 
     # If extract, extract the zipfile.
     if extract:
-        zf = zipfile.ZipFile(dlpath)
-        zf.extractall(path=data_dir)
-
-
-##########################################################################
-## Signature checking utility
-##########################################################################
-
-def sha256sum(path, blocksize=65536):
-    """
-    Computes the SHA256 signature of a file to verify that the file has not
-    been modified in transit and that it is the correct version of the data.
-    """
-    sig = hashlib.sha256()
-    with open(path, 'rb') as f:
-        buf = f.read(blocksize)
-        while len(buf) > 0:
-            sig.update(buf)
-            buf = f.read(blocksize)
-    return sig.hexdigest()
+        zf = zipfile.ZipFile(archive)
+        zf.extractall(path=data_home)

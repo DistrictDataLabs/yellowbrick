@@ -15,8 +15,9 @@ Helper functions for looking up dataset paths.
 ##########################################################################
 
 import os
+import shutil
 
-# from .download import download_data
+from .signature import sha256sum
 from yellowbrick.exceptions import DataError
 
 
@@ -28,7 +29,7 @@ FIXTURES = os.path.join(os.path.dirname(__file__), "fixtures")
 
 
 ##########################################################################
-## Helper Functions
+## Dataset path utilities
 ##########################################################################
 
 def get_data_home(path=None):
@@ -55,7 +56,7 @@ def get_data_home(path=None):
     return path
 
 
-def find_dataset_path(dataset, data_home=None, fname=None, ext=".csv"):
+def find_dataset_path(dataset, data_home=None, fname=None, ext=".csv", raises=True):
     """
     Looks up the path to the dataset specified in the data home directory,
     which is found using the ``get_data_home`` function. By default data home
@@ -66,7 +67,7 @@ def find_dataset_path(dataset, data_home=None, fname=None, ext=".csv"):
     format. Other files and extensions can be passed in to locate other data
     types or auxilliary files.
 
-    If the dataset is not found a ``DataError`` is raised.
+    If the dataset is not found a ``DataError`` is raised by default.
 
     Parameters
     ----------
@@ -87,11 +88,19 @@ def find_dataset_path(dataset, data_home=None, fname=None, ext=".csv"):
         is specified then the ext parameter is ignored. If ext is None then
         the directory of the dataset will be returned.
 
+    raises : bool, default: True
+        If the path does not exist, raises a DataError unless this flag is set
+        to False, at which point None is returned (e.g. for checking if the
+        path exists or not).
+
     Returns
     -------
-    path : str
+    path : str or None
         A path to the requested file, guaranteed to exist if an exception is
-        not raised during processing of the request.
+        not raised during processing of the request (unless None is returned).
+
+    raises : DataError
+        If raise is True and the path does not exist, raises a DataError.
     """
     # Figure out the root directory of the datasets
     data_home = get_data_home(data_home)
@@ -107,6 +116,11 @@ def find_dataset_path(dataset, data_home=None, fname=None, ext=".csv"):
 
     # Determine if the path exists
     if not os.path.exists(path):
+
+        # Suppress exceptions if required
+        if not raises:
+            return None
+
         raise DataError((
             "could not find dataset at {} - does it need to be downloaded?"
         ).format(path))
@@ -138,3 +152,73 @@ def dataset_exists(dataset, data_home=None):
     path = os.path.join(data_home, dataset)
 
     return os.path.exists(path) and os.path.isdir(path)
+
+
+def dataset_archive(dataset, signature, data_home=None, ext=".zip"):
+    """
+    Checks to see if the dataset archive file exists in the data home directory,
+    found with ``get_data_home``. By specifying the signature, this function
+    also checks to see if the archive is the latest version by comparing the
+    sha256sum of the local archive with the specified signature.
+
+    Parameters
+    ----------
+    dataset : str
+        The name of the dataset; should either be a folder in data home or
+        specified in the yellowbrick.datasets.DATASETS variable.
+
+    signature : str
+        The SHA 256 signature of the dataset, used to determine if the archive
+        is the latest version of the dataset or not.
+
+    data_home : str, optional
+        The path on disk where data is stored. If not passed in, it is looked
+        up from YELLOWBRICK_DATA or the default returned by ``get_data_home``.
+
+    ext : str, default: ".zip"
+        The extension of the archive file.
+
+    Returns
+    -------
+    exists : bool
+        True if the dataset archive exists and is the latest version.
+    """
+    data_home = get_data_home(data_home)
+    path = os.path.join(data_home, dataset+ext)
+
+    if os.path.exists(path) and os.path.isfile(path):
+        return sha256sum(path) == signature
+
+    return False
+
+
+def cleanup_dataset(dataset, data_home=None, ext=".zip"):
+    """
+    Removes the dataset directory and archive file from the data home directory.
+
+    Parameters
+    ----------
+    dataset : str
+        The name of the dataset; should either be a folder in data home or
+        specified in the yellowbrick.datasets.DATASETS variable.
+
+    data_home : str, optional
+        The path on disk where data is stored. If not passed in, it is looked
+        up from YELLOWBRICK_DATA or the default returned by ``get_data_home``.
+
+    ext : str, default: ".zip"
+        The extension of the archive file.
+    """
+    data_home = get_data_home(data_home)
+
+    # Paths to remove
+    datadir = os.path.join(data_home, dataset)
+    archive = os.path.join(data_home, dataset+ext)
+
+    # Remove directory and contents
+    if os.path.exists(datadir):
+        shutil.rmtree(datadir)
+
+    # Remove the archive file
+    if os.path.exists(archive):
+        os.remove(archive)

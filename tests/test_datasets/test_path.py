@@ -15,9 +15,11 @@ Tests for the dataset path utilities
 ##########################################################################
 
 import os
+import pytest
 import contextlib
 
 from yellowbrick.datasets.path import *
+from yellowbrick.exceptions import DataError
 
 
 ##########################################################################
@@ -82,6 +84,59 @@ def test_get_data_home_specified(tmpdir):
     assert os.path.exists(path)
 
 
+def test_find_dataset_path(tmpdir):
+    """
+    Test find_dataset_path with a specified data_home
+    """
+
+    # Create the dataset
+    data_home = tmpdir.mkdir("fixtures")
+    foo = data_home.mkdir("foo")
+
+    # Test the default lookup of foo/foo.csv
+    fpath = foo.join("foo.csv")
+    fpath.write("1,2,3")
+    assert find_dataset_path("foo", data_home=data_home) == fpath
+
+    # Test the extension based lookup of foo/foo.npz
+    fpath = foo.join("foo.npz")
+    fpath.write("1234")
+    assert find_dataset_path("foo", data_home=data_home, ext=".npz") == fpath
+
+    # Test the fname based lookup of foo/data.txt
+    fpath = foo.join("data.txt")
+    fpath.write("there is data in this file")
+    assert find_dataset_path("foo", data_home=data_home, fname="data.txt") == fpath
+
+
+def test_missing_find_dataset_path(tmpdir):
+    """
+    Test find_dataset_path when the dataset does not exist
+    """
+    data_home = tmpdir.mkdir("fixtures")
+
+    # When the data directory doesn't exist
+    with pytest.raises(DataError):
+        find_dataset_path("foo", data_home=data_home)
+
+    # When the data directory exists but no file is in the directory
+    foo = data_home.mkdir("foo")
+    with pytest.raises(DataError):
+        find_dataset_path("foo", data_home=data_home)
+
+    # When the specified file doesn't exist
+    fpath = foo.join("foo.csv")
+    fpath.write("1,2,3")
+    with pytest.raises(DataError):
+        find_dataset_path("foo", data_home=data_home, ext=".npz")
+
+
+def test_suppress_exception_find_dataset_path(tmpdir):
+    """
+    Assert that find_dataset_path can suppress exceptions
+    """
+    data_home = tmpdir.mkdir("fixtures")
+    assert find_dataset_path("foo", data_home=data_home, raises=False) is None
 
 
 def test_dataset_exists(tmpdir):
@@ -103,3 +158,62 @@ def test_dataset_exists(tmpdir):
     # Test correct case
     data_home.mkdir("foo")
     assert dataset_exists("foo", data_home)
+
+
+def test_dataset_archive(tmpdir):
+    """
+    Test the dataset_archive determines if an archive is up to date
+    """
+    sig = "49b3fc3143d727d7819fabd4365d7e7b29794089dc9fa1e5e452aeb0b33d5eda"
+    data_home = tmpdir.mkdir("fixtures")
+
+    # When archive does not exist
+    assert not dataset_archive("foo", sig, data_home=data_home)
+
+    # Create archive
+    fpath = data_home.join("foo.zip")
+    fpath.write("this is a data archive")
+
+    # When archive exists
+    assert dataset_archive("foo", sig, data_home=data_home)
+
+    # When archive does not match signature
+    assert not dataset_archive("foo", "abcd", data_home=data_home)
+
+
+def test_cleanup_dataset(tmpdir):
+    """
+    Test cleanup_dataset removes both data dir and archive
+    """
+    data_home = tmpdir.mkdir("fixtures")
+
+    # Make dataset and archive
+    foo = data_home.mkdir("foo")
+    fdata = foo.join("foo.csv")
+    fdata.write("testing 1,2,3")
+
+    fzip = data_home.join("foo.zip")
+    fzip.write("this is the archive file")
+
+    # Make sure the files exist
+    assert os.path.exists(fzip)
+    assert os.path.exists(fdata)
+
+    # Cleanup the dataset
+    cleanup_dataset("foo", data_home=data_home)
+
+    # Files should be gone
+    assert not os.path.exists(fzip)
+    assert not os.path.exists(fdata)
+
+
+def test_cleanup_dataset_no_data(tmpdir):
+    """
+    Assert cleanup_dataset fails gracefully if data and archive don't exist.
+    """
+    data_home = tmpdir.mkdir("fixtures")
+    cleanup_dataset("foo", data_home=data_home)
+
+    # Files should be gone
+    assert not os.path.exists(data_home.join("foo.zip"))
+    assert not os.path.exists(data_home.join("foo"))

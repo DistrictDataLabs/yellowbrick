@@ -17,214 +17,224 @@ Loading utilities for the yellowbrick datasets.
 ##########################################################################
 
 import os
+import json
 import numpy as np
 
-from sklearn.datasets.base import Bunch
+from .download import download_data
+from .path import find_dataset_path, dataset_exists
 
-from .path import find_dataset_path, FIXTURES
+from yellowbrick.utils.decorators import memoized
 
-
-##########################################################################
-## Links and MD5 hash of datasets
-##########################################################################
-
-DATASETS = {
-    'concrete': {
-        'url': 'https://s3.amazonaws.com/ddl-data-lake/yellowbrick/concrete.zip',
-        'signature': 'b9ea5f26a7bb272a040e2f1a993b26babbf8dc4a04ab8198bb315ca66d71f10d',
-        'type': 'numpy',
-    },
-    'energy': {
-        'url': 'https://s3.amazonaws.com/ddl-data-lake/yellowbrick/energy.zip',
-        'signature': '19fb86f3bcdde208eed46944172cb643ef6a7d58da103fb568fae43205ed89d3',
-        'type': 'numpy',
-    },
-    'credit': {
-        'url': 'https://s3.amazonaws.com/ddl-data-lake/yellowbrick/credit.zip',
-        'signature': '4a91339c69f55e18f3f48004328fbcb7868070b618208fed099920427b084e5e',
-        'type': 'numpy',
-    },
-    'occupancy': {
-        'url': 'https://s3.amazonaws.com/ddl-data-lake/yellowbrick/occupancy.zip',
-        'signature': '429cfe376dc9929a1fa528da89f0e1626e34e19695f3f555d8954025bbc522b8',
-        'type': 'numpy',
-    },
-    'mushroom': {
-        'url': 'https://s3.amazonaws.com/ddl-data-lake/yellowbrick/mushroom.zip',
-        'signature': '884c43cb70db35d211c67b1cf6a3683b2b4569393d2789d5c07840da4dc85ba8',
-        'type': 'numpy',
-    },
-    'game': {
-        'url': 'https://s3.amazonaws.com/ddl-data-lake/yellowbrick/game.zip',
-        'signature': 'b1bd85789a014a898daa34cb5f89ceab6d2cd6488a2e572187e34aa4ec21a43b',
-        'type': 'numpy',
-    },
-    'bikeshare': {
-        'url': 'https://s3.amazonaws.com/ddl-data-lake/yellowbrick/bikeshare.zip',
-        'signature': 'a9b440f65549746dff680c92ff8bdca3c7265f09db1cf09e708e6e26fc8aba44',
-        'type': 'numpy',
-    },
-    'spam': {
-        'url': 'https://s3.amazonaws.com/ddl-data-lake/yellowbrick/spam.zip',
-        'signature': '65be21196ba3d8448847409b70a67d761f873f30719c807600eb516d7aef1de1',
-        'type': 'numpy',
-    },
-    'hobbies': {
-        'url': 'https://s3.amazonaws.com/ddl-data-lake/yellowbrick/hobbies.zip',
-        'signature': '415c8f68df1486d5d84a1d1757a5aa3035aef5ad63ede5013c261d622fbd29d8',
-        'type': 'corpus',
-    },
-}
+try:
+    import pandas as pd
+except ImportError:
+    pd = None
 
 
 ##########################################################################
-## General loading utilities
+## Dataset Object
 ##########################################################################
 
-def load_numpy(name, data_home=None, **kwargs):
+class BaseDataset(object):
     """
-    Loads the numpy matrix from the specified data set, downloads it if
-    it hasn't already been downloaded.
+    Base functionality for Dataset and Corpus objects.
     """
 
-    path = find_dataset_path(name, data_home=data_home)
-    return np.genfromtxt(path, dtype=float, delimiter=',', names=True, **kwargs)
+    def __init__(self, name, url=None, signature=None, data_home=None):
+        self.name = name
+        self.data_home = data_home
+        self.url = url
+        self.signature = signature
+
+        # Check if the dataset exists, and if not - download it!
+        if not dataset_exists(self.name, data_home=data_home):
+            self.download()
+
+    def download(self, replace=False):
+        """
+        Download the dataset from the hosted Yellowbrick data store and save
+        it to the location specified by ``get_data_home``. The downloader
+        verifies the download completed successfully and safely by comparing
+        the expected signature with the SHA 256 signature of the downloaded
+        archive file.
+
+        Parameters
+        ----------
+        replace : bool, default: False
+            If the data archive already exists, replace the dataset. If this is
+            False and the dataset exists, an exception is raised.
+        """
+        download_data(
+            self.url, self.signature, data_home=self.data_home,
+            replace=replace, extract=True
+        )
+
+    def contents(self):
+        """
+        Contents returns a list of the files in the data directory.
+        """
+        data = find_dataset_path(
+            self.name, data_home=self.data_home, ext=None
+        )
+        return os.listdir(data)
+
+    @memoized
+    def README(self):
+        """
+        Returns the contents of the README.md file that describes the dataset
+        in detail and contains attribution information.
+        """
+        path = find_dataset_path(
+            self.name, data_home=self.data_home, fname="README.md"
+        )
+        with open(path, 'r') as f:
+            return f.read()
+
+    @memoized
+    def meta(self):
+        """
+        Returns the contents of the meta.json file that describes important
+        attributes about the dataset and modifies the behavior of the loader.
+        """
+        path = find_dataset_path(
+            self.name, data_home=self.data_home, fname="meta.json", raises=False
+        )
+        if path is None:
+            return None 
+
+        with open(path, 'r') as f:
+            return json.load(f)
 
 
-def load_corpus(name, data_home=None):
+class Dataset(BaseDataset):
     """
-    Loads a sklearn Bunch with the corpus and downloads it if it hasn't
-    already been downloaded. Used to test text visualizers.
+    Datasets contain a reference to data on disk and provide utilities for
+    quickly loading files and objects into a variety of formats. The most
+    common use of the Dataset object is to load example datasets provided by
+    Yellowbrick to run the examples in the documentation.
+
+    The dataset by default will return the data as a numpy array, however if
+    Pandas is installed, it is possible to access the data as a DataFrame and
+    Series object. In either case, the data is represented by a features table,
+    X and a target vector, y.
+
+    Parameters
+    ----------
+    name : str
+        The name of the dataset; should either be a folder in data home or
+        specified in the yellowbrick.datasets.DATASETS variable. This name is
+        used to perform all lookups and identify the dataset externally.
+
+    data_home : str, optional
+        The path on disk where data is stored. If not passed in, it is looked
+        up from YELLOWBRICK_DATA or the default returned by ``get_data_home``.
+
+    url : str, optional
+        The web location where the archive file of the dataset can be
+        downloaded from.
+
+    signature : str, optional
+        The signature of the data archive file, used to verify that the latest
+        version of the data has been downloaded and that the download hasn't
+        been corrupted or modified in anyway.
     """
-    path = find_dataset_path(name, data_home=data_home, ext=None)
 
-    # Read the directories in the directory as the categories.
-    categories = [
-        cat for cat in os.listdir(path)
-        if os.path.isdir(os.path.join(path, cat))
-    ]
+    def as_matrix(self):
+        """
+        Returns the dataset as two numpy arrays: X and y.
 
-    files  = [] # holds the file names relative to the root
-    data   = [] # holds the text read from the file
-    target = [] # holds the string of the category
+        Returns
+        -------
+        X : array-like with shape (n_instances, n_features)
+            A numpy array describing the instance features.
 
-    # Load the data from the files in the corpus
-    for cat in categories:
-        for name in os.listdir(os.path.join(path, cat)):
-            files.append(os.path.join(path, cat, name))
-            target.append(cat)
+        y : array-like with shape (n_instances,)
+            A numpy array describing the target vector.
+        """
+        path = find_dataset_path(self.name, data_home=self.data_home)
+        return np.genfromtxt(path, dtype=float, delimiter=',', names=True)
 
-            with open(os.path.join(path, cat, name), 'r', encoding='UTF-8') as f:
-                data.append(f.read())
+    def as_pandas(self):
+        """
+        Returns the dataset as two pandas objects: X and y.
 
-    # Return the data bunch for use similar to the newsgroups example
-    return Bunch(
-        categories=categories,
-        files=files,
-        data=data,
-        target=target,
-    )
+        Returns
+        -------
+        X : DataFrame with shape (n_instances, n_features)
+            A pandas DataFrame containing feature data and named columns.
+
+        y : Series with shape (n_instances,)
+            A pandas Series containing target data and an index that matches
+            the feature DataFrame index.
+        """
+        if pd is None:
+            raise ImportError(
+                "pandas is required to load DataFrame, it can be installed with pip"
+            )
+
+        path = find_dataset_path(self.name, data_home=self.data_home)
+        return pd.read_csv(path)
 
 
-##########################################################################
-## Specific loading utilities
-##########################################################################
-
-def load_concrete(data_home=FIXTURES):
+class Corpus(BaseDataset):
     """
-    Downloads the 'concrete' dataset, saving it to the output
-    path specified and returns the data.
-    """
-    # name of the dataset
-    name = 'concrete'
-    data = load_numpy(name, data_home=data_home)
-    return data
+    Corpus datasets contain a reference to documents on disk and provide
+    utilities for quickly loading text data for use in machine learning
+    workflows. The most common use of the corpus is to load the text analysis
+    examples from the Yellowbrick documentation.
 
+    Parameters
+    ----------
+    name : str
+        The name of the corpus; should either be a folder in data home or
+        specified in the yellowbrick.datasets.DATASETS variable. This name is
+        used to perform all lookups and identify the corpus externally.
 
-def load_energy(data_home=FIXTURES):
-    """
-    Downloads the 'energy' dataset, saving it to the output
-    path specified and returns the data.
-    """
-    # name of the dataset
-    name = 'energy'
-    data = load_numpy(name, data_home=data_home)
-    return data
+    data_home : str, optional
+        The path on disk where data is stored. If not passed in, it is looked
+        up from YELLOWBRICK_DATA or the default returned by ``get_data_home``.
 
+    url : str, optional
+        The web location where the archive file of the corpus can be
+        downloaded from.
 
-def load_credit(data_home=FIXTURES):
+    signature : str, optional
+        The signature of the data archive file, used to verify that the latest
+        version of the data has been downloaded and that the download hasn't
+        been corrupted or modified in anyway.
     """
-    Downloads the 'credit' dataset, saving it to the output
-    path specified and returns the data.
-    """
-    # name of the dataset
-    name = 'credit'
-    data = load_numpy(name, data_home=data_home)
-    return data
 
+    @memoized
+    def path(self):
+        return find_dataset_path(self.name, data_home=self.data_home, ext=None)
 
-def load_occupancy(data_home=FIXTURES):
-    """
-    Downloads the 'occupancy' dataset, saving it to the output
-    path specified and returns the data.
-    """
-    # name of the dataset
-    name = 'occupancy'
-    data = load_numpy(name, data_home=data_home)
-    return data
+    @memoized
+    def categories(self):
+        return [
+            cat for cat in os.listdir(path)
+            if os.path.isdir(os.path.join(path, cat))
+        ]
 
+    @property
+    def files(self):
+        return [
+            name
+            for cat in self.categories
+            for name in os.listdir(os.path.join(self.path, cat))
+        ]
 
-def load_mushroom(data_home=FIXTURES):
-    """
-    Downloads the 'mushroom' dataset, saving it to the output
-    path specified and returns the data.
-    """
-    # name of the dataset
-    name = 'mushroom'
-    data = load_numpy(name, data_home=data_home)
-    return data
+    @property
+    def data(self):
+        def read(path):
+            with open(path, 'r', encoding='UTF-8') as f:
+                return f.read()
 
+        return [
+            read(f) for f in self.files
+        ]
 
-def load_hobbies(data_home=FIXTURES):
-    """
-    Downloads the 'hobbies' dataset, saving it to the output
-    path specified and returns the data.
-    """
-    # name of the dataset
-    name = 'hobbies'
-    data = load_corpus(name, data_home=data_home)
-    return data
-
-
-def load_game(data_home=FIXTURES):
-    """
-    Downloads the 'game' dataset, saving it to the output
-    path specified and returns the data.
-    """
-    # name of the dataset
-    name = 'game'
-    path = find_dataset_path(name, data_home=data_home)
-    dtype = np.array(['S1']*42+['|S4'])
-    return np.genfromtxt(path, dtype=dtype, delimiter=',', names=True)
-
-
-def load_bikeshare(data_home=FIXTURES):
-    """
-    Downloads the 'bikeshare' dataset, saving it to the output
-    path specified and returns the data.
-    """
-    # name of the dataset
-    name = 'bikeshare'
-    data = load_numpy(name, data_home=data_home)
-    return data
-
-
-def load_spam(data_home=FIXTURES):
-    """
-    Downloads the 'spam' dataset, saving it to the output
-    path specified and returns the data.
-    """
-    # name of the dataset
-    name = 'spam'
-    data = load_numpy(name, skip_header=True, data_home=data_home)
-    return data
+    @property
+    def target(self):
+        return [
+            os.path.basename(os.path.dirname(f)) for f in self.files
+        ]
