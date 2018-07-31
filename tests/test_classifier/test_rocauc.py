@@ -139,8 +139,43 @@ class ROCAUCTests(VisualTestCase, DatasetMixin):
         self.assertEqual(len(visualizer.roc_auc.keys()), 1)
 
         # Compare the images
-        visualizer.poof()
         self.assert_images_similar(visualizer)
+
+    def test_binary_micro_error(self):
+        """
+        Test ROCAUC to see if _binary_decision with micro = True raises an error
+        """
+        # Create visualizer with a linear model to force a binary decision
+        visualizer = ROCAUC(LinearSVC(random_state=42), micro=True)
+        visualizer.fit(self.binary.X.train, self.binary.y.train)
+
+        # Ensure score raises error (micro curves aren't defined for binary decisions)
+        with self.assertRaises(ModelError):
+            visualizer.score(self.binary.X.test, self.binary.y.test)
+
+    def test_binary_macro_error(self):
+        """
+        Test ROCAUC to see if _binary_decision with macro = True raises an error
+        """
+        # Create visualizer with a linear model to force a binary decision
+        visualizer = ROCAUC(LinearSVC(random_state=42), macro=True)
+        visualizer.fit(self.binary.X.train, self.binary.y.train)
+
+        # Ensure score raises error (macro curves aren't defined for binary decisions)
+        with self.assertRaises(ModelError):
+            visualizer.score(self.binary.X.test, self.binary.y.test)
+
+    def test_binary_per_class_error(self):
+        """
+        Test ROCAUC to see if _binary_decision with per_class = True raises an error
+        """
+        # Create visualizer with a linear model to force a binary decision
+        visualizer = ROCAUC(LinearSVC(random_state=42), per_class=True)
+        visualizer.fit(self.binary.X.train, self.binary.y.train)
+
+        # Ensure score raises error (per_class curves not defined for binary decisions)
+        with self.assertRaises(ModelError):
+            visualizer.score(self.binary.X.test, self.binary.y.test)
 
     def test_multiclass_rocauc(self):
         """
