@@ -250,7 +250,7 @@ DATASAURUS = [
 def datasaurus():
     """
     Creates 2x2 grid plot of 4 from the Datasaurus Dozen datasets for illustration.
-    
+
     Citation:
     Justin Matejka, George Fitzmaurice (2017)
     Same Stats, Different Graphs: Generating Datasets with Varied Appearance and
@@ -258,7 +258,7 @@ def datasaurus():
     CHI 2017 Conference proceedings:
     ACM SIGCHI Conference on Human Factors in Computing Systems
     """
-    fig, ((axa, axb), (axc, axd)) =  plt.subplots(2, 2, sharex='col', sharey='row')
+    _, ((axa, axb), (axc, axd)) =  plt.subplots(2, 2, sharex='col', sharey='row')
     colors = get_color_cycle()
     for arr, ax, color in zip(DATASAURUS, (axa, axb, axc, axd), colors):
         x = arr[0]
@@ -266,7 +266,7 @@ def datasaurus():
 
         # Draw the points in the scatter plot
         ax.scatter(x, y, c=color)
-        
+
         # Set the X and Y limits
         ax.set_xlim(0, 100)
         ax.set_ylim(0, 110)
