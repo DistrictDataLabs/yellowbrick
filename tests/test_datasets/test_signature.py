@@ -35,4 +35,4 @@ def test_signature(tmpdir):
 
     fpath = tmpdir.join("test.json")
     json.dump(FIXTURE, fpath, indent=2)
-    assert sha256sum(fpath) == "d10b36aa74a59bcf4a88185837f658afaf3646eff2bb16c3928d0e9335e945d2"
+    assert sha256sum(str(fpath)) == "d10b36aa74a59bcf4a88185837f658afaf3646eff2bb16c3928d0e9335e945d2"

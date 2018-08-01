@@ -93,6 +93,9 @@ def test_find_dataset_path(tmpdir):
     data_home = tmpdir.mkdir("fixtures")
     foo = data_home.mkdir("foo")
 
+    # Stringify FilePath for Py2 tests
+    data_home = str(data_home)
+
     # Test the default lookup of foo/foo.csv
     fpath = foo.join("foo.csv")
     fpath.write("1,2,3")
@@ -117,25 +120,25 @@ def test_missing_find_dataset_path(tmpdir):
 
     # When the data directory doesn't exist
     with pytest.raises(DataError):
-        find_dataset_path("foo", data_home=data_home)
+        find_dataset_path("foo", data_home=str(data_home))
 
     # When the data directory exists but no file is in the directory
     foo = data_home.mkdir("foo")
     with pytest.raises(DataError):
-        find_dataset_path("foo", data_home=data_home)
+        find_dataset_path("foo", data_home=str(data_home))
 
     # When the specified file doesn't exist
     fpath = foo.join("foo.csv")
     fpath.write("1,2,3")
     with pytest.raises(DataError):
-        find_dataset_path("foo", data_home=data_home, ext=".npz")
+        find_dataset_path("foo", data_home=str(data_home), ext=".npz")
 
 
 def test_suppress_exception_find_dataset_path(tmpdir):
     """
     Assert that find_dataset_path can suppress exceptions
     """
-    data_home = tmpdir.mkdir("fixtures")
+    data_home = str(tmpdir.mkdir("fixtures"))
     assert find_dataset_path("foo", data_home=data_home, raises=False) is None
 
 
@@ -144,20 +147,20 @@ def test_dataset_exists(tmpdir):
     Test the dataset_exists helper function
     """
     data_home = tmpdir.mkdir("fixtures")
-    assert not os.path.exists(data_home.join("foo"))
+    assert not os.path.exists(str(data_home.join("foo")))
 
     # Test when directory doesn't exist
-    assert not dataset_exists("foo", data_home)
+    assert not dataset_exists("foo", str(data_home))
 
     # Test when path exists but is file
     fpath = data_home.join("foo.txt")
     fpath.write("foo")
 
-    assert not dataset_exists("foo.txt", data_home)
+    assert not dataset_exists("foo.txt", str(data_home))
 
     # Test correct case
     data_home.mkdir("foo")
-    assert dataset_exists("foo", data_home)
+    assert dataset_exists("foo", str(data_home))
 
 
 def test_dataset_archive(tmpdir):
@@ -168,11 +171,14 @@ def test_dataset_archive(tmpdir):
     data_home = tmpdir.mkdir("fixtures")
 
     # When archive does not exist
-    assert not dataset_archive("foo", sig, data_home=data_home)
+    assert not dataset_archive("foo", sig, data_home=str(data_home))
 
     # Create archive
     fpath = data_home.join("foo.zip")
     fpath.write("this is a data archive")
+
+    # Stringify FilePath for Py2 tests
+    data_home = str(data_home)
 
     # When archive exists
     assert dataset_archive("foo", sig, data_home=data_home)
@@ -195,6 +201,11 @@ def test_cleanup_dataset(tmpdir):
     fzip = data_home.join("foo.zip")
     fzip.write("this is the archive file")
 
+    # Stringify FilePath for Py2 tests
+    data_home = str(data_home)
+    fzip = str(fzip)
+    fdata = str(fdata)
+
     # Make sure the files exist
     assert os.path.exists(fzip)
     assert os.path.exists(fdata)
@@ -212,8 +223,8 @@ def test_cleanup_dataset_no_data(tmpdir):
     Assert cleanup_dataset fails gracefully if data and archive don't exist.
     """
     data_home = tmpdir.mkdir("fixtures")
-    cleanup_dataset("foo", data_home=data_home)
+    cleanup_dataset("foo", data_home=str(data_home))
 
     # Files should be gone
-    assert not os.path.exists(data_home.join("foo.zip"))
-    assert not os.path.exists(data_home.join("foo"))
+    assert not os.path.exists(str(data_home.join("foo.zip")))
+    assert not os.path.exists(str(data_home.join("foo")))
