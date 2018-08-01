@@ -334,9 +334,11 @@ class ResidualsPlot(RegressionScoreVisualizer):
         The axes to plot the figure on. If None is passed in the current axes
         will be used (or generated if required).
 
-    hist : bool, default: True
+    hist : {True, False, None, 'density', 'frequency'}, default: True
         Draw a histogram showing the distribution of the residuals on the
         right side of the figure. Requires Matplotlib >= 2.0.2.
+        If set to 'density', the probability density function will be plotted.
+        If set to True or 'frequency' then the frequency will be plotted.  
 
     train_color : color, default: 'b'
         Residuals for training data are ploted with this color but also
@@ -385,9 +387,15 @@ class ResidualsPlot(RegressionScoreVisualizer):
             'test_point': test_color,
             'line': line_color,
         }
-
+        
         self.hist = hist
-        if self.hist:
+        if self.hist not in {True, 'density', 'frequency', None, False}:
+                raise YellowbrickValueError(
+                    "'{}' is an invalid argument for hist, use None, True, " \
+                    "False, 'density', or 'frequency'".format(hist)
+                )
+
+        if self.hist in {True, 'density', 'frequency'}:
             self.hax # If hist is True, test the version availability
 
     @memoized
@@ -503,9 +511,11 @@ class ResidualsPlot(RegressionScoreVisualizer):
         # Draw the residuals scatter plot
         self.ax.scatter(y_pred, residuals, c=color, alpha=alpha, label=label)
 
-        # Add residuals histogram histogram
-        if self.hist:
+        # Add residuals histogram
+        if self.hist in {True, 'frequency'}:
             self.hax.hist(residuals, bins=50, orientation="horizontal")
+        elif self.hist == 'density':
+            self.hax.hist(residuals, bins=50, orientation="horizontal", density=True)
 
         # Ensure the current axes is always the main residuals axes
         plt.sca(self.ax)
@@ -575,9 +585,11 @@ def residuals_plot(model,
         The axes to plot the figure on. If None is passed in the current axes
         will be used (or generated if required).
 
-    hist : bool, default: True
+    hist : {True, False, None, 'density', 'frequency'}, default: True
         Draw a histogram showing the distribution of the residuals on the
         right side of the figure. Requires Matplotlib >= 2.0.2.
+        If set to 'density', the probability density function will be plotted.
+        If set to True or 'frequency' then the frequency will be plotted.  
 
     test_size : float, int default: 0.25
         If float, should be between 0.0 and 1.0 and represent the proportion
