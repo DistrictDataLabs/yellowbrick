@@ -95,8 +95,8 @@ class TestFeatureCorrelationVisualizer(VisualTestCase, DatasetMixin):
         Test FeatureCorrelation visualizer with unknown method
         """
         method = 'foo'
-        e = ('Method foo not implement; choose from pearson, mutual_info, '
-             'mutual_info_classif')
+        e = ('Method foo not implement; choose from mutual_info, '
+             'mutual_info_classif, pearson')
         with pytest.raises(YellowbrickValueError, match=e):
             FeatureCorrelation(method=method)
 

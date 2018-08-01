@@ -117,7 +117,7 @@ class FeatureCorrelation(TargetVisualizer):
         if method not in self.METHOD_FUNC:
             raise YellowbrickValueError(
                 'Method {} not implement; choose from {}'.format(
-                    method, ", ".join(self.METHOD_FUNC.keys())
+                    method, ", ".join(sorted(self.METHOD_FUNC))
                 )
             )
 
