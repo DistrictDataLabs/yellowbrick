@@ -18,7 +18,7 @@ import numpy as np
 
 from yellowbrick.target.base import TargetVisualizer
 from yellowbrick.utils import is_dataframe
-from yellowbrick.exceptions import YellowbrickValueError
+from yellowbrick.exceptions import YellowbrickValueError, YellowbrickWarning
 
 from sklearn.feature_selection import (mutual_info_classif,
                                        mutual_info_regression)
@@ -64,9 +64,13 @@ class FeatureCorrelation(TargetVisualizer):
         If false, the features are are not sorted in the plot; otherwise
         features are sorted in ascending order of correlation.
 
-    feature_index : ndarray or a list of feature names
-        An array of feature index or feature names to include in the plot.
-        If a list of feature names is provided, then X must be a DataFrame.
+    feature_index : list,
+        A list of feature index to include in the plot.
+
+    feature_names : list of feature names
+        A list of feature names to include in the plot.
+        Must have labels or the fitted data is a DataFrame with column names.
+        If feature_index is provided, feature_names will be ignored.
 
     kwargs : dict
         Keyword arguments that are passed to the base class and may influence
@@ -88,10 +92,16 @@ class FeatureCorrelation(TargetVisualizer):
     >>> viz.poof()
     """
 
+    def _pearsonr(X, y, **kwargs):
+        """
+        Utility function calculate pearson correlation coefficient
+        """
+        return [pearsonr(x, y, **kwargs)[0] for x in np.asarray(X).T]
+
     METHOD_FUNC = {
-        'pearson': lambda X, y: [pearsonr(x, y)[0] for x in np.asarray(X).T],
-        'mutual_info': lambda X, y: mutual_info_regression(X, y),
-        'mutual_info_classif': lambda X, y: mutual_info_classif(X, y)
+        'pearson': _pearsonr,
+        'mutual_info': mutual_info_regression,
+        'mutual_info_classif': mutual_info_classif
     }
     METHOD_LABEL = {
         'pearson': 'Pearson Correlation',
@@ -100,7 +110,8 @@ class FeatureCorrelation(TargetVisualizer):
     }
 
     def __init__(self, ax=None, method='pearson', classification=False,
-                 labels=None, sort=False, feature_index=None, **kwargs):
+                 labels=None, sort=False, feature_index=None,
+                 feature_names=None, **kwargs):
         super(FeatureCorrelation, self).__init__(ax=None, **kwargs)
 
         if method not in self.METHOD_FUNC:
@@ -118,10 +129,11 @@ class FeatureCorrelation(TargetVisualizer):
             method=method,
             labels=labels,
             sort=sort,
-            feature_index=feature_index
+            feature_index=feature_index,
+            feature_names=feature_names
         )
 
-    def fit(self, X, y):
+    def fit(self, X, y, **kwargs):
         """
         Fits the estimator to calculate feature correlation to
         dependent variable.
@@ -142,22 +154,7 @@ class FeatureCorrelation(TargetVisualizer):
         self : visualizer
             The fit method must always return self to support pipelines.
         """
-        if self.feature_index and isinstance(self.feature_index[0], str):
-            if not is_dataframe(X):
-                raise YellowbrickValueError(
-                    'Feature index is a list of string '
-                    'but X is not a DataFrame'
-                )
-            else:
-                self.feature_index = [
-                    i for i in range(X.shape[1])
-                    if X.columns[i] in self.feature_index
-                ]
-
-        # Calculate Features correlation with target variable
-        self.corr_ = np.array(self.METHOD_FUNC[self.method](X, y))
-
-        # Create labels for the feature importances
+        # Create labels for the features
         # NOTE: this code is duplicated from MultiFeatureVisualizer
         if self.labels is None:
             # Use column names if a dataframe
@@ -169,6 +166,31 @@ class FeatureCorrelation(TargetVisualizer):
                 self.features_ = np.arange(0, ncols)
         else:
             self.features_ = np.array(self.labels)
+
+        if self.feature_index and self.feature_names:
+            raise YellowbrickWarning(
+                'Both feature_index and feature_names '
+                'are specified. feature_names is ignored'
+            )
+        elif self.feature_index:
+            if (min(self.feature_index) < 0
+                    or max(self.feature_index) >= X.shape[1]):
+                raise YellowbrickValueError('Feature index is out of range')
+        elif self.feature_names:
+            self.feature_index = []
+            features_list = self.features_.tolist()
+            for feature_name in self.feature_names:
+                try:
+                    self.feature_index.append(
+                        features_list.index(feature_name)
+                    )
+                except ValueError:
+                    raise YellowbrickValueError(
+                        '{} not in labels'.format(feature_name)
+                    )
+
+        # Calculate Features correlation with target variable
+        self.corr_ = np.array(self.METHOD_FUNC[self.method](X, y, **kwargs))
 
         # If feature indices are given, plot only the given features
         if self.feature_index:
@@ -214,7 +236,8 @@ class FeatureCorrelation(TargetVisualizer):
 ##########################################################################
 
 def feature_correlation(X, y, ax=None, method='pearson', classification=False,
-                        labels=None, sort=False, feature_index=None, **kwargs):
+                        labels=None, sort=False, feature_index=None,
+                        feature_names=None, **kwargs):
     """
     Displays the correlation between features and dependent variables.
 
@@ -249,9 +272,13 @@ def feature_correlation(X, y, ax=None, method='pearson', classification=False,
         If false, the features are are not sorted in the plot; otherwise
         features are sorted in ascending order of correlation.
 
-    feature_index : ndarray or a list of feature names
-        An array of feature index or feature names to include in the plot.
-        If a list of feature names is provided, then X must be a DataFrame.
+    feature_index : list,
+        A list of feature index to include in the plot.
+
+    feature_names : list of feature names
+        A list of feature names to include in the plot.
+        Must have labels or the fitted data is a DataFrame with column names.
+        If feature_index is provided, feature_names will be ignored.
 
     kwargs : dict
         Keyword arguments that are passed to the base class and may influence
@@ -264,11 +291,11 @@ def feature_correlation(X, y, ax=None, method='pearson', classification=False,
     """
 
     # Instantiate the visualizer
-    viz = FeatureCorrelation(X, y, ax, method, classification, labels, sort,
-                             feature_index, **kwargs)
+    viz = FeatureCorrelation(ax, method, classification, labels, sort,
+                             feature_index, feature_names, **kwargs)
 
     # Fit and transform the visualizer (calls draw)
-    viz.fit(X, y)
+    viz.fit(X, y, **kwargs)
     viz.finalize()
 
     # Return the axes object on the visualizer
