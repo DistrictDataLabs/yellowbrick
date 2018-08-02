@@ -87,6 +87,22 @@ class TestTSNE(VisualTestCase, DatasetMixin):
         tol = 40 if six.PY3 else 55
         self.assert_images_similar(tsne, tol=tol)
 
+    def test_custom_title_tsne(self):
+        """
+        Check tSNE can accept a custom title (string) from the user
+        """
+        tsne = TSNEVisualizer(title="custom_title")
+
+        assert tsne._title == "custom_title"
+
+    def test_custom_size_tsne(self):
+        """
+        Check tSNE can accept a custom size (tuple of pixels) from the user
+        """
+        tsne = TSNEVisualizer(size=(100, 50))
+
+        assert tsne._size == (100, 50)
+        
     def test_make_classification_tsne(self):
         """
         Test tSNE integrated visualization on a sklearn classifier dataset
