@@ -177,6 +177,8 @@ class TSNEVisualizer(TextVisualizer):
         self.colors = colors
         self.colormap = colormap
         self.random_state = random_state
+        self._size = kwargs.pop('size', None)
+        self._title = kwargs.pop('title', None)
 
         # TSNE Parameters
         self.transformer_ = self.make_transformer(decompose, decompose_by, kwargs)
@@ -338,11 +340,14 @@ class TSNEVisualizer(TextVisualizer):
         Finalize the drawing by adding a title and legend, and removing the
         axes objects that do not convey information about TNSE.
         """
-
-        # Add a title
-        self.set_title(
-            "TSNE Projection of {} Documents".format(self.n_instances_)
-        )
+        # See if the user has specified a custom title
+        if self._title:
+            self.set_title(self._title)
+        # Otherwise add the default title
+        else:
+            self.set_title(
+                "TSNE Projection of {} Documents".format(self.n_instances_)
+            )
 
         # Remove the ticks
         self.ax.set_yticks([])
