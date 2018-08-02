@@ -14,7 +14,7 @@ This leads to another metric, area under the curve (AUC), which is a computation
     from sklearn.model_selection import train_test_split
 
     # Load the classification data set
-    data = load_occupancy()
+    data = load_data("occupancy")
 
     # Specify the features of interest and the classes of the target
     features = ["temperature", "relative humidity", "light", "C02", "humidity"]
