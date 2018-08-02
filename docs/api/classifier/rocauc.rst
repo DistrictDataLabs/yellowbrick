@@ -49,14 +49,14 @@ This leads to another metric, area under the curve (AUC), which is a computation
     will be a 1D array, meaning there is only sufficient information to plot a
     single curve. More on this bug can be found in this `notebook <https://github.com/DistrictDataLabs/yellowbrick/blob/develop/examples/rebeccabilbro/rocauc_bug_research.ipynb>`_. The bug was addressed in a `July 2018 PR <https://github.com/DistrictDataLabs/yellowbrick/pull/533>`_
     and will be fixed in v0.9, where the solution will be to set the ``micro``,
-    ``macro``, and ``per-class`` parameters of ``ROCAUC`` to ``False``:
+    ``macro``, and ``per-class`` parameters of ``ROCAUC`` to ``False``.
 
 
 Multi-class ROCAUC Curves
 #########################
 
 Yellowbrick's ``ROCAUC`` Visualizer does allow for plotting multiclass classification curves.
-ROC curves are typically used in binary classification, and in fact the Scikit-Learn ``roc_curve`` metric is only able to perform metrics for binary classifiers. Yellowbrick addresses this by binarizing the output (per-class) or to use one-vs-rest (micro score) or one-vs-all (macro score) strategies of classification. 
+ROC curves are typically used in binary classification, and in fact the Scikit-Learn ``roc_curve`` metric is only able to perform metrics for binary classifiers. Yellowbrick addresses this by binarizing the output (per-class) or to use one-vs-rest (micro score) or one-vs-all (macro score) strategies of classification.
 
 .. code::
 
