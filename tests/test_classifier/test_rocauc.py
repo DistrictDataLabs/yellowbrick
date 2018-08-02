@@ -19,8 +19,6 @@ Testing for the ROCAUC visualizer
 ##########################################################################
 
 import os
-TOL = 10 if os.name == 'nt'  else 0.01
-
 import pytest
 import numpy as np
 import numpy.testing as npt
@@ -36,11 +34,16 @@ from sklearn.tree import DecisionTreeClassifier
 from sklearn.datasets import load_breast_cancer
 from sklearn.linear_model import LogisticRegression
 from sklearn.base import BaseEstimator, ClassifierMixin
+from sklearn.ensemble import RandomForestClassifier, AdaBoostClassifier
 
 
 ##########################################################################
 ## Fixtures
 ##########################################################################
+
+# Increased tolerance for AppVeyor tests
+TOL = 10 if os.name == 'nt'  else 0.1
+
 
 class FakeClassifier(BaseEstimator, ClassifierMixin):
     """
@@ -56,13 +59,12 @@ class FakeClassifier(BaseEstimator, ClassifierMixin):
 @pytest.mark.usefixtures("binary", "multiclass")
 class ROCAUCTests(VisualTestCase, DatasetMixin):
 
-    @pytest.mark.xfail(reason="binary classifiers don't currently work as expected")
-    def test_binary_rocauc(self):
+    def test_binary_probability(self):
         """
-        Test ROCAUC with a binary classifier
+        Test ROCAUC with a binary classifier with a predict_proba function
         """
         # Create and fit the visualizer
-        visualizer = ROCAUC(LinearSVC())
+        visualizer = ROCAUC(RandomForestClassifier(random_state=42))
         visualizer.fit(self.binary.X.train, self.binary.y.train)
 
         # Score the visualizer
@@ -86,7 +88,98 @@ class ROCAUCTests(VisualTestCase, DatasetMixin):
 
         # Compare the images
         visualizer.poof()
-        self.assert_images_similar(visualizer)
+        self.assert_images_similar(visualizer, tol=TOL)
+
+    def test_binary_probability_decision(self):
+        """
+        Test ROCAUC with a binary classifier with both decision & predict_proba
+        """
+        # Create and fit the visualizer
+        visualizer = ROCAUC(AdaBoostClassifier())
+        visualizer.fit(self.binary.X.train, self.binary.y.train)
+
+        # Score the visualizer
+        s = visualizer.score(self.binary.X.test, self.binary.y.test)
+
+        # Test that score method successfully returns a value between 0 and 1
+        assert 0 <= s <= 1
+
+        # Check the scores
+        self.assertEqual(len(visualizer.fpr.keys()), 4)
+        self.assertEqual(len(visualizer.tpr.keys()), 4)
+        self.assertEqual(len(visualizer.roc_auc.keys()), 4)
+
+        for k in (0, 1, "micro", "macro"):
+            self.assertIn(k, visualizer.fpr)
+            self.assertIn(k, visualizer.tpr)
+            self.assertIn(k, visualizer.roc_auc)
+            self.assertEqual(len(visualizer.fpr[k]), len(visualizer.tpr[k]))
+            self.assertGreater(visualizer.roc_auc[k], 0.0)
+            self.assertLess(visualizer.roc_auc[k], 1.0)
+
+        # Compare the images
+        visualizer.poof()
+        self.assert_images_similar(visualizer, tol=TOL)
+
+    def test_binary_decision(self):
+        """
+        Test ROCAUC with a binary classifier with a decision_function
+        """
+        # Create and fit the visualizer
+        visualizer = ROCAUC(LinearSVC(random_state=42), micro=False, macro=False, per_class=False)
+        visualizer.fit(self.binary.X.train, self.binary.y.train)
+
+        # Score the visualizer
+        s = visualizer.score(self.binary.X.test, self.binary.y.test)
+
+        # Test that score method successfully returns a value between 0 and 1
+        assert 0 <= s <= 1
+
+        # Check the scores
+        self.assertEqual(len(visualizer.fpr.keys()), 1)
+        self.assertEqual(len(visualizer.tpr.keys()), 1)
+        self.assertEqual(len(visualizer.roc_auc.keys()), 1)
+
+        # Compare the images
+        # NOTE: increased tolerance for both AppVeyor and Travis CI tests
+        visualizer.poof()
+        self.assert_images_similar(visualizer, tol=10)
+
+    def test_binary_micro_error(self):
+        """
+        Test ROCAUC to see if _binary_decision with micro = True raises an error
+        """
+        # Create visualizer with a linear model to force a binary decision
+        visualizer = ROCAUC(LinearSVC(random_state=42), micro=True)
+        visualizer.fit(self.binary.X.train, self.binary.y.train)
+
+        # Ensure score raises error (micro curves aren't defined for binary decisions)
+        with self.assertRaises(ModelError):
+            visualizer.score(self.binary.X.test, self.binary.y.test)
+
+    def test_binary_macro_error(self):
+        """
+        Test ROCAUC to see if _binary_decision with macro = True raises an error
+        """
+        # Create visualizer with a linear model to force a binary decision
+        visualizer = ROCAUC(LinearSVC(random_state=42), macro=True)
+        visualizer.fit(self.binary.X.train, self.binary.y.train)
+
+        # Ensure score raises error (macro curves aren't defined for binary decisions)
+        with self.assertRaises(ModelError):
+            visualizer.score(self.binary.X.test, self.binary.y.test)
+
+    def test_binary_per_class_error(self):
+        """
+        Test ROCAUC to see if _binary_decision with per_class = True raises an error
+        """
+        # Create visualizer with a linear model to force a binary decision
+        visualizer = ROCAUC(LinearSVC(random_state=42), per_class=True)
+        visualizer.fit(self.binary.X.train, self.binary.y.train)
+
+        # Ensure score raises error (per_class curves not defined for binary decisions)
+        with self.assertRaises(ModelError):
+            visualizer.score(self.binary.X.test, self.binary.y.test)
 
     def test_multiclass_rocauc(self):
         """
@@ -224,10 +317,12 @@ class ROCAUCTests(VisualTestCase, DatasetMixin):
         Test ROCAUC with no curves specified at all
         """
         # Create and fit the visualizer
+        visualizer = ROCAUC(LogisticRegression(), per_class=False, macro=False, micro=False)
+        visualizer.fit(self.binary.X.train, self.binary.y.train)
+
+        # Attempt to score the visualizer
         with pytest.raises(YellowbrickValueError, match="no curves will be drawn"):
-            ROCAUC(
-                LogisticRegression(), per_class=False, macro=False, micro=False
-            )
+            visualizer.score(self.binary.X.test, self.binary.y.test)
 
     def test_rocauc_label_encoded(self):
         """
