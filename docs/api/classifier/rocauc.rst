@@ -61,7 +61,7 @@ ROC curves are typically used in binary classification, and in fact the Scikit-L
 .. code::
 
     # Load multi-class classification dataset
-    data = load_game("occupancy")
+    game = load_game("game")
 
     classes = ["win", "loss", "draw"]
 
