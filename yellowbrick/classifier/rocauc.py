@@ -127,7 +127,7 @@ class ROCAUC(ClassificationScoreVisualizer):
     >>> from yellowbrick.classifier import ROCAUC
     >>> from sklearn.linear_model import LogisticRegression
     >>> from sklearn.model_selection import train_test_split
-    >>> data = load_data("occupancy")
+    >>> data = load_occupancy()
     >>> features = ["temp", "relative humidity", "light", "C02", "humidity"]
     >>> X_train, X_test, y_train, y_test = train_test_split(X, y)
     >>> oz = ROCAUC(LogisticRegression())
@@ -477,7 +477,7 @@ def roc_auc(model, X, y=None, ax=None, **kwargs):
     --------
     >>> from yellowbrick.classifier import ROCAUC
     >>> from sklearn.linear_model import LogisticRegression
-    >>> data = load_data("occupancy")
+    >>> data = load_occupancy()
     >>> features = ["temp", "relative humidity", "light", "C02", "humidity"]
     >>> X = data[features].values
     >>> y = data.occupancy.values
