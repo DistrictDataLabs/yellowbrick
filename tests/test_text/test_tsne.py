@@ -26,6 +26,7 @@ from tests.base import VisualTestCase
 from tests.dataset import DatasetMixin
 from yellowbrick.exceptions import YellowbrickValueError
 
+from sklearn.manifold import TSNE
 from sklearn.datasets import make_classification
 from sklearn.feature_extraction.text import TfidfVectorizer
 
@@ -87,13 +88,35 @@ class TestTSNE(VisualTestCase, DatasetMixin):
         tol = 40 if six.PY3 else 55
         self.assert_images_similar(tsne, tol=tol)
 
+    def test_sklearn_tsne_size(self):
+        """
+        Check to make sure sklearn's TSNE doesn't use the size param
+        """
+        # In TSNEVisualizer, the internal sklearn TSNE transform consumes
+        # some but not all kwargs passed in by user. Those not in get_params(),
+        # like size, are passed through to YB's finalize method. This test should
+        # notify us  if TSNE's params change on the sklearn side.
+        with pytest.raises(TypeError):
+            TSNE(size=(100,100))
+
+    def test_sklearn_tsne_title(self):
+        """
+        Check to make sure sklearn's TSNE doesn't use the title param
+        """
+        # In TSNEVisualizer, the internal sklearn TSNE transform consumes
+        # some but not all kwargs passed in by user. Those not in get_params(),
+        # like title, are passed through to YB's finalize method. This test should
+        # notify us  if TSNE's params change on the sklearn side.
+        with pytest.raises(TypeError):
+            TSNE(title="custom_title")
+
     def test_custom_title_tsne(self):
         """
         Check tSNE can accept a custom title (string) from the user
         """
         tsne = TSNEVisualizer(title="custom_title")
 
-        assert tsne._title == "custom_title"
+        assert tsne.title == "custom_title"
 
     def test_custom_size_tsne(self):
         """
