@@ -124,18 +124,16 @@ class ROCAUC(ClassificationScoreVisualizer):
 
     Examples
     --------
-    >>> from sklearn.datasets import load_breast_cancer
     >>> from yellowbrick.classifier import ROCAUC
     >>> from sklearn.linear_model import LogisticRegression
     >>> from sklearn.model_selection import train_test_split
-    >>> data = load_breast_cancer()
-    >>> X = data['data']
-    >>> y = data['target']
+    >>> data = load_data("occupancy")
+    >>> features = ["temp", "relative humidity", "light", "C02", "humidity"]
     >>> X_train, X_test, y_train, y_test = train_test_split(X, y)
-    >>> viz = ROCAUC(LogisticRegression())
-    >>> viz.fit(X_train, y_train)
-    >>> viz.score(X_test, y_test)
-    >>> viz.poof()
+    >>> oz = ROCAUC(LogisticRegression())
+    >>> oz.fit(X_train, y_train)
+    >>> oz.score(X_test, y_test)
+    >>> oz.poof()
     """
 
     def __init__(self, model, ax=None, classes=None,
@@ -477,11 +475,13 @@ def roc_auc(model, X, y=None, ax=None, **kwargs):
 
     Examples
     --------
-    >>> from sklearn.datasets import load_breast_cancer
-    >>> from yellowbrick.classifier import roc_auc
+    >>> from yellowbrick.classifier import ROCAUC
     >>> from sklearn.linear_model import LogisticRegression
-    >>> data = load_breast_cancer()
-    >>> roc_auc(LogisticRegression(), data.data, data.target)
+    >>> data = load_data("occupancy")
+    >>> features = ["temp", "relative humidity", "light", "C02", "humidity"]
+    >>> X = data[features].values
+    >>> y = data.occupancy.values
+    >>> roc_auc(LogisticRegression(), X, y)
 
     Returns
     -------
