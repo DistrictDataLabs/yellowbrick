@@ -13,31 +13,48 @@ import os
 import pandas as pd
 import matplotlib.pyplot as plt
 
-from sklearn.linear_model import RidgeCV
+from sklearn.linear_model import Ridge
 from sklearn.naive_bayes import MultinomialNB
-from sklearn.model_selection import StratifiedKFold
+from sklearn.model_selection import KFold, StratifiedKFold
 
 from yellowbrick.model_selection import CVScores
-
-
-FIXTURES = os.path.join("..", "..", "..", "examples", "data")
 
 
 ##########################################################################
 ## Helper Methods
 ##########################################################################
 
-def cv_scores_classifier(path="images/cv_scores_classifier.png"):
+def load_occupancy():
+    # Load the classification data set
+    room = pd.read_csv("../../../examples/data/occupancy/occupancy.csv")
 
-    data = pd.read_csv(os.path.join(FIXTURES, "game", "game.csv"))
+    features = ["temperature", "relative humidity", "light", "C02", "humidity"]
 
-    target = "outcome"
-    features = [col for col in data.columns if col != target]
+    # Extract the numpy arrays from the data frame
+    X = room[features].values
+    y = room.occupancy.values
 
-    X = pd.get_dummies(data[features])
-    y = data[target]
+    return X, y
 
+
+def load_energy():
+    # Load regression dataset
+    energy = pd.read_csv('../../../examples/data/energy/energy.csv')
+
+    targets = ["heating load", "cooling load"]
+    features = [col for col in energy.columns if col not in targets]
+
+    X = energy[features]
+    y = energy[targets[1]]
+
+    return X, y
+
+def classification_cvscores(outpath="images/cv_scores_classifier.png", **kwargs):
+    X, y = load_occupancy()
+
+    # Create a new figure and axes
     _, ax = plt.subplots()
+
     cv = StratifiedKFold(12)
 
     oz = CVScores(
@@ -45,30 +62,29 @@ def cv_scores_classifier(path="images/cv_scores_classifier.png"):
     )
 
     oz.fit(X, y)
-    oz.poof(outpath=path)
+
+    # Save to disk
+    oz.poof(outpath=outpath)
 
 
-def cv_scores_regressor(path="images/cv_scores_regressor.png"):
+def regression_cvscores(outpath="images/cv_scores_regressor.png", **kwargs):
+    X, y = load_energy()
 
-    data = pd.read_csv(os.path.join(FIXTURES, "energy", "energy.csv"))
-
-    targets = ["heating load", "cooling load"]
-    features = [col for col in data.columns if col not in targets]
-
-    X = data[features]
-    y = data[targets[1]]
-
+    # Create a new figure and axes
     _, ax = plt.subplots()
 
-    oz = CVScores(RidgeCV(), ax=ax, scoring='r2')
+    cv = KFold(12)
+
+    oz = CVScores(
+        Ridge(), ax=ax, cv=cv, scoring='r2'
+    )
+
     oz.fit(X, y)
-    oz.poof(outpath=path)
 
+    # Save to disk
+    oz.poof(outpath=outpath)
 
-##########################################################################
-## Main Method
-##########################################################################
 
 if __name__ == '__main__':
-    cv_scores_classifier()
-    cv_scores_regressor()
+    classification_cvscores()
+    regression_cvscores()
