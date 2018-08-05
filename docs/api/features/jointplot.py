@@ -5,12 +5,8 @@ from yellowbrick.features import JointPlotVisualizer
 
 
 def jointplot(X, y, outpath, **kwargs):
-    # Create a new figure and axes
-    fig = plt.figure()
-    ax = fig.add_subplot(111)
-
     # Create the visualizer
-    visualizer = JointPlotVisualizer(ax=ax, **kwargs)
+    visualizer = JointPlotVisualizer(**kwargs)
     visualizer.fit(X, y)
     visualizer.transform(X)
 
