@@ -22,6 +22,7 @@ from yellowbrick.exceptions import YellowbrickValueError, YellowbrickWarning
 
 from sklearn.feature_selection import (mutual_info_classif,
                                        mutual_info_regression)
+from sklearn.utils.multiclass import type_of_target
 from scipy.stats import pearsonr
 
 
@@ -50,11 +51,12 @@ class FeatureCorrelation(TargetVisualizer):
         The axis to plot the figure on. If None is passed in the current axes
         will be used (or generated if required).
 
-    method : one of {'pearson', 'mutual_info'}, default: 'pearson'
+    method : one of ['pearson', 'mutual_info-regression',
+            'mutual_info-classification'], default: 'pearson'
         The method to calculate correlation between features and target.
-
-    classification : boolean, default: False
-        This parameter is only used for method = 'mutual_info'.
+        'pearson' uses `scipy.stats.pearsonr`.
+        'mutual_info-regression' uses `sklearn.feature_selection.mutual_info_classif`.
+        'mutual_info-classification' uses `sklearn.feature_selection.mutual_info_classif`.
 
     labels : list, default: None
         A list of feature names to use. If a DataFrame is passed to fit and
@@ -98,31 +100,28 @@ class FeatureCorrelation(TargetVisualizer):
         """
         return [pearsonr(x, y, **kwargs)[0] for x in np.asarray(X).T]
 
-    METHOD_FUNC = {
+    correlation_method = {
         'pearson': _pearsonr,
-        'mutual_info': mutual_info_regression,
-        'mutual_info_classif': mutual_info_classif
+        'mutual_info-regression': mutual_info_regression,
+        'mutual_info-classification': mutual_info_classif
     }
-    METHOD_LABEL = {
+    correlation_label = {
         'pearson': 'Pearson Correlation',
-        'mutual_info': 'Mutual Information',
-        'mutual_info_classif': 'Mutual Information'
+        'mutual_info-regression': 'Mutual Information',
+        'mutual_info-classification': 'Mutual Information'
     }
 
-    def __init__(self, ax=None, method='pearson', classification=False,
+    def __init__(self, ax=None, method='pearson',
                  labels=None, sort=False, feature_index=None,
                  feature_names=None, **kwargs):
         super(FeatureCorrelation, self).__init__(ax=None, **kwargs)
 
-        if method not in self.METHOD_FUNC:
+        if method not in self.correlation_method:
             raise YellowbrickValueError(
                 'Method {} not implement; choose from {}'.format(
-                    method, ", ".join(sorted(self.METHOD_FUNC))
+                    method, ", ".join(sorted(self.correlation_method))
                 )
             )
-
-        if classification and method == 'mutual_info':
-            method = 'mutual_info_classif'
 
         # Parameters
         self.set_params(
@@ -154,43 +153,14 @@ class FeatureCorrelation(TargetVisualizer):
         self : visualizer
             The fit method must always return self to support pipelines.
         """
-        # Create labels for the features
-        # NOTE: this code is duplicated from MultiFeatureVisualizer
-        if self.labels is None:
-            # Use column names if a dataframe
-            if is_dataframe(X):
-                self.features_ = np.array(X.columns)
-            # Otherwise use the column index as the labels
-            else:
-                _, ncols = X.shape
-                self.features_ = np.arange(0, ncols)
-        else:
-            self.features_ = np.array(self.labels)
+        self._create_labels_for_features(X)
 
-        if self.feature_index and self.feature_names:
-            raise YellowbrickWarning(
-                'Both feature_index and feature_names '
-                'are specified. feature_names is ignored'
-            )
-        elif self.feature_index:
-            if (min(self.feature_index) < 0
-                    or max(self.feature_index) >= X.shape[1]):
-                raise YellowbrickValueError('Feature index is out of range')
-        elif self.feature_names:
-            self.feature_index = []
-            features_list = self.features_.tolist()
-            for feature_name in self.feature_names:
-                try:
-                    self.feature_index.append(
-                        features_list.index(feature_name)
-                    )
-                except ValueError:
-                    raise YellowbrickValueError(
-                        '{} not in labels'.format(feature_name)
-                    )
+        self._select_features_to_plot(X)
 
         # Calculate Features correlation with target variable
-        self.corr_ = np.array(self.METHOD_FUNC[self.method](X, y, **kwargs))
+        self.corr_ = np.array(
+            self.correlation_method[self.method](X, y, **kwargs)
+        )
 
         # If feature indices are given, plot only the given features
         if self.feature_index:
@@ -226,16 +196,79 @@ class FeatureCorrelation(TargetVisualizer):
         """
         self.set_title('Features correlation with dependent variable')
 
-        self.ax.set_xlabel(self.METHOD_LABEL[self.method])
+        self.ax.set_xlabel(self.correlation_label[self.method])
 
         self.ax.grid(False, axis='y')
+
+    def _select_mutual_info_algo(self, y):
+        """
+        Select mutual information calculation algorithm depending on
+        target type.
+
+        If target type is binary or multiclass, mutual_info_classif is used;
+        otherwise, mutual_info_classif is used.
+
+        NOTE: Currently not being used because using
+        `sklearn.utils.multiclass.type_of_target` to determine
+        classification/regression problem is not very robust.
+        """
+        target_type = type_of_target(y)
+        if target_type in ['binary', 'multiclass']:
+            self.method = 'mutual_info_classif'
+        elif target_type != 'continuous':
+            raise YellowbrickWarning(
+                'mutual_info_regression is used but type_of_target is '
+                '{}, not continuous'.format(target_type)
+            )
+
+    def _create_labels_for_features(self, X):
+        """
+        Create labels for the features
+        NOTE: this code is duplicated from MultiFeatureVisualizer
+        """
+        if self.labels is None:
+            # Use column names if a dataframe
+            if is_dataframe(X):
+                self.features_ = np.array(X.columns)
+            # Otherwise use the column index as the labels
+            else:
+                _, ncols = X.shape
+                self.features_ = np.arange(0, ncols)
+        else:
+            self.features_ = np.array(self.labels)
+
+    def _select_features_to_plot(self, X):
+        """
+        Select features to plot
+        """
+        if self.feature_index and self.feature_names:
+            raise YellowbrickWarning(
+                'Both feature_index and feature_names '
+                'are specified. feature_names is ignored'
+            )
+        elif self.feature_index:
+            if (min(self.feature_index) < 0
+                    or max(self.feature_index) >= X.shape[1]):
+                raise YellowbrickValueError('Feature index is out of range')
+        elif self.feature_names:
+            self.feature_index = []
+            features_list = self.features_.tolist()
+            for feature_name in self.feature_names:
+                try:
+                    self.feature_index.append(
+                        features_list.index(feature_name)
+                    )
+                except ValueError:
+                    raise YellowbrickValueError(
+                        '{} not in labels'.format(feature_name)
+                    )
 
 
 ##########################################################################
 ## Quick Method
 ##########################################################################
 
-def feature_correlation(X, y, ax=None, method='pearson', classification=False,
+def feature_correlation(X, y, ax=None, method='pearson',
                         labels=None, sort=False, feature_index=None,
                         feature_names=None, **kwargs):
     """
@@ -258,11 +291,12 @@ def feature_correlation(X, y, ax=None, method='pearson', classification=False,
         The axis to plot the figure on. If None is passed in the current axes
         will be used (or generated if required).
 
-    method : one of {'pearson', 'mutual_info'}, default: 'pearson'
+    method : one of ['pearson', 'mutual_info-regression',
+            'mutual_info-classification'], default: 'pearson'
         The method to calculate correlation between features and target.
-
-    classification : boolean, default: False
-        This parameter is only used for method = 'mutual_info'.
+        'pearson' uses `scipy.stats.pearsonr`.
+        'mutual_info-regression' uses `sklearn.feature_selection.mutual_info_classif`.
+        'mutual_info-classification' uses `sklearn.feature_selection.mutual_info_classif`.
 
     labels : list, default: None
         A list of feature names to use. If a DataFrame is passed to fit and
@@ -291,7 +325,7 @@ def feature_correlation(X, y, ax=None, method='pearson', classification=False,
     """
 
     # Instantiate the visualizer
-    viz = FeatureCorrelation(ax, method, classification, labels, sort,
+    viz = FeatureCorrelation(ax, method, labels, sort,
                              feature_index, feature_names, **kwargs)
 
     # Fit and transform the visualizer (calls draw)

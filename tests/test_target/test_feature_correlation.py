@@ -20,7 +20,10 @@ Test the feature correlation to dependent variable visualizer.
 import sys
 import pytest
 import numpy as np
-import pandas as pd
+try:
+    import pandas as pd
+except ImportError:
+    pd = None
 import numpy.testing as npt
 import matplotlib.pyplot as plt
 
@@ -67,7 +70,7 @@ class TestFeatureCorrelationVisualizer(VisualTestCase, DatasetMixin):
         """
         Test FeatureCorrelation visualizer with mutual information regression
         """
-        viz = FeatureCorrelation(method='mutual_info')
+        viz = FeatureCorrelation(method='mutual_info-regression')
         viz.fit(self.X, self.y, random_state=23456)
         viz.poof()
 
@@ -84,7 +87,7 @@ class TestFeatureCorrelationVisualizer(VisualTestCase, DatasetMixin):
         data = datasets.load_wine()
         X, y = data['data'], data['target']
 
-        viz = FeatureCorrelation(method='mutual_info', classification=True)
+        viz = FeatureCorrelation(method='mutual_info-classification')
         viz.fit(X, y, random_state=12345)
         viz.poof()
 
@@ -95,8 +98,10 @@ class TestFeatureCorrelationVisualizer(VisualTestCase, DatasetMixin):
         Test FeatureCorrelation visualizer with unknown method
         """
         method = 'foo'
-        e = ('Method foo not implement; choose from mutual_info, '
-             'mutual_info_classif, pearson')
+        e = ('Method foo not implement; choose from '
+             'mutual_info-classification, '
+             'mutual_info-regression, '
+             'pearson')
         with pytest.raises(YellowbrickValueError, match=e):
             FeatureCorrelation(method=method)
 
