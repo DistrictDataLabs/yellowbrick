@@ -27,7 +27,7 @@ In our first example, we'll explore using the ``ValidationCurve`` visualizer wit
     y = data[targets[0]]
 
     viz = ValidationCurve(
-        DecisionTreeRegressor(), ax=ax, param_name="max_depth",
+        DecisionTreeRegressor(), param_name="max_depth",
         param_range=np.arange(1, 11), cv=10, scoring="r2"
     )
 
@@ -45,7 +45,7 @@ In the next visualizer, we will see an example that more dramatically visualizes
 
 .. code:: python
 
-    from sklearn.svc import SVM
+    from sklearn.svm import SVC
     from sklearn.model_selection import StratifiedKFold
 
     # Load a classification data set
