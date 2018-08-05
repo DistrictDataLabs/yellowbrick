@@ -2,6 +2,7 @@
 # Implements TSNE visualizations of documents in 2D space.
 #
 # Author:   Benjamin Bengfort <benjamin@bengfort.com>
+# Author:   Rebecca Bilbro <bilbro@gmail.com>
 # Created:  Mon Feb 20 06:33:29 2017 -0500
 #
 # Copyright (C) 2016 Bengfort.com
@@ -166,11 +167,7 @@ class TSNEVisualizer(TextVisualizer):
     NULL_CLASS = None
 
     def __init__(self, ax=None, decompose='svd', decompose_by=50, labels=None,
-               classes=None, colors=None, colormap=None, random_state=None, **kwargs):
-        """
-        Initialize the TSNE visualizer with visual hyperparameters.
-        """
-        super(TSNEVisualizer, self).__init__(ax=ax, **kwargs)
+                 classes=None, colors=None, colormap=None, random_state=None, **kwargs):
 
         # Visual Parameters
         self.labels = labels
@@ -178,8 +175,16 @@ class TSNEVisualizer(TextVisualizer):
         self.colormap = colormap
         self.random_state = random_state
 
-        # TSNE Parameters
-        self.transformer_ = self.make_transformer(decompose, decompose_by, kwargs)
+        # Fetch TSNE kwargs from kwargs by popping only keys belonging to TSNE params
+        tsne_kwargs = {
+            key: kwargs.pop(key)
+            for key in TSNE().get_params()
+            if key in kwargs
+        }
+        self.transformer_ = self.make_transformer(decompose, decompose_by, tsne_kwargs)
+
+        # Call super at the end so that size and title are set correctly
+        super(TSNEVisualizer, self).__init__(ax=ax, **kwargs)
 
     def make_transformer(self, decompose='svd', decompose_by=50, tsne_kwargs={}):
         """
@@ -338,8 +343,6 @@ class TSNEVisualizer(TextVisualizer):
         Finalize the drawing by adding a title and legend, and removing the
         axes objects that do not convey information about TNSE.
         """
-
-        # Add a title
         self.set_title(
             "TSNE Projection of {} Documents".format(self.n_instances_)
         )
