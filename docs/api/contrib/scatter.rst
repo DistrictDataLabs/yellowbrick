@@ -22,7 +22,7 @@ A scatter visualizer simply plots two features against each other and colors the
 
 .. code:: python
 
-    from yellowbrick.features import ScatterVisualizer
+    from yellowbrick.contrib.scatter import ScatterVisualizer
 
     visualizer = ScatterVisualizer(x="light", y="C02", classes=classes)
 
