@@ -182,6 +182,18 @@ Model Selection Visualizers
     :alt: Learning Curve for KMeans
     :target: api/model_selection/learning_curve.html#clustering
 
+.. image:: api/model_selection/images/cv_scores_classifier.png
+    :width: 200px
+    :height: 100px
+    :alt: CV Scores for MultinomialNB Classification
+    :target: api/model_selection/cv.html#classification
+
+.. image:: api/model_selection/images/cv_scores_regressor.png
+    :width: 200px
+    :height: 100px
+    :alt: CV Scores for Ridge Regression
+    :target: api/model_selection/cv.html#regression
+
 Text Modeling Visualizers
 ---------------------------
 
