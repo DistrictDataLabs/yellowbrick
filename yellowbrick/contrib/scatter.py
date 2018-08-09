@@ -32,6 +32,7 @@ from yellowbrick.style.colors import resolve_colors
 def scatterviz(X,
                y=None,
                ax=None,
+               alpha=1,
                features=None,
                classes=None,
                color=None,
@@ -70,6 +71,10 @@ def scatterviz(X,
 
     markers : iterable of strings, default: ,+o*vhd
         Matplotlib style markers for points on the scatter plot points
+
+    alpha : float, default: 1.0
+        Specify a transparency where 1 is completely opaque and 0 is completely
+        transparent. This property makes densely clustered points more visible.
 
     Returns
     -------
@@ -135,6 +140,10 @@ class ScatterVisualizer(DataVisualizer):
 
         kwargs : keyword arguments passed to the super class.
 
+        alpha : float, default: 1.0
+            Specify a transparency where 1 is completely opaque and 0 is completely
+            transparent. This property makes densely clustered points more visible.
+
         These parameters can be influenced later on in the visualization
         process, but can and should be set as early as possible.
     """
@@ -143,6 +152,7 @@ class ScatterVisualizer(DataVisualizer):
                  ax=None,
                  x=None,
                  y=None,
+                 alpha=1,
                  features=None,
                  classes=None,
                  color=None,
@@ -158,6 +168,9 @@ class ScatterVisualizer(DataVisualizer):
 
         self.x = x
         self.y = y
+
+        self.alpha = alpha
+
         self.markers = itertools.cycle(
             kwargs.pop('markers', (',', '+', 'o', '*', 'v', 'h', 'd')))
 
@@ -280,6 +293,7 @@ class ScatterVisualizer(DataVisualizer):
                 marker=next(self.markers),
                 color=colors[kls],
                 label=str(kls),
+                alpha=self.alpha,
                 **kwargs)
 
         self.ax.axis('equal')
