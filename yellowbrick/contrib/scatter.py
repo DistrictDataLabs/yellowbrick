@@ -32,12 +32,12 @@ from yellowbrick.style.colors import resolve_colors
 def scatterviz(X,
                y=None,
                ax=None,
-               alpha=1,
                features=None,
                classes=None,
                color=None,
                colormap=None,
                markers=None,
+               alpha=1.0,
                **kwargs):
     """Displays a bivariate scatter plot.
 
@@ -82,8 +82,9 @@ def scatterviz(X,
         Returns the axes that the parallel coordinates were drawn on.
     """
     # Instantiate the visualizer
-    visualizer = ScatterVisualizer(ax, features, classes, color, colormap,
-                                   markers, **kwargs)
+    visualizer = ScatterVisualizer(ax=ax, features=features, classes=classes,
+                                   color=color, colormap=colormap,
+                                   markers=markers, alpha=alpha, **kwargs)
 
     # Fit and transform the visualizer (calls draw)
     visualizer.fit(X, y, **kwargs)
@@ -138,11 +139,11 @@ class ScatterVisualizer(DataVisualizer):
         markers : iterable of strings, default: ,+o*vhd
             Matplotlib style markers for points on the scatter plot points
 
-        kwargs : keyword arguments passed to the super class.
-
         alpha : float, default: 1.0
             Specify a transparency where 1 is completely opaque and 0 is completely
             transparent. This property makes densely clustered points more visible.
+
+        kwargs : keyword arguments passed to the super class.
 
         These parameters can be influenced later on in the visualization
         process, but can and should be set as early as possible.
@@ -152,12 +153,12 @@ class ScatterVisualizer(DataVisualizer):
                  ax=None,
                  x=None,
                  y=None,
-                 alpha=1,
                  features=None,
                  classes=None,
                  color=None,
                  colormap=None,
                  markers=None,
+                 alpha=1.0,
                  **kwargs):
         """
         Initialize the base scatter with many of the options required in order
