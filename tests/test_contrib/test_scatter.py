@@ -17,7 +17,6 @@ Test the ScatterViz feature analysis visualizers
 ##########################################################################
 
 import pytest
-import unittest
 import numpy as np
 import matplotlib as mptl
 
@@ -30,9 +29,15 @@ from tests.base import VisualTestCase
 from yellowbrick.exceptions import ImageComparisonFailure
 
 try:
-    import pandas
+    import pandas as pd
 except ImportError:
-    pandas = None
+    pd = None
+
+try:
+    from unittest import mock
+except ImportError:
+    import mock
+
 
 ##########################################################################
 # ScatterViz Base Tests
@@ -62,6 +67,9 @@ class ScatterVizTests(VisualTestCase, DatasetMixin):
         super(ScatterVizTests, self).tearDown()
 
     def test_init_alias(self):
+        """
+        Test alias for ScatterViz
+        """
         features = ["temperature", "relative_humidity"]
         visualizer = ScatterVisualizer(features=features, markers=['*'])
         self.assertIsNotNone(visualizer.markers)
@@ -152,11 +160,20 @@ class ScatterVizTests(VisualTestCase, DatasetMixin):
         Test that the user can supply an alpha param on instantiation
         """
         # Instantiate a scatter plot and provide a custom alpha
-        visualizer = ScatterVisualizer(
-            x="temperature", y="light", alpha=0.7
-        )
+        visualizer = ScatterVisualizer(alpha=0.7, features=["a", "b"])
 
+        # Test param gets set correctly
         assert visualizer.alpha == 0.7
+
+        # Mock ax and fit the visualizer
+        visualizer.ax = mock.MagicMock(autospec=True)
+        visualizer.fit(self.X[:, :2], self.y)
+
+        # Test that alpha was passed to the scatter plot
+        _, scatter_kwargs = visualizer.ax.scatter.call_args
+        assert "alpha" in scatter_kwargs
+        assert scatter_kwargs["alpha"] == 0.7
+
 
     def test_scatter_quick_method(self):
         """
@@ -178,8 +195,7 @@ class ScatterVizTests(VisualTestCase, DatasetMixin):
         # test that is returns a matplotlib obj with axes
         self.assertIsInstance(ax, mptl.axes.Axes)
 
-    @unittest.skipUnless(pandas is not None,
-                         "Pandas is not installed, could not run test.")
+    @pytest.mark.skipif(pd is None, reason="pandas is required for this test")
     def test_integrated_scatter_with_pandas(self):
         """
         Test scatterviz on the real, occupancy data set with pandas
@@ -191,7 +207,7 @@ class ScatterVizTests(VisualTestCase, DatasetMixin):
         y = self.occupancy['occupancy'].astype(int)
 
         # Convert X to a pandas dataframe
-        X = pandas.DataFrame(X)
+        X = pd.DataFrame(X)
         X.columns = [
             "temperature", "relative_humidity", "light", "C02", "humidity"
         ]
@@ -220,7 +236,6 @@ class ScatterVizTests(VisualTestCase, DatasetMixin):
         visualizer = ScatterViz(features=['one', 'two'])
         visualizer.fit_transform_poof(X_named, self.y)
         self.assertEquals(visualizer.features_, ['one', 'two'])
-
 
     def test_integrated_scatter_numpy_arrays_no_names(self):
         """
