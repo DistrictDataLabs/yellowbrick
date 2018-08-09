@@ -147,6 +147,17 @@ class ScatterVizTests(VisualTestCase, DatasetMixin):
         visualizer = ScatterViz(features=features)
         visualizer.fit_transform_poof(X[:, :2], y)
 
+    def test_alpha_param(self):
+        """
+        Test that the user can supply an alpha param on instantiation
+        """
+        # Instantiate a scatter plot and provide a custom alpha
+        visualizer = ScatterVisualizer(
+            x="temperature", y="light", alpha=0.7
+        )
+
+        assert visualizer.alpha == 0.7
+
     def test_scatter_quick_method(self):
         """
         Test scatter quick method on the real, occupancy data set
