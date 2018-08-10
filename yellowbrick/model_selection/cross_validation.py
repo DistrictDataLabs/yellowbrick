@@ -233,7 +233,7 @@ def cv_scores(model, X, y, ax=None, cv=None, scoring=None, **kwargs):
     """
 
     # Initialize the visualizer
-    visualizer = cv_scores(model, X, y, ax=ax, cv=cv, scoring=scoring)
+    visualizer = CVScores(model, ax=ax, cv=cv, scoring=scoring)
 
     # Fit and poof the visualizer
     visualizer.fit(X, y)
