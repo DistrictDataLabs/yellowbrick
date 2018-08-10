@@ -186,13 +186,13 @@ Model Selection Visualizers
     :width: 200px
     :height: 100px
     :alt: CV Scores for MultinomialNB Classification
-    :target: api/model_selection/cv.html#classification
+    :target: api/model_selection/cross_validation.html#classification
 
 .. image:: api/model_selection/images/cv_scores_regressor.png
     :width: 200px
     :height: 100px
     :alt: CV Scores for Ridge Regression
-    :target: api/model_selection/cv.html#regression
+    :target: api/model_selection/cross_validation.html#regression
 
 Text Modeling Visualizers
 ---------------------------
