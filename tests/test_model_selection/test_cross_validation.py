@@ -105,7 +105,7 @@ class TestCrossValidation(VisualTestCase, DatasetMixin):
 
     def test_quick_method(self):
         """
-        Test validation curve quick method with image closeness on SVC
+        Test cross validation quick method with image closeness on SVC
         """
         X, y = self.classification
 
@@ -137,4 +137,3 @@ class TestCrossValidation(VisualTestCase, DatasetMixin):
         oz.poof()
 
         self.assert_images_similar(oz)
-        
