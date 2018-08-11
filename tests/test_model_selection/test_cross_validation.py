@@ -101,7 +101,7 @@ class TestCrossValidation(VisualTestCase, DatasetMixin):
         oz.fit(X, y)
         oz.poof()
 
-        self.assert_images_similar(oz, tol=12.0)
+        self.assert_images_similar(oz, tol=33.0)
 
     def test_quick_method(self):
         """
