@@ -15,6 +15,7 @@ Tests for the CVScores visualizer
 ##########################################################################
 
 import pytest
+import numpy.testing as npt
 
 from tests.base import VisualTestCase
 from tests.dataset import DatasetMixin
@@ -24,6 +25,7 @@ from sklearn.naive_bayes import BernoulliNB
 from sklearn.tree import DecisionTreeRegressor
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.model_selection import ShuffleSplit, StratifiedKFold
+from sklearn.linear_model import RidgeCV, LogisticRegressionCV
 
 from yellowbrick.model_selection.cross_validation import *
 
@@ -84,7 +86,30 @@ class TestCrossValidation(VisualTestCase, DatasetMixin):
         oz.fit(X, y)
         oz.poof()
 
-        self.assert_images_similar(oz)
+        self.assert_images_similar(oz, tol=2.0)
+
+    def test_classifier_with_cv(self):
+        """
+        Test that CVScores passes cv param to internal sklearn classifier with CV
+        """
+        X, y = self.classification
+
+        cv = ShuffleSplit(3, random_state=288)
+
+        oz_external_cv = CVScores(
+            LogisticRegressionCV(), cv=cv
+        )
+
+        oz_internal_cv = CVScores(
+            LogisticRegressionCV(cv=cv)
+        )
+
+        oz_external_cv.fit(X,y)
+        oz_internal_cv.fit(X,y)
+
+        npt.assert_array_almost_equal(
+            oz_external_cv.cv_scores_, oz_internal_cv.cv_scores_, decimal=1
+        )
 
     def test_regression(self):
         """
@@ -103,6 +128,29 @@ class TestCrossValidation(VisualTestCase, DatasetMixin):
 
         self.assert_images_similar(oz, tol=33.0)
 
+    def test_regressor_with_cv(self):
+        """
+        Test that CVScores passes cv param to internal sklearn regressor with CV
+        """
+        X, y = self.regression
+
+        cv = ShuffleSplit(3, random_state=288)
+
+        oz_external_cv = CVScores(
+            RidgeCV(), cv=cv
+        )
+
+        oz_internal_cv = CVScores(
+            RidgeCV(cv=cv)
+        )
+
+        oz_external_cv.fit(X,y)
+        oz_internal_cv.fit(X,y)
+
+        npt.assert_array_almost_equal(
+            oz_external_cv.cv_scores_, oz_internal_cv.cv_scores_
+        )
+
     def test_quick_method(self):
         """
         Test cross validation quick method with image closeness on SVC
@@ -112,7 +160,7 @@ class TestCrossValidation(VisualTestCase, DatasetMixin):
         cv = ShuffleSplit(n_splits=5, test_size=0.2, random_state=321)
         ax = cv_scores(SVC(), X, y, cv=cv)
 
-        self.assert_images_similar(ax=ax)
+        self.assert_images_similar(ax=ax, tol=2.0)
 
     @pytest.mark.skipif(pd is None, reason="test requires pandas")
     def test_pandas_integration(self):
@@ -136,4 +184,4 @@ class TestCrossValidation(VisualTestCase, DatasetMixin):
         oz.fit(X, y)
         oz.poof()
 
-        self.assert_images_similar(oz)
+        self.assert_images_similar(oz, tol=2.0)
