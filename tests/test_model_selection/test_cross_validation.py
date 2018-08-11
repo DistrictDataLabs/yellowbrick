@@ -126,7 +126,7 @@ class TestCrossValidation(VisualTestCase, DatasetMixin):
         oz.fit(X, y)
         oz.poof()
 
-        self.assert_images_similar(oz, tol=33.0)
+        self.assert_images_similar(oz, tol=36.0)
 
     def test_regressor_with_cv(self):
         """
