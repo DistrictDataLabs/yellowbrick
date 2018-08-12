@@ -96,7 +96,7 @@ class AlphaSelection(RegressionScoreVisualizer):
     Visualizer for manually iterating through all alphas and selecting the
     best one.
 
-    This Visualizer hoooks into the Scikit-Learn API during ``fit()``. In
+    This Visualizer hooks into the Scikit-Learn API during ``fit()``. In
     order to pass a fitted model to the Visualizer, call the ``draw()`` method
     directly after instantiating the visualizer with the fitted model.
 
