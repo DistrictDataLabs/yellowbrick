@@ -99,7 +99,7 @@ As with our classification ``CVScores`` visualization, our regression visualizat
 API Reference
 -------------
 
-.. automodule:: yellowbrick.model_selection.cv
+.. automodule:: yellowbrick.model_selection.cross_validation
     :members: CVScores
     :undoc-members:
     :show-inheritance:
