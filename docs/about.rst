@@ -29,12 +29,12 @@ Who is Yellowbrick for?
 
 Yellowbrick ``Visualizers`` have multiple use cases:
 
- - For data scientists, they can help evaluate the stability and predictive value of machine learning models and improves the speed of the experimental workflow.
+ - For data scientists, they can help evaluate the stability and predictive value of machine learning models and improve the speed of the experimental workflow.
  - For data engineers, Yellowbrick provides visual tools for monitoring model performance in real world applications.
  - For users of models, Yellowbrick provides visual interpretation of the behavior of the model in high dimensional feature space.
  - For teachers and students, Yellowbrick is a framework for teaching and understanding a large variety of algorithms and methods.
 
- 
+
 Name Origin
 -----------
 The Yellowbrick package gets its name from the fictional element in the 1900 children's novel **The Wonderful Wizard of Oz** by American author L. Frank Baum. In the book, the yellow brick road is the path that the protagonist, Dorothy Gale, must travel in order to reach her destination in the Emerald City.
