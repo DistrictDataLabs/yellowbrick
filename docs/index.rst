@@ -97,6 +97,7 @@ The following is a complete listing of the Yellowbrick documentation for this ve
    evaluation
    contributing
    matplotlib
+   teaching
    gallery
    about
    code_of_conduct

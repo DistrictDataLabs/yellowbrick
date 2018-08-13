@@ -23,6 +23,18 @@ However, model selection is a bit more nuanced than simply picking the "right" o
 
 The **model selection triple** was first described in a 2015 SIGMOD_ paper by Kumar et al. In their paper, which concerns the development of next-generation database systems built to anticipate predictive modeling, the authors cogently express that such systems are badly needed due to the highly experimental nature of machine learning in practice. "Model selection," they explain, "is iterative and exploratory because the space of [model selection triples] is usually infinite, and it is generally impossible for analysts to know a priori which [combination] will yield satisfactory accuracy and/or insights."
 
+
+Who is Yellowbrick for?
+-----------------------
+
+Yellowbrick ``Visualizers`` have multiple use cases:
+
+ - For data scientists, they can help evaluate the stability and predictive value of machine learning models and improve the speed of the experimental workflow.
+ - For data engineers, Yellowbrick provides visual tools for monitoring model performance in real world applications.
+ - For users of models, Yellowbrick provides visual interpretation of the behavior of the model in high dimensional feature space.
+ - For teachers and students, Yellowbrick is a framework for teaching and understanding a large variety of algorithms and methods.
+
+
 Name Origin
 -----------
 The Yellowbrick package gets its name from the fictional element in the 1900 children's novel **The Wonderful Wizard of Oz** by American author L. Frank Baum. In the book, the yellow brick road is the path that the protagonist, Dorothy Gale, must travel in order to reach her destination in the Emerald City.
@@ -68,7 +80,7 @@ Jupyter Notebooks:
     - `Data Science Delivered: ML Regression Predications <https://github.com/ianozsvald/data_science_delivered/blob/master/ml_explain_regression_prediction.ipynb>`_
 
 Slides:
-    - `Machine Learning Libraries You'd Wish You'd Known About (PyData Budapest 2017) <https://speakerdeck.com/ianozsvald/machine-learning-libraries-youd-wish-youd-known-about-1>`_ 
+    - `Machine Learning Libraries You'd Wish You'd Known About (PyData Budapest 2017) <https://speakerdeck.com/ianozsvald/machine-learning-libraries-youd-wish-youd-known-about-1>`_
     - `Visualizing the Model Selection Process <https://www.slideshare.net/BenjaminBengfort/visualizing-the-model-selection-process>`_
     - `Visualizing Model Selection with Scikit-Yellowbrick <https://www.slideshare.net/BenjaminBengfort/visualizing-model-selection-with-scikityellowbrick-an-introduction-to-developing-visualizers>`_
     - `Visual Pipelines for Text Analysis (Data Intelligence 2017) <https://speakerdeck.com/dataintelligence/visual-pipelines-for-text-analysis>`_

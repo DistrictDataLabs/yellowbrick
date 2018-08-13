@@ -12,7 +12,7 @@ Consider the following learning curves (generated with Yellowbrick, but from `Pl
 
 .. image:: images/learning_curve_sklearn_example.png
 
-If the training and cross validation scores converge together as more data is added (shown in the left figure), then the model will probably not benefit from more data. If the training score is much greater than the validation score (as showin in the right figure) then the model probably requires more training examples in order to generalize more effectively.
+If the training and cross validation scores converge together as more data is added (shown in the left figure), then the model will probably not benefit from more data. If the training score is much greater than the validation score (as shown in the right figure) then the model probably requires more training examples in order to generalize more effectively.
 
 The curves are plotted with the mean scores, however variability during cross-validation is shown with the shaded areas that represent a standard deviation above and below the mean for all cross-validations. If the model suffers from error due to bias, then there will likely be more variability around the training score curve. If the model suffers from error due to variance, then there will be more variability around the cross validated score.
 
