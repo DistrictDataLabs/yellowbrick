@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-# cv.py
+# cross_validation.py
 
 """
 Generates a CVScores image

@@ -16,4 +16,4 @@ Visualizers that wrap the model selection libraries of Scikit-Learn
 
 from .learning_curve import LearningCurve, learning_curve
 from .validation_curve import ValidationCurve, validation_curve
-from .cv import CVScores, cv_scores
+from .cross_validation import CVScores, cv_scores
