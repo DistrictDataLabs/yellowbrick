@@ -3,7 +3,7 @@
 Frequently Asked Questions
 ==========================
 
-Here are some of our frequently asked questions. If you have a question that is not captured here, please feel free to submit it on our `Google Groups Listserv <https://groups.google.com/forum/#!forum/yellowbrick>`_. This is an email list/forum that members of the community can join and respond to each other; you should be able to receive the quickest response here. Please also consider joining the group so you can respond to questions! You can also ask questions on `Stack Overflow <http://stackoverflow.com/questions/tagged/yellowbrick>`_ and tag them with "yellowbrick". Or you can add issues on GitHub. You can also tweet or direct message us on Twitter `@scikit_yb <https://twitter.com/scikit_yb>`_.
+Welcome to our frequently asked questions page. We're glad that you're using Yellowbrick! If your question is not captured here, please submit it to our `Google Groups Listserv <https://groups.google.com/forum/#!forum/yellowbrick>`_. This is an email list/forum that you, as a Yellowbrick user, can join and interact with other users to address and troubleshoot Yellowbrick issues. The Google Groups Listserv is where you should be able to receive the quickest response. We would welcome and encourage you to join the group so that you can respond to others' questions! You can also ask questions on `Stack Overflow <http://stackoverflow.com/questions/tagged/yellowbrick>`_ and tag them with "yellowbrick". Finally, you can add issues on GitHub and you can tweet or direct message us on Twitter `@scikit_yb <https://twitter.com/scikit_yb>`_.
 
 
 How can I change the size of a Yellowbrick plot?
@@ -24,7 +24,7 @@ You can change the ``size`` of a plot by passing in the desired dimensions in pi
     ...
 
 
-Note: we are considering adding support for passing in ``size`` in inches, but that isn't currently implemented. For a convenient inch-to-pixel converter, check out `www.unitconversion.org <http://www.unitconversion.org/typography/inchs-to-pixels-y-conversion.html>`_.
+Note: we are considering adding support for passing in ``size`` in inches in a future Yellowbrick release. For a convenient inch-to-pixel converter, check out `www.unitconversion.org <http://www.unitconversion.org/typography/inchs-to-pixels-y-conversion.html>`_.
 
 How can I change the title of a Yellowbrick plot?
 ---------------------------------------------------
@@ -53,8 +53,8 @@ How can I change the color of a Yellowbrick plot?
 
 To customize coloring in your plot, use the ``colors`` or ``cmap`` (or ``colormap``) arguments. Note that different visualizers may require slightly different arguments depending on how they construct the plots.
 
-For instance, the :doc:`api/features/manifold` accepts a ``colors`` argument, which for ``discrete`` targets should be the name of one of the :doc:`api/palettes` or a list of `matplotlib colors <https://matplotlib.org/examples/color/named_colors.html>`_ represented as strings:
-For instance, the :doc:`api/features/manifold` accepts a ``colors`` argument, which for ``discrete`` targets should be the name of a palette from the Yellowbrick :doc:`api/palettes` or a list of `matplotlib colors <https://matplotlib.org/examples/color/named_colors.html>`_ represented as strings:
+For instance, the :doc:`api/features/manifold` accepts a ``colors`` argument, for which ``discrete`` targets should be the name of one of the :doc:`api/palettes` or a list of `matplotlib colors <https://matplotlib.org/examples/color/named_colors.html>`_ represented as strings:
+For instance, the :doc:`api/features/manifold` accepts a ``colors`` argument, for which ``discrete`` targets should be the name of a palette from the Yellowbrick :doc:`api/palettes` or a list of `matplotlib colors <https://matplotlib.org/examples/color/named_colors.html>`_ represented as strings:
 
 .. code:: python
 
@@ -139,7 +139,7 @@ Save your Yellowbrick plot by passing an ``outpath`` into ``poof()``:
 
     ...
 
-Most backends support png, pdf, ps, eps and svg.
+Most backends support png, pdf, ps, eps and svg to save your work!
 
 
 How can I make overlapping points show up better?
