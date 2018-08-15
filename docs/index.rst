@@ -97,8 +97,10 @@ The following is a complete listing of the Yellowbrick documentation for this ve
    evaluation
    contributing
    matplotlib
+   teaching
    gallery
    about
+   faq
    code_of_conduct
    changelog
 
