@@ -22,7 +22,6 @@ from yellowbrick.exceptions import YellowbrickValueError, YellowbrickWarning
 
 from sklearn.feature_selection import (mutual_info_classif,
                                        mutual_info_regression)
-from sklearn.utils.multiclass import type_of_target
 from scipy.stats import pearsonr
 
 
