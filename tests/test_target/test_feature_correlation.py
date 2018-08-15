@@ -98,10 +98,7 @@ class TestFeatureCorrelationVisualizer(VisualTestCase, DatasetMixin):
         Test FeatureCorrelation visualizer with unknown method
         """
         method = 'foo'
-        e = ('Method foo not implement; choose from '
-             'mutual_info-classification, '
-             'mutual_info-regression, '
-             'pearson')
+        e = ('Method foo not implement; choose from *')
         with pytest.raises(YellowbrickValueError, match=e):
             FeatureCorrelation(method=method)
 
@@ -151,7 +148,7 @@ class TestFeatureCorrelationVisualizer(VisualTestCase, DatasetMixin):
         viz = FeatureCorrelation(feature_index=[0, 2, 3])
         viz.fit(self.X, self.y)
 
-        self.assertEqual(viz.corr_.shape[0], 3)
+        assert viz.scores_.shape[0] == 3
 
     def test_feature_correlation_select_feature_by_index_and_name(self):
         """
@@ -166,7 +163,7 @@ class TestFeatureCorrelationVisualizer(VisualTestCase, DatasetMixin):
             viz = FeatureCorrelation(feature_index=feature_index,
                                      feature_names=feature_names)
             viz.fit(self.X, self.y)
-            self.assertEqual(viz.corr_.shape[0], 3)
+            assert viz.scores_.shape[0] == 3
 
     def test_feature_correlation_select_feature_by_name_no_labels(self):
         """
@@ -198,7 +195,7 @@ class TestFeatureCorrelationVisualizer(VisualTestCase, DatasetMixin):
         viz = FeatureCorrelation(sort=True)
         viz.fit(self.X, self.y)
 
-        self.assertTrue(np.all(viz.corr_[:-1] <= viz.corr_[1:]))
+        assert np.all(viz.scores_[:-1] <= viz.scores_[1:])
 
     @pytest.mark.xfail(
         sys.platform == 'win32', reason="images not close on windows"

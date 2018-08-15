@@ -41,12 +41,6 @@ class FeatureCorrelation(TargetVisualizer):
 
     Parameters
     ----------
-    X : ndarray or DataFrame of shape n x m
-        A matrix of n instances with m features
-
-    y : ndarray or Series of length n
-        An array or series of target or class values
-
     ax : matplotlib Axes, default: None
         The axis to plot the figure on. If None is passed in the current axes
         will be used (or generated if required).
@@ -83,7 +77,7 @@ class FeatureCorrelation(TargetVisualizer):
     features_ : np.array
         The feature labels
 
-    corr_ : np.array
+    scores_ : np.array
         Correlation between features and dependent variable.
 
     Examples
@@ -97,6 +91,11 @@ class FeatureCorrelation(TargetVisualizer):
     def _pearsonr(X, y, **kwargs):
         """
         Utility function calculate pearson correlation coefficient
+
+        pearsonr returns a correlation coefficient and p-value;
+        currently only fetch the coefficient
+        but can be updated for future implementations that are
+        interested in p-value visualization
         """
         return [pearsonr(x, y, **kwargs)[0] for x in np.asarray(X).T]
 
@@ -119,7 +118,7 @@ class FeatureCorrelation(TargetVisualizer):
         if method not in self.correlation_method:
             raise YellowbrickValueError(
                 'Method {} not implement; choose from {}'.format(
-                    method, ", ".join(sorted(self.correlation_method))
+                    method, ", ".join(self.correlation_method)
                 )
             )
 
@@ -158,19 +157,19 @@ class FeatureCorrelation(TargetVisualizer):
         self._select_features_to_plot(X)
 
         # Calculate Features correlation with target variable
-        self.corr_ = np.array(
+        self.scores_ = np.array(
             self.correlation_method[self.method](X, y, **kwargs)
         )
 
         # If feature indices are given, plot only the given features
         if self.feature_index:
-            self.corr_ = self.corr_[self.feature_index]
+            self.scores_ = self.scores_[self.feature_index]
             self.features_ = self.features_[self.feature_index]
 
         # Sort features by correlation
         if self.sort:
-            sort_idx = np.argsort(self.corr_)
-            self.corr_ = self.corr_[sort_idx]
+            sort_idx = np.argsort(self.scores_)
+            self.scores_ = self.scores_[sort_idx]
             self.features_ = self.features_[sort_idx]
 
         self.draw()
@@ -180,9 +179,9 @@ class FeatureCorrelation(TargetVisualizer):
         """
         Draws the feature correlation to dependent variable, called from fit.
         """
-        pos = np.arange(self.corr_.shape[0]) + 0.5
+        pos = np.arange(self.scores_.shape[0]) + 0.5
 
-        self.ax.barh(pos, self.corr_)
+        self.ax.barh(pos, self.scores_)
 
         # Set the labels for the bars
         self.ax.set_yticks(pos)
@@ -199,27 +198,6 @@ class FeatureCorrelation(TargetVisualizer):
         self.ax.set_xlabel(self.correlation_label[self.method])
 
         self.ax.grid(False, axis='y')
-
-    def _select_mutual_info_algo(self, y):
-        """
-        Select mutual information calculation algorithm depending on
-        target type.
-
-        If target type is binary or multiclass, mutual_info_classif is used;
-        otherwise, mutual_info_classif is used.
-
-        NOTE: Currently not being used because using
-        `sklearn.utils.multiclass.type_of_target` to determine
-        classification/regression problem is not very robust.
-        """
-        target_type = type_of_target(y)
-        if target_type in ['binary', 'multiclass']:
-            self.method = 'mutual_info_classif'
-        elif target_type != 'continuous':
-            raise YellowbrickWarning(
-                'mutual_info_regression is used but type_of_target is '
-                '{}, not continuous'.format(target_type)
-            )
 
     def _create_labels_for_features(self, X):
         """
@@ -239,14 +217,21 @@ class FeatureCorrelation(TargetVisualizer):
 
     def _select_features_to_plot(self, X):
         """
-        Select features to plot
+        Select features to plot.
+
+        feature_index is always used as the filter and
+        if filter_names is supplied, a new feature_index
+        is computed from those names.
+
+
+        !!!
         """
-        if self.feature_index and self.feature_names:
-            raise YellowbrickWarning(
-                'Both feature_index and feature_names '
-                'are specified. feature_names is ignored'
-            )
-        elif self.feature_index:
+        if self.feature_index:
+            if self.feature_names:
+                raise YellowbrickWarning(
+                    'Both feature_index and feature_names '
+                    'are specified. feature_names is ignored'
+                )
             if (min(self.feature_index) < 0
                     or max(self.feature_index) >= X.shape[1]):
                 raise YellowbrickValueError('Feature index is out of range')
