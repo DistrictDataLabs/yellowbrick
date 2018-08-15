@@ -33,14 +33,13 @@ from yellowbrick.exceptions import YellowbrickValueError, YellowbrickWarning
 from sklearn import datasets
 
 from tests.base import VisualTestCase
-from tests.dataset import DatasetMixin
 
 
 ##########################################################################
 ## Feature Correlation Tests
 ##########################################################################
 
-class TestFeatureCorrelationVisualizer(VisualTestCase, DatasetMixin):
+class TestFeatureCorrelationVisualizer(VisualTestCase):
     """
     FeatureCorrelation visualizer
     """
