@@ -14,6 +14,7 @@ Tests for the high-level drawing utility functions
 ## Imports
 ##########################################################################
 
+import pytest
 import numpy as np
 import matplotlib.pyplot as plt
 
@@ -22,7 +23,19 @@ from .base import VisualTestCase
 
 
 ##########################################################################
-## Visual Test Cases for Drawing Utilities
+## Simple tests for high-level drawing utilities
+##########################################################################
+
+def test_manual_legend_uneven_colors():
+    """
+    Raise exception when colors and labels are mismatched in manual_legend
+    """
+    with pytest.raises(YellowbrickValueError, match="same number of colors as labels"):
+        manual_legend(None, ('a', 'b', 'c'), ('r', 'g'))
+
+
+##########################################################################
+## Visual test cases for high-level drawing utilities
 ##########################################################################
 
 class TestDraw(VisualTestCase):

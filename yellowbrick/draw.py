@@ -15,6 +15,8 @@ Utilities for common matplotlib drawing procedures.
 ##########################################################################
 
 from .base import Visualizer
+from .exceptions import YellowbrickValueError
+
 from matplotlib import patches
 
 import matplotlib.pyplot as plt
@@ -71,6 +73,12 @@ def manual_legend(g, labels, colors, **legend_kwargs):
         g = g.ax
     elif g is None:
         g = plt.gca()
+
+    # Ensure that labels and colors are the same length to prevent odd behavior.
+    if len(colors) != len(labels):
+        raise YellowbrickValueError(
+            "please specify the same number of colors as labels!"
+        )
 
     # Create the legend handles with the associated colors and labels
     handles = [
