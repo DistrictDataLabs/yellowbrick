@@ -52,11 +52,6 @@ coverage.xml
 # Sphinx documentation
 docs/_build/
 
-# PyBuilder
-target/
-!yellowbrick/target/
-!docs/api/target/
-
 # Jupyter Notebook
 .ipynb_checkpoints
 
