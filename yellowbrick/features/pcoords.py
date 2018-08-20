@@ -21,8 +21,6 @@ Implementation of parallel coordinates for multi-dimensional feature analysis.
 import numpy as np
 
 from six import string_types
-from matplotlib import patches
-from operator import itemgetter
 from numpy.random import RandomState
 from sklearn.preprocessing import MinMaxScaler, MaxAbsScaler
 from sklearn.preprocessing import Normalizer, StandardScaler
