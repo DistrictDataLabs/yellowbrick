@@ -30,7 +30,7 @@ except ImportError:
 from sklearn.model_selection import train_test_split
 
 from .base import RegressionScoreVisualizer
-
+from ..draw import manual_legend
 from ..style.palettes import LINE_COLOR
 from ..utils.decorators import memoized
 from ..exceptions import YellowbrickValueError
@@ -338,7 +338,7 @@ class ResidualsPlot(RegressionScoreVisualizer):
         Draw a histogram showing the distribution of the residuals on the
         right side of the figure. Requires Matplotlib >= 2.0.2.
         If set to 'density', the probability density function will be plotted.
-        If set to True or 'frequency' then the frequency will be plotted.  
+        If set to True or 'frequency' then the frequency will be plotted.
 
     train_color : color, default: 'b'
         Residuals for training data are ploted with this color but also
@@ -387,7 +387,7 @@ class ResidualsPlot(RegressionScoreVisualizer):
             'test_point': test_color,
             'line': line_color,
         }
-        
+
         self.hist = hist
         if self.hist not in {True, 'density', 'frequency', None, False}:
                 raise YellowbrickValueError(
@@ -397,6 +397,9 @@ class ResidualsPlot(RegressionScoreVisualizer):
 
         if self.hist in {True, 'density', 'frequency'}:
             self.hax # If hist is True, test the version availability
+
+        # Store labels and colors for the legend ordered by call
+        self._labels, self._colors = [], []
 
     @memoized
     def hax(self):
@@ -508,6 +511,10 @@ class ResidualsPlot(RegressionScoreVisualizer):
             alpha = 0.9
             label = "Test $R^2 = {:0.3f}$".format(self.test_score_)
 
+        # Update the legend information
+        self._labels.append(label)
+        self._colors.append(color)
+
         # Draw the residuals scatter plot
         self.ax.scatter(y_pred, residuals, c=color, alpha=alpha, label=label)
 
@@ -533,8 +540,8 @@ class ResidualsPlot(RegressionScoreVisualizer):
         # Add the title to the plot
         self.set_title('Residuals for {} Model'.format(self.name))
 
-        # Set the legend
-        self.ax.legend(loc='best', frameon=True)
+        # Set the legend with full opacity patches using manual legend
+        manual_legend(self, self._labels, self._colors, loc='best', frameon=True)
 
         # Create a full line across the figure at zero error.
         self.ax.axhline(y=0, c=self.colors['line'])
@@ -589,7 +596,7 @@ def residuals_plot(model,
         Draw a histogram showing the distribution of the residuals on the
         right side of the figure. Requires Matplotlib >= 2.0.2.
         If set to 'density', the probability density function will be plotted.
-        If set to True or 'frequency' then the frequency will be plotted.  
+        If set to True or 'frequency' then the frequency will be plotted.
 
     test_size : float, int default: 0.25
         If float, should be between 0.0 and 1.0 and represent the proportion
