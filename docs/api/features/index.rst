@@ -22,7 +22,7 @@ At the moment we have the following feature analysis visualizers implemented:
 -  :doc:`manifold`: visualize high dimensional data using manifold learning
 -  :doc:`importances`: rank features by relative importance in a model
 -  :doc:`rfecv`: select a subset of features by importance
--  :doc:`jointplot`: plot 2D correlation between features and target
+-  :doc:`jointplot`: (aka Jointplots) plot 2D correlation between features and target
 
 Feature analysis visualizers implement the ``Transformer`` API from
 scikit-learn, meaning they can be used as intermediate transform steps

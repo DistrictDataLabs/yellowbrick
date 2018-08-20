@@ -3,8 +3,8 @@
 Gallery
 =======
 
-Features Analysis
------------------
+Feature Analysis
+----------------
 
 .. image:: api/features/images/radviz.png
     :width: 200px
@@ -116,11 +116,17 @@ Classification Visualizers
     :alt: Logistic Regression Confusion Matrix
     :target: api/classifier/confusion_matrix.html#confusion-matrix
 
-.. image:: api/classifier/images/rocauc.png
+.. image:: api/classifier/images/rocauc_binary.png
     :width: 200px
     :height: 100px
-    :alt: ROC Curves for Logistic Regression
+    :alt: Binary ROC Curves for Logistic Regression
     :target: api/classifier/rocauc.html#rocauc
+
+.. image:: api/classifier/images/rocauc_multiclass.png
+    :width: 200px
+    :height: 100px
+    :alt: Multiclass ROC Curves
+    :target: api/classifier/rocauc.html#multi-class-rocauc-curves
 
 .. image:: api/target/images/class_balance_compare.png
     :width: 200px
@@ -175,6 +181,18 @@ Model Selection Visualizers
     :height: 100px
     :alt: Learning Curve for KMeans
     :target: api/model_selection/learning_curve.html#clustering
+
+.. image:: api/model_selection/images/cv_scores_classifier.png
+    :width: 200px
+    :height: 100px
+    :alt: CV Scores for MultinomialNB Classification
+    :target: api/model_selection/cross_validation.html#classification
+
+.. image:: api/model_selection/images/cv_scores_regressor.png
+    :width: 200px
+    :height: 100px
+    :alt: CV Scores for Ridge Regression
+    :target: api/model_selection/cross_validation.html#regression
 
 Text Modeling Visualizers
 ---------------------------
