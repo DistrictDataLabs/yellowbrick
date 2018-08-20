@@ -27,6 +27,7 @@ from numpy.random import RandomState
 from sklearn.preprocessing import MinMaxScaler, MaxAbsScaler
 from sklearn.preprocessing import Normalizer, StandardScaler
 
+from yellowbrick.draw import manual_legend
 from yellowbrick.utils import is_dataframe, is_series
 from yellowbrick.features.base import DataVisualizer
 from yellowbrick.exceptions import YellowbrickTypeError, YellowbrickValueError
@@ -138,7 +139,7 @@ class ParallelCoordinates(DataVisualizer):
     Parallel coordinates displays each feature as a vertical axis spaced
     evenly along the horizontal, and each instance as a line drawn between
     each individual axis. This allows you to detect braids of similar instances
-    and separability that suggests a good classification problem. 
+    and separability that suggests a good classification problem.
 
     Parameters
     ----------
@@ -341,9 +342,9 @@ class ParallelCoordinates(DataVisualizer):
             if self.features_ is None:
                 self.features_ = np.array(X.columns)
 
-            X = X.as_matrix()
+            X = X.values
         if is_series(y):
-            y = y.as_matrix()
+            y = y.values
 
         # Assign integer labels to the feature columns from the input
         if self.features_ is None:
@@ -513,12 +514,10 @@ class ParallelCoordinates(DataVisualizer):
         self.ax.set_xticklabels(self.features_)
         self.ax.set_xlim(self._increments[0], self._increments[-1])
 
-        # Add the legend
-        handles = [
-            patches.Patch(color=color, label=label)
-            for label, color in sorted(self._colors.items(), key=itemgetter(0))
-        ]
-        self.ax.legend(handles=handles, loc='best', frameon=True)
+        # Add the legend sorting classes by name
+        labels = sorted(list(self._colors.keys()))
+        colors = [self._colors[lbl] for lbl in labels]
+        manual_legend(self, labels, colors, loc='best', frameon=True)
 
         # Add the grid view
         self.ax.grid()
