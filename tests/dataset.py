@@ -226,7 +226,7 @@ class DatasetMixin(object):
                 files.append(os.path.join(path, cat, name))
                 target.append(cat)
 
-                with open(os.path.join(path, cat, name), 'r') as f:
+                with open(os.path.join(path, cat, name), 'r', encoding='UTF-8') as f:
                     data.append(f.read())
 
         # Return the data bunch for use similar to the newsgroups example

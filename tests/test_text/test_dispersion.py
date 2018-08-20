@@ -18,9 +18,6 @@ Tests for the dispersion plot text visualization
 ## Imports
 ##########################################################################
 
-import sys
-import pytest
-
 from yellowbrick.text.dispersion import *
 from tests.dataset import DatasetMixin
 from tests.base import VisualTestCase
@@ -30,7 +27,6 @@ from itertools import chain
 ## DispersionPlot Tests
 ##########################################################################
 
-@pytest.mark.xfail(sys.platform == "win32", reason="Issue #491")
 class DispersionPlotTests(VisualTestCase, DatasetMixin):
 
     def test_integrated_dispersionplot(self):
