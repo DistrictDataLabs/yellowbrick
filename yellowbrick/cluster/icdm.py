@@ -17,14 +17,28 @@ Implements Intercluster Distance Map visualizations.
 import numpy as np
 import matplotlib.pyplot as plt
 
+from matplotlib.patches import Circle
 from sklearn.manifold import MDS, TSNE
 
 from .base import ClusteringScoreVisualizer
 
+from ..utils.decorators import memoized
 from ..utils.helpers import prop_to_size
 from ..exceptions import YellowbrickValueError
 
-from matplotlib.patches import Circle
+try:
+    # Only available in Matplotlib >= 2.0.2
+    from mpl_toolkits.axes_grid1 import inset_locator
+except ImportError:
+    inset_locator = None
+
+
+# Valid strings to use for embedding names
+VALID_EMBEDDING = {'mds', 'tsne'}
+
+# Valid strings to use for scoring names
+VALID_SCORING = {'membership',}
+
 
 ##########################################################################
 ## InterclusterDistance Visualizer
@@ -53,49 +67,84 @@ class InterclusterDistance(ClusteringScoreVisualizer):
         The scores of each cluster that determine its size on the graph.
     """
 
-    EMBEDDINGS = {
-        'mds': MDS,
-        'tsne': TSNE,
-    }
 
-    SCORING = {
-        'membership': np.bincount,
-    }
-
-    def __init__(self, model, ax=None, min_size=400, max_size=25000, legend=True,
-                 embedding='mds', scoring='membership', **kwargs):
+    def __init__(self, model, ax=None, min_size=400, max_size=25000,
+                 embedding='mds', scoring='membership',
+                 legend=True, legend_loc="lower left", legend_size=1.5,
+                 random_state=None, **kwargs):
         # Initialize the visualizer bases
         super(InterclusterDistance, self).__init__(model, ax=ax, **kwargs)
 
-        # Ensure that a valid embedding is passed.
-        if embedding.lower() not in self.EMBEDDINGS:
-            raise YellowbrickValueError(
-                "unknown embedding '{}', chose from '{}'".format(
-                    embedding, ", ".join(self.EMBEDDINGS.keys())
-                )
-            )
-
-        # Ensure that a valid scoring metric is passed.
-        if scoring.lower() not in self.SCORING:
-            raise YellowbrickValueError(
-                "unknown scoring '{}', chose from '{}'".format(
-                    scoring, ", ".join(self.SCORING.keys())
-                )
-            )
+        # Ensure that a valid embedding and scoring is passed in
+        validate_embedding(embedding)
+        validate_scoring(scoring)
 
         # Set decomposition properties
         self.embedding = embedding
         self.scoring = scoring
+        self.random_state = random_state
 
         # Set visual properties
         self.min_size = min_size
         self.max_size = max_size
         self.legend = legend
+        self.legend_loc = legend_loc
+        self.legend_size = legend_size
 
         # Colors are currently hardcoded, need to compute face and edge color
-        # from this color based on the alpha of the cluster center.
+        # from this color based on the alpha of the cluster center. The user
+        # can "hack" these properties before drawing, however.
         self.facecolor = "#2e719344"
         self.edgecolor = "#2e719399"
+
+        if self.legend:
+            self.lax # If legend True, test the version availability
+
+    @memoized
+    def lax(self):
+        """
+        Returns the legend axes, creating it only on demand by creating a 2"
+        by 2" inset axes that has no grid, ticks, spines or face frame (e.g
+        is mostly invisible). The legend can then be drawn on this axes.
+        """
+        if inset_locator is None:
+            raise YellowbrickValueError((
+                "intercluster distance map legend requires matplotlib 2.0.2 or greater "
+                "please upgrade matplotlib or set legend=False on the visualizer"
+            ))
+
+        lax = inset_locator.inset_axes(
+            self.ax, width=self.legend_size, height=self.legend_size, loc=self.legend_loc
+        )
+
+        lax.set_frame_on(False)
+        lax.set_facecolor("none")
+        lax.grid(False)
+        lax.set_xlim(-1.4,1.4)
+        lax.set_ylim(-1.4,1.4)
+        lax.set_xticks([])
+        lax.set_yticks([])
+
+        for name in lax.spines:
+            lax.spines[name].set_visible(False)
+
+        return lax
+
+    @memoized
+    def transformer(self):
+        """
+        Creates the internal transformer that maps the cluster center's high
+        dimensional space to its two dimensional space.
+        """
+        ttype = self.embedding.lower() # transformer method type
+
+        if ttype == 'mds':
+            return MDS(n_components=2, random_state=self.random_state)
+
+        if ttype == 'tsne':
+            return TSNE(n_components=2, random_state=self.random_state)
+
+        raise YellowbrickValueError("unknown embedding '{}'".format(ttype))
 
     def fit(self, X, y=None):
         """
@@ -109,17 +158,12 @@ class InterclusterDistance(ClusteringScoreVisualizer):
         # TODO: is this how sklearn stores all centers in the model?
         C = self.estimator.cluster_centers_
 
-        # Embed the centers
-        transformer = self.EMBEDDINGS[self.embedding.lower()](n_components=2)
-        self.embedded_centers_ = transformer.fit_transform(C)
+        # Embed the centers in 2D space and get the cluster scores
+        self.embedded_centers_ = self.transformer.fit_transform(C)
+        self.scores_ = self._score_clusters(X, y)
 
-        # Compute the score of the centers
-        self.scores_ = self.SCORING[self.scoring.lower()](self.estimator.predict(X))
-
-        # Draw the clusters
+        # Draw the clusters and fit returns self
         self.draw()
-
-        # Fit returns self
         return self
 
     def draw(self):
@@ -127,7 +171,7 @@ class InterclusterDistance(ClusteringScoreVisualizer):
         Draw the embedded centers with their sizes on the visualization.
         """
         # Compute the sizes of the markers from their score
-        sizes = self._scores_to_size(self.scores_)
+        sizes = self._get_cluster_sizes()
 
         # Draw the scatter plots with associated sizes on the graph
         self.ax.scatter(
@@ -136,12 +180,14 @@ class InterclusterDistance(ClusteringScoreVisualizer):
         )
 
         # Annotate the clusters with their labels
-        # TODO: font size is hardcoded here, how to handle?
         for i, pt in enumerate(self.embedded_centers_):
             self.ax.text(
-                s=str(i), x=pt[0], y=pt[1], va="center", ha="center",
-                fontweight="bold", size=13
+                s=str(i), x=pt[0], y=pt[1], va="center", ha="center", fontweight="bold"
             )
+
+        # Ensure the current axes is always the main residuals axes
+        plt.sca(self.ax)
+        return self.ax
 
     def finalize(self):
         """
@@ -150,11 +196,12 @@ class InterclusterDistance(ClusteringScoreVisualizer):
         the grid with components. This function also adds a legend from the
         sizes if required.
         """
+        # Set the default title if a user hasn't supplied one
         self.set_title("{} Intercluster Distance Map (via {})".format(
             self.estimator.__class__.__name__, self.embedding.upper()
         ))
 
-        # Create the origin grid
+        # Create the origin grid and minimalist display
         self.ax.set_xticks([0])
         self.ax.set_yticks([0])
         self.ax.set_xticklabels([])
@@ -162,57 +209,110 @@ class InterclusterDistance(ClusteringScoreVisualizer):
         self.ax.set_xlabel("PC2")
         self.ax.set_ylabel("PC1")
 
-        # Make the legend by pushing over the current axes
-        # TODO: fix and generalize this similar to ResidualsPlot.hax
+        # Make the legend by creating an inset axes that shows relative sizing
+        # based on the scoring metric supplied by the user.
         if self.legend:
-            lax = plt.gcf().add_axes([.9, 0.25, 0.3333, 0.5], frameon=False, facecolor="none")
-            self._make_size_legend(self.scores_, lax)
+            self._make_size_legend()
 
-    def _scores_to_size(self, scores):
+        return self.ax
+
+    def _score_clusters(self, X, y=None):
+        """
+        Determines the "scores" of the cluster, the metric that determines the
+        size of the cluster visualized on the visualization.
+        """
+        stype = self.scoring.lower() # scoring method name
+
+        if stype == "membership":
+            return np.bincount(self.estimator.predict(X))
+
+        raise YellowbrickValueError("unknown scoring method '{}'".format(stype))
+
+    def _get_cluster_sizes(self):
         """
         Returns the marker size (in points, e.g. area of the circle) based on
         the scores, using the prop_to_size scaling mechanism.
         """
         # NOTE: log and power are hardcoded, should we allow the user to specify?
         return prop_to_size(
-            scores, mi=self.min_size, ma=self.max_size, log=False, power=0.5
+            self.scores_, mi=self.min_size, ma=self.max_size, log=False, power=0.5
         )
 
-    def _make_size_legend(self, scores, ax):
+    def _make_size_legend(self):
         """
         Draw a legend that shows relative sizes of the clusters at the 25th,
         50th, and 75th percentile based on the current scoring metric.
         """
         # Compute the size of the markers and scale them to our figure size
-        areas = self._scores_to_size(scores)
+        # NOTE: the marker size is the area of the plot, we need to compute the
+        # radius of the markers.
+        areas = self._get_cluster_sizes()
         radii = np.sqrt(areas / np.pi)
         scaled = np.interp(radii, (radii.min(), radii.max()), (.1, 1))
 
-        # Compute the locations of the 25th, 50th, and 75th percentiles of the score
+        # Compute the locations of the 25th, 50th, and 75th percentile scores
         indices = np.array([
-            np.where(scores==np.percentile(scores, p, interpolation='nearest'))[0][0]
-            for p in (25, 50, 75)
+            percentile_index(self.scores_, p) for p in (25, 50, 75)
         ])
 
-        # Draw circles with their various sizes as the legend
+        # Draw size circles annotated with the percentile score as the legend.
         for idx in indices:
+            # TODO: should the size circle's center be hard coded like this?
             center = (-0.30, 1-scaled[idx])
-            c = Circle(center, scaled[idx], facecolor="none", edgecolor="#2e7193", linewidth=1.5, linestyle="--", label="bob")
-            ax.add_patch(c)
+            c = Circle(
+                center, scaled[idx], facecolor="none", edgecolor="#2e7193",
+                linewidth=1.5, linestyle="--"
+            )
+            self.lax.add_patch(c)
 
-            ax.annotate(
-                scores[idx], (-0.30, 1-(2*scaled[idx])), xytext=(1, 1-(2*scaled[idx])),
+            # Add annotation to the size circle with the value of the score
+            self.lax.annotate(
+                self.scores_[idx], (-0.30, 1-(2*scaled[idx])), xytext=(1, 1-(2*scaled[idx])),
                 arrowprops=dict(arrowstyle="wedge", color="#2e7193"), va='center', ha='center',
             )
 
         # Draw size legend title
-        ax.text(s="membership", x=0, y=1.2, va='center', ha='center')
+        self.lax.text(s="membership", x=0, y=1.2, va='center', ha='center')
 
-        ax.set_xlim(-1.4,1.4)
-        ax.set_ylim(-1.4,1.4)
-        ax.set_xticks([])
-        ax.set_yticks([])
-        for name in ax.spines:
-            ax.spines[name].set_visible(False)
+        # Ensure the current axes is always the main axes after modifying the
+        # inset axes and while drawing.
+        plt.sca(self.ax)
 
-        ax.grid(False)
+
+##########################################################################
+## Helper Methods
+##########################################################################
+
+def percentile_index(a, q):
+    """
+    Returns the index of the value at the Qth percentile in array a.
+    """
+    return np.where(
+        a==np.percentile(a, q, interpolation='nearest')
+    )[0][0]
+
+
+def validate_string_param(s, valid, param_name="param"):
+    """
+    Raises a well formatted exception if s is not in valid, otherwise does not
+    raise an exception. Uses ``param_name`` to identify the parameter.
+    """
+    if s.lower() not in valid:
+        raise YellowbrickValueError(
+            "unknown {} '{}', chose from '{}'".format(
+                param_name, s, ", ".join(valid)
+            )
+        )
+
+def validate_embedding(param):
+    """
+    Raises an exception if the param is not in VALID_EMBEDDING
+    """
+    validate_string_param(param, VALID_EMBEDDING, "embedding")
+
+
+def validate_scoring(param):
+    """
+    Raises an exception if the param is not in VALID_SCORING
+    """
+    validate_string_param(param, VALID_SCORING, "scoring")
