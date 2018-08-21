@@ -35,7 +35,7 @@ from sklearn.decomposition import TruncatedSVD, PCA
 ##########################################################################
 
 def tsne(X, y=None, ax=None, decompose='svd', decompose_by=50, classes=None,
-           colors=None, colormap=None, **kwargs):
+           colors=None, colormap=None, alpha=1.0, **kwargs):
     """
     Display a projection of a vectorized corpus in two dimensions using TSNE,
     a nonlinear dimensionality reduction method that is particularly well
@@ -78,6 +78,10 @@ def tsne(X, y=None, ax=None, decompose='svd', decompose_by=50, classes=None,
     colormap : string or matplotlib cmap
         Sequential colormap for continuous target
 
+    alpha : float, default: 1.0
+        Specify a transparency where 1 is completely opaque and 0 is completely
+        transparent. This property makes densely clustered points more visible.
+
     kwargs : dict
         Pass any additional keyword arguments to the TSNE transformer.
 
@@ -88,7 +92,7 @@ def tsne(X, y=None, ax=None, decompose='svd', decompose_by=50, classes=None,
     """
     # Instantiate the visualizer
     visualizer = TSNEVisualizer(
-        ax, decompose, decompose_by, classes, colors, colormap, **kwargs
+        ax, decompose, decompose_by, classes, colors, colormap, alpha, **kwargs
     )
 
     # Fit and transform the visualizer (calls draw)
@@ -159,6 +163,10 @@ class TSNEVisualizer(TextVisualizer):
         by np.random. The random state is applied to the preliminary
         decomposition as well as tSNE.
 
+    alpha : float, default: 1.0
+        Specify a transparency where 1 is completely opaque and 0 is completely
+        transparent. This property makes densely clustered points more visible.
+
     kwargs : dict
         Pass any additional keyword arguments to the TSNE transformer.
     """
@@ -166,10 +174,12 @@ class TSNEVisualizer(TextVisualizer):
     # NOTE: cannot be np.nan
     NULL_CLASS = None
 
-    def __init__(self, ax=None, decompose='svd', decompose_by=50, labels=None,
-                 classes=None, colors=None, colormap=None, random_state=None, **kwargs):
+    def __init__(self, ax=None, decompose='svd', decompose_by=50,
+                 labels=None, classes=None, colors=None, colormap=None,
+                 random_state=None, alpha=1.0, **kwargs):
 
         # Visual Parameters
+        self.alpha = alpha
         self.labels = labels
         self.colors = colors
         self.colormap = colormap
@@ -335,7 +345,7 @@ class TSNEVisualizer(TextVisualizer):
         for label, points in series.items():
             self.ax.scatter(
                 points['x'], points['y'], c=colors[label],
-                alpha=0.7, label=label
+                alpha=self.alpha, label=label
             )
 
     def finalize(self, **kwargs):
