@@ -42,6 +42,10 @@ try:
 except ImportError:
     pd = None
 
+try:
+    from unittest import mock
+except ImportError:
+    import mock
 
 # Determine version of matplotlib
 MPL_VERS_MAJ = int(mpl.__version__.split(".")[0])
@@ -187,6 +191,30 @@ class TestPredictionError(VisualTestCase, DatasetMixin):
         visualizer.finalize()
 
         self.assert_images_similar(visualizer, tol=1.0, remove_legend=True)
+
+    def test_alpha_param(self):
+        """
+        Test that the user can supply an alpha param on instantiation
+        """
+        # Instantiate a sklearn regressor
+        model = Lasso(random_state=23, alpha=10)
+        # Instantiate a prediction error plot, provide custom alpha
+        visualizer = PredictionError(
+            model, bestfit=False, identity=False, alpha=0.7
+        )
+
+        # Test param gets set correctly
+        assert visualizer.alpha == 0.7
+
+        # Mock ax and fit the visualizer
+        visualizer.ax = mock.MagicMock(autospec=True)
+        visualizer.fit(self.data.X.train, self.data.y.train)
+        visualizer.score(self.data.X.test, self.data.y.test)
+
+        # Test that alpha was passed to internal matplotlib scatterplot
+        _, scatter_kwargs = visualizer.ax.scatter.call_args
+        assert "alpha" in scatter_kwargs
+        assert scatter_kwargs["alpha"] == 0.7
 
 
 ##########################################################################
