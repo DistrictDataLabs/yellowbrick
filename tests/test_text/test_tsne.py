@@ -38,7 +38,7 @@ try:
     from unittest import mock
 except ImportError:
     import mock
-    
+
 ##########################################################################
 ## TSNE Tests
 ##########################################################################
@@ -85,7 +85,7 @@ class TestTSNE(VisualTestCase, DatasetMixin):
         tsne = TSNEVisualizer(random_state=8392, colormap='Set1')
         tsne.fit_transform(docs, labels)
 
-        tol = 40 if six.PY3 else 55
+        tol = 50 if six.PY3 else 55
         self.assert_images_similar(tsne, tol=tol)
 
     def test_sklearn_tsne_size(self):
