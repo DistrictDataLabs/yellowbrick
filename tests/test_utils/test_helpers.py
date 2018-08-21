@@ -128,6 +128,55 @@ class TestNumericFunctions(object):
         with pytest.raises(ValueError):
             div_safe(5, 0)
 
+    def test_prop_to_size_list(self):
+        """
+        Test prop to size correctly returns scaled values for a list
+        """
+        # Hieghts (in cm) of U.S. Presidents in order of term until Lincoln
+        heights = [188, 170, 189, 163, 183, 171, 185, 168, 173, 183, 173, 173, 175, 178, 183, 193]
+        sizes = prop_to_size(heights, mi=1, ma=10, log=False, power=0.33)
+
+        npt.assert_array_almost_equal(sizes, np.array([
+            9.47447296,  6.56768746,  9.58486955,  1.        ,  8.87285756,
+            6.81851544,  9.12441277,  5.98256068,  7.26314542,  8.87285756,
+            7.26314542,  7.26314542,  7.65154152,  8.15982835,  8.87285756,
+            10.
+        ]))
+
+    def test_prop_to_size_log(self):
+        """
+        Test prop to size returns natural log scaled values
+        """
+        # Hieghts (in cm) of U.S. Presidents in order of term until Lincoln
+        heights = [188, 170, 189, 163, 183, 171, 185, 168, 173, 183, 173, 173, 175, 178, 183, 193]
+        sizes = prop_to_size(heights, mi=1, ma=10, log=True, power=0.5)
+
+        npt.assert_array_almost_equal(sizes, np.array([
+            9.271337,  5.49004 ,  9.423692,  1.      ,  8.449214,  5.792968,
+            8.791172,  4.806088,  6.343007,  8.449214,  6.343007,  6.343007,
+            6.835994,  7.496806,  8.449214, 10.
+        ]))
+
+    def test_prop_to_size_default(self):
+        """
+        Test the default values of prop to size are correct
+        """
+        vals = np.random.normal(50, 23, 500)
+        sizes = prop_to_size(vals)
+
+        assert sizes.ndim == vals.ndim
+        assert sizes.shape == vals.shape
+        assert sizes.max() <= 5.0
+        assert sizes.min() >= 0.0
+
+    def test_prop_to_size_zero_division(self):
+        """
+        Ensure that prop to size does not cause division by zero errors
+        """
+        vals = [8]*8
+        sizes = prop_to_size(vals)
+        npt.assert_array_equal(sizes, [0]*8)
+
 
 ##########################################################################
 ## Features/Array Tests
