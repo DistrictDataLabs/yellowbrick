@@ -47,6 +47,9 @@ class DispersionPlot(TextVisualizer):
     ignore_case : boolean, default: False
 	Specify whether input  will be case-sensitive.
         
+    boundary : boolean, default: False
+        Specify whether document boundaries will be drawn
+    
     kwargs : dict
         Pass any additional keyword arguments to the super class.
     
@@ -54,13 +57,14 @@ class DispersionPlot(TextVisualizer):
     process, but can and should be set as early as possible.
     """
     
-    def __init__(self, words, ax=None, color=None, ignore_case=False, **kwargs):
+    def __init__(self, words, ax=None, color=None, ignore_case=False,
+                 boundary=False, **kwargs):
         super(DispersionPlot, self).__init__(ax=ax, **kwargs)
         
         self.color = color
         self.words = words
         self.ignore_case = ignore_case
-        
+        self.set_boundaries = boundary
     
     def _compute_dispersion(self, text):
         for x, word in enumerate(text):
@@ -84,13 +88,25 @@ class DispersionPlot(TextVisualizer):
             A list of words in the order they appear in the corpus.
         """
             
+        # Concatenating documents and define boundaries by word offset
+        self.boundaries_ = []
+        self.doc_words_ = []
+        self.offset = 0
+
+        for doc in text:
+            for word in doc.split():
+                self.doc_words_.append(word)
+                self.offset += 1
+            self.boundaries_.append(self.offset)
+        self.doc_words_ = np.array(self.doc_words_)
+
         # Create an index (e.g. the y position) for the target words
         self.target_words_ = np.flip(self.words, axis=0)
         if self.ignore_case:
             self.target_words_ = np.array([w.lower() for w in self.target_words_])
         
         # Stack is used to create a 2D array from the generator
-        points = np.stack(self._compute_dispersion(text))
+        points = np.stack(self._compute_dispersion(self.doc_words_))
         self.draw(points)
         return self 
     
@@ -103,6 +119,11 @@ class DispersionPlot(TextVisualizer):
         kwargs: generic keyword arguments.
         """
         
+        # Define boundaries with a solid vertical line
+        if self.set_boundaries:
+            for xcoords in self.boundaries_:
+                self.ax.axvline(x=xcoords, color='lightgray', alpha=0.75,
+                                linewidth=0.5)
         self.ax.scatter(points[:,0], points[:,1], marker='|', color=self.color)
         self.ax.set_yticks(list(range(len(self.target_words_))))
         self.ax.set_yticklabels(self.target_words_)
@@ -126,7 +147,8 @@ class DispersionPlot(TextVisualizer):
 ## Quick Method
 ##########################################################################
 
-def dispersion(words, corpus, ax=None, color=None, ignore_case=False, **kwargs):
+def dispersion(words, corpus, ax=None, color=None,
+               boundary=False, ignore_case=False, **kwargs):
     """ Displays lexical dispersion plot for words in a corpus
     
     This helper function is a quick wrapper to utilize the DisperstionPlot
@@ -147,6 +169,9 @@ def dispersion(words, corpus, ax=None, color=None, ignore_case=False, **kwargs):
     color : list or tuple of colors
         Specify color for bars
 
+    boundary : boolean, default: False
+        Specify whether document boundaries will be drawn
+    
     ignore_case : boolean, default: False
 	Specify whether input  will be case-sensitive.
     
