@@ -67,7 +67,7 @@ class DispersionPlotTests(VisualTestCase, DatasetMixin):
         """
         corpus = self.load_data('hobbies')
 
-        text = chain(*map(str.split, corpus.data))
+        text = chain(*map(lambda s: s.split(), corpus.data))
         target_words = ['Game', 'player', 'score', 'oil', 'Man']
 
         visualizer = DispersionPlot(target_words, ignore_case=True)
