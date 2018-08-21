@@ -351,3 +351,19 @@ class TestResidualsPlot(VisualTestCase, DatasetMixin):
         assert score == pytest.approx(0.9999888484, rel=1e-4)
         assert visualizer.train_score_ == pytest.approx(0.9999906, rel=1e-4)
         assert visualizer.test_score_ == score
+
+    def test_alpha_param(self):
+        """
+        Test that the user can supply an alpha param on instantiation
+        """
+        # Instantiate a prediction error plot, provide custom alpha
+        visualizer = ResidualsPlot(
+            Ridge(random_state=8893), alpha=0.3
+        )
+
+        # Test param gets set correctly
+        assert visualizer.alpha == 0.3
+
+        # TODO: mock ax and test alpha is passed to pyplot scatterplot
+        # not sure how to do this without triggering the Matplotlib error:
+        # "ValueError: Axes instance argument was not found in a figure"

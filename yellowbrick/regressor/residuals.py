@@ -369,6 +369,10 @@ class ResidualsPlot(RegressionScoreVisualizer):
     line_color : color, default: dark grey
         Defines the color of the zero error line, can be any matplotlib color.
 
+    alpha : float, default: 1.0
+        Specify a transparency where 1 is completely opaque and 0 is completely
+        transparent. This property makes densely clustered points more visible.
+
     kwargs : dict
         Keyword arguments that are passed to the base class and may influence
         the visualization as defined in other Visualizers.
@@ -391,7 +395,8 @@ class ResidualsPlot(RegressionScoreVisualizer):
     The residuals histogram feature requires matplotlib 2.0.2 or greater.
     """
     def __init__(self, model, ax=None, hist=True, train_color='b',
-                 test_color='g', line_color=LINE_COLOR, **kwargs):
+                 test_color='g', line_color=LINE_COLOR, alpha=1.0,
+                 **kwargs):
 
         super(ResidualsPlot, self).__init__(model, ax=ax, **kwargs)
 
@@ -415,6 +420,8 @@ class ResidualsPlot(RegressionScoreVisualizer):
 
         # Store labels and colors for the legend ordered by call
         self._labels, self._colors = [], []
+
+        self.alpha = alpha
 
     @memoized
     def hax(self):
@@ -519,11 +526,9 @@ class ResidualsPlot(RegressionScoreVisualizer):
 
         if train:
             color = self.colors['train_point']
-            alpha = 0.5
             label = "Train $R^2 = {:0.3f}$".format(self.train_score_)
         else:
             color = self.colors['test_point']
-            alpha = 0.9
             label = "Test $R^2 = {:0.3f}$".format(self.test_score_)
 
         # Update the legend information
@@ -531,13 +536,17 @@ class ResidualsPlot(RegressionScoreVisualizer):
         self._colors.append(color)
 
         # Draw the residuals scatter plot
-        self.ax.scatter(y_pred, residuals, c=color, alpha=alpha, label=label)
+        self.ax.scatter(
+            y_pred, residuals, c=color, alpha=self.alpha, label=label
+        )
 
         # Add residuals histogram
         if self.hist in {True, 'frequency'}:
             self.hax.hist(residuals, bins=50, orientation="horizontal")
         elif self.hist == 'density':
-            self.hax.hist(residuals, bins=50, orientation="horizontal", density=True)
+            self.hax.hist(
+                residuals, bins=50, orientation="horizontal", density=True
+            )
 
         # Ensure the current axes is always the main residuals axes
         plt.sca(self.ax)
@@ -556,7 +565,9 @@ class ResidualsPlot(RegressionScoreVisualizer):
         self.set_title('Residuals for {} Model'.format(self.name))
 
         # Set the legend with full opacity patches using manual legend
-        manual_legend(self, self._labels, self._colors, loc='best', frameon=True)
+        manual_legend(
+            self, self._labels, self._colors, loc='best', frameon=True
+        )
 
         # Create a full line across the figure at zero error.
         self.ax.axhline(y=0, c=self.colors['line'])
@@ -581,6 +592,7 @@ def residuals_plot(model,
                    test_color='g',
                    line_color=LINE_COLOR,
                    random_state=None,
+                   alpha=1.0,
                    **kwargs):
     """Quick method:
 
@@ -635,6 +647,10 @@ def residuals_plot(model,
     random_state : int, RandomState instance or None, optional
         Passed to the train_test_split function.
 
+    alpha : float, default: 1.0
+        Specify a transparency where 1 is completely opaque and 0 is completely
+        transparent. This property makes densely clustered points more visible.
+
     kwargs : dict
         Keyword arguments that are passed to the base class and may influence
         the visualization as defined in other Visualizers.
@@ -647,7 +663,8 @@ def residuals_plot(model,
     # Instantiate the visualizer
     visualizer = ResidualsPlot(
         model=model, ax=ax, hist=hist, train_color=train_color,
-        test_color=test_color, line_color=line_color, **kwargs
+        test_color=test_color, line_color=line_color, alpha=alpha,
+        **kwargs
     )
 
     # Create the train and test splits
@@ -656,7 +673,7 @@ def residuals_plot(model,
     )
 
     # Fit and transform the visualizer (calls draw)
-    visualizer.fit(X_train, y_train)
+    visualizer.fit(X_train, y_train, **kwargs)
     visualizer.score(X_test, y_test)
     visualizer.finalize()
 
