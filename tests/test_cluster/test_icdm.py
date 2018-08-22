@@ -252,7 +252,7 @@ class TestInterclusterDistance(VisualTestCase, DatasetMixin):
         assert isinstance(oz, InterclusterDistance)
 
         tol = 2.75 if sys.platform == 'win32' else 1.0 # fails with RMSE 2.631 on AppVeyor
-        self.assert_images_similar(oz, tol=1.0)
+        self.assert_images_similar(oz, tol=tol)
 
     @pytest.mark.skipif(MPL_VERS_MAJ >= 2, reason="test requires mpl earlier than 2.0.2")
     def test_legend_matplotlib_version(self, mock_toolkit):
