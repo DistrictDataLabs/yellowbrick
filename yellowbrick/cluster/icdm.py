@@ -50,21 +50,90 @@ class InterclusterDistance(ClusteringScoreVisualizer):
     2 dimensions with the distance to other centers preserved. E.g. the closer
     to centers are in the visualization, the closer they are in the original
     feature space. The clusters are sized according to a scoring metric. By
-    default, they are sized by population, e.g. the number of instances that
+    default, they are sized by membership, e.g. the number of instances that
     belong to each center. This gives a sense of the relative importance of
     clusters. Note however, that because two clusters overlap in the 2D space,
     it does not imply that they overlap in the original feature space.
 
     Parameters
     ----------
+    model : a Scikit-Learn clusterer
+        Should be an instance of a centroidal clustering algorithm (or a
+        hierarchical algorithm with a specified number of clusters). Also
+        accepts some other models like LDA for text clustering.
+        If it is not a clusterer, an exception is raised.
+
+    ax : matplotlib Axes, default: None
+        The axes to plot the figure on. If None is passed in the current axes
+        will be used (or generated if required).
+
+    min_size : int, default: 400
+        The size, in points, of the smallest cluster drawn on the graph.
+        Cluster sizes will be scaled between the min and max sizes.
+
+    max_size : int, default: 25000
+        The size, in points, of the largest cluster drawn on the graph.
+        Cluster sizes will be scaled between the min and max sizes.
+
+    embedding : default: 'mds'
+        The algorithm used to embed the cluster centers in 2 dimensional space
+        so that the distance between clusters is represented equivalently to
+        their relationship in feature spaceself.
+        Embedding algorithm options include:
+
+        - **mds**: multidimensional scaling
+        - **tsne**: stochastic neighbor embedding
+
+    scoring : default: 'membership'
+        The scoring method used to determine the size of the clusters drawn on
+        the graph so that the relative importance of clusters can be viewed.
+        Scoring method options include:
+
+        - **membership**: number of instances belonging to each cluster
+
+    legend : bool, default: True
+        Whether or not to draw the size legend onto the graph, omit the legend
+        to more easily see clusters that overlap.
+
+    legend_loc : str, default: "lower left"
+        The location of the legend on the graph, used to move the legend out
+        of the way of clusters into open space. The same legend location
+        options for matplotlib are used here.
+
+        .. seealso:: https://matplotlib.org/api/pyplot_api.html#matplotlib.pyplot.legend
+
+    legend_size : float, default: 1.5
+        The size, in inches, of the size legend to inset into the graph.
+
+    random_state : int or RandomState, default: None
+        Fixes the random state for stochastic embedding algorithms.
+
+    kwargs : dict
+        Keyword arguments passed to the base class and may influence the
+        feature visualization properties.
 
     Attributes
     ----------
+    cluster_centers_ : array of shape (n_clusters, n_features)
+        The computed cluster centers from the underlying model.
+
     embedded_centers_ : array of shape (n_clusters, 2)
         The positions of all the cluster centers on the graph.
 
     scores_ : array of shape (n_clusters,)
         The scores of each cluster that determine its size on the graph.
+
+    Notes
+    -----
+    Currently the only two embeddings supportted are MDS and TSNE. Soon to
+    follow will be PCoA and a customized version of PCoA for LDA. The only
+    supported scoring metric is membership, but in the future, silhouette
+    scores and cluster diameter will be added.
+
+    In terms of algorithm support, right now any clustering algorithm that has
+    a learned ``cluster_centers_`` and ``labels_`` attribute will work with
+    the visualizer. In the future, we will update this to work with hierarchical
+    clusterers that have ``n_components`` and LDA.
     """
 
 
@@ -146,6 +215,26 @@ class InterclusterDistance(ClusteringScoreVisualizer):
 
         raise YellowbrickValueError("unknown embedding '{}'".format(ttype))
 
+    @property
+    def cluster_centers_(self):
+        """
+        Searches for or creates cluster centers for the specified clustering
+        algorithm. This algorithm ensures that that the centers are
+        appropriately drawn and scaled so that distance between clusters are
+        maintained.
+        """
+        # TODO: Handle agglomerative clustering and LDA
+        for attr in ('cluster_centers_',):
+            try:
+                return getattr(self.estimator, attr)
+            except AttributeError:
+                continue
+
+        raise AttributeError(
+            "could not find or make cluster_centers_ for {}".format(
+            self.estimator.__class__.__name__
+        ))
+
     def fit(self, X, y=None):
         """
         Fit the clustering model, computing the centers then embeds the centers
@@ -156,7 +245,7 @@ class InterclusterDistance(ClusteringScoreVisualizer):
 
         # Get the centers
         # TODO: is this how sklearn stores all centers in the model?
-        C = self.estimator.cluster_centers_
+        C = self.cluster_centers_
 
         # Embed the centers in 2D space and get the cluster scores
         self.embedded_centers_ = self.transformer.fit_transform(C)
@@ -224,7 +313,7 @@ class InterclusterDistance(ClusteringScoreVisualizer):
         stype = self.scoring.lower() # scoring method name
 
         if stype == "membership":
-            return np.bincount(self.estimator.predict(X))
+            return np.bincount(self.estimator.labels_)
 
         raise YellowbrickValueError("unknown scoring method '{}'".format(stype))
 
@@ -304,6 +393,7 @@ def validate_string_param(s, valid, param_name="param"):
             )
         )
 
+
 def validate_embedding(param):
     """
     Raises an exception if the param is not in VALID_EMBEDDING
@@ -316,3 +406,102 @@ def validate_scoring(param):
     Raises an exception if the param is not in VALID_SCORING
     """
     validate_string_param(param, VALID_SCORING, "scoring")
+
+
+##########################################################################
+## Quick Method
+##########################################################################
+
+def intercluster_distance(model, X, y=None, ax=None,
+                          min_size=400, max_size=25000,
+                          embedding='mds', scoring='membership',
+                          legend=True, legend_loc="lower left", legend_size=1.5,
+                          random_state=None, **kwargs):
+    """Quick Method:
+
+    Intercluster distance maps display an embedding of the cluster centers in
+    2 dimensions with the distance to other centers preserved. E.g. the closer
+    to centers are in the visualization, the closer they are in the original
+    feature space. The clusters are sized according to a scoring metric. By
+    default, they are sized by membership, e.g. the number of instances that
+    belong to each center. This gives a sense of the relative importance of
+    clusters. Note however, that because two clusters overlap in the 2D space,
+    it does not imply that they overlap in the original feature space.
+
+    Parameters
+    ----------
+    model : a Scikit-Learn clusterer
+        Should be an instance of a centroidal clustering algorithm (or a
+        hierarchical algorithm with a specified number of clusters). Also
+        accepts some other models like LDA for text clustering.
+        If it is not a clusterer, an exception is raised.
+
+    X : array-like of shape (n, m)
+        A matrix or data frame with n instances and m features
+
+    y : array-like of shape (n,), optional
+        A vector or series representing the target for each instance
+
+    ax : matplotlib Axes, default: None
+        The axes to plot the figure on. If None is passed in the current axes
+        will be used (or generated if required).
+
+    min_size : int, default: 400
+        The size, in points, of the smallest cluster drawn on the graph.
+        Cluster sizes will be scaled between the min and max sizes.
+
+    max_size : int, default: 25000
+        The size, in points, of the largest cluster drawn on the graph.
+        Cluster sizes will be scaled between the min and max sizes.
+
+    embedding : default: 'mds'
+        The algorithm used to embed the cluster centers in 2 dimensional space
+        so that the distance between clusters is represented equivalently to
+        their relationship in feature spaceself.
+        Embedding algorithm options include:
+
+        - **mds**: multidimensional scaling
+        - **tsne**: stochastic neighbor embedding
+
+    scoring : default: 'membership'
+        The scoring method used to determine the size of the clusters drawn on
+        the graph so that the relative importance of clusters can be viewed.
+        Scoring method options include:
+
+        - **membership**: number of instances belonging to each cluster
+
+    legend : bool, default: True
+        Whether or not to draw the size legend onto the graph, omit the legend
+        to more easily see clusters that overlap.
+
+    legend_loc : str, default: "lower left"
+        The location of the legend on the graph, used to move the legend out
+        of the way of clusters into open space. The same legend location
+        options for matplotlib are used here.
+
+        .. seealso:: https://matplotlib.org/api/pyplot_api.html#matplotlib.pyplot.legend
+
+    legend_size : float, default: 1.5
+        The size, in inches, of the size legend to inset into the graph.
+
+    random_state : int or RandomState, default: None
+        Fixes the random state for stochastic embedding algorithms.
+
+    kwargs : dict
+        Keyword arguments passed to the base class and may influence the
+        feature visualization properties.
+
+    Returns
+    -------
+    viz : InterclusterDistance
+        The intercluster distance visualizer, fitted and finalized.
+    """
+    oz = InterclusterDistance(
+        model, ax=ax, min_size=min_size, max_size=max_size, embedding=embedding,
+        scoring=scoring, legend=legend, legend_loc=legend_loc, legend_size=legend_size,
+        random_state=random_state, **kwargs
+    )
+
+    oz.fit(X, y)
+    oz.poof()
+    return oz

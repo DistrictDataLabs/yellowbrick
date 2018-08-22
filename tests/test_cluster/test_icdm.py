@@ -19,9 +19,14 @@ import matplotlib as mpl
 
 from yellowbrick.cluster.icdm import *
 from yellowbrick.exceptions import YellowbrickValueError
-from sklearn.cluster import KMeans
 
 from tests.base import VisualTestCase
+from tests.dataset import DatasetMixin, Dataset
+
+from sklearn.datasets import make_blobs
+from sklearn.cluster import Birch, AgglomerativeClustering
+from sklearn.cluster import KMeans, AffinityPropagation, MiniBatchKMeans
+from sklearn.decomposition import LatentDirichletAllocation as LDA
 
 try:
     import pandas as pd
@@ -34,27 +39,215 @@ MPL_VERS_MAJ = int(mpl.__version__.split(".")[0])
 
 
 ##########################################################################
+## Fixtures
+##########################################################################
+
+@pytest.fixture(scope='class')
+def blobs12(request):
+    """
+    Creates a fixture of 1000 instances in 12 clusters with 16 features.
+    """
+    X, y = make_blobs(
+        centers=12, n_samples=1000, n_features=16, shuffle=True, random_state=2121
+    )
+    request.cls.blobs12 = Dataset(X, y)
+
+
+@pytest.fixture(scope='class')
+def blobs4(request):
+    """
+    Creates a fixture of 400 instances in 4 clusters with 16 features.
+    """
+    X, y = make_blobs(
+        centers=4, n_samples=400, n_features=16, shuffle=True, random_state=1212
+    )
+    request.cls.blobs4 = Dataset(X, y)
+
+
+##########################################################################
 ## InterclusterDistance Test Cases
 ##########################################################################
 
-class TestInterclusterDistance(VisualTestCase):
+@pytest.mark.usefixtures("blobs12", "blobs4")
+class TestInterclusterDistance(VisualTestCase, DatasetMixin):
     """
     Test the InterclusterDistance visualizer
     """
 
     def test_only_valid_embeddings(self):
         """
-        should raise an exception on invalid embedding
+        Should raise an exception on invalid embedding
         """
+        # On init
         with pytest.raises(YellowbrickValueError, match="unknown embedding 'foo'"):
             InterclusterDistance(KMeans(), embedding='foo')
 
+        # After init
+        icdm = InterclusterDistance(KMeans())
+        icdm.embedding = 'foo'
+        with pytest.raises(YellowbrickValueError, match="unknown embedding 'foo'"):
+            icdm.transformer
+
     def test_only_valid_scoring(self):
         """
-        should raise an exception on invalid scoring
+        Should raise an exception on invalid scoring
         """
+        # On init
         with pytest.raises(YellowbrickValueError, match="unknown scoring 'foo'"):
             InterclusterDistance(KMeans(), scoring='foo')
+
+        # After init
+        icdm = InterclusterDistance(KMeans())
+        icdm.scoring = 'foo'
+        with pytest.raises(YellowbrickValueError, match="unknown scoring method 'foo'"):
+            icdm._score_clusters(None)
+
+    def test_kmeans_mds(self):
+        """
+        Visual similarity with KMeans and MDS scaling
+        """
+        model = KMeans(9, random_state=38)
+        oz = InterclusterDistance(model, random_state=83, embedding='mds')
+
+        # Prefit assertions
+        assert not hasattr(oz, 'embedded_centers_')
+        assert not hasattr(oz, 'scores_')
+
+        assert oz.fit(self.blobs12.X) is oz # Fit returns self
+
+        # Postfit assertions
+        assert hasattr(oz, 'cluster_centers_')
+        assert hasattr(oz, 'embedded_centers_')
+        assert hasattr(oz, 'scores_')
+        assert oz.embedded_centers_.shape[0] == oz.scores_.shape[0]
+        assert oz.embedded_centers_.shape[0] == oz.cluster_centers_.shape[0]
+        assert len(oz._score_clusters(self.blobs12.X)) == 9
+        assert len(oz._get_cluster_sizes()) == 9
+
+        # Image similarity
+        oz.finalize()
+        self.assert_images_similar(oz, tol=1.0)
+
+    @pytest.mark.filterwarnings("ignore:the matrix subclass is not the recommended way")
+    def test_affinity_tsne_no_legend(self):
+        """
+        Visual similarity with AffinityPropagation, TSNE scaling, and no legend
+        """
+        model = AffinityPropagation()
+        oz = InterclusterDistance(
+            model, random_state=763, embedding='tsne', legend=False
+        )
+
+        # Prefit assertions
+        assert not hasattr(oz, 'embedded_centers_')
+        assert not hasattr(oz, 'scores_')
+
+        assert oz.fit(self.blobs4.X) is oz # Fit returns self
+
+        # Postfit assertions
+        assert hasattr(oz, 'cluster_centers_')
+        assert hasattr(oz, 'embedded_centers_')
+        assert hasattr(oz, 'scores_')
+        assert oz.embedded_centers_.shape[0] == oz.scores_.shape[0]
+        assert oz.embedded_centers_.shape[0] == oz.cluster_centers_.shape[0]
+
+        # Image similarity
+        oz.finalize()
+        self.assert_images_similar(oz, tol=1.0)
+
+
+    @pytest.mark.skip(reason="LDA not implemented yet")
+    def test_lda_mds(self):
+        """
+        Visual similarity with LDA and MDS scaling
+        """
+        model = LDA(9, random_state=6667)
+        oz = InterclusterDistance(model, random_state=2332, embedding='mds')
+
+        # Prefit assertions
+        assert not hasattr(oz, 'embedded_centers_')
+        assert not hasattr(oz, 'scores_')
+
+        assert oz.fit(self.blobs12.X) is oz # Fit returns self
+
+        # Postfit assertions
+        assert hasattr(oz, 'cluster_centers_')
+        assert hasattr(oz, 'embedded_centers_')
+        assert hasattr(oz, 'scores_')
+        assert oz.embedded_centers_.shape[0] == oz.scores_.shape[0]
+        assert oz.embedded_centers_.shape[0] == oz.cluster_centers_.shape[0]
+        assert len(oz._score_clusters(self.blobs12.X)) == 9
+        assert len(oz._get_cluster_sizes()) == 9
+
+        # Image similarity
+        oz.finalize()
+        self.assert_images_similar(oz, tol=1.0)
+
+    @pytest.mark.skip(reason="agglomerative not implemented yet")
+    @pytest.mark.filterwarnings("ignore:Using a non-tuple sequence")
+    @pytest.mark.filterwarnings("ignore:the matrix subclass is not the recommended way")
+    def test_birch_tsne(self):
+        """
+        Visual similarity with Birch and MDS scaling
+        """
+        oz = InterclusterDistance(Birch(n_clusters=9), random_state=83, embedding='mds')
+
+        # Prefit assertions
+        assert not hasattr(oz, 'embedded_centers_')
+        assert not hasattr(oz, 'scores_')
+
+        assert oz.fit(self.blobs12.X) is oz # Fit returns self
+
+        # Postfit assertions
+        assert hasattr(oz, 'cluster_centers_')
+        assert hasattr(oz, 'embedded_centers_')
+        assert hasattr(oz, 'scores_')
+        assert oz.embedded_centers_.shape[0] == oz.scores_.shape[0]
+        assert oz.embedded_centers_.shape[0] == oz.cluster_centers_.shape[0]
+        assert len(oz._score_clusters(self.blobs12.X)) == 9
+        assert len(oz._get_cluster_sizes()) == 9
+
+        # Image similarity
+        oz.finalize()
+        self.assert_images_similar(oz, tol=1.0)
+
+    @pytest.mark.skip(reason="agglomerative not implemented yet")
+    def test_ward_mds_no_legend(self):
+        """
+        Visual similarity with Ward, TSNE scaling, and no legend
+        """
+        model = AgglomerativeClustering(n_clusters=9)
+        oz = InterclusterDistance(
+            model, random_state=83, embedding='tsne', legend=False
+        )
+
+        # Prefit assertions
+        assert not hasattr(oz, 'embedded_centers_')
+        assert not hasattr(oz, 'scores_')
+
+        assert oz.fit(self.blobs12.X) is oz # Fit returns self
+
+        # Postfit assertions
+        assert hasattr(oz, 'cluster_centers_')
+        assert hasattr(oz, 'embedded_centers_')
+        assert hasattr(oz, 'scores_')
+        assert oz.embedded_centers_.shape[0] == oz.scores_.shape[0]
+        assert oz.embedded_centers_.shape[0] == oz.cluster_centers_.shape[0]
+        assert len(oz._score_clusters(self.blobs12.X)) == 9
+        assert len(oz._get_cluster_sizes()) == 9
+
+        # Image similarity
+        oz.finalize()
+        self.assert_images_similar(oz, tol=1.0)
+
+    def test_quick_method(self):
+        """
+        Test the quick method producing a valid visualization
+        """
+        model = MiniBatchKMeans(3, random_state=343)
+        oz = intercluster_distance(model, self.blobs4.X, random_state=93, legend=False)
+        assert isinstance(oz, InterclusterDistance)
+        self.assert_images_similar(oz, tol=1.0)
 
     @pytest.mark.skipif(MPL_VERS_MAJ >= 2, reason="test requires mpl earlier than 2.0.2")
     def test_legend_matplotlib_version(self, mock_toolkit):
