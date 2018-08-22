@@ -25,7 +25,7 @@ from yellowbrick.base import VisualizerGrid
 from yellowbrick.exceptions import YellowbrickValueError
 
 from tests.base import VisualTestCase
-from tests.random import RandomVisualizer
+from tests.rand import RandomVisualizer
 
 from sklearn.datasets import make_classification
 
