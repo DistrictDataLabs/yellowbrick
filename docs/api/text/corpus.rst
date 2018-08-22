@@ -3,7 +3,7 @@
 Loading a Text Corpus
 =====================
 
-As in the previous sections, Yellowbrick has provided a sample dataset to run the following cells. In particular, we are going to use a text corpus wrangled from the `Baleen RSS Corpus <http://baleen.districtdatalabs.com/>`_ to present the following examples. If you haven't already downloaded the data, you can do so by running:
+As in the previous sections, Yellowbrick has provided a sample dataset to run the following cells. In particular, we are going to use a text corpus wrangled from the `Baleen RSS Corpus <https://github.com/DistrictDataLabs/baleen>`_ to present the following examples. If you haven't already downloaded the data, you can do so by running:
 
 ::
 
