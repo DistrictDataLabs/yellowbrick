@@ -209,6 +209,7 @@ class Visualizer(BaseEstimator):
 
         if outpath is not None:
             plt.savefig(outpath, **kwargs)
+            plt.gcf().clear()
         else:
             plt.show()
 
