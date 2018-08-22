@@ -59,6 +59,7 @@ Visualizers are estimators (objects that learn from data) whose primary objectiv
 
 - **K-Elbow Plot**: select k using the elbow method and various metrics
 - **Silhouette Plot**: select k by visualizing silhouette coefficient values
+- **Intercluster Distance Maps**: show relative distance and size of clusters
 
 #### Model Selection Visualization
 

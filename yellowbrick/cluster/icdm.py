@@ -33,6 +33,13 @@ except ImportError:
     inset_locator = None
 
 
+## Packages for export
+__all__ = [
+    "InterclusterDistance", "intercluster_distance",
+    "VALID_EMBEDDING", "VALID_SCORING",
+]
+
+
 # Valid strings to use for embedding names
 VALID_EMBEDDING = {'mds', 'tsne'}
 
