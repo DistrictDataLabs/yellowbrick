@@ -68,15 +68,20 @@ class DispersionPlot(TextVisualizer):
         self.annotate_docs = annotate_docs
 
     def _compute_dispersion(self, text):
-        for x, word in enumerate(text):
-            if self.ignore_case:
-                word = word.lower()
+        self.boundaries_ = []
+        self.offset = 0
+        for doc in text:
+            for word in doc:
+                if self.ignore_case:
+                    word = word.lower()
 
-            # NOTE: this will find all indices if duplicate words are supplied 
-            # In the case that word is not in target words, any empty list is
-            # returned and no data will be yielded 
-            for y in (self.target_words_ == word).nonzero()[0]:
-                yield (x, y)
+                # NOTE: this will find all indices if duplicate words are supplied
+                # In the case that word is not in target words, any empty list is
+                # returned and no data will be yielded
+                self.offset += 1
+                for y in (self.target_words_ == word).nonzero()[0]:
+                    yield (self.offset, y)
+            self.boundaries_.append(self.offset)
 
     def fit(self, text):
         """
@@ -86,20 +91,9 @@ class DispersionPlot(TextVisualizer):
         Parameters
         ----------
         text : list
-            A list of words in the order they appear in the corpus.
+            Should be provided as a list of documents that contain
+            a list of words in the order they appear in the document.
         """
-
-        # Concatenating documents and define boundaries by word offset
-        self.boundaries_ = []
-        self.doc_words_ = []
-        self.offset = 0
-
-        for doc in text:
-            for word in doc.split():
-                self.doc_words_.append(word)
-                self.offset += 1
-            self.boundaries_.append(self.offset)
-        self.doc_words_ = np.array(self.doc_words_)
 
         # Create an index (e.g. the y position) for the target words
         self.target_words_ = np.flip(self.words, axis=0)
@@ -107,7 +101,7 @@ class DispersionPlot(TextVisualizer):
             self.target_words_ = np.array([w.lower() for w in self.target_words_])
 
         # Stack is used to create a 2D array from the generator
-        points = np.stack(self._compute_dispersion(self.doc_words_))
+        points = np.stack(self._compute_dispersion(text))
         self.draw(points)
         return self
 
@@ -120,12 +114,13 @@ class DispersionPlot(TextVisualizer):
         kwargs: generic keyword arguments.
         """
 
-        # Define boundaries with a solid vertical line
-        if self.set_boundaries:
+        # Define boundaries with a vertical line
+        if self.annotate_docs:
             for xcoords in self.boundaries_:
-                self.ax.axvline(x=xcoords, color='lightgray', alpha=0.75,
-                                linewidth=0.5)
-        self.ax.scatter(points[:,0], points[:,1], marker='|', color=self.color)
+                self.ax.axvline(x=xcoords, color='lightgray', linestyle='dashed')
+
+        self.ax.scatter(points[:,0], points[:,1], marker='|', color=self.color,
+                        zorder=100)
         self.ax.set_yticks(list(range(len(self.target_words_))))
         self.ax.set_yticklabels(self.target_words_)
 
