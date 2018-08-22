@@ -1,9 +1,9 @@
 # feature_correlation
 # Generates images for the feature correlation documentation.
-
+#
 # Author:  Zijie (ZJ) Poh <poh.zijie@gmail.com>
 # Created: Tue Jul 31 20:21:32 2018 -0700
-
+#
 #
 """
 Generates images for the feature correlation documentation.
@@ -13,6 +13,10 @@ Generates images for the feature correlation documentation.
 ## Imports
 ##########################################################################
 
+import sys
+sys.path.insert(0, '../../../')
+import matplotlib
+matplotlib.use('Agg')
 import numpy as np
 import pandas as pd
 from sklearn import datasets
@@ -30,9 +34,9 @@ def feature_correlation_pearson(
     X, y = data['data'], data['target']
     feature_names = np.array(data['feature_names'])
 
-    fea_corr = FeatureCorrelation(labels=feature_names)
-    fea_corr.fit(X, y)
-    fea_corr.poof(outpath=path)
+    visualizer = FeatureCorrelation(labels=feature_names)
+    visualizer.fit(X, y)
+    visualizer.poof(outpath=path)
 
 
 def feature_correlation_mutual_info_classification(
@@ -44,11 +48,10 @@ def feature_correlation_mutual_info_classification(
 
     feature_to_plot = ['alcohol', 'ash', 'hue', 'proline', 'total_phenols']
 
-    fea_corr = FeatureCorrelation(method='mutual_info-classification',
-                                  random_state=0,
-                                  feature_names=feature_to_plot)
-    fea_corr.fit(X_pd, y)
-    fea_corr.poof(outpath=path)
+    visualizer = FeatureCorrelation(method='mutual_info-classification',
+                                    feature_names=feature_to_plot)
+    visualizer.fit(X_pd, y, random_state=0)
+    visualizer.poof(outpath=path)
 
 
 def feature_correlation_mutual_info_regression(
@@ -60,10 +63,10 @@ def feature_correlation_mutual_info_regression(
     discrete_features = [False for _ in range(len(feature_names))]
     discrete_features[1] = True
 
-    fea_corr = FeatureCorrelation(method='mutual_info-regression',
-                                  labels=feature_names, random_state=0)
-    fea_corr.fit(X, y, discrete_features=discrete_features)
-    fea_corr.poof(outpath=path)
+    visualizer = FeatureCorrelation(method='mutual_info-regression',
+                                    labels=feature_names, sort=True)
+    visualizer.fit(X, y, discrete_features=discrete_features, random_state=0)
+    visualizer.poof(outpath=path)
 
 
 if __name__ == '__main__':

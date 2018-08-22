@@ -221,9 +221,6 @@ class FeatureCorrelation(TargetVisualizer):
         feature_index is always used as the filter and
         if filter_names is supplied, a new feature_index
         is computed from those names.
-
-
-        !!!
         """
         if self.feature_index:
             if self.feature_names:
