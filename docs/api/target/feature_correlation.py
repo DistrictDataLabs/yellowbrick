@@ -13,10 +13,6 @@ Generates images for the feature correlation documentation.
 ## Imports
 ##########################################################################
 
-import sys
-sys.path.insert(0, '../../../')
-import matplotlib
-matplotlib.use('Agg')
 import numpy as np
 import pandas as pd
 from sklearn import datasets
