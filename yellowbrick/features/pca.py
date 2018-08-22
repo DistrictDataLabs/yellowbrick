@@ -24,6 +24,7 @@ import matplotlib.pyplot as plt
 from yellowbrick.features.base import MultiFeatureVisualizer
 from yellowbrick.style import palettes
 from yellowbrick.exceptions import YellowbrickValueError
+from yellowbrick.draw import manual_legend
 
 from sklearn.pipeline import Pipeline
 from sklearn.decomposition import PCA
