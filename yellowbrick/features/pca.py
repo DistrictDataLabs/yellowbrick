@@ -216,7 +216,7 @@ class PCADecomposition(MultiFeatureVisualizer):
             self.ax.set_zlabel('Principal Component 3')
         if self.legend_labels is not None:
               manual_legend(
-              ax, self.legend_labels, self.color, frameon=True, loc='best'
+              self.ax, self.legend_labels, self.color, frameon=True, loc='best'
             )
 
 
