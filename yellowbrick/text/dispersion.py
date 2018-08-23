@@ -81,7 +81,9 @@ class DispersionPlot(TextVisualizer):
                 self.offset += 1
                 for y in (self.target_words_ == word).nonzero()[0]:
                     yield (self.offset, y)
-            self.boundaries_.append(self.offset)
+            if self.annotate_docs:
+                self.boundaries_.append(self.offset)
+        self.boundaries_ = np.array(self.boundaries_, dtype=int)
 
     def fit(self, text):
         """
