@@ -32,7 +32,7 @@ Mutual Information - Regression
 
 Mutual information between features and the dependent variable is calculated with ``sklearn.feature_selection.mutual_info_classif`` when ``method='mutual_info-classification'`` and ``mutual_info_regression`` when ``method='mutual_info-regression'``.
 It is very important to specify discrete features when calculating mutual information because the calculation for continuous and discrete variables are different.
-See [scikit-learn documentation](http://scikit-learn.org/stable/modules/generated/sklearn.feature_selection.mutual_info_classif.html) for more details.
+See `scikit-learn documentation <http://scikit-learn.org/stable/modules/generated/sklearn.feature_selection.mutual_info_classif.html>`_ for more details.
 
 .. code:: python
 

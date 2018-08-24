@@ -32,7 +32,7 @@ def feature_correlation_pearson(
 
     visualizer = FeatureCorrelation(labels=feature_names)
     visualizer.fit(X, y)
-    visualizer.poof(outpath=path)
+    visualizer.poof(outpath=path, clear_figure=True)
 
 
 def feature_correlation_mutual_info_classification(
@@ -47,7 +47,7 @@ def feature_correlation_mutual_info_classification(
     visualizer = FeatureCorrelation(method='mutual_info-classification',
                                     feature_names=feature_to_plot)
     visualizer.fit(X_pd, y, random_state=0)
-    visualizer.poof(outpath=path)
+    visualizer.poof(outpath=path, clear_figure=True)
 
 
 def feature_correlation_mutual_info_regression(
@@ -62,7 +62,7 @@ def feature_correlation_mutual_info_regression(
     visualizer = FeatureCorrelation(method='mutual_info-regression',
                                     labels=feature_names, sort=True)
     visualizer.fit(X, y, discrete_features=discrete_features, random_state=0)
-    visualizer.poof(outpath=path)
+    visualizer.poof(outpath=path, clear_figure=True)
 
 
 if __name__ == '__main__':
