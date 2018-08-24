@@ -21,7 +21,6 @@ Tests for the dispersion plot text visualization
 from yellowbrick.text.dispersion import *
 from tests.dataset import DatasetMixin
 from tests.base import VisualTestCase
-from itertools import chain
 
 ##########################################################################
 ## DispersionPlot Tests
@@ -34,8 +33,8 @@ class DispersionPlotTests(VisualTestCase, DatasetMixin):
         Assert no errors occur during DispersionPlot integration
         """
         corpus = self.load_data('hobbies')
-	
-        text = [word for doc in corpus.data for word in doc.split()]
+
+        text = [doc.split() for doc in corpus.data]
         target_words = ['Game', 'player', 'score', 'oil', 'Man']
 
         visualizer = DispersionPlot(target_words)
@@ -50,8 +49,8 @@ class DispersionPlotTests(VisualTestCase, DatasetMixin):
         with ignore_case parameter turned on
         """
         corpus = self.load_data('hobbies')
-	
-        text = [word for doc in corpus.data for word in doc.split()]
+
+        text = [doc.split() for doc in corpus.data]
         target_words = ['Game', 'player', 'score', 'oil', 'Man']
 
         visualizer = DispersionPlot(target_words, ignore_case=True)
@@ -67,7 +66,7 @@ class DispersionPlotTests(VisualTestCase, DatasetMixin):
         """
         corpus = self.load_data('hobbies')
 
-        text = chain(*map(lambda s: s.split(), corpus.data))
+        text = (doc.split() for doc in corpus.data)
         target_words = ['Game', 'player', 'score', 'oil', 'Man']
 
         visualizer = DispersionPlot(target_words, ignore_case=True)
@@ -75,4 +74,19 @@ class DispersionPlotTests(VisualTestCase, DatasetMixin):
         visualizer.ax.grid(False)
 
         self.assert_images_similar(visualizer, tol=25)
-        
+
+    def test_dispersionplot_annotate_docs(self):
+        """
+        Assert no errors occur during DispersionPlot integration
+        with annotate_docs parameter turned on
+        """
+        corpus = self.load_data('hobbies')
+
+        text = (doc.split() for doc in corpus.data)
+        target_words = ['girl', 'she', 'boy', 'he', 'man']
+
+        visualizer = DispersionPlot(target_words, annotate_docs=True)
+        visualizer.fit(text)
+        visualizer.ax.grid(False)
+
+        self.assert_images_similar(visualizer, tol=25)
