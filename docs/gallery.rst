@@ -161,6 +161,12 @@ Clustering Visualizers
     :alt: Silhoutte Plot of Mini Batch Kmeans Clustering
     :target: api/cluster/silhouette.html#silhouette-visualizer
 
+.. image:: api/cluster/images/icdm.png
+    :width: 200px
+    :height: 100px
+    :alt: Intercluster Distance Maps
+    :target: api/cluster/icdm.html#intercluster-distance-maps
+
 Model Selection Visualizers
 ---------------------------
 
