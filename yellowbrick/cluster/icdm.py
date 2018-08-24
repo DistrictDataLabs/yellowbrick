@@ -22,6 +22,7 @@ from sklearn.manifold import MDS, TSNE
 
 from .base import ClusteringScoreVisualizer
 
+from ..utils.timer import Timer
 from ..utils.decorators import memoized
 from ..utils.helpers import prop_to_size
 from ..exceptions import YellowbrickValueError
@@ -129,6 +130,9 @@ class InterclusterDistance(ClusteringScoreVisualizer):
 
     scores_ : array of shape (n_clusters,)
         The scores of each cluster that determine its size on the graph.
+
+    fit_time_ : Timer
+        The time it took to fit the clustering model and perform the embedding.
 
     Notes
     -----
@@ -247,16 +251,17 @@ class InterclusterDistance(ClusteringScoreVisualizer):
         Fit the clustering model, computing the centers then embeds the centers
         into 2D space using the embedding method specified.
         """
-        # Fit the underlying estimator
-        self.estimator.fit(X, y)
+        with Timer() as self.fit_time_:
+            # Fit the underlying estimator
+            self.estimator.fit(X, y)
 
-        # Get the centers
-        # TODO: is this how sklearn stores all centers in the model?
-        C = self.cluster_centers_
+            # Get the centers
+            # TODO: is this how sklearn stores all centers in the model?
+            C = self.cluster_centers_
 
-        # Embed the centers in 2D space and get the cluster scores
-        self.embedded_centers_ = self.transformer.fit_transform(C)
-        self.scores_ = self._score_clusters(X, y)
+            # Embed the centers in 2D space and get the cluster scores
+            self.embedded_centers_ = self.transformer.fit_transform(C)
+            self.scores_ = self._score_clusters(X, y)
 
         # Draw the clusters and fit returns self
         self.draw()

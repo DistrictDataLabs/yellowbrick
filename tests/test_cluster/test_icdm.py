@@ -65,6 +65,17 @@ def blobs4(request):
     request.cls.blobs4 = Dataset(X, y)
 
 
+def assert_fitted(oz):
+    for param in ('cluster_centers_', 'embedded_centers_', 'scores_', 'fit_time_'):
+        assert hasattr(oz, param)
+
+
+def assert_not_fitted(oz):
+    for param in ('embedded_centers_', 'scores_', 'fit_time_'):
+        assert not hasattr(oz, param)
+
+
+
 ##########################################################################
 ## InterclusterDistance Test Cases
 ##########################################################################
@@ -111,15 +122,12 @@ class TestInterclusterDistance(VisualTestCase, DatasetMixin):
         oz = InterclusterDistance(model, random_state=83, embedding='mds')
 
         # Prefit assertions
-        assert not hasattr(oz, 'embedded_centers_')
-        assert not hasattr(oz, 'scores_')
+        assert_not_fitted(oz)
 
         assert oz.fit(self.blobs12.X) is oz # Fit returns self
 
         # Postfit assertions
-        assert hasattr(oz, 'cluster_centers_')
-        assert hasattr(oz, 'embedded_centers_')
-        assert hasattr(oz, 'scores_')
+        assert_fitted(oz)
         assert oz.embedded_centers_.shape[0] == oz.scores_.shape[0]
         assert oz.embedded_centers_.shape[0] == oz.cluster_centers_.shape[0]
         assert len(oz._score_clusters(self.blobs12.X)) == 9
@@ -141,15 +149,12 @@ class TestInterclusterDistance(VisualTestCase, DatasetMixin):
         )
 
         # Prefit assertions
-        assert not hasattr(oz, 'embedded_centers_')
-        assert not hasattr(oz, 'scores_')
+        assert_not_fitted(oz)
 
         assert oz.fit(self.blobs4.X) is oz # Fit returns self
 
         # Postfit assertions
-        assert hasattr(oz, 'cluster_centers_')
-        assert hasattr(oz, 'embedded_centers_')
-        assert hasattr(oz, 'scores_')
+        assert_fitted(oz)
         assert oz.embedded_centers_.shape[0] == oz.scores_.shape[0]
         assert oz.embedded_centers_.shape[0] == oz.cluster_centers_.shape[0]
 
@@ -168,15 +173,12 @@ class TestInterclusterDistance(VisualTestCase, DatasetMixin):
         oz = InterclusterDistance(model, random_state=2332, embedding='mds')
 
         # Prefit assertions
-        assert not hasattr(oz, 'embedded_centers_')
-        assert not hasattr(oz, 'scores_')
+        assert_not_fitted(oz)
 
         assert oz.fit(self.blobs12.X) is oz # Fit returns self
 
         # Postfit assertions
-        assert hasattr(oz, 'cluster_centers_')
-        assert hasattr(oz, 'embedded_centers_')
-        assert hasattr(oz, 'scores_')
+        assert_fitted(oz)
         assert oz.embedded_centers_.shape[0] == oz.scores_.shape[0]
         assert oz.embedded_centers_.shape[0] == oz.cluster_centers_.shape[0]
         assert len(oz._score_clusters(self.blobs12.X)) == 9
@@ -196,15 +198,12 @@ class TestInterclusterDistance(VisualTestCase, DatasetMixin):
         oz = InterclusterDistance(Birch(n_clusters=9), random_state=83, embedding='mds')
 
         # Prefit assertions
-        assert not hasattr(oz, 'embedded_centers_')
-        assert not hasattr(oz, 'scores_')
+        assert_not_fitted(oz)
 
         assert oz.fit(self.blobs12.X) is oz # Fit returns self
 
         # Postfit assertions
-        assert hasattr(oz, 'cluster_centers_')
-        assert hasattr(oz, 'embedded_centers_')
-        assert hasattr(oz, 'scores_')
+        assert_fitted(oz)
         assert oz.embedded_centers_.shape[0] == oz.scores_.shape[0]
         assert oz.embedded_centers_.shape[0] == oz.cluster_centers_.shape[0]
         assert len(oz._score_clusters(self.blobs12.X)) == 9
@@ -225,15 +224,12 @@ class TestInterclusterDistance(VisualTestCase, DatasetMixin):
         )
 
         # Prefit assertions
-        assert not hasattr(oz, 'embedded_centers_')
-        assert not hasattr(oz, 'scores_')
+        assert_not_fitted(oz)
 
         assert oz.fit(self.blobs12.X) is oz # Fit returns self
 
         # Postfit assertions
-        assert hasattr(oz, 'cluster_centers_')
-        assert hasattr(oz, 'embedded_centers_')
-        assert hasattr(oz, 'scores_')
+        assert_fitted(oz)
         assert oz.embedded_centers_.shape[0] == oz.scores_.shape[0]
         assert oz.embedded_centers_.shape[0] == oz.cluster_centers_.shape[0]
         assert len(oz._score_clusters(self.blobs12.X)) == 9
