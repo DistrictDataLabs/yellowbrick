@@ -52,6 +52,7 @@ Clustering Visualization
 
 - :doc:`K-Elbow Plot <api/cluster/elbow>`: select k using the elbow method and various metrics
 - :doc:`Silhouette Plot <api/cluster/silhouette>`: select k by visualizing silhouette coefficient values
+- :doc:`api/cluster/icdm`: show relative distance and size/importance of clusters
 
 Model Selection Visualization
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
