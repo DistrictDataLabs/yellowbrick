@@ -17,6 +17,8 @@ Helper functions and generic utilities for use in Yellowbrick code.
 ## Imports
 ##########################################################################
 
+from __future__ import division
+
 import re
 import numpy as np
 
@@ -86,7 +88,7 @@ def is_monotonic(a, increasing=True):
         Test if the array is montonically increasing, otherwise test if the
         array is montonically decreasing.
     """
-    a = np.asarray(a) # ensure a is array-like 
+    a = np.asarray(a) # ensure a is array-like
 
     if a.ndim > 1:
         raise ValueError("not supported for multi-dimensonal arrays")
@@ -130,6 +132,54 @@ def div_safe( numerator, denominator ):
         return result
     except ValueError as e:
         raise e
+
+
+def prop_to_size(vals, mi=0.0, ma=5.0, power=0.5, log=False):
+    """
+    Converts an array of property values (e.g. a metric or score) to values
+    that are more useful for marker sizes, line widths, or other visual
+    sizes. The new sizes are computed as:
+
+        y = mi + (ma -mi)(\frac{x_i - min(x){max(x) - min(x)})^{power}
+
+    If ``log=True``, the natural logarithm of the property values is used instead.
+
+    Parameters
+    ----------
+    prop : array-like, 1D
+        An array of values of the property to scale between the size range.
+
+    mi : float, default: 0.0
+        The size to assign the smallest property (minimum size value).
+
+    ma : float, default: 5.0
+        The size to assign the largest property (maximum size value).
+
+    power : float, default: 0.5
+        Used to control how rapidly the size increases from smallest to largest.
+
+    log : bool, default: False
+        Use the natural logarithm to compute the property sizes
+
+    Returns
+    -------
+    sizes : array, 1D
+        The new size values, in the same shape as the input prop array
+    """
+    # ensure that prop is an array
+    vals = np.asarray(vals)
+
+    # apply natural log if specified
+    if log:
+        vals = np.log(vals)
+
+    # avoid division by zero error
+    delta = vals.max() - vals.min()
+    if delta == 0.0:
+        delta = 1.0
+
+    return mi + (ma-mi) * ((vals -vals.min()) / delta) ** power
+
 
 
 ##########################################################################
