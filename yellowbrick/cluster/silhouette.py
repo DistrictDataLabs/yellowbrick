@@ -37,7 +37,11 @@ __all__ = [
 
 class SilhouetteVisualizer(ClusteringScoreVisualizer):
     """
-    TODO: Document this class!
+    The Silhouette Visualizer displays the silhouette coefficient for each 
+    sample on a per-cluster basis, visualizing which clusters are dense and 
+    which are not. This is particularly useful for determining cluster 
+    imbalance, or for selecting a value for K by comparing multiple 
+    visualizers.
     """
 
     def __init__(self, model, ax=None, **kwargs):
