@@ -191,7 +191,11 @@ class Visualizer(BaseEstimator):
         Parameters
         ----------
         outpath: string, default: None
-            path or None. Save  figure to disk or if None show in window
+            path or None. Save figure to disk or if None show in window
+
+        clear_figure: boolean, default: False
+            When True, this flag clears the figure after saving to file or
+            showing on screen. This is useful when making consecutive plots.
 
         kwargs: dict
             generic keyword arguments.
