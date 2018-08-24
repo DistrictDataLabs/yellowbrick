@@ -21,7 +21,6 @@ Tests for the dispersion plot text visualization
 from yellowbrick.text.dispersion import *
 from tests.dataset import DatasetMixin
 from tests.base import VisualTestCase
-# from itertools import chain
 
 ##########################################################################
 ## DispersionPlot Tests
