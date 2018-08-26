@@ -35,7 +35,7 @@ from sklearn.decomposition import TruncatedSVD, PCA
 ##########################################################################
 
 def tsne(X, y=None, ax=None, decompose='svd', decompose_by=50, classes=None,
-           colors=None, colormap=None, alpha=1.0, **kwargs):
+           colors=None, colormap=None, alpha=0.7, **kwargs):
     """
     Display a projection of a vectorized corpus in two dimensions using TSNE,
     a nonlinear dimensionality reduction method that is particularly well
@@ -78,7 +78,7 @@ def tsne(X, y=None, ax=None, decompose='svd', decompose_by=50, classes=None,
     colormap : string or matplotlib cmap
         Sequential colormap for continuous target
 
-    alpha : float, default: 1.0
+    alpha : float, default: 0.7
         Specify a transparency where 1 is completely opaque and 0 is completely
         transparent. This property makes densely clustered points more visible.
 
@@ -163,7 +163,7 @@ class TSNEVisualizer(TextVisualizer):
         by np.random. The random state is applied to the preliminary
         decomposition as well as tSNE.
 
-    alpha : float, default: 1.0
+    alpha : float, default: 0.7
         Specify a transparency where 1 is completely opaque and 0 is completely
         transparent. This property makes densely clustered points more visible.
 
@@ -176,7 +176,7 @@ class TSNEVisualizer(TextVisualizer):
 
     def __init__(self, ax=None, decompose='svd', decompose_by=50,
                  labels=None, classes=None, colors=None, colormap=None,
-                 random_state=None, alpha=1.0, **kwargs):
+                 random_state=None, alpha=0.7, **kwargs):
 
         # Visual Parameters
         self.alpha = alpha
@@ -318,9 +318,9 @@ class TSNEVisualizer(TextVisualizer):
 
 
         # Create the color mapping for the labels.
-        color_values = resolve_colors(
+        self.color_values_ = resolve_colors(
             n_colors=len(labels), colormap=self.colormap, colors=self.color)
-        colors = dict(zip(labels, color_values))
+        colors = dict(zip(labels, self.color_values_))
 
         # Transform labels into a map of class to label
         labels = dict(zip(self.classes_, labels))
@@ -365,4 +365,7 @@ class TSNEVisualizer(TextVisualizer):
         if not all(self.classes_ == np.array([self.NULL_CLASS])):
             box = self.ax.get_position()
             self.ax.set_position([box.x0, box.y0, box.width * 0.8, box.height])
-            self.ax.legend(loc='center left', bbox_to_anchor=(1, 0.5))
+            manual_legend(
+                self, self.classes_, self.color_values_,
+                loc='center left', bbox_to_anchor=(1, 0.5)
+            )

@@ -248,6 +248,10 @@ class PredictionError(RegressionScoreVisualizer):
 
         # Set the legend
         self.ax.legend(loc='best', frameon=True)
+        # Set the legend with full opacity patches using manual legend
+        manual_legend(
+            self, self._labels, self.colors['point'], loc='best', frameon=True
+        )
 
 
 def prediction_error(model, X, y=None, ax=None, alpha=1.0, **kwargs):
@@ -369,7 +373,7 @@ class ResidualsPlot(RegressionScoreVisualizer):
     line_color : color, default: dark grey
         Defines the color of the zero error line, can be any matplotlib color.
 
-    alpha : float, default: 1.0
+    alpha : float, default: 0.75
         Specify a transparency where 1 is completely opaque and 0 is completely
         transparent. This property makes densely clustered points more visible.
 
@@ -395,7 +399,7 @@ class ResidualsPlot(RegressionScoreVisualizer):
     The residuals histogram feature requires matplotlib 2.0.2 or greater.
     """
     def __init__(self, model, ax=None, hist=True, train_color='b',
-                 test_color='g', line_color=LINE_COLOR, alpha=1.0,
+                 test_color='g', line_color=LINE_COLOR, alpha=0.75,
                  **kwargs):
 
         super(ResidualsPlot, self).__init__(model, ax=ax, **kwargs)
@@ -592,7 +596,7 @@ def residuals_plot(model,
                    test_color='g',
                    line_color=LINE_COLOR,
                    random_state=None,
-                   alpha=1.0,
+                   alpha=0.75,
                    **kwargs):
     """Quick method:
 
@@ -647,7 +651,7 @@ def residuals_plot(model,
     random_state : int, RandomState instance or None, optional
         Passed to the train_test_split function.
 
-    alpha : float, default: 1.0
+    alpha : float, default: 0.75
         Specify a transparency where 1 is completely opaque and 0 is completely
         transparent. This property makes densely clustered points more visible.
 
