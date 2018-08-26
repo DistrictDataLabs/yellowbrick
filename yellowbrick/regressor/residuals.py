@@ -248,11 +248,6 @@ class PredictionError(RegressionScoreVisualizer):
 
         # Set the legend
         self.ax.legend(loc='best', frameon=True)
-        # Set the legend with full opacity patches using manual legend
-        manual_legend(
-            self, self._labels, self.colors['point'], loc='best', frameon=True
-        )
-
 
 def prediction_error(model, X, y=None, ax=None, alpha=1.0, **kwargs):
     """
