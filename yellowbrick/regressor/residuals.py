@@ -231,6 +231,13 @@ class PredictionError(RegressionScoreVisualizer):
             # Ensure the aspect ratio is square
             self.ax.set_aspect('equal', adjustable='box')
 
+        # Draw the 45 degree line
+        if self.identity:
+            draw_identity_line(
+                ax=self.ax, ls='--', lw=2, c=self.colors['line'],
+                alpha=0.5, label="identity"
+            )
+
         # Set the axes labels
         self.ax.set_ylabel(r'$\hat{y}$')
         self.ax.set_xlabel(r'$y$')
