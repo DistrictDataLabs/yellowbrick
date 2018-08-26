@@ -231,22 +231,17 @@ class PredictionError(RegressionScoreVisualizer):
             # Ensure the aspect ratio is square
             self.ax.set_aspect('equal', adjustable='box')
 
-        # Draw the 45 degree line
-        if self.identity:
-            draw_identity_line(
-                ax=self.ax, ls='--', lw=2, c=self.colors['line'],
-                alpha=0.5, label="identity"
-            )
-
         # Set the axes labels
         self.ax.set_ylabel(r'$\hat{y}$')
         self.ax.set_xlabel(r'$y$')
 
-        # Annotate the score
-        # NOTE: Couldn't get this to work so added to title instead (for now)
-        # self.ax.annotate('$r^2={:0.3f}$'.format(self.score_), xy=(0,0), xytext=(0,0))
-
         # Set the legend
+        # Note: it would be nice to be able to use the manual_legend utility
+        # here, since if the user sets a low alpha value, the R2 color in the
+        # legend will also become more translucent. Unfortunately this is a
+        # bit tricky because adding a manual legend here would override the
+        # best fit and 45 degree line legend components. In particular, the
+        # best fit is plotted in draw because it depends on y and y_pred.
         self.ax.legend(loc='best', frameon=True)
 
 def prediction_error(model, X, y=None, ax=None, alpha=1.0, **kwargs):
