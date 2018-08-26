@@ -22,6 +22,7 @@ import numpy as np
 
 from collections import defaultdict
 
+from yellowbrick.draw import manual_legend
 from yellowbrick.text.base import TextVisualizer
 from yellowbrick.style.colors import resolve_colors
 from yellowbrick.exceptions import YellowbrickValueError
