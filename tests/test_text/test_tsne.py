@@ -82,10 +82,10 @@ class TestTSNE(VisualTestCase, DatasetMixin):
         docs   = tfidf.fit_transform(corpus.data)
         labels = corpus.target
 
-        tsne = TSNEVisualizer(random_state=8392, colormap='Set1')
+        tsne = TSNEVisualizer(random_state=8392, colormap='Set1', alpha=1.0)
         tsne.fit_transform(docs, labels)
 
-        tol = 50 if six.PY3 else 55
+        tol = 40 if six.PY3 else 55
         self.assert_images_similar(tsne, tol=tol)
 
     def test_sklearn_tsne_size(self):
