@@ -75,7 +75,7 @@ class SilhouetteVisualizer(ClusteringScoreVisualizer):
         Mean Silhouette Coefficient for all samples. Computed via scikit-learn
         `sklearn.metrics.silhouette_score`.
 
-    silhouette_samples_ : array, shape = [n_samples]
+    silhouette_samples_ : array, shape = [n_samples_]
         Silhouette Coefficient for each samples. Computed via scikit-learn
         `sklearn.metrics.silhouette_samples`.
 
@@ -196,7 +196,7 @@ class SilhouetteVisualizer(ClusteringScoreVisualizer):
         # Set the X and Y limits
         # The silhouette coefficient can range from -1, 1
         self.ax.set_xlim([-1, 1])
-        # The (n_clusters+1)*10 is for inserting blank space between
+        # The (n_clusters_+1)*10 is for inserting blank space between
         # silhouette plots of individual clusters, to demarcate them clearly.
         self.ax.set_ylim([0, self.n_samples_ + (self.n_clusters_ + 1) * 10])
 
