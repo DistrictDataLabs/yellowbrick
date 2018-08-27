@@ -91,7 +91,7 @@ class PredictionError(RegressionScoreVisualizer):
     line_color : color
         Defines the color of the best fit line; can be any matplotlib color.
 
-    alpha : float, default: 1.0
+    alpha : float, default: 0.75
         Specify a transparency where 1 is completely opaque and 0 is completely
         transparent. This property makes densely clustered points more visible.
 
@@ -117,7 +117,7 @@ class PredictionError(RegressionScoreVisualizer):
     """
 
     def __init__(self, model, ax=None, shared_limits=True,
-                 bestfit=True, identity=True, alpha=1.0, **kwargs):
+                 bestfit=True, identity=True, alpha=0.75, **kwargs):
         # Initialize the visualizer
         super(PredictionError, self).__init__(model, ax=ax, **kwargs)
 
@@ -251,7 +251,7 @@ class PredictionError(RegressionScoreVisualizer):
         # best fit is plotted in draw because it depends on y and y_pred.
         self.ax.legend(loc='best', frameon=True)
 
-def prediction_error(model, X, y=None, ax=None, alpha=1.0, **kwargs):
+def prediction_error(model, X, y=None, ax=None, alpha=0.75, **kwargs):
     """
     Quick method:
 
@@ -299,7 +299,7 @@ def prediction_error(model, X, y=None, ax=None, alpha=1.0, **kwargs):
     line_color : color
         Defines the color of the best fit line; can be any matplotlib color.
 
-    alpha : float, default: 1.0
+    alpha : float, default: 0.75
         Specify a transparency where 1 is completely opaque and 0 is completely
         transparent. This property makes densely clustered points more visible.
 
