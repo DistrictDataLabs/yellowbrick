@@ -184,10 +184,30 @@ class TestKElbowVisualizer(VisualTestCase, DatasetMixin):
         """
 
         with pytest.raises(YellowbrickValueError):
-            KElbowVisualizer(KMeans(), k=(1,2,3,4,5))
+            KElbowVisualizer(KMeans(), k=(1, 2, 3, 'foo', 5))
 
         with pytest.raises(YellowbrickValueError):
             KElbowVisualizer(KMeans(), k="foo")
+
+    def test_valid_k(self):
+        """
+        Assert that valid values of K generate correct k_values_:
+        if k is an int, k_values_ = range(2, k+1)
+        if k is a tuple of 2 ints, k_values = range(k[0], k[1])
+        if k is an iterable, k_values_ = list(k)
+        """
+        visualizer = KElbowVisualizer(KMeans(), k=8)
+        assert visualizer.k_values_ == list(np.arange(2, 8+1))
+
+        visualizer = KElbowVisualizer(KMeans(), k=(4, 12))
+        assert visualizer.k_values_ == list(np.arange(4, 12))
+
+        visualizer = KElbowVisualizer(KMeans(), k=np.arange(10, 100, 10))
+        assert visualizer.k_values_ == list(np.arange(10, 100, 10))
+
+        visualizer = KElbowVisualizer(KMeans(),
+                                      k=[10, 20, 30, 40, 50, 60, 70, 80, 90])
+        assert visualizer.k_values_ == list(np.arange(10, 100, 10))
 
     @pytest.mark.xfail(
         sys.platform == 'win32', reason="images not close on windows"
