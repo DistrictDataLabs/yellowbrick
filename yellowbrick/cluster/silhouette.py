@@ -37,11 +37,65 @@ __all__ = [
 
 class SilhouetteVisualizer(ClusteringScoreVisualizer):
     """
-    The Silhouette Visualizer displays the silhouette coefficient for each 
-    sample on a per-cluster basis, visualizing which clusters are dense and 
-    which are not. This is particularly useful for determining cluster 
-    imbalance, or for selecting a value for K by comparing multiple 
+    The Silhouette Visualizer displays the silhouette coefficient for each
+    sample on a per-cluster basis, visually evaluating the density and
+    separation between clusters. The score is calculated by averaging the
+    silhouette coefficient for each sample, computed as the difference
+    between the average intra-cluster distance and the mean nearest-cluster
+    distance for each sample, normalized by the maximum value. This produces a
+    score between -1 and +1, where scores near +1 indicate high separation
+    and scores near -1 indicate that the samples may have been assigned to
+    the wrong cluster.
+
+    In SilhouetteVisualizer plots, clusters with higher scores have wider
+    silhouettes, but clusters that are less cohesive will fall short of the
+    average score across all clusters, which is plotted as a vertical dotted
+    red line.
+
+    This is particularly useful for determining cluster
+    imbalance, or for selecting a value for K by comparing multiple
     visualizers.
+
+    Parameters
+    ----------
+    model : a Scikit-Learn clusterer
+        Should be an instance of a centroidal clustering algorithm (``KMeans``
+        or ``MiniBatchKMeans``).
+
+    ax : matplotlib Axes, default: None
+        The axes to plot the figure on. If None is passed in the current axes
+        will be used (or generated if required).
+
+    kwargs : dict
+        Keyword arguments that are passed to the base class and may influence
+        the visualization as defined in other Visualizers.
+
+    Attributes
+    ----------
+    silhouette_score_ : float
+        Mean Silhouette Coefficient for all samples. Computed via scikit-learn
+        `sklearn.metrics.silhouette_score`.
+
+    silhouette_samples_ : array, shape = [n_samples]
+        Silhouette Coefficient for each samples. Computed via scikit-learn
+        `sklearn.metrics.silhouette_samples`.
+
+    n_samples : integer
+        Number of total samples in the dataset (X.shape[0])
+
+    n_clusters : integer
+        Number of clusters (e.g. n_clusters or k value) passed to internal
+        scikit-learn model.
+
+
+    Examples
+    --------
+
+    >>> from yellowbrick.cluster import SilhouetteVisualizer
+    >>> from sklearn.cluster import KMeans
+    >>> model = SilhouetteVisualizer(KMeans(10))
+    >>> model.fit(X)
+    >>> model.poof()
     """
 
     def __init__(self, model, ax=None, **kwargs):
@@ -60,12 +114,12 @@ class SilhouetteVisualizer(ClusteringScoreVisualizer):
 
     def fit(self, X, y=None, **kwargs):
         """
-        Fits the model and generates the the silhouette visualization.
-
-        TODO: decide to use this method or the score method to draw.
-        NOTE: Probably this would be better in score, but the standard score
-        is a little different and I'm not sure how it's used.
+        Fits the model and generates the silhouette visualization.
         """
+        # TODO: decide to use this method or the score method to draw.
+        # NOTE: Probably this would be better in score, but the standard score
+        # is a little different and I'm not sure how it's used.
+
         # Fit the wrapped estimator
         self.estimator.fit(X, y, **kwargs)
 
