@@ -19,6 +19,8 @@ Implementation of lexical dispersion for text visualization
 ##########################################################################
 
 from yellowbrick.text.base import TextVisualizer
+from yellowbrick.style.colors import resolve_colors
+from yellowbrick.exceptions import YellowbrickValueError
 import numpy as np
 
 ##########################################################################
@@ -41,8 +43,12 @@ class DispersionPlot(TextVisualizer):
     ax : matplotlib axes, default: None
         The axes to plot the figure on.
 
-    color : list or tuple of colors
-        Specify color for bars
+    labels : list of strings
+        The names of the classes in the target, used to create a legend.
+        Labels must match names of classes in sorted order.
+
+    colors : list or tuple of colors
+        Specify the colors for each individual class
 
     ignore_case : boolean, default: False
 	Specify whether input  will be case-sensitive.
@@ -58,19 +64,30 @@ class DispersionPlot(TextVisualizer):
     process, but can and should be set as early as possible.
     """
 
-    def __init__(self, words, ax=None, color=None, ignore_case=False,
-                 annotate_docs=False, **kwargs):
+    # NOTE: cannot be np.nan
+    NULL_CLASS = None
+
+    def __init__(self, words, ax=None, colors=None, ignore_case=False,
+                 annotate_docs=False, labels=None, colormap=None, **kwargs):
         super(DispersionPlot, self).__init__(ax=ax, **kwargs)
 
-        self.color = color
+        self.labels = labels
+        self.colors = colors
+        self.colormap = colormap
+
         self.words = words
         self.ignore_case = ignore_case
         self.annotate_docs = annotate_docs
 
-    def _compute_dispersion(self, text):
+    def _compute_dispersion(self, text, y):
         self.boundaries_ = []
         self.offset = 0
-        for doc in text:
+
+
+        if y is None:
+            y = [None]*len(text)
+
+        for doc, target in zip(text, y):
             for word in doc:
                 if self.ignore_case:
                     word = word.lower()
@@ -79,13 +96,14 @@ class DispersionPlot(TextVisualizer):
                 # In the case that word is not in target words, any empty list is
                 # returned and no data will be yielded
                 self.offset += 1
-                for y in (self.target_words_ == word).nonzero()[0]:
-                    yield (self.offset, y)
+                for y_coord in (self.target_words_ == word).nonzero()[0]:
+                    y_coord = int(y_coord)
+                    yield (self.offset, y_coord, target)
             if self.annotate_docs:
                 self.boundaries_.append(self.offset)
         self.boundaries_ = np.array(self.boundaries_, dtype=int)
 
-    def fit(self, text):
+    def fit(self, text, y=None, **kwargs):
         """
         The fit method is the primary drawing input for the dispersion
         visualization. It requires the corpus as a list of words.
@@ -95,7 +113,27 @@ class DispersionPlot(TextVisualizer):
         text : list
             Should be provided as a list of documents that contain
             a list of words in the order they appear in the document.
+
+        y : ndarray or Series of length n
+            An optional array or series of target or class values for
+            instances. If this is specified, then the points will be colored
+            according to their class.
+
+        kwargs : dict
+            Pass generic arguments to the drawing method
+
+        Returns
+        -------
+        self : instance
+            Returns the instance of the transformer/visualizer
         """
+
+        if y is not None:
+            self.classes_ = np.unique(y)
+        elif y is None and self.labels is not None:
+            self.classes_ = np.array([self.labels[0]])
+        else:
+            self.classes_ = np.array([self.NULL_CLASS])
 
         # Create an index (e.g. the y position) for the target words
         self.target_words_ = np.flip(self.words, axis=0)
@@ -103,26 +141,49 @@ class DispersionPlot(TextVisualizer):
             self.target_words_ = np.array([w.lower() for w in self.target_words_])
 
         # Stack is used to create a 2D array from the generator
-        points = np.stack(self._compute_dispersion(text))
-        self.draw(points)
+        self.points = np.stack(self._compute_dispersion(text, y))
+        print(self.points)
+        self.target = self.points[:,2]
+        self.draw(self.points, self.target)
         return self
 
-    def draw(self, points, **kwargs):
+    def draw(self, points, target=None, **kwargs):
         """
         Called from the fit method, this method creates the canvas and
-        draws the distribution plot on it.
+        draws the plot on it.
         Parameters
         ----------
         kwargs: generic keyword arguments.
         """
+
+        # Resolve the labels with the classes
+        labels = self.labels if self.labels is not None else self.classes_
+        if len(labels) != len(self.classes_):
+            raise YellowbrickValueError((
+                "number of supplied labels ({}) does not "
+                "match the number of classes ({})"
+            ).format(len(labels), len(self.classes_)))
+
+
+        # Create the color mapping for the labels.
+        color_values = resolve_colors(
+            n_colors=len(labels), colormap=self.colormap, colors=self.color)
+        colors = dict(zip(labels, color_values))
+        print(colors.values())
+        # Transform labels into a map of class to label
+        labels = dict(zip(self.classes_, labels))
 
         # Define boundaries with a vertical line
         if self.annotate_docs:
             for xcoords in self.boundaries_:
                 self.ax.axvline(x=xcoords, color='lightgray', linestyle='dashed')
 
-        self.ax.scatter(points[:,0], points[:,1], marker='|', color=self.color,
-                        zorder=100)
+        true_colors = [colors[x[2]] for x in points]
+        # for x, y, label in self.points:
+        #     self.ax.scatter(int(x), int(y), marker='|', c=colors[label], zorder=100, label=label)
+        self.ax.scatter(points[:,0].astype(int), points[:,1].astype(int),
+                        marker='|', c=true_colors, zorder=100)
+
         self.ax.set_yticks(list(range(len(self.target_words_))))
         self.ax.set_yticklabels(self.target_words_)
 
@@ -140,6 +201,11 @@ class DispersionPlot(TextVisualizer):
         self.ax.set_xlabel("Word Offset")
         self.ax.grid(False)
 
+        # Add the legend outside of the figure box.
+        if not all(self.classes_ == np.array([self.NULL_CLASS])):
+            box = self.ax.get_position()
+            self.ax.set_position([box.x0, box.y0, box.width * 0.8, box.height])
+            self.ax.legend(loc='center left', bbox_to_anchor=(1, 0.5))
 
 ##########################################################################
 ## Quick Method
