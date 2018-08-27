@@ -352,18 +352,24 @@ class TestResidualsPlot(VisualTestCase, DatasetMixin):
         assert visualizer.train_score_ == pytest.approx(0.9999906, rel=1e-4)
         assert visualizer.test_score_ == score
 
-    def test_alpha_param(self):
+    @mock.patch('yellowbrick.regressor.residuals.plt.sca', autospec=True)
+    def test_alpha_param(self, mock_sca):
         """
         Test that the user can supply an alpha param on instantiation
         """
         # Instantiate a prediction error plot, provide custom alpha
         visualizer = ResidualsPlot(
-            Ridge(random_state=8893), alpha=0.3
+            Ridge(random_state=8893), alpha=0.3, hist=False
         )
 
         # Test param gets set correctly
         assert visualizer.alpha == 0.3
 
-        # TODO: mock ax and test alpha is passed to pyplot scatterplot
-        # not sure how to do this without triggering the Matplotlib error:
-        # "ValueError: Axes instance argument was not found in a figure"
+        visualizer.ax = mock.MagicMock()
+        visualizer.fit(self.data.X.train, self.data.y.train)
+        visualizer.score(self.data.X.test, self.data.y.test)
+
+        # Test that alpha was passed to internal matplotlib scatterplot
+        _, scatter_kwargs = visualizer.ax.scatter.call_args
+        assert "alpha" in scatter_kwargs
+        assert scatter_kwargs["alpha"] == 0.3
