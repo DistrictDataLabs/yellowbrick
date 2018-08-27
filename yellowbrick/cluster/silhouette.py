@@ -52,9 +52,8 @@ class SilhouetteVisualizer(ClusteringScoreVisualizer):
     average score across all clusters, which is plotted as a vertical dotted
     red line.
 
-    This is particularly useful for determining cluster
-    imbalance, or for selecting a value for K by comparing multiple
-    visualizers.
+    This is particularly useful for determining cluster imbalance, or for
+    selecting a value for K by comparing multiple visualizers.
 
     Parameters
     ----------
@@ -80,13 +79,12 @@ class SilhouetteVisualizer(ClusteringScoreVisualizer):
         Silhouette Coefficient for each samples. Computed via scikit-learn
         `sklearn.metrics.silhouette_samples`.
 
-    n_samples : integer
+    n_samples_ : integer
         Number of total samples in the dataset (X.shape[0])
 
-    n_clusters : integer
+    n_clusters_ : integer
         Number of clusters (e.g. n_clusters or k value) passed to internal
         scikit-learn model.
-
 
     Examples
     --------
@@ -106,12 +104,6 @@ class SilhouetteVisualizer(ClusteringScoreVisualizer):
         self.colormap = kwargs.get('colormap', 'set1')
         self.color = kwargs.get('color', None)
 
-        # Required internal properties
-        self.silhouette_score_ = None
-        self.silhouette_samples_ = None
-        self.n_samples = None
-        self.n_clusters = None
-
     def fit(self, X, y=None, **kwargs):
         """
         Fits the model and generates the silhouette visualization.
@@ -124,8 +116,8 @@ class SilhouetteVisualizer(ClusteringScoreVisualizer):
         self.estimator.fit(X, y, **kwargs)
 
         # Get the properties of the dataset
-        self.n_samples = X.shape[0]
-        self.n_clusters = self.estimator.n_clusters
+        self.n_samples_ = X.shape[0]
+        self.n_clusters_ = self.estimator.n_clusters
 
         # Compute the scores of the cluster
         labels = self.estimator.predict(X)
@@ -156,10 +148,10 @@ class SilhouetteVisualizer(ClusteringScoreVisualizer):
 
         # Get the colors from the various properties
         # TODO: Use resolve_colors instead of this
-        colors = color_palette(self.colormap, self.n_clusters)
+        colors = color_palette(self.colormap, self.n_clusters_)
 
         # For each cluster, plot the silhouette scores
-        for idx in range(self.n_clusters):
+        for idx in range(self.n_clusters_):
 
             # Collect silhouette scores for samples in the current cluster .
             values = self.silhouette_samples_[labels == idx]
@@ -198,7 +190,7 @@ class SilhouetteVisualizer(ClusteringScoreVisualizer):
         self.set_title((
             "Silhouette Plot of {} Clustering for {} Samples in {} Centers"
         ).format(
-            self.name, self.n_samples, self.n_clusters
+            self.name, self.n_samples_, self.n_clusters_
         ))
 
         # Set the X and Y limits
@@ -206,7 +198,7 @@ class SilhouetteVisualizer(ClusteringScoreVisualizer):
         self.ax.set_xlim([-1, 1])
         # The (n_clusters+1)*10 is for inserting blank space between
         # silhouette plots of individual clusters, to demarcate them clearly.
-        self.ax.set_ylim([0, self.n_samples + (self.n_clusters + 1) * 10])
+        self.ax.set_ylim([0, self.n_samples_ + (self.n_clusters_ + 1) * 10])
 
         # Set the x and y labels
         self.ax.set_xlabel("silhouette coefficient values")
