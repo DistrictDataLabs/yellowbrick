@@ -34,7 +34,7 @@ class FeatureCorrelation(TargetVisualizer):
     Displays the correlation between features and dependent variables.
 
     This visualizer can be used side-by-side with
-    yellowbrick.features.JointPlotVisualizer that plots a feature
+    ``yellowbrick.features.JointPlotVisualizer`` that plots a feature
     against the target and shows the distribution of each via a
     histogram on each axis.
 
@@ -44,12 +44,16 @@ class FeatureCorrelation(TargetVisualizer):
         The axis to plot the figure on. If None is passed in the current axes
         will be used (or generated if required).
 
-    method : one of ['pearson', 'mutual_info-regression',
-            'mutual_info-classification'], default: 'pearson'
+
+    method : str, default: 'pearson'
         The method to calculate correlation between features and target.
-        'pearson' uses `scipy.stats.pearsonr`.
-        'mutual_info-regression' uses `sklearn.feature_selection.mutual_info_classif`.
-        'mutual_info-classification' uses `sklearn.feature_selection.mutual_info_classif`.
+        Options include:
+
+            - 'pearson', which uses ``scipy.stats.pearsonr``
+            - 'mutual_info-regression', which uses ``mutual_info-regression``
+              from ``sklearn.feature_selection``
+            - 'mutual_info-classification', which uses ``mutual_info_classif``
+              from ``sklearn.feature_selection``
 
     labels : list, default: None
         A list of feature names to use. If a DataFrame is passed to fit and
@@ -98,16 +102,16 @@ class FeatureCorrelation(TargetVisualizer):
         """
         return [pearsonr(x, y, **kwargs)[0] for x in np.asarray(X).T]
 
-    correlation_method = {
-        'pearson': _pearsonr,
-        'mutual_info-regression': mutual_info_regression,
-        'mutual_info-classification': mutual_info_classif
-    }
-    correlation_label = {
-        'pearson': 'Pearson Correlation',
-        'mutual_info-regression': 'Mutual Information',
-        'mutual_info-classification': 'Mutual Information'
-    }
+        correlation_method = {
+                'pearson': _pearsonr,
+                'mutual_info-regression': mutual_info_regression,
+                'mutual_info-classification': mutual_info_classif
+        }
+        correlation_label = {
+                'pearson': 'Pearson Correlation',
+                'mutual_info-regression': 'Mutual Information',
+                'mutual_info-classification': 'Mutual Information'
+        }
 
     def __init__(self, ax=None, method='pearson',
                  labels=None, sort=False, feature_index=None,
@@ -201,6 +205,7 @@ class FeatureCorrelation(TargetVisualizer):
     def _create_labels_for_features(self, X):
         """
         Create labels for the features
+
         NOTE: this code is duplicated from MultiFeatureVisualizer
         """
         if self.labels is None:
@@ -272,12 +277,16 @@ def feature_correlation(X, y, ax=None, method='pearson',
         The axis to plot the figure on. If None is passed in the current axes
         will be used (or generated if required).
 
-    method : one of ['pearson', 'mutual_info-regression',
-            'mutual_info-classification'], default: 'pearson'
+    method : str, default: 'pearson'
         The method to calculate correlation between features and target.
-        'pearson' uses `scipy.stats.pearsonr`.
-        'mutual_info-regression' uses `sklearn.feature_selection.mutual_info_classif`.
-        'mutual_info-classification' uses `sklearn.feature_selection.mutual_info_classif`.
+        Options include:
+
+            - 'pearson', which uses ``scipy.stats.pearsonr``
+            - 'mutual_info-regression', which uses ``mutual_info-regression``
+              from ``sklearn.feature_selection``
+            - 'mutual_info-classification', which uses ``mutual_info_classif``
+              from ``sklearn.feature_selection``
+            'mutual_info-classification'], default: 'pearson'
 
     labels : list, default: None
         A list of feature names to use. If a DataFrame is passed to fit and
