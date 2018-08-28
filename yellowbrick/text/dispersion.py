@@ -18,9 +18,13 @@ Implementation of lexical dispersion for text visualization
 ## Imports
 ##########################################################################
 
+from collections import defaultdict
+import types
+
 from yellowbrick.text.base import TextVisualizer
 from yellowbrick.style.colors import resolve_colors
 from yellowbrick.exceptions import YellowbrickValueError
+
 import numpy as np
 
 ##########################################################################
@@ -85,7 +89,10 @@ class DispersionPlot(TextVisualizer):
 
 
         if y is None:
-            y = [None]*len(text)
+            y = [None]*len(list(text))
+
+        if isinstance(text, types.GeneratorType):
+            text = np.array(list(text))
 
         for doc, target in zip(text, y):
             for word in doc:
@@ -141,9 +148,13 @@ class DispersionPlot(TextVisualizer):
             self.target_words_ = np.array([w.lower() for w in self.target_words_])
 
         # Stack is used to create a 2D array from the generator
-        self.points = np.stack(self._compute_dispersion(text, y))
-        print(self.points)
-        self.target = self.points[:,2]
+        self.points_target = np.stack(self._compute_dispersion(text, y))
+
+        self.points = np.stack(zip(self.points_target[:,0].astype(int),
+                               self.points_target[:,1].astype(int)))
+
+        self.target = self.points_target[:,2]
+
         self.draw(self.points, self.target)
         return self
 
@@ -164,12 +175,11 @@ class DispersionPlot(TextVisualizer):
                 "match the number of classes ({})"
             ).format(len(labels), len(self.classes_)))
 
-
         # Create the color mapping for the labels.
         color_values = resolve_colors(
             n_colors=len(labels), colormap=self.colormap, colors=self.color)
         colors = dict(zip(labels, color_values))
-        print(colors.values())
+
         # Transform labels into a map of class to label
         labels = dict(zip(self.classes_, labels))
 
@@ -178,11 +188,22 @@ class DispersionPlot(TextVisualizer):
             for xcoords in self.boundaries_:
                 self.ax.axvline(x=xcoords, color='lightgray', linestyle='dashed')
 
-        true_colors = [colors[x[2]] for x in points]
-        # for x, y, label in self.points:
-        #     self.ax.scatter(int(x), int(y), marker='|', c=colors[label], zorder=100, label=label)
-        self.ax.scatter(points[:,0].astype(int), points[:,1].astype(int),
-                        marker='|', c=true_colors, zorder=100)
+        series = defaultdict(lambda: {'x':[], 'y':[]})
+
+        if target is not None:
+            for point, t in zip(points, target):
+                label = labels[t]
+                series[label]['x'].append(point[0])
+                series[label]['y'].append(point[1])
+        else:
+            label = self.classes_[0]
+            for x, y in points:
+                series[label]['x'].append(x)
+                series[label]['y'].append(y)
+
+        for label, points in series.items():
+            self.ax.scatter(points['x'], points['y'], marker='|',
+                            c=colors[label], zorder=100, label=label)
 
         self.ax.set_yticks(list(range(len(self.target_words_))))
         self.ax.set_yticklabels(self.target_words_)
