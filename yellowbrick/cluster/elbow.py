@@ -18,6 +18,7 @@ https://bl.ocks.org/rpgove/0060ff3b656618e9136b
 ## Imports
 ##########################################################################
 
+import collections
 import time
 import numpy as np
 import scipy.sparse as sp
@@ -150,10 +151,11 @@ class KElbowVisualizer(ClusteringScoreVisualizer):
         The axes to plot the figure on. If None is passed in the current axes
         will be used (or generated if required).
 
-    k : integer or tuple
-        The range of k to compute silhouette scores for. If a single integer
-        is specified, then will compute the range (2,k) otherwise the
-        specified range in the tuple is used.
+    k : integer, tuple, or iterable
+        The k values to compute silhouette scores for. If a single integer
+        is specified, then will compute the range (2,k). If a tuple of 2
+        integers is specified, then k will be in np.arange(k[0], k[1]).
+        Otherwise, specify an iterable of integers to use as values for k.
 
     metric : string, default: ``"distortion"``
         Select the scoring metric to evaluate the clusters. The default is the
@@ -220,18 +222,18 @@ class KElbowVisualizer(ClusteringScoreVisualizer):
 
         # Convert K into a tuple argument if an integer
         if isinstance(k, int):
-            k = (2, k+1)
-
-        # Expand k in to the values we will use, capturing exceptions
-        try:
-            k = tuple(k)
+            self.k_values_ = list(range(2, k+1))
+        elif isinstance(k, tuple) and len(k) == 2 and \
+                all(isinstance(x, (int, np.integer)) for x in k):
             self.k_values_ = list(range(*k))
-        except:
+        elif isinstance(k, collections.Iterable) and \
+                all(isinstance(x, (int, np.integer)) for x in k):
+            self.k_values_ = list(k)
+        else:
             raise YellowbrickValueError((
-                "Specify a range or maximal K value, the value '{}' "
-                "is not a valid argument for K.".format(k)
+                "Specify an iterable of integers, a range, or maximal K value,"
+                " the value '{}' is not a valid argument for K.".format(k)
             ))
-
 
         # Holds the values of the silhoutte scores
         self.k_scores_ = None
