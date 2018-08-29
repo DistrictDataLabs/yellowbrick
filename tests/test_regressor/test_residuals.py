@@ -42,6 +42,10 @@ try:
 except ImportError:
     pd = None
 
+try:
+    from unittest import mock
+except ImportError:
+    import mock
 
 # Determine version of matplotlib
 MPL_VERS_MAJ = int(mpl.__version__.split(".")[0])
@@ -188,6 +192,30 @@ class TestPredictionError(VisualTestCase, DatasetMixin):
 
         self.assert_images_similar(visualizer, tol=1.0, remove_legend=True)
 
+    def test_alpha_param(self):
+        """
+        Test that the user can supply an alpha param on instantiation
+        """
+        # Instantiate a sklearn regressor
+        model = Lasso(random_state=23, alpha=10)
+        # Instantiate a prediction error plot, provide custom alpha
+        visualizer = PredictionError(
+            model, bestfit=False, identity=False, alpha=0.7
+        )
+
+        # Test param gets set correctly
+        assert visualizer.alpha == 0.7
+
+        # Mock ax and fit the visualizer
+        visualizer.ax = mock.MagicMock(autospec=True)
+        visualizer.fit(self.data.X.train, self.data.y.train)
+        visualizer.score(self.data.X.test, self.data.y.test)
+
+        # Test that alpha was passed to internal matplotlib scatterplot
+        _, scatter_kwargs = visualizer.ax.scatter.call_args
+        assert "alpha" in scatter_kwargs
+        assert scatter_kwargs["alpha"] == 0.7
+
 
 ##########################################################################
 ## Residuals Plot Test Cases
@@ -323,3 +351,25 @@ class TestResidualsPlot(VisualTestCase, DatasetMixin):
         assert score == pytest.approx(0.9999888484, rel=1e-4)
         assert visualizer.train_score_ == pytest.approx(0.9999906, rel=1e-4)
         assert visualizer.test_score_ == score
+
+    @mock.patch('yellowbrick.regressor.residuals.plt.sca', autospec=True)
+    def test_alpha_param(self, mock_sca):
+        """
+        Test that the user can supply an alpha param on instantiation
+        """
+        # Instantiate a prediction error plot, provide custom alpha
+        visualizer = ResidualsPlot(
+            Ridge(random_state=8893), alpha=0.3, hist=False
+        )
+
+        # Test param gets set correctly
+        assert visualizer.alpha == 0.3
+
+        visualizer.ax = mock.MagicMock()
+        visualizer.fit(self.data.X.train, self.data.y.train)
+        visualizer.score(self.data.X.test, self.data.y.test)
+
+        # Test that alpha was passed to internal matplotlib scatterplot
+        _, scatter_kwargs = visualizer.ax.scatter.call_args
+        assert "alpha" in scatter_kwargs
+        assert scatter_kwargs["alpha"] == 0.3

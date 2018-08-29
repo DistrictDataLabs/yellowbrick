@@ -34,6 +34,10 @@ try:
 except ImportError:
     pandas = None
 
+try:
+    from unittest import mock
+except ImportError:
+    import mock
 
 ##########################################################################
 ## TSNE Tests
@@ -78,10 +82,10 @@ class TestTSNE(VisualTestCase, DatasetMixin):
         docs   = tfidf.fit_transform(corpus.data)
         labels = corpus.target
 
-        tsne = TSNEVisualizer(random_state=8392, colormap='Set1')
+        tsne = TSNEVisualizer(random_state=8392, colormap='Set1', alpha=1.0)
         tsne.fit_transform(docs, labels)
 
-        tol = 40 if six.PY3 else 55
+        tol = 50 if six.PY3 else 55
         self.assert_images_similar(tsne, tol=tol)
 
     def test_sklearn_tsne_size(self):
@@ -121,7 +125,7 @@ class TestTSNE(VisualTestCase, DatasetMixin):
         tsne = TSNEVisualizer(size=(100, 50))
 
         assert tsne._size == (100, 50)
-        
+
     def test_make_classification_tsne(self):
         """
         Test tSNE integrated visualization on a sklearn classifier dataset
@@ -175,7 +179,6 @@ class TestTSNE(VisualTestCase, DatasetMixin):
         with pytest.raises(YellowbrickValueError):
             tsne.fit(X,y)
 
-
     def test_no_target_tsne(self):
         """
         Test tSNE when no target or classes are specified
@@ -209,3 +212,27 @@ class TestTSNE(VisualTestCase, DatasetMixin):
 
         tol = 0.1 if six.PY3 else 40
         self.assert_images_similar(tsne, tol=tol)
+
+    def test_alpha_param(self):
+        """
+        Test that the user can supply an alpha param on instantiation
+        """
+        ## produce random data
+        X, y = make_classification(n_samples=200, n_features=100,
+                               n_informative=20, n_redundant=10,
+                               n_classes=3, random_state=42)
+
+        ## Instantiate a TSNEVisualizer, provide custom alpha
+        tsne = TSNEVisualizer(random_state=64, alpha=0.5)
+
+        # Test param gets set correctly
+        assert tsne.alpha == 0.5
+
+        # Mock ax and fit the visualizer
+        tsne.ax = mock.MagicMock(autospec=True)
+        tsne.fit(X, y)
+
+        # Test that alpha was passed to internal matplotlib scatterplot
+        _, scatter_kwargs = tsne.ax.scatter.call_args
+        assert "alpha" in scatter_kwargs
+        assert scatter_kwargs["alpha"] == 0.5

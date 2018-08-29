@@ -72,6 +72,11 @@ Text Visualization
 - **t-SNE Corpus Visualization**: use stochastic neighbor embedding to project documents
 - **Dispersion Plot**: visualize how key terms are dispersed throughout a corpus
 
+Target Visualization
+~~~~~~~~~~~~~~~~~~~~
+
+- **Feature Correlation**: visualize the correlation between the dependent variables and the target
+
 ... and more! Visualizers are being added all the time; be sure to check the examples_ (or even the develop_ branch) and feel free to contribute your ideas for new Visualizers!
 
 .. _examples: http://www.scikit-yb.org/en/latest/api/index.html
