@@ -161,6 +161,12 @@ Clustering Visualizers
     :alt: Silhoutte Plot of Mini Batch Kmeans Clustering
     :target: api/cluster/silhouette.html#silhouette-visualizer
 
+.. image:: api/cluster/images/icdm.png
+    :width: 200px
+    :height: 100px
+    :alt: Intercluster Distance Maps
+    :target: api/cluster/icdm.html#intercluster-distance-maps
+
 Model Selection Visualizers
 ---------------------------
 
@@ -217,3 +223,24 @@ Decision Boundaries Visualizer
     :height: 100px
     :alt: Nearest Neighbor Boundary Visualizer
     :target: api/contrib/boundaries.html#decisionboundaries-vizualizer
+
+Target Visualizers
+------------------
+
+.. image:: api/target/images/feature_correlation_pearson.png
+    :width: 200px
+    :height: 100px
+    :alt: Feature Correlation Pearson Correlation Coefficients
+    :target: api/target/feature_correlation.html#pearson-correlation
+
+.. image:: api/target/images/feature_correlation_mutual_info_regression.png
+    :width: 200px
+    :height: 100px
+    :alt: Feature Correlation Mutual Information - Regression
+    :target: api/target/feature_correlation.html#mutual-information-regression
+
+.. image:: api/target/images/feature_correlation_mutual_info_classification.png
+    :width: 200px
+    :height: 100px
+    :alt: Feature Correlation Mutual Information - Classification
+    :target: api/target/feature_correlation.html#mutual-information-classification

@@ -22,6 +22,7 @@ import numpy as np
 
 from collections import defaultdict
 
+from yellowbrick.draw import manual_legend
 from yellowbrick.text.base import TextVisualizer
 from yellowbrick.style.colors import resolve_colors
 from yellowbrick.exceptions import YellowbrickValueError
@@ -35,7 +36,7 @@ from sklearn.decomposition import TruncatedSVD, PCA
 ##########################################################################
 
 def tsne(X, y=None, ax=None, decompose='svd', decompose_by=50, classes=None,
-           colors=None, colormap=None, **kwargs):
+           colors=None, colormap=None, alpha=0.7, **kwargs):
     """
     Display a projection of a vectorized corpus in two dimensions using TSNE,
     a nonlinear dimensionality reduction method that is particularly well
@@ -78,6 +79,10 @@ def tsne(X, y=None, ax=None, decompose='svd', decompose_by=50, classes=None,
     colormap : string or matplotlib cmap
         Sequential colormap for continuous target
 
+    alpha : float, default: 0.7
+        Specify a transparency where 1 is completely opaque and 0 is completely
+        transparent. This property makes densely clustered points more visible.
+
     kwargs : dict
         Pass any additional keyword arguments to the TSNE transformer.
 
@@ -88,7 +93,7 @@ def tsne(X, y=None, ax=None, decompose='svd', decompose_by=50, classes=None,
     """
     # Instantiate the visualizer
     visualizer = TSNEVisualizer(
-        ax, decompose, decompose_by, classes, colors, colormap, **kwargs
+        ax, decompose, decompose_by, classes, colors, colormap, alpha, **kwargs
     )
 
     # Fit and transform the visualizer (calls draw)
@@ -159,6 +164,10 @@ class TSNEVisualizer(TextVisualizer):
         by np.random. The random state is applied to the preliminary
         decomposition as well as tSNE.
 
+    alpha : float, default: 0.7
+        Specify a transparency where 1 is completely opaque and 0 is completely
+        transparent. This property makes densely clustered points more visible.
+
     kwargs : dict
         Pass any additional keyword arguments to the TSNE transformer.
     """
@@ -166,10 +175,12 @@ class TSNEVisualizer(TextVisualizer):
     # NOTE: cannot be np.nan
     NULL_CLASS = None
 
-    def __init__(self, ax=None, decompose='svd', decompose_by=50, labels=None,
-                 classes=None, colors=None, colormap=None, random_state=None, **kwargs):
+    def __init__(self, ax=None, decompose='svd', decompose_by=50,
+                 labels=None, classes=None, colors=None, colormap=None,
+                 random_state=None, alpha=0.7, **kwargs):
 
         # Visual Parameters
+        self.alpha = alpha
         self.labels = labels
         self.colors = colors
         self.colormap = colormap
@@ -308,9 +319,9 @@ class TSNEVisualizer(TextVisualizer):
 
 
         # Create the color mapping for the labels.
-        color_values = resolve_colors(
+        self.color_values_ = resolve_colors(
             n_colors=len(labels), colormap=self.colormap, colors=self.color)
-        colors = dict(zip(labels, color_values))
+        colors = dict(zip(labels, self.color_values_))
 
         # Transform labels into a map of class to label
         labels = dict(zip(self.classes_, labels))
@@ -335,7 +346,7 @@ class TSNEVisualizer(TextVisualizer):
         for label, points in series.items():
             self.ax.scatter(
                 points['x'], points['y'], c=colors[label],
-                alpha=0.7, label=label
+                alpha=self.alpha, label=label
             )
 
     def finalize(self, **kwargs):
@@ -355,4 +366,7 @@ class TSNEVisualizer(TextVisualizer):
         if not all(self.classes_ == np.array([self.NULL_CLASS])):
             box = self.ax.get_position()
             self.ax.set_position([box.x0, box.y0, box.width * 0.8, box.height])
-            self.ax.legend(loc='center left', bbox_to_anchor=(1, 0.5))
+            manual_legend(
+                self, self.classes_, self.color_values_,
+                loc='center left', bbox_to_anchor=(1, 0.5)
+            )
