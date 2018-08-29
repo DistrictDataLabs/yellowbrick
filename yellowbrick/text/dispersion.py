@@ -19,7 +19,7 @@ Implementation of lexical dispersion for text visualization
 ##########################################################################
 
 from collections import defaultdict
-import types
+import itertools
 
 from yellowbrick.text.base import TextVisualizer
 from yellowbrick.style.colors import resolve_colors
@@ -54,6 +54,9 @@ class DispersionPlot(TextVisualizer):
     colors : list or tuple of colors
         Specify the colors for each individual class
 
+    colormap : string or matplotlib cmap
+        Sequential colormap for continuous target
+    
     ignore_case : boolean, default: False
 	Specify whether input  will be case-sensitive.
 
@@ -89,10 +92,7 @@ class DispersionPlot(TextVisualizer):
 
 
         if y is None:
-            y = [None]*len(list(text))
-
-        if isinstance(text, types.GeneratorType):
-            text = np.array(list(text))
+            y = itertools.repeat(None)
 
         for doc, target in zip(text, y):
             for word in doc:
@@ -232,7 +232,7 @@ class DispersionPlot(TextVisualizer):
 ## Quick Method
 ##########################################################################
 
-def dispersion(words, corpus, ax=None, color=None,
+def dispersion(words, corpus, y=None, ax=None, colors=None, labels=None,
                annotate_docs=False, ignore_case=False, **kwargs):
     """ Displays lexical dispersion plot for words in a corpus
 
@@ -245,14 +245,27 @@ def dispersion(words, corpus, ax=None, color=None,
     words : list
         A list of words whose dispersion will be examined within a corpus
 
+    y : ndarray or Series of length n
+        An optional array or series of target or class values for
+        instances. If this is specified, then the points will be colored
+        according to their class.
+
     corpus : list
-        A list of words in the order they appear in the corpus
+        Should be provided as a list of documents that contain
+        a list of words in the order they appear in the document.
 
     ax : matplotlib axes, default: None
         The axes to plot the figure on.
 
-    color : list or tuple of colors
-        Specify color for bars
+    labels : list of strings
+        The names of the classes in the target, used to create a legend.
+        Labels must match names of classes in sorted order.
+
+    colors : list or tuple of colors
+        Specify the colors for each individual class
+
+    colormap : string or matplotlib cmap
+        Sequential colormap for continuous target
 
     annotate_docs : boolean, default: False
         Specify whether document boundaries will be displayed.  Vertical lines
@@ -272,12 +285,13 @@ def dispersion(words, corpus, ax=None, color=None,
 
     # Instantiate the visualizer
     visualizer = DispersionPlot(
-        words, ax=ax, color=color, ignore_case=ignore_case,
+        words, ax=ax, colors=colors, colormap=colormap,
+        ignore_case=ignore_case, labels=labels,
         annotate_docs=annotate_docs, **kwargs
     )
 
     # Fit and transform the visualizer (calls draw)
-    visualizer.fit(corpus)
+    visualizer.fit(corpus, y, **kwargs)
 
     # Return the axes object on the visualizer
     return visualizer.ax
