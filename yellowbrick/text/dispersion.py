@@ -232,8 +232,8 @@ class DispersionPlot(TextVisualizer):
 ## Quick Method
 ##########################################################################
 
-def dispersion(words, corpus, y=None, ax=None, colors=None, labels=None,
-               annotate_docs=False, ignore_case=False, **kwargs):
+def dispersion(words, corpus, y=None, ax=None, colors=None, colormap=None,
+               labels=None, annotate_docs=False, ignore_case=False, **kwargs):
     """ Displays lexical dispersion plot for words in a corpus
 
     This helper function is a quick wrapper to utilize the DisperstionPlot
