@@ -125,5 +125,11 @@ class DispersionPlotTests(VisualTestCase, DatasetMixin):
 
         visualizer = DispersionPlot(target_words, annotate_docs=True,
                                     labels=['a', 'b'])
-        with pytest.raises(YellowbrickValueError):
+
+        msg = (
+            r'number of supplied labels \(\d\) '
+            r'does not match the number of classes \(\d\)'
+        )
+
+        with pytest.raises(YellowbrickValueError, match=msg):
             visualizer.fit(text, target_values)

@@ -40,7 +40,7 @@ class DispersionPlot(TextVisualizer):
 
     Parameters
     ----------
-    words : list
+    target_words : list
         A list of target words whose dispersion across a corpus passed at fit
 	will be visualized.
 
@@ -55,8 +55,8 @@ class DispersionPlot(TextVisualizer):
         Specify the colors for each individual class
 
     colormap : string or matplotlib cmap
-        Sequential colormap for continuous target
-    
+        Qualitative colormap for discrete target
+
     ignore_case : boolean, default: False
 	Specify whether input  will be case-sensitive.
 
@@ -74,7 +74,7 @@ class DispersionPlot(TextVisualizer):
     # NOTE: cannot be np.nan
     NULL_CLASS = None
 
-    def __init__(self, words, ax=None, colors=None, ignore_case=False,
+    def __init__(self, target_words, ax=None, colors=None, ignore_case=False,
                  annotate_docs=False, labels=None, colormap=None, **kwargs):
         super(DispersionPlot, self).__init__(ax=ax, **kwargs)
 
@@ -82,13 +82,13 @@ class DispersionPlot(TextVisualizer):
         self.colors = colors
         self.colormap = colormap
 
-        self.words = words
+        self.target_words = target_words
         self.ignore_case = ignore_case
         self.annotate_docs = annotate_docs
 
     def _compute_dispersion(self, text, y):
         self.boundaries_ = []
-        self.offset = 0
+        offset = 0
 
 
         if y is None:
@@ -102,24 +102,25 @@ class DispersionPlot(TextVisualizer):
                 # NOTE: this will find all indices if duplicate words are supplied
                 # In the case that word is not in target words, any empty list is
                 # returned and no data will be yielded
-                self.offset += 1
-                for y_coord in (self.target_words_ == word).nonzero()[0]:
+                offset += 1
+                for y_coord in (self.indexed_words_ == word).nonzero()[0]:
                     y_coord = int(y_coord)
-                    yield (self.offset, y_coord, target)
+                    yield (offset, y_coord, target)
             if self.annotate_docs:
-                self.boundaries_.append(self.offset)
+                self.boundaries_.append(offset)
         self.boundaries_ = np.array(self.boundaries_, dtype=int)
 
-    def fit(self, text, y=None, **kwargs):
+    def fit(self, X, y=None, **kwargs):
         """
         The fit method is the primary drawing input for the dispersion
-        visualization. It requires the corpus as a list of words.
+        visualization.
 
         Parameters
         ----------
-        text : list
-            Should be provided as a list of documents that contain
-            a list of words in the order they appear in the document.
+        X : list or generator
+            Should be provided as a list of documents or a generator
+            that yields a list of documents that contain a list of 
+            words in the order they appear in the document.
 
         y : ndarray or Series of length n
             An optional array or series of target or class values for
@@ -143,19 +144,19 @@ class DispersionPlot(TextVisualizer):
             self.classes_ = np.array([self.NULL_CLASS])
 
         # Create an index (e.g. the y position) for the target words
-        self.target_words_ = np.flip(self.words, axis=0)
+        self.indexed_words_ = np.flip(self.target_words, axis=0)
         if self.ignore_case:
-            self.target_words_ = np.array([w.lower() for w in self.target_words_])
+            self.indexed_words_ = np.array([w.lower() for w in self.indexed_words_])
 
         # Stack is used to create a 2D array from the generator
-        self.points_target = np.stack(self._compute_dispersion(text, y))
+        points_target = np.stack(self._compute_dispersion(X, y))
 
-        self.points = np.stack(zip(self.points_target[:,0].astype(int),
-                               self.points_target[:,1].astype(int)))
+        points = np.stack(zip(points_target[:,0].astype(int),
+                              points_target[:,1].astype(int)))
 
-        self.target = self.points_target[:,2]
+        self.target = points_target[:,2]
 
-        self.draw(self.points, self.target)
+        self.draw(points, self.target)
         return self
 
     def draw(self, points, target=None, **kwargs):
@@ -205,8 +206,8 @@ class DispersionPlot(TextVisualizer):
             self.ax.scatter(points['x'], points['y'], marker='|',
                             c=colors[label], zorder=100, label=label)
 
-        self.ax.set_yticks(list(range(len(self.target_words_))))
-        self.ax.set_yticklabels(self.target_words_)
+        self.ax.set_yticks(list(range(len(self.indexed_words_))))
+        self.ax.set_yticklabels(self.indexed_words_)
 
     def finalize(self, **kwargs):
         """
@@ -217,7 +218,7 @@ class DispersionPlot(TextVisualizer):
         kwargs: generic keyword arguments.
         """
 
-        self.ax.set_ylim(-1, len(self.target_words_))
+        self.ax.set_ylim(-1, len(self.indexed_words_))
         self.ax.set_title("Lexical Dispersion Plot")
         self.ax.set_xlabel("Word Offset")
         self.ax.grid(False)
@@ -265,7 +266,7 @@ def dispersion(words, corpus, y=None, ax=None, colors=None, colormap=None,
         Specify the colors for each individual class
 
     colormap : string or matplotlib cmap
-        Sequential colormap for continuous target
+        Qualitative colormap for discrete target
 
     annotate_docs : boolean, default: False
         Specify whether document boundaries will be displayed.  Vertical lines
