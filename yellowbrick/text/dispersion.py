@@ -110,6 +110,16 @@ class DispersionPlot(TextVisualizer):
                 self.boundaries_.append(offset)
         self.boundaries_ = np.array(self.boundaries_, dtype=int)
 
+    def _check_missing_words(self, points):
+        for index, word in enumerate(self.indexed_words_):
+            if index in points[:,1]:
+                pass
+            else:
+                raise YellowbrickValueError((
+                    "The indexed word '{}' is not found in "
+                    "this corpus"
+                    ).format(self.indexed_words_[index]))
+
     def fit(self, X, y=None, **kwargs):
         """
         The fit method is the primary drawing input for the dispersion
@@ -149,12 +159,18 @@ class DispersionPlot(TextVisualizer):
             self.indexed_words_ = np.array([w.lower() for w in self.indexed_words_])
 
         # Stack is used to create a 2D array from the generator
-        points_target = np.stack(self._compute_dispersion(X, y))
-
+        try:
+            points_target = np.stack(self._compute_dispersion(X, y))
+        except ValueError:
+            raise YellowbrickValueError((
+                "No indexed words were found in the corpus"
+                ))
         points = np.stack(zip(points_target[:,0].astype(int),
                               points_target[:,1].astype(int)))
 
         self.target = points_target[:,2]
+
+        self._check_missing_words(points)
 
         self.draw(points, self.target)
         return self
