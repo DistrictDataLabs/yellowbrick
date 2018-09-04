@@ -111,7 +111,7 @@ class DispersionPlot(TextVisualizer):
         self.boundaries_ = np.array(self.boundaries_, dtype=int)
 
     def _check_missing_words(self, points):
-        for index, word in enumerate(self.indexed_words_):
+        for index in range(len(self.indexed_words_)):
             if index in points[:,1]:
                 pass
             else:
