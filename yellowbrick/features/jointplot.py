@@ -301,6 +301,8 @@ class JointPlotVisualizer(FeatureVisualizer):
         ----------
         kwargs: generic keyword arguments.
         """
+        self.joint_ax.set_xlabel(self.feature)
+        self.joint_ax.set_ylabel(self.target)
 
         plt.setp(self.x_ax.get_xticklabels(), visible=False)
         plt.setp(self.y_ax.get_yticklabels(), visible=False)
