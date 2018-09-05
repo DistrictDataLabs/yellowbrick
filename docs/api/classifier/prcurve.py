@@ -1,34 +1,59 @@
 #!/usr/bin/env python
 
-import numpy as np
+import os
+import pandas as pd
 import matplotlib.pyplot as plt
+
+from sklearn.naive_bayes import MultinomialNB
+from sklearn.linear_model import RidgeClassifier
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import LabelEncoder
 
 from yellowbrick.classifier import PrecisionRecallCurve
 
-from sklearn.datasets import load_iris
-from yellowbrick.datasets import load_occupancy
 
-from sklearn.svm import LinearSVC
-from sklearn.naive_bayes import GaussianNB
-from sklearn.linear_model import RidgeClassifier
-from sklearn.model_selection import train_test_split
+# Location of downloaded datasets from Yellowbrick
+FIXTURES = os.path.join(
+    os.path.dirname(__file__), "..", "..", "..", "yellowbrick", "datasets", "fixtures"
+)
+
+
+def load_binary(split=True):
+    data = pd.read_csv(os.path.join(FIXTURES, "spam", "spam.csv"))
+
+    target = "is_spam"
+    features = [col for col in data.columns if col != target]
+
+    X = data[features]
+    y = data[target]
+
+    if split:
+        return train_test_split(X, y, test_size=0.2, shuffle=True)
+    return X, y
+
+
+def load_multiclass(split=True):
+    data = pd.read_csv(os.path.join(FIXTURES, "game", "game.csv"))
+
+    # Encode the categorical variables
+    data.replace({'x':0, 'o':1, 'b':2}, inplace=True)
+
+    # Extract the numpy arrays from the data frame
+    X = data.iloc[:, data.columns != 'outcome']
+    y = LabelEncoder().fit_transform(data['outcome'])
+
+    if split:
+        return train_test_split(X, y, test_size=0.2, shuffle=True)
+    return X, y
 
 
 def draw_binary(outpath=None):
     _, ax = plt.subplots(figsize=(9,6))
 
-    data = load_occupancy()
-    X = data[["temperature", "relative_humidity", "light", "C02", "humidity"]].copy()
-    X = X.view((float, len(X.dtype.names)))
-    y = data["occupancy"]
+    X_train, X_test, y_train, y_test = load_binary(split=True)
 
-    n_samples, n_features = X.shape
-    random_state = np.random.RandomState(42)
-    X = np.c_[X, random_state.randn(n_samples, 200 * n_features)]
-
-    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.35, shuffle=True)
-
-    oz = PrecisionRecallCurve(LinearSVC(), ax=ax)
+    oz = PrecisionRecallCurve(RidgeClassifier(), ax=ax)
     oz.fit(X_train, y_train)
     oz.score(X_test, y_test)
     oz.poof(outpath=outpath)
@@ -37,21 +62,12 @@ def draw_binary(outpath=None):
 def draw_multiclass(outpath=None, simple=True):
     _, ax = plt.subplots(figsize=(9,6))
 
-    data = load_iris()
-    X = data.data
-    y = data.target
-
-    n_samples, n_features = X.shape
-    random_state = np.random.RandomState(0)
-    X = np.c_[X, random_state.randn(n_samples, 200 * n_features)]
-
-    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.35, shuffle=True)
-
+    X_train, X_test, y_train, y_test = load_multiclass()
 
     if simple:
-        oz = PrecisionRecallCurve(GaussianNB(), ax=ax)
+        oz = PrecisionRecallCurve(RandomForestClassifier(), ax=ax)
     else:
-        oz = PrecisionRecallCurve(RidgeClassifier(), ax=ax, per_class=True, iso_f1_curves=True, fill_area=False, micro=False)
+        oz = PrecisionRecallCurve(MultinomialNB(), ax=ax, per_class=True, iso_f1_curves=True, fill_area=False, micro=False)
 
     oz.fit(X_train, y_train)
     oz.score(X_test, y_test)
@@ -60,6 +76,6 @@ def draw_multiclass(outpath=None, simple=True):
 
 
 if __name__ == '__main__':
-    # draw_binary()
-    # draw_multiclass(simple=True)
-    draw_multiclass(simple=False)
+    draw_binary(outpath="images/binary_precision_recall.png")
+    draw_multiclass(simple=True, outpath="images/multiclass_precision_recall.png")
+    draw_multiclass(simple=False, outpath="images/multiclass_precision_recall_full.png")

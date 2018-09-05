@@ -75,7 +75,7 @@ class SilhouetteVisualizer(ClusteringScoreVisualizer):
         Mean Silhouette Coefficient for all samples. Computed via scikit-learn
         `sklearn.metrics.silhouette_score`.
 
-    silhouette_samples_ : array, shape = [n_samples_]
+    silhouette_samples_ : array, shape = [n_samples]
         Silhouette Coefficient for each samples. Computed via scikit-learn
         `sklearn.metrics.silhouette_samples`.
 
