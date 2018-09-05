@@ -10,12 +10,13 @@ from yellowbrick.datasets import load_occupancy
 
 from sklearn.svm import LinearSVC
 from sklearn.naive_bayes import GaussianNB
-from sklearn.tree import DecisionTreeClassifier
 from sklearn.linear_model import RidgeClassifier
 from sklearn.model_selection import train_test_split
 
 
 def draw_binary(outpath=None):
+    _, ax = plt.subplots(figsize=(9,6))
+
     data = load_occupancy()
     X = data[["temperature", "relative_humidity", "light", "C02", "humidity"]].copy()
     X = X.view((float, len(X.dtype.names)))
@@ -27,13 +28,14 @@ def draw_binary(outpath=None):
 
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.35, shuffle=True)
 
-    oz = PrecisionRecallCurve(LinearSVC())
+    oz = PrecisionRecallCurve(LinearSVC(), ax=ax)
     oz.fit(X_train, y_train)
     oz.score(X_test, y_test)
     oz.poof(outpath=outpath)
 
 
 def draw_multiclass(outpath=None, simple=True):
+    _, ax = plt.subplots(figsize=(9,6))
 
     data = load_iris()
     X = data.data
@@ -47,9 +49,9 @@ def draw_multiclass(outpath=None, simple=True):
 
 
     if simple:
-        oz = PrecisionRecallCurve(GaussianNB())
+        oz = PrecisionRecallCurve(GaussianNB(), ax=ax)
     else:
-        oz = PrecisionRecallCurve(RidgeClassifier(), per_class=True, iso_f1_curves=True, fill_area=False, micro=False)
+        oz = PrecisionRecallCurve(RidgeClassifier(), ax=ax, per_class=True, iso_f1_curves=True, fill_area=False, micro=False)
 
     oz.fit(X_train, y_train)
     oz.score(X_test, y_test)

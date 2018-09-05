@@ -309,7 +309,7 @@ class PrecisionRecallCurve(ClassificationScoreVisualizer):
         Finalize the figure by adding titles, labels, and limits.
         """
         self.set_title("Precision-Recall Curve for {}".format(self.name))
-        self.ax.legend(loc='best', frameon=True)
+        self.ax.legend(loc='lower left', frameon=True)
 
         self.ax.set_xlim([0.0, 1.0])
         self.ax.set_ylim([0.0, 1.0])
