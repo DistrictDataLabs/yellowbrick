@@ -338,7 +338,14 @@ class PrecisionRecallCurve(ClassificationScoreVisualizer):
             try:
                 method = getattr(self.estimator, attr, None)
                 if method:
-                    return method(X)
+                    # Compute the scores from the decision function
+                    y_scores = method(X)
+
+                    # Return only the positive class for binary predict_proba
+                    if self.target_type_ == BINARY and y_scores.ndim == 2:
+                        return y_scores[:,1]
+                    return y_scores
+
             except AttributeError:
                 # Some Scikit-Learn estimators have both probability and
                 # decision functions but override __getattr__ and raise an
