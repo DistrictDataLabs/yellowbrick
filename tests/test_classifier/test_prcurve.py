@@ -97,6 +97,13 @@ class TestPrecisionRecallCurve(VisualTestCase):
         # Score should be between 0 and 1
         assert 0.0 <= s <= 1.0
 
+        # Check the binary classification properties
+        assert oz.target_type_ == BINARY
+        assert isinstance(oz.score_, float)
+        assert oz.score_ == s
+        assert isinstance(oz.precision_, np.ndarray)
+        assert isinstance(oz.recall_, np.ndarray)
+
         # Compare the images
         oz.finalize()
         tol = 1.5 if sys.platform == 'win32' else 1.0 # fails with RMSE 1.409 on AppVeyor
@@ -119,6 +126,13 @@ class TestPrecisionRecallCurve(VisualTestCase):
 
         # Score should be between 0 and 1
         assert 0.0 <= s <= 1.0
+
+        # Check the binary classification properties
+        assert oz.target_type_ == BINARY
+        assert isinstance(oz.score_, float)
+        assert oz.score_ == s
+        assert isinstance(oz.precision_, np.ndarray)
+        assert isinstance(oz.recall_, np.ndarray)
 
         # Compare the images
         oz.finalize()
@@ -143,6 +157,13 @@ class TestPrecisionRecallCurve(VisualTestCase):
         # Score should be between 0 and 1
         assert 0.0 <= s <= 1.0
 
+        # Check the binary classification properties
+        assert oz.target_type_ == BINARY
+        assert isinstance(oz.score_, float)
+        assert oz.score_ == s
+        assert isinstance(oz.precision_, np.ndarray)
+        assert isinstance(oz.recall_, np.ndarray)
+
         # Compare the images
         # NOTE: do not finalize image to ensure tests pass on Travis
         # Fails with 3.083 on Travis-CI (passes on AppVeyor)
@@ -165,6 +186,16 @@ class TestPrecisionRecallCurve(VisualTestCase):
 
         # Score should be between 0 and 1
         assert 0.0 <= s <= 1.0
+
+        # Check the multiclass classification properties
+        assert oz.target_type_ == MULTICLASS
+        assert isinstance(oz.score_, dict)
+        assert oz.score_[MICRO] == s
+        assert isinstance(oz.precision_, dict)
+        assert isinstance(oz.recall_, dict)
+        assert len(oz.score_) == len(oz.classes_) + 1
+        assert len(oz.precision_) == len(oz.classes_) + 1
+        assert len(oz.recall_) == len(oz.classes_) + 1
 
         # Compare the images
         oz.finalize()
@@ -191,6 +222,16 @@ class TestPrecisionRecallCurve(VisualTestCase):
 
         # Score should be between 0 and 1
         assert 0.0 <= s <= 1.0
+
+        # Check the multiclass classification properties
+        assert oz.target_type_ == MULTICLASS
+        assert isinstance(oz.score_, dict)
+        assert oz.score_[MICRO] == s
+        assert isinstance(oz.precision_, dict)
+        assert isinstance(oz.recall_, dict)
+        assert len(oz.score_) == len(oz.classes_) + 1
+        assert len(oz.precision_) == len(oz.classes_) + 1
+        assert len(oz.recall_) == len(oz.classes_) + 1
 
         # Compare the images
         oz.finalize()
