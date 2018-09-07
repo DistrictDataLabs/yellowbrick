@@ -88,7 +88,6 @@ class JointPlotTests(VisualTestCase, DatasetMixin):
 
         visualizer = JointPlotVisualizer(ax=ax)
         visualizer.fit(self.X, self.y)
-        visualizer.finalize()
 
         self.assert_images_similar(visualizer)
 
@@ -114,7 +113,6 @@ class JointPlotTests(VisualTestCase, DatasetMixin):
         visualizer = JointPlotVisualizer(
             feature=feature, target=target, joint_plot="hex", ax=ax)
         visualizer.fit(X, y)
-        visualizer.finalize()
 
         self.assert_images_similar(visualizer)
 
