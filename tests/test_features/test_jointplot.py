@@ -89,7 +89,7 @@ class JointPlotTests(VisualTestCase, DatasetMixin):
         visualizer = JointPlotVisualizer(ax=ax)
         visualizer.fit(self.X, self.y)
 
-        self.assert_images_similar(visualizer)
+        self.assert_images_similar(visualizer, tol=10)
 
     @pytest.mark.xfail(
         sys.platform == 'win32', reason="images not close on windows"
@@ -114,7 +114,7 @@ class JointPlotTests(VisualTestCase, DatasetMixin):
             feature=feature, target=target, joint_plot="hex", ax=ax)
         visualizer.fit(X, y)
 
-        self.assert_images_similar(visualizer)
+        self.assert_images_similar(visualizer, tol=15)
 
 
     @pytest.mark.skipif(MPL_VERS_MAJ < 2, reason="requires matplotlib 2.0.0 or greater")
