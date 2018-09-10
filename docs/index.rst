@@ -62,6 +62,7 @@ Model Selection Visualization
 Target Visualization
 ~~~~~~~~~~~~~~~~~~~~
 
+- :doc:`api/target/binning`: generate a histogram with vertical lines showing the recommended value point to bin the data into evenly distributed bins
 - :doc:`api/target/class_balance`: see how the distribution of classes affects the model
 - :doc:`api/target/feature_correlation`: display the correlation between features and dependent variables
 
