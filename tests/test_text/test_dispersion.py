@@ -18,6 +18,9 @@ Tests for the dispersion plot text visualization
 ## Imports
 ##########################################################################
 
+import pytest
+
+from yellowbrick.exceptions import YellowbrickValueError
 from yellowbrick.text.dispersion import *
 from tests.dataset import DatasetMixin
 from tests.base import VisualTestCase
@@ -82,7 +85,7 @@ class DispersionPlotTests(VisualTestCase, DatasetMixin):
         """
         corpus = self.load_data('hobbies')
 
-        text = (doc.split() for doc in corpus.data)
+        text = [doc.split() for doc in corpus.data]
         target_words = ['girl', 'she', 'boy', 'he', 'man']
 
         visualizer = DispersionPlot(target_words, annotate_docs=True)
@@ -90,3 +93,43 @@ class DispersionPlotTests(VisualTestCase, DatasetMixin):
         visualizer.ax.grid(False)
 
         self.assert_images_similar(visualizer, tol=25)
+
+    def test_dispersionplot_color_words_by_class(self):
+        """
+        Assert no errors occur during DispersionPlot integration
+        when target values are specified
+        """
+        corpus = self.load_data('hobbies')
+
+        text = (doc.split() for doc in corpus.data)
+        target_words = ['girl', 'she', 'boy', 'he', 'man']
+
+        target_values = corpus.target
+
+        visualizer = DispersionPlot(target_words)
+        visualizer.fit(text, target_values)
+        visualizer.ax.grid(False)
+
+        self.assert_images_similar(visualizer, tol=25)
+
+    def test_dispersionplot_mismatched_labels(self):
+        """
+        Assert exception is raised when number of labels doesn't match
+        """
+        corpus = self.load_data('hobbies')
+
+        text = (doc.split() for doc in corpus.data)
+        target_words = ['girl', 'she', 'boy', 'he', 'man']
+
+        target_values = corpus.target
+
+        visualizer = DispersionPlot(target_words, annotate_docs=True,
+                                    labels=['a', 'b'])
+
+        msg = (
+            r'number of supplied labels \(\d\) '
+            r'does not match the number of classes \(\d\)'
+        )
+
+        with pytest.raises(YellowbrickValueError, match=msg):
+            visualizer.fit(text, target_values)
