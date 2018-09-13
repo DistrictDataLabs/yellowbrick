@@ -14,9 +14,6 @@ Generates images for the balanced binning reference documentation.
 ## Imports
 ##########################################################################
 
-import pandas as pd
-import matplotlib.pyplot as plt
-
 from yellowbrick.target import BalancedBinningReference 
 from sklearn.datasets import load_diabetes
 
