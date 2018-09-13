@@ -217,7 +217,7 @@ class ConfusionMatrix(ClassificationScoreVisualizer):
         # predicted as a percent of true in each class.
         if self.percent == True:
             # Note: div_safe function returns 0 instead of NAN.
-            cm_display = div_safe(self.confusion_matrix_, self.class_counts_)
+            cm_display = div_safe(self.confusion_matrix_, self.class_counts_.reshape(-1,1))
             cm_display = np.round(cm_display* 100, decimals=0)
 
         # Y axis should be sorted top to bottom in pcolormesh
