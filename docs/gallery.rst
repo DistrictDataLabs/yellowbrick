@@ -221,6 +221,12 @@ Decision Boundaries Visualizer
 Target Visualizers
 ------------------
 
+.. image:: api/target/images/balanced_binning_reference.png
+    :width: 200px
+    :height: 100px
+    :alt: Balanced Binning Reference
+    :target: api/target/binning.html#balanced-binning-reference
+
 .. image:: api/target/images/class_balance_compare.png
     :width: 200px
     :height: 100px
