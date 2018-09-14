@@ -140,12 +140,6 @@ Classification Visualizers
     :alt: Multi-Label Precision-Recall Curves
     :target: api/classifier/prcurve.html#multi-label-classification
 
-.. image:: api/target/images/class_balance_compare.png
-    :width: 200px
-    :height: 100px
-    :alt: Class Balance
-    :target: api/target/class_balance.html#class-balance
-
 .. image:: api/classifier/images/class_prediction_error.png
     :width: 200px
     :height: 100px
@@ -238,6 +232,18 @@ Decision Boundaries Visualizer
 
 Target Visualizers
 ------------------
+
+.. image:: api/target/images/balanced_binning_reference.png
+    :width: 200px
+    :height: 100px
+    :alt: Balanced Binning Reference
+    :target: api/target/binning.html#balanced-binning-reference
+
+.. image:: api/target/images/class_balance_compare.png
+    :width: 200px
+    :height: 100px
+    :alt: Class Balance
+    :target: api/target/class_balance.html#class-balance
 
 .. image:: api/target/images/feature_correlation_pearson.png
     :width: 200px

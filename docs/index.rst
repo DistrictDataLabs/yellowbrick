@@ -33,7 +33,6 @@ Feature Visualization
 Classification Visualization
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-- :doc:`api/target/class_balance`: see how the distribution of classes affects the model
 - :doc:`api/classifier/class_prediction_error`: shows error and support in classification
 - :doc:`api/classifier/classification_report`: visual representation of precision, recall, and F1
 - :doc:`ROC/AUC Curves <api/classifier/rocauc>`: receiver operator characteristics and area under the curve
@@ -60,6 +59,13 @@ Model Selection Visualization
 
 -  :doc:`api/model_selection/validation_curve`: tune a model with respect to a single hyperparameter
 -  :doc:`api/model_selection/learning_curve`: show if a model might benefit from more data or less complexity
+
+Target Visualization
+~~~~~~~~~~~~~~~~~~~~
+
+- :doc:`api/target/binning`: generate a histogram with vertical lines showing the recommended value point to bin the data into evenly distributed bins
+- :doc:`api/target/class_balance`: see how the distribution of classes affects the model
+- :doc:`api/target/feature_correlation`: display the correlation between features and dependent variables
 
 Text Visualization
 ~~~~~~~~~~~~~~~~~~
