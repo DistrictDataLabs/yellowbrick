@@ -16,7 +16,7 @@ To help the user select the optimal number of bins, the ``BalancedBinningReferen
 
     # Load the a regression data set
     data = load_data("concrete")
-    
+
     # Extract the target of interest
     y = data["strength"]
 
@@ -25,6 +25,9 @@ To help the user select the optimal number of bins, the ``BalancedBinningReferen
 
     visualizer.fit(y)          # Fit the data to the visualizer
     visualizer.poof()          # Draw/show/poof the data
+
+
+.. image:: images/balanced_binning_reference.png
 
 .. seealso::
 
