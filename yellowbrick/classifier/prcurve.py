@@ -224,9 +224,9 @@ class PrecisionRecallCurve(ClassificationScoreVisualizer):
             self.precision_, self.recall_, self.score_ = {}, {}, {}
 
             # Compute PRCurve for all classes
-            for idx, cls in enumerate(self.classes_):
-                self.precision_[cls], self.recall_[cls], _ = sk_precision_recall_curve(Y[:,idx], y_scores[:,idx])
-                self.score_[cls] = average_precision_score(Y[:,idx], y_scores[:,idx])
+            for i, class_i in enumerate(self.classes_):
+                self.precision_[class_i], self.recall_[class_i], _ = sk_precision_recall_curve(Y[:,i], y_scores[:,i])
+                self.score_[class_i] = average_precision_score(Y[:,i], y_scores[:,i])
 
             # Compute micro average PR curve
             self.precision_[MICRO], self.recall_[MICRO], _ = sk_precision_recall_curve(
