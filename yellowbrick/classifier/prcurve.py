@@ -50,7 +50,7 @@ class PrecisionRecallCurve(ClassificationScoreVisualizer):
     scenario for a classifier, showing a model that returns accurate results
     for the majority of classes it selects.
 
-    TODO: extend docstring
+    .. todo:: extend docstring
 
     Parameters
     ----------
@@ -180,11 +180,12 @@ class PrecisionRecallCurve(ClassificationScoreVisualizer):
             # Different variable is used here to prevent transformation
             Y = y
         else:
-            raise YellowbrickValueError(
-                "{} does not support target type '{}'".format(
+            raise YellowbrickValueError((
+                "{} does not support target type '{}', "
+                "please provide a binary or multiclass single-output target"
+            ).format(
                 self.__class__.__name__, ttype
-                )
-            )
+            ))
 
         # Fit the model and return self
         return super(PrecisionRecallCurve, self).fit(X, Y)
@@ -204,7 +205,7 @@ class PrecisionRecallCurve(ClassificationScoreVisualizer):
         # has not correctly been fitted for multi-class targets.
         if not hasattr(self, "target_type_"):
             raise NotFitted((
-                "{} requires a visual fit and cannot wrap an already fitted estimator"
+                "{} cannot wrap an already fitted estimator"
             ).format(
                 self.__class__.__name__
             ))
@@ -298,7 +299,7 @@ class PrecisionRecallCurve(ClassificationScoreVisualizer):
         """
         Helper function to draw the AP score annotation
         """
-        label = label or "AP={:0.2f}".format(score)
+        label = label or "Avg Precision={:0.2f}".format(score)
         if self.ap_score:
             self.ax.axhline(
                 y=score, color="r", ls="--", label=label
@@ -323,10 +324,9 @@ class PrecisionRecallCurve(ClassificationScoreVisualizer):
         can either be the probability estimates of the positive class,
         confidence values, or non-thresholded measures of decisions (as
         returned by a "decision function").
-
-        .. todo:: refactor shared method with ROCAUC
-        .. todo:: ensure only probabilities from positive case are returned (binary)
         """
+        # TODO refactor shared method with ROCAUC
+
         # Resolution order of scoring functions
         attrs = (
             'decision_function',

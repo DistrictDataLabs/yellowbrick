@@ -75,7 +75,7 @@ class TestPrecisionRecallCurve(VisualTestCase):
         """
         Requires visualizer to be fit
         """
-        with pytest.raises(NotFitted, match="requires a visual fit"):
+        with pytest.raises(NotFitted, match="cannot wrap an already fitted estimator"):
             oz = PrecisionRecallCurve(RidgeClassifier())
             oz.score(self.binary.X.test, self.binary.y.test)
 
