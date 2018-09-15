@@ -36,6 +36,7 @@ Classification Visualization
 - :doc:`api/classifier/class_prediction_error`: shows error and support in classification
 - :doc:`api/classifier/classification_report`: visual representation of precision, recall, and F1
 - :doc:`ROC/AUC Curves <api/classifier/rocauc>`: receiver operator characteristics and area under the curve
+-  :doc:`api/classifier/prcurve`: precision vs recall for different probability thresholds
 - :doc:`Confusion Matrices <api/classifier/confusion_matrix>`: visual description of class decision making
 - :doc:`Discrimination Threshold <api/classifier/threshold>`: find a threshold that best separates binary classes
 
