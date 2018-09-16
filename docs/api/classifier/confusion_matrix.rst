@@ -51,8 +51,37 @@ scikit-learn documentation on `confusion matrices <http://scikit-learn.org/stabl
     cm.poof()
 
 
+.. image:: images/confusion_matrix_digits.png
 
-.. image:: images/confusion_matrix.png
+
+Plotting with Class Names
+#########################
+
+Class names can be added to a `ConfusionMatrix` plot using the `label_encoder` argument. The `label_encoder` can be a `sklearn.preprocessing.LabelEncoder <http://scikit-learn.org/stable/modules/generated/sklearn.preprocessing.LabelEncoder.html>`_ (or anything with an `inverse_transform` method that performs the mapping), or a `dict` with the encoding-to-string mapping as in the example below:
+
+.. code:: python
+
+    iris = load_iris()
+    X = iris.data
+    y = iris.target
+    classes = iris.target_names
+
+    X_train, X_test, y_train, y_test = tts(X, y, test_size=0.2)
+
+    model = LogisticRegression()
+
+    iris_cm = ConfusionMatrix(
+        model, classes=classes,
+        label_encoder={0: 'setosa', 1: 'versicolor', 2: 'virginica'}
+    )
+
+    iris_cm.fit(X_train, y_train)
+    iris_cm.score(X_test, y_test)
+
+    iris_cm.poof()
+
+
+.. image:: images/confusion_matrix_iris.png
 
 
 API Reference
