@@ -110,11 +110,17 @@ Classification Visualizers
     :alt: GaussianNB Classification Report
     :target: api/classifier/classification_report.html#classification-report
 
-.. image:: api/classifier/images/confusion_matrix.png
+.. image:: api/classifier/images/confusion_matrix_digits.png
     :width: 200px
     :height: 100px
-    :alt: Logistic Regression Confusion Matrix
+    :alt: Logistic Regression Confusion Matrix with Numeric Labels
     :target: api/classifier/confusion_matrix.html#confusion-matrix
+
+.. image:: api/classifier/images/confusion_matrix_iris.png
+    :width: 200px
+    :height: 100px
+    :alt: Logistic Regression Confusion Matrix with Class Name Labels
+    :target: api/classifier/confusion_matrix.html#plotting-with-class-names
 
 .. image:: api/classifier/images/rocauc_binary.png
     :width: 200px
@@ -127,6 +133,18 @@ Classification Visualizers
     :height: 100px
     :alt: Multiclass ROC Curves
     :target: api/classifier/rocauc.html#multi-class-rocauc-curves
+
+.. image:: api/classifier/images/binary_precision_recall.png
+    :width: 200px
+    :height: 100px
+    :alt: Precision-Recall Curves
+    :target: api/classifier/prcurve.html
+
+.. image:: api/classifier/images/multiclass_precision_recall_full.png
+    :width: 200px
+    :height: 100px
+    :alt: Multi-Label Precision-Recall Curves
+    :target: api/classifier/prcurve.html#multi-label-classification
 
 .. image:: api/classifier/images/class_prediction_error.png
     :width: 200px

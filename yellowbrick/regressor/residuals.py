@@ -543,10 +543,10 @@ class ResidualsPlot(RegressionScoreVisualizer):
 
         # Add residuals histogram
         if self.hist in {True, 'frequency'}:
-            self.hax.hist(residuals, bins=50, orientation="horizontal")
+            self.hax.hist(residuals, bins=50, orientation="horizontal", color=color)
         elif self.hist == 'density':
             self.hax.hist(
-                residuals, bins=50, orientation="horizontal", density=True
+                residuals, bins=50, orientation="horizontal", density=True, color=color
             )
 
         # Ensure the current axes is always the main residuals axes
