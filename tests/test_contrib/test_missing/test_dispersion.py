@@ -17,9 +17,8 @@ Tests for the MissingValuesDispersion visualizations.
 ## Imports
 ##########################################################################
 import os
-from sklearn.datasets import make_classification
+import pytest
 from tests.base import VisualTestCase
-
 from yellowbrick.contrib.missing.dispersion import *
 
 try:
@@ -31,6 +30,7 @@ except ImportError:
 ## Feature Importances Tests
 ##########################################################################
 
+@pytest.mark.usefixtures("missingdata")
 class MissingValuesDispersionTestCase(VisualTestCase):
     """
     MissingValuesDispersion visualizer
@@ -41,20 +41,13 @@ class MissingValuesDispersionTestCase(VisualTestCase):
         if os.name == 'nt': # Windows
             self.tol = 5.0
 
-
+    @pytest.mark.skipif(pd is None, reason="test requires pandas")
     def test_missingvaluesdispersion_with_pandas(self):
         """
         Integration test of visualizer with pandas
         """
-        X, y = make_classification(
-            n_samples=400, n_features=20, n_informative=8, n_redundant=8,
-            n_classes=2, n_clusters_per_class=4, random_state=854
-        )
 
-        # add nan values to a range of values in the matrix
-        X[X > 1.5] = np.nan
-
-        X_ = pd.DataFrame(X)
+        X_ = pd.DataFrame(self.missingdata.X)
         features = [str(n) for n in range(20)]
         viz = MissingValuesDispersion(features=features)
         viz.fit(X_)
@@ -66,19 +59,12 @@ class MissingValuesDispersionTestCase(VisualTestCase):
         """
         Integration test of visualizer with pandas with y targets
         """
-        X, y = make_classification(
-            n_samples=400, n_features=20, n_informative=8, n_redundant=8,
-            n_classes=2, n_clusters_per_class=4, random_state=854
-        )
 
-        # add nan values to a range of values in the matrix
-        X[X > 1.5] = np.nan
-
-        X_ = pd.DataFrame(X)
+        X_ = pd.DataFrame(self.missingdata.X)
         features = [str(n) for n in range(20)]
         classes = ['Class A', 'Class B']
         viz = MissingValuesDispersion(features=features, classes=classes)
-        viz.fit(X_, y=y)
+        viz.fit(X_, y=self.missingdata.y)
         viz.poof()
 
         self.assert_images_similar(viz, tol=self.tol)
@@ -88,17 +74,9 @@ class MissingValuesDispersionTestCase(VisualTestCase):
         """
         Integration test of visualizer with numpy
         """
-        X, y = make_classification(
-            n_samples=400, n_features=20, n_informative=8, n_redundant=8,
-            n_classes=2, n_clusters_per_class=4, random_state=852
-        )
-
-        # add nan values to a range of values in the matrix
-        X[X > 1.5] = np.nan
-
         features = [str(n) for n in range(20)]
         viz = MissingValuesDispersion(features=features)
-        viz.fit(X)
+        viz.fit(self.missingdata.X)
         viz.poof()
 
         self.assert_images_similar(viz, tol=self.tol)
@@ -107,18 +85,11 @@ class MissingValuesDispersionTestCase(VisualTestCase):
         """
         Integration test of visualizer with numpy with y targets
         """
-        X, y = make_classification(
-            n_samples=400, n_features=20, n_informative=8, n_redundant=8,
-            n_classes=2, n_clusters_per_class=4, random_state=852
-        )
-
-        # add nan values to a range of values in the matrix
-        X[X > 1.5] = np.nan
 
         features = [str(n) for n in range(20)]
         classes = ['Class A', 'Class B']
         viz = MissingValuesDispersion(features=features, classes=classes)
-        viz.fit(X, y=y)
+        viz.fit(self.missingdata.X, y=self.missingdata.y)
         viz.poof()
 
         self.assert_images_similar(viz, tol=self.tol)

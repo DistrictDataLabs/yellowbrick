@@ -18,8 +18,8 @@ Tests for the MissingValuesBar visualizations.
 ##########################################################################
 
 import os
+import pytest
 from tests.base import VisualTestCase
-from sklearn.datasets import make_classification
 from yellowbrick.contrib.missing.bar import *
 
 try:
@@ -31,29 +31,26 @@ except ImportError:
 ## Feature Importances Tests
 ##########################################################################
 
-class TestMissingBarVisualizer(VisualTestCase):
+
+@pytest.mark.usefixtures("missingdata")
+class MissingBarVisualizerTestCase(VisualTestCase):
     """
-    FeatureImportances visualizer
+    MissingBar Visualizer
     """
 
     def setUp(self):
-        super(TestMissingBarVisualizer, self).setUp()
+        super(MissingBarVisualizerTestCase, self).setUp()
         self.tol = 0.01
         if os.name == 'nt': # Windows
             self.tol = 0.5
 
+    @pytest.mark.skipif(pd is None, reason="test requires pandas")
     def test_missingvaluesbar_pandas(self):
         """
         Integration test of visualizer with pandas
         """
-        X, y = make_classification(
-            n_samples=400, n_features=20, n_informative=8, n_redundant=8,
-            n_classes=2, n_clusters_per_class=4, random_state=854
-        )
 
-        # add nan values to a range of values in the matrix
-        X[X > 1.5] = np.nan
-        X_ = pd.DataFrame(X)
+        X_ = pd.DataFrame(self.missingdata.X)
 
         features = [str(n) for n in range(20)]
         viz = MissingValuesBar(features=features)
@@ -62,62 +59,44 @@ class TestMissingBarVisualizer(VisualTestCase):
 
         self.assert_images_similar(viz, tol=self.tol)
 
-
     def test_missingvaluesbar_numpy(self):
         """
         Integration test of visualizer with numpy without target y passed in
         """
-        X, y = make_classification(
-            n_samples=400, n_features=20, n_informative=8, n_redundant=8,
-            n_classes=2, n_clusters_per_class=4, random_state=856
-        )
-
-        # add nan values to a range of values in the matrix
-        X[X > 1.5] = np.nan
 
         features = [str(n) for n in range(20)]
         viz = MissingValuesBar(features=features)
-        viz.fit(X)
+        viz.fit(self.missingdata.X)
         viz.poof()
 
         self.assert_images_similar(viz, tol=self.tol)
+
 
     def test_missingvaluesbar_numpy_with_y_target(self):
         """
         Integration test of visualizer with numpy without target y passed in
         but no class labels
         """
-        X, y = make_classification(
-            n_samples=400, n_features=20, n_informative=8, n_redundant=8,
-            n_classes=2, n_clusters_per_class=4, random_state=856
-        )
-
-        # add nan values to a range of values in the matrix
-        X[X > 1.5] = np.nan
 
         features = [str(n) for n in range(20)]
         viz = MissingValuesBar(features=features)
-        viz.fit(X, y)
+        viz.fit(self.missingdata.X, self.missingdata.y)
         viz.poof()
 
         self.assert_images_similar(viz, tol=self.tol)
+
 
     def test_missingvaluesbar_numpy_with_y_target_with_labels(self):
         """
         Integration test of visualizer with numpy without target y passed in
         but no class labels
         """
-        X, y = make_classification(
-            n_samples=400, n_features=20, n_informative=8, n_redundant=8,
-            n_classes=2, n_clusters_per_class=4, random_state=856
-        )
 
         # add nan values to a range of values in the matrix
-        X[X > 1.5] = np.nan
 
         features = [str(n) for n in range(20)]
         viz = MissingValuesBar(features=features, classes=['class A', 'class B'])
-        viz.fit(X, y)
+        viz.fit(self.missingdata.X, self.missingdata.y)
         viz.poof()
 
         self.assert_images_similar(viz, tol=self.tol)
