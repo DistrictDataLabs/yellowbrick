@@ -20,6 +20,7 @@ Implements 1D (histograms) and 2D (joint plot) feature rankings.
 import numpy as np
 from scipy.stats import shapiro
 from scipy.stats import spearmanr
+from scipy.stats import kendalltau
 
 from yellowbrick.utils import is_dataframe
 from yellowbrick.features.base import MultiFeatureVisualizer
@@ -102,7 +103,7 @@ def rank2d(X, y=None, ax=None, algorithm='pearson', features=None,
     ax : matplotlib axes
         the axis to plot the figure on.
 
-    algorithm : one of {pearson, covariance, spearman}
+    algorithm : one of {pearson, covariance, spearman, kendalltau}
         the ranking algorithm to use, default is Pearson correlation.
 
     features : list
@@ -449,6 +450,7 @@ class Rank2D(RankDBase):
         'pearson': lambda X: np.corrcoef(X.transpose()),
         'covariance': lambda X: np.cov(X.transpose()),
         'spearman': lambda X: spearmanr(X)[0],
+        'kendalltau': lambda X, y: kendalltau(X, y)
     }
 
     def __init__(self, ax=None, algorithm='pearson', features=None,
