@@ -147,7 +147,7 @@ class TestManifold(VisualTestCase):
             n_samples=300, n_features=7, n_informative=4, random_state=87
         )
 
-        oz = Manifold(manifold="ltsa", target="continuous", random_state=1)
+        oz = Manifold(manifold="tsne", target="continuous", random_state=1)
         assert not hasattr(oz, 'range_')
 
         oz.fit(X, y)
@@ -164,7 +164,7 @@ class TestManifold(VisualTestCase):
             n_samples=300, n_features=7, centers=3, random_state=1112,
         )
 
-        oz = Manifold(manifold="modified", random_state=139973)
+        oz = Manifold(manifold="mds", random_state=139973)
         oz.fit(X)
 
         self.assert_images_similar(oz, tol=5.0)
