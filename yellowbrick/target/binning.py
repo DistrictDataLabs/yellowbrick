@@ -31,7 +31,7 @@ from yellowbrick.exceptions import YellowbrickValueError
 
 class BalancedBinningReference(TargetVisualizer):
     """
-    BalancedBinningReference allows to generate a histogram with vertical lines
+    BalancedBinningReference generates a histogram with vertical lines
     showing the recommended value point to bin your data so they can be evenly
     distributed in each bin.
 
@@ -39,10 +39,13 @@ class BalancedBinningReference(TargetVisualizer):
     ----------
     ax : matplotlib Axes, default: None
         This is inherited from FeatureVisualizer and is defined within
-        BalancedBinningReference.
+        ``BalancedBinningReference``.
+
     target : string, default: "Frequency"
-        The name of the y variable
+        The name of the ``y`` variable
+
     bins : number of bins to generate the histogram, default: 4
+
     kwargs : dict
         Keyword arguments that are passed to the base class and may influence
         the visualization as defined in other Visualizers.
@@ -73,7 +76,9 @@ class BalancedBinningReference(TargetVisualizer):
 
     def draw(self, y, **kwargs):
         """
-        Draws a histogram with the reference value for binning as vetical lines
+        Draws a histogram with the reference value for binning as vertical
+        lines.
+
         Parameters
         ----------
         y : an array of one dimension or a pandas Series
@@ -90,13 +95,16 @@ class BalancedBinningReference(TargetVisualizer):
     def fit(self, y, **kwargs):
         """
         Sets up y for the histogram and checks to
-        ensure that y is of the correct data type
-        Fit calls draw
+        ensure that ``y`` is of the correct data type.
+        Fit calls draw.
+
         Parameters
         ----------
         y : an array of one dimension or a pandas Series
+
         kwargs : dict
-            keyword arguments passed to Scikit-Learn API.
+            keyword arguments passed to scikit-learn API.
+
         """
 
         #throw an error if y has more than 1 column
@@ -113,7 +121,7 @@ class BalancedBinningReference(TargetVisualizer):
 
     def poof(self, **kwargs):
         """
-        Creates the labels for the feature and target variables
+        Creates the labels for the feature and target variables.
         """
 
         self.ax.set_xlabel(self.target)
@@ -123,9 +131,11 @@ class BalancedBinningReference(TargetVisualizer):
         """
         Finalize executes any subclass-specific axes finalization steps.
         The user calls poof and poof calls finalize.
+
         Parameters
         ----------
         kwargs: generic keyword arguments.
+
         """
 
         for tk in self.ax.get_xticklabels():
@@ -142,7 +152,7 @@ class BalancedBinningReference(TargetVisualizer):
 def balanced_binning_reference(y, ax=None, target='Frequency', bins=4, **kwargs):
     
     """
-    BalancedBinningReference allows to generate a histogram with vertical lines
+    BalancedBinningReference generates a histogram with vertical lines
     showing the recommended value point to bin your data so they can be evenly
     distributed in each bin.
 
@@ -152,16 +162,19 @@ def balanced_binning_reference(y, ax=None, target='Frequency', bins=4, **kwargs)
     
     ax : matplotlib Axes, default: None
         This is inherited from FeatureVisualizer and is defined within
-        BalancedBinningReference.
+        ``BalancedBinningReference``.
+
     target : string, default: "Frequency"
-        The name of the y variable
+        The name of the ``y`` variable
+
     bins : number of bins to generate the histogram, default: 4
+
     kwargs : dict
         Keyword arguments that are passed to the base class and may influence
         the visualization as defined in other Visualizers.
 
     """
-    
+
     # Initialize the visualizer
     visualizer = BalancedBinningReference(ax=ax, bins=bins, target=target, **kwargs)
     

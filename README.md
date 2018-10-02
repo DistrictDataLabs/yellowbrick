@@ -46,6 +46,7 @@ Visualizers are estimators (objects that learn from data) whose primary objectiv
 - **Class Prediction Error**: shows error and support in classification
 - **Classification Report**: visual representation of precision, recall, and F1
 - **ROC/AUC Curves**: receiver operator characteristics and area under the curve
+- **Precision-Recall Curves**: precision vs recall for different probability thresholds
 - **Confusion Matrices**: visual description of class decision making
 - **Discrimination Threshold**: find a threshold that best separates binary classes
 
@@ -59,6 +60,7 @@ Visualizers are estimators (objects that learn from data) whose primary objectiv
 
 - **K-Elbow Plot**: select k using the elbow method and various metrics
 - **Silhouette Plot**: select k by visualizing silhouette coefficient values
+- **Intercluster Distance Maps**: show relative distance and size of clusters
 
 #### Model Selection Visualization
 
@@ -70,6 +72,10 @@ Visualizers are estimators (objects that learn from data) whose primary objectiv
 - **Term Frequency**: visualize the frequency distribution of terms in the corpus
 - **t-SNE Corpus Visualization**: use stochastic neighbor embedding to project documents.
 - **Dispersion Plot**: visualize how key terms are dispersed throughout a corpus
+
+#### Target Visualization
+
+- **Feature Correlation**: visualize the correlation between the dependent variables and the target
 
 And more! Visualizers are being added all the time, so be sure to check the examples (or even the develop branch) and feel free to contribute your ideas for Visualizers!
 
@@ -170,7 +176,7 @@ $ python -m tests.images -C tests/test_visualizer.py
 Glob syntax can be used to move multiple files. For example to reset all the classifier tests:
 
 ```
-$ python -m tests.images tests/test_classifier/*   
+$ python -m tests.images tests/test_classifier/*
 ```
 
 Though it is recommended that specific test cases are targeted, rather than updating entire directories.

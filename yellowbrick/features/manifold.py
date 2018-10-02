@@ -18,10 +18,10 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 from six import string_types
-from matplotlib import patches
 
-from yellowbrick.utils.types import is_estimator
 from yellowbrick.utils.timer import Timer
+from yellowbrick.draw import manual_legend
+from yellowbrick.utils.types import is_estimator
 from yellowbrick.style import palettes, resolve_colors
 from yellowbrick.features.base import FeatureVisualizer
 from yellowbrick.exceptions import YellowbrickValueError, NotFitted
@@ -402,11 +402,7 @@ class Manifold(FeatureVisualizer):
 
         if self._target_color_type == DISCRETE:
             # Add the legend
-            handles = [
-                patches.Patch(color=self._colors[idx], label=self.classes_[idx])
-                for idx in range(len(self.classes_))
-            ]
-            self.ax.legend(handles=handles)
+            manual_legend(self, self.classes_, self._colors)
 
         elif self._target_color_type == CONTINUOUS:
             # Add the color bar

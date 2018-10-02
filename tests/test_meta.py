@@ -18,7 +18,7 @@ import os
 import pytest
 import inspect
 
-from tests.random import RandomVisualizer
+from tests.rand import RandomVisualizer
 from tests.base import ACTUAL_IMAGES, BASELINE_IMAGES
 from tests.base import VisualTestCase, ImageComparison
 
