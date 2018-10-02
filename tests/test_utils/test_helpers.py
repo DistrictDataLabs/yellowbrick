@@ -47,7 +47,7 @@ class TestHelpers(object):
         (KNeighborsClassifier, 'KNeighborsClassifier'),
         (KMeans, 'KMeans'),
         (RandomForestClassifier, 'RandomForestClassifier'),
-    ], ids=lambda i: i[0])
+    ], ids=["LassoCV", "KNeighborsClassifier", "KMeans", "RandomForestClassifier"])
     def test_real_model(self, model, name):
         """
         Test getting model name for sklearn estimators
