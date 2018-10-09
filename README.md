@@ -1,7 +1,7 @@
 # Yellowbrick
 
 [![Build Status](https://travis-ci.com/DistrictDataLabs/yellowbrick.svg?branch=develop)](https://travis-ci.com/DistrictDataLabs/yellowbrick)
-[![Build status](https://ci.appveyor.com/api/projects/status/11abg00ollbdf4oy?svg=true)](https://ci.appveyor.com/project/districtdatalabs/yellowbrick)
+[![Build status](https://ci.appveyor.com/api/projects/status/11abg00ollbdf4oy?svg=true)](https://ci.appveyor.com/project/districtdatalabs/yellowbrick)//comment added
 [![Coverage Status](https://coveralls.io/repos/github/DistrictDataLabs/yellowbrick/badge.svg?branch=master)](https://coveralls.io/github/DistrictDataLabs/yellowbrick?branch=master)
 [![Total Alerts](https://img.shields.io/lgtm/alerts/g/DistrictDataLabs/yellowbrick.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/DistrictDataLabs/yellowbrick/alerts/)
 [![Language Grade: Python](https://img.shields.io/lgtm/grade/python/g/DistrictDataLabs/yellowbrick.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/DistrictDataLabs/yellowbrick/context:python)
@@ -61,7 +61,7 @@ Visualizers are estimators (objects that learn from data) whose primary objectiv
 - **K-Elbow Plot**: select k using the elbow method and various metrics
 - **Silhouette Plot**: select k by visualizing silhouette coefficient values
 - **Intercluster Distance Maps**: show relative distance and size of clusters
-
+//Comment added
 #### Model Selection Visualization
 
 - **Validation Curve**: tune a model with respect to a single hyperparameter
