@@ -87,7 +87,7 @@ Yellowbrick is compatible with Python 2.7 or later but it is preferred to use Py
 
 Note that Yellowbrick is an active project and routinely publishes new releases with more visualizers and updates. In order to upgrade Yellowbrick to the latest version, use pip as follows.
 
-    $ pip install -U yellowbrick
+    $ pip install -U yellow Rick//commend added
 
 You can also use the `-U` flag to update scikit-learn, matplotlib, or any other third party utilities that work well with Yellowbrick to their latest versions.
 
