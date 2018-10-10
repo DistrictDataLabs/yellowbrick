@@ -135,4 +135,10 @@ class TestRank2D(VisualTestCase, DatasetMixin):
 
         tol = 10 if six.PY2 else 0.1
         self.assert_images_similar(visualizer, tol=tol)
+    
+    def test_pearson(self):
+    
+    def test_covariance(self):
+    
+    def test_spearman(self):
 #
