@@ -20,9 +20,10 @@ Implements radviz for feature analysis.
 import numpy as np
 import matplotlib.patches as patches
 
+from yellowbrick.draw import manual_legend
 from yellowbrick.utils import is_dataframe
+from yellowbrick.utils import nan_warnings
 from yellowbrick.features.base import DataVisualizer
-import yellowbrick.utils.nan_warnings as nan_warnings
 from yellowbrick.style.colors import resolve_colors
 
 
@@ -169,7 +170,7 @@ class RadialVisualizer(DataVisualizer):
         """
         # Convert from dataframe
         if is_dataframe(X):
-            X = X.as_matrix()
+            X = X.values
 
         # Clean out nans and warn that the user they aren't plotted
         nan_warnings.warn_if_nans_exist(X)
@@ -188,7 +189,7 @@ class RadialVisualizer(DataVisualizer):
         color_values = resolve_colors(
             n_colors=len(self.classes_), colormap=self.colormap, colors=self.color
         )
-        colors = dict(zip(self.classes_, color_values))
+        self._colors = dict(zip(self.classes_, color_values))
 
         # Create a data structure to hold scatter plot representations
         to_plot = {}
@@ -220,7 +221,7 @@ class RadialVisualizer(DataVisualizer):
         # TODO: make this a separate function
         for i, kls in enumerate(self.classes_):
             self.ax.scatter(
-                to_plot[kls][0], to_plot[kls][1], color=colors[kls],
+                to_plot[kls][0], to_plot[kls][1], color=self._colors[kls],
                 label=str(kls), alpha=self.alpha, **kwargs
             )
 
@@ -267,7 +268,8 @@ class RadialVisualizer(DataVisualizer):
         self.ax.set_xticks([])
 
         # Add the legend
-        self.ax.legend(loc='best')
+        colors = [self._colors[c] for c in self.classes_]
+        manual_legend(self, self.classes_, colors, loc='best')
 
 
 # Alias for RadViz

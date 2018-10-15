@@ -78,8 +78,8 @@ regression dataset:
     ]
 
     # Extract the instances and target
-    X = concrete[feats]
-    y = concrete.strength
+    X = data[features]
+    y = data.strength
 
 When using a model with a ``coef_`` attribute, it is better to set
 ``relative=False`` to draw the true magnitude of the coefficient (which may

@@ -52,9 +52,6 @@ coverage.xml
 # Sphinx documentation
 docs/_build/
 
-# PyBuilder
-target/
-
 # Jupyter Notebook
 .ipynb_checkpoints
 
@@ -124,3 +121,5 @@ fabric.properties
 # Data downloaded from Yellowbrick
 data/
 .vscode/settings.json
+
+yellowbrick/datasets/fixtures

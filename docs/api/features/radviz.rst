@@ -20,7 +20,7 @@ picture of your data. RadViz will raise a DataWarning to inform you of the
 percent missing.
 
 If you do receive this warning, you may want to look at imputation strategies.
-A good starting place is `scikit-learn Imputer. <http://scikit-learn.org/stable/modules/generated/sklearn.preprocessing.Imputer.html>`_
+A good starting place is the `scikit-learn Imputer. <http://scikit-learn.org/stable/modules/generated/sklearn.impute.SimpleImputer.html>`_
 
 .. code:: python
 

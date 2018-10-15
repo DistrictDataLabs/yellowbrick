@@ -52,8 +52,9 @@ def anscombe():
     """
     Creates 2x2 grid plot of the 4 anscombe datasets for illustration.
     """
-    fig, ((axa, axb), (axc, axd)) =  plt.subplots(2, 2, sharex='col', sharey='row')
+    _, ((axa, axb), (axc, axd)) =  plt.subplots(2, 2, sharex='col', sharey='row')
     colors = get_color_cycle()
+
     for arr, ax, color in zip(ANSCOMBE, (axa, axb, axc, axd), colors):
         x = arr[0]
         y = arr[1]

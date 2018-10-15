@@ -22,3 +22,4 @@ related to evaluating Scikit-Learn clustering models.
 from .base import *
 from .elbow import *
 from .silhouette import *
+from .icdm import * 

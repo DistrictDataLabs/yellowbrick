@@ -1,13 +1,10 @@
 .. -*- mode: rst -*-
 
-====================
-Example Gallery
-=======
 Gallery
-====================
+=======
 
-Features Analysis
------------------
+Feature Analysis
+----------------
 
 .. image:: api/features/images/radviz.png
     :width: 200px
@@ -104,7 +101,7 @@ Regression Visualizers
     :target: api/regressor/alphas.html#alpha-selection
 
 
-Clasification Visualizers
+Classification Visualizers
 --------------------------
 
 .. image:: api/classifier/images/classification_report.png
@@ -113,23 +110,41 @@ Clasification Visualizers
     :alt: GaussianNB Classification Report
     :target: api/classifier/classification_report.html#classification-report
 
-.. image:: api/classifier/images/confusion_matrix.png
+.. image:: api/classifier/images/confusion_matrix_digits.png
     :width: 200px
     :height: 100px
-    :alt: Logistic Regression Confusion Matrix
+    :alt: Logistic Regression Confusion Matrix with Numeric Labels
     :target: api/classifier/confusion_matrix.html#confusion-matrix
 
-.. image:: api/classifier/images/rocauc.png
+.. image:: api/classifier/images/confusion_matrix_iris.png
     :width: 200px
     :height: 100px
-    :alt: ROC Curves for Logistic Regression
+    :alt: Logistic Regression Confusion Matrix with Class Name Labels
+    :target: api/classifier/confusion_matrix.html#plotting-with-class-names
+
+.. image:: api/classifier/images/rocauc_binary.png
+    :width: 200px
+    :height: 100px
+    :alt: Binary ROC Curves for Logistic Regression
     :target: api/classifier/rocauc.html#rocauc
 
-.. image:: api/classifier/images/class_balance.png
+.. image:: api/classifier/images/rocauc_multiclass.png
     :width: 200px
     :height: 100px
-    :alt: Class Balance for Random Forest Classifier
-    :target: api/classifier/class_balance.html#class-balance
+    :alt: Multiclass ROC Curves
+    :target: api/classifier/rocauc.html#multi-class-rocauc-curves
+
+.. image:: api/classifier/images/binary_precision_recall.png
+    :width: 200px
+    :height: 100px
+    :alt: Precision-Recall Curves
+    :target: api/classifier/prcurve.html
+
+.. image:: api/classifier/images/multiclass_precision_recall_full.png
+    :width: 200px
+    :height: 100px
+    :alt: Multi-Label Precision-Recall Curves
+    :target: api/classifier/prcurve.html#multi-label-classification
 
 .. image:: api/classifier/images/class_prediction_error.png
     :width: 200px
@@ -158,6 +173,12 @@ Clustering Visualizers
     :alt: Silhoutte Plot of Mini Batch Kmeans Clustering
     :target: api/cluster/silhouette.html#silhouette-visualizer
 
+.. image:: api/cluster/images/icdm.png
+    :width: 200px
+    :height: 100px
+    :alt: Intercluster Distance Maps
+    :target: api/cluster/icdm.html#intercluster-distance-maps
+
 Model Selection Visualizers
 ---------------------------
 
@@ -179,6 +200,18 @@ Model Selection Visualizers
     :alt: Learning Curve for KMeans
     :target: api/model_selection/learning_curve.html#clustering
 
+.. image:: api/model_selection/images/cv_scores_classifier.png
+    :width: 200px
+    :height: 100px
+    :alt: CV Scores for MultinomialNB Classification
+    :target: api/model_selection/cross_validation.html#classification
+
+.. image:: api/model_selection/images/cv_scores_regressor.png
+    :width: 200px
+    :height: 100px
+    :alt: CV Scores for Ridge Regression
+    :target: api/model_selection/cross_validation.html#regression
+
 Text Modeling Visualizers
 ---------------------------
 
@@ -194,7 +227,7 @@ Text Modeling Visualizers
     :alt: TSNE Projection of Documents
     :target: api/text/tsne.html#t-sne-corpus-visualization
 
-Decision Boundaries Vizualizer
+Decision Boundaries Visualizer
 ------------------------------
 
 .. image:: api/contrib/images/knn_decisionviz.png
@@ -202,3 +235,36 @@ Decision Boundaries Vizualizer
     :height: 100px
     :alt: Nearest Neighbor Boundary Visualizer
     :target: api/contrib/boundaries.html#decisionboundaries-vizualizer
+
+Target Visualizers
+------------------
+
+.. image:: api/target/images/balanced_binning_reference.png
+    :width: 200px
+    :height: 100px
+    :alt: Balanced Binning Reference
+    :target: api/target/binning.html#balanced-binning-reference
+
+.. image:: api/target/images/class_balance_compare.png
+    :width: 200px
+    :height: 100px
+    :alt: Class Balance
+    :target: api/target/class_balance.html#class-balance
+
+.. image:: api/target/images/feature_correlation_pearson.png
+    :width: 200px
+    :height: 100px
+    :alt: Feature Correlation Pearson Correlation Coefficients
+    :target: api/target/feature_correlation.html#pearson-correlation
+
+.. image:: api/target/images/feature_correlation_mutual_info_regression.png
+    :width: 200px
+    :height: 100px
+    :alt: Feature Correlation Mutual Information - Regression
+    :target: api/target/feature_correlation.html#mutual-information-regression
+
+.. image:: api/target/images/feature_correlation_mutual_info_classification.png
+    :width: 200px
+    :height: 100px
+    :alt: Feature Correlation Mutual Information - Classification
+    :target: api/target/feature_correlation.html#mutual-information-classification
