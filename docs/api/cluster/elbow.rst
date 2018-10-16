@@ -9,7 +9,7 @@ The best :math:`K` value is one which the SSE (sum of square error) decreases ab
 
 For a given :math:`K` value, single integer or iterable, if there is no visible elbow, the elbow may be beyond or behind the given :math:`K`. Take the second chart displayed below. Displayed is a chart using the same data as the first, however the given :math:`K` starts after the elbow, as seen in the chart above.
 
-In the event that there is no elbow or multiple elbows are foudn, the use of k-means may need to be re-evaluated based on the context of the current issue.
+In the event that there is no elbow or multiple elbows are found, the use of k-means may need to be re-evaluated based on the context of the current issue.
 
 .. code:: python
 
