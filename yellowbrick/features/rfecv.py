@@ -32,7 +32,7 @@ class RFECV(ModelVisualizer):
     """
     Recursive Feature Elimination, Cross-Validated (RFECV) feature selection.
 
-    Selects the best subset of features for the suplied estimator by removing
+    Selects the best subset of features for the supplied estimator by removing
     0 to N features (where N is the number of features) using recursive
     feature elimination, then selecting the best subset based on the
     cross-validation score of the model. Recursive feature elimination

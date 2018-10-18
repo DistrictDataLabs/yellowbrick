@@ -62,7 +62,7 @@ class ClassificationReport(ClassificationScoreVisualizer):
 
     cmap : string, default: ``'YlOrRd'``
         Specify a colormap to define the heatmap of the predicted class
-        against the actual class in the confusion matrix.
+        against the actual class in the classification report.
 
     support: {True, False, None, 'percent', 'count'}, default: None
         Specify if support will be displayed. It can be further defined by

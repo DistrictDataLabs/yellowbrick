@@ -82,7 +82,7 @@ This is a fairly long bit of code, so let's walk through it step by step. The da
         ├── 56d62adec1808113ffb88054.txt
         └── 56d70f17c180810560aec345.txt
 
-Each of the documents in the corpus is stored in a text file labeled with its hash signature in a directory that specifies its label or category. Therefore the first step after checking to make sure the specified path exists is to list all the directories in the `hobbies` directory&mdash;this gives us each of our categories, which we will store later in the bunch.
+Each of the documents in the corpus is stored in a text file labeled with its hash signature in a directory that specifies its label or category. Therefore the first step after checking to make sure the specified path exists is to list all the directories in the `hobbies` directory---this gives us each of our categories, which we will store later in the bunch.
 
 The second step is to create placeholders for holding filenames, text data, and labels. We can then loop through the list of categories, list the files in each category directory, add those files to the files list, add the category name to the target list, then open and read the file to add it to data.
 
