@@ -21,6 +21,8 @@ See http://bbengfort.github.io/programmer/2016/01/20/packaging-with-pypi.html
 
 import os
 import codecs
+import numpy
+import matplotlib
 
 from setuptools import setup
 from setuptools import find_packages
@@ -40,7 +42,7 @@ REPOSITORY   = "https://github.com/districtdatalabs/yellowbrick"
 PACKAGE      = "yellowbrick"
 
 ## Define the keywords
-KEYWORDS     = ('visualization', 'machine learning', 'scikit-learn', 'matplotlib', 'data science')
+KEYWORDS     = ('machine learning', 'visualisation', 'matplotlib', 'scit-plot', 'data science')
 
 ## Define the classifiers
 ## See https://pypi.python.org/pypi?%3Aaction=list_classifiers
@@ -100,7 +102,7 @@ def get_requires(path=REQUIRE_PATH):
     should point to a requirements.txt output by `pip freeze`.
     """
     for line in read(path).splitlines():
-        line = line.strip()
+        line = map(line.strip())
         if line and not line.startswith('#'):
             yield line
 
