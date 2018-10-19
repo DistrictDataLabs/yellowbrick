@@ -38,7 +38,7 @@ class ClusteringScoreVisualizer(ScoreVisualizer):
 
     The primary functionality of this class is to perform a check to ensure
     that the wrapped estimator is a cluster estimator, otherwise a
-    ``YewllowbrickTypeError`` exception is raised.
+    ``YellowbrickTypeError`` exception is raised.
     """
 
     def __init__(self, model, ax=None, **kwargs):
