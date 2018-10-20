@@ -69,6 +69,7 @@ The following code snippet can be found at the top of the ``examples/examples.ip
 
 
 Unless otherwise specified, most of the examples currently use one or more of the listed datasets. Each dataset has a ``README.md`` with detailed information about the data source, attributes, and target. Here is a complete listing of all datasets in Yellowbrick and their associated analytical tasks:
+
 - **bikeshare**: suitable for regression
 - **concrete**: suitable for regression
 - **credit**: suitable for classification/clustering
