@@ -198,6 +198,7 @@ def _axes_style(style=None, rc=None):
         # Common parameters
         style_dict = {
             "figure.facecolor": "white",
+            "figure.autolayout" : True,
             "text.color": dark_gray,
             "axes.labelcolor": dark_gray,
             "legend.frameon": False,
