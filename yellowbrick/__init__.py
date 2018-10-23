@@ -38,6 +38,7 @@ from .classifier import ROCAUC, ClassBalance, ClassificationScoreVisualizer
 # from .classifier import crplot, rocplot
 # from .regressor import peplot, residuals_plot
 
+
 ##########################################################################
 ## Set default aesthetics
 ##########################################################################
