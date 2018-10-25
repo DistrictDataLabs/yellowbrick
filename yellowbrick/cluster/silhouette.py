@@ -18,7 +18,7 @@ Implements visualizers that use the silhouette metric for cluster evaluation.
 ##########################################################################
 
 import numpy as np
-import matplotlib.pyplot as plt
+import matplotlib.ticker as ticker
 
 from ..style import color_palette
 from .base import ClusteringScoreVisualizer
@@ -214,4 +214,4 @@ class SilhouetteVisualizer(ClusteringScoreVisualizer):
 
         # Set the ticks on the axis object.
         self.ax.set_yticks([])  # Clear the yaxis labels / ticks
-        self.ax.xaxis.set_major_locator(plt.MultipleLocator(0.1))  # Set the ticks at multiples of 0.1
+        self.ax.xaxis.set_major_locator(ticker.MultipleLocator(0.1))  # Set the ticks at multiples of 0.1
