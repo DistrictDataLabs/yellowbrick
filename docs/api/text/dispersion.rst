@@ -16,7 +16,7 @@ After importing the visualizer, we can :doc:`load the corpus <corpus>`
     # Load the text data
     corpus = load_corpus("hobbies")
 
-    # create a list of words from the corpus text
+    # Create a list of words from the corpus text
     text = [word for doc in corpus.data for word in doc.split()]
 
     # Choose words whose occurence in the text will be plotted

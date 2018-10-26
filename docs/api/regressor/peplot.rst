@@ -9,14 +9,16 @@ A prediction error plot shows the actual targets from the dataset against the pr
 
     from sklearn.model_selection import train_test_split
 
-    # Load the data
-    df = load_data('concrete')
-    feature_names = ['cement', 'slag', 'ash', 'water', 'splast', 'coarse', 'fine', 'age']
-    target_name = 'strength'
+    # Load the regression data set
+    data = load_data('concrete')
 
-    # Get the X and y data from the DataFrame
-    X = df[feature_names].as_matrix()
-    y = df[target_name].as_matrix()
+    # Specify the features of interest and the target
+    features = ['cement', 'slag', 'ash', 'water', 'splast', 'coarse', 'fine', 'age']
+    target = 'strength'
+
+    # Extract the instances and target
+    X = data[features]
+    y = data[target]
 
     # Create the train and test data
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2)
