@@ -12,7 +12,7 @@
 [![Binder](https://mybinder.org/badge.svg)](https://mybinder.org/v2/gh/DistrictDataLabs/yellowbrick/develop?filepath=examples%2Fexamples.ipynb)
 
 
-**Visual analysis and diagnostic tools to facilitate machine learning model selection.**
+**Visual Analysis and Diagnostic Tools to Facilitate Machine Learning Model Selection.**
 
 ![Follow the yellow brick road](docs/images/yellowbrickroad.jpg)
 Image by [Quatro Cinco](https://flic.kr/p/2Yj9mj), used with permission, Flickr Creative Commons.
