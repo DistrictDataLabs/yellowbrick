@@ -61,6 +61,6 @@ One great tip, is to create your PR right after you fork the repo; that way we c
 
 In this section we want to thank our examples contributors, and describe their notebooks so that you can find an example similar to your application! 
 
-- [bbengfort](https://github.com/bbengfort): visualizing text classification 
-- [rebeccabilbro](https://github.com/rebeccabilbro): visualizing book reviews data 
-- [nathan](https://github.com/ndanielsen/): visualizing the Iris dataset 
+- [bbengfort](https://github.com/bbengfort): visualizing text classification. 
+- [rebeccabilbro](https://github.com/rebeccabilbro): visualizing book reviews data. 
+- [nathan](https://github.com/ndanielsen/): visualizing the Iris dataset. 
