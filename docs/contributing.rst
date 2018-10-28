@@ -156,7 +156,7 @@ Visualizers interact with scikit-learn objects by intersecting with them at the 
 
 Creating a visualizer means defining a class that extends ``Visualizer`` or one of its subclasses, then implementing several of the methods described above. A barebones implementation is as follows::
 
-    import matplotlib.pyplot as plot
+    import matplotlib.pyplot as plt
 
     from yellowbrick.base import Visualizer
 
@@ -173,7 +173,7 @@ Creating a visualizer means defining a class that extends ``Visualizer`` or one 
             if self.ax is None:
                 self.ax = self.gca()
 
-            self.ax.plot(X)
+            self.ax.plt(X)
 
         def finalize(self):
             self.set_title("My Visualizer")
