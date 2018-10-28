@@ -27,7 +27,7 @@ Yellowbrick is a suite of visual diagnostic tools called "Visualizers" that exte
 
 ### Visualizers
 
-Visualizers are estimators (objects that learn from data) whose primary objective is to create visualizations that allow insight into the model selection process. In scikit-learn terms, they can be similar to transformers when visualizing the data space or wrapping a model estimator similar to how the "ModelCV" (e.g. RidgeCV, LassoCV) methods work. The primary goal of Yellowbrick is to create a sensical API similar to scikit-learn. Some of our most popular visualizers include:
+Visualizers are estimators (objects that learn from data) whose primary objective is to create visualizations that allow insight into the model selection process. In scikit-learn terms, they can be similar to transformers when visualizing the data space or wrapping a model estimator similar to how the "ModelCV" (e.g. RidgeCV, LassoCV) methods work. The primary goal of Yellowbrick is to create a sensical API(Application Programming Interface) similar to scikit-learn. Some of our most popular visualizers include:
 
 #### Feature Visualization
 
@@ -99,7 +99,7 @@ Note, however, that there is a [known bug](https://github.com/DistrictDataLabs/y
 
 ## Using Yellowbrick
 
-The Yellowbrick API is specifically designed to play nicely with scikit-learn. Here is an example of a typical workflow sequence with scikit-learn and Yellowbrick:
+The Yellowbrick API(Application Programming Interface) is specifically designed to play nicely with scikit-learn. Here is an example of a typical workflow sequence with scikit-learn and Yellowbrick:
 
 ### Feature Visualization
 
