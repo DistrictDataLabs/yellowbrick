@@ -20,7 +20,7 @@ Implements 1D (histograms) and 2D (joint plot) feature rankings.
 import numpy as np
 from scipy.stats import shapiro
 from scipy.stats import spearmanr
-from scipy.stats import kendalltau
+from scipy.stats import kendalltau as sp_kendalltau
 
 from yellowbrick.utils import is_dataframe
 from yellowbrick.features.base import MultiFeatureVisualizer
@@ -28,6 +28,24 @@ from yellowbrick.exceptions import YellowbrickValueError
 
 
 __all__ = ["rank1d", "rank2d", "Rank1D", "Rank2D"]
+
+
+def kendalltau(X):
+    """
+    Accepts a matrix X and returns a correlation matrix so that each column 
+    is the variable and each row is the observations. 
+    
+    Parameters
+    ----------
+    X : ndarray or DataFrame of shape n x m
+        A matrix of n instances with m features
+    
+    """
+    corrs = np.zeros(X.shape[1], X.shape[1]) 
+    for idx, cola in enumerate(X.T):
+        for jdx, colb in enumerate(X.T):
+            corrs[idx, jdx] = sp_kendalltau(cola,colb)[0] 
+    return corrs 
 
 
 ##########################################################################
@@ -449,8 +467,8 @@ class Rank2D(RankDBase):
     ranking_methods = {
         'pearson': lambda X: np.corrcoef(X.transpose()),
         'covariance': lambda X: np.cov(X.transpose()),
-        'spearman': lambda X: spearmanr(X)[0],
-        'kendalltau': lambda X, y: kendalltau(X, y)
+        'spearman': lambda X: spearmanr(X, axis=0)[0],
+        'kendalltau': lambda X, y: kendalltau(X)
     }
 
     def __init__(self, ax=None, algorithm='pearson', features=None,
