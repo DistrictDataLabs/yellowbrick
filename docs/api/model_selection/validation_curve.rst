@@ -23,6 +23,7 @@ In our first example, we'll explore using the ``ValidationCurve`` visualizer wit
     targets = ["heating load", "cooling load"]
     features = [col for col in data.columns if col not in targets]
 
+    # Extract the instances and target
     X = data[features]
     y = data[targets[0]]
 

@@ -9,16 +9,18 @@ The AlphaSelection Visualizer demonstrates how different values of alpha influen
 
 .. code:: python
 
-    # Load the data
+    # Load the regression data set
     df = load_data('concrete')
-    feature_names = [
+
+    # Specify the features of interest and the target
+    features = [
         'cement', 'slag', 'ash', 'water', 'splast', 'coarse', 'fine', 'age'
     ]
-    target_name = 'strength'
+    target = 'strength'
 
-    # Get the X and y data from the DataFrame
-    X = df[feature_names].as_matrix()
-    y = df[target_name].as_matrix()
+    # Extract the instances and target
+    X = df[features]
+    y = df[target]
 
 .. code:: python
 

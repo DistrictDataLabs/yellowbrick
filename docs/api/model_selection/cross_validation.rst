@@ -30,13 +30,15 @@ In the following example we show how to visualize cross-validated scores for a c
     from yellowbrick.model_selection import CVScores
 
 
-    room = load_data("occupancy")
+    # Load the classification data set
+    data = load_data("occupancy")
 
+    # Specify the features of interest
     features = ["temperature", "relative humidity", "light", "C02", "humidity"]
 
-    # Extract the numpy arrays from the data frame
-    X = room[features].values
-    y = room.occupancy.values
+    # Extract the instances and target
+    X = data[features]
+    y = data.occupancy
 
     # Create a new figure and axes
     _, ax = plt.subplots()
@@ -70,13 +72,16 @@ In this next example we show how to visualize cross-validated scores for a regre
     from sklearn.model_selection import KFold
 
 
-    energy = load_data("energy")
+    # Load the regression data set
+    data = load_data("energy")
 
+    # Specify the features of interest and the target
     targets = ["heating load", "cooling load"]
-    features = [col for col in energy.columns if col not in targets]
+    features = [col for col in data.columns if col not in targets]
 
-    X = energy[features]
-    y = energy[targets[1]]
+    # Extract the instances and target
+    X = data[features]
+    y = data[targets[1]]
 
     # Create a new figure and axes
     _, ax = plt.subplots()

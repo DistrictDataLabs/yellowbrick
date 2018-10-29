@@ -75,6 +75,7 @@ Building a learning curve for a regression is straight forward and very similar.
     targets = ["heating load", "cooling load"]
     features = [col for col in data.columns if col not in targets]
 
+    # Extract the instances and target
     X = data[features]
     y = data[targets[0]]
 
