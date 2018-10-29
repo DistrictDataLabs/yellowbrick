@@ -20,9 +20,9 @@ In this example, we'll use the credit default data set from the UCI Machine Lear
             'jul_pay', 'aug_pay', 'sep_pay',
         ]
 
-    # Extract the numpy arrays from the data frame
-    X = data[features].as_matrix()
-    y = data.default.as_matrix()
+    # Extract the instances and target
+    X = data[features]
+    y = data.default
 
 Rank 1D
 -------

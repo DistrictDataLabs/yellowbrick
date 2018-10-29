@@ -69,7 +69,7 @@ this by assigning a color to each label and showing the labels in a legend.
         "temperature", "relative humidity", "light", "C02", "humidity"
     ]
 
-    # Extract the data from the data frame.
+    # Extract the instances and target
     X = data[features]
     y = data.occupancy
 
@@ -106,7 +106,18 @@ the ``f_classif`` score to find the 3 best features in our occupancy dataset.
         ("viz", Manifold(manifold='isomap', target='discrete')),
     ])
 
-    X, y = load_occupancy_data()
+    # Load the classification dataset
+    data = load_data("occupancy")
+
+    # Specify the features of interest
+    features = [
+        "temperature", "relative humidity", "light", "CO2", "humidity"
+    ]
+
+    # Extract the instances and target
+    X = data[features]
+    y = data.occupancy
+
     model.fit(X, y)
     model.named_steps['viz'].poof()
 
