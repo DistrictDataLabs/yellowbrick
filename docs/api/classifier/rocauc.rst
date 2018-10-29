@@ -20,9 +20,9 @@ This leads to another metric, area under the curve (AUC), which is a computation
     features = ["temperature", "relative humidity", "light", "C02", "humidity"]
     classes = ["unoccupied", "occupied"]
 
-    # Extract the numpy arrays from the data frame
-    X = data[features].values
-    y = data.occupancy.values
+    # Extract the instances and target
+    X = data[features]
+    y = data.occupancy
 
     # Create the train and test data
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2)
@@ -68,7 +68,7 @@ ROC curves are typically used in binary classification, and in fact the Scikit-L
     # Encode the non-numeric columns
     game.replace({'loss':-1, 'draw':0, 'win':1, 'x':2, 'o':3, 'b':4}, inplace=True)
 
-    # Extract the numpy arrays from the data frame
+    # Extract the instances and target
     X = game.iloc[:, game.columns != 'outcome']
     y = game['outcome']
 

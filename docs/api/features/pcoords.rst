@@ -18,6 +18,7 @@ Data scientists use this method to detect clusters of instances that have simila
     ]
     classes = ["unoccupied", "occupied"]
 
+    # Extract the instances and target
     X = data[features]
     y = data.occupancy
 
