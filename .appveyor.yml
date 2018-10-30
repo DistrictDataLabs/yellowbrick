@@ -26,35 +26,26 @@ environment:
         #   PYTHON_VERSION: "3.6.4"
         #   MINICONDA_VERSION: "4.4.10"
         #   PYTHON_ARCH: "32"
-
         - PYTHON: "C:\\Miniconda3-x64"
           PYTHON_VERSION: "3.6.4"
           MINICONDA_VERSION: "4.4.10"
           PYTHON_ARCH: "64"
-
-
 # Cancel pending jobs after first job failure
 matrix:
     fast_finish: true
-
 install:
     - "%PYTHON%\\python.exe -m pip install wheel"
     - "%PYTHON%\\python.exe -m pip install -r requirements.txt"
     - "%PYTHON%\\python.exe -m pip install -r tests/requirements.txt"
     - "%PYTHON%\\python.exe -m nltk.downloader popular"
-
 # No requirement to build any C libraries
 build: off
-
 test_script:
     - "%PYTHON%\\python.exe setup.py test"
-
 after_test:
     - "%PYTHON%\\python.exe setup.py bdist_wheel"
-
 artifacts:
     - path: dist\*
-
 cache:
     # Use the appveryor cache to avoid redownload of numpy and scipy wheels
     - '%APPDATA%\pip\Cache'
