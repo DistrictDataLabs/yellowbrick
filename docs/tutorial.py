@@ -109,3 +109,5 @@ if __name__ == '__main__':
 
     for clf, path in ESTIMATORS.items():
         visual_model_selection(X, y, clf(), path)
+
+#just for fun.       
