@@ -26,6 +26,7 @@ def rank2d(X, y, outpath, **kwargs):
     visualizer.transform(X)
 
     # Save to disk
+    plt.tight_layout()
     visualizer.poof(outpath=outpath)
 
 
