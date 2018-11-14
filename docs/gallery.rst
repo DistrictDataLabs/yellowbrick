@@ -227,6 +227,12 @@ Text Modeling Visualizers
     :alt: TSNE Projection of Documents
     :target: api/text/tsne.html#t-sne-corpus-visualization
 
+.. image:: api/text/images/dispersion_docs.png
+    :width: 200px
+    :height: 100px
+    :alt: Dispersion Plot
+    :target: api/text/dispersion.html#dispersion-plot
+
 Decision Boundaries Visualizer
 ------------------------------
 
