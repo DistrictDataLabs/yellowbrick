@@ -42,6 +42,7 @@ Classification Visualization
 - **Class Prediction Error**: shows error and support in classification
 - **Classification Report**: visual representation of precision, recall, and F1
 - **ROC/AUC Curves**: receiver operator characteristics and area under the curve
+- **Precision-Recall Curves**: precision vs recall for different probability thresholds
 - **Confusion Matrices**: visual description of class decision making
 - **Discrimination Threshold**: find a threshold that best separates binary classes
 
@@ -57,6 +58,7 @@ Clustering Visualization
 
 - **K-Elbow Plot**: select k using the elbow method and various metrics
 - **Silhouette Plot**: select k by visualizing silhouette coefficient values
+- **Intercluster Distance Maps**: show relative distance and size of clusters
 
 Model Selection Visualization
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -70,6 +72,11 @@ Text Visualization
 - **Term Frequency**: visualize the frequency distribution of terms in the corpus
 - **t-SNE Corpus Visualization**: use stochastic neighbor embedding to project documents
 - **Dispersion Plot**: visualize how key terms are dispersed throughout a corpus
+
+Target Visualization
+~~~~~~~~~~~~~~~~~~~~
+
+- **Feature Correlation**: visualize the correlation between the dependent variables and the target
 
 ... and more! Visualizers are being added all the time; be sure to check the examples_ (or even the develop_ branch) and feel free to contribute your ideas for new Visualizers!
 

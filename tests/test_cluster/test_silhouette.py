@@ -90,3 +90,12 @@ class SilhouetteVisualizerTests(VisualTestCase):
             self.assert_images_similar(visualizer)
         except Exception as e:
             self.fail("error during silhouette: {}".format(e))
+
+    @pytest.mark.skip(
+        reason="no negative silhouette example available yet"
+    )
+    def test_negative_silhouette_score(self):
+        """
+        Ensure negative silhouette scores are correctly displayed by the visualizer.
+        """
+        raise NotImplementedError("no negative silhouette example available")

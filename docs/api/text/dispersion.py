@@ -37,8 +37,8 @@ if __name__ == '__main__':
     corpus = load_corpus("../../../examples/data/hobbies")
 
     # Convert corpus into a list of all words from beginning to end
-    text = [word for doc in corpus.data for word in doc.split()]
-    
+    # text = [word for doc in corpus.data for word in doc.split()]
+    text = [doc.split() for doc in corpus.data]
     # Select target words to visualize 
     target_words = ['Game', 'player', 'score', 'oil', 'Man']
 

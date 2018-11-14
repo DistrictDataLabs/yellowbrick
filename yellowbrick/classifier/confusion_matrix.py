@@ -17,7 +17,6 @@ Visual confusion matrix for classifier scoring.
 ## Imports
 ##########################################################################
 
-import warnings
 import numpy as np
 
 from ..utils import div_safe
@@ -96,6 +95,9 @@ class ConfusionMatrix(ClassificationScoreVisualizer):
 
     Attributes
     ----------
+    score_ : float
+        Global accuracy score
+
     confusion_matrix_ : array, shape = [n_classes, n_classes]
         The numeric scores of the confusion matrix
 
@@ -134,7 +136,7 @@ class ConfusionMatrix(ClassificationScoreVisualizer):
         # Used to draw diagonal line for predicted class = true class
         self._edgecolors = []
 
-    def score(self, X, y, **kwargs):
+    def score(self, X, y):
         """
         Draws a confusion matrix based on the test data supplied by comparing
         predictions on instances X with the true values specified by the
@@ -147,18 +149,13 @@ class ConfusionMatrix(ClassificationScoreVisualizer):
 
         y : ndarray or Series of length n
             An array or series of target or class values
+
+        Returns
+        -------
+
+        score_ : float
+            Global accuracy score
         """
-        # Perform deprecation warnings for attributes to score
-        # TODO: remove this in v0.9
-        for param in ("percent", "sample_weight"):
-            if param in kwargs:
-                warnings.warn(PendingDeprecationWarning((
-                    "specifying '{}' in score is no longer supported, "
-                    "pass to constructor of the visualizer instead."
-                ).format(param)))
-
-                setattr(self, param, kwargs[param])
-
         # Create predictions from X (will raise not fitted error)
         y_pred = self.predict(X)
 
@@ -189,7 +186,12 @@ class ConfusionMatrix(ClassificationScoreVisualizer):
                 selected_class_counts.append(0)
         self.class_counts_ = np.array(selected_class_counts)
 
-        return self.draw()
+        self.draw()
+
+        # Retrieve and store the score attribute from the sklearn classifier
+        self.score_ = self.estimator.score(X, y)
+
+        return self.score_
 
     def draw(self):
         """
@@ -203,7 +205,7 @@ class ConfusionMatrix(ClassificationScoreVisualizer):
         # predicted as a percent of true in each class.
         if self.percent == True:
             # Note: div_safe function returns 0 instead of NAN.
-            cm_display = div_safe(self.confusion_matrix_, self.class_counts_)
+            cm_display = div_safe(self.confusion_matrix_, self.class_counts_.reshape(-1,1))
             cm_display = np.round(cm_display* 100, decimals=0)
 
         # Y axis should be sorted top to bottom in pcolormesh

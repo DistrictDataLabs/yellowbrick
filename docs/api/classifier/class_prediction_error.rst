@@ -23,7 +23,7 @@ The class prediction error chart provides a way to quickly understand how good y
 .. code:: python
 
     from sklearn.ensemble import RandomForestClassifier
-    
+
     from yellowbrick.classifier import ClassPredictionError
 
     # Instantiate the classification model and visualizer
@@ -45,7 +45,7 @@ The class prediction error chart provides a way to quickly understand how good y
 API Reference
 -------------
 
-.. automodule:: yellowbrick.classifier.class_balance
+.. automodule:: yellowbrick.classifier.class_prediction_error
     :members: ClassPredictionError
     :undoc-members:
     :show-inheritance:

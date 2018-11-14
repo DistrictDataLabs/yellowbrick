@@ -50,4 +50,4 @@ class FreqDistTests(VisualTestCase, DatasetMixin):
         visualizer.fit(docs)
 
         visualizer.poof()
-        self.assert_images_similar(visualizer)
+        self.assert_images_similar(visualizer, tol=1)
