@@ -3,6 +3,25 @@
 Changelog
 =========
 
+Version 1.0
+-----------
+* Tag: v1.0_
+* Deployed: 
+* Contributors: 
+
+Major Changes:
+    - 
+    
+Minor Changes:
+    - 
+    
+Compatibility Notes:
+    - This version provides support for matplotlib 3.0 and drops support for <matplotlib 2.0 
+    - This version drops support for Python 2
+
+.. _v1.0: https://github.com/DistrictDataLabs/yellowbrick/releases/tag/v1.0
+
+
 Version 0.9
 -----------
 * Tag: v0.9_
