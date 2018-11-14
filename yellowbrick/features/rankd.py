@@ -468,7 +468,7 @@ class Rank2D(RankDBase):
         'pearson': lambda X: np.corrcoef(X.transpose()),
         'covariance': lambda X: np.cov(X.transpose()),
         'spearman': lambda X: spearmanr(X, axis=0)[0],
-        'kendalltau': lambda X, y: kendalltau(X)
+        'kendalltau': lambda X: kendalltau(X)
     }
 
     def __init__(self, ax=None, algorithm='pearson', features=None,
