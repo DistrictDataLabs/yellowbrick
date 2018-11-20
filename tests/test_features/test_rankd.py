@@ -25,6 +25,7 @@ from tests.base import VisualTestCase
 from tests.dataset import DatasetMixin, Dataset
 
 from yellowbrick.features.rankd import *
+from yellowbrick.features.rankd import kendalltau
 from sklearn.datasets import make_classification
 
 try:
@@ -44,8 +45,15 @@ def dataset(request):
     )
 
     request.cls.dataset = Dataset(X, y)
-
-
+    
+##########################################################################
+## Kendall-Tau Tests
+##########################################################################
+    
+def test_kendalltau():
+    corr = kendalltau(X)
+    self.assertEqual(corr.shape[0], corr.shape[1])
+    
 ##########################################################################
 ## Rank1D Base Tests
 ##########################################################################
