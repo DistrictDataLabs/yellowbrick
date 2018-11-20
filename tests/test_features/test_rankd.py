@@ -51,7 +51,7 @@ def dataset(request):
 ##########################################################################
     
 def test_kendalltau():
-    corr = kendalltau(X)
+    corr = kendalltau(self.dataset.X)
     self.assertEqual(corr.shape[0], corr.shape[1])
     
 ##########################################################################
