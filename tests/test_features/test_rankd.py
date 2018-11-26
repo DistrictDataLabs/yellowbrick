@@ -20,6 +20,7 @@ Test the Rankd feature analysis visualizers
 import sys
 import six
 import pytest
+import numpy as np
 
 from tests.base import VisualTestCase
 from tests.dataset import DatasetMixin, Dataset
@@ -49,11 +50,28 @@ def dataset(request):
 ##########################################################################
 ## Kendall-Tau Tests
 ##########################################################################
+
+@pytest.mark.usefixtures("dataset")
+class TestKendallTau(VisualTestCase, DatasetMixin): 
+    """
+    Test the Kendall-Tau correlation
+    """
     
-def test_kendalltau():
-    corr = kendalltau(self.dataset.X)
-    self.assertEqual(corr.shape[0], corr.shape[1])
+    def test_kendalltau_shape():
+        corr = kendalltau(self.dataset.xX)
+        self.assertEqual(corr.shape[0], corr.shape[1])
+
     
+    def test_kendalltau_1D():
+        with pytest.raises(IndexError, match="tuple index out of range"):
+            X = 0.1 * np.arange(10)
+            corr = kendalltau(X)
+
+    def test_kendalltau_empty():
+        with pytest.raises(TypeError, match="data type not understood"):
+            X = np.empty([2,3])
+            corr = kendalltau(X)
+        
 ##########################################################################
 ## Rank1D Base Tests
 ##########################################################################
