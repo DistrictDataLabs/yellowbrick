@@ -58,7 +58,7 @@ class TestKendallTau(VisualTestCase, DatasetMixin):
     """
     
     def test_kendalltau_shape(self):
-        corr = kendalltau(self.dataset.xX)
+        corr = kendalltau(self.dataset.X)
         self.assertEqual(corr.shape[0], corr.shape[1])
 
     
