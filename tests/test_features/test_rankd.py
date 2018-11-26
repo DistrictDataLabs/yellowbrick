@@ -57,17 +57,17 @@ class TestKendallTau(VisualTestCase, DatasetMixin):
     Test the Kendall-Tau correlation
     """
     
-    def test_kendalltau_shape():
+    def test_kendalltau_shape(self):
         corr = kendalltau(self.dataset.xX)
         self.assertEqual(corr.shape[0], corr.shape[1])
 
     
-    def test_kendalltau_1D():
+    def test_kendalltau_1D(self):
         with pytest.raises(IndexError, match="tuple index out of range"):
             X = 0.1 * np.arange(10)
             corr = kendalltau(X)
 
-    def test_kendalltau_empty():
+    def test_kendalltau_empty(self):
         with pytest.raises(TypeError, match="data type not understood"):
             X = np.empty([2,3])
             corr = kendalltau(X)
