@@ -27,7 +27,7 @@ In this example, we'll use the credit default data set from the UCI Machine Lear
 Rank 1D
 -------
 
-A one dimensional ranking of features utilizes a ranking algorithm that takes into account only a single feature at a time (e.g. histogram analysis). By default we utilize the Shapiro-Wilk algorithm to assess the normality of the distribution of instances with respect to the feature. A barplot is then drawn showing the relative ranks of each feature.
+A one-dimensional ranking of features utilizes a ranking algorithm that takes into account only a single feature at a time (e.g. histogram analysis). By default we utilize the Shapiro-Wilk algorithm to assess the normality of the distribution of instances with respect to the feature. A barplot is then drawn showing the relative ranks of each feature.
 
 .. code:: python
 
@@ -43,29 +43,12 @@ A one dimensional ranking of features utilizes a ranking algorithm that takes in
 
 .. image:: images/rank1d_shapiro.png
 
-
 Rank 2D
 -------
 
-A two dimensional ranking of features utilizes a ranking algorithm that takes into account pairs of features at a time (e.g. joint plot analysis). The pairs of features are then ranked by score and visualized using the lower left triangle of a feature co-occurence matrix.
+A two-dimensional ranking of features utilizes a ranking algorithm that takes into account pairs of features at a time (e.g. joint plot analysis). The pairs of features are then ranked by score and visualized using the lower left triangle of a feature co-occurence matrix.
 
-The default ranking algorithm is covariance, which attempts to compute the mean value of the product of deviations of variates from their respective means. Covariance loosely attempts to detect a colinear relationship between features.
-
-.. code:: python
-
-    from yellowbrick.features import Rank2D
-
-    # Instantiate the visualizer with the Covariance ranking algorithm
-    visualizer = Rank2D(features=features, algorithm='covariance')
-
-    visualizer.fit(X, y)                # Fit the data to the visualizer
-    visualizer.transform(X)             # Transform the data
-    visualizer.poof()                   # Draw/show/poof the data
-
-
-.. image:: images/rank2d_covariance.png
-
-Alternatively, we can utilize a linear correlation algorithm such as a Pearson score to similarly detect colinear relationships. Compare the output from Pearson below to the covariance ranking above.
+By default, the ``Rank2D`` visualizer utilizes the Pearson correlation score to detect colinear relationships. 
 
 .. code:: python
 
@@ -79,6 +62,21 @@ Alternatively, we can utilize a linear correlation algorithm such as a Pearson s
 
 .. image:: images/rank2d_pearson.png
 
+Alternatively, we can utilize the covariance ranking algorithm, which attempts to compute the mean value of the product of deviations of variates from their respective means. Covariance loosely attempts to detect a colinear relationship between features. Compare the output from Pearson above to the covariance ranking below.
+
+.. code:: python
+
+    from yellowbrick.features import Rank2D
+
+    # Instantiate the visualizer with the covariance ranking algorithm
+    visualizer = Rank2D(features=features, algorithm='covariance')
+
+    visualizer.fit(X, y)                # Fit the data to the visualizer
+    visualizer.transform(X)             # Transform the data
+    visualizer.poof()                   # Draw/show/poof the data
+
+
+.. image:: images/rank2d_covariance.png
 
 API Reference
 -------------
