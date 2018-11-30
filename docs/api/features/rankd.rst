@@ -52,6 +52,8 @@ By default, the ``Rank2D`` visualizer utilizes the Pearson correlation score to 
 
 .. code:: python
 
+    from yellowbrick.features import Rank2D
+    
     # Instantiate the visualizer with the Pearson ranking algorithm
     visualizer = Rank2D(features=features, algorithm='pearson')
 
