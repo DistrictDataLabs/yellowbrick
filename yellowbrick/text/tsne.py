@@ -285,7 +285,8 @@ class TSNEVisualizer(TextVisualizer):
 
         # Store the classes we observed in y
         if y is not None:
-            self.classes_ = np.unique(y)
+            indexes = np.unique(y, return_index=True)[1]
+            self.classes_ = [y[index] for index in sorted(indexes)]
         elif y is None and self.labels is not None:
             self.classes_ = np.array([self.labels[0]])
         else:
