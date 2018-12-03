@@ -1,4 +1,4 @@
-# yellowbrick.text.tsne
+# yellowbrick.text.umap
 # Implements UMAP visualizations of documents in 2D space.
 #
 # Author:   John Healy <jchealy@gmail.com>
@@ -9,7 +9,7 @@
 # Copyright (C) 2016 Bengfort.com
 # For license information, see LICENSE.txt
 #
-# ID: tsne.py [6aa9198] benjamin@bengfort.com $
+
 
 """
 Implements UMAP visualizations of documents in 2D space.
@@ -49,15 +49,17 @@ def umap(X, y=None, ax=None, classes=None,
     and can be applied directly to sparse matrices eliminating the need to run a truncatedSVD
     as a pre-processing step.
 
-    TODO: We should add a distance function here.  Perhaps default it with cosine for now.
-    TODO: Update to Hellinger at next release
+    The current default for UMAP is Euclidean distance.  Hellinger distance would be a more appropriate distance
+    function to use with CountVectorize data.  That will be released in the next version of UMAP.
+    In the meantime cosine distance is likely a better text default that Euclidean and can be set using
+    the keyword arg metric='cosine'.
 
     Parameters
     ----------
 
     X : ndarray or DataFrame of shape n x m
         A matrix of n instances with m features representing the corpus of
-        vectorized documents to visualize with tsne.
+        vectorized documents to visualize with umap.
 
     y : ndarray or Series of length n
         An optional array or series of target or class values for instances.
@@ -83,7 +85,7 @@ def umap(X, y=None, ax=None, classes=None,
         transparent. This property makes densely clustered points more visible.
 
     kwargs : dict
-        Pass any additional keyword arguments to the TSNE transformer.
+        Pass any additional keyword arguments to the UMAP transformer.
 
     Returns
     -------
@@ -104,7 +106,7 @@ def umap(X, y=None, ax=None, classes=None,
 
 
 ##########################################################################
-## TSNEVisualizer
+## UMAPVisualizer
 ##########################################################################
 
 class UMAPVisualizer(TextVisualizer):
@@ -130,6 +132,11 @@ class UMAPVisualizer(TextVisualizer):
     neighbor embedding with more information about similarity, and can allow
     better interpretation of both clusters and classes.
 
+    The current default for UMAP is Euclidean distance.  Hellinger distance would be a more appropriate distance
+    function to use with CountVectorize data.  That will be released in the next version of UMAP.
+    In the meantime cosine distance is likely a better text default that Euclidean and can be set using
+    the keyword argument metric='cosine'.
+
     For more, see https://github.com/lmcinnes/umap
 
     Parameters
@@ -153,14 +160,14 @@ class UMAPVisualizer(TextVisualizer):
         If RandomState instance, random_state is the random number generator;
         If None, the random number generator is the RandomState instance used
         by np.random. The random state is applied to the preliminary
-        decomposition as well as tSNE.
+        decomposition as well as UMAP.
 
     alpha : float, default: 0.7
         Specify a transparency where 1 is completely opaque and 0 is completely
         transparent. This property makes densely clustered points more visible.
 
     kwargs : dict
-        Pass any additional keyword arguments to the TSNE transformer.
+        Pass any additional keyword arguments to the UMAP transformer.
     """
 
     # NOTE: cannot be np.nan
