@@ -20,7 +20,7 @@ Tests for the UMAP visual corpus embedding mechanism.
 import six
 import pytest
 
-from yellowbrick.text.umap import *
+from yellowbrick.text.umap_vis import *
 from tests.base import VisualTestCase
 from tests.dataset import DatasetMixin
 from yellowbrick.exceptions import YellowbrickValueError
