@@ -4,6 +4,7 @@ scipy>=1.0.0
 scikit-learn>=0.20
 numpy>=1.13.0
 cycler>=0.10.0
+umap-learn>=0.3
 
 ## Testing Requirements (uncomment for development)
 #pytest>=3.4.1
@@ -20,6 +21,7 @@ cycler>=0.10.0
 ## Optional Testing Dependencies (uncomment for development)
 #nltk>=3.2
 #pandas>=0.20
+
 
 ## Documentation (uncomment to build documentation)
 #Sphinx>=1.7.5
