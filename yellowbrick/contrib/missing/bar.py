@@ -95,6 +95,9 @@ class MissingValuesBar(MissingDataVisualizer):
 
         self.colors = color_palette(kwargs.pop('colors', None), n_colors)
 
+        # set later
+        self.nan_col_counts = []
+
     def get_nan_col_counts(self, **kwargs):
         # where matrix contains strings, handle them
         if np.issubdtype(self.X.dtype, np.string_) or np.issubdtype(self.X.dtype, np.unicode_):
@@ -106,20 +109,19 @@ class MissingValuesBar(MissingDataVisualizer):
             nan_matrix = self.X.astype(np.float)
 
         if self.y is None:
-            nan_col_counts = [np.count_nonzero(np.isnan(col)) for col in nan_matrix.T]
-            return nan_col_counts
+            self.nan_col_counts = [np.count_nonzero(np.isnan(col)) for col in nan_matrix.T]
+            return self.nan_col_counts
 
         else:
             # add in counting of np.nan per target y by column
-            nan_counts = []
             for target_value in np.unique(self.y):
 
                 indices = np.argwhere(self.y == target_value)
                 target_matrix = nan_matrix[indices.flatten()]
-                nan_col_counts = np.array([np.count_nonzero(np.isnan(col)) for col in target_matrix.T])
-                nan_counts.append((target_value, nan_col_counts))
+                col_counts = np.array([np.count_nonzero(np.isnan(col)) for col in target_matrix.T])
+                self.nan_col_counts.append((target_value, col_counts))
 
-            return nan_counts
+            return self.nan_col_counts
 
     def draw(self, X, y, **kwargs):
         """Called from the fit method, this method generated a horizontal bar plot.

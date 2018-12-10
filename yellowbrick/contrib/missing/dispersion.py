@@ -89,6 +89,9 @@ class MissingValuesDispersion(MissingDataVisualizer):
 
         self.colors = color_palette(kwargs.pop('colors', None), n_colors)
 
+        # properties set later
+        self.nan_locs = []
+
 
     def get_nan_locs(self, **kwargs):
         """Gets the locations of nans in feature data and returns
@@ -105,14 +108,14 @@ class MissingValuesDispersion(MissingDataVisualizer):
         if self.y is None:
             return np.argwhere(np.isnan(nan_matrix))
         else:
-            nan_locs = []
+            self.nan_locs = []
             for target_value in np.unique(self.y):
                 indices = np.argwhere(self.y == target_value)
                 target_matrix = nan_matrix[indices.flatten()]
                 nan_target_locs = np.argwhere(np.isnan(target_matrix))
                 nan_locs.append((target_value, nan_target_locs))
 
-            return nan_locs
+            return self.nan_locs
 
     def draw(self, X, y, **kwargs):
         """Called from the fit method, this method creates a scatter plot that

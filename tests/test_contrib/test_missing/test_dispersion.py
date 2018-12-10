@@ -42,6 +42,19 @@ class MissingValuesDispersionTestCase(VisualTestCase):
             self.tol = 5.0
 
     @pytest.mark.skipif(pd is None, reason="test requires pandas")
+    def test_viz_properties(self):
+        """
+        Integration test of visualizer with pandas
+        """
+
+        X_ = pd.DataFrame(self.missingdata.X)
+        features = [str(n) for n in range(20)]
+        viz = MissingValuesDispersion(features=features)
+
+        assert viz.nan_locs == []
+
+
+    @pytest.mark.skipif(pd is None, reason="test requires pandas")
     def test_missingvaluesdispersion_with_pandas(self):
         """
         Integration test of visualizer with pandas

@@ -44,6 +44,20 @@ class MissingBarVisualizerTestCase(VisualTestCase):
         if os.name == 'nt': # Windows
             self.tol = 0.5
 
+
+    @pytest.mark.skipif(pd is None, reason="test requires pandas")
+    def test_viz_properties(self):
+        """
+        Integration test of visualizer with pandas
+        """
+
+        X_ = pd.DataFrame(self.missingdata.X)
+
+        features = [str(n) for n in range(20)]
+        viz = MissingValuesBar(features=features)
+        assert viz.nan_col_counts == []
+
+
     @pytest.mark.skipif(pd is None, reason="test requires pandas")
     def test_missingvaluesbar_pandas(self):
         """
