@@ -97,14 +97,9 @@ class MissingValuesBar(MissingDataVisualizer):
         self.nan_col_counts = []
 
     def get_nan_col_counts(self, X, y, **kwargs):
-        # where matrix contains strings, handle them
-        if np.issubdtype(X.dtype, np.string_) or np.issubdtype(X.dtype, np.unicode_):
-            mask = np.where( X == '' )
-            nan_matrix = np.zeros(X.shape)
-            nan_matrix[mask] = np.nan
-
-        else:
-            nan_matrix = X.astype(np.float)
+        """Calculate the number of nan values on a per column basis.
+        """
+        nan_matrix = self.create_nan_matrix(X)
 
         if y is None:
             self.nan_col_counts = [np.count_nonzero(np.isnan(col)) for col in nan_matrix.T]

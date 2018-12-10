@@ -97,13 +97,7 @@ class MissingValuesDispersion(MissingDataVisualizer):
         """Gets the locations of nans in feature data and returns
         the coordinates in the matrix
         """
-        if np.issubdtype(X.dtype, np.string_) or np.issubdtype(X.dtype, np.unicode_):
-            mask = np.where( X == '' )
-            nan_matrix = np.zeros(X.shape)
-            nan_matrix[mask] = np.nan
-
-        else:
-            nan_matrix = X.astype(float)
+        nan_matrix = self.create_nan_matrix(X)
 
         if y is None:
             return np.argwhere(np.isnan(nan_matrix))

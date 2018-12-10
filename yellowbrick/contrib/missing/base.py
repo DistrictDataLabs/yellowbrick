@@ -65,3 +65,18 @@ class MissingDataVisualizer(DataVisualizer):
         if self.features_ is None:
             return ["Feature {}".format(str(n)) for n in np.arange(len(self.features_))]
         return self.features_
+
+    def create_nan_matrix(self, X):
+        """Given a numpy matrix X, creates a new matrix that contains nan values
+        that can be of further use in missing values visualizers
+        """
+        # where matrix contains strings, handle them
+        if np.issubdtype(X.dtype, np.string_) or np.issubdtype(X.dtype, np.unicode_):
+            mask = np.where( X == '' )
+            nan_matrix = np.zeros(X.shape)
+            nan_matrix[mask] = np.nan
+
+        else:
+            nan_matrix = X.astype(np.float)
+
+        return nan_matrix
