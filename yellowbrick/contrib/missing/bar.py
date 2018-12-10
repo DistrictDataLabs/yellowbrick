@@ -96,25 +96,25 @@ class MissingValuesBar(MissingDataVisualizer):
         # set later
         self.nan_col_counts = []
 
-    def get_nan_col_counts(self, **kwargs):
+    def get_nan_col_counts(self, X, y, **kwargs):
         # where matrix contains strings, handle them
-        if np.issubdtype(self.X.dtype, np.string_) or np.issubdtype(self.X.dtype, np.unicode_):
-            mask = np.where( self.X == '' )
-            nan_matrix = np.zeros(self.X.shape)
+        if np.issubdtype(X.dtype, np.string_) or np.issubdtype(X.dtype, np.unicode_):
+            mask = np.where( X == '' )
+            nan_matrix = np.zeros(X.shape)
             nan_matrix[mask] = np.nan
 
         else:
-            nan_matrix = self.X.astype(np.float)
+            nan_matrix = X.astype(np.float)
 
-        if self.y is None:
+        if y is None:
             self.nan_col_counts = [np.count_nonzero(np.isnan(col)) for col in nan_matrix.T]
             return self.nan_col_counts
 
         else:
             # add in counting of np.nan per target y by column
-            for target_value in np.unique(self.y):
+            for target_value in np.unique(y):
 
-                indices = np.argwhere(self.y == target_value)
+                indices = np.argwhere(y == target_value)
                 target_matrix = nan_matrix[indices.flatten()]
                 col_counts = np.array([np.count_nonzero(np.isnan(col)) for col in target_matrix.T])
                 self.nan_col_counts.append((target_value, col_counts))
@@ -128,7 +128,7 @@ class MissingValuesBar(MissingDataVisualizer):
         If y is not none, then draws a stacked horizontal bar chart for each nan count per
         target values.
         """
-        nan_col_counts = self.get_nan_col_counts()
+        nan_col_counts = self.get_nan_col_counts(X, y)
 
         # the x locations for the groups
         self.ind = np.arange(len(self.features_))

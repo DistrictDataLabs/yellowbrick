@@ -52,15 +52,13 @@ class MissingDataVisualizer(DataVisualizer):
             Returns the instance of the transformer/visualizer
         """
         if is_dataframe(X):
-            self.X = X.values
+            X_ = X.values
             if self.features_ is None:
                 self.features_ = X.columns
         else:
-            self.X = X
+            X_ = X
 
-        self.y = y
-
-        super(MissingDataVisualizer, self).fit(X, y, **kwargs)
+        return super(MissingDataVisualizer, self).fit(X_, y, **kwargs)
 
 
     def get_feature_names(self):

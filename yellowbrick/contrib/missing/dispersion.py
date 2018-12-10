@@ -93,24 +93,24 @@ class MissingValuesDispersion(MissingDataVisualizer):
         self.nan_locs = []
 
 
-    def get_nan_locs(self, **kwargs):
+    def get_nan_locs(self, X, y, **kwargs):
         """Gets the locations of nans in feature data and returns
         the coordinates in the matrix
         """
-        if np.issubdtype(self.X.dtype, np.string_) or np.issubdtype(self.X.dtype, np.unicode_):
-            mask = np.where( self.X == '' )
-            nan_matrix = np.zeros(self.X.shape)
+        if np.issubdtype(X.dtype, np.string_) or np.issubdtype(X.dtype, np.unicode_):
+            mask = np.where( X == '' )
+            nan_matrix = np.zeros(X.shape)
             nan_matrix[mask] = np.nan
 
         else:
-            nan_matrix = self.X.astype(float)
+            nan_matrix = X.astype(float)
 
-        if self.y is None:
+        if y is None:
             return np.argwhere(np.isnan(nan_matrix))
         else:
             self.nan_locs = []
-            for target_value in np.unique(self.y):
-                indices = np.argwhere(self.y == target_value)
+            for target_value in np.unique(y):
+                indices = np.argwhere(y == target_value)
                 target_matrix = nan_matrix[indices.flatten()]
                 nan_target_locs = np.argwhere(np.isnan(target_matrix))
                 self.nan_locs.append((target_value, nan_target_locs))
@@ -125,7 +125,7 @@ class MissingValuesDispersion(MissingDataVisualizer):
         If y is not None, then it draws a scatter plot where each class is in a
         different color.
         """
-        nan_locs = self.get_nan_locs()
+        nan_locs = self.get_nan_locs(X, y)
         if y is None:
             x_, y_ = list(zip(*nan_locs))
             self.ax.scatter(x_, y_, alpha=self.alpha, marker=self.marker, label=None)
