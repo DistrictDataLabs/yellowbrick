@@ -197,11 +197,8 @@ def missing_bar(X, y=None, ax=None, classes=None, width=0.5, color='black', **kw
 
     Parameters
     ----------
-    alpha : float, default: 0.5
-        A value for bending elments with the background.
-
-    marker : matplotlib marker, default: |
-        The marker used for each element coordinate in the plot
+    width : float, default: 0.5
+        The width of the bars in the visualization.
 
     color : string, default: black
         The color for drawing the bar chart when the y targets are not passed to

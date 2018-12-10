@@ -50,9 +50,6 @@ class MissingBarVisualizerTestCase(VisualTestCase):
         """
         Integration test of visualizer with pandas
         """
-
-        X_ = pd.DataFrame(self.missingdata.X)
-
         features = [str(n) for n in range(20)]
         viz = MissingValuesBar(features=features)
         assert viz.nan_col_counts == []

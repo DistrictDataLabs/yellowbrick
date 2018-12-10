@@ -47,7 +47,6 @@ class MissingValuesDispersionTestCase(VisualTestCase):
         Integration test of visualizer with pandas
         """
 
-        X_ = pd.DataFrame(self.missingdata.X)
         features = [str(n) for n in range(20)]
         viz = MissingValuesDispersion(features=features)
 

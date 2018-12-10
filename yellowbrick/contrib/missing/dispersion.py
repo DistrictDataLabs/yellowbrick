@@ -113,7 +113,7 @@ class MissingValuesDispersion(MissingDataVisualizer):
                 indices = np.argwhere(self.y == target_value)
                 target_matrix = nan_matrix[indices.flatten()]
                 nan_target_locs = np.argwhere(np.isnan(target_matrix))
-                nan_locs.append((target_value, nan_target_locs))
+                self.nan_locs.append((target_value, nan_target_locs))
 
             return self.nan_locs
 
