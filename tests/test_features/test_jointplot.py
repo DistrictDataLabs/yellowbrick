@@ -24,7 +24,6 @@ execute, otherwise most will skip and only the warning will be tested.
 import sys
 import pytest
 import warnings
-import unittest
 import numpy as np
 import matplotlib as mpl
 import matplotlib.pyplot as plt
@@ -53,7 +52,7 @@ class JointPlotTests(VisualTestCase, DatasetMixin):
     def tearDown(self):
         self.concrete = None
 
-    @unittest.skipIf(MPL_VERS_MAJ > 1, "requires matplotlib 1.5.3 or less")
+    @pytest.mark.skipif(MPL_VERS_MAJ > 1, reason="requires matplotlib 1.5.3 or less")
     def test_warning(self):
         """
         Ensure that the jointplot warns if mpl version is < 2.0.0
@@ -78,7 +77,8 @@ class JointPlotTests(VisualTestCase, DatasetMixin):
     @pytest.mark.xfail(
         sys.platform == 'win32', reason="images not close on windows"
     )
-    @unittest.skipIf(MPL_VERS_MAJ < 2, "requires matplotlib 2.0.0 or greater")
+    @pytest.mark.skipif(MPL_VERS_MAJ < 2, reason="requires matplotlib 2.0.0 or greater")
+    @pytest.mark.filterwarnings("ignore:internal gelsd driver")
     def test_jointplot_has_no_errors(self):
         """
         Assert no errors occur during jointplot visualizer integration
@@ -88,14 +88,13 @@ class JointPlotTests(VisualTestCase, DatasetMixin):
 
         visualizer = JointPlotVisualizer(ax=ax)
         visualizer.fit(self.X, self.y)
-        visualizer.poof()
 
-        self.assert_images_similar(visualizer)
+        self.assert_images_similar(visualizer, tol=10)
 
     @pytest.mark.xfail(
         sys.platform == 'win32', reason="images not close on windows"
     )
-    @unittest.skipIf(MPL_VERS_MAJ < 2, "requires matplotlib 2.0.0 or greater")
+    @pytest.mark.skipif(MPL_VERS_MAJ < 2, reason="requires matplotlib 2.0.0 or greater")
     def test_jointplot_integrated_has_no_errors(self):
         """
         Test jointplot on the concrete data set
@@ -114,12 +113,11 @@ class JointPlotTests(VisualTestCase, DatasetMixin):
         visualizer = JointPlotVisualizer(
             feature=feature, target=target, joint_plot="hex", ax=ax)
         visualizer.fit(X, y)
-        visualizer.poof()
 
-        self.assert_images_similar(visualizer)
+        self.assert_images_similar(visualizer, tol=15)
 
 
-    @unittest.skipIf(MPL_VERS_MAJ < 2, "requires matplotlib 2.0.0 or greater")
+    @pytest.mark.skipif(MPL_VERS_MAJ < 2, reason="requires matplotlib 2.0.0 or greater")
     def test_jointplot_no_matplotlib2_warning(self):
         """
         Assert no UserWarning occurs if matplotlib major version >= 2
@@ -129,7 +127,7 @@ class JointPlotTests(VisualTestCase, DatasetMixin):
             warnings.filterwarnings("always", category=UserWarning)
             visualizer = JointPlotVisualizer()
             visualizer.fit(self.X, self.y)
-            visualizer.poof()
+            visualizer.finalize()
 
             # Filter out user warnings not related to matplotlib version
             ver_warn_msg = "requires matplotlib major version 2 or greater"

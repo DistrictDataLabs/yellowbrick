@@ -19,6 +19,7 @@ Global definitions for Yellowbrick PyTest
 
 import os
 
+from pytest_flakes import FlakesItem
 
 ##########################################################################
 ## PyTest Hooks
@@ -37,7 +38,7 @@ def pytest_itemcollected(item):
     """
 
     # Ignore Session and PyFlake tests that are generated automatically
-    if not hasattr(item.parent, 'obj'):
+    if not hasattr(item.parent, 'obj') or isinstance(item, FlakesItem):
         return
 
     # Collect test objects to inspect

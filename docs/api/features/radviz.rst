@@ -20,7 +20,7 @@ picture of your data. RadViz will raise a DataWarning to inform you of the
 percent missing.
 
 If you do receive this warning, you may want to look at imputation strategies.
-A good starting place is `scikit-learn Imputer. <http://scikit-learn.org/stable/modules/generated/sklearn.preprocessing.Imputer.html>`_
+A good starting place is the `scikit-learn Imputer. <http://scikit-learn.org/stable/modules/generated/sklearn.impute.SimpleImputer.html>`_
 
 .. code:: python
 
@@ -31,9 +31,9 @@ A good starting place is `scikit-learn Imputer. <http://scikit-learn.org/stable/
     features = ["temperature", "relative humidity", "light", "C02", "humidity"]
     classes = ["unoccupied", "occupied"]
 
-    # Extract the numpy arrays from the data frame
-    X = data[features].as_matrix()
-    y = data.occupancy.as_matrix()
+    # Extract the instances and target
+    X = data[features]
+    y = data.occupancy
 
 .. code:: python
 

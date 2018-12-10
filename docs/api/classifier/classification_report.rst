@@ -18,9 +18,9 @@ The classification report visualizer displays the precision, recall, F1, and sup
     ]
     classes = ["unoccupied", "occupied"]
 
-    # Extract the numpy arrays from the data frame
-    X = data[features].as_matrix()
-    y = data.occupancy.as_matrix()
+    # Extract the instances and target
+    X = data[features]
+    y = data.occupancy
 
     # Create the train and test data
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2)

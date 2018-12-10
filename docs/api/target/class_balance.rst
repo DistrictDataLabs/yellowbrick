@@ -14,6 +14,8 @@ There are several techniques for dealing with class imbalance such as stratified
 
     # Load the classification data set
     data = load_game()
+
+    # Specify the target
     y = data["outcome"]
 
     visualizer = ClassBalance(labels=["draw", "loss", "win"])
@@ -33,11 +35,17 @@ The ``ClassBalance`` visualizer has a "compare" mode, where the train and test d
 
 .. code:: python
 
-    data = load_occupancy
+    from sklearn.model_selection import train_test_split
+    from yellowbrick.model_selection import ClassBalance
 
+    # Load the classification data set
+    data = load_data('occupancy')
+
+    # Specify the features of interest and the target
     features = ["temperature", "relative_humidity", "light", "C02", "humidity"]
-    classes = ['unoccupied', 'occupied']
+    classes = ["unoccupied", "occupied"]
 
+    # Extract the instances and target
     X = data[features]
     y = data["occupancy"]
 
