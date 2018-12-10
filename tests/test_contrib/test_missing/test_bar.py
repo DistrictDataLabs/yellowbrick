@@ -52,7 +52,7 @@ class MissingBarVisualizerTestCase(VisualTestCase):
         """
         features = [str(n) for n in range(20)]
         viz = MissingValuesBar(features=features)
-        assert viz.nan_col_counts == []
+        assert viz.nan_col_counts_ == []
 
 
     @pytest.mark.skipif(pd is None, reason="test requires pandas")

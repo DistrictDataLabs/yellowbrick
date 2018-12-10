@@ -50,7 +50,7 @@ class MissingValuesDispersionTestCase(VisualTestCase):
         features = [str(n) for n in range(20)]
         viz = MissingValuesDispersion(features=features)
 
-        assert viz.nan_locs == []
+        assert viz.nan_locs_ == []
 
 
     @pytest.mark.skipif(pd is None, reason="test requires pandas")
