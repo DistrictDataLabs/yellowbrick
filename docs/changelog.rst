@@ -6,17 +6,20 @@ Changelog
 Version 1.0
 -----------
 * Tag: v1.0_
-* Deployed: 
-* Contributors: 
+* Deployed: Not yet deployed
+* Contributors: Benjamin Bengfort, Rebecca Bilbro, Nathan Danielson, Francois Dion, Kristen McIntyre, Larry Gray, Prema Roman
 
 Major Changes:
-    - 
-    
+    - Add support for matplotlib 3.0.1 or greater.
+    - ``UMAPVisualizer`` as an alternative manifold to TSNE for corpus visualization that is fast enough to not require preprocessing PCA or SVD decomposition and preserves higher order similarities and distances.
+
 Minor Changes:
-    - 
-    
+    - Updated Rank2D tests to include Kendall-Tau metric.
+    - Added code review checklist and conventions to the documentation and expanded the contributing docs.
+    - Added polish to missing value visualizers code, tests, and documentation.
+
 Compatibility Notes:
-    - This version provides support for matplotlib 3.0 and drops support for <matplotlib 2.0 
+    - This version provides support for matplotlib 3.0.1 or greater and drops support for matplotlib versions less than 2.0.
     - This version drops support for Python 2
 
 .. _v1.0: https://github.com/DistrictDataLabs/yellowbrick/releases/tag/v1.0
