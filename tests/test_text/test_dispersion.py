@@ -24,12 +24,28 @@ from yellowbrick.exceptions import YellowbrickValueError
 from yellowbrick.text.dispersion import *
 from tests.dataset import DatasetMixin
 from tests.base import VisualTestCase
+import matplotlib.pyplot as plt
 
 ##########################################################################
 ## DispersionPlot Tests
 ##########################################################################
 
 class DispersionPlotTests(VisualTestCase, DatasetMixin):
+
+    def test_quick_method(self):
+        """
+        Assert no errors occur when using the qucik method
+        """
+        _, ax = plt.subplots()
+        corpus = self.load_data('hobbies')
+
+        text = [doc.split() for doc in corpus.data]
+        target_words = ['Game', 'player', 'score', 'oil', 'Man']
+
+        dispersion(words=target_words, corpus=text, ax=ax)
+        ax.grid(False)
+
+        self.assert_images_similar(ax=ax, tol=25)
 
     def test_integrated_dispersionplot(self):
         """
