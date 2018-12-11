@@ -7,7 +7,7 @@ Version 1.0
 -----------
 * Tag: v1.0_
 * Deployed: Not yet deployed
-* Contributors: Benjamin Bengfort, Rebecca Bilbro, Nathan Danielson, Francois Dion, Kristen McIntyre, Larry Gray, Prema Roman
+* Contributors: Benjamin Bengfort, Rebecca Bilbro, Nathan Danielsen, Francois Dion, Kristen McIntyre, Larry Gray, Prema Roman
 
 Major Changes:
     - Add support for matplotlib 3.0.1 or greater.
