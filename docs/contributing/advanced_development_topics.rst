@@ -10,8 +10,14 @@ Visualizer Review Checklist
 
 As the visualizer API has matured over time, we've realized that there are a number of routine items that must be in place to consider a visualizer truly complete and ready for prime time. This list is also extremely helpful for reviewing code submissions to ensure that visualizers are consistently implemented, tested, and documented. Though we do not expect these items to be checked off on every PR, the below list includes some guidance about what to look for when reviewing or writing a new Visualizer.
 
+.. note:: The ``contrib`` module is a great place for work-in-progress Visualizers!
+
 Code Conventions
 ~~~~~~~~~~~~~~~~
+
+- Ensure the visualizer API is met.
+
+    The basic principle of the visualizer API is that scikit-learn methods such as ``fit()``, ``transform()``, ``score()``, etc. perform interactions with scikit-learn or other computations and call the ``draw()`` method. Calls to matplotlib should happen only in ``draw()`` or ``finalize()``.
 
 - Create a quick method for the visualizer.
 
@@ -36,6 +42,10 @@ Code Conventions
 - Use sklearn underscore suffix for learned parameters.
 
     Any parameters that are learned during ``fit()`` should only be added to the visualizer when ``fit()`` is called (this is also how we determine if a visualizer is fitted or not) and should be identified with an underscore suffix. For example, in classification visualizers, the classes can be either passed in by the user or determined when they are passed in via fit, therefore it should be ``self.classes_``. This is also true for other learned parameters, e.g. ``self.score_``, even though this is not created during ``fit()``.
+
+- Correctly set the title in finalize.
+
+    Use the ``self.set_title()`` method to set a default title; this allows the user to specify a custom title in the initialization arguments.
 
 Testing Conventions
 ~~~~~~~~~~~~~~~~~~~
@@ -66,7 +76,7 @@ Testing Conventions
 
 - Test that ``score()`` between zero and one.
 
-    With visualizers that have a ``score()`` method we like to ``assert 0.0 <= oz.score() >=1.0`` to ensure the API is maintained.
+    With visualizers that have a ``score()`` method, we like to ``assert 0.0 <= oz.score() >=1.0`` to ensure the API is maintained.
 
 Documentation Conventions
 ~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -86,6 +96,10 @@ Documentation Conventions
 - Include a gallery image.
 
     Please also add the visualizer image to the gallery!
+
+- Update added to the changelog.
+
+    To reduce the time it takes to put together the changelog, we'd like to update it when we add new features and visualizers rather than right before the release.
 
 Branching Convention
 --------------------
@@ -127,7 +141,7 @@ When ready to create a new release we branch off of develop as follows::
 
     $ git checkout -b release-x.x
 
-This creates a release branch for version x.x. At this point do the version bump by modifying ``version.py`` and the test version in ``tests/__init__.py``. Make sure all tests pass for the release and that the documentation is up to date. There may be style changes or deployment options that have to be done at this phase in the release branch. At this phase you'll also modify the ``changelog`` with the features and changes in the release.
+This creates a release branch for version x.x. At this point do the version bump by modifying ``version.py`` and the test version in ``tests/__init__.py``. Make sure all tests pass for the release and that the documentation is up to date. Note, to build the docs see the :ref:`documentation notes <documentation>`. There may be style changes or deployment options that have to be done at this phase in the release branch. At this phase you'll also modify the ``changelog`` with the features and changes in the release that have not already been marked.
 
 Once the release is ready for prime-time, merge into master::
 

@@ -133,6 +133,8 @@ This will move all related test images from ``actual_images`` to ``baseline_imag
 
 This is useful particularly if you're stuck trying to get an image comparison to work. For more information on the images helper script, use ``python -m tests.images --help``.
 
+.. _documentation:
+
 Documentation
 -------------
 
