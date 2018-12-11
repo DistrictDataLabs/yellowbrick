@@ -3,22 +3,22 @@
 Confusion Matrix
 ================
 
-The ``ConfusionMatrix`` visualizer is a ScoreVisualizer that takes a
-fitted scikit-learn classifier and a set of test X and y values and
+The ``ConfusionMatrix`` visualizer is a ``ScoreVisualizer`` that takes a
+fitted scikit-learn classifier and a set of test ``X`` and ``y`` values and
 returns a report showing how each of the test values predicted classes
 compare to their actual classes. Data scientists use confusion matrices
 to understand which classes are most easily confused. These provide
-similar information as what is available in a ClassificationReport, but
+similar information as what is available in a ``ClassificationReport``, but
 rather than top-level scores, they provide deeper insight into the
 classification of individual data points.
 
-Below are a few examples of using the ConfusionMatrix visualizer; more
+Below are a few examples of using the ``ConfusionMatrix`` visualizer; more
 information can be found by looking at the
 scikit-learn documentation on `confusion matrices <http://scikit-learn.org/stable/modules/generated/sklearn.metrics.confusion_matrix.html>`_.
 
 .. code:: python
 
-    from sklearn.datasets import load_digits
+    from sklearn.datasets import load_digits, load_iris
     from sklearn.model_selection import train_test_split
     from sklearn.linear_model import LogisticRegression
 
@@ -57,7 +57,7 @@ scikit-learn documentation on `confusion matrices <http://scikit-learn.org/stabl
 Plotting with Class Names
 -------------------------
 
-Class names can be added to a `ConfusionMatrix` plot using the `label_encoder` argument. The `label_encoder` can be a `sklearn.preprocessing.LabelEncoder <http://scikit-learn.org/stable/modules/generated/sklearn.preprocessing.LabelEncoder.html>`_ (or anything with an `inverse_transform` method that performs the mapping), or a `dict` with the encoding-to-string mapping as in the example below:
+Class names can be added to a ``ConfusionMatrix`` plot using the ``label_encoder`` argument. The ``label_encoder`` can be a `sklearn.preprocessing.LabelEncoder <http://scikit-learn.org/stable/modules/generated/sklearn.preprocessing.LabelEncoder.html>`_ (or anything with an ``inverse_transform`` method that performs the mapping), or a ``dict`` with the encoding-to-string mapping as in the example below:
 
 .. code:: python
 
@@ -66,7 +66,7 @@ Class names can be added to a `ConfusionMatrix` plot using the `label_encoder` a
     y = iris.target
     classes = iris.target_names
 
-    X_train, X_test, y_train, y_test = tts(X, y, test_size=0.2)
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2)
 
     model = LogisticRegression()
 
