@@ -7,16 +7,18 @@ Version 1.0
 -----------
 * Tag: v1.0_
 * Deployed: Not yet deployed
-* Contributors: Benjamin Bengfort, Rebecca Bilbro, Nathan Danielsen, Francois Dion, Kristen McIntyre, Larry Gray, Prema Roman
+* Contributors: Benjamin Bengfort, Rebecca Bilbro, Nathan Danielsen, Kristen McIntyre, Larry Gray, Prema Roman, John Healy, Sourav Singh, Francois Dion
 
 Major Changes:
     - Add support for matplotlib 3.0.1 or greater.
     - ``UMAPVisualizer`` as an alternative manifold to TSNE for corpus visualization that is fast enough to not require preprocessing PCA or SVD decomposition and preserves higher order similarities and distances.
 
 Minor Changes:
-    - Updated Rank2D tests to include Kendall-Tau metric.
+    - Updated Rank2D to include Kendall-Tau metric.
     - Added code review checklist and conventions to the documentation and expanded the contributing docs.
     - Added polish to missing value visualizers code, tests, and documentation.
+    - Improved RankD tests for better coverage.
+    - Improved the documentation readability and structure.
 
 Compatibility Notes:
     - This version provides support for matplotlib 3.0.1 or greater and drops support for matplotlib versions less than 2.0.
