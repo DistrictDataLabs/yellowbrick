@@ -55,7 +55,7 @@ scikit-learn documentation on `confusion matrices <http://scikit-learn.org/stabl
 
 
 Plotting with Class Names
-#########################
+-------------------------
 
 Class names can be added to a `ConfusionMatrix` plot using the `label_encoder` argument. The `label_encoder` can be a `sklearn.preprocessing.LabelEncoder <http://scikit-learn.org/stable/modules/generated/sklearn.preprocessing.LabelEncoder.html>`_ (or anything with an `inverse_transform` method that performs the mapping), or a `dict` with the encoding-to-string mapping as in the example below:
 
