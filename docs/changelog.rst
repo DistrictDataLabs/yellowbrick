@@ -18,6 +18,7 @@ Minor Changes:
     - Added code review checklist and conventions to the documentation and expanded the contributing docs.
     - Added polish to missing value visualizers code, tests, and documentation.
     - Improved RankD tests for better coverage.
+    - Added quick method test for ``DispersionPlot`` visualizer.
     - Improved the documentation readability and structure.
 
 Compatibility Notes:
