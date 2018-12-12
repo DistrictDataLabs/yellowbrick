@@ -2,8 +2,6 @@
 # Implements UMAP visualizations of documents in 2D space.
 #
 # Author:   John Healy <jchealy@gmail.com>
-# Author:   Benjamin Bengfort <benjamin@bengfort.com>
-# Author:   Rebecca Bilbro <bilbro@gmail.com>
 # Created:  Mon Dec 03 14:00:00 2018 -0500
 #
 # Copyright (C) 2016 Bengfort.com
