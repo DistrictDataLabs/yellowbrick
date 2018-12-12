@@ -17,7 +17,7 @@ Tests for the UMAP visual corpus embedding mechanism.
 ## Imports
 ##########################################################################
 
-import six
+#import six
 import pytest
 
 from yellowbrick.text.umap_vis import *

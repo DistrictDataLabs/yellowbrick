@@ -26,7 +26,10 @@ from yellowbrick.text.base import TextVisualizer
 from yellowbrick.style.colors import resolve_colors
 from yellowbrick.exceptions import YellowbrickValueError
 
-from umap import UMAP
+try:
+    from umap import UMAP
+except ImportError:
+    UMAP = None
 from sklearn.pipeline import Pipeline
 
 
@@ -183,6 +186,13 @@ class UMAPVisualizer(TextVisualizer):
     def __init__(self, ax=None,
                  labels=None, classes=None, colors=None, colormap=None,
                  random_state=None, alpha=0.7, **kwargs):
+
+        if UMAP is None:
+            raise YellowbrickValueError((
+                "umap package doesn't seem to be installed."
+                "Please install UMAP via: pip install umap-learn"
+            ))
+
 
         # Visual Parameters
         self.alpha = alpha
