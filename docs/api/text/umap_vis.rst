@@ -8,7 +8,7 @@ or three dimensions for visualization as a scatter plot. UMAP is a
 relatively new technique but very effective for visualizing clusters or
 groups of data points and their relative proximities. It does a good job
 of learning the local structure within your data but also attempts to
-preserve the realtionships between your groups as can be seen in it’s
+preserve the relationships between your groups as can be seen in its
 `exploration of
 MNIST <https://umap-learn.readthedocs.io/en/latest/basic_usage.html#digits-data>`__.
 It is fast, scalable, and can be applied directly to sparse matrices,
@@ -36,7 +36,7 @@ After importing the required tools, we can :doc:`load the corpus <corpus>` and v
 .. code:: ipython3
 
     # Load the data and create document vectors
-    corpus = load_corpus('hobbies', data_path='/mnt/timc/sandbox/ava00114/yellowbrick/data/')
+    corpus = load_corpus('hobbies')
     tfidf  = TfidfVectorizer()
     docs   = tfidf.fit_transform(corpus.data)
     labels = corpus.target
@@ -110,7 +110,7 @@ us to look for clusters of related text by their contents:
 On one hand, these clusters aren’t particularly well concentrated by the
 two dimensional embedding of UMAP, on the other hand, the true labels
 for this data are. That is a good indication that your data does indeed
-live on a manifold in your tfIDF space and that structure is being
+live on a manifold in your TF-IDF space and that structure is being
 ignored by the kmeans algorithms. Clustering can be quite tricky in high
 dimensional spaces and it is often a good idea to reduce your dimension
 before running clustering algorithms on your data.
