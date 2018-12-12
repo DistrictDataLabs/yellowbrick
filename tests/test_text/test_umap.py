@@ -71,7 +71,7 @@ class TestUMAP(VisualTestCase, DatasetMixin):
         umap = UMAPVisualizer(random_state=8392, colormap='Set1', alpha=1.0)
         umap.fit_transform(docs, labels)
 
-        tol = 50 if six.PY3 else 55
+        tol = 55
         self.assert_images_similar(umap, tol=tol)
 
     def test_sklearn_umap_size(self):
