@@ -26,13 +26,16 @@ from yellowbrick.text.base import TextVisualizer
 from yellowbrick.style.colors import resolve_colors
 from yellowbrick.exceptions import YellowbrickValueError
 
+from warnings import warn
 try:
     from umap import UMAP
 except ImportError:
     UMAP = None
+except RuntimeError:
+    UMAP = None
+    warn("Error Importing UMAP.  UMAP does not support python 2.7 on Windows 32 bit.")
+
 from sklearn.pipeline import Pipeline
-
-
 
 ##########################################################################
 ## Quick Methods
@@ -209,6 +212,8 @@ class UMAPVisualizer(TextVisualizer):
             if key in kwargs
         }
 
+        #UMAP doesn't require any pre-processing before embedding and thus doesn't require a pipeline.
+        #self.transformer_ = UMAP(n_components=2, random_state=random_state, **umap_kwargs)
         self.transformer_ = self.make_transformer(umap_kwargs)
 
         # Call super at the end so that size and title are set correctly
@@ -223,10 +228,8 @@ class UMAPVisualizer(TextVisualizer):
         Parameters
         ----------
 
-
         Returns
         -------
-
         transformer : Pipeline
             Pipelined transformer for UMAP projections
         """
@@ -240,6 +243,7 @@ class UMAPVisualizer(TextVisualizer):
 
         # return the pipeline
         return Pipeline(steps)
+
 
     def fit(self, X, y=None, **kwargs):
         """
