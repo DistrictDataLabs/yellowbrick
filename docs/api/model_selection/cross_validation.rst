@@ -6,7 +6,7 @@ Cross Validation Scores
 Generally we determine whether a given model is optimal by looking at it's F1, precision, recall, and accuracy (for classification), or it's coefficient of determination (R2) and error (for regression). However, real world data is often distributed somewhat unevenly, meaning that the fitted model is likely to perform better on some sections of the data than on others. Yellowbrick's ``CVScores`` visualizer enables us to visually explore these variations in performance using different cross validation strategies.
 
 Cross Validation
-################
+----------------
 
 Cross-validation starts by shuffling the data (to prevent any unintentional ordering errors) and splitting it into `k` folds. Then `k` models are fit on :math:`\frac{k-1} {k}` of the data (called the training split) and evaluated on :math:`\frac {1} {k}` of the data (called the test split). The results from each evaluation are averaged together for a final score, then the final model is fit on the entire dataset for operationalization.
 
