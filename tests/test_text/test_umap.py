@@ -25,7 +25,6 @@ from tests.base import VisualTestCase
 from tests.dataset import DatasetMixin
 from yellowbrick.exceptions import YellowbrickValueError
 
-from umap import UMAP
 from sklearn.datasets import make_classification
 from sklearn.feature_extraction.text import TfidfVectorizer
 
@@ -38,6 +37,14 @@ try:
     from unittest import mock
 except ImportError:
     import mock
+
+try:
+    from umap import UMAP
+except ImportError:
+    UMAP = None
+except RuntimeError:
+    UMAP = None
+    warn("Error Importing UMAP.  UMAP does not support python 2.7 on Windows 32 bit.")
 
 ##########################################################################
 ## TSNE Tests
