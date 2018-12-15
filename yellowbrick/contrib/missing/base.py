@@ -29,7 +29,7 @@ class MissingDataVisualizer(DataVisualizer):
     """Base class for MissingDataVisualizers.
     """
 
-    def fit(self, X, y=None, **kwargs):
+    def fit(self, X, y=None, index_column=None, **kwargs):
         """
         The fit method is the primary drawing input for the
         visualization since it has both the X and y data required for the
@@ -42,6 +42,9 @@ class MissingDataVisualizer(DataVisualizer):
 
         y : ndarray or Series of length n
             An array or series of target or class values
+
+        index_column : ndarray or Series of length n
+            An array to be used as the x axis such as datetime
 
         kwargs : dict
             Pass generic arguments to the drawing method
@@ -56,9 +59,10 @@ class MissingDataVisualizer(DataVisualizer):
             if self.features_ is None:
                 self.features_ = X.columns
         else:
-            X_ = X
+            # ensure that X is an np array not a nested list
+            X_ = np.array(X)
 
-        return super(MissingDataVisualizer, self).fit(X_, y, **kwargs)
+        return super(MissingDataVisualizer, self).fit(X_, y, index_column=index_column, **kwargs)
 
 
     def get_feature_names(self):

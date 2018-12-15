@@ -177,7 +177,12 @@ class MissingValuesBar(MissingDataVisualizer):
         # Remove the ticks from the graph
         self.ax.set_xlabel('Count')
 
-        self.ax.legend(loc='best')
+
+        # supress warning
+        # "No handles with labels found to put in legend.""
+        handles, labels = self.ax.get_legend_handles_labels()
+        if labels != []: # don't draw labels if none exist
+            self.ax.legend(loc='best')
 
 ##########################################################################
 ## Quick Method

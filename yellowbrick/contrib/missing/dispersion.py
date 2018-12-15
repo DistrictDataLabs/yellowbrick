@@ -93,7 +93,7 @@ class MissingValuesDispersion(MissingDataVisualizer):
         self.nan_locs_ = []
 
 
-    def get_nan_locs(self, X, y, **kwargs):
+    def get_nan_locs(self, X, y, index_column=None, **kwargs):
         """Gets the locations of nans in feature data and returns
         the coordinates in the matrix
         """
@@ -111,7 +111,7 @@ class MissingValuesDispersion(MissingDataVisualizer):
 
             return self.nan_locs_
 
-    def draw(self, X, y, **kwargs):
+    def draw(self, X, y, index_column=None, **kwargs):
         """Called from the fit method, this method creates a scatter plot that
         draws each instance as a class or target colored point, whose location
         is determined by the feature data set.
@@ -119,14 +119,36 @@ class MissingValuesDispersion(MissingDataVisualizer):
         If y is not None, then it draws a scatter plot where each class is in a
         different color.
         """
-        nan_locs = self.get_nan_locs(X, y)
+        nan_locs = self.get_nan_locs(X, y, index_column=index_column)
+
+        if index_column is not None and not isinstance(index_column, (np.ndarray, np.generic) ):
+            index_column = np.array(index_column)
+
+            if len(index_column.shape) != 1:
+                raise Exception('index_column be one-dimensional array')
+
+            if X.shape[0] != index_column.shape[0]:
+                raise Exception('X and index_column must have same x length')
+
         if y is None:
             x_, y_ = list(zip(*nan_locs))
-            self.ax.scatter(x_, y_, alpha=self.alpha, marker=self.marker, label=None)
-        else:
-            self.draw_multi_dispersion_chart(nan_locs)
+            if index_column is not None:
+                x_ = index_column.take(x_)
 
-    def draw_multi_dispersion_chart(self, nan_locs):
+            self.ax.scatter(x_, y_, alpha=self.alpha, marker=self.marker, label=None)
+
+        else:
+            self.draw_multi_dispersion_chart(nan_locs, index_column=index_column)
+
+        if index_column is not None:
+            self.ax.set_xlabel('Position by provided index')
+            if np.issubdtype(index_column.dtype, np.datetime64):
+                self.ax.tick_params(axis='x', rotation=45)
+        else:
+            self.ax.set_xlabel('Position by index')
+
+
+    def draw_multi_dispersion_chart(self, nan_locs, index_column=None):
         """Draws a multi dimensional dispersion chart, each color corresponds
         to a different target variable.
         """
@@ -140,6 +162,10 @@ class MissingValuesDispersion(MissingDataVisualizer):
             color = self.colors[index]
 
             x_, y_ = list(zip(*nan_locations))
+
+            if index_column is not None:
+                x_ = index_column.take(x_)
+
             self.ax.scatter(x_, y_, alpha=self.alpha, marker=self.marker, color=color, label=label)
 
     def finalize(self, **kwargs):
@@ -159,10 +185,14 @@ class MissingValuesDispersion(MissingDataVisualizer):
         # the x locations for the groups
         tick_locations = np.arange(len(self.features_))
 
-        self.ax.set_xlabel('Position by index')
         self.ax.set_yticks(tick_locations)
         self.ax.set_yticklabels(self.get_feature_names())
-        self.ax.legend(loc='upper left', prop={'size':5}, bbox_to_anchor=(1,1))
+
+        # supress warning
+        # "No handles with labels found to put in legend.""
+        handles, labels = self.ax.get_legend_handles_labels()
+        if labels != []: # don't draw labels if none exist
+            self.ax.legend(loc='upper left', prop={'size':5}, bbox_to_anchor=(1,1))
 
 
 
