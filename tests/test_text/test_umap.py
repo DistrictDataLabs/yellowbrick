@@ -19,6 +19,11 @@ Tests for the UMAP visual corpus embedding mechanism.
 
 #import six
 import pytest
+import sys
+
+@pytest.mark.xfail(
+    sys.platform == 'win32', reason="not supported on windows 32bit with Python 2.7"
+)
 
 from yellowbrick.text.umap_vis import *
 from tests.base import VisualTestCase
