@@ -46,7 +46,9 @@ except ImportError:
 except RuntimeError:
     UMAP = None
     warn("Error Importing UMAP.  UMAP does not support python 2.7 on Windows 32 bit.")
-
+except AttributeError:
+    UMAP = None
+    warn('Attribute Error Importing UMAP.  UMAP does not support python 2.7 on Windows 32 bit.')
 
 ##########################################################################
 ## TSNE Tests
