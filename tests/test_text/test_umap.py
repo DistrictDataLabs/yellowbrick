@@ -56,7 +56,7 @@ class TestUMAP(VisualTestCase, DatasetMixin):
     """
     UMAPVisualizer tests
     """
-
+    @pytest.mark.xfail(sys.platform == 'win32', reason="not supported on windows 32bit with Python 2.7")
     def test_make_pipeline(self):
         """
         Verify the pipeline creation step for UMAP
@@ -84,6 +84,7 @@ class TestUMAP(VisualTestCase, DatasetMixin):
         tol = 55
         self.assert_images_similar(umap, tol=tol)
 
+    @pytest.mark.xfail(sys.platform == 'win32', reason="not supported on windows 32bit with Python 2.7")
     def test_sklearn_umap_size(self):
         """
         Check to make sure sklearn's UMAP doesn't use the size param
@@ -95,6 +96,7 @@ class TestUMAP(VisualTestCase, DatasetMixin):
         with pytest.raises(TypeError):
             UMAP(size=(100,100))
 
+    @pytest.mark.xfail(sys.platform == 'win32', reason="not supported on windows 32bit with Python 2.7")
     def test_sklearn_umap_title(self):
         """
         Check to make sure sklearn's UMAP doesn't use the title param
@@ -106,6 +108,7 @@ class TestUMAP(VisualTestCase, DatasetMixin):
         with pytest.raises(TypeError):
             UMAP(title="custom_title")
 
+    @pytest.mark.xfail(sys.platform == 'win32', reason="not supported on windows 32bit with Python 2.7")
     def test_custom_title_umap(self):
         """
         Check UMAP can accept a custom title (string) from the user
@@ -114,6 +117,7 @@ class TestUMAP(VisualTestCase, DatasetMixin):
 
         assert umap.title == "custom_title"
 
+    @pytest.mark.xfail(sys.platform == 'win32', reason="not supported on windows 32bit with Python 2.7")
     def test_custom_size_umap(self):
         """
         Check UMAP can accept a custom size (tuple of pixels) from the user
