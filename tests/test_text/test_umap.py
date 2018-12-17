@@ -39,6 +39,15 @@ try:
 except ImportError:
     import mock
 
+pytest.mark.xfail(
+    sys.platform == 'win32', reason="not supported on windows 32bit with Python 2.7"
+)
+
+
+pytest.mark.xfail(
+    sys.version_info[0] < 3, reason="Having issues with python version 2"
+)
+
 try:
     from umap import UMAP
 except ImportError:
@@ -47,9 +56,6 @@ except RuntimeError:
     UMAP = None
     warn("Error Importing UMAP.  UMAP does not support python 2.7 on Windows 32 bit.")
 
-pytest.mark.xfail(
-    sys.platform == 'win32', reason="not supported on windows 32bit with Python 2.7"
-)
 
 ##########################################################################
 ## TSNE Tests
