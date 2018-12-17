@@ -21,10 +21,6 @@ Tests for the UMAP visual corpus embedding mechanism.
 import pytest
 import sys
 
-@pytest.mark.xfail(
-    sys.platform == 'win32', reason="not supported on windows 32bit with Python 2.7"
-)
-
 from yellowbrick.text.umap_vis import *
 from tests.base import VisualTestCase
 from tests.dataset import DatasetMixin
@@ -50,6 +46,10 @@ except ImportError:
 except RuntimeError:
     UMAP = None
     warn("Error Importing UMAP.  UMAP does not support python 2.7 on Windows 32 bit.")
+
+pytest.mark.xfail(
+    sys.platform == 'win32', reason="not supported on windows 32bit with Python 2.7"
+)
 
 ##########################################################################
 ## TSNE Tests
