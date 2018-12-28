@@ -15,6 +15,7 @@ Major Changes:
 
 Minor Changes:
     - Updated Rank2D to include Kendall-Tau metric.
+    - Added ``target_color_type`` functionality to determine continuous or discrete color representations based on the type of the target variable.
     - Added code review checklist and conventions to the documentation and expanded the contributing docs.
     - Added polish to missing value visualizers code, tests, and documentation.
     - Improved RankD tests for better coverage.
