@@ -20,3 +20,4 @@ mock>=2.0.0
 # Optional Testing Dependencies
 nltk>=3.2
 pandas>=0.20
+umap-learn>=0.3
