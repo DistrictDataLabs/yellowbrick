@@ -5,7 +5,10 @@ scikit-learn>=0.20
 numpy>=1.13.0
 cycler>=0.10.0
 
-## Testing Requirements (uncomment for development)
+## Optional Dependencies (uncomment to use)
+#umap-learn>=0.3
+
+## Testing Requirements (pip install -r tests/requirements.txt)
 #pytest>=3.4.1
 #pytest-cov>=2.5.1
 #pytest-flakes>=2.0.0
@@ -17,11 +20,12 @@ cycler>=0.10.0
 ## Python 2 Testing Requirements
 #mock>=2.0.0
 
-## Optional Testing Dependencies (uncomment for development)
+## Optional Testing Dependencies (pip install -r tests/requirements.txt)
 #nltk>=3.2
 #pandas>=0.20
+#umap-learn>=0.3
 
-## Documentation (uncomment to build documentation)
+## Documentation (pip install -r docs/requirements.txt)
 #Sphinx>=1.7.5
 #sphinx-rtd-theme>=0.4.0
 #numpydoc>=0.8.0
