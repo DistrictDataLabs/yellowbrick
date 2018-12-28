@@ -17,9 +17,9 @@ Tests for the UMAP visual corpus embedding mechanism.
 ## Imports
 ##########################################################################
 
-#import six
-import pytest
 import sys
+import pytest
+import warnings
 
 from yellowbrick.text.umap_vis import *
 from tests.base import VisualTestCase
@@ -43,22 +43,36 @@ try:
     from umap import UMAP
 except ImportError:
     UMAP = None
-except RuntimeError:
+except (RuntimeError, AttributeError):
     UMAP = None
-    warn("Error Importing UMAP.  UMAP does not support python 2.7 on Windows 32 bit.")
-except AttributeError:
-    UMAP = None
-    warn('Attribute Error Importing UMAP.  UMAP does not support python 2.7 on Windows 32 bit.')
+    warnings.warn(
+        "Error Importing UMAP.  UMAP does not support python 2.7 on Windows 32 bit."
+    )
+
 
 ##########################################################################
-## TSNE Tests
+## UMAP Tests
 ##########################################################################
 
+@mock.patch('yellowbrick.text.umap_vis.UMAP', None)
+def test_umap_unavailable():
+    """
+    Assert an appropriate exception is raised when UMAP is not installed
+    """
+    from yellowbrick.text.umap_vis import UMAP
+    assert UMAP is None
+
+    with pytest.raises(YellowbrickValueError, match="umap package doesn't seem to be installed"):
+        UMAPVisualizer()
+
+
+@pytest.mark.skipif(UMAP is None, reason="tests require the umap library")
+@pytest.mark.xfail(sys.platform == 'win32', reason="not supported on windows 32bit with Python 2.7")
 class TestUMAP(VisualTestCase, DatasetMixin):
     """
     UMAPVisualizer tests
     """
-    @pytest.mark.xfail(sys.platform == 'win32', reason="not supported on windows 32bit with Python 2.7")
+
     def test_make_pipeline(self):
         """
         Verify the pipeline creation step for UMAP
@@ -69,7 +83,6 @@ class TestUMAP(VisualTestCase, DatasetMixin):
 
         assert len(umap.transformer_.steps) == 1
 
-    @pytest.mark.xfail(sys.platform == 'win32', reason="not supported on windows 32bit with Python 2.7")
     def test_integrated_umap(self):
         """
         Check UMAP integrated visualization on the hobbies corpus
@@ -86,7 +99,6 @@ class TestUMAP(VisualTestCase, DatasetMixin):
         tol = 55
         self.assert_images_similar(umap, tol=tol)
 
-    @pytest.mark.xfail(sys.platform == 'win32', reason="not supported on windows 32bit with Python 2.7")
     def test_sklearn_umap_size(self):
         """
         Check to make sure sklearn's UMAP doesn't use the size param
@@ -98,7 +110,6 @@ class TestUMAP(VisualTestCase, DatasetMixin):
         with pytest.raises(TypeError):
             UMAP(size=(100,100))
 
-    @pytest.mark.xfail(sys.platform == 'win32', reason="not supported on windows 32bit with Python 2.7")
     def test_sklearn_umap_title(self):
         """
         Check to make sure sklearn's UMAP doesn't use the title param
@@ -110,7 +121,6 @@ class TestUMAP(VisualTestCase, DatasetMixin):
         with pytest.raises(TypeError):
             UMAP(title="custom_title")
 
-    @pytest.mark.xfail(sys.platform == 'win32', reason="not supported on windows 32bit with Python 2.7")
     def test_custom_title_umap(self):
         """
         Check UMAP can accept a custom title (string) from the user
@@ -119,7 +129,6 @@ class TestUMAP(VisualTestCase, DatasetMixin):
 
         assert umap.title == "custom_title"
 
-    @pytest.mark.xfail(sys.platform == 'win32', reason="not supported on windows 32bit with Python 2.7")
     def test_custom_size_umap(self):
         """
         Check UMAP can accept a custom size (tuple of pixels) from the user
@@ -128,7 +137,6 @@ class TestUMAP(VisualTestCase, DatasetMixin):
 
         assert umap._size == (100, 50)
 
-    @pytest.mark.xfail(sys.platform == 'win32', reason="not supported on windows 32bit with Python 2.7")
     def test_make_classification_umap(self):
         """
         Test UMAP integrated visualization on a sklearn classifier dataset
@@ -147,7 +155,6 @@ class TestUMAP(VisualTestCase, DatasetMixin):
         tol = 40
         self.assert_images_similar(umap, tol=tol)
 
-    @pytest.mark.xfail(sys.platform == 'win32', reason="not supported on windows 32bit with Python 2.7")
     def test_make_classification_umap_class_labels(self):
         """
         Test UMAP integrated visualization with class labels specified
@@ -166,7 +173,6 @@ class TestUMAP(VisualTestCase, DatasetMixin):
         tol = 40
         self.assert_images_similar(umap, tol=tol)
 
-    @pytest.mark.xfail(sys.platform == 'win32', reason="not supported on windows 32bit with Python 2.7")
     def test_umap_mismtached_labels(self):
         """
         Assert exception is raised when number of labels doesn't match
@@ -186,7 +192,6 @@ class TestUMAP(VisualTestCase, DatasetMixin):
         with pytest.raises(YellowbrickValueError):
             umap.fit(X,y)
 
-    @pytest.mark.xfail(sys.platform == 'win32', reason="not supported on windows 32bit with Python 2.7")
     def test_no_target_umap(self):
         """
         Test UMAP when no target or classes are specified
@@ -203,7 +208,6 @@ class TestUMAP(VisualTestCase, DatasetMixin):
         self.assert_images_similar(umap, tol=40)
 
     @pytest.mark.skipif(pandas is None, reason="test requires pandas")
-    @pytest.mark.xfail(sys.platform == 'win32', reason="not supported on windows 32bit with Python 2.7")
     def test_visualizer_with_pandas(self):
         """
         Test UMAP when passed a pandas DataFrame and series
@@ -223,7 +227,6 @@ class TestUMAP(VisualTestCase, DatasetMixin):
         tol = 40
         self.assert_images_similar(umap, tol=tol)
 
-    @pytest.mark.xfail(sys.platform == 'win32', reason="not supported on windows 32bit with Python 2.7")
     def test_alpha_param(self):
         """
         Test that the user can supply an alpha param on instantiation

@@ -17,6 +17,7 @@ Implements UMAP visualizations of documents in 2D space.
 ## Imports
 ##########################################################################
 
+import warnings
 import numpy as np
 
 from collections import defaultdict
@@ -26,16 +27,17 @@ from yellowbrick.text.base import TextVisualizer
 from yellowbrick.style.colors import resolve_colors
 from yellowbrick.exceptions import YellowbrickValueError
 
-from warnings import warn
+from sklearn.pipeline import Pipeline
+
 try:
     from umap import UMAP
 except ImportError:
     UMAP = None
-except RuntimeError:
+except (RuntimeError, AttributeError):
     UMAP = None
-    warn("Error Importing UMAP.  UMAP does not support python 2.7 on Windows 32 bit.")
-
-from sklearn.pipeline import Pipeline
+    warnings.warn(
+        "Error Importing UMAP.  UMAP does not support python 2.7 on Windows 32 bit."
+    )
 
 ##########################################################################
 ## Quick Methods
