@@ -18,28 +18,42 @@ Tests for the dispersion plot text visualization
 ## Imports
 ##########################################################################
 
-import sys
 import pytest
 
+from yellowbrick.exceptions import YellowbrickValueError
 from yellowbrick.text.dispersion import *
 from tests.dataset import DatasetMixin
 from tests.base import VisualTestCase
-from itertools import chain
+import matplotlib.pyplot as plt
 
 ##########################################################################
 ## DispersionPlot Tests
 ##########################################################################
 
-@pytest.mark.xfail(sys.platform == "win32", reason="Issue #491")
 class DispersionPlotTests(VisualTestCase, DatasetMixin):
+
+    def test_quick_method(self):
+        """
+        Assert no errors occur when using the qucik method
+        """
+        _, ax = plt.subplots()
+        corpus = self.load_data('hobbies')
+
+        text = [doc.split() for doc in corpus.data]
+        target_words = ['Game', 'player', 'score', 'oil', 'Man']
+
+        dispersion(words=target_words, corpus=text, ax=ax)
+        ax.grid(False)
+
+        self.assert_images_similar(ax=ax, tol=25)
 
     def test_integrated_dispersionplot(self):
         """
         Assert no errors occur during DispersionPlot integration
         """
         corpus = self.load_data('hobbies')
-	
-        text = [word for doc in corpus.data for word in doc.split()]
+
+        text = [doc.split() for doc in corpus.data]
         target_words = ['Game', 'player', 'score', 'oil', 'Man']
 
         visualizer = DispersionPlot(target_words)
@@ -54,8 +68,8 @@ class DispersionPlotTests(VisualTestCase, DatasetMixin):
         with ignore_case parameter turned on
         """
         corpus = self.load_data('hobbies')
-	
-        text = [word for doc in corpus.data for word in doc.split()]
+
+        text = [doc.split() for doc in corpus.data]
         target_words = ['Game', 'player', 'score', 'oil', 'Man']
 
         visualizer = DispersionPlot(target_words, ignore_case=True)
@@ -71,7 +85,7 @@ class DispersionPlotTests(VisualTestCase, DatasetMixin):
         """
         corpus = self.load_data('hobbies')
 
-        text = chain(*map(str.split, corpus.data))
+        text = (doc.split() for doc in corpus.data)
         target_words = ['Game', 'player', 'score', 'oil', 'Man']
 
         visualizer = DispersionPlot(target_words, ignore_case=True)
@@ -79,4 +93,59 @@ class DispersionPlotTests(VisualTestCase, DatasetMixin):
         visualizer.ax.grid(False)
 
         self.assert_images_similar(visualizer, tol=25)
-        
+
+    def test_dispersionplot_annotate_docs(self):
+        """
+        Assert no errors occur during DispersionPlot integration
+        with annotate_docs parameter turned on
+        """
+        corpus = self.load_data('hobbies')
+
+        text = [doc.split() for doc in corpus.data]
+        target_words = ['girl', 'she', 'boy', 'he', 'man']
+
+        visualizer = DispersionPlot(target_words, annotate_docs=True)
+        visualizer.fit(text)
+        visualizer.ax.grid(False)
+
+        self.assert_images_similar(visualizer, tol=25)
+
+    def test_dispersionplot_color_words_by_class(self):
+        """
+        Assert no errors occur during DispersionPlot integration
+        when target values are specified
+        """
+        corpus = self.load_data('hobbies')
+
+        text = (doc.split() for doc in corpus.data)
+        target_words = ['girl', 'she', 'boy', 'he', 'man']
+
+        target_values = corpus.target
+
+        visualizer = DispersionPlot(target_words)
+        visualizer.fit(text, target_values)
+        visualizer.ax.grid(False)
+
+        self.assert_images_similar(visualizer, tol=25)
+
+    def test_dispersionplot_mismatched_labels(self):
+        """
+        Assert exception is raised when number of labels doesn't match
+        """
+        corpus = self.load_data('hobbies')
+
+        text = (doc.split() for doc in corpus.data)
+        target_words = ['girl', 'she', 'boy', 'he', 'man']
+
+        target_values = corpus.target
+
+        visualizer = DispersionPlot(target_words, annotate_docs=True,
+                                    labels=['a', 'b'])
+
+        msg = (
+            r'number of supplied labels \(\d\) '
+            r'does not match the number of classes \(\d\)'
+        )
+
+        with pytest.raises(YellowbrickValueError, match=msg):
+            visualizer.fit(text, target_values)

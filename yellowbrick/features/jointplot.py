@@ -292,15 +292,6 @@ class JointPlotVisualizer(FeatureVisualizer):
             self.y_ax.hist(y, bins=hist_bins, color=histcolor_y,
                               orientation='horizontal', **self.xy_args)
 
-    def poof(self, **kwargs):
-        """
-        Creates the labels for the feature and target variables
-        """
-
-        self.joint_ax.set_xlabel(self.feature)
-        self.joint_ax.set_ylabel(self.target)
-        self.finalize(**kwargs)
-
     def finalize(self, **kwargs):
         """
         Finalize executes any subclass-specific axes finalization steps.
@@ -310,6 +301,8 @@ class JointPlotVisualizer(FeatureVisualizer):
         ----------
         kwargs: generic keyword arguments.
         """
+        self.joint_ax.set_xlabel(self.feature)
+        self.joint_ax.set_ylabel(self.target)
 
         plt.setp(self.x_ax.get_xticklabels(), visible=False)
         plt.setp(self.y_ax.get_yticklabels(), visible=False)

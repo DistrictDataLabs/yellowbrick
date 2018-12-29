@@ -37,6 +37,7 @@ def scatterviz(X,
                color=None,
                colormap=None,
                markers=None,
+               alpha=1.0,
                **kwargs):
     """Displays a bivariate scatter plot.
 
@@ -71,14 +72,19 @@ def scatterviz(X,
     markers : iterable of strings, default: ,+o*vhd
         Matplotlib style markers for points on the scatter plot points
 
+    alpha : float, default: 1.0
+        Specify a transparency where 1 is completely opaque and 0 is completely
+        transparent. This property makes densely clustered points more visible.
+
     Returns
     -------
     ax : matplotlib axes
         Returns the axes that the parallel coordinates were drawn on.
     """
     # Instantiate the visualizer
-    visualizer = ScatterVisualizer(ax, features, classes, color, colormap,
-                                   markers, **kwargs)
+    visualizer = ScatterVisualizer(ax=ax, features=features, classes=classes,
+                                   color=color, colormap=colormap,
+                                   markers=markers, alpha=alpha, **kwargs)
 
     # Fit and transform the visualizer (calls draw)
     visualizer.fit(X, y, **kwargs)
@@ -133,6 +139,10 @@ class ScatterVisualizer(DataVisualizer):
         markers : iterable of strings, default: ,+o*vhd
             Matplotlib style markers for points on the scatter plot points
 
+        alpha : float, default: 1.0
+            Specify a transparency where 1 is completely opaque and 0 is completely
+            transparent. This property makes densely clustered points more visible.
+
         kwargs : keyword arguments passed to the super class.
 
         These parameters can be influenced later on in the visualization
@@ -148,6 +158,7 @@ class ScatterVisualizer(DataVisualizer):
                  color=None,
                  colormap=None,
                  markers=None,
+                 alpha=1.0,
                  **kwargs):
         """
         Initialize the base scatter with many of the options required in order
@@ -158,6 +169,9 @@ class ScatterVisualizer(DataVisualizer):
 
         self.x = x
         self.y = y
+
+        self.alpha = alpha
+
         self.markers = itertools.cycle(
             kwargs.pop('markers', (',', '+', 'o', '*', 'v', 'h', 'd')))
 
@@ -280,6 +294,7 @@ class ScatterVisualizer(DataVisualizer):
                 marker=next(self.markers),
                 color=colors[kls],
                 label=str(kls),
+                alpha=self.alpha,
                 **kwargs)
 
         self.ax.axis('equal')

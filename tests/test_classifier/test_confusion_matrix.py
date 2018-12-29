@@ -173,23 +173,6 @@ class ConfusionMatrixTests(VisualTestCase, DatasetMixin):
            [ 0,  0,  0,  0,  0, 32,  0,  0,  2,  0],
            [ 0,  0,  0,  0,  0, 34,  0,  0,  0,  3]]))
 
-    def test_deprecated_fit_kwargs(self):
-        """
-        Test that passing percent or sample_weight is deprecated
-        """
-        if yb.__version_info__['minor'] >= 9:
-            pytest.fail("deprecation warnings should be removed after 0.9")
-
-        args = (self.digits.X.test, self.digits.y.test)
-        cm = ConfusionMatrix(LogisticRegression())
-        cm.fit(self.digits.X.train, self.digits.y.train)
-
-        # Deprecated percent in score
-        pytest.deprecated_call(cm.score, *args, percent=True)
-
-        # Deprecated sample_weight in score
-        pytest.deprecated_call(cm.score, *args, sample_weight=np.arange(360))
-
     def test_class_filter_eg_zoom_in(self):
         """
         Test filtering classes zooms in on the confusion matrix.
@@ -372,5 +355,5 @@ class ConfusionMatrixTests(VisualTestCase, DatasetMixin):
 
         # Score the visualizer
         s = visualizer.score(X_test, y_test)
-        
+
         assert 0 <= s <= 1

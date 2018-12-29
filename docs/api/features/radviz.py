@@ -9,9 +9,9 @@ data = pd.read_csv("../../../examples/data/occupancy/occupancy.csv")
 features = ["temperature", "relative humidity", "light", "C02", "humidity"]
 classes = ['unoccupied', 'occupied']
 
-# Extract the numpy arrays from the data frame
-X = data[features].as_matrix()
-y = data.occupancy.as_matrix()
+# Extract the instances and target
+X = data[features]
+y = data.occupancy
 
 # Instantiate the visualizer
 visualizer = RadViz(classes=classes, features=features)

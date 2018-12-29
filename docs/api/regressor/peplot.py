@@ -14,8 +14,8 @@ if __name__ == '__main__':
     target_name = 'strength'
 
     # Get the X and y data from the DataFrame
-    X = df[feature_names].as_matrix()
-    y = df[target_name].as_matrix()
+    X = df[feature_names]
+    y = df[target_name]
 
     # Create the train and test data
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2)

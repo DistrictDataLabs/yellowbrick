@@ -4,7 +4,8 @@ import matplotlib.pyplot as plt
 
 from yellowbrick.features.importances import FeatureImportances
 from sklearn.ensemble import GradientBoostingClassifier
-from sklearn.linear_model import Lasso
+from sklearn.linear_model import Lasso, LogisticRegression
+from sklearn.datasets import load_iris
 
 
 DATA_DIR = os.path.relpath(os.path.join(
@@ -46,6 +47,18 @@ def coef_(outpath):
     viz.poof(outpath=outpath)
 
 
+def stacked_coef_(outpath):
+    data = load_iris()
+
+    fig = plt.figure()
+    ax = fig.add_subplot()
+
+    viz = FeatureImportances(LogisticRegression(), ax=ax, stack=True, relative=False)
+    viz.fit(data.data, data.target)
+    viz.poof(outpath=outpath)
+
+
 if __name__ == '__main__':
-    feature_importances_("images/feature_importances.png")
-    coef_("images/feature_importances_coef.png")
+    # feature_importances_("images/feature_importances.png")
+    # coef_("images/feature_importances_coef.png")
+    stacked_coef_("images/feature_importances_stacked.png")
