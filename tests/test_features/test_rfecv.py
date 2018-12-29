@@ -181,4 +181,5 @@ class TestRFECV(VisualTestCase, DatasetMixin):
         npt.assert_array_equal(oz.n_feature_subsets_, np.arange(1,35,5))
 
         oz.finalize()
-        self.assert_images_similar(oz)
+        tol = 1.75 if sys.platform == "win32" else 0.25
+        self.assert_images_similar(oz, tol=tol)
