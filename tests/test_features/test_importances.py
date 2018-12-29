@@ -230,7 +230,7 @@ class TestFeatureImportancesVisualizer(VisualTestCase, DatasetMixin):
 
     def test_multi_coefs(self):
         """
-        Test fit with multidimensional coefficients
+        Test fit with multidimensional coefficients and stack warning
         """
         coefs = np.array([
             [0.4, 0.2, -0.08, 0.07, 0.16, 0.23, -0.38, 0.1, -0.05],
@@ -242,10 +242,12 @@ class TestFeatureImportancesVisualizer(VisualTestCase, DatasetMixin):
         model = MockEstimator()
         model.make_importance_param(value=coefs)
 
-        visualizer = FeatureImportances(model)
-        visualizer.fit(
-            np.random.rand(100, len(np.mean(coefs, axis=0))), np.random.rand(100)
-        )
+        visualizer = FeatureImportances(model, stack=False)
+
+        with pytest.warns(YellowbrickWarning):
+            visualizer.fit(
+                np.random.rand(100, len(np.mean(coefs, axis=0))), np.random.rand(100)
+            )
 
         npt.assert_equal(visualizer.feature_importances_.ndim, 1)
 
@@ -256,12 +258,11 @@ class TestFeatureImportancesVisualizer(VisualTestCase, DatasetMixin):
         """
         Test stack plot with multidimensional coefficients
         """
-        X_iris, y_iris = load_iris(True)
-        X_iris_pd = pd.DataFrame(X_iris, columns=['f1', 'f2', 'f3', 'f4'])
+        X, y = load_iris(True)
 
-        viz = FeatureImportances(LogisticRegression(), stack=True)
-        viz.fit(X_iris_pd, y_iris)
-        viz.poof()
+        viz = FeatureImportances(LogisticRegression(random_state=222), stack=True)
+        viz.fit(X, y)
+        viz.finalize()
 
         npt.assert_equal(viz.feature_importances_.shape, (3, 4))
         self.assert_images_similar(viz)
