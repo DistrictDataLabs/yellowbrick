@@ -1,3 +1,4 @@
+.. -*- mode: rst -*-
 
 UMAP Corpus Visualization
 ==========================
@@ -25,15 +26,16 @@ documents. The yellowbrick visualizer then plots the scatter plot,
 coloring by cluster or by class, or neither if a structural analysis is
 required.
 
-.. code:: ipython3
+.. code:: python
 
     from yellowbrick.text import UMAPVisualizer
     from sklearn.feature_extraction.text import TfidfVectorizer
     from yellowbrick.datasets.utils import load_corpus
 
+
 After importing the required tools, we can :doc:`load the corpus <corpus>` and vectorize the text using TF-IDF.
 
-.. code:: ipython3
+.. code:: python
 
     # Load the data and create document vectors
     corpus = load_corpus('hobbies')
@@ -41,15 +43,15 @@ After importing the required tools, we can :doc:`load the corpus <corpus>` and v
     docs   = tfidf.fit_transform(corpus.data)
     labels = corpus.target
 
+
 Now that the corpus is vectorized we can visualize it, showing the
 distribution of classes.
 
-.. code:: ipython3
+.. code:: python
 
     umap   = UMAPVisualizer()
     umap.fit(docs,labels)
     umap.poof()
-
 
 
 .. image:: images/umap_all_docs_euclidean.png
@@ -60,12 +62,11 @@ appropriate metric on our feature space we could specify that via a
 ``metric`` paramater passed through to the underlying UMAP function by
 the ``UMAPVisualizer``.
 
-.. code:: ipython3
+.. code:: python
 
     umap   = UMAPVisualizer(metric='cosine')
     umap.fit(docs,labels)
     umap.poof()
-
 
 
 .. image:: images/umap_all_docs_cosine.png
@@ -74,13 +75,12 @@ the ``UMAPVisualizer``.
 If we omit the target during fit, we can visualize the whole dataset to
 see if any meaningful patterns are observed.
 
-.. code:: ipython3
+.. code:: python
 
     # Don't color points with their classes
     umap = UMAPVisualizer(labels=["documents"], metric='cosine')
     umap.fit(docs)
     umap.poof()
-
 
 
 .. image:: images/umap_no_labels.png
@@ -90,18 +90,17 @@ This means we don’t have to use class labels at all. Instead we can use
 cluster membership from K-Means to label each document. This will allow
 us to look for clusters of related text by their contents:
 
-.. code:: ipython3
+.. code:: python
 
     # Apply clustering instead of class names.
     from sklearn.cluster import KMeans
-    
+
     clusters = KMeans(n_clusters=5)
     clusters.fit(docs)
-    
+
     umap = UMAPVisualizer()
     umap.fit(docs, ["c{}".format(c) for c in clusters.labels_])
     umap.poof()
-
 
 
 .. image:: images/umap_kmeans.png
