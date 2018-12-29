@@ -16,6 +16,8 @@ Tests for the RFECV visualizer
 
 import sys
 import pytest
+import numpy as np
+import numpy.testing as npt
 
 from tests.base import VisualTestCase
 from tests.dataset import DatasetMixin, Dataset
@@ -77,7 +79,7 @@ class TestRFECV(VisualTestCase, DatasetMixin):
         X, y = self.dataset
         params = (
             "n_features_", "support_", "ranking_",
-            "cv_scores_", "rfe_estimator_",
+            "cv_scores_", "rfe_estimator_", "n_feature_subsets_"
         )
 
         rf = RandomForestClassifier()
@@ -124,7 +126,7 @@ class TestRFECV(VisualTestCase, DatasetMixin):
         model = LogisticRegression()
         X, y = self.dataset
 
-        ax = rfecv(model, X, y, step=3, cv=cv, scoring='f1_weighted')
+        ax = rfecv(model, X, y, step=2, cv=cv, scoring='f1_weighted')
 
         self.assert_images_similar(ax=ax)
 
@@ -156,11 +158,27 @@ class TestRFECV(VisualTestCase, DatasetMixin):
 
         self.assert_images_similar(oz)
 
-    def test_valid_step(self):
+    def test_invalid_step(self):
         """
         Test step hyperparam validation
         """
         # TODO: parametrize when unittest is removed
-        with pytest.raises(YellowbrickValueError):
-            oz = RFECV(SVC(kernel="lnear"), step=-1)
+        with pytest.raises(YellowbrickValueError, match="step must be >0"):
+            oz = RFECV(SVC(kernel="linear"), step=-1)
             oz.fit(self.dataset.X, self.dataset.y)
+
+    def test_rfecv_step(self):
+        """
+        Test RFECV step=5 with LogisticRegression
+        """
+        X, y = make_classification(
+            n_samples=200, n_features=30, n_informative=18, n_redundant=6,
+            n_repeated=0, n_classes=8, n_clusters_per_class=1, random_state=0
+        )
+
+        oz = RFECV(LogisticRegression(random_state=32), step=5).fit(X, y)
+        assert hasattr(oz, "n_feature_subsets_")
+        npt.assert_array_equal(oz.n_feature_subsets_, np.arange(1,35,5))
+
+        oz.finalize()
+        self.assert_images_similar(oz)
