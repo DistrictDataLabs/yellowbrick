@@ -63,4 +63,3 @@ def test_regression_target_color_type():
     """
     _, y = make_regression()
     assert target_color_type(y) == CONTINUOUS
-

@@ -56,9 +56,9 @@ def target_color_type(y):
         * 'discrete': `y` is either a binary target or a multiclass target
           with <= 12 discrete classes.
         * 'continuous': `y` is an array-like of floats that are not all
-          integers or a multiclass with > 12 discrete classes.
+          integers or a multiclass target with > 12 discrete classes.
         * 'unknown': `y` is array-like but none of the above. For example
-          a multilabel-indeicator or a 3D array. No exception is raised.
+          a multilabel-indicator or a 3D array. No exception is raised.
     """
     ttype = type_of_target(y)
 
