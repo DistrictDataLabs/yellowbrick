@@ -137,6 +137,41 @@ class TestUMAP(VisualTestCase, DatasetMixin):
 
         assert umap._size == (100, 50)
 
+    def test_custom_colors_umap(self):
+        """
+        Check UMAP accepts and properly handles custom colors from user
+        """
+        ## produce random data
+        X, y = make_classification(n_samples=200, n_features=100,
+                               n_informative=20, n_redundant=10, 
+                               n_classes=5, random_state=42)
+        
+        ## specify a list of custom colors >= n_classes
+        purple_blues = ["indigo", "orchid", "plum", "navy", "purple", "blue"]
+        
+        ## instantiate the visualizer and check that self.colors is correct
+        purple_umap = UMAPVisualizer(colors=purple_blues, random_state=87)
+        assert purple_umap.colors == purple_blues
+        
+        ## fit the visualizer and check that self.color_values is as long as
+        ## n_classes and is the first n_classes items in self.colors
+        purple_umap.fit(X,y)
+        assert len(purple_umap.color_values_) == len(purple_umap.classes_)
+        assert purple_umap.color_values_ == purple_blues[:len(purple_umap.classes_)]
+
+        ## specify a list of custom colors < n_classes
+        greens = ["green", "lime", "teal"]
+
+        ## instantiate the visualizer and check that self.colors is correct
+        green_umap = UMAPVisualizer(colors=greens, random_state=87)
+        assert green_umap.colors == greens
+
+        ## fit the visualizer and check that self.color_values is as long as
+        ## n_classes and the user-supplied color list gets recycled as expected
+        green_umap.fit(X,y)
+        assert len(green_umap.color_values_) == len(green_umap.classes_)
+        assert green_umap.color_values_ == ["green", "lime", "teal", "green", "lime"]
+
     def test_make_classification_umap(self):
         """
         Test UMAP integrated visualization on a sklearn classifier dataset
