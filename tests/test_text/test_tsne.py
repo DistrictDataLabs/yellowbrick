@@ -126,6 +126,41 @@ class TestTSNE(VisualTestCase, DatasetMixin):
 
         assert tsne._size == (100, 50)
 
+    def test_custom_colors_tsne(self):
+        """
+        Check tSNE accepts and properly handles custom colors from user
+        """
+        ## produce random data
+        X, y = make_classification(n_samples=200, n_features=100,
+                               n_informative=20, n_redundant=10, 
+                               n_classes=5, random_state=42)
+        
+        ## specify a list of custom colors >= n_classes
+        purple_blues = ["indigo", "orchid", "plum", "navy", "purple", "blue"]
+        
+        ## instantiate the visualizer and check that self.colors is correct
+        purple_tsne = TSNEVisualizer(colors=purple_blues, random_state=87)
+        assert purple_tsne.colors == purple_blues
+        
+        ## fit the visualizer and check that self.color_values is as long as
+        ## n_classes and is the first n_classes items in self.colors
+        purple_tsne.fit(X,y)
+        assert len(purple_tsne.color_values_) == len(purple_tsne.classes_)
+        assert purple_tsne.color_values_ == purple_blues[:len(purple_tsne.classes_)]
+
+        ## specify a list of custom colors < n_classes
+        greens = ["green", "lime", "teal"]
+
+        ## instantiate the visualizer and check that self.colors is correct
+        green_tsne = TSNEVisualizer(colors=greens, random_state=87)
+        assert green_tsne.colors == greens
+
+        ## fit the visualizer and check that self.color_values is as long as
+        ## n_classes and the user-supplied color list gets recycled as expected
+        green_tsne.fit(X,y)
+        assert len(green_tsne.color_values_) == len(green_tsne.classes_)
+        assert green_tsne.color_values_ == ["green", "lime", "teal", "green", "lime"]
+
     def test_make_classification_tsne(self):
         """
         Test tSNE integrated visualization on a sklearn classifier dataset
