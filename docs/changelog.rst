@@ -7,7 +7,7 @@ Version 1.0
 -----------
 * Tag: v1.0_
 * Deployed: Not yet deployed
-* Contributors: Benjamin Bengfort, Rebecca Bilbro, Nathan Danielsen, Kristen McIntyre, Larry Gray, Prema Roman, John Healy, Sourav Singh, Francois Dion
+* Contributors: Benjamin Bengfort, Rebecca Bilbro, Nathan Danielsen, Kristen McIntyre, Larry Gray, Prema Roman, John Healy, Sourav Singh, Francois Dion, Jerome Massot
 
 Major Changes:
     - Add support for matplotlib 3.0.1 or greater.
@@ -20,6 +20,7 @@ Minor Changes:
     - Added polish to missing value visualizers code, tests, and documentation.
     - Improved RankD tests for better coverage.
     - Added quick method test for ``DispersionPlot`` visualizer.
+    - BugFix: fixed resolve colors bug in TSNE and UMAP text visualizers and added regression tests to prevent future errors.
     - Extended FeatureImportances documentation and tests for stacked importances and added a warning when stack should be true.
     - Improved the documentation readability and structure.
 
