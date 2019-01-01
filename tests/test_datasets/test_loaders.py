@@ -22,6 +22,7 @@ from yellowbrick.datasets.loaders import DATASETS
 from yellowbrick.datasets.base import Dataset, Corpus
 from yellowbrick.datasets.path import dataset_exists, dataset_archive
 from yellowbrick.datasets.path import find_dataset_path
+from yellowbrick.exceptions import DatasetsError
 
 try:
     import pandas as pd
@@ -103,7 +104,7 @@ def assert_valid_numpy(data):
     assert isinstance(X, np.ndarray), "to_data does not return numpy"
     assert isinstance(y, np.ndarray), "to_data does not return numpy"
 
-    with pytest.raises(ModuleNotFoundError):
+    with pytest.raises(DatasetsError):
         data.to_pandas(), "exception not raised when pandas unavailable"
 
 

@@ -17,8 +17,13 @@ Loading utilities for the yellowbrick datasets.
 ##########################################################################
 
 import os
+import six
 import json
 import numpy as np
+
+if six.PY2:
+    # backport for encoding in open for python2
+    from io import open
 
 from .download import download_data
 from .path import find_dataset_path, dataset_exists
@@ -239,7 +244,7 @@ class Dataset(BaseDataset):
             features (including those that might have been filtered out).
         """
         if pd is None:
-            raise ModuleNotFoundError(
+            raise DatasetsError(
                 "pandas is required to load DataFrame, it can be installed with pip"
             )
 
