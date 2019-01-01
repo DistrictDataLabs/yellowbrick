@@ -187,16 +187,14 @@ class Dataset(BaseDataset):
             A numpy array describing the target vector.
         """
         path = find_dataset_path(self.name, ext=".npz", data_home=self.data_home)
-        npf = np.load(path)
-        X, y = npf.get("X"), npf.get("y")
+        with np.load(path) as npf:
+            if "X" not in npf or "y" not in npf:
+                raise DatasetsError((
+                    "the downloaded dataset was improperly packaged without numpy arrays "
+                    "- please report this bug to the Yellowbrick maintainers!"
+                ))
 
-        if X is None or y is None:
-            raise DatasetsError((
-                "the downloaded dataset was improperly packaged without numpy arrays "
-                "- please report this bug to the Yellowbrick maintainers!"
-            ))
-
-        return X, y
+            return npf["X"], npf["y"]
 
     def to_pandas(self):
         """
