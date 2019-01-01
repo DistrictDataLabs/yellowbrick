@@ -56,15 +56,15 @@ def get_data_home(path=None):
     return path
 
 
-def find_dataset_path(dataset, data_home=None, fname=None, ext=".csv", raises=True):
+def find_dataset_path(dataset, data_home=None, fname=None, ext=".csv.gz", raises=True):
     """
     Looks up the path to the dataset specified in the data home directory,
     which is found using the ``get_data_home`` function. By default data home
     is colocated with the code, but can be modified with the YELLOWBRICK_DATA
     environment variable, or passing in a different directory.
 
-    The file returned will be by default, the name of the dataset in CSV
-    format. Other files and extensions can be passed in to locate other data
+    The file returned will be by default, the name of the dataset in compressed
+    CSV format. Other files and extensions can be passed in to locate other data
     types or auxilliary files.
 
     If the dataset is not found a ``DatasetsError`` is raised by default.
@@ -83,7 +83,7 @@ def find_dataset_path(dataset, data_home=None, fname=None, ext=".csv", raises=Tr
         The filename to look up in the dataset path, by default it will be the
         name of the dataset. The fname must include an extension.
 
-    ext : str, default: ".csv"
+    ext : str, default: ".csv.gz"
         The extension of the data to look up in the dataset path, if the fname
         is specified then the ext parameter is ignored. If ext is None then
         the directory of the dataset will be returned.
@@ -208,7 +208,13 @@ def cleanup_dataset(dataset, data_home=None, ext=".zip"):
 
     ext : str, default: ".zip"
         The extension of the archive file.
+
+    Returns
+    -------
+    removed : int
+        The number of objects removed from data_home.
     """
+    removed = 0
     data_home = get_data_home(data_home)
 
     # Paths to remove
@@ -218,7 +224,11 @@ def cleanup_dataset(dataset, data_home=None, ext=".zip"):
     # Remove directory and contents
     if os.path.exists(datadir):
         shutil.rmtree(datadir)
+        removed += 1
 
     # Remove the archive file
     if os.path.exists(archive):
         os.remove(archive)
+        removed += 1
+
+    return removed

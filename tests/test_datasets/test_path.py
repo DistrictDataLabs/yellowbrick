@@ -96,8 +96,8 @@ def test_find_dataset_path(tmpdir):
     # Stringify FilePath for Py2 tests
     data_home = str(data_home)
 
-    # Test the default lookup of foo/foo.csv
-    fpath = foo.join("foo.csv")
+    # Test the default lookup of foo/foo.csv.gz
+    fpath = foo.join("foo.csv.gz")
     fpath.write("1,2,3")
     assert find_dataset_path("foo", data_home=data_home) == fpath
 

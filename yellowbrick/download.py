@@ -19,11 +19,13 @@ Downloads the example datasets for running the examples.
 ## Imports
 ##########################################################################
 
+import os
 import argparse
 
 from yellowbrick.datasets import get_data_home
 from yellowbrick.datasets.loaders import DATASETS
 from yellowbrick.datasets.download import download_data
+from yellowbrick.datasets.path import cleanup_dataset
 
 
 ##########################################################################
@@ -41,11 +43,38 @@ def download_all(data_home=None, replace=False):
             meta['url'], meta['signature'], data_home=data_home, replace=replace
         )
 
+    print(
+        "Downloaded {} datasets to {}".format(len(DATASETS), get_data_home(data_home))
+    )
+
+
+def cleanup_all(data_home=None):
+    """
+    Cleans up all the example datasets in the data directory specified by
+    ``get_data_home`` either to clear up disk space or start from fresh.
+    """
+    removed = 0
+    for name, meta in DATASETS.items():
+        _, ext = os.path.splitext(meta['url'])
+        removed += cleanup_dataset(name, data_home=data_home, ext=ext)
+
+    print(
+        "Removed {} fixture objects from {}".format(removed, get_data_home(data_home))
+    )
+
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(
         description="Yellowbrick data downloader",
         epilog="for troubleshooting please visit our GitHub issues"
+    )
+    parser.add_argument(
+        '-c', '--cleanup', action='store_true', default=False,
+        help="cleanup any existing datasets before download",
+    )
+    parser.add_argument(
+        '--no-download', action='store_true', default=False,
+        help="prevent new data from being downloaded",
     )
     parser.add_argument(
         '-f', '--overwrite', action='store_true', default=False,
@@ -58,8 +87,8 @@ if __name__ == '__main__':
 
     args = parser.parse_args()
 
-    download_all(data_home=args.data_home, replace=args.overwrite)
-    print(
-        "Downloaded {} datasets to {}".format(
-            len(DATASETS), get_data_home(args.data_home)
-    ))
+    if args.cleanup:
+        cleanup_all(data_home=args.data_home)
+
+    if not args.no_download:
+        download_all(data_home=args.data_home, replace=args.overwrite)

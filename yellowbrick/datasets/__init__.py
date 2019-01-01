@@ -17,14 +17,5 @@ Management utilities for Yellowbrick example datasets.
 ## Imports
 ##########################################################################
 
-from .loaders import load_concrete
-from .loaders import load_energy
-from .loaders import load_credit
-from .loaders import load_occupancy
-from .loaders import load_mushroom
-from .loaders import load_hobbies
-from .loaders import load_game
-from .loaders import load_bikeshare
-from .loaders import load_spam
-
+from .loaders import *
 from .path import get_data_home

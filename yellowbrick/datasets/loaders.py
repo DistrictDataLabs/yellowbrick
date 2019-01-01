@@ -14,61 +14,54 @@ Dataset loading utilities and primary API to the datasets module.
 ## Imports
 ##########################################################################
 
+import os
+import json
+
 from .base import Dataset, Corpus
+
+__all__ = [
+    "load_concrete", "load_energy", "load_credit", "load_occupancy",
+    "load_mushroom", "load_hobbies", "load_game", "load_bikeshare",
+    "load_spam", "load_walking",
+]
 
 
 ##########################################################################
 ## Links and SHA 256 signature of Yellowbrick hosted datasets
 ##########################################################################
 
-DATASETS = {
-    'concrete': {
-        'url': 'https://s3.amazonaws.com/ddl-data-lake/yellowbrick/concrete.zip',
-        'signature': 'b9ea5f26a7bb272a040e2f1a993b26babbf8dc4a04ab8198bb315ca66d71f10d',
-    },
-    'energy': {
-        'url': 'https://s3.amazonaws.com/ddl-data-lake/yellowbrick/energy.zip',
-        'signature': '19fb86f3bcdde208eed46944172cb643ef6a7d58da103fb568fae43205ed89d3',
-    },
-    'credit': {
-        'url': 'https://s3.amazonaws.com/ddl-data-lake/yellowbrick/credit.zip',
-        'signature': '4a91339c69f55e18f3f48004328fbcb7868070b618208fed099920427b084e5e',
-    },
-    'occupancy': {
-        'url': 'https://s3.amazonaws.com/ddl-data-lake/yellowbrick/occupancy.zip',
-        'signature': '429cfe376dc9929a1fa528da89f0e1626e34e19695f3f555d8954025bbc522b8',
-    },
-    'mushroom': {
-        'url': 'https://s3.amazonaws.com/ddl-data-lake/yellowbrick/mushroom.zip',
-        'signature': '884c43cb70db35d211c67b1cf6a3683b2b4569393d2789d5c07840da4dc85ba8',
-    },
-    'hobbies': {
-        'url': 'https://s3.amazonaws.com/ddl-data-lake/yellowbrick/hobbies.zip',
-        'signature': '415c8f68df1486d5d84a1d1757a5aa3035aef5ad63ede5013c261d622fbd29d8',
-    },
-    'game': {
-        'url': 'https://s3.amazonaws.com/ddl-data-lake/yellowbrick/game.zip',
-        'signature': 'b1bd85789a014a898daa34cb5f89ceab6d2cd6488a2e572187e34aa4ec21a43b',
-    },
-    'bikeshare': {
-        'url': 'https://s3.amazonaws.com/ddl-data-lake/yellowbrick/bikeshare.zip',
-        'signature': 'a9b440f65549746dff680c92ff8bdca3c7265f09db1cf09e708e6e26fc8aba44',
-    },
-    'spam': {
-        'url': 'https://s3.amazonaws.com/ddl-data-lake/yellowbrick/spam.zip',
-        'signature': '65be21196ba3d8448847409b70a67d761f873f30719c807600eb516d7aef1de1',
-    },
-}
+MANIFEST = os.path.join(os.path.dirname(__file__), "manifest.json")
+with open(MANIFEST, "r") as f:
+    DATASETS = json.load(f)
 
 
 ##########################################################################
 ## Specific loading utilities
 ##########################################################################
 
-def load_concrete(data_home=None):
+def _load_dataset(name, data_home=None, return_dataset=False):
+    """
+    Load a dataset by name and return specified format.
+    """
+    info = DATASETS[name]
+    data = Dataset(name, data_home=data_home, **info)
+    if return_dataset:
+        return data
+    return data.to_data()
+
+
+def _load_corpus(name, data_home=None):
+    """
+    Load a corpus object by name.
+    """
+    info = DATASETS[name]
+    return Corpus(name, data_home=data_home, **info)
+
+
+def load_concrete(data_home=None, return_dataset=False):
     """
     Loads the concrete multivariate dataset that is well suited to regression
-    tasks. The dataset contains 1030 instances and 9 real valued attributes
+    tasks. The dataset contains 1030 instances and 8 real valued attributes
     with a continuous target.
 
     The Yellowbrick datasets are hosted online and when requested, the dataset
@@ -87,18 +80,26 @@ def load_concrete(data_home=None):
         The path on disk where data is stored. If not passed in, it is looked
         up from YELLOWBRICK_DATA or the default returned by ``get_data_home``.
 
+    return_dataset : bool, default=False
+        Return the raw dataset object instead of X and y numpy arrays to
+        get access to alternative targets, extra features, content and meta.
+
     Returns
     -------
-    dataset : Dataset
+    X : array-like with shape (n_instances, n_features) if return_dataset=False
+        A pandas DataFrame or numpy array describing the instance features.
+
+    y : array-like with shape (n_instances,) if return_dataset=False
+        A pandas Series or numpy array describing the target vector.
+
+    dataset : Dataset instance if return_dataset=True
         The Yellowbrick Dataset object provides an interface to accessing the
-        data and metadata associated with the dataset.
+        data in a variety of formats as well as associated metadata and content.
     """
-    name = 'concrete'
-    info = DATASETS[name]
-    return Dataset(name, data_home=data_home, **info)
+    return _load_dataset('concrete', data_home, return_dataset)
 
 
-def load_energy(data_home=None):
+def load_energy(data_home=None, return_dataset=False):
     """
     Loads the energy multivariate dataset that is well suited to multi-output
     regression and classification tasks. The dataset contains 768 instances and
@@ -120,22 +121,29 @@ def load_energy(data_home=None):
         The path on disk where data is stored. If not passed in, it is looked
         up from YELLOWBRICK_DATA or the default returned by ``get_data_home``.
 
+    return_dataset : bool, default=False
+        Return the raw dataset object instead of X and y numpy arrays to
+        get access to alternative targets, extra features, content and meta.
+
     Returns
     -------
-    dataset : Dataset
+    X : array-like with shape (n_instances, n_features) if return_dataset=False
+        A pandas DataFrame or numpy array describing the instance features.
+
+    y : array-like with shape (n_instances,) if return_dataset=False
+        A pandas Series or numpy array describing the target vector.
+
+    dataset : Dataset instance if return_dataset=True
         The Yellowbrick Dataset object provides an interface to accessing the
-        data and metadata associated with the dataset.
+        data in a variety of formats as well as associated metadata and content.
     """
-    # name of the dataset
-    name = 'energy'
-    info = DATASETS[name]
-    return Dataset(name, data_home=data_home, **info)
+    return _load_dataset('energy', data_home, return_dataset)
 
 
-def load_credit(data_home=None):
+def load_credit(data_home=None, return_dataset=False):
     """
     Loads the credit multivariate dataset that is well suited to binary
-    classification tasks. The dataset contains 30000 instances and 24 integer
+    classification tasks. The dataset contains 30000 instances and 23 integer
     and real value attributes with a discrete target.
 
     The Yellowbrick datasets are hosted online and when requested, the dataset
@@ -154,23 +162,30 @@ def load_credit(data_home=None):
         The path on disk where data is stored. If not passed in, it is looked
         up from YELLOWBRICK_DATA or the default returned by ``get_data_home``.
 
+    return_dataset : bool, default=False
+        Return the raw dataset object instead of X and y numpy arrays to
+        get access to alternative targets, extra features, content and meta.
+
     Returns
     -------
-    dataset : Dataset
+    X : array-like with shape (n_instances, n_features) if return_dataset=False
+        A pandas DataFrame or numpy array describing the instance features.
+
+    y : array-like with shape (n_instances,) if return_dataset=False
+        A pandas Series or numpy array describing the target vector.
+
+    dataset : Dataset instance if return_dataset=True
         The Yellowbrick Dataset object provides an interface to accessing the
-        data and metadata associated with the dataset.
+        data in a variety of formats as well as associated metadata and content.
     """
-    # name of the dataset
-    name = 'credit'
-    info = DATASETS[name]
-    return Dataset(name, data_home=data_home, **info)
+    return _load_dataset('credit', data_home, return_dataset)
 
 
-def load_occupancy(data_home=None):
+def load_occupancy(data_home=None, return_dataset=False):
     """
     Loads the occupancy multivariate, time-series dataset that is well suited
     to binary classification tasks. The dataset contains 20560 instances with
-    7 real valued attributes and a discrete target.
+    5 real valued attributes and a discrete target.
 
     The Yellowbrick datasets are hosted online and when requested, the dataset
     is downloaded to your local computer for use. Note that if the dataset
@@ -188,22 +203,29 @@ def load_occupancy(data_home=None):
         The path on disk where data is stored. If not passed in, it is looked
         up from YELLOWBRICK_DATA or the default returned by ``get_data_home``.
 
+    return_dataset : bool, default=False
+        Return the raw dataset object instead of X and y numpy arrays to
+        get access to alternative targets, extra features, content and meta.
+
     Returns
     -------
-    dataset : Dataset
+    X : array-like with shape (n_instances, n_features) if return_dataset=False
+        A pandas DataFrame or numpy array describing the instance features.
+
+    y : array-like with shape (n_instances,) if return_dataset=False
+        A pandas Series or numpy array describing the target vector.
+
+    dataset : Dataset instance if return_dataset=True
         The Yellowbrick Dataset object provides an interface to accessing the
-        data and metadata associated with the dataset.
+        data in a variety of formats as well as associated metadata and content.
     """
-    # name of the dataset
-    name = 'occupancy'
-    info = DATASETS[name]
-    return Dataset(name, data_home=data_home, **info)
+    return _load_dataset('occupancy', data_home, return_dataset)
 
 
-def load_mushroom(data_home=None):
+def load_mushroom(data_home=None, return_dataset=False):
     """
     Loads the mushroom multivariate dataset that is well suited to binary
-    classification tasks. The dataset contains 8124 instances with 4
+    classification tasks. The dataset contains 8123 instances with 3
     categorical attributes and a discrete target.
 
     The Yellowbrick datasets are hosted online and when requested, the dataset
@@ -222,16 +244,23 @@ def load_mushroom(data_home=None):
         The path on disk where data is stored. If not passed in, it is looked
         up from YELLOWBRICK_DATA or the default returned by ``get_data_home``.
 
+    return_dataset : bool, default=False
+        Return the raw dataset object instead of X and y numpy arrays to
+        get access to alternative targets, extra features, content and meta.
+
     Returns
     -------
-    dataset : Dataset
+    X : array-like with shape (n_instances, n_features) if return_dataset=False
+        A pandas DataFrame or numpy array describing the instance features.
+
+    y : array-like with shape (n_instances,) if return_dataset=False
+        A pandas Series or numpy array describing the target vector.
+
+    dataset : Dataset instance if return_dataset=True
         The Yellowbrick Dataset object provides an interface to accessing the
-        data and metadata associated with the dataset.
+        data in a variety of formats as well as associated metadata and content.
     """
-    # name of the dataset
-    name = 'mushroom'
-    info = DATASETS[name]
-    return Dataset(name, data_home=data_home, **info)
+    return _load_dataset('mushroom', data_home, return_dataset)
 
 
 def load_hobbies(data_home=None):
@@ -263,13 +292,10 @@ def load_hobbies(data_home=None):
         The Yellowbrick Corpus object provides an interface to accessing the
         text documents and metadata associated with the corpus.
     """
-    # name of the dataset
-    name = 'hobbies'
-    info = DATASETS[name]
-    return Corpus(name, data_home=data_home, **info)
+    return _load_corpus('hobbies', data_home)
 
 
-def load_game(data_home=None):
+def load_game(data_home=None, return_dataset=False):
     """
     Load the Connect-4 game multivariate and spatial dataset that is well
     suited to multiclass classification tasks. The dataset contains 67557
@@ -291,24 +317,29 @@ def load_game(data_home=None):
         The path on disk where data is stored. If not passed in, it is looked
         up from YELLOWBRICK_DATA or the default returned by ``get_data_home``.
 
+    return_dataset : bool, default=False
+        Return the raw dataset object instead of X and y numpy arrays to
+        get access to alternative targets, extra features, content and meta.
+
     Returns
     -------
-    dataset : Dataset
+    X : array-like with shape (n_instances, n_features) if return_dataset=False
+        A pandas DataFrame or numpy array describing the instance features.
+
+    y : array-like with shape (n_instances,) if return_dataset=False
+        A pandas Series or numpy array describing the target vector.
+
+    dataset : Dataset instance if return_dataset=True
         The Yellowbrick Dataset object provides an interface to accessing the
-        data and metadata associated with the dataset.
+        data in a variety of formats as well as associated metadata and content.
     """
-    raise NotImplementedError("requires specialized datatype")
-    # name of the dataset
-    # name = 'game'
-    # path = find_dataset_path(name, data_home=data_home)
-    # dtype = np.array(['S1']*42+['|S4'])
-    # return np.genfromtxt(path, dtype=dtype, delimiter=',', names=True)
+    return _load_dataset('game', data_home, return_dataset)
 
 
-def load_bikeshare(data_home=None):
+def load_bikeshare(data_home=None, return_dataset=False):
     """
     Loads the bike sharing univariate dataset that is well suited to regression
-    tasks. The dataset contains 17379 instances with 16 integer and real valued
+    tasks. The dataset contains 17379 instances with 12 integer and real valued
     attributes and a continuous target.
 
     The Yellowbrick datasets are hosted online and when requested, the dataset
@@ -327,22 +358,29 @@ def load_bikeshare(data_home=None):
         The path on disk where data is stored. If not passed in, it is looked
         up from YELLOWBRICK_DATA or the default returned by ``get_data_home``.
 
+    return_dataset : bool, default=False
+        Return the raw dataset object instead of X and y numpy arrays to
+        get access to alternative targets, extra features, content and meta.
+
     Returns
     -------
-    dataset : Dataset
+    X : array-like with shape (n_instances, n_features) if return_dataset=False
+        A pandas DataFrame or numpy array describing the instance features.
+
+    y : array-like with shape (n_instances,) if return_dataset=False
+        A pandas Series or numpy array describing the target vector.
+
+    dataset : Dataset instance if return_dataset=True
         The Yellowbrick Dataset object provides an interface to accessing the
-        data and metadata associated with the dataset.
+        data in a variety of formats as well as associated metadata and content.
     """
-    # name of the dataset
-    name = 'bikeshare'
-    info = DATASETS[name]
-    return Dataset(name, data_home=data_home, **info)
+    return _load_dataset('bikeshare', data_home, return_dataset)
 
 
-def load_spam(data_home=None):
+def load_spam(data_home=None, return_dataset=False):
     """
     Loads the email spam dataset that is weill suited to binary classification
-    and theshold tasks. The dataset contains 4601 instances with 57 integer and
+    and threshold tasks. The dataset contains 4600 instances with 57 integer and
     real valued attributes and a discrete target.
 
     The Yellowbrick datasets are hosted online and when requested, the dataset
@@ -361,13 +399,61 @@ def load_spam(data_home=None):
         The path on disk where data is stored. If not passed in, it is looked
         up from YELLOWBRICK_DATA or the default returned by ``get_data_home``.
 
+    return_dataset : bool, default=False
+        Return the raw dataset object instead of X and y numpy arrays to
+        get access to alternative targets, extra features, content and meta.
+
     Returns
     -------
-    dataset : Dataset
+    X : array-like with shape (n_instances, n_features) if return_dataset=False
+        A pandas DataFrame or numpy array describing the instance features.
+
+    y : array-like with shape (n_instances,) if return_dataset=False
+        A pandas Series or numpy array describing the target vector.
+
+    dataset : Dataset instance if return_dataset=True
         The Yellowbrick Dataset object provides an interface to accessing the
-        data and metadata associated with the dataset.
+        data in a variety of formats as well as associated metadata and content.
     """
-    # name of the dataset
-    name = 'spam'
-    info = DATASETS[name]
-    return Dataset(name, data_home=data_home, **info)
+    return _load_dataset('spam', data_home, return_dataset)
+
+
+def load_walking(data_home=None, return_dataset=False):
+    """
+    Loads the walking activity dataset that is weill suited to clustering and
+    multi-label classification tasks. The dataset contains multi-variate time
+    series data with 149,332 real valued measurements across 22 unique walkers.
+
+    The Yellowbrick datasets are hosted online and when requested, the dataset
+    is downloaded to your local computer for use. Note that if the dataset
+    hasn't been downloaded before, an Internet connection is required. However,
+    if the data is cached locally, no data will be downloaded. Yellowbrick
+    checks the known signature of the dataset with the data downloaded to
+    ensure the download completes successfully.
+
+    Datasets are stored alongside the code, but the location can be specified
+    with the ``data_home`` parameter or the $YELLOWBRICK_DATA envvar.
+
+    Parameters
+    ----------
+    data_home : str, optional
+        The path on disk where data is stored. If not passed in, it is looked
+        up from YELLOWBRICK_DATA or the default returned by ``get_data_home``.
+
+    return_dataset : bool, default=False
+        Return the raw dataset object instead of X and y numpy arrays to
+        get access to alternative targets, extra features, content and meta.
+
+    Returns
+    -------
+    X : array-like with shape (n_instances, n_features) if return_dataset=False
+        A pandas DataFrame or numpy array describing the instance features.
+
+    y : array-like with shape (n_instances,) if return_dataset=False
+        A pandas Series or numpy array describing the target vector.
+
+    dataset : Dataset instance if return_dataset=True
+        The Yellowbrick Dataset object provides an interface to accessing the
+        data in a variety of formats as well as associated metadata and content.
+    """
+    return _load_dataset('walking', data_home, return_dataset)

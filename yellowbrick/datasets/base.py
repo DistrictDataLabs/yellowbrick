@@ -23,6 +23,7 @@ import numpy as np
 from .download import download_data
 from .path import find_dataset_path, dataset_exists
 
+from yellowbrick.exceptions import DatasetsError
 from yellowbrick.utils.decorators import memoized
 
 try:
@@ -41,9 +42,9 @@ class BaseDataset(object):
     """
 
     def __init__(self, name, url=None, signature=None, data_home=None):
+        self.url = url
         self.name = name
         self.data_home = data_home
-        self.url = url
         self.signature = signature
 
         # Check if the dataset exists, and if not - download it!
@@ -105,6 +106,21 @@ class BaseDataset(object):
         with open(path, 'r') as f:
             return json.load(f)
 
+    @memoized
+    def citation(self):
+        """
+        Returns the contents of the citation.bib file that describes the source
+        and provenance of the dataset or to cite for academic work.
+        """
+        path = find_dataset_path(
+            self.name, data_home=self.data_home, fname="meta.json", raises=False
+        )
+        if path is None:
+            return None
+
+        with open(path, 'r') as f:
+            return f.read()
+
 
 class Dataset(BaseDataset):
     """
@@ -139,7 +155,26 @@ class Dataset(BaseDataset):
         been corrupted or modified in anyway.
     """
 
-    def as_matrix(self):
+    def to_data(self):
+        """
+        Returns the data contained in the dataset as X and y where X is the
+        features matrix and y is the target vector. If pandas is installed,
+        the data will be returned as DataFrame and Series objects. Otherwise,
+        the data will be returned as two numpy arrays.
+
+        Returns
+        -------
+        X : array-like with shape (n_instances, n_features)
+            A pandas DataFrame or numpy array describing the instance features.
+
+        y : array-like with shape (n_instances,)
+            A pandas Series or numpy array describing the target vector.
+        """
+        if pd is not None:
+            return self.to_pandas()
+        return self.to_numpy()
+
+    def to_numpy(self):
         """
         Returns the dataset as two numpy arrays: X and y.
 
@@ -151,10 +186,19 @@ class Dataset(BaseDataset):
         y : array-like with shape (n_instances,)
             A numpy array describing the target vector.
         """
-        path = find_dataset_path(self.name, data_home=self.data_home)
-        return np.genfromtxt(path, dtype=float, delimiter=',', names=True)
+        path = find_dataset_path(self.name, ext=".npz", data_home=self.data_home)
+        npf = np.load(path)
+        X, y = npf.get("X"), npf.get("y")
 
-    def as_pandas(self):
+        if X is None or y is None:
+            raise DatasetsError((
+                "the downloaded dataset was improperly packaged without numpy arrays "
+                "- please report this bug to the Yellowbrick maintainers!"
+            ))
+
+        return X, y
+
+    def to_pandas(self):
         """
         Returns the dataset as two pandas objects: X and y.
 
@@ -167,13 +211,42 @@ class Dataset(BaseDataset):
             A pandas Series containing target data and an index that matches
             the feature DataFrame index.
         """
+        # Ensure the metadata is valid before continuing
+        if self.meta is None:
+            raise DatasetsError((
+                "the downloaded dataset was improperly packaged without meta.json "
+                "- please report this bug to the Yellowbrick maintainers!"
+            ))
+
+        if "features" not in self.meta or "target" not in self.meta:
+            raise DatasetsError((
+                "the downloaded dataset was improperly packaged without features "
+                "or target - please report this bug to the Yellowbrick maintainers!"
+            ))
+
+        # Load data frame and return features and target
+        df = self.to_dataframe()
+        return df[self.meta["features"]], df[self.meta["target"]]
+
+
+    def to_dataframe(self):
+        """
+        Returns the entire dataset as a single pandas DataFrame.
+
+        Returns
+        -------
+        df : DataFrame with shape (n_instances, n_columns)
+            A pandas DataFrame containing the complete original data table
+            including all targets (specified by the meta data) and all
+            features (including those that might have been filtered out).
+        """
         if pd is None:
-            raise ImportError(
+            raise ModuleNotFoundError(
                 "pandas is required to load DataFrame, it can be installed with pip"
             )
 
-        path = find_dataset_path(self.name, data_home=self.data_home)
-        return pd.read_csv(path)
+        path = find_dataset_path(self.name, ext=".csv.gz", data_home=self.data_home)
+        return pd.read_csv(path, compression="gzip")
 
 
 class Corpus(BaseDataset):
@@ -205,26 +278,38 @@ class Corpus(BaseDataset):
     """
 
     @memoized
-    def path(self):
+    def root(self):
+        """
+        Discovers and caches the root directory of the corpus.
+        """
         return find_dataset_path(self.name, data_home=self.data_home, ext=None)
 
     @memoized
-    def categories(self):
+    def labels(self):
+        """
+        Return the unique labels assigned to the documents.
+        """
         return [
-            cat for cat in os.listdir(self.path)
-            if os.path.isdir(os.path.join(self.path, cat))
+            name for name in os.listdir(self.root)
+            if os.path.isdir(os.path.join(self.root, name))
         ]
 
     @property
     def files(self):
+        """
+        Returns the list of file names for all documents.
+        """
         return [
-            name
-            for cat in self.categories
-            for name in os.listdir(os.path.join(self.path, cat))
+            os.path.join(self.root, label, name)
+            for label in self.labels
+            for name in os.listdir(os.path.join(self.root, label))
         ]
 
     @property
     def data(self):
+        """
+        Read all of the documents from disk into an in-memory list.
+        """
         def read(path):
             with open(path, 'r', encoding='UTF-8') as f:
                 return f.read()
@@ -235,6 +320,9 @@ class Corpus(BaseDataset):
 
     @property
     def target(self):
+        """
+        Returns the label associated with each item in data.
+        """
         return [
             os.path.basename(os.path.dirname(f)) for f in self.files
         ]

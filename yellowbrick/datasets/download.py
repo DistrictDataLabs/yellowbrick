@@ -37,7 +37,8 @@ from yellowbrick.exceptions import DatasetsError
 
 
 # Downlod chunk size
-CHUNK = 49152
+CHUNK = 524288
+
 
 ##########################################################################
 ## Download functions
