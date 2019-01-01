@@ -320,7 +320,7 @@ class TSNEVisualizer(TextVisualizer):
 
         # Create the color mapping for the labels.
         self.color_values_ = resolve_colors(
-            n_colors=len(labels), colormap=self.colormap, colors=self.color)
+            n_colors=len(labels), colormap=self.colormap, colors=self.colors)
         colors = dict(zip(labels, self.color_values_))
 
         # Transform labels into a map of class to label
