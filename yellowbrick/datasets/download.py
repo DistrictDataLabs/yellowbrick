@@ -33,7 +33,7 @@ except ImportError:
 from .signature import sha256sum
 from .path import get_data_home, cleanup_dataset
 
-from yellowbrick.exceptions import DataError
+from yellowbrick.exceptions import DatasetsError
 
 
 # Downlod chunk size
@@ -82,7 +82,7 @@ def download_data(url, signature, data_home=None, replace=False, extract=True):
     # If the archive exists cleanup or raise override exception
     if os.path.exists(archive):
         if not replace:
-            raise DataError((
+            raise DatasetsError((
                 "dataset already exists at {}, set replace=False to overwrite"
             ).format(archive))
 

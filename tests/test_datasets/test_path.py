@@ -19,7 +19,7 @@ import pytest
 import contextlib
 
 from yellowbrick.datasets.path import *
-from yellowbrick.exceptions import DataError
+from yellowbrick.exceptions import DatasetsError
 
 
 ##########################################################################
@@ -119,18 +119,18 @@ def test_missing_find_dataset_path(tmpdir):
     data_home = tmpdir.mkdir("fixtures")
 
     # When the data directory doesn't exist
-    with pytest.raises(DataError):
+    with pytest.raises(DatasetsError):
         find_dataset_path("foo", data_home=str(data_home))
 
     # When the data directory exists but no file is in the directory
     foo = data_home.mkdir("foo")
-    with pytest.raises(DataError):
+    with pytest.raises(DatasetsError):
         find_dataset_path("foo", data_home=str(data_home))
 
     # When the specified file doesn't exist
     fpath = foo.join("foo.csv")
     fpath.write("1,2,3")
-    with pytest.raises(DataError):
+    with pytest.raises(DatasetsError):
         find_dataset_path("foo", data_home=str(data_home), ext=".npz")
 
 

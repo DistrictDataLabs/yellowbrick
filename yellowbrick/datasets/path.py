@@ -18,7 +18,7 @@ import os
 import shutil
 
 from .signature import sha256sum
-from yellowbrick.exceptions import DataError
+from yellowbrick.exceptions import DatasetsError
 
 
 ##########################################################################
@@ -67,7 +67,7 @@ def find_dataset_path(dataset, data_home=None, fname=None, ext=".csv", raises=Tr
     format. Other files and extensions can be passed in to locate other data
     types or auxilliary files.
 
-    If the dataset is not found a ``DataError`` is raised by default.
+    If the dataset is not found a ``DatasetsError`` is raised by default.
 
     Parameters
     ----------
@@ -89,7 +89,7 @@ def find_dataset_path(dataset, data_home=None, fname=None, ext=".csv", raises=Tr
         the directory of the dataset will be returned.
 
     raises : bool, default: True
-        If the path does not exist, raises a DataError unless this flag is set
+        If the path does not exist, raises a DatasetsError unless this flag is set
         to False, at which point None is returned (e.g. for checking if the
         path exists or not).
 
@@ -99,8 +99,8 @@ def find_dataset_path(dataset, data_home=None, fname=None, ext=".csv", raises=Tr
         A path to the requested file, guaranteed to exist if an exception is
         not raised during processing of the request (unless None is returned).
 
-    raises : DataError
-        If raise is True and the path does not exist, raises a DataError.
+    raises : DatasetsError
+        If raise is True and the path does not exist, raises a DatasetsError.
     """
     # Figure out the root directory of the datasets
     data_home = get_data_home(data_home)
@@ -121,7 +121,7 @@ def find_dataset_path(dataset, data_home=None, fname=None, ext=".csv", raises=Tr
         if not raises:
             return None
 
-        raise DataError((
+        raise DatasetsError((
             "could not find dataset at {} - does it need to be downloaded?"
         ).format(path))
 
