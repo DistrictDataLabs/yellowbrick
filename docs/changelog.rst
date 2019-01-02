@@ -10,6 +10,8 @@ Version 1.0
 * Contributors: Benjamin Bengfort, Rebecca Bilbro, Nathan Danielsen, Kristen McIntyre, Larry Gray, Prema Roman, John Healy, Sourav Singh, Francois Dion, Jerome Massot
 
 Major Changes:
+    - New datasets module that provide greater support for interacting with Yellowbrick example datasets including support for Pandas, npz, and text corpora.
+    - Management repository for Yellowbrick example data, yellowbrick-datasets.
     - Add support for matplotlib 3.0.1 or greater.
     - ``UMAPVisualizer`` as an alternative manifold to TSNE for corpus visualization that is fast enough to not require preprocessing PCA or SVD decomposition and preserves higher order similarities and distances.
 

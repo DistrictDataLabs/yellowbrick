@@ -79,3 +79,12 @@ Unless otherwise specified, most of the examples currently use one or more of th
 - **mushroom**: suitable for classification/clustering
 - **occupancy**: suitable for classification
 - **spam**: suitable for binary classification
+
+
+API Reference
+-------------
+
+.. automodule:: yellowbrick.datasets.path
+    :members:
+    :undoc-members:
+    :show-inheritance:
