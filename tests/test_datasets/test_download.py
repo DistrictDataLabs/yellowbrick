@@ -29,7 +29,7 @@ from yellowbrick.datasets.path import dataset_exists, dataset_archive
     ], ids=lambda l: l.__name__)
 def test_loader_download(tmpdir, loader):
     """
-    Test download of dataset when it does not exist
+    Test download of dataset when it does not exist (requires Internet connection!)
     """
     name = loader.__name__[len("load_"):]
     data_home = str(tmpdir.mkdir("datasets"))

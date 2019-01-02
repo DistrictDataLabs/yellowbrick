@@ -199,6 +199,7 @@ class Dataset(BaseDataset):
                     "- please report this bug to the Yellowbrick maintainers!"
                 ))
 
+            # TODO: How to handle the case where y is None?
             return npf["X"], npf["y"]
 
     def to_pandas(self):
@@ -228,6 +229,7 @@ class Dataset(BaseDataset):
             ))
 
         # Load data frame and return features and target
+        # TODO: Return y as None if there is no self.meta["target"]
         df = self.to_dataframe()
         return df[self.meta["features"]], df[self.meta["target"]]
 

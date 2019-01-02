@@ -115,15 +115,28 @@ def assert_valid_numpy(data):
 class TestDatasetLoaders(object):
     """
     Test the dataset loading functions
+
+    Broadly: test each of the dataset loaders to ensure that they are valid
+    for their particular type of dataset and that they return X and y by
+    default. Then test their shape to ensure that the dataset hasn't changed
+    unexpectedly between versions. See ``test_load_concrete`` for a sketch.
+
+    Final tests with parametrize test all loaders against Base classes.
+    Make sure you scroll to the bottom and implement your loader in the
+    correct test batch!
     """
 
     def test_load_concrete(self):
         """
         Test loading the concrete regression dataset
         """
+        # Load the type-specific dataset wrapper and validate it
         data = load_concrete(return_dataset=True)
         assert_valid_dataset(data, "concrete")
 
+        # Ensure that the default returns X, y to match documentation
+        # Check shape to ensure no unexpected dataset changes have occured
+        # before we push something to PyPI!
         X, y = load_concrete()
         assert X.shape == (1030, 8)
         assert y.shape == (1030,)
