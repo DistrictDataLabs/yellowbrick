@@ -238,6 +238,44 @@ class TestPrecisionRecallCurve(VisualTestCase):
         tol = 6.6 if sys.platform == 'win32' else 1.0 # fails with RMSE 6.583 on AppVeyor
         self.assert_images_similar(oz, tol=tol)
 
+    def test_multiclass_probability_with_class_labels(self):
+        """
+        Visual similarity of multiclass classifier with predict_proba function
+        with class labels
+        """
+        # Create and fit the visualizer
+        oz = PrecisionRecallCurve(
+            GaussianNB(), per_class=True, micro=False, fill_area=False,
+            iso_f1_curves=True, ap_score=False,
+            classes=["a", "b", "c", "d", "e", "f"]
+        )
+        assert_not_fitted(oz)
+
+        # Fit returns self
+        assert oz.fit(self.multiclass.X.train, self.multiclass.y.train) is oz
+
+        # Score the visualizer
+        s = oz.score(self.multiclass.X.test, self.multiclass.y.test)
+        assert_fitted(oz)
+
+        # Score should be between 0 and 1
+        assert 0.0 <= s <= 1.0
+
+        # Check the multiclass classification properties
+        assert oz.target_type_ == MULTICLASS
+        assert isinstance(oz.score_, dict)
+        assert oz.score_[MICRO] == s
+        assert isinstance(oz.precision_, dict)
+        assert isinstance(oz.recall_, dict)
+        assert len(oz.score_) == len(oz.classes_) + 1
+        assert len(oz.precision_) == len(oz.classes_) + 1
+        assert len(oz.recall_) == len(oz.classes_) + 1
+
+        # Compare the images
+        oz.finalize()
+        tol = 6.6 if sys.platform == 'win32' else 1.0 # fails with RMSE 6.583 on AppVeyor
+        self.assert_images_similar(oz, tol=tol)
+
     @pytest.mark.filterwarnings("ignore:From version 0.21")
     def test_quick_method(self):
         """
