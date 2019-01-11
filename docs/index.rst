@@ -28,15 +28,15 @@ Feature Visualization
 - :doc:`api/features/manifold`: high dimensional visualization with manifold learning
 - :doc:`api/features/importances`: rank features by importance or linear coefficients for a specific model
 - :doc:`api/features/rfecv`: find the best subset of features based on importance
-- :doc:`Scatter and Joint Plots<api/features/scatter>`: direct data visualization with feature selection
+- :doc:`Joint Plots <api/features/jointplot>`: direct data visualization with feature selection
 
 Classification Visualization
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-- :doc:`api/classifier/class_balance`: see how the distribution of classes affects the model
 - :doc:`api/classifier/class_prediction_error`: shows error and support in classification
 - :doc:`api/classifier/classification_report`: visual representation of precision, recall, and F1
 - :doc:`ROC/AUC Curves <api/classifier/rocauc>`: receiver operator characteristics and area under the curve
+-  :doc:`api/classifier/prcurve`: precision vs recall for different probability thresholds
 - :doc:`Confusion Matrices <api/classifier/confusion_matrix>`: visual description of class decision making
 - :doc:`Discrimination Threshold <api/classifier/threshold>`: find a threshold that best separates binary classes
 
@@ -52,6 +52,7 @@ Clustering Visualization
 
 - :doc:`K-Elbow Plot <api/cluster/elbow>`: select k using the elbow method and various metrics
 - :doc:`Silhouette Plot <api/cluster/silhouette>`: select k by visualizing silhouette coefficient values
+- :doc:`api/cluster/icdm`: show relative distance and size/importance of clusters
 
 Model Selection Visualization
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -59,11 +60,19 @@ Model Selection Visualization
 -  :doc:`api/model_selection/validation_curve`: tune a model with respect to a single hyperparameter
 -  :doc:`api/model_selection/learning_curve`: show if a model might benefit from more data or less complexity
 
+Target Visualization
+~~~~~~~~~~~~~~~~~~~~
+
+- :doc:`api/target/binning`: generate a histogram with vertical lines showing the recommended value point to bin the data into evenly distributed bins
+- :doc:`api/target/class_balance`: see how the distribution of classes affects the model
+- :doc:`api/target/feature_correlation`: display the correlation between features and dependent variables
+
 Text Visualization
 ~~~~~~~~~~~~~~~~~~
 
 - :doc:`Term Frequency <api/text/freqdist>`: visualize the frequency distribution of terms in the corpus
-- :doc:`api/text/tsne`: use stochastic neighbor embedding to project documents.
+- :doc:`api/text/tsne`: use stochastic neighbor embedding to project documents
+- :doc:`api/text/dispersion`: visualize how key terms are dispersed throughout a corpus
 
 ... and more! Visualizers are being added all the time; be sure to check the examples (or even the `develop branch <https://github.com/DistrictDataLabs/yellowbrick/tree/develop>`_) and feel free to contribute your ideas for new Visualizers!
 
@@ -94,9 +103,12 @@ The following is a complete listing of the Yellowbrick documentation for this ve
    tutorial
    api/index
    evaluation
-   contributing
+   contributing/index
    matplotlib
+   teaching
+   gallery
    about
+   faq
    code_of_conduct
    changelog
 

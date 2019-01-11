@@ -77,13 +77,14 @@ DECOMPOSITIONS = [
 ]
 
 # Import Transformers
+from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.feature_extraction import DictVectorizer
 from sklearn.preprocessing import QuantileTransformer
-from sklearn.preprocessing import StandardScaler, Imputer
-from sklearn.feature_extraction.text import TfidfVectorizer
+from sklearn.preprocessing import StandardScaler
+from sklearn.impute import SimpleImputer
 
 TRANSFORMERS = [
-    DictVectorizer, QuantileTransformer, StandardScaler, Imputer,
+    DictVectorizer, QuantileTransformer, StandardScaler, SimpleImputer,
     TfidfVectorizer,
 ]
 
@@ -186,7 +187,7 @@ class TestModelTypeChecking(object):
         (Visualizer, {}),
         (ScoreVisualizer, {'model': LinearRegression()}),
         (ModelVisualizer, {'model': LogisticRegression()})
-    ], ids=lambda i: obj_name(i[0]))
+    ], ids=["Visualizer", "ScoreVisualizer", "ModelVisualizer"])
     def test_is_estimator_visualizer(self, viz, params):
         """
         Test that is_estimator works for Visualizers
@@ -259,7 +260,7 @@ class TestModelTypeChecking(object):
     @pytest.mark.parametrize("viz,params", [
         (ScoreVisualizer, {'model': LinearRegression()}),
         (ModelVisualizer, {'model': Ridge()})
-    ], ids=lambda i: obj_name(i[0]))
+    ], ids=["ScoreVisualizer", "ModelVisualizer"])
     def test_is_regressor_visualizer(self, viz, params):
         """
         Test that is_regressor works on visualizers
@@ -332,7 +333,7 @@ class TestModelTypeChecking(object):
     @pytest.mark.parametrize("viz,params", [
         (ScoreVisualizer, {'model': MultinomialNB()}),
         (ModelVisualizer, {'model': MLPClassifier()})
-    ], ids=lambda i: obj_name(i[0]))
+    ], ids=["ScoreVisualizer", "ModelVisualizer"])
     def test_is_classifier_visualizer(self, viz, params):
         """
         Test that is_classifier works on visualizers
@@ -393,7 +394,7 @@ class TestModelTypeChecking(object):
 
     @pytest.mark.parametrize("viz,params", [
         (ModelVisualizer, {'model': KMeans()})
-    ], ids=lambda i: obj_name(i[0]))
+    ], ids=["ModelVisualizer"])
     def test_is_clusterer_visualizer(self, viz, params):
         """
         Test that is_clusterer works on visualizers
@@ -426,7 +427,7 @@ class TestModelTypeChecking(object):
         assert is_gridsearch(obj)
 
     @pytest.mark.parametrize("model",
-        [MLPRegressor, MLPClassifier, Imputer], ids=obj_name)
+        [MLPRegressor, MLPClassifier, SimpleImputer], ids=obj_name)
     def test_not_is_gridsearch(self, model):
         """
         Test that is_gridsearch does not match non grid searches
@@ -462,7 +463,7 @@ class TestModelTypeChecking(object):
         assert is_probabilistic(obj)
 
     @pytest.mark.parametrize("model", [
-        MLPRegressor, Imputer, StandardScaler, KMeans,
+        MLPRegressor, SimpleImputer, StandardScaler, KMeans,
         RandomForestRegressor,
     ], ids=obj_name)
     def test_not_is_probabilistic(self, model):
@@ -521,6 +522,40 @@ class TestDataTypeChecking(object):
         Test that is_dataframe does not match non-dataframes
         """
         assert not is_dataframe(obj)
+
+    ##////////////////////////////////////////////////////////////////////
+    ## is_series testing
+    ##////////////////////////////////////////////////////////////////////
+
+    def test_series_alias(self):
+        """
+        Assert isseries aliases is_series
+        """
+        assert isseries is is_series
+
+    @pytest.mark.skipif(pd is None, reason="requires pandas")
+    def test_is_series(self):
+        """
+        Test that is_series works correctly
+        """
+        df = pd.Series([1, 2, 3])
+
+        assert is_series(df)
+
+    @pytest.mark.parametrize("obj", [
+        np.array([
+            (1,2.,'Hello'), (2,3.,"World")],
+            dtype=[('foo', 'i4'),('bar', 'f4'), ('baz', 'S10')]
+        ),
+        np.array([1,2,3]),
+        [1, 2, 3],
+    ],
+    ids=["structured array", "array", "list"])
+    def test_not_is_series(self, obj):
+        """
+        Test that is_series does not match non-dataframes
+        """
+        assert not is_series(obj)
 
     ##////////////////////////////////////////////////////////////////////
     ## is_structured_array testing

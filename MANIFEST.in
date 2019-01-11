@@ -4,11 +4,24 @@ include *.txt
 include *.yml
 include *.cfg
 include Makefile
-recursive-include docs *.rst
-recursive-include docs *.jpg
-recursive-include docs *.png
-recursive-include docs *.py
-recursive-include docs Makefile
-recursive-include tests *.py
-recursive-include examples *.py
-recursive-include examples *.ipynb
+include MANIFEST.in
+
+include examples/*.ipynb
+include examples/*.md
+
+graft docs
+prune docs/_build
+
+graft tests
+prune tests/fixtures
+prune tests/actual_images
+
+graft yellowbrick
+prune yellowbrick/datasets/fixtures
+
+global-exclude __pycache__
+global-exclude *.py[co]
+global-exclude .ipynb_checkpoints
+global-exclude .DS_Store
+global-exclude .env
+global-exclude .coverage.*

@@ -181,7 +181,7 @@ class Visualizer(BaseEstimator):
         """
         return self.ax
 
-    def poof(self, outpath=None, **kwargs):
+    def poof(self, outpath=None, clear_figure=False, **kwargs):
         """
         Poof makes the magic happen and a visualizer appear! You can pass in
         a path to save the figure to disk with various backends, or you can
@@ -191,7 +191,11 @@ class Visualizer(BaseEstimator):
         Parameters
         ----------
         outpath: string, default: None
-            path or None. Save  figure to disk or if None show in window
+            path or None. Save figure to disk or if None show in window
+
+        clear_figure: boolean, default: False
+            When True, this flag clears the figure after saving to file or
+            showing on screen. This is useful when making consecutive plots.
 
         kwargs: dict
             generic keyword arguments.
@@ -211,6 +215,9 @@ class Visualizer(BaseEstimator):
             plt.savefig(outpath, **kwargs)
         else:
             plt.show()
+
+        if clear_figure:
+            plt.gcf().clear()
 
     ##////////////////////////////////////////////////////////////////////
     ## Helper Functions
@@ -533,7 +540,7 @@ class VisualizerGrid(Visualizer):
 
         return self
 
-    def poof(self, outpath=None, **kwargs):
+    def poof(self, outpath=None, clear_figure=False, **kwargs):
 
         if self.axarr is None: return
 
@@ -552,3 +559,6 @@ class VisualizerGrid(Visualizer):
             plt.savefig(outpath, **kwargs)
         else:
             plt.show()
+
+        if clear_figure:
+            plt.gcf().clear()

@@ -10,3 +10,5 @@ The ``yellowbrick.contrib`` package contains a variety of extra tools and experi
 
    boundaries
    statsmodels
+   scatter
+   missing/index

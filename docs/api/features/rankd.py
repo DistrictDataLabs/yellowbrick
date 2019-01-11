@@ -26,6 +26,7 @@ def rank2d(X, y, outpath, **kwargs):
     visualizer.transform(X)
 
     # Save to disk
+    plt.tight_layout()
     visualizer.poof(outpath=outpath)
 
 
@@ -41,9 +42,9 @@ if __name__ == '__main__':
             'jul_pay', 'aug_pay', 'sep_pay',
         ]
 
-    # Extract the numpy arrays from the data frame
-    X = data[features].as_matrix()
-    y = data.default.as_matrix()
+    # Extract the instances and target
+    X = data[features]
+    y = data.default
 
     # Instantiate the visualizer with the Shapiro-Wilk ranking algorithm
     rank1d(X, y, "images/rank1d_shapiro.png", features=features, algorithm='shapiro')

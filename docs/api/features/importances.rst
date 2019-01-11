@@ -81,8 +81,8 @@ regression dataset:
     ]
 
     # Extract the instances and target
-    X = concrete[feats]
-    y = concrete.strength
+    X = data[features]
+    y = data.strength
 
 When using a model with a ``coef_`` attribute, it is better to set
 ``relative=False`` to draw the true magnitude of the coefficient (which may
@@ -92,11 +92,7 @@ title case our features for better readability:
 
 .. code:: python
 
-    import matplotlib.pyplot as plt
-    
     from sklearn.linear_model import Lasso
-    
-    from yellowbrick.features.importances import FeatureImportances
 
     # Create a new figure
     fig = plt.figure()
@@ -114,6 +110,33 @@ title case our features for better readability:
 .. image:: images/feature_importances_coef.png
 
 .. NOTE:: The interpretation of the importance of coeficients depends on the model; see the discussion below for more details.
+
+Stacked Feature Importances
+---------------------------
+
+Some estimators return a multi-dimensonal array for either ``feature_importances_`` or ``coef_`` attributes. For example the ``LogisticRegression`` classifier returns a ``coef_`` array in the shape of ``(n_classes, n_features)`` in the multiclass case. These coefficients map the importance of the feature to the prediction of the probability of a specific class. Although the interpretation of multi-dimensional feature importances depends on the specific estimator and model family, the data is treated the same in the ``FeatureImportances`` visualizer -- namely the importances are averaged.
+
+Taking the mean of the importances may be undesirable for several reasons. For example, a feature may be more informative for some classes than others. Multi-output estimators also do not benefit from having averages taken across what are essentially multiple internal models. In this case, use the ``stack=True`` parameter to draw a stacked bar chart of importances as follows:
+
+.. code:: python
+
+    from sklearn.linear_model import LogisticRegression
+    from sklearn.datasets import load_iris
+
+    # Create a new matplotlib figure
+    fig = plt.figure()
+    ax = fig.add_subplot()
+
+    data = load_iris()
+    X, y = data.data, data.target
+
+    viz = FeatureImportances(LogisticRegression(), ax=ax, stack=True, relative=False)
+    viz.fit(X, y)
+    viz.poof()
+
+
+.. image:: images/feature_importances_stacked.png
+
 
 Discussion
 ----------

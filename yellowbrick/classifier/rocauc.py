@@ -77,20 +77,31 @@ class ROCAUC(ClassificationScoreVisualizer):
 
     micro : bool, default = True
         Plot the micro-averages ROC curve, computed from the sum of all true
-        positives and false positives across all classes.
+        positives and false positives across all classes. Micro is not defined
+        for binary classification problems with estimators with only a
+        decision_function method.
 
     macro : bool, default = True
         Plot the macro-averages ROC curve, which simply takes the average of
-        curves across all classes.
+        curves across all classes. Macro is not defined for binary
+        classification problems with estimators with only a decision_function
+        method.
 
     per_class : bool, default = True
-        Plot the ROC curves for each individual class. Primarily this is set
-        to false if only the macro or micro average curves are required.
+        Plot the ROC curves for each individual class. This should be set
+        to false if only the macro or micro average curves are required. Per-
+        class classification is not defined for binary classification problems
+        with estimators with only a decision_function method.
 
     kwargs : keyword arguments passed to the super class.
         Currently passing in hard-coded colors for the Receiver Operating
         Characteristic curve and the diagonal.
         These will be refactored to a default Yellowbrick style.
+
+    Attributes
+    ----------
+    score_ : float
+        Global accuracy score, unless micro or macro scores are requested
 
     Notes
     -----
@@ -113,28 +124,21 @@ class ROCAUC(ClassificationScoreVisualizer):
 
     Examples
     --------
-    >>> from sklearn.datasets import load_breast_cancer
     >>> from yellowbrick.classifier import ROCAUC
     >>> from sklearn.linear_model import LogisticRegression
     >>> from sklearn.model_selection import train_test_split
-    >>> data = load_breast_cancer()
-    >>> X = data['data']
-    >>> y = data['target']
+    >>> data = load_data("occupancy")
+    >>> features = ["temp", "relative humidity", "light", "C02", "humidity"]
     >>> X_train, X_test, y_train, y_test = train_test_split(X, y)
-    >>> viz = ROCAUC(LogisticRegression())
-    >>> viz.fit(X_train, y_train)
-    >>> viz.score(X_test, y_test)
-    >>> viz.poof()
+    >>> oz = ROCAUC(LogisticRegression())
+    >>> oz.fit(X_train, y_train)
+    >>> oz.score(X_test, y_test)
+    >>> oz.poof()
     """
 
     def __init__(self, model, ax=None, classes=None,
                  micro=True, macro=True, per_class=True, **kwargs):
         super(ROCAUC, self).__init__(model, ax=ax, classes=classes, **kwargs)
-
-        if not micro and not macro and not per_class:
-            raise YellowbrickValueError(
-                "no curves will be drawn; specify micro, macro, or per_clss"
-            )
 
         # Set the visual parameters for ROCAUC
         self.micro = micro
@@ -156,15 +160,42 @@ class ROCAUC(ClassificationScoreVisualizer):
 
         Returns
         -------
-        score : float
-            The micro-average area under the curve of all classes.
+        score_ : float
+            Global accuracy unless micro or macro scores are requested.
         """
 
         # Compute the predictions for the test data
         y_pred = self._get_y_scores(X)
 
-        # # Classes may be label encoded so only use what's in y to compute.
-        # # The self.classes_ attribute will be used as names for labels.
+        # Note: In the above, _get_y_scores calls either a decision_function or
+        # predict_proba, which should return a 2D array. But in a binary
+        # classification using an estimator with only a decision_function, y_pred
+        # will instead be 1D, meaning only one curve can be plotted. In this case,
+        # we set the _binary_decision attribute to True to ensure only one curve is
+        # computed and plotted later on.
+        if y_pred.ndim == 1:
+            self._binary_decision = True
+
+            # Raise an error if it's a binary decision and user has set micro,
+            # macro, or per_class to True
+            if self.micro or self.macro or self.per_class:
+                raise ModelError(
+                    "Micro, macro, and per-class scores are not defined for "
+                    "binary classification for estimators with only "
+                    "decision_function methods; set micro, macro, and "
+                    "per-class params to False."
+                )
+        else:
+            self._binary_decision = False
+            # If it's not a binary decision, at least one of micro, macro, or
+            # per_class must be True
+            if not self.micro and not self.macro and not self.per_class:
+                raise YellowbrickValueError(
+                    "no curves will be drawn; specify micro, macro, or per_class"
+                )
+
+        # Classes may be label encoded so only use what's in y to compute.
+        # The self.classes_ attribute will be used as names for labels.
         classes = np.unique(y)
         n_classes = len(classes)
 
@@ -173,10 +204,15 @@ class ROCAUC(ClassificationScoreVisualizer):
         self.tpr = dict()
         self.roc_auc = dict()
 
-        # Compute ROC curve and ROC area for each class
-        for i, c in enumerate(classes):
-            self.fpr[i], self.tpr[i], _ = roc_curve(y, y_pred[:,i], pos_label=c)
-            self.roc_auc[i] = auc(self.fpr[i], self.tpr[i])
+        # If the decision is binary, compute the ROC curve and ROC area
+        if self._binary_decision == True:
+            self.fpr[0], self.tpr[0], _ = roc_curve(y, y_pred)
+            self.roc_auc[0] = auc(self.fpr[0], self.tpr[0])
+        else:
+            # Otherwise compute the ROC curve and ROC area for each class
+            for i, c in enumerate(classes):
+                self.fpr[i], self.tpr[i], _ = roc_curve(y, y_pred[:,i], pos_label=c)
+                self.roc_auc[i] = auc(self.fpr[i], self.tpr[i])
 
         # Compute micro average
         if self.micro:
@@ -189,16 +225,18 @@ class ROCAUC(ClassificationScoreVisualizer):
         # Draw the Curves
         self.draw()
 
-        # Return micro average if specified
+        # Set score to micro average if specified
         if self.micro:
-            return self.roc_auc[MICRO]
+            self.score_ = self.roc_auc[MICRO]
 
-        # Return macro average if not micro
+        # Set score to macro average if not micro
         if self.macro:
-            return self.roc_auc[MACRO]
+            self.score_ = self.roc_auc[MACRO]
 
-        # Return the base score if neither macro nor micro
-        return self.estimator.score(X, y)
+        # Set score to the base score if neither macro nor micro
+        self.score_ = self.estimator.score(X, y)
+
+        return self.score_
 
     def draw(self):
         """
@@ -212,7 +250,16 @@ class ROCAUC(ClassificationScoreVisualizer):
         colors = self.colors[0:len(self.classes_)]
         n_classes = len(colors)
 
-        # Plot the ROC curves for each class
+        # If it's a binary decision, plot the single ROC curve
+        if self._binary_decision == True:
+            self.ax.plot(
+                self.fpr[0], self.tpr[0],
+                label='ROC for binary decision, AUC = {:0.2f}'.format(
+                        self.roc_auc[0]
+                )
+            )
+
+        # If per-class plotting is requested, plot ROC curves for each class
         if self.per_class:
             for i, color in zip(range(n_classes), colors):
                 self.ax.plot(
@@ -222,7 +269,7 @@ class ROCAUC(ClassificationScoreVisualizer):
                     )
                 )
 
-        # Plot the ROC curve for the micro average
+        # If requested, plot the ROC curve for the micro average
         if self.micro:
             self.ax.plot(
                 self.fpr[MICRO], self.tpr[MICRO], linestyle="--",
@@ -232,7 +279,7 @@ class ROCAUC(ClassificationScoreVisualizer):
                 )
             )
 
-        # Plot the ROC curve for the macro average
+        # If requested, plot the ROC curve for the macro average
         if self.macro:
             self.ax.plot(
                 self.fpr[MACRO], self.tpr[MACRO], linestyle="--",
@@ -301,6 +348,8 @@ class ROCAUC(ClassificationScoreVisualizer):
                 # Some Scikit-Learn estimators have both probability and
                 # decision functions but override __getattr__ and raise an
                 # AttributeError on access.
+                # Note that because of the ordering of our attrs above,
+                # estimators with both will *only* ever use probability.
                 continue
 
         # If we've gotten this far, raise an error
@@ -389,15 +438,21 @@ def roc_auc(model, X, y=None, ax=None, **kwargs):
 
     micro : bool, default = True
         Plot the micro-averages ROC curve, computed from the sum of all true
-        positives and false positives across all classes.
+        positives and false positives across all classes. Micro is not defined
+        for binary classification problems with estimators with only a
+        decision_function method.
 
     macro : bool, default = True
         Plot the macro-averages ROC curve, which simply takes the average of
-        curves across all classes.
+        curves across all classes. Macro is not defined for binary
+        classification problems with estimators with only a decision_function
+        method.
 
     per_class : bool, default = True
-        Plot the ROC curves for each individual class. Primarily this is set
-        to false if only the macro or micro average curves are required.
+        Plot the ROC curves for each individual class. This should be set
+        to false if only the macro or micro average curves are required. Per-
+        class classification is not defined for binary classification problems
+        with estimators with only a decision_function method.
 
     Notes
     -----
@@ -420,11 +475,13 @@ def roc_auc(model, X, y=None, ax=None, **kwargs):
 
     Examples
     --------
-    >>> from sklearn.datasets import load_breast_cancer
-    >>> from yellowbrick.classifier import roc_auc
+    >>> from yellowbrick.classifier import ROCAUC
     >>> from sklearn.linear_model import LogisticRegression
-    >>> data = load_breast_cancer()
-    >>> roc_auc(LogisticRegression(), data.data, data.target)
+    >>> data = load_data("occupancy")
+    >>> features = ["temp", "relative humidity", "light", "C02", "humidity"]
+    >>> X = data[features].values
+    >>> y = data.occupancy.values
+    >>> roc_auc(LogisticRegression(), X, y)
 
     Returns
     -------

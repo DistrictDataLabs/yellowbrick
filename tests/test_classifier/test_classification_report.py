@@ -59,13 +59,13 @@ class ClassificationReportTests(VisualTestCase, DatasetMixin):
         viz.fit(self.binary.X.train, self.binary.y.train)
         viz.score(self.binary.X.test, self.binary.y.test)
 
-        self.assert_images_similar(viz, tol=35)
+        self.assert_images_similar(viz, tol=40)
 
         assert viz.scores_ == {
             'precision': {0: approx(0.7446808), 1: approx(0.8490566)},
             'recall': {0: approx(0.8139534), 1: approx(0.7894736)},
             'f1': {0: approx(0.7777777), 1: approx(0.8181818)}
-        }
+            }
 
     @pytest.mark.xfail(
         sys.platform == 'win32', reason="images not close on windows"
@@ -80,7 +80,7 @@ class ClassificationReportTests(VisualTestCase, DatasetMixin):
         viz.fit(self.multiclass.X.train, self.multiclass.y.train)
         viz.score(self.multiclass.X.test, self.multiclass.y.test)
 
-        self.assert_images_similar(viz)
+        self.assert_images_similar(viz, tol=11.0)
 
         assert viz.scores_ == {
             'precision': {
@@ -128,9 +128,9 @@ class ClassificationReportTests(VisualTestCase, DatasetMixin):
         viz.fit(X_train, y_train)
         viz.score(X_test, y_test)
 
-        self.assert_images_similar(viz, tol=0.1)
+        self.assert_images_similar(viz, tol=43.0)
 
-        # Ensure correct classification scores under the hood
+        # Ensure correct classification scores under the hood!
         assert viz.scores_ == {
             'precision': {
                 'unoccupied': 0.999347471451876,
@@ -143,7 +143,6 @@ class ClassificationReportTests(VisualTestCase, DatasetMixin):
                 'occupied': 0.9366447034972124
             }}
 
-    @pytest.mark.skip(reason="requires random state in quick method")
     def test_quick_method(self):
         """
         Test the quick method with a random dataset
@@ -154,9 +153,10 @@ class ClassificationReportTests(VisualTestCase, DatasetMixin):
         )
 
         _, ax = plt.subplots()
-        classification_report(DecisionTreeClassifier(), X, y, ax=ax)
+        model = DecisionTreeClassifier(random_state=19)
+        classification_report(model, X, y, ax=ax, random_state=42)
 
-        self.assert_images_similar(ax=ax)
+        self.assert_images_similar(ax=ax, tol=25.0)
 
     def test_isclassifier(self):
         """
@@ -170,3 +170,65 @@ class ClassificationReportTests(VisualTestCase, DatasetMixin):
 
         with pytest.raises(yb.exceptions.YellowbrickError, match=message):
             ClassificationReport(LassoCV())
+
+    def test_support_count_class_report(self):
+        """
+        Correctly generates a report showing support as a raw count
+        """
+        _, ax = plt.subplots()
+
+        viz = ClassificationReport(LinearSVC(random_state=42), ax=ax,
+                                   support='count')
+        viz.fit(self.binary.X.train, self.binary.y.train)
+        viz.score(self.binary.X.test, self.binary.y.test)
+
+        self.assert_images_similar(viz, tol=40)
+
+        assert viz.scores_ == {
+            'precision': {0: approx(0.7446808), 1: approx(0.8490566)},
+            'recall': {0: approx(0.8139534), 1: approx(0.7894736)},
+            'f1': {0: approx(0.7777777), 1: approx(0.8181818)},
+            'support': {0: approx(0.42999999999999999),
+                        1: approx(0.56999999999999995)}
+            }
+
+    def test_support_percent_class_report(self):
+        """
+        Correctly generates a report showing support as a percent
+        """
+        _, ax = plt.subplots()
+
+        viz = ClassificationReport(LinearSVC(random_state=42), ax=ax,
+                                   support='percent')
+        viz.fit(self.binary.X.train, self.binary.y.train)
+        viz.score(self.binary.X.test, self.binary.y.test)
+
+        self.assert_images_similar(viz, tol=40)
+
+        assert viz.scores_ == {
+            'precision': {0: approx(0.7446808), 1: approx(0.8490566)},
+            'recall': {0: approx(0.8139534), 1: approx(0.7894736)},
+            'f1': {0: approx(0.7777777), 1: approx(0.8181818)},
+            'support': {0: approx(0.42999999999999999),
+                        1: approx(0.56999999999999995)}
+            }
+
+    def test_invalid_support(self):
+        """
+        Ensure that bad support arguments raise exception
+        """
+        with pytest.raises(YellowbrickValueError,
+                match="'foo' is an invalid argument for support, use None, " \
+                      "True, False, 'percent', or 'count'"):
+            ClassificationReport(LinearSVC(), support="foo")
+
+    def test_score_returns_score(self):
+        """
+        Test that ClassificationReport score() returns a score between 0 and 1
+        """
+        viz = ClassificationReport(LinearSVC(random_state=42))
+
+        viz.fit(self.binary.X.train, self.binary.y.train)
+        s = viz.score(self.binary.X.test, self.binary.y.test)
+
+        assert 0 <= s <= 1

@@ -46,6 +46,13 @@ class NotFitted(ModelError):
     pass
 
 
+class DatasetsError(YellowbrickError):
+    """
+    A problem occured when interacting with data sets.
+    """
+    pass
+
+
 class YellowbrickTypeError(YellowbrickError, TypeError):
     """
     There was an unexpected type or none for a property or input.
@@ -67,19 +74,9 @@ class YellowbrickKeyError(YellowbrickError, KeyError):
     pass
 
 
-class YellowbrickWarning(UserWarning):
-    """
-    Warning class used to notify users of Yellowbrick-specific issues.
-    """
-    pass
-
-
-class DataWarning(YellowbrickWarning):
-    """
-    The supplied data has an issue that may produce unexpected visualizations.
-    """
-    pass
-
+##########################################################################
+## Assertions
+##########################################################################
 
 class YellowbrickAssertionError(YellowbrickError, AssertionError):
     """
@@ -91,5 +88,23 @@ class YellowbrickAssertionError(YellowbrickError, AssertionError):
 class ImageComparisonFailure(YellowbrickAssertionError):
     """
     Provides a cleaner error when image comparison assertions fail.
+    """
+    pass
+
+
+##########################################################################
+## Warnings
+##########################################################################
+
+class YellowbrickWarning(UserWarning):
+    """
+    Warning class used to notify users of Yellowbrick-specific issues.
+    """
+    pass
+
+
+class DataWarning(YellowbrickWarning):
+    """
+    The supplied data has an issue that may produce unexpected visualizations.
     """
     pass

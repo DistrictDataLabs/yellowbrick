@@ -20,9 +20,10 @@ Implements radviz for feature analysis.
 import numpy as np
 import matplotlib.patches as patches
 
+from yellowbrick.draw import manual_legend
 from yellowbrick.utils import is_dataframe
+from yellowbrick.utils import nan_warnings
 from yellowbrick.features.base import DataVisualizer
-import yellowbrick.utils.nan_warnings as nan_warnings
 from yellowbrick.style.colors import resolve_colors
 
 
@@ -31,7 +32,7 @@ from yellowbrick.style.colors import resolve_colors
 ##########################################################################
 
 def radviz(X, y=None, ax=None, features=None, classes=None,
-           color=None, colormap=None, **kwargs):
+           color=None, colormap=None, alpha=1.0, **kwargs):
     """
     Displays each feature as an axis around a circle surrounding a scatter
     plot whose points are each individual instance.
@@ -63,6 +64,10 @@ def radviz(X, y=None, ax=None, features=None, classes=None,
     colormap : string or matplotlib cmap, default: None
         Sequential colormap for continuous target
 
+    alpha : float, default: 1.0
+        Specify a transparency where 1 is completely opaque and 0 is completely
+        transparent. This property makes densely clustered points more visible.
+
     Returns
     -------
     ax : matplotlib axes
@@ -70,7 +75,7 @@ def radviz(X, y=None, ax=None, features=None, classes=None,
     """
     # Instantiate the visualizer
     visualizer = RadialVisualizer(
-        ax, features, classes, color, colormap, **kwargs
+        ax, features, classes, color, colormap, alpha, **kwargs
     )
 
     # Fit and transform the visualizer (calls draw)
@@ -119,6 +124,10 @@ class RadialVisualizer(DataVisualizer):
         Use either color to colorize the lines on a per class basis or
         colormap to color them on a continuous scale.
 
+    alpha : float, default: 1.0
+        Specify a transparency where 1 is completely opaque and 0 is completely
+        transparent. This property makes densely clustered points more visible.
+
     kwargs : dict
         Keyword arguments that are passed to the base class and may influence
         the visualization as defined in other Visualizers.
@@ -138,10 +147,11 @@ class RadialVisualizer(DataVisualizer):
     """
 
     def __init__(self, ax=None, features=None, classes=None, color=None,
-                 colormap=None, **kwargs):
+                 colormap=None, alpha=1.0, **kwargs):
         super(RadialVisualizer, self).__init__(
             ax, features, classes, color, colormap, **kwargs
         )
+        self.alpha = alpha
 
     @staticmethod
     def normalize(X):
@@ -160,7 +170,7 @@ class RadialVisualizer(DataVisualizer):
         """
         # Convert from dataframe
         if is_dataframe(X):
-            X = X.as_matrix()
+            X = X.values
 
         # Clean out nans and warn that the user they aren't plotted
         nan_warnings.warn_if_nans_exist(X)
@@ -179,7 +189,7 @@ class RadialVisualizer(DataVisualizer):
         color_values = resolve_colors(
             n_colors=len(self.classes_), colormap=self.colormap, colors=self.color
         )
-        colors = dict(zip(self.classes_, color_values))
+        self._colors = dict(zip(self.classes_, color_values))
 
         # Create a data structure to hold scatter plot representations
         to_plot = {}
@@ -210,11 +220,16 @@ class RadialVisualizer(DataVisualizer):
         # TODO: store these plots to add more instances to later
         # TODO: make this a separate function
         for i, kls in enumerate(self.classes_):
-            self.ax.scatter(to_plot[kls][0], to_plot[kls][1], color=colors[kls], label=str(kls), **kwargs)
+            self.ax.scatter(
+                to_plot[kls][0], to_plot[kls][1], color=self._colors[kls],
+                label=str(kls), alpha=self.alpha, **kwargs
+            )
 
         # Add the circular axis path
         # TODO: Make this a seperate function (along with labeling)
-        self.ax.add_patch(patches.Circle((0.0, 0.0), radius=1.0, facecolor='none', edgecolor='grey', linewidth=.5 ))
+        self.ax.add_patch(patches.Circle(
+            (0.0, 0.0), radius=1.0, facecolor='none', edgecolor='grey', linewidth=.5
+        ))
 
         # Add the feature names
         for xy, name in zip(s, self.features_):
@@ -253,7 +268,8 @@ class RadialVisualizer(DataVisualizer):
         self.ax.set_xticks([])
 
         # Add the legend
-        self.ax.legend(loc='best')
+        colors = [self._colors[c] for c in self.classes_]
+        manual_legend(self, self.classes_, colors, loc='best')
 
 
 # Alias for RadViz

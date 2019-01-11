@@ -43,6 +43,10 @@ The typical workflow for a contributor to the codebase is as follows:
 
 We believe that *contribution is collaboration* and therefore emphasize *communication* throughout the open source process. We rely heavily on GitHub's social coding tools to allow us to do this.
 
+Ideally, any pull request should be capable of resolution within 6 weeks of being opened. This timeline helps to keep our pull request queue small and allows Yellowbrick to maintain a robust release schedule to give our users the best experience possible. However, the most important thing is to keep the dialogue going! And if you're unsure whether you can complete your idea within 6 weeks, you should still go ahead and open a PR and we will be happy to help you scope it down as needed.
+
+If we have comments or questions when we evaluate your pull request and receive no response, we will also close the PR after this period of time. Please know that this does not mean we don't value your contribution, just that things go stale. If in the future you want to pick it back up, feel free to address our original feedback and to reference the original PR in a new pull request. 
+
 ### Forking the Repository
 
 The first step is to fork the repository into your own account. This will create a copy of the codebase that you can edit and write to. Do so by clicking the **"fork"** button in the upper right corner of the Yellowbrick GitHub page.
@@ -53,26 +57,34 @@ Once forked, use the following steps to get your development environment set up 
 
     After clicking the fork button, you should be redirected to the GitHub page of the repository in your user account. You can then clone a copy of the code to your local machine.
 
-    ``
+    ```
     $ git clone https://github.com/[YOURUSERNAME]/yellowbrick
     $ cd yellowbrick
-    ``
+    ```
+
+    Optionally, you can also [add the upstream remote](https://help.github.com/articles/configuring-a-remote-for-a-fork/) to synchronize with changes made by other contributors:
+
+    ```
+    $ git remote add upstream https://github.com/DistrictDataLabs/yellowbrick
+    ```
+
+    See "Branching Conventions" below for more on this topic.
 
 2. Create a virtual environment.
 
     Yellowbrick developers typically use [virtualenv](https://virtualenv.pypa.io/en/stable/) (and [virtualenvwrapper](https://virtualenvwrapper.readthedocs.io/en/latest/), [pyenv](https://github.com/pyenv/pyenv-virtualenv) or [conda envs](https://conda.io/docs/using/envs.html) in order to manage their Python version and dependencies. Using the virtual environment tool of your choice, create one for Yellowbrick. Here's how with virtualenv:
 
-    ``
+    ```
     $ virtualenv venv
-    ``
+    ```
 
 3. Install dependencies.
 
     Yellowbrick's dependencies are in the `requirements.txt` document at the root of the repository. Open this file and uncomment the dependencies that are for development only. Then install the dependencies with `pip`:
 
-    ``
+    ```
     $ pip install -r requirements.txt
-    ``
+    ```
 
     Note that there may be other dependencies required for development and testing, you can simply install them with `pip`. For example to install
     the additional dependencies for building the documentation or to run the
@@ -87,43 +99,50 @@ Once forked, use the following steps to get your development environment set up 
 
     The Yellowbrick repository has a `develop` branch that is the primary working branch for contributions. It is probably already the branch you're on, but you can make sure and switch to it as follows::
 
-    ``
+    ```
     $ git fetch
     $ git checkout develop
-    ``
+    ```
 
 At this point you're ready to get started writing code. If you're going to take on a specific task, we'd strongly encourage you to check out the issue on [Waffle](https://waffle.io/DistrictDataLabs/yellowbrick) and create a [pull request](https://github.com/DistrictDataLabs/yellowbrick/pulls) **before you start coding** to better foster communication with other contributors.
 
 ### Branching Conventions
 
-The Yellowbrick repository is set up in a typical production/release/development cycle as described in "[A Successful Git Branching Model](http://nvie.com/posts/a-successful-git-branching-model/)>." The primary working branch is the `develop` branch. This should be the branch that you are working on and from, since this has all the latest code. The `master` branch contains the latest stable version and release_, which is pushed to PyPI_. No one but core contributors will generally push to master.
+The Yellowbrick repository is set up in a typical production/release/development cycle as described in "[A Successful Git Branching Model](http://nvie.com/posts/a-successful-git-branching-model/)." The primary working branch is the `develop` branch. This should be the branch that you are working on and from, since this has all the latest code. The `master` branch contains the latest stable version and release, _which is pushed to PyPI_. No one but maintainers will push to master.
 
 **NOTE:** All pull requests should be into the `yellowbrick/develop` branch from your forked repository.
 
-You can work directly in your fork and create a pull request from your fork's develop branch into ours. We also recommend setting up an `upstream` remote so that you can easily pull the latest development changes from the main Yellowbrick repository (see [configuring a remote for a fork](https://help.github.com/articles/configuring-a-remote-for-a-fork/)). You can do that as follows:
+You should work directly in your fork and create a pull request from your fork's develop branch into ours. We also recommend setting up an `upstream` remote so that you can easily pull the latest development changes from the main Yellowbrick repository (see [configuring a remote for a fork](https://help.github.com/articles/configuring-a-remote-for-a-fork/)). You can do that as follows:
 
-`$ git remote add upstream https://github.com/DistrictDataLabs/yellowbrick.git`
-`$ git remote -v`
-> origin    https://github.com/YOUR_USERNAME/YOUR_FORK.git (fetch)
-> origin    https://github.com/YOUR_USERNAME/YOUR_FORK.git (push)
-> upstream  https://github.com/DistrictDataLabs/yellowbrick.git (fetch)
-> upstream  https://github.com/DistrictDataLabs/yellowbrick.git (push)
-
+```
+$ git remote add upstream https://github.com/DistrictDataLabs/yellowbrick.git`
+$ git remote -v
+origin    https://github.com/YOUR_USERNAME/YOUR_FORK.git (fetch)
+origin    https://github.com/YOUR_USERNAME/YOUR_FORK.git (push)
+upstream  https://github.com/DistrictDataLabs/yellowbrick.git (fetch)
+upstream  https://github.com/DistrictDataLabs/yellowbrick.git (push)
+```
 
 When you're ready, request a code review for your pull request. Then, when reviewed and approved, you can merge your fork into our main branch. Make sure to use the "Squash and Merge" option in order to create a Git history that is understandable.
 
-**NOTE**: When merge a pull request, use the "squash and merge" option.
+**NOTE to maintainers**: When merging a pull request, use the "squash and merge" option and make sure to edit the both the subject and the body of the commit message so that when we're putting the changelog together, we know what happened in the PR. I recommend reading [Chris Beams' _How to Write a Git Commit Message_](https://chris.beams.io/posts/git-commit/) so we're all on the same page!
 
-Core contributors have write access to the repository. In order to reduce the number of merges (and merge conflicts) we recommend that you utilize a feature branch off of develop to do intermediate work in::
+Core contributors and those who are planning on contributing multiple PRs might want to consider using feature branches to reduce the number of merges (and merge conflicts). Create a feature branch as follows:
 
-    $ git checkout -b feature-myfeature develop
+```
+$ git checkout -b feature-myfeature develop
+$ git push --set-upstream origin feature-myfeature
+```
 
-Once you are done working (and everything is tested) merge your feature into develop.::
+Once you are done working (and everything is tested) you can submit a PR from your feature branch. Synchronize with `upstream` once the PR has been merged and delete the feature branch:
 
-    $ git checkout develop
-    $ git merge --no-ff feature-myfeature
-    $ git branch -d feature-myfeature
-    $ git push origin develop
+```
+$ git checkout develop
+$ git pull upstream develop
+$ git push origin develop
+$ git branch -d feature-myfeature
+$ git push origin --delete feature-myfeature
+```
 
 Head back to Waffle and checkout another issue!
 
