@@ -145,7 +145,7 @@ Beyond creating visualizers, there are many ways to contribute:
 - Contribute a Jupyter notebook to our examples[ gallery](https://github.com/DistrictDataLabs/yellowbrick/tree/develop/examples).
 - Assist us with [user testing](http://www.scikit-yb.org/en/latest/evaluation.html).
 - Add to the documentation or help with our website, [scikit-yb.org](http://www.scikit-yb.org).
-- Write unit or integration tests for our project.
+- [Write unit or integration tests](http://www.scikit-yb.org/en/latest/contributing.html#testing) for our project.
 - Answer questions on our issues, mailing list, Stack Overflow, and elsewhere.
 - Translate our documentation into another language.
 - Write a blog post, tweet, or share our project with others.
