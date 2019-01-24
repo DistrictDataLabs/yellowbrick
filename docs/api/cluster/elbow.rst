@@ -9,19 +9,13 @@ To demonstrate, in the following example the ``KElbowVisualizer`` fits the ``KMe
 
 .. plot::
 
+    from sklearn.cluster import KMeans
     from sklearn.datasets import make_blobs
+
+    from yellowbrick.cluster import KElbowVisualizer
 
     # Create synthetic dataset with 8 random clusters
     X, y = make_blobs(centers=8, n_features=12, shuffle=True, random_state=42)
-
-    from sklearn.cluster import KMeans
-    from yellowbrick.cluster import KElbowVisualizer
-
-    # Make 8 blobs dataset
-    X, y = make_blobs(centers=8,
-                      n_samples=1000,
-                      n_features=12,
-                      shuffle=True)
 
     # Instantiate the clustering model and visualizer
     model = KMeans()
@@ -39,13 +33,16 @@ The ``KElbowVisualizer`` also displays the amount of time to train the clusterin
 .. plot::
 
     from sklearn.cluster import KMeans
+    from sklearn.datasets import make_blobs
+
     from yellowbrick.cluster import KElbowVisualizer
+
+    # Create synthetic dataset with 8 random clusters
+    X, y = make_blobs(centers=8, n_features=12, shuffle=True, random_state=42)
 
     # Instantiate the clustering model and visualizer
     model = KMeans()
-    visualizer = KElbowVisualizer(
-        model, k=(4,12), metric='calinski_harabaz', timings=False
-    )
+    visualizer = KElbowVisualizer(model, k=(4,12), metric='calinski_harabaz', timings=False)
 
     visualizer.fit(X)    # Fit the data to the visualizer
     visualizer.poof()    # Draw/show/poof the data
