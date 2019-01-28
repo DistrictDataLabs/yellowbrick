@@ -86,6 +86,9 @@ class PrecisionRecallCurve(ClassificationScoreVisualizer):
         Draw ISO F1-Curves on the plot to show how close the precision-recall
         curves are to different F1 scores.
 
+    f1_values : list , default=[0.2,0.4,0.6,0.8]
+        Values of f1 score for which to draw ISO F1-Curves
+
     per_class : bool, default=False
         If multi-class classification, draw the precision-recall curve for
         each class using a OneVsRestClassifier to compute the recall on a
@@ -145,16 +148,18 @@ class PrecisionRecallCurve(ClassificationScoreVisualizer):
     """
 
     def __init__(self, model, ax=None, classes=None, fill_area=True, ap_score=True,
-                 micro=True, iso_f1_curves=False, per_class=False, fill_opacity=0.2,
+                 micro=True, iso_f1_curves=False,f1_values=[0.2,0.4,0.6,0.8], per_class=False, fill_opacity=0.2,
                  line_opacity=0.8, **kwargs):
         super(PrecisionRecallCurve, self).__init__(model, ax=ax, classes=classes, **kwargs)
 
         # Set visual params
+        print("monkey")
         self.set_params(
             fill_area=fill_area,
             ap_score=ap_score,
             micro=micro,
             iso_f1_curves=iso_f1_curves,
+            f1_values = set(f1_values),
             per_class=per_class,
             fill_opacity=fill_opacity,
             line_opacity=line_opacity,
@@ -247,7 +252,7 @@ class PrecisionRecallCurve(ClassificationScoreVisualizer):
         Draws the precision-recall curves computed in score on the axes.
         """
         if self.iso_f1_curves:
-            for f1 in np.linspace(0.2, 0.8, num=4):
+            for f1 in self.f1_values:
                 x = np.linspace(0.01, 1)
                 y = f1 * x / (2 * x - f1)
                 self.ax.plot(x[y>=0], y[y>=0], color='#333333', alpha=0.2)
@@ -366,7 +371,7 @@ PRCurve = PrecisionRecallCurve
 ## Quick Method
 ##########################################################################
 
-def precision_recall_curve(model, X, y, ax=None, train_size=0.8,
+def precision_recall_curve(model, X, y ,X_test=None,y_test=None, ax=None, train_size=0.8,
                            random_state=None, shuffle=True, **kwargs):
     """Precision-Recall Curve quick method:
 
@@ -377,11 +382,17 @@ def precision_recall_curve(model, X, y, ax=None, train_size=0.8,
 
     X : ndarray or DataFrame of shape n x m
         A feature array of n instances with m features the model is trained on.
-        This array will be split into train and test splits.
+        This array will be split into train and test splits if X_test is not specified.
 
     y : ndarray or Series of length n
         An array or series of target or class values. This vector will be split
-        into train and test splits.
+        into train and test splits  if y_test is not specified.
+
+    X_test : ndarray or DataFrame of shape n x m
+        A feature array of n instances with m features that the model is tested on.
+        
+    y_test : ndarray or Series of length n
+        An array or series of target or class values that serve as actual labels for X_test.
 
     ax : matplotlib Axes, default: None
         The axes to plot the figure on. If None is passed in the current axes
@@ -390,7 +401,7 @@ def precision_recall_curve(model, X, y, ax=None, train_size=0.8,
     train_size : float or int, default=0.8
         If float, should be between 0.0 and 1.0 and represent the proportion
         of the dataset to include in the train split. If int, represents the
-        absolute number of train samples.
+        absolute number of train samples. Used if X_test and y_test not specified.
 
     random_state : int, RandomState, or None, optional
         If int, random_state is the seed used by the random number generator;
@@ -458,10 +469,17 @@ def precision_recall_curve(model, X, y, ax=None, train_size=0.8,
     # Instantiate the visualizer
     viz = PRCurve(model, ax=ax, **kwargs)
 
-    # Create train and test splits to validate the model
-    X_train, X_test, y_train, y_test = tts(
-        X, y, train_size=train_size, random_state=random_state, shuffle=shuffle
-    )
+
+    if (X_test is None) and (y_test is None):
+        # Create train and test splits to validate the model
+        X_train, X_test, y_train, y_test = tts(
+            X, y, train_size=train_size, random_state=random_state, shuffle=shuffle
+        )
+        print("splitting...")
+
+    else:
+        X_train,y_train=X,y
+        
 
     # Fit and transform the visualizer
     viz.fit(X_train, y_train)

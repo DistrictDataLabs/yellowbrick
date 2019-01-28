@@ -54,6 +54,7 @@ docs/_build/
 
 # Jupyter Notebook
 .ipynb_checkpoints
+test_yellowbrick.ipynb
 
 # pyenv
 .python-version
@@ -89,6 +90,9 @@ ENV/
 
 # PyTest
 .pytest_cache
+
+# python scripts
+gen_test.py
 
 # PyCharm
 .idea/workspace.xml
