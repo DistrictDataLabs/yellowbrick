@@ -299,6 +299,9 @@ class ConfusionMatrixTests(VisualTestCase):
             [   1,  985]
         ]))
 
+    @pytest.mark.xfail(
+        sys.platform == 'win32', reason="images not close on windows"
+    )
     def test_quick_method(self):
         """
         Test the quick method with a random dataset
