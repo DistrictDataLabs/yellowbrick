@@ -283,7 +283,7 @@ class ConfusionMatrix(ClassificationScoreVisualizer):
 
 def confusion_matrix(model, X, y, ax=None, classes=None, sample_weight=None,
                      percent=False, label_encoder=None, cmap='YlOrRd',
-                     fontsize=None, **kwargs):
+                     fontsize=None, random_state=None, **kwargs):
     """Quick method:
 
     Creates a heatmap visualization of the sklearn.metrics.confusion_matrix().
@@ -346,6 +346,9 @@ def confusion_matrix(model, X, y, ax=None, classes=None, sample_weight=None,
         Specify the fontsize of the text in the grid and labels to make the
         matrix a bit easier to read. Uses rcParams font size by default.
 
+    random_state : int, RandomState instance or None, optional (default=None)
+        Passes a random state parameter to the train_test_split function.
+
     Returns
     -------
     ax : matplotlib axes
@@ -358,7 +361,10 @@ def confusion_matrix(model, X, y, ax=None, classes=None, sample_weight=None,
     )
 
     # Create the train and test splits
-    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2)
+    # TODO: determine how to use quick methods that require train and test data.
+    X_train, X_test, y_train, y_test = train_test_split(
+        X, y, test_size=0.2, random_state=random_state
+    )
 
     # Fit and transform the visualizer (calls draw)
     visualizer.fit(X_train, y_train, **kwargs)
