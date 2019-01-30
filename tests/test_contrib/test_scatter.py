@@ -20,13 +20,13 @@ import pytest
 import numpy as np
 import matplotlib as mptl
 
-from yellowbrick.contrib.scatter import *
-from yellowbrick.exceptions import YellowbrickValueError
 from yellowbrick.style import palettes
-
-from tests.dataset import DatasetMixin
-from tests.base import VisualTestCase
+from yellowbrick.contrib.scatter import *
+from yellowbrick.datasets import load_occupancy
+from yellowbrick.exceptions import YellowbrickValueError
 from yellowbrick.exceptions import ImageComparisonFailure
+
+from tests.base import VisualTestCase
 
 try:
     import pandas as pd
@@ -44,7 +44,10 @@ except ImportError:
 ##########################################################################
 
 @pytest.mark.filterwarnings('ignore')
-class ScatterVizTests(VisualTestCase, DatasetMixin):
+class ScatterVizTests(VisualTestCase):
+    """
+    Test ScatterViz
+    """
 
     # yapf: disable
     X = np.array([
@@ -58,19 +61,11 @@ class ScatterVizTests(VisualTestCase, DatasetMixin):
     # yapf: enable
     y = np.array([1, 0, 1, 0, 1, 0])
 
-    def setUp(self):
-        self.occupancy = self.load_data('occupancy')
-        super(ScatterVizTests, self).setUp()
-
-    def tearDown(self):
-        self.occupancy = None
-        super(ScatterVizTests, self).tearDown()
-
     def test_init_alias(self):
         """
         Test alias for ScatterViz
         """
-        features = ["temperature", "relative_humidity"]
+        features = ["temperature", "relative humidity"]
         visualizer = ScatterVisualizer(features=features, markers=['*'])
         self.assertIsNotNone(visualizer.markers)
 
@@ -79,7 +74,7 @@ class ScatterVizTests(VisualTestCase, DatasetMixin):
         Assert no errors occur during scatter visualizer integration
         """
         X_two_cols = self.X[:, :2]
-        features = ["temperature", "relative_humidity"]
+        features = ["temperature", "relative humidity"]
         visualizer = ScatterViz(features=features)
         visualizer.fit_transform(X_two_cols, self.y)
 
@@ -89,7 +84,7 @@ class ScatterVizTests(VisualTestCase, DatasetMixin):
         """
         colors = palettes.PALETTES['pastel']
         X_two_cols = self.X[:, :2]
-        features = ["temperature", "relative_humidity"]
+        features = ["temperature", "relative humidity"]
         visualizer = ScatterViz(features=features, color=colors)
         visualizer.fit_transform(X_two_cols, self.y)
 
@@ -106,7 +101,7 @@ class ScatterVizTests(VisualTestCase, DatasetMixin):
         """
         Assert that only two features are allowed for scatter visualizer init
         """
-        features = ["temperature", "relative_humidity", "light"]
+        features = ["temperature", "relative humidity", "light"]
 
         with self.assertRaises(YellowbrickValueError):
             ScatterViz(features=features)
@@ -115,7 +110,7 @@ class ScatterVizTests(VisualTestCase, DatasetMixin):
         """
         Assert that x,y and features will raise scatterviz error
         """
-        features = ["temperature", "relative_humidity", "light"]
+        features = ["temperature", "relative humidity", "light"]
 
         with self.assertRaises(YellowbrickValueError):
             ScatterViz(features=features, x='one', y='two')
@@ -142,16 +137,10 @@ class ScatterVizTests(VisualTestCase, DatasetMixin):
         Test scatter on the real, occupancy data set
         """
         # Load the data from the fixture
-        X = self.occupancy[[
-            "temperature", "relative_humidity", "light", "C02", "humidity"
-        ]]
-
-        # Convert to numpy arrays
-        X = X.copy().view((float, len(X.dtype.names)))
-        y = self.occupancy['occupancy'].astype(int)
+        X, y = load_occupancy(return_dataset=True).to_numpy()
 
         # Test the visualizer
-        features = ["temperature", "relative_humidity"]
+        features = ["temperature", "relative humidity"]
         visualizer = ScatterViz(features=features)
         visualizer.fit_transform_poof(X[:, :2], y)
 
@@ -180,16 +169,10 @@ class ScatterVizTests(VisualTestCase, DatasetMixin):
         Test scatter quick method on the real, occupancy data set
         """
         # Load the data from the fixture
-        X = self.occupancy[[
-            "temperature", "relative_humidity", "light", "C02", "humidity"
-        ]]
-
-        # Convert to numpy arrays
-        X = X.copy().view((float, len(X.dtype.names)))
-        y = self.occupancy['occupancy'].astype(int)
+        X, y = load_occupancy(return_dataset=True).to_numpy()
 
         # Test the visualizer
-        features = ["temperature", "relative_humidity"]
+        features = ["temperature", "relative humidity"]
         ax = scatterviz(X[:, :2], y=y, ax=None, features=features)
 
         # test that is returns a matplotlib obj with axes
@@ -201,22 +184,15 @@ class ScatterVizTests(VisualTestCase, DatasetMixin):
         Test scatterviz on the real, occupancy data set with pandas
         """
         # Load the data from the fixture
-        X = self.occupancy[[
-            "temperature", "relative_humidity", "light", "C02", "humidity"
-        ]]
-        y = self.occupancy['occupancy'].astype(int)
-
-        # Convert X to a pandas dataframe
-        X = pd.DataFrame(X)
-        X.columns = [
-            "temperature", "relative_humidity", "light", "C02", "humidity"
-        ]
+        # Load the data from the fixture
+        X, y = load_occupancy(return_dataset=True).to_pandas()
 
         # Test the visualizer
-        features = ["temperature", "relative_humidity"]
+        features = ["temperature", "relative humidity"]
         visualizer = ScatterViz(features=features)
         visualizer.fit_transform_poof(X, y)
 
+    @pytest.mark.xfail(reason="numpy structured arrays have changed since v1.14")
     def test_integrated_scatter_numpy_named_arrays(self):
         """
         Test scatterviz on numpy named arrays
@@ -252,7 +228,7 @@ class ScatterVizTests(VisualTestCase, DatasetMixin):
         # self.setUp_ImageTest()
 
         X_two_cols = self.X[:, :2]
-        features = ["temperature", "relative_humidity"]
+        features = ["temperature", "relative humidity"]
         visualizer = ScatterViz(features=features)
         visualizer.fit(X_two_cols, self.y)
         visualizer.draw(X_two_cols, self.y)
@@ -266,7 +242,7 @@ class ScatterVizTests(VisualTestCase, DatasetMixin):
         """
 
         X_two_cols = self.X[:, :2]
-        features = ["temperature", "relative_humidity"]
+        features = ["temperature", "relative humidity"]
         visualizer = ScatterViz(features=features)
         visualizer.fit(X_two_cols, self.y)
         visualizer.draw(X_two_cols, self.y)

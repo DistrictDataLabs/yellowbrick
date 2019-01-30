@@ -27,6 +27,7 @@ import matplotlib.pyplot as plt
 
 from yellowbrick.exceptions import NotFitted
 from yellowbrick.features.importances import *
+from yellowbrick.datasets import load_occupancy, load_concrete
 
 from sklearn.datasets import load_iris
 from sklearn.base import BaseEstimator, ClassifierMixin
@@ -35,7 +36,6 @@ from sklearn.ensemble import RandomForestClassifier
 from sklearn.ensemble import GradientBoostingClassifier
 
 from tests.base import VisualTestCase
-from tests.dataset import DatasetMixin
 
 try:
     from unittest import mock
@@ -52,9 +52,9 @@ except ImportError:
 ## Feature Importances Tests
 ##########################################################################
 
-class TestFeatureImportancesVisualizer(VisualTestCase, DatasetMixin):
+class TestFeatureImportancesVisualizer(VisualTestCase):
     """
-    FeatureImportances visualizer
+    Test FeatureImportances visualizer
     """
 
     @pytest.mark.xfail(
@@ -65,15 +65,8 @@ class TestFeatureImportancesVisualizer(VisualTestCase, DatasetMixin):
         Integration test of visualizer with feature importances param
         """
 
-        occupancy = self.load_data('occupancy')
-        features = [
-            "temperature", "relative_humidity", "light", "C02", "humidity"
-        ]
-
-        # Extract X and y as numpy arrays
-        X = occupancy[features].copy()
-        X = X.view((float, len(X.dtype.names)))
-        y = occupancy['occupancy'].astype(int)
+        # Load the test dataset
+        X, y = load_occupancy(return_dataset=True).to_numpy()
 
         fig = plt.figure()
         ax = fig.add_subplot()
@@ -81,7 +74,7 @@ class TestFeatureImportancesVisualizer(VisualTestCase, DatasetMixin):
         clf = GradientBoostingClassifier(random_state=42)
         viz = FeatureImportances(clf, ax=ax)
         viz.fit(X, y)
-        viz.poof()
+        viz.finalize()
 
         self.assert_images_similar(viz)
 
@@ -93,22 +86,19 @@ class TestFeatureImportancesVisualizer(VisualTestCase, DatasetMixin):
         Integration test of visualizer with coef param
         """
 
-        concrete = self.load_data('concrete')
-        feats = ['cement','slag','ash','water','splast','coarse','fine','age']
-
-        # Create X and y datasets as numpy arrays
-        X = concrete[feats].copy()
-        X = X.view((float, len(X.dtype.names)))
-        y = concrete['strength']
+        # Load the test dataset
+        dataset = load_concrete(return_dataset=True)
+        X, y = dataset.to_numpy()
+        features = dataset.meta["features"]
 
         fig = plt.figure()
         ax = fig.add_subplot()
 
         reg = Lasso(random_state=42)
-        feats = list(map(lambda s: s.title(), feats))
-        viz = FeatureImportances(reg, ax=ax, labels=feats, relative=False)
+        features = list(map(lambda s: s.title(), features))
+        viz = FeatureImportances(reg, ax=ax, labels=features, relative=False)
         viz.fit(X, y)
-        viz.poof()
+        viz.finalize()
 
         self.assert_images_similar(viz)
 
@@ -120,15 +110,8 @@ class TestFeatureImportancesVisualizer(VisualTestCase, DatasetMixin):
         Integration test of quick method
         """
 
-        occupancy = self.load_data('occupancy')
-        features = [
-            "temperature", "relative_humidity", "light", "C02", "humidity"
-        ]
-
-        # Create X and y datasets as numpy arrays
-        X = occupancy[features].copy()
-        X = X.view((float, len(X.dtype.names)))
-        y = occupancy['occupancy'].astype(int)
+        # Load the test dataset
+        X, y = load_occupancy(return_dataset=True).to_numpy()
 
         fig = plt.figure()
         ax = fig.add_subplot()

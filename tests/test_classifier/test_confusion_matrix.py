@@ -23,9 +23,10 @@ import numpy.testing as npt
 import matplotlib.pyplot as plt
 
 from yellowbrick.classifier.confusion_matrix import *
+from yellowbrick.datasets import load_occupancy
 
 from tests.base import VisualTestCase
-from tests.dataset import DatasetMixin, Dataset, Split
+from tests.dataset import Dataset, Split
 
 from sklearn.svm import SVC
 from sklearn.datasets import load_digits
@@ -69,9 +70,9 @@ def digits(request):
 ##########################################################################
 
 @pytest.mark.usefixtures("digits")
-class ConfusionMatrixTests(VisualTestCase, DatasetMixin):
+class ConfusionMatrixTests(VisualTestCase):
     """
-    ConfusionMatrix visualizer tests
+    Test ConfusionMatrix visualizer
     """
 
     @pytest.mark.xfail(
@@ -277,15 +278,7 @@ class ConfusionMatrixTests(VisualTestCase, DatasetMixin):
         _, ax = plt.subplots()
 
         # Load the occupancy dataset from fixtures
-        data = self.load_data('occupancy')
-        target = 'occupancy'
-        features = [
-            "temperature", "relative_humidity", "light", "C02", "humidity"
-        ]
-
-        # Create instances and target
-        X = pd.DataFrame(data[features])
-        y = pd.Series(data[target].astype(int))
+        X, y = load_occupancy(return_dataset=True).to_pandas()
 
         # Create train/test splits
         splits = tts(X, y, test_size=0.2, random_state=8873)
@@ -306,7 +299,6 @@ class ConfusionMatrixTests(VisualTestCase, DatasetMixin):
             [   1,  985]
         ]))
 
-    @pytest.mark.skip(reason="requires random state in quick method")
     def test_quick_method(self):
         """
         Test the quick method with a random dataset
@@ -317,7 +309,8 @@ class ConfusionMatrixTests(VisualTestCase, DatasetMixin):
         )
 
         _, ax = plt.subplots()
-        confusion_matrix(DecisionTreeClassifier(), X, y, ax=ax)
+        model = DecisionTreeClassifier(random_state=25)
+        confusion_matrix(model, X, y, ax=ax, random_state=23)
 
         self.assert_images_similar(ax=ax)
 
@@ -338,17 +331,10 @@ class ConfusionMatrixTests(VisualTestCase, DatasetMixin):
         """
         Test that ConfusionMatrix score() returns a score between 0 and 1
         """
-        data = self.load_data("occupancy")
-        X = data[[
-            "temperature", "relative_humidity", "light", "C02", "humidity"
-        ]]
-
-        y = data['occupancy']
-
-        # Convert X to an ndarray
-        X = X.copy().view((float, len(X.dtype.names)))
-
+        # Load the occupancy dataset from fixtures
+        X, y = load_occupancy(return_dataset=True).to_numpy()
         X_train, X_test, y_train, y_test = tts(X, y, test_size=0.2, random_state=42)
+
         # Create and fit the visualizer
         visualizer = ConfusionMatrix(LogisticRegression())
         visualizer.fit(X_train, y_train)
