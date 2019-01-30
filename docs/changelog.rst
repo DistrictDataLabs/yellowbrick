@@ -3,6 +3,36 @@
 Changelog
 =========
 
+Version 1.0
+-----------
+* Tag: v1.0_
+* Deployed: Not yet deployed
+* Contributors: Benjamin Bengfort, Rebecca Bilbro, Nathan Danielsen, Kristen McIntyre, Larry Gray, Prema Roman, John Healy, Sourav Singh, Francois Dion, Jerome Massot
+
+Major Changes:
+    - New datasets module that provide greater support for interacting with Yellowbrick example datasets including support for Pandas, npz, and text corpora.
+    - Management repository for Yellowbrick example data, yellowbrick-datasets.
+    - Add support for matplotlib 3.0.1 or greater.
+    - ``UMAPVisualizer`` as an alternative manifold to TSNE for corpus visualization that is fast enough to not require preprocessing PCA or SVD decomposition and preserves higher order similarities and distances.
+
+Minor Changes:
+    - Updated Rank2D to include Kendall-Tau metric.
+    - Added ``target_color_type`` functionality to determine continuous or discrete color representations based on the type of the target variable.
+    - Added code review checklist and conventions to the documentation and expanded the contributing docs.
+    - Added polish to missing value visualizers code, tests, and documentation.
+    - Improved RankD tests for better coverage.
+    - Added quick method test for ``DispersionPlot`` visualizer.
+    - BugFix: fixed resolve colors bug in TSNE and UMAP text visualizers and added regression tests to prevent future errors.
+    - Extended FeatureImportances documentation and tests for stacked importances and added a warning when stack should be true.
+    - Improved the documentation readability and structure.
+
+Compatibility Notes:
+    - This version provides support for matplotlib 3.0.1 or greater and drops support for matplotlib versions less than 2.0.
+    - This version drops support for Python 2
+
+.. _v1.0: https://github.com/DistrictDataLabs/yellowbrick/releases/tag/v1.0
+
+
 Version 0.9
 -----------
 * Tag: v0.9_

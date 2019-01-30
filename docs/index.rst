@@ -103,7 +103,7 @@ The following is a complete listing of the Yellowbrick documentation for this ve
    tutorial
    api/index
    evaluation
-   contributing
+   contributing/index
    matplotlib
    teaching
    gallery
