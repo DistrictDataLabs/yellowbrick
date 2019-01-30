@@ -235,7 +235,6 @@ class ScatterVizTests(VisualTestCase):
 
         self.assert_images_similar(visualizer)
 
-
     def test_scatter_image_fail(self):
         """
         Assert bad image similarity on scatterviz errors
