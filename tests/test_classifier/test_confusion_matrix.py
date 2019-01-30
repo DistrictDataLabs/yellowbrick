@@ -312,7 +312,8 @@ class ConfusionMatrixTests(VisualTestCase):
         model = DecisionTreeClassifier(random_state=25)
         confusion_matrix(model, X, y, ax=ax, random_state=23)
 
-        self.assert_images_similar(ax=ax)
+        tol = 0.1 if six.PY3 else 10
+        self.assert_images_similar(ax=ax, tol=tol)
 
     def test_isclassifier(self):
         """
