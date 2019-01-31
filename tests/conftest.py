@@ -64,6 +64,7 @@ def pytest_itemcollected(item):
     suffix = docline(node) or node.__name__
 
     # Add parametrize or test generation id to distinguish it in output
+    # TODO: this is broken with pytest 4.2 (no attribute _genid)
     if hasattr(item, "_genid") and item._genid:
         suffix += " ({})".format(item._genid)
 
