@@ -9,11 +9,11 @@ cycler>=0.10.0
 #umap-learn>=0.3
 
 ## Testing Requirements (pip install -r tests/requirements.txt)
-#pytest>=3.4.1
-#pytest-cov>=2.5.1
-#pytest-flakes>=2.0.0
+#pytest>=4.2.0
+#pytest-cov>=2.6.1
+#pytest-flakes>=4.0.0
 #pytest-spec>=1.1.0
-#coverage>=4.4.1
+#coverage>=4.5.2
 #requests>=2.18.3
 #six==1.11.0
 
