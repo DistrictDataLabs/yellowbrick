@@ -38,7 +38,7 @@ The ``KElbowVisualizer`` also displays the amount of time to train the clusterin
     from yellowbrick.cluster import KElbowVisualizer
 
     # Create synthetic dataset with 8 random clusters
-    X, y = make_blobs(centers=8, n_features=12, shuffle=True, random_state=42)
+    X, _ = make_blobs(centers=8, n_features=12, shuffle=True, random_state=42)
 
     # Instantiate the clustering model and visualizer
     model = KMeans()

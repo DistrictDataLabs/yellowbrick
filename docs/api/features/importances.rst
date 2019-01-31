@@ -26,35 +26,15 @@ with a ``GradientBoostingClassifier`` to visualize the ranked features.
 
 .. plot::
 
-    # Load the classification data set
+    from sklearn.ensemble import RandomForestClassifier
+
     from yellowbrick.datasets import load_occupancy
-    occupancy = load_occupancy()
-    data = occupancy['data']
-    feature_names = occupancy['feature_names']
+    from yellowbrick.features import FeatureImportances
 
-    # Specify the features of interest
-    features = [
-        "temperature", "relative humidity", "light", "C02", "humidity"
-    ]
+    # Load the classification data set
+    X, y = load_occupancy()
 
-    # Map features to column indices
-    indices = [feature_names.index(feature) for feature in features]
-
-    # Extract the instances and target
-    X = data[:, indices]
-    y = data[:, -1]
-
-    import matplotlib.pyplot as plt
-
-    from sklearn.ensemble import GradientBoostingClassifier
-
-    from yellowbrick.features.importances import FeatureImportances
-
-    # Create a new matplotlib figure
-    fig = plt.figure()
-    ax = fig.add_subplot()
-
-    viz = FeatureImportances(GradientBoostingClassifier(), ax=ax)
+    viz = FeatureImportances(RandomForestClassifier())
     viz.fit(X, y)
     viz.poof()
 
@@ -67,22 +47,7 @@ most important feature. The visualizer also contains ``features_`` and
 
 For models that do not support a ``feature_importances_`` attribute, the
 ``FeatureImportances`` visualizer will also draw a bar plot for the ``coef_``
-attribute that many linear models provide. First we start by loading a
-regression dataset:
-
-.. code:: python
-
-    # Load a regression data set
-    data = load_data("concrete")
-
-    # Specify the features of interest
-    features = [
-        "cement","slag","ash","water","splast","coarse","fine","age"
-    ]
-
-    # Extract the instances and target
-    X = data[features]
-    y = data.strength
+attribute that many linear models provide.
 
 When using a model with a ``coef_`` attribute, it is better to set
 ``relative=False`` to draw the true magnitude of the coefficient (which may
@@ -90,24 +55,23 @@ be negative). We can also specify our own set of labels if the dataset does
 not have column names or to print better titles. In the example below we
 title case our features for better readability:
 
-.. code:: python
+.. plot::
 
     from sklearn.linear_model import Lasso
+    from yellowbrick.datasets import load_concrete
+    from yellowbrick.features import FeatureImportances
 
-    # Create a new figure
-    fig = plt.figure()
-    ax = fig.add_subplot()
+    # Load the regression dataset
+    dataset = load_concrete(return_dataset=True)
+    X, y = dataset.to_data()
 
     # Title case the feature for better display and create the visualizer
-    labels = list(map(lambda s: s.title(), features))
-    viz = FeatureImportances(Lasso(), ax=ax, labels=labels, relative=False)
+    labels = list(map(lambda s: s.title(), dataset.meta['features']))
+    viz = FeatureImportances(Lasso(), labels=labels, relative=False)
 
     # Fit and show the feature importances
     viz.fit(X, y)
     viz.poof()
-
-
-.. image:: images/feature_importances_coef.png
 
 .. NOTE:: The interpretation of the importance of coeficients depends on the model; see the discussion below for more details.
 
@@ -118,24 +82,18 @@ Some estimators return a multi-dimensonal array for either ``feature_importances
 
 Taking the mean of the importances may be undesirable for several reasons. For example, a feature may be more informative for some classes than others. Multi-output estimators also do not benefit from having averages taken across what are essentially multiple internal models. In this case, use the ``stack=True`` parameter to draw a stacked bar chart of importances as follows:
 
-.. code:: python
+.. plot::
 
+    from yellowbrick.features import FeatureImportances
     from sklearn.linear_model import LogisticRegression
     from sklearn.datasets import load_iris
-
-    # Create a new matplotlib figure
-    fig = plt.figure()
-    ax = fig.add_subplot()
 
     data = load_iris()
     X, y = data.data, data.target
 
-    viz = FeatureImportances(LogisticRegression(), ax=ax, stack=True, relative=False)
+    viz = FeatureImportances(LogisticRegression(), stack=True, relative=False)
     viz.fit(X, y)
     viz.poof()
-
-
-.. image:: images/feature_importances_stacked.png
 
 
 Discussion
