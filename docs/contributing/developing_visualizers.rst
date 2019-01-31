@@ -97,11 +97,20 @@ Visual tests are notoriously difficult to create --- how do you test a visualiza
             except Exception as e:
                 pytest.fail("my visualizer didn't work")
 
-Tests can be run as follows::
+Running the Test Suite
+----------------------
+
+To run the test suite, first install the testing dependencies that are located in the `tests` folder as follows::
+
+    $ pip install -r tests/requirements.txt
+
+The required dependencies for the test suite include testing utilities and libraries such as pandas and nltk that are not included in the core dependencies.
+
+Tests can be run as follows from the project root::
 
     $ make test
 
-The Makefile uses the pytest runner and testing suite as well as the coverage library, so make sure you have those dependencies installed! The ``DatasetMixin`` also requires `requests.py <http://docs.python-requests.org/en/master/>`_ to fetch data from our Amazon S3 account.
+The Makefile uses the pytest runner and testing suite as well as the coverage library. The ``DatasetMixin`` also requires `requests.py <http://docs.python-requests.org/en/master/>`_ to fetch data from our Amazon S3 account.
 
 Image Comparison Tests
 ----------------------
