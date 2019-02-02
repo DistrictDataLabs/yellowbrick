@@ -24,6 +24,11 @@ from yellowbrick.exceptions import YellowbrickValueError
 from yellowbrick.bestfit import draw_best_fit
 from yellowbrick.utils import is_dataframe
 
+
+FACECOLOR = "#FAFAFA"
+HISTCOLOR = "#6897bb"
+
+
 ##########################################################################
 ## Joint Plot Visualizer
 ##########################################################################
@@ -98,9 +103,6 @@ class JointPlotVisualizer(FeatureVisualizer):
         histcolor_y     used to set the color for the histogram on the y axis
         ==============  =====================================================
 
-    size: float, default: 600
-        Size of each side of the figure in pixels
-
     ratio: float, default: 5
         Ratio of joint axis size to the x and y axes height
 
@@ -127,7 +129,7 @@ class JointPlotVisualizer(FeatureVisualizer):
     def __init__(self, ax=None, feature=None, target=None,
                  joint_plot='scatter', joint_args=None,
                  xy_plot='hist', xy_args=None,
-                 size=600, ratio=5, space=.2, **kwargs):
+                 ratio=5, space=.2, **kwargs):
 
         # Check matplotlib version - needs to be version 2.0.0 or greater.
         mpl_vers_maj = int(mpl.__version__.split(".")[0])
@@ -145,7 +147,6 @@ class JointPlotVisualizer(FeatureVisualizer):
         self.joint_args = joint_args
         self.xy_plot = xy_plot
         self.xy_args = xy_args
-        self.size = (size, size)
         self.ratio = ratio
         self.space = space
 
@@ -225,6 +226,7 @@ class JointPlotVisualizer(FeatureVisualizer):
         self.joint_ax = joint_ax
         self.x_ax = x_ax
         self.y_ax = y_ax
+        self._ax = joint_ax
 
         self.draw_joint(X, y, **kwargs)
         self.draw_xy(X, y, **kwargs)
@@ -238,7 +240,7 @@ class JointPlotVisualizer(FeatureVisualizer):
             self.joint_args = {}
 
         self.joint_args.setdefault("alpha", 0.4)
-        facecolor = self.joint_args.pop("facecolor", "#dddddd")
+        facecolor = self.joint_args.pop("facecolor", FACECOLOR)
         self.joint_ax.set_facecolor(facecolor)
 
         if self.joint_plot == "scatter":
@@ -275,18 +277,18 @@ class JointPlotVisualizer(FeatureVisualizer):
         if self.xy_args is None:
             self.xy_args = {}
 
-        facecolor_x = self.xy_args.pop("facecolor_x", "#dddddd")
+        facecolor_x = self.xy_args.pop("facecolor_x", FACECOLOR)
         self.x_ax.set_facecolor(facecolor_x)
-        facecolor_y = self.xy_args.pop("facecolor_y", "#dddddd")
+        facecolor_y = self.xy_args.pop("facecolor_y", FACECOLOR)
         self.y_ax.set_facecolor(facecolor_y)
 
 
         if self.xy_plot == "hist":
             hist_bins = self.xy_args.pop("bins", 50)
             self.xy_args.setdefault("alpha", 0.4)
-            histcolor_x = self.xy_args.pop("histcolor_x", "#6897bb")
+            histcolor_x = self.xy_args.pop("histcolor_x", HISTCOLOR)
             self.x_ax.set_facecolor(facecolor_x)
-            histcolor_y = self.xy_args.pop("histcolor_y", "#6897bb")
+            histcolor_y = self.xy_args.pop("histcolor_y", HISTCOLOR)
             self.y_ax.set_facecolor(facecolor_y)
             self.x_ax.hist(X, bins=hist_bins, color=histcolor_x, **self.xy_args)
             self.y_ax.hist(y, bins=hist_bins, color=histcolor_y,
