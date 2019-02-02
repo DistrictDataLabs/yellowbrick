@@ -26,8 +26,8 @@ cycler>=0.10.0
 #umap-learn>=0.3
 
 ## Documentation (pip install -r docs/requirements.txt)
-#Sphinx>=1.7.5
-#sphinx-rtd-theme>=0.4.0
+#Sphinx>=1.8.3
+#sphinx-rtd-theme>=0.4.2
 #numpydoc>=0.8.0
 
 ## Build Requirements (uncomment for deployment)
