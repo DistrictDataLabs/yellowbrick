@@ -21,7 +21,7 @@
 
 Yellowbrick is a suite of visual diagnostic tools called "Visualizers" that extend the scikit-learn API to allow human steering of the model selection process. In a nutshell, Yellowbrick combines scikit-learn with matplotlib in the best tradition of the scikit-learn documentation, but to produce visualizations for _your_ machine learning workflow!
 
-For complete documentation on the Yellowbrick API, a gallery of available visualizers, the contributor's guide, tutorials and teaching resources, frequently asked questions, and more, please visit our documentation at www.scikit-yb.org. 
+For complete documentation on the Yellowbrick API, a gallery of available visualizers, the contributor's guide, tutorials and teaching resources, frequently asked questions, and more, please visit our documentation at [www.scikit-yb.org](https://www.scikit-yb.org/). 
 
 ## Installing Yellowbrick
 
@@ -75,19 +75,19 @@ visualizer.score(X,y)
 visualizer.poof()
 ```
 
-For additional information on getting started with Yellowbrick, view the quickstart guide in the [documentation](http://www.scikit-yb.org/en/latest/) and check out our [examples notebook](https://github.com/DistrictDataLabs/yellowbrick/blob/develop/examples/examples.ipynb).
+For additional information on getting started with Yellowbrick, view the quickstart guide in the [documentation](https://www.scikit-yb.org/en/latest/) and check out our [examples notebook](https://github.com/DistrictDataLabs/yellowbrick/blob/develop/examples/examples.ipynb).
 
 ## Contributing to Yellowbrick
 
 Yellowbrick is an open source project that is supported by a community who will gratefully and humbly accept any contributions you might make to the project. Large or small, any contribution makes a big difference; and if you've never contributed to an open source project before, we hope you will start with Yellowbrick!
 
-If you are interested in contributing, check out our [contributor's guide](http://www.scikit-yb.org/en/latest/contributing.html). Beyond creating visualizers, there are many ways to contribute:
+If you are interested in contributing, check out our [contributor's guide](https://www.scikit-yb.org/en/latest/contributing.html). Beyond creating visualizers, there are many ways to contribute:
 
 - Submit a bug report or feature request on [GitHub Issues](https://github.com/DistrictDataLabs/yellowbrick/issues).
 - Contribute a Jupyter notebook to our examples[ gallery](https://github.com/DistrictDataLabs/yellowbrick/tree/develop/examples).
-- Assist us with [user testing](http://www.scikit-yb.org/en/latest/evaluation.html).
-- Add to the documentation or help with our website, [scikit-yb.org](http://www.scikit-yb.org).
-- [Write unit or integration tests](http://www.scikit-yb.org/en/latest/contributing.html#testing) for our project.
+- Assist us with [user testing](https://www.scikit-yb.org/en/latest/evaluation.html).
+- Add to the documentation or help with our website, [scikit-yb.org](https://www.scikit-yb.org).
+- [Write unit or integration tests](https://www.scikit-yb.org/en/latest/contributing.html#testing) for our project.
 - Answer questions on our issues, mailing list, Stack Overflow, and elsewhere.
 - Translate our documentation into another language.
 - Write a blog post, tweet, or share our project with others.
@@ -95,7 +95,7 @@ If you are interested in contributing, check out our [contributor's guide](http:
 
 As you can see, there are lots of ways to get involved and we would be very happy for you to join us! The only thing we ask is that you abide by the principles of openness, respect, and consideration of others as described in the [Python Software Foundation Code of Conduct](https://www.python.org/psf/codeofconduct/).
 
-For more information, checkout the `CONTRIBUTING.md` file in the root of the repository or the detailed documentation at [Contributing to Yellowbrick](http://www.scikit-yb.org/en/latest/contributing.html)
+For more information, checkout the `CONTRIBUTING.md` file in the root of the repository or the detailed documentation at [Contributing to Yellowbrick](https://www.scikit-yb.org/en/latest/contributing.html)
 
 ## Yellowbrick Datasets
 
