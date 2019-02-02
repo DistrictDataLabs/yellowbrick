@@ -4,7 +4,6 @@ import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 
-from yellowbrick.base import VisualizerGrid
 from yellowbrick.regressor import AlphaSelection
 from yellowbrick.regressor import ResidualsPlot
 from yellowbrick.regressor import PredictionError
