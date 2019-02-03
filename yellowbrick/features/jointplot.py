@@ -356,6 +356,9 @@ class JointPlot(FeatureVisualizer):
             plt.setp(self.yhax.get_yticklabels(), visible=False)
             plt.sca(self.ax)
 
+        # Call tight layout to maximize readability
+        plt.tight_layout()
+
     def _index_into(self, idx, data):
         """
         Attempts to get the column from the data using the specified index, raises an
