@@ -23,10 +23,10 @@ try:
 except ImportError:
     make_axes_locatable = None
 
-from scipy.stats import pearsonr
 from .base import FeatureVisualizer
 # from ..bestfit import draw_best_fit
 from ..exceptions import YellowbrickValueError
+from scipy.stats import pearsonr, spearmanr, kendalltau
 
 
 # Default Colors
@@ -113,9 +113,9 @@ class JointPlot(FeatureVisualizer):
     # TODO: should we couple more closely with Rank2D?
     correlation_methods = {
         'pearson': lambda x, y: pearsonr(x,y)[0],
-        'spearman': lambda x, y: 1.0,
-        'covariance': lambda x, y: 1.0,
-        'kendalltau': lambda x, y: 1.0,
+        'spearman': lambda x, y: spearmanr(x,y)[0],
+        'covariance': lambda x, y: np.cov(x,y)[0,1],
+        'kendalltau': lambda x, y: kendalltau(x,y)[0],
     }
 
     def __init__(self, ax=None, columns=None, correlation='pearson', kind="scatter",
@@ -291,8 +291,8 @@ class JointPlot(FeatureVisualizer):
         xlabel, ylabel : str
             The labels for the x and y axes.
         """
-        # This is a little weird to be doing here, but it is the best place to perform
-        # this computation given how fit calls draw and exits immediately.
+        # This is a little weird to be here, but it is the best place to perform
+        # this computation given how fit calls draw and returns.
         self.corr_ = self.correlation_methods[self.correlation](x, y)
 
         # First draw the joint plot

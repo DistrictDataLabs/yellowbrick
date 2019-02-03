@@ -39,9 +39,9 @@ except ImportError:
     make_axes_locatable = None
 
 try:
-    from unittest.mock import patch
+    from unittest.mock import patch, MagicMock
 except ImportError:
-    from mock import patch
+    from mock import patch, MagicMock
 
 
 ##########################################################################
@@ -129,6 +129,29 @@ class TestJointPlotNoHistogram(VisualTestCase):
 
         with pytest.raises(AttributeError, match="histogram for the Y axis"):
             oz.yhax
+
+    @patch('yellowbrick.features.jointplot.plt')
+    def test_correlation(self, mplt):
+        """
+        Test correlation is correctly computed
+        """
+        x = self.discrete.X[:,0]
+        y = self.discrete.X[:,1]
+
+        cases = (
+            ("pearson", -0.3847799883805261),
+            ("spearman", -0.37301201472324463),
+            ("covariance", -0.5535440619953924),
+            ("kendalltau", -0.2504201680672269),
+        )
+
+        for alg, expected in cases:
+            oz = JointPlot(hist=False, correlation=alg, columns=None)
+            oz.ax = MagicMock()
+            oz.fit(x,y)
+
+            assert hasattr(oz, 'corr_')
+            assert oz.corr_ == pytest.approx(expected), "{} not computed correctly".format(alg)
 
     def test_columns_none_invalid_x(self):
         """
