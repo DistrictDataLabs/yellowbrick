@@ -14,14 +14,17 @@
 Abstract base classes and interface for Yellowbrick.
 """
 
-import matplotlib.pyplot as plt
 import math
+import warnings
+import matplotlib.pyplot as plt
 
 from .utils.wrapper import Wrapper
 from sklearn.base import BaseEstimator
+from .exceptions import YellowbrickWarning
 from .utils import get_model_name, isestimator
 from sklearn.model_selection import cross_val_predict as cvp
 from .exceptions import YellowbrickValueError, YellowbrickTypeError
+
 
 ##########################################################################
 ## Base class hierarchy
@@ -206,7 +209,14 @@ class Visualizer(BaseEstimator):
         primarily called by the user to render the visualization.
         """
         # Ensure that draw has been called
-        if self._ax is None: return
+        if self._ax is None:
+            warn_message = (
+                "{} does not have a reference to a matplotlib.Axes "
+                "the figure may not render as expected!"
+            )
+            warnings.warn(
+                warn_message.format(self.__class__.__name__), YellowbrickWarning
+            )
 
         # Finalize the figure
         self.finalize()
