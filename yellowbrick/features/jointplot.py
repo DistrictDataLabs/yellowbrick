@@ -365,6 +365,7 @@ class JointPlot(FeatureVisualizer):
         exception if this is not possible from this point in the stack.
         """
         try:
+            # TODO: This won't work if data is an array and we want columns.
             return data[idx]
         except Exception as e:
             raise IndexError(

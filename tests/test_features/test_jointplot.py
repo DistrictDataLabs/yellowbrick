@@ -174,11 +174,23 @@ class TestJointPlotNoHistogram(VisualTestCase):
         """
         When self.columns=None image similarity with valid X and y
         """
+        oz = JointPlot(hist=False, columns=None)
+        assert oz.fit(self.discrete.X[:,0], self.discrete.y) is oz
+        assert hasattr(oz, "corr_")
+
+        oz.finalize()
+        self.assert_images_similar(oz)
 
     def test_columns_none_x(self):
         """
         When self.columns=None image similarity with valid X, no y
         """
+        oz = JointPlot(hist=False, columns=None)
+        assert oz.fit(self.discrete.X) is oz
+        assert hasattr(oz, "corr_")
+
+        oz.finalize()
+        self.assert_images_similar(oz)
 
     def test_columns_single_index_no_y(self):
         """
@@ -256,3 +268,25 @@ class TestJointPlotHistogram(VisualTestCase):
         oz = JointPlot(hist=True)
         assert oz.xhax is not None
         assert oz.yhax is not None
+
+    def test_columns_none_x_y_hist(self):
+        """
+        When self.columns=None image similarity with valid X and y
+        """
+        oz = JointPlot(hist=True, columns=None)
+        assert oz.fit(self.discrete.X[:,0], self.discrete.y) is oz
+        assert hasattr(oz, "corr_")
+
+        oz.finalize()
+        self.assert_images_similar(oz)
+
+    def test_columns_none_x_hist(self):
+        """
+        When self.columns=None image similarity with valid X, no y
+        """
+        oz = JointPlot(hist=True, columns=None)
+        assert oz.fit(self.discrete.X) is oz
+        assert hasattr(oz, "corr_")
+
+        oz.finalize()
+        self.assert_images_similar(oz)
