@@ -334,6 +334,9 @@ class ConfusionMatrixTests(VisualTestCase, DatasetMixin):
         with pytest.raises(yb.exceptions.YellowbrickError, match=message):
             ConfusionMatrix(model)
 
+    @pytest.mark.xfail(
+        sys.platform == 'win32', reason="Changing the dtype to a subarray type is only supported if the total itemsize is unchanged"
+    )
     def test_score_returns_score(self):
         """
         Test that ConfusionMatrix score() returns a score between 0 and 1

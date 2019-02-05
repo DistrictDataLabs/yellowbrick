@@ -16,6 +16,7 @@ Test the ScatterViz feature analysis visualizers
 # Imports
 ##########################################################################
 
+import sys
 import pytest
 import numpy as np
 import matplotlib as mptl
@@ -137,6 +138,9 @@ class ScatterVizTests(VisualTestCase, DatasetMixin):
             self.assertTrue(
                 'only accepts two features' in str(context.exception))
 
+    @pytest.mark.xfail(
+        sys.platform == 'win32', reason="Changing the dtype to a subarray type is only supported if the total itemsize is unchanged"
+    )
     def test_integrated_scatter(self):
         """
         Test scatter on the real, occupancy data set
@@ -174,7 +178,9 @@ class ScatterVizTests(VisualTestCase, DatasetMixin):
         assert "alpha" in scatter_kwargs
         assert scatter_kwargs["alpha"] == 0.7
 
-
+    @pytest.mark.xfail(
+        sys.platform == 'win32', reason="Changing the dtype to a subarray type is only supported if the total itemsize is unchanged"
+    )
     def test_scatter_quick_method(self):
         """
         Test scatter quick method on the real, occupancy data set
@@ -217,6 +223,9 @@ class ScatterVizTests(VisualTestCase, DatasetMixin):
         visualizer = ScatterViz(features=features)
         visualizer.fit_transform_poof(X, y)
 
+    @pytest.mark.xfail(
+        sys.platform == 'win32', reason="Changing the dtype to a subarray type is only supported if the total itemsize is unchanged"
+    )
     def test_integrated_scatter_numpy_named_arrays(self):
         """
         Test scatterviz on numpy named arrays

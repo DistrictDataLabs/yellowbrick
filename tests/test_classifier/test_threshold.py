@@ -295,7 +295,7 @@ class TestDiscriminationThreshold(VisualTestCase, DatasetMixin):
         assert viz._check_cv(splits, random_state=23).random_state == 23
 
         splits = StratifiedShuffleSplit(n_splits=1, random_state=181)
-        assert viz._check_cv(splits, random_state=None).random_state is 181
+        assert viz._check_cv(splits, random_state=None).random_state == 181
         assert viz._check_cv(splits, random_state=72).random_state == 72
 
     def test_bad_exclude(self):
