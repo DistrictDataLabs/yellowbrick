@@ -43,6 +43,11 @@ try:
 except ImportError:
     from mock import patch, MagicMock
 
+try:
+    import pandas as pd
+except ImportError:
+    pd = None
+
 
 ##########################################################################
 ## Fixtures
@@ -200,40 +205,102 @@ class TestJointPlotNoHistogram(VisualTestCase):
         with pytest.raises(YellowbrickValueError, match="y must be specified"):
             oz.fit(rand2col(), y=None)
 
-    def test_columns_single_invalid_index(self):
+    def test_columns_single_invalid_index_numpy(self):
         """
-        When self.columns=int or str validate the index in X
+        When self.columns=int validate the index in X
         """
+        oz = JointPlot(columns=2, hist=False)
+        with pytest.raises(IndexError, match="could not index column '2' into type"):
+            oz.fit(self.continuous.X, self.continuous.y)
+
+    @pytest.mark.skipif(pd is None, reason="test requires pandas")
+    def test_columns_single_invalid_index_pandas(self):
+        """
+        When self.columns=str validate the index in X
+        """
+        oz = JointPlot(columns="foo", hist=False)
+        X = pd.DataFrame(self.continuous.X, columns=["a", "b"])
+        y = pd.Series(self.continuous.y)
+
+        with pytest.raises(IndexError, match="could not index column 'foo' into type"):
+            oz.fit(X, y)
 
     def test_columns_single_int_index_numpy(self):
         """
         When self.columns=int image similarity on numpy dataset
         """
+        oz = JointPlot(columns=1, hist=False)
+        assert oz.fit(self.continuous.X, self.continuous.y) is oz
+        assert hasattr(oz, "corr_")
 
+        oz.finalize()
+        self.assert_images_similar(oz)
+
+    @pytest.mark.skipif(pd is None, reason="test requires pandas")
     def test_columns_single_str_index_pandas(self):
         """
         When self.columns=str image similarity on pandas dataset
         """
+        oz = JointPlot(columns="a", hist=False)
+        X = pd.DataFrame(self.continuous.X, columns=['a', 'b'])
+        y = pd.Series(self.continuous.y)
+        assert oz.fit(X, y) is oz
+        assert hasattr(oz, "corr_")
+
+        oz.finalize()
+        self.assert_images_similar(oz)
 
     def test_columns_double_int_index_numpy_no_y(self):
         """
         When self.columns=[int, int] image similarity on numpy dataset no y
         """
+        oz = JointPlot(columns=[0,1], hist=False)
+        assert oz.fit(self.discrete.X, y=None) is oz
+        assert hasattr(oz, "corr_")
 
+        oz.finalize()
+        self.assert_images_similar(oz)
+
+    @pytest.mark.skipif(pd is None, reason="test requires pandas")
     def test_columns_double_str_index_pandas_no_y(self):
         """
         When self.columns=[str, str] image similarity on pandas dataset no y
         """
+        oz = JointPlot(columns=['a', 'b'], hist=False)
+        X = pd.DataFrame(self.continuous.X, columns=['a', 'b'])
+        assert oz.fit(X, y=None) is oz
+        assert hasattr(oz, "corr_")
 
+        oz.finalize()
+        self.assert_images_similar(oz)
+
+    @pytest.mark.skipif(pd is None, reason="test requires pandas")
     def test_columns_double_index_discrete_y(self):
         """
         When self.columns=[str, str] on DataFrame with discrete y
         """
+        oz = JointPlot(columns=['a', 'b'], hist=False)
+        X = pd.DataFrame(self.discrete.X, columns=['a', 'b'])
+        y = pd.Series(self.discrete.y)
+        assert oz.fit(X, y) is oz
+        assert hasattr(oz, "corr_")
 
+        oz.finalize()
+        self.assert_images_similar(oz)
+
+    @pytest.mark.skipif(pd is None, reason="test requires pandas")
     def test_columns_double_index_continuous_y(self):
         """
-        When self.columns=[str, str] on DataFrame with discrete y
+        When self.columns=[str, str] on DataFrame with continuous y
         """
+        oz = JointPlot(columns=['a', 'b'], hist=False)
+        X = pd.DataFrame(self.continuous.X, columns=['a', 'b'])
+        y = pd.Series(self.continuous.y)
+        assert oz.fit(X, y) is oz
+        assert hasattr(oz, "corr_")
+
+        oz.finalize()
+        self.assert_images_similar(oz)
 
 
 @pytest.mark.skipif(make_axes_locatable is not None, reason="requires matplotlib <= 2.0.1")
@@ -286,6 +353,83 @@ class TestJointPlotHistogram(VisualTestCase):
         """
         oz = JointPlot(hist=True, columns=None)
         assert oz.fit(self.discrete.X) is oz
+        assert hasattr(oz, "corr_")
+
+        oz.finalize()
+        self.assert_images_similar(oz)
+
+    def test_columns_single_int_index_numpy_hist(self):
+        """
+        When self.columns=int image similarity on numpy dataset
+        """
+        oz = JointPlot(columns=1, hist=True)
+        assert oz.fit(self.continuous.X, self.continuous.y) is oz
+        assert hasattr(oz, "corr_")
+
+        oz.finalize()
+        self.assert_images_similar(oz)
+
+    @pytest.mark.skipif(pd is None, reason="test requires pandas")
+    def test_columns_single_str_index_pandas_hist(self):
+        """
+        When self.columns=str image similarity on pandas dataset
+        """
+        oz = JointPlot(columns="a", hist=True)
+        X = pd.DataFrame(self.continuous.X, columns=['a', 'b'])
+        y = pd.Series(self.continuous.y)
+        assert oz.fit(X, y) is oz
+        assert hasattr(oz, "corr_")
+
+        oz.finalize()
+        self.assert_images_similar(oz)
+
+    def test_columns_double_int_index_numpy_no_y_hist(self):
+        """
+        When self.columns=[int, int] image similarity on numpy dataset no y
+        """
+        oz = JointPlot(columns=[0,1], hist=True)
+        assert oz.fit(self.discrete.X, y=None) is oz
+        assert hasattr(oz, "corr_")
+
+        oz.finalize()
+        self.assert_images_similar(oz)
+
+    @pytest.mark.skipif(pd is None, reason="test requires pandas")
+    def test_columns_double_str_index_pandas_no_y_hist(self):
+        """
+        When self.columns=[str, str] image similarity on pandas dataset no y
+        """
+        oz = JointPlot(columns=['a', 'b'], hist=True)
+        X = pd.DataFrame(self.continuous.X, columns=['a', 'b'])
+        assert oz.fit(X, y=None) is oz
+        assert hasattr(oz, "corr_")
+
+        oz.finalize()
+        self.assert_images_similar(oz)
+
+    @pytest.mark.skipif(pd is None, reason="test requires pandas")
+    def test_columns_double_index_discrete_y_hist(self):
+        """
+        When self.columns=[str, str] on DataFrame with discrete y
+        """
+        oz = JointPlot(columns=['a', 'b'], hist=True)
+        X = pd.DataFrame(self.discrete.X, columns=['a', 'b'])
+        y = pd.Series(self.discrete.y)
+        assert oz.fit(X, y) is oz
+        assert hasattr(oz, "corr_")
+
+        oz.finalize()
+        self.assert_images_similar(oz)
+
+    @pytest.mark.skipif(pd is None, reason="test requires pandas")
+    def test_columns_double_index_continuous_y_hist(self):
+        """
+        When self.columns=[str, str] on DataFrame with continuous y
+        """
+        oz = JointPlot(columns=['a', 'b'], hist=True)
+        X = pd.DataFrame(self.continuous.X, columns=['a', 'b'])
+        y = pd.Series(self.continuous.y)
+        assert oz.fit(X, y) is oz
         assert hasattr(oz, "corr_")
 
         oz.finalize()

@@ -25,6 +25,7 @@ except ImportError:
 
 from .base import FeatureVisualizer
 # from ..bestfit import draw_best_fit
+from ..utils.types import is_dataframe
 from ..exceptions import YellowbrickValueError
 from scipy.stats import pearsonr, spearmanr, kendalltau
 
@@ -198,9 +199,6 @@ class JointPlot(FeatureVisualizer):
                 "please upgrade matplotlib or set hist=False on the visualizer"
             ))
 
-        # Set the aspect ratio to make the visualization square
-        self.ax.set_aspect('equal', adjustable='box')
-
         # Create the new axes for the histograms
         divider = make_axes_locatable(self.ax)
         self._xhax = divider.append_axes("top", size=1, pad=0.1, sharex=self.ax)
@@ -253,7 +251,7 @@ class JointPlot(FeatureVisualizer):
 
             if y is None:
                 # Draw the fist column as x and the second column as y
-                self.draw(X[:,0], X[:,1], xlabel="0", ylabel=1)
+                self.draw(X[:,0], X[:,1], xlabel="0", ylabel="1")
                 return self
 
             # Draw x against y
@@ -269,14 +267,20 @@ class JointPlot(FeatureVisualizer):
 
             # fetch the index from X -- raising index error if not possible
             x = self._index_into(self.columns, X)
-            self.draw(x, y, xlabel=self.columns, ylabel="target")
+            self.draw(x, y, xlabel=str(self.columns), ylabel="target")
             return self
 
         # Case where there is a double index for both columns
-        # TODO: color the points based on the target
-        x = self._index_into(self.columns[0], X)
-        y = self._index_into(self.columns[1], X)
-        self.draw(x, y, xlabel=self.columns[0], ylabel=self.columns[1])
+        columns = tuple(self.columns)
+        if len(columns) != 2:
+            raise YellowbrickValueError((
+                    "'{}' contains too many indices or is invalid for joint plot"
+                ).format(columns))
+
+        # TODO: color the points based on the target if it is given
+        x = self._index_into(columns[0], X)
+        y = self._index_into(columns[1], X)
+        self.draw(x, y, xlabel=str(columns[0]), ylabel=str(columns[1]))
         return self
 
     def draw(self, x, y, xlabel=None, ylabel=None):
@@ -343,6 +347,12 @@ class JointPlot(FeatureVisualizer):
         """
         Finalize executes any remaining image modifications making it ready to show.
         """
+        # Set the aspect ratio to make the visualization square
+        # TODO: stil unable to make plot square using make_axes_locatable
+        # x0,x1 = self.ax.get_xlim()
+        # y0,y1 = self.ax.get_ylim()
+        # self.ax.set_aspect(abs(x1-x0)/abs(y1-y0))
+
         # Add the title to the plot if the user has set one.
         self.set_title("")
 
@@ -365,11 +375,14 @@ class JointPlot(FeatureVisualizer):
         exception if this is not possible from this point in the stack.
         """
         try:
-            # TODO: This won't work if data is an array and we want columns.
-            return data[idx]
+            if is_dataframe(data):
+                # Assume column indexing
+                return data[idx]
+            # Otherwise assume numpy array-like indexing
+            return data[:,idx]
         except Exception as e:
             raise IndexError(
-                "could not index {} into type {}: {}".format(
+                "could not index column '{}' into type {}: {}".format(
                     self.columns, data.__class__.__name__, e
             ))
 
