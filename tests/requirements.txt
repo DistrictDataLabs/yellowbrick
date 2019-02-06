@@ -1,12 +1,12 @@
 # Library Dependencies
-matplotlib>=1.5.1,<3.0
+matplotlib>=1.5.1,!=3.0.0
 scipy>=0.19
 scikit-learn>=0.19
 numpy>=1.13.0
 cycler>=0.10.0
 
 # Testing Requirements
-pytest>=3.4.1
+pytest>=3.4.1,<4.2.0
 pytest-cov>=2.5.1
 pytest-flakes>=2.0.0
 pytest-spec>=1.1.0
