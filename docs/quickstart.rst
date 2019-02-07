@@ -173,8 +173,8 @@ In this chart, we see that the features ``temp`` and ``feelslike`` have a strong
 
     from yellowbrick.features import JointPlotVisualizer
 
-    visualizer = JointPlotVisualizer(feature='temp', target='feelslike')
-    visualizer.fit_transform(X['temp'], X['feelslike'])
+    visualizer = JointPlotVisualizer(columns=['temp', 'feelslike'])
+    visualizer.fit_transform(X, y)
     visualizer.poof()
 
 .. plot::
@@ -185,8 +185,8 @@ In this chart, we see that the features ``temp`` and ``feelslike`` have a strong
     from yellowbrick.datasets import load_bikeshare
 
     X, y = load_bikeshare()
-    visualizer = JointPlotVisualizer(feature='temp', target='feelslike')
-    visualizer.fit_transform(X['temp'], X['feelslike'])
+    visualizer = JointPlotVisualizer(columns=['temp', 'feelslike'])
+    visualizer.fit_transform(X, y)
     visualizer.poof()
 
 This visualizer plots a scatter diagram of the apparent temperature on the y axis and the actual measured temperature on the x axis and draws a line of best fit using a simple linear regression. Additionally, univariate distributions are shown as histograms above the x axis for temp and next to the y axis for feelslike.  The ``JointPlotVisualizer`` gives an at-a-glance view of the very strong positive correlation of the features, as well as the range and distribution of each feature. Note that the axes are normalized to the space between zero and one, a common technique in machine learning to reduce the impact of one feature over another.

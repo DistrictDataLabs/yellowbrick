@@ -1,11 +1,11 @@
 
 # yellowbrick.features.jointplot
-# Implementations of joint plots for univariate and bivariate analysis.
+# Implementation of joint plots for univariate and bivariate analysis.
 #
 # Author:   Prema Damodaran Roman
 # Created:  Mon Apr 10 21:00:54 2017 -0400
 #
-# Copyright (C) 2017 District Data Labs
+# Copyright (C) 2017 The scikit-yb developers.
 # For license information, see LICENSE.txt
 #
 # ID: jointplot.py [7f47800] pdamodaran@users.noreply.github.com $
@@ -14,19 +14,32 @@
 ## Imports
 ##########################################################################
 
-import warnings
 import numpy as np
-import matplotlib as mpl
 import matplotlib.pyplot as plt
 
-from yellowbrick.features.base import FeatureVisualizer
-from yellowbrick.exceptions import YellowbrickValueError
-from yellowbrick.bestfit import draw_best_fit
-from yellowbrick.utils import is_dataframe
+try:
+    # Only available in Matplotlib >= 2.0.2
+    from mpl_toolkits.axes_grid1 import make_axes_locatable
+except ImportError:
+    make_axes_locatable = None
+
+from .base import FeatureVisualizer
+# from ..bestfit import draw_best_fit # TODO: return in #728
+from ..utils.types import is_dataframe
+from ..exceptions import YellowbrickValueError
+from scipy.stats import pearsonr, spearmanr, kendalltau
 
 
+# Default Colors
+# TODO: should we reuse these colors?
 FACECOLOR = "#FAFAFA"
 HISTCOLOR = "#6897bb"
+
+
+# Objects for export
+__all__ = [
+    "JointPlot", "JointPlotVisualizer", "joint_plot",
+]
 
 
 ##########################################################################
@@ -34,288 +47,377 @@ HISTCOLOR = "#6897bb"
 ##########################################################################
 
 
-class JointPlotVisualizer(FeatureVisualizer):
+class JointPlot(FeatureVisualizer):
     """
-    JointPlotVisualizer allows for a simultaneous visualization of the relationship
-    between two variables and the distrbution of each individual variable.  The
-    relationship is plotted along the joint axis and univariate distributions
-    are plotted on top of the x axis and to the right of the y axis.
+    Joint plots are useful for machine learning on multi-dimensional data, allowing for
+    the visualization of complex interactions between different data dimensions, their
+    varying distributions, and even their relationships to the target variable for
+    prediction.
+
+    The Yellowbrick ``JointPlot`` can be used both for pairwise feature analysis and
+    feature-to-target plots. For pairwise feature analysis, the ``columns`` argument can
+    be used to specify the index of the two desired columns in ``X``. If ``y`` is also
+    specified, the plot can be colored with a heatmap or by class. For feature-to-target
+    plots, the user can provide either ``X`` and ``y` as 1D vectors, or a ``columns``
+    argument with an index to a single feature in ``X`` to be plotted against ``y``.
+
+    Histograms can be included by setting the ``hist`` argument to ``True`` for a
+    frequency distribution, or to ``"density"`` for a probability density function. Note
+    that histograms requires matplotlib 2.0.2 or greater.
 
     Parameters
     ----------
-    ax: matplotlib Axes, default: None
-        This is inherited from FeatureVisualizer but is defined within
-        JointPlotVisualizer since there are three axes objects.
+    ax : matplotlib Axes, default: None
+        The axes to plot the figure on. If None is passed in the current axes will be
+        used (or generated if required). This is considered the base axes where the
+        the primary joint plot is drawn. It will be shifted and two additional axes
+        added above (xhax) and to the right (yhax) if hist=True.
 
-    feature: string, default: None
-        The name of the X variable
-        If a DataFrame is passed to fit and feature is None, feature
-        is selected as the column of the DataFrame.  There must be only
-        one column in the DataFrame.
+    columns : int, str, [int, int], [str, str], default: None
+        Determines what data is plotted in the joint plot and acts as a selection index
+        into the data passed to ``fit(X, y)``. This data therefore must be indexable by
+        the column type (e.g. an int for a numpy array or a string for a DataFrame).
 
-    target: string, default: None
-        The name of the Y variable
-        If target is None and a y value is passed to fit then the target
-        is selected from the target vector.
+        If None is specified then either both X and y must be 1D vectors and they will
+        be plotted against each other or X must be a 2D array with only 2 columns. If a
+        single index is specified then the data is indexed as ``X[columns]`` and plotted
+        jointly with the target variable, y. If two indices are specified then they are
+        both selected from X, additionally in this case, if y is specified, then it is
+        used to plot the color of points.
 
-    joint_plot: one of {'scatter', 'hex'}, default: 'scatter'
-        The type of plot to render in the joint axis
-        Currently, the choices are scatter and hex.
-        Use scatter for small datasets and hex for large datasets
+        Note that these names are also used as the x and y axes labels if they aren't
+        specified in the joint_kws argument.
 
-    joint_args: dict, default: None
-        Keyword arguments used for customizing the joint plot:
+    correlation : str, default: 'pearson'
+        The algorithm used to compute the relationship between the variables in the
+        joint plot, one of: 'pearson', 'covariance', 'spearman', 'kendalltau'.
 
-        =============   ==================================================================
-        Property        Description
-        -------------   ------------------------------------------------------------------
-        alpha           transparency
-        facecolor       background color of the joint axis
-        aspect          aspect ratio
-        fit             used if scatter is selected for joint_plot to draw a
-                        best fit line - values can be True or False.
-                        Uses ``Yellowbrick.bestfit``
-        estimator       used if scatter is selected for joint_plot to determine
-                        the type of best fit line to use.  Refer to
-                        Yellowbrick.bestfit for types of estimators that can be used.
-        x_bins          used if hex is selected to set the number of bins for the x value
-        y_bins          used if hex is selected to set the number of bins for the y value
-        cmap            string or matplotlib cmap to colorize lines
-                        Use either color to colorize the lines on a per class basis or
-                        colormap to color them on a continuous scale.
-        =============   ==================================================================
+    kind : str in {'scatter', 'hex'}, default: 'scatter'
+        The type of plot to render in the joint axes. Note that when kind='hex' the
+        target cannot be plotted by color.
 
-    xy_plot: one of {'hist'}, default: 'hist'
-        The type of plot to render along the x and y axes
-        Currently, the choice is hist
+    hist : {True, False, None, 'density', 'frequency'}, default: True
+        Draw histograms showing the distribution of the variables plotted jointly.
+        If set to 'density', the probability density function will be plotted.
+        If set to True or 'frequency' then the frequency will be plotted.
+        Requires Matplotlib >= 2.0.2.
 
-    xy_args: dict, default: None
-        Keyword arguments used for customizing the x and y plots:
+    alpha : float, default: 0.65
+        Specify a transparency where 1 is completely opaque and 0 is completely
+        transparent. This property makes densely clustered points more visible.
 
-        ==============  =====================================================
-        Property        Description
-        --------------  -----------------------------------------------------
-        alpha           transparency
-        facecolor_x     background color of the x axis
-        facecolor_y     background color of the y axis
-        bins            used to set up the number of bins for the hist plot
-        histcolor_x     used to set the color for the histogram on the x axis
-        histcolor_y     used to set the color for the histogram on the y axis
-        ==============  =====================================================
-
-    ratio: float, default: 5
-        Ratio of joint axis size to the x and y axes height
-
-    space: float, default: 0.2
-        Space between the joint axis and the x and y axes
+    {joint, hist}_kws : dict, default: None
+        Additional keyword arguments for the plot components.
 
     kwargs : dict
         Keyword arguments that are passed to the base class and may influence
         the visualization as defined in other Visualizers.
 
+    Attributes
+    ----------
+    corr_ : float
+        The correlation or relationship of the data in the joint plot, specified by the
+        correlation algorithm.
+
     Examples
     --------
 
-    >>> visualizer = JointPlotVisualizer()
-    >>> visualizer.fit(X,y)
-    >>> visualizer.poof()
-
-    Notes
-    -----
-    These parameters can be influenced later on in the visualization
-    process, but can and should be set as early as possible.
+    >>> viz = JointPlot(columns=["temp", "humidity"])
+    >>> viz.fit(X, y)
+    >>> viz.poof()
     """
 
-    def __init__(self, ax=None, feature=None, target=None,
-                 joint_plot='scatter', joint_args=None,
-                 xy_plot='hist', xy_args=None,
-                 ratio=5, space=.2, **kwargs):
+    # TODO: should we couple more closely with Rank2D?
+    correlation_methods = {
+        'pearson': lambda x, y: pearsonr(x,y)[0],
+        'spearman': lambda x, y: spearmanr(x,y)[0],
+        'covariance': lambda x, y: np.cov(x,y)[0,1],
+        'kendalltau': lambda x, y: kendalltau(x,y)[0],
+    }
 
-        # Check matplotlib version - needs to be version 2.0.0 or greater.
-        mpl_vers_maj = int(mpl.__version__.split(".")[0])
-        if mpl_vers_maj < 2:
-            warnings.warn((
-                "{} requires matplotlib major version 2 or greater. "
-                "Please upgrade."
-            ).format(self.__class__.__name__))
+    def __init__(self, ax=None, columns=None, correlation='pearson', kind="scatter",
+                 hist=True, alpha=0.65, joint_kws=None, hist_kws=None, **kwargs):
+        # Initialize the visualizer
+        super(JointPlot, self).__init__(ax=ax, **kwargs)
+        self._xhax, self._yhax = None, None
 
-        super(JointPlotVisualizer, self).__init__(ax, **kwargs)
+        # Set and validate the columns
+        self.columns = columns
+        if self.columns is not None and not isinstance(self.columns, (int, str)):
+            self.columns = tuple(self.columns)
+            if len(self.columns) > 2:
+                raise YellowbrickValueError((
+                    "'{}' contains too many indices or is invalid for joint plot - "
+                    "specify either a single int or str index or two columns as a list"
+                ).format(columns))
 
-        self.feature = feature
-        self.target = target
-        self.joint_plot = joint_plot
-        self.joint_args = joint_args
-        self.xy_plot = xy_plot
-        self.xy_args = xy_args
-        self.ratio = ratio
-        self.space = space
+        # Seet and validate the correlation
+        self.correlation = correlation
+        if self.correlation not in self.correlation_methods:
+            raise YellowbrickValueError(
+                "'{}' is an invalid correlation method, use one of {}".format(
+                    self.correlation, ", ".join(self.correlation_methods.keys())
+            ))
 
-    def fit(self, X, y, **kwargs):
+        # Set and validate the kind of plot
+        self.kind = kind
+        if self.kind not in {'scatter', 'hex', 'hexbin'}:
+            raise YellowbrickValueError((
+                "'{}' is invalid joint plot kind, use 'scatter' or 'hex'"
+            ).format(self.kind))
+
+        # Set and validate the histogram if specified
+        self.hist = hist
+        if self.hist not in {True, 'density', 'frequency', None, False}:
+                raise YellowbrickValueError((
+                    "'{}' is an invalid argument for hist, use None, True, "
+                    "False, 'density', or 'frequency'"
+                ).format(hist))
+
+        # If hist is True, test the version availability
+        if self.hist in {True, 'density', 'frequency'}:
+            self._layout()
+
+        # Set the additional visual parameters
+        self.alpha = alpha
+        self.joint_kws = joint_kws
+        self.hist_kws = hist_kws
+
+    @property
+    def xhax(self):
         """
-        Sets up the X and y variables for the jointplot
-        and checks to ensure that X and y are of the
-        correct data type
+        The axes of the histogram for the top of the JointPlot (X-axis)
+        """
+        if self._xhax is None:
+            raise AttributeError(
+                "this visualizer does not have a histogram for the X axis"
+            )
+        return self._xhax
 
-        Fit calls draw
+    @property
+    def yhax(self):
+        """
+        The axes of the histogram for the right of the JointPlot (Y-axis)
+        """
+        if self._yhax is None:
+            raise AttributeError(
+                "this visualizer does not have a histogram for the Y axis"
+            )
+        return self._yhax
+
+    def _layout(self):
+        """
+        Creates the grid layout for the joint plot, adding new axes for the histograms
+        if necessary and modifying the aspect ratio. Does not modify the axes or the
+        layout if self.hist is False or None.
+        """
+        # Ensure the axes are created if not hist, then return.
+        if not self.hist:
+            self.ax
+            return
+
+        # Ensure matplotlib version compatibility
+        if make_axes_locatable is None:
+            raise YellowbrickValueError((
+                "joint plot histograms requires matplotlib 2.0.2 or greater "
+                "please upgrade matplotlib or set hist=False on the visualizer"
+            ))
+
+        # Create the new axes for the histograms
+        divider = make_axes_locatable(self.ax)
+        self._xhax = divider.append_axes("top", size=1, pad=0.1, sharex=self.ax)
+        self._yhax = divider.append_axes("right", size=1, pad=0.1, sharey=self.ax)
+
+        # Modify the display of the axes
+        self._xhax.xaxis.tick_top()
+        self._yhax.yaxis.tick_right()
+        self._xhax.grid(False, axis='y')
+        self._yhax.grid(False, axis='x')
+
+    def fit(self, X, y=None):
+        """
+        Fits the JointPlot, creating a correlative visualization between the columns
+        specified during initialization and the data and target passed into fit:
+
+            - If self.columns is None then X and y must both be specified as 1D arrays
+              or X must be a 2D array with only 2 columns.
+            - If self.columns is a single int or str, that column is selected to be
+              visualized against the target y.
+            - If self.columns is two ints or strs, those columns are visualized against
+              each other. If y is specified then it is used to color the points.
+
+        This is the main entry point into the joint plot visualization.
 
         Parameters
         ----------
+        X : array-like
+            An array-like object of either 1 or 2 dimensions depending on self.columns.
+            Usually this is a 2D table with shape (n, m)
 
-        X : ndarray or DataFrame of shape n x 1
-            A matrix of n instances with 1 feature
-
-        y : ndarray or Series of length n
-            An array or series of the target value
-
-        kwargs: dict
-            keyword arguments passed to Scikit-Learn API.
+        y : array-like, default: None
+            An vector or 1D array that has the same length as X. May be used to either
+            directly plot data or to color data points.
         """
+        # Convert python objects to numpy arrays
+        if isinstance(X, (list, tuple)):
+            X = np.array(X)
 
-        #throw an error if X has more than 1 column
-        if is_dataframe(X):
-            nrows, ncols = X.shape
+        if y is not None and isinstance(y, (list, tuple)):
+            y = np.array(y)
 
-            if ncols > 1:
+        # Case where no columns are specified
+        if self.columns is None:
+            if (y is None and (X.ndim != 2 or X.shape[1] != 2)) or (y is not None and (X.ndim != 1 or y.ndim != 1)):
                 raise YellowbrickValueError((
-                    "X needs to be an ndarray or DataFrame with one feature, "
-                    "please select one feature from the DataFrame"
+                    "when self.columns is None specify either X and y as 1D arrays "
+                    "or X as a matrix with 2 columns"
                 ))
 
-        #throw an error is y is None
-        if y is None:
+            if y is None:
+                # Draw the first column as x and the second column as y
+                self.draw(X[:,0], X[:,1], xlabel="0", ylabel="1")
+                return self
+
+            # Draw x against y
+            self.draw(X, y, xlabel="x", ylabel="y")
+            return self
+
+        # Case where a single string or int index is specified
+        if isinstance(self.columns, (int,str)):
+            if y is None:
+                raise YellowbrickValueError(
+                    "when self.columns is a single index, y must be specified"
+                )
+
+            # fetch the index from X -- raising index error if not possible
+            x = self._index_into(self.columns, X)
+            self.draw(x, y, xlabel=str(self.columns), ylabel="target")
+            return self
+
+        # Case where there is a double index for both columns
+        columns = tuple(self.columns)
+        if len(columns) != 2:
             raise YellowbrickValueError((
-                "Joint plots are useful for classification and regression "
-                "problems, which require a target variable"
-            ))
+                    "'{}' contains too many indices or is invalid for joint plot"
+                ).format(columns))
 
-
-        # Handle the feature name if it is None.
-        if self.feature is None:
-
-            # If X is a data frame, get the columns off it.
-            if is_dataframe(X):
-                self.feature = X.columns
-
-            else:
-                self.feature = ['x']
-
-        # Handle the target name if it is None.
-        if self.target is None:
-            self.target = ['y']
-
-        self.draw(X, y, **kwargs)
+        # TODO: color the points based on the target if it is given
+        x = self._index_into(columns[0], X)
+        y = self._index_into(columns[1], X)
+        self.draw(x, y, xlabel=str(columns[0]), ylabel=str(columns[1]))
         return self
 
-    def draw(self, X, y, **kwargs):
+    def draw(self, x, y, xlabel=None, ylabel=None):
         """
-        Sets up the layout for the joint plot draw calls ``draw_joint`` and
-        ``draw_xy`` to render the visualizations.
+        Draw the joint plot for the data in x and y.
+
+        Parameters
+        ----------
+        x, y : 1D array-like
+            The data to plot for the x axis and the y axis
+
+        xlabel, ylabel : str
+            The labels for the x and y axes.
         """
-        fig = plt.gcf()
-        gs = plt.GridSpec(self.ratio + 1, self.ratio + 1)
+        # This is a little weird to be here, but it is the best place to perform
+        # this computation given how fit calls draw and returns.
+        self.corr_ = self.correlation_methods[self.correlation](x, y)
 
-        #Set up the 3 axes objects
-        joint_ax = fig.add_subplot(gs[1:, :-1])
-        x_ax = fig.add_subplot(gs[0, :-1], sharex=joint_ax)
-        y_ax = fig.add_subplot(gs[1:, -1], sharey=joint_ax)
+        # First draw the joint plot
+        joint_kws = self.joint_kws or {}
+        joint_kws.setdefault("alpha", self.alpha)
+        joint_kws.setdefault("label", "{}={:0.3f}".format(self.correlation, self.corr_))
 
-        fig.tight_layout()
-        fig.subplots_adjust(hspace=self.space, wspace=self.space)
+        # Draw scatter joint plot
+        if self.kind == "scatter":
+            self.ax.scatter(x, y, **joint_kws)
 
-        self.fig = fig
-        self.joint_ax = joint_ax
-        self.x_ax = x_ax
-        self.y_ax = y_ax
-        self._ax = joint_ax
+            # TODO: Draw best fit line (or should this be kind='reg'?)
 
-        self.draw_joint(X, y, **kwargs)
-        self.draw_xy(X, y, **kwargs)
+        # Draw hexbin joint plot
+        elif self.kind in ('hex', 'hexbin'):
+            joint_kws.setdefault("mincnt", 1)
+            joint_kws.setdefault("gridsize", 50)
+            self.ax.hexbin(x, y, **joint_kws)
 
-    def draw_joint(self, X, y, **kwargs):
-        """
-        Draws the visualization for the joint axis.
-        """
+        # Something bad happened
+        else:
+            raise ValueError("unknown joint plot kind '{}'".format(self.kind))
 
-        if self.joint_args is None:
-            self.joint_args = {}
+        # Set the X and Y axis labels on the plot
+        self.ax.set_xlabel(xlabel)
+        self.ax.set_ylabel(ylabel)
 
-        self.joint_args.setdefault("alpha", 0.4)
-        facecolor = self.joint_args.pop("facecolor", FACECOLOR)
-        self.joint_ax.set_facecolor(facecolor)
+        # If we're not going to draw histograms, stop here
+        if not self.hist:
+            # Ensure the current axes is always the main joint plot axes
+            plt.sca(self.ax)
+            return self.ax
 
-        if self.joint_plot == "scatter":
-            aspect = self.joint_args.pop("aspect", "auto")
-            self.joint_ax.set_aspect(aspect)
-            self.joint_ax.scatter(X, y, **self.joint_args)
+        # Draw the histograms
+        hist_kws = self.hist_kws or {}
+        hist_kws.setdefault("bins", 50)
+        if self.hist == "density":
+            hist_kws.setdefault("density", True)
 
-            fit = self.joint_args.pop("fit", True)
-            if fit:
-                estimator = self.joint_args.pop("estimator", "linear")
-                draw_best_fit(X, y, self.joint_ax, estimator)
+        self.xhax.hist(x, **hist_kws)
+        self.yhax.hist(y, orientation="horizontal", **hist_kws)
 
-        elif self.joint_plot == "hex":
-            x_bins = self.joint_args.pop("x_bins", 50)
-            y_bins = self.joint_args.pop("y_bins", 50)
-            colormap = self.joint_args.pop("cmap", 'Blues')
-            gridsize = int(np.mean([x_bins, y_bins]))
-
-            xmin = X.min()
-            xmax = X.max()
-            ymin = y.min()
-            ymax = y.max()
-
-            self.joint_ax.hexbin(X, y,
-                gridsize=gridsize, cmap=colormap, mincnt=1, **self.joint_args
-            )
-            self.joint_ax.axis([xmin, xmax, ymin, ymax])
-
-    def draw_xy(self, X, y, **kwargs):
-        """
-        Draws the visualization for the x and y axes
-        """
-
-        if self.xy_args is None:
-            self.xy_args = {}
-
-        facecolor_x = self.xy_args.pop("facecolor_x", FACECOLOR)
-        self.x_ax.set_facecolor(facecolor_x)
-        facecolor_y = self.xy_args.pop("facecolor_y", FACECOLOR)
-        self.y_ax.set_facecolor(facecolor_y)
-
-
-        if self.xy_plot == "hist":
-            hist_bins = self.xy_args.pop("bins", 50)
-            self.xy_args.setdefault("alpha", 0.4)
-            histcolor_x = self.xy_args.pop("histcolor_x", HISTCOLOR)
-            self.x_ax.set_facecolor(facecolor_x)
-            histcolor_y = self.xy_args.pop("histcolor_y", HISTCOLOR)
-            self.y_ax.set_facecolor(facecolor_y)
-            self.x_ax.hist(X, bins=hist_bins, color=histcolor_x, **self.xy_args)
-            self.y_ax.hist(y, bins=hist_bins, color=histcolor_y,
-                              orientation='horizontal', **self.xy_args)
+        # Ensure the current axes is always the main joint plot axes
+        plt.sca(self.ax)
+        return self.ax
 
     def finalize(self, **kwargs):
         """
-        Finalize executes any subclass-specific axes finalization steps.
-        The user calls poof and poof calls finalize.
-
-        Parameters
-        ----------
-        kwargs: generic keyword arguments.
+        Finalize executes any remaining image modifications making it ready to show.
         """
-        self.joint_ax.set_xlabel(self.feature)
-        self.joint_ax.set_ylabel(self.target)
+        # Set the aspect ratio to make the visualization square
+        # TODO: still unable to make plot square using make_axes_locatable
+        # x0,x1 = self.ax.get_xlim()
+        # y0,y1 = self.ax.get_ylim()
+        # self.ax.set_aspect(abs(x1-x0)/abs(y1-y0))
 
-        plt.setp(self.x_ax.get_xticklabels(), visible=False)
-        plt.setp(self.y_ax.get_yticklabels(), visible=False)
+        # Add the title to the plot if the user has set one.
+        self.set_title("")
 
-        plt.setp(self.x_ax.yaxis.get_majorticklines(), visible=False)
-        plt.setp(self.x_ax.yaxis.get_minorticklines(), visible=False)
-        plt.setp(self.y_ax.xaxis.get_majorticklines(), visible=False)
-        plt.setp(self.y_ax.xaxis.get_minorticklines(), visible=False)
-        plt.setp(self.x_ax.get_yticklabels(), visible=False)
-        plt.setp(self.y_ax.get_xticklabels(), visible=False)
-        self.x_ax.yaxis.grid(False)
-        self.y_ax.xaxis.grid(False)
-        self.fig.suptitle("Joint Plot of {} vs {}"
-                        .format(self.feature, self.target), y=1.05)
+        # Set the legend with full opacity patches using manual legend.
+        # Or Add the colorbar if this is a continuous plot.
+        self.ax.legend(loc="best", frameon=True)
+
+        # Finalize the histograms
+        if self.hist:
+            plt.setp(self.xhax.get_xticklabels(), visible=False)
+            plt.setp(self.yhax.get_yticklabels(), visible=False)
+            plt.sca(self.ax)
+
+        # Call tight layout to maximize readability
+        plt.tight_layout()
+
+    def _index_into(self, idx, data):
+        """
+        Attempts to get the column from the data using the specified index, raises an
+        exception if this is not possible from this point in the stack.
+        """
+        try:
+            if is_dataframe(data):
+                # Assume column indexing
+                return data[idx]
+            # Otherwise assume numpy array-like indexing
+            return data[:,idx]
+        except Exception as e:
+            raise IndexError(
+                "could not index column '{}' into type {}: {}".format(
+                    self.columns, data.__class__.__name__, e
+            ))
+
+
+# Alias for JointPlot
+JointPlotVisualizer = JointPlot
+
+
+##########################################################################
+## Quick Method for JointPlot visualizations
+##########################################################################
+
+def joint_plot():
+    raise NotImplementedError("quick method still needs to be implemented")
