@@ -108,7 +108,11 @@ The Yellowbrick repository is set up in a typical production/release/development
 
 .. note:: All pull requests should be into the ``yellowbrick/develop`` branch from your forked repository.
 
-You can work directly in your fork and create a pull request from your fork's develop branch into ours. We also recommend setting up an ``upstream`` remote so that you can easily pull the latest development changes from the main Yellowbrick repository (see `configuring a remote for a fork <https://help.github.com/articles/configuring-a-remote-for-a-fork/>`_). You can do that as follows::
+You can work directly in your fork and create a pull request from your fork's ``develop`` branch into ours. In order to reduce the number of merges (and merge conflicts) we recommend that you utilize a feature branch off of ``develop`` to work in::
+
+    $ git checkout -b feature-myfeature develop
+
+We also recommend setting up an ``upstream`` remote so that you can easily pull the latest development changes from the main Yellowbrick repository (see `configuring a remote for a fork <https://help.github.com/articles/configuring-a-remote-for-a-fork/>`_). You can do that as follows::
 
     $ git remote add upstream https://github.com/DistrictDataLabs/yellowbrick.git
     $ git remote -v
@@ -117,22 +121,20 @@ You can work directly in your fork and create a pull request from your fork's de
     upstream  https://github.com/DistrictDataLabs/yellowbrick.git (fetch)
     upstream  https://github.com/DistrictDataLabs/yellowbrick.git (push)
 
-When you're ready, request a code review for your pull request. Then, when reviewed and approved, you can merge your fork into our main branch. Make sure to use the "Squash and Merge" option in order to create a Git history that is understandable.
+When you're ready, request a code review for your pull request. Then, when reviewed and approved, we will merge the branch of your fork into our ``develop`` branch. 
+
+
+Merging Pull Requests
+~~~~~~~~~~~~~~~~~~~~~
+
+Our convention is that the person who performs the code review should merge the pull request (since reviewing is hard work and deserves due credit!). Only core contributors have write access to the repository and can merge pull requests. Some preferences for commit messages when merging in pull requests:
+
+- Make sure to use the "Squash and Merge" option in order to create a Git history that is understandable. 
+- Keep the title of the commit short and descriptive; be sure it includes the PR #.
+- Craft a commit message body that is 1-3 sentences, depending on the complexity of the commit; it should explicitly reference any issues being closed or opened using `GitHub's commit message keywords <https://help.github.com/articles/closing-issues-using-keywords/>`_.
 
 .. note:: When merging a pull request, use the "squash and merge" option.
 
-Core contributors have write access to the repository. In order to reduce the number of merges (and merge conflicts) we recommend that you utilize a feature branch off of develop to do intermediate work in::
-
-    $ git checkout -b feature-myfeature develop
-
-Once you are done working (and everything is tested) merge your feature into develop.::
-
-    $ git checkout develop
-    $ git merge --no-ff feature-myfeature
-    $ git branch -d feature-myfeature
-    $ git push origin develop
-
-Head back to Waffle and checkout another issue!
 
 Releases
 --------

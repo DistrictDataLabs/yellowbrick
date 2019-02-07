@@ -42,10 +42,12 @@ Once forked, use the following steps to get your development environment set up 
 
 3. Install dependencies.
 
-    Yellowbrick's dependencies are in the ``requirements.txt`` document at the root of the repository. Open this file and uncomment the dependencies that are for development only. Then install the dependencies with ``pip``::
+    Yellowbrick's dependencies are in the ``requirements.txt`` document at the root of the repository. Open this file and uncomment any dependencies marked as for development only. Then install the package in editable mode::
 
-        $ pip install -r requirements.txt
+        $ pip install -e .
 
+    This will add Yellowbrick to your PYTHONPATH so that you don't need to reinstall it each time you make a change during development.
+    
     Note that there may be other dependencies required for development and testing; you can simply install them with ``pip``. For example to install
     the additional dependencies for building the documentation or to run the
     test suite, use the ``requirements.txt`` files in those directories::
