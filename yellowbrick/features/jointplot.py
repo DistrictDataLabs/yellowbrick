@@ -24,13 +24,14 @@ except ImportError:
     make_axes_locatable = None
 
 from .base import FeatureVisualizer
-# from ..bestfit import draw_best_fit
+# from ..bestfit import draw_best_fit # TODO: return in #728
 from ..utils.types import is_dataframe
 from ..exceptions import YellowbrickValueError
 from scipy.stats import pearsonr, spearmanr, kendalltau
 
 
 # Default Colors
+# TODO: should we reuse these colors?
 FACECOLOR = "#FAFAFA"
 HISTCOLOR = "#6897bb"
 
@@ -48,6 +49,21 @@ __all__ = [
 
 class JointPlot(FeatureVisualizer):
     """
+    Joint plots are useful for machine learning on multi-dimensional data, allowing for
+    the visualization of complex interactions between different data dimensions, their
+    varying distributions, and even their relationships to the target variable for
+    prediction.
+
+    The Yellowbrick ``JointPlot`` can be used both for pairwise feature analysis and
+    feature-to-target plots. For pairwise feature analysis, the ``columns`` argument can
+    be used to specify the index of the two desired columns in ``X``. If ``y`` is also
+    specified, the plot can be colored with a heatmap or by class. For feature-to-target
+    plots, the user can provide either ``X`` and ``y` as 1D vectors, or a ``columns``
+    argument with an index to a single feature in ``X`` to be plotted against ``y``.
+
+    Histograms can be included by setting the ``hist`` argument to ``True`` for a
+    frequency distribution, or to ``"density"`` for a probability density function. Note
+    that histograms requires matplotlib 2.0.2 or greater.
 
     Parameters
     ----------
@@ -65,7 +81,7 @@ class JointPlot(FeatureVisualizer):
         If None is specified then either both X and y must be 1D vectors and they will
         be plotted against each other or X must be a 2D array with only 2 columns. If a
         single index is specified then the data is indexed as ``X[columns]`` and plotted
-        jointly with the target variable, y. If two indices are specfied then they are
+        jointly with the target variable, y. If two indices are specified then they are
         both selected from X, additionally in this case, if y is specified, then it is
         used to plot the color of points.
 
@@ -131,7 +147,8 @@ class JointPlot(FeatureVisualizer):
             self.columns = tuple(self.columns)
             if len(self.columns) > 2:
                 raise YellowbrickValueError((
-                    "'{}' contains too many indices or is invalid for joint plot"
+                    "'{}' contains too many indices or is invalid for joint plot - "
+                    "specify either a single int or str index or two columns as a list"
                 ).format(columns))
 
         # Seet and validate the correlation
@@ -168,6 +185,9 @@ class JointPlot(FeatureVisualizer):
 
     @property
     def xhax(self):
+        """
+        The axes of the histogram for the top of the JointPlot (X-axis)
+        """
         if self._xhax is None:
             raise AttributeError(
                 "this visualizer does not have a histogram for the X axis"
@@ -176,6 +196,9 @@ class JointPlot(FeatureVisualizer):
 
     @property
     def yhax(self):
+        """
+        The axes of the histogram for the right of the JointPlot (Y-axis)
+        """
         if self._yhax is None:
             raise AttributeError(
                 "this visualizer does not have a histogram for the Y axis"
@@ -185,7 +208,8 @@ class JointPlot(FeatureVisualizer):
     def _layout(self):
         """
         Creates the grid layout for the joint plot, adding new axes for the histograms
-        if necessary and modifying the aspect ratio. Does nothing if hist is falsey.
+        if necessary and modifying the aspect ratio. Does not modify the axes or the
+        layout if self.hist is False or None.
         """
         # Ensure the axes are created if not hist, then return.
         if not self.hist:
@@ -219,7 +243,7 @@ class JointPlot(FeatureVisualizer):
               or X must be a 2D array with only 2 columns.
             - If self.columns is a single int or str, that column is selected to be
               visualized against the target y.
-            - If self.columns is two ints or strs, those coumns are visualized against
+            - If self.columns is two ints or strs, those columns are visualized against
               each other. If y is specified then it is used to color the points.
 
         This is the main entry point into the joint plot visualization.
@@ -250,7 +274,7 @@ class JointPlot(FeatureVisualizer):
                 ))
 
             if y is None:
-                # Draw the fist column as x and the second column as y
+                # Draw the first column as x and the second column as y
                 self.draw(X[:,0], X[:,1], xlabel="0", ylabel="1")
                 return self
 
@@ -348,7 +372,7 @@ class JointPlot(FeatureVisualizer):
         Finalize executes any remaining image modifications making it ready to show.
         """
         # Set the aspect ratio to make the visualization square
-        # TODO: stil unable to make plot square using make_axes_locatable
+        # TODO: still unable to make plot square using make_axes_locatable
         # x0,x1 = self.ax.get_xlim()
         # y0,y1 = self.ax.get_ylim()
         # self.ax.set_aspect(abs(x1-x0)/abs(y1-y0))
