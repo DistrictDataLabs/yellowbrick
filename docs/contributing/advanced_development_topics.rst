@@ -121,14 +121,19 @@ We also recommend setting up an ``upstream`` remote so that you can easily pull 
     upstream  https://github.com/DistrictDataLabs/yellowbrick.git (fetch)
     upstream  https://github.com/DistrictDataLabs/yellowbrick.git (push)
 
-When you're ready, request a code review for your pull request. Then, when reviewed and approved, we will merge the branch of your fork into our ``develop`` branch. After that, you can update your local fork by merging your feature into your fork's ``develop`` branch.::
+When you're ready, request a code review for your pull request. Then, when reviewed and approved, we will merge the branch of your fork into our ``develop`` branch. After that, you should update your local fork, either by pulling from ``upstream`` ``develop``::
+
+    $ git checkout develop
+    $ git pull upstream develop
+    $ git push origin develop
+
+or by manually merging your feature into your fork's ``develop`` branch.::
 
     $ git checkout develop
     $ git merge --no-ff feature-myfeature
-    $ git branch -d feature-myfeature
     $ git push origin develop
 
-Now head back to Waffle and checkout another issue!
+Then you can safely delete the old feature branch, both locally and on GitHub. Now head back to the backlog and checkout another issue!
 
 Merging Pull Requests
 ~~~~~~~~~~~~~~~~~~~~~
