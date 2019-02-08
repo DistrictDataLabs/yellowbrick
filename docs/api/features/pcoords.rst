@@ -20,7 +20,7 @@ Data scientists use this method to detect clusters of instances that have simila
 
     # Specify the features of interest and the classes of the target
     features = [
-        "temperature", "relative humidity", "light", "C02", "humidity"
+        "temperature", "relative humidity", "light", "CO2", "humidity"
     ]
     classes = ["unoccupied", "occupied"]
 
@@ -53,7 +53,7 @@ Normalization techniques can be directly applied to the visualizer without pre-t
 
     # Specify the features of interest and the classes of the target
     features = [
-        "temperature", "relative humidity", "light", "C02", "humidity"
+        "temperature", "relative humidity", "light", "CO2", "humidity"
     ]
     classes = ["unoccupied", "occupied"]
 
