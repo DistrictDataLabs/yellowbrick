@@ -6,73 +6,73 @@ Gallery
 Feature Analysis
 ----------------
 
-.. image:: api/features/images/radviz.png
+.. image:: images/gallery/radviz.png
     :width: 200px
     :height: 100px
-    :alt: Features Analysis adViz Visualizer
+    :alt: Features Analysis RadViz Visualizer
     :target: api/features/radviz.html#radviz-visualizer
 
-.. image:: api/features/images/rank1d_shapiro.png
+.. image:: images/gallery/rank1d_shapiro.png
     :width: 200px
     :height: 100px
-    :alt: Features Analysis rank1d shapiro\
+    :alt: Features Analysis Shapiro Rank1D
     :target: api/features/rankd.html#rank-1d
 
-.. image:: api/features/images/rank2d_covariance.png
+.. image:: images/gallery/rank2d_covariance.png
     :width: 200px
     :height: 100px
-    :alt: Features Analysis rank2d covariance
+    :alt: Features Analysis Covariance Rank2D
     :target: api/features/rankd.html#rank-2d
 
-.. image:: api/features/images/parallel_coordinates.png
+.. image:: images/gallery/parallel_coordinates.png
     :width: 200px
     :height: 100px
     :alt: Parallel Coordinates for 5 features
     :target: api/features/pcoords.html#parallel-coordinates
 
-.. image:: api/features/images/pca_projection_3d.png
+.. image:: images/gallery/pca_projection_3d.png
     :width: 200px
     :height: 100px
-    :alt: Principal Component Plot
+    :alt: Principal Component Plot 3D
     :target: api/features/pca.html#pca-projection
 
-.. image:: api/features/images/concrete_tsne_manifold.png
+.. image:: images/gallery/concrete_tsne_manifold.png
     :width: 200px
     :height: 100px
     :alt: t-SNE Manifold Visualization
     :target: api/features/manifold.html#manifold-visualization
 
-.. image:: api/features/images/occupancy_tsne_manifold.png
+.. image:: images/gallery/occupancy_tsne_manifold.png
     :width: 200px
     :height: 100px
     :alt: t-SNE Manifold Visualization Discrete Target
     :target: api/features/manifold.html#discrete-target
 
-.. image:: api/features/images/concrete_isomap_manifold.png
+.. image:: images/gallery/concrete_isomap_manifold.png
     :width: 200px
     :height: 100px
     :alt: Isomap Manifold Visualization
     :target: api/features/manifold.html#continuous-target
 
-.. image:: api/features/images/feature_importances.png
+.. image:: images/gallery/feature_importances.png
     :width: 200px
     :height: 100px
-    :alt: Feature Importance using Gradient Boosting Classifier
+    :alt: Feature Importance using Ensemble Classifier
     :target: api/features/importances.html#feature-importances
 
-.. image:: api/features/images/rfecv_sklearn_example.png
+.. image:: images/gallery/rfecv_sklearn_example.png
     :width: 200px
     :height: 100px
-    :alt: Feature Importance using Gradient Boosting Classifier
+    :alt: Recursive Feature Elimination with Ensemble Classifier
     :target: api/features/rfecv.html#recursive-feature-elimination
 
-.. image:: api/contrib/images/scatter.png
+.. image:: images/gallery/scatter.png
     :width: 200px
     :height: 100px
     :alt: Scatter Visualization
     :target: api/contrib/scatter.html#scatter-visualization
 
-.. image:: api/features/images/jointplot.png
+.. image:: images/gallery/jointplot.png
     :width: 200px
     :height: 100px
     :alt: Joint Point Visualization
