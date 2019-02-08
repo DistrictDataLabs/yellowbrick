@@ -152,6 +152,7 @@ The machine learning workflow is the art of creating *model selection triples*, 
    visualizer.poof()
 
 .. plot::
+    :context: close-figs
     :include-source: False
     :alt: Rank2D of Bikeshare Features
 
@@ -178,6 +179,7 @@ In this chart, we see that the features ``temp`` and ``feelslike`` have a strong
     visualizer.poof()
 
 .. plot::
+    :context: close-figs
     :include-source: False
     :alt: JointPlot of temp vs feelslike
 
@@ -216,6 +218,7 @@ At this point, we can train our model; let's fit a linear regression to our mode
     visualizer.poof()
 
 .. plot::
+    :context: close-figs
     :include-source: False
     :alt: ResidualsPlot of a simple LinearRegression
 
@@ -257,6 +260,7 @@ Along with generating the residuals plot, we also measured the performance by "s
     visualizer.poof()
 
 .. plot::
+    :context: close-figs
     :include-source: False
     :alt: AlphaSelection for L2 Regularization using RidgeCV
 
@@ -291,6 +295,7 @@ We can now train our final model and visualize it with the ``PredictionError`` v
     visualizer.poof()
 
 .. plot::
+    :context: close-figs
     :include-source: False
     :alt: PredictionError for L2 Regularization using Ridge
 

@@ -10,6 +10,7 @@ Data scientists use this method to detect clusters of instances that have simila
 .. note:: These visualizations can be produced with either the ``ParallelCoordinates`` visualizer or by using the ``parallel_coordinates`` quick method.
 
 .. plot::
+    :context: close-figs
 
     from yellowbrick.features import ParallelCoordinates
     from yellowbrick.datasets import load_occupancy
@@ -42,6 +43,7 @@ Unfortunately, as we inspect this class, we can see that the domain of each feat
 Normalization techniques can be directly applied to the visualizer without pre-transforming the data (though you could also do this) by using the ``normalize`` parameter. Several transformers are available; try using ``minmax``, ``minabs``, ``standard``, ``l1``, or ``l2`` normalization to change perspectives in the parallel coordinates as follows:
 
 .. plot::
+    :context: close-figs
 
     from yellowbrick.features import ParallelCoordinates
     from yellowbrick.datasets import load_occupancy
@@ -82,7 +84,8 @@ The "fast" drawing mode vastly improves the performance of the parallel coordina
 
 .. plot::
     :include-source: False
-    
+    :context: close-figs
+
     import matplotlib.pyplot as plt
     from sklearn.datasets import load_iris
     from yellowbrick.features import ParallelCoordinates
