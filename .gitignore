@@ -54,7 +54,7 @@ docs/_build/
 
 # Jupyter Notebook
 .ipynb_checkpoints
-test_yellowbrick.ipynb
+
 
 # pyenv
 .python-version

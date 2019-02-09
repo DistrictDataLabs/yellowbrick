@@ -73,6 +73,7 @@ class VisualTestCase(unittest.TestCase):
         super(VisualTestCase, self).setUp()
 
     def assert_images_similar(self, visualizer=None, ax=None, tol=0.01, **kwargs):
+        
         """Accessible testing method for testing generation of a Visualizer.
 
         Requires the placement of a baseline image for comparison in the

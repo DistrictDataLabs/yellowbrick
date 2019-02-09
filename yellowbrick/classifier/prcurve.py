@@ -85,7 +85,7 @@ class PrecisionRecallCurve(ClassificationScoreVisualizer):
         Draw ISO F1-Curves on the plot to show how close the precision-recall
         curves are to different F1 scores.
 
-    f1_values : list , default=[0.2,0.4,0.6,0.8]
+    iso_f1_values : tuple , default=(0.2,0.4,0.6,0.8)
         Values of f1 score for which to draw ISO F1-Curves
 
     per_class : bool, default=False
@@ -147,18 +147,17 @@ class PrecisionRecallCurve(ClassificationScoreVisualizer):
     """
 
     def __init__(self, model, ax=None, classes=None, fill_area=True, ap_score=True,
-                 micro=True, iso_f1_curves=False,f1_values=[0.2,0.4,0.6,0.8], per_class=False, fill_opacity=0.2,
+                 micro=True, iso_f1_curves=False,iso_f1_values=(0.2,0.4,0.6,0.8), per_class=False, fill_opacity=0.2,
                  line_opacity=0.8, **kwargs):
         super(PrecisionRecallCurve, self).__init__(model, ax=ax, classes=classes, **kwargs)
 
         # Set visual params
-        print("monkey")
         self.set_params(
             fill_area=fill_area,
             ap_score=ap_score,
             micro=micro,
             iso_f1_curves=iso_f1_curves,
-            f1_values = set(f1_values),
+            iso_f1_values = set(iso_f1_values),
             per_class=per_class,
             fill_opacity=fill_opacity,
             line_opacity=line_opacity,
@@ -251,7 +250,7 @@ class PrecisionRecallCurve(ClassificationScoreVisualizer):
         Draws the precision-recall curves computed in score on the axes.
         """
         if self.iso_f1_curves:
-            for f1 in self.f1_values:
+            for f1 in self.iso_f1_values:
                 x = np.linspace(0.01, 1)
                 y = f1 * x / (2 * x - f1)
                 self.ax.plot(x[y>=0], y[y>=0], color='#333333', alpha=0.2)
@@ -370,7 +369,7 @@ PRCurve = PrecisionRecallCurve
 ## Quick Method
 ##########################################################################
 
-def precision_recall_curve(model, X, y ,X_test=None,y_test=None, ax=None, train_size=0.8,
+def precision_recall_curve(model, X, y, X_test=None, y_test=None, ax=None, train_size=0.8,
                            random_state=None, shuffle=True, **kwargs):
     """Precision-Recall Curve quick method:
 
@@ -385,13 +384,16 @@ def precision_recall_curve(model, X, y ,X_test=None,y_test=None, ax=None, train_
 
     y : ndarray or Series of length n
         An array or series of target or class values. This vector will be split
-        into train and test splits  if y_test is not specified.
+        into train and test splits if y_test is not specified.
 
     X_test : ndarray or DataFrame of shape n x m
-        A feature array of n instances with m features that the model is tested on.
+        An optional feature array of n instances with m features that the model
+        is tested on if specified, using X as the training data. Otherwise 
+        X will be split into train and test splits.
         
     y_test : ndarray or Series of length n
         An array or series of target or class values that serve as actual labels for X_test.
+        If not specified, y will be split into test and train along with X.
 
     ax : matplotlib Axes, default: None
         The axes to plot the figure on. If None is passed in the current axes
@@ -465,8 +467,8 @@ def precision_recall_curve(model, X, y ,X_test=None,y_test=None, ax=None, train_
     random_state, and shuffle are specified. Note that splits are not stratified,
     if required, it is recommended to use the base class.
     """
-    # Instantiate the visualizer
-    viz = PRCurve(model, ax=ax, **kwargs)
+
+
 
 
     if (X_test is None) and (y_test is None):
@@ -474,12 +476,16 @@ def precision_recall_curve(model, X, y ,X_test=None,y_test=None, ax=None, train_
         X_train, X_test, y_train, y_test = tts(
             X, y, train_size=train_size, random_state=random_state, shuffle=shuffle
         )
-        print("splitting...")
-
+    elif any([((X_test is not None) and (y_test is None)),((X_test is None) and (y_test is not None))]):
+        # exception handling in case of missing X_test or y_test
+        raise YellowbrickValueError("both X_test and y_test are required if one is specified")
+        
     else:
         X_train,y_train=X,y
-        
 
+    # Instantiate the visualizer
+    viz = PRCurve(model, ax=ax, **kwargs)
+    
     # Fit and transform the visualizer
     viz.fit(X_train, y_train)
     viz.score(X_test, y_test)
