@@ -174,7 +174,7 @@ class RankDBase(MultiFeatureVisualizer):
 
         # Extract matrix from dataframe if necessary
         if is_dataframe(X):
-            X = X.as_matrix()
+            X = X.values
 
         return self.ranking_methods[algorithm](X)
 

@@ -22,12 +22,20 @@ import matplotlib.pyplot as plt
 
 from yellowbrick.base import *
 from yellowbrick.base import VisualizerGrid
+from yellowbrick.exceptions import YellowbrickWarning
 from yellowbrick.exceptions import YellowbrickValueError
 
 from tests.base import VisualTestCase
 from tests.rand import RandomVisualizer
 
 from sklearn.datasets import make_classification
+
+try:
+    from unittest.mock import patch
+    from unittest.mock import MagicMock
+except ImportError:
+    from mock import patch
+    from mock import MagicMock
 
 
 ##########################################################################
@@ -51,6 +59,26 @@ class TestBaseClasses(VisualTestCase):
         assert viz._ax == "foo"
         assert viz.ax == "foo"
 
+    def test_size_property(self):
+        """
+        Test the size property on the base Visualizer
+        """
+        fig = plt.figure(figsize =(1,2))
+        viz = Visualizer()
+
+        assert viz._size is None
+        assert viz.size is not None
+
+        fsize = fig.get_size_inches() * fig.get_dpi()
+        assert all(viz.size) == all(fsize)
+
+        viz.size = (1080, 720)
+        assert viz._size == (1080, 720)
+        assert viz.size == (1080, 720)
+
+        fsize = fig.get_size_inches() * fig.get_dpi()
+        assert all(viz.size) == all(fsize)
+
     def test_visualizer_fit_returns_self(self):
         """
         Assert that all visualizers return self
@@ -73,31 +101,58 @@ class TestBaseClasses(VisualTestCase):
         viz = Visualizer()
         assert viz.finalize() is viz.ax
 
-    def test_size_property(self):
+    @patch("yellowbrick.base.plt")
+    def test_poof_show_interface(self, mock_plt):
         """
-        Test the size property on the base Visualizer
+        Test poof calls plt.show and other figure finalization correctly
         """
-        fig = plt.figure(figsize =(1,2))
-        viz = Visualizer()
+        class CustomVisualizer(Visualizer):
+            pass
 
-        assert viz._size is None
-        assert viz.size is not None
+        _, ax = plt.subplots()
+        viz = CustomVisualizer(ax=ax)
+        viz.finalize = MagicMock()
+        viz.poof()
 
-        fsize = fig.get_size_inches() * fig.get_dpi()
-        assert all(viz.size) == all(fsize)
+        viz.finalize.assert_called_once_with()
+        mock_plt.show.assert_called_once_with()
+        mock_plt.savefig.assert_not_called()
 
-        viz.size = (1080, 720)
-        assert viz._size == (1080, 720)
-        assert viz.size == (1080, 720)
+    @patch("yellowbrick.base.plt")
+    def test_poof_savefig_interface(self, mock_plt):
+        """
+        Test poof calls plt.savefig and other figure finalization correctly
+        """
+        class CustomVisualizer(Visualizer):
+            pass
 
-        fsize = fig.get_size_inches() * fig.get_dpi()
-        assert all(viz.size) == all(fsize)
+        _, ax = plt.subplots()
+        viz = CustomVisualizer(ax=ax)
+        viz.finalize = MagicMock()
+        viz.poof(outpath="test.png")
+
+        viz.finalize.assert_called_once_with()
+        mock_plt.show.assert_not_called()
+        mock_plt.savefig.assert_called_once_with("test.png")
+
+    @patch("yellowbrick.base.plt")
+    def test_poof_warns(self, mock_plt):
+        """
+        Test poof issues a warning when no axes has been modified
+        """
+        class CustomVisualizer(Visualizer):
+            pass
+
+        with pytest.warns(YellowbrickWarning):
+            viz = CustomVisualizer()
+            viz.poof()
 
 
 ##########################################################################
 ## Visual Grid Cases
 ##########################################################################
 
+@pytest.mark.filterwarnings("ignore:Matplotlib is currently using agg")
 class TestVisualizerGrid(VisualTestCase):
     """
     Tests for the VisualizerGrid layout class
@@ -119,7 +174,7 @@ class TestVisualizerGrid(VisualTestCase):
         grid = VisualizerGrid(visualizers)
 
         grid.fit(X, y)
-        grid.poof()
+        grid.poof() # poof is required here (do not replace with finalize)!
 
         self.assert_images_similar(grid)
 
@@ -139,7 +194,7 @@ class TestVisualizerGrid(VisualTestCase):
         grid = VisualizerGrid(visualizers, nrows=2)
 
         grid.fit(X, y)
-        grid.poof()
+        grid.poof() # poof is required here (do not replace with finalize)!
 
         self.assert_images_similar(grid)
 
@@ -159,7 +214,7 @@ class TestVisualizerGrid(VisualTestCase):
         grid = VisualizerGrid(visualizers, ncols=2)
 
         grid.fit(X, y)
-        grid.poof()
+        grid.poof() # poof is required here (do not replace with finalize)!
 
         self.assert_images_similar(grid)
 
