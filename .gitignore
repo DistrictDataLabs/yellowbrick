@@ -55,7 +55,6 @@ docs/_build/
 # Jupyter Notebook
 .ipynb_checkpoints
 
-
 # pyenv
 .python-version
 
@@ -90,7 +89,6 @@ ENV/
 
 # PyTest
 .pytest_cache
-
 
 # PyCharm
 .idea/workspace.xml
