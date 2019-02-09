@@ -29,9 +29,8 @@ from sklearn.naive_bayes import GaussianNB
 from sklearn.datasets import make_regression
 from sklearn.tree import DecisionTreeClassifier
 from sklearn.linear_model import RidgeClassifier
-from sklearn.ensemble import RandomForestClassifier, AdaBoostClassifier
 from sklearn.model_selection import train_test_split as tts
-
+from sklearn.ensemble import RandomForestClassifier, AdaBoostClassifier
 
 
 ##########################################################################
@@ -266,54 +265,53 @@ class TestPrecisionRecallCurve(VisualTestCase):
             oz._get_y_scores(self.binary.X.train)
 
     def test_custom_iso_f1_scores(self):
+        """
+        Test using custom ISO F1 Values
+        """
 
         iris = load_iris()
-        x = iris.data[:, :] 
+        x = iris.data[:, :]
         y = iris.target
 
         vals = (0.1,0.6,0.3,0.9,0.9)
         viz = PrecisionRecallCurve(RandomForestClassifier(random_state=27),iso_f1_curves=True,iso_f1_values=vals)
         x_train, x_test, y_train, y_test = tts(x, y, test_size=0.2, shuffle=True,random_state=555)
-        
-        viz.fit(x_train,y_train)
+
+        assert viz.fit(x_train,y_train) is viz
         viz.score(x_test, y_test)
-        assert isinstance(viz, PrecisionRecallCurve)
         viz.finalize()
-        tol = 5.8 if sys.platform == 'win32' else 1.0 # fails with RMSE 5.740 on AppVeyor
-        self.assert_images_similar(viz,tol=tol)
-       
+
+        # tol = 5.8 if sys.platform == 'win32' else 1.0 # fails with RMSE 5.740 on AppVeyor
+        self.assert_images_similar(viz,tol=1.0)
 
     def test_quick_method_with_test_set(self):
+        """
+        Test quick method when both train and test data is supplied
+        """
 
         iris = load_iris()
-        x = iris.data[:, :] 
+        x = iris.data[:, :]
         y = iris.target
 
         x_train, x_test, y_train, y_test = tts(x, y, test_size=0.2, shuffle=True,random_state = 555)
         viz = precision_recall_curve(RandomForestClassifier(random_state=27),x_train, y_train,X_test=x_test,y_test=y_test,random_state=7)
-        assert isinstance(viz, PrecisionRecallCurve)
-        tol = 5.8 if sys.platform == 'win32' else 1.0 # fails with RMSE 5.740 on AppVeyor
-        self.assert_images_similar(viz, tol=tol)
 
-
+        # tol = 5.8 if sys.platform == 'win32' else 1.0 # fails with RMSE 5.740 on AppVeyor
+        self.assert_images_similar(viz, tol=1.0)
 
     def test_missing_test_data_in_quick_method(self):
+        """
+        Test quick method when test data is missing.
+        """
 
         iris = load_iris()
-        x = iris.data[:, :] 
+        x = iris.data[:, :]
         y = iris.target
 
         x_train, x_test, y_train, y_test = tts(x, y, test_size=0.2, shuffle=True,random_state = 555)
-        
-        with pytest.raises(YellowbrickValueError, match="both X_test and y_test are required if one is specified"):
-            viz = precision_recall_curve(RandomForestClassifier(random_state=27),x_train, y_train,y_test=y_test,random_state=7)
 
         with pytest.raises(YellowbrickValueError, match="both X_test and y_test are required if one is specified"):
-            viz = precision_recall_curve(RandomForestClassifier(random_state=27),x_train, y_train,X_test=x_test,random_state=7)
+            precision_recall_curve(RandomForestClassifier(random_state=27),x_train, y_train,y_test=y_test,random_state=7)
 
-
-
-
-
-
-
+        with pytest.raises(YellowbrickValueError, match="both X_test and y_test are required if one is specified"):
+            precision_recall_curve(RandomForestClassifier(random_state=27),x_train, y_train,X_test=x_test,random_state=7)

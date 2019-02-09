@@ -5,6 +5,7 @@
 # Created: Tue Sep 04 16:47:19 2018 -0400
 #
 # ID: prcurve.py [] benjamin@bengfort.com $
+
 """
 Implements Precision-Recall curves for classification models.
 """
@@ -33,6 +34,9 @@ MULTICLASS = "multiclass"
 
 # Average Metric Constants
 MICRO = "micro"
+
+# Default Values
+DEFAULT_ISO_F1_VALUES = (0.2,0.4,0.6,0.8)
 
 
 ##########################################################################
@@ -147,8 +151,8 @@ class PrecisionRecallCurve(ClassificationScoreVisualizer):
     """
 
     def __init__(self, model, ax=None, classes=None, fill_area=True, ap_score=True,
-                 micro=True, iso_f1_curves=False,iso_f1_values=(0.2,0.4,0.6,0.8), per_class=False, fill_opacity=0.2,
-                 line_opacity=0.8, **kwargs):
+                 micro=True, iso_f1_curves=False,iso_f1_values=DEFAULT_ISO_F1_VALUES,
+                 per_class=False, fill_opacity=0.2, line_opacity=0.8, **kwargs):
         super(PrecisionRecallCurve, self).__init__(model, ax=ax, classes=classes, **kwargs)
 
         # Set visual params
@@ -388,12 +392,12 @@ def precision_recall_curve(model, X, y, X_test=None, y_test=None, ax=None, train
 
     X_test : ndarray or DataFrame of shape n x m
         An optional feature array of n instances with m features that the model
-        is tested on if specified, using X as the training data. Otherwise 
+        is tested on if specified, using X as the training data. Otherwise
         X will be split into train and test splits.
-        
+
     y_test : ndarray or Series of length n
-        An array or series of target or class values that serve as actual labels for X_test.
-        If not specified, y will be split into test and train along with X.
+        An array or series of target or class values that serve as actual labels for
+        X_test. If not specified, y will be split into test and train along with X.
 
     ax : matplotlib Axes, default: None
         The axes to plot the figure on. If None is passed in the current axes
