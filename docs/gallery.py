@@ -15,7 +15,11 @@ from yellowbrick.features import PCADecomposition, Manifold, FeatureImportances
 
 from yellowbrick.contrib.scatter import ScatterVisualizer
 
+from yellowbrick.regressor import ResidualsPlot, PredictionError, AlphaSelection
+
 from sklearn.ensemble import RandomForestClassifier
+from sklearn.linear_model import Ridge, Lasso, LassoCV
+from sklearn.model_selection import train_test_split as tts
 
 
 GALLERY = path.join(path.dirname(__file__), "images", "gallery")
@@ -132,6 +136,32 @@ def jointplot():
     savefig(oz, "jointplot")
 
 
+def residuals():
+    X, y = load_concrete()
+    X_train, X_test, y_train, y_test = tts(X, y, test_size=0.2)
+    oz = ResidualsPlot(Ridge(), ax=newfig())
+    oz.fit(X_train, y_train)
+    oz.score(X_test, y_test)
+    savefig(oz, "residuals")
+
+
+def peplot():
+    X, y = load_concrete()
+    X_train, X_test, y_train, y_test = tts(X, y, test_size=0.2)
+    oz = PredictionError(Lasso(), ax=newfig())
+    oz.fit(X_train, y_train)
+    oz.score(X_test, y_test)
+    savefig(oz, "prediction_error")
+
+
+def alphas():
+    X, y = load_concrete()
+    alphas = np.logspace(-10, 1, 400)
+    oz = AlphaSelection(LassoCV(alphas=alphas), ax=newfig())
+    oz.fit(X, y)
+    savefig(oz, "alpha_selection")
+
+
 if __name__ == "__main__":
     plots = {
         "all": None,
@@ -147,6 +177,9 @@ if __name__ == "__main__":
         "rfecv": rfecv,
         "scatter": scatter,
         "jointplot": jointplot,
+        "residuals": residuals,
+        "peplot": peplot,
+        "alphas": alphas,
     }
 
     parser = argparse.ArgumentParser(description="gallery image generator")

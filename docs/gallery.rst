@@ -82,22 +82,22 @@ Feature Analysis
 Regression Visualizers
 ----------------------
 
-.. image:: api/regressor/images/residuals.png
+.. image:: images/gallery/residuals.png
     :width: 200px
     :height: 100px
     :alt: Residuals for Ridge Model
     :target: api/regressor/residuals.html#residuals-plot
 
-.. image:: api/regressor/images/prediction_error.png
+.. image:: images/gallery/prediction_error.png
     :width: 200px
     :height: 100px
     :alt: Prediction Error for Lasso
     :target: api/regressor/peplot.html#residuals-plot
 
-.. image:: api/regressor/images/alpha_selection.png
+.. image:: images/gallery/alpha_selection.png
     :width: 200px
     :height: 100px
-    :alt: Lasso Alpha Error
+    :alt: Alpha Selection for Lasso
     :target: api/regressor/alphas.html#alpha-selection
 
 
