@@ -4,10 +4,14 @@ Class Prediction Error
 ======================
 The class prediction error chart provides a way to quickly understand how good your classifier is at predicting the right classes.
 
-.. code:: python
+.. plot::
+    :context: close-figs
 
     from sklearn.datasets import make_classification
     from sklearn.model_selection import train_test_split
+    from sklearn.ensemble import RandomForestClassifier
+    from yellowbrick.classifier import ClassPredictionError
+
 
     # Create classification dataset
     X, y = make_classification(
@@ -19,13 +23,6 @@ The class prediction error chart provides a way to quickly understand how good y
     # Perform 80/20 training/test split
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.20,
                                                         random_state=42)
-
-.. code:: python
-
-    from sklearn.ensemble import RandomForestClassifier
-
-    from yellowbrick.classifier import ClassPredictionError
-
     # Instantiate the classification model and visualizer
     visualizer = ClassPredictionError(
         RandomForestClassifier(), classes=classes
@@ -38,10 +35,42 @@ The class prediction error chart provides a way to quickly understand how good y
     visualizer.score(X_test, y_test)
 
     # Draw visualization
-    g = visualizer.poof()
+    visualizer.poof()
 
-.. image:: images/class_prediction_error.png
+.. plot::
+    :nofigs: True
+    :include-source: False
+    
+    from sklearn.model_selection import train_test_split
+    from sklearn.ensemble import RandomForestClassifier
+    from yellowbrick.classifier import ClassPredictionError
+    from yellowbrick.datasets import load_credit
 
+    data = load_credit()
+    
+    classes = data.meta['labels'].keys()
+    X, y = data.to_pandas()
+
+    # Perform 80/20 training/test split
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.20,
+                                                        random_state=42)
+    
+    # Instantiate the classification model and visualizer
+    visualizer = ClassPredictionError(
+        RandomForestClassifier(), classes=classes
+    )
+
+    # Fit the training data to the visualizer
+    visualizer.fit(X_train, y_train)
+
+    # Evaluate the model on the test data
+    visualizer.score(X_test, y_test)
+
+    # Draw visualization
+    visualizer.poof()
+
+    
+    
 API Reference
 -------------
 
