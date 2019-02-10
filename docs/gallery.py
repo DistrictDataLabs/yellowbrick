@@ -8,7 +8,7 @@ import os.path as path
 import matplotlib.pyplot as plt
 
 from yellowbrick.datasets import load_occupancy, load_credit, load_concrete
-from yellowbrick.datasets import load_spam, load_game
+from yellowbrick.datasets import load_spam, load_game, load_energy
 
 from yellowbrick.features import RFECV, JointPlot
 from yellowbrick.features import RadViz, Rank1D, Rank2D, ParallelCoordinates
@@ -22,15 +22,22 @@ from yellowbrick.classifier import DiscriminationThreshold
 from yellowbrick.classifier import ClassificationReport, ConfusionMatrix
 from yellowbrick.classifier import ROCAUC, PRCurve, ClassPredictionError
 
+from yellowbrick.cluster import KElbowVisualizer, SilhouetteVisualizer
+from yellowbrick.cluster import InterclusterDistance
+
+from yellowbrick.model_selection import ValidationCurve, LearningCurve, CVScores
+
+from sklearn.tree import DecisionTreeRegressor
 from sklearn.linear_model import RidgeClassifier
-from sklearn.datasets import make_classification
 from sklearn.datasets import load_iris, load_digits
+from sklearn.cluster import KMeans, MiniBatchKMeans
 from sklearn.linear_model import LogisticRegression
 from sklearn.ensemble import RandomForestClassifier
-from sklearn.linear_model import Ridge, Lasso, LassoCV
 from sklearn.naive_bayes import GaussianNB, MultinomialNB
 from sklearn.model_selection import train_test_split as tts
+from sklearn.datasets import make_classification, make_blobs
 from sklearn.preprocessing import OrdinalEncoder, LabelEncoder
+from sklearn.linear_model import Ridge, Lasso, LassoCV, RidgeCV
 
 
 GALLERY = path.join(path.dirname(__file__), "images", "gallery")
@@ -147,6 +154,10 @@ def jointplot():
     savefig(oz, "jointplot")
 
 
+##########################################################################
+## Regression
+##########################################################################
+
 def residuals():
     X, y = load_concrete()
     X_train, X_test, y_train, y_test = tts(X, y, test_size=0.2)
@@ -172,6 +183,10 @@ def alphas():
     oz.fit(X, y)
     savefig(oz, "alpha_selection")
 
+
+##########################################################################
+## Classification
+##########################################################################
 
 def classreport():
     X, y = load_occupancy()
@@ -258,6 +273,64 @@ def discrimination():
     savefig(oz, "discrimination_threshold")
 
 
+##########################################################################
+## Clustering
+##########################################################################
+
+def elbow():
+    X, _ = make_blobs(centers=8, n_features=12, shuffle=True)
+    oz = KElbowVisualizer(KMeans(), k=(4,12), ax=newfig())
+    oz.fit(X)
+    savefig(oz, "elbow")
+
+
+def silhouette():
+    X, _ = make_blobs(centers=8)
+    oz = SilhouetteVisualizer(MiniBatchKMeans(6), ax=newfig())
+    oz.fit(X)
+    savefig(oz, "silhouette")
+
+
+def icdm():
+    X, _ = make_blobs(centers=12, n_samples=1000, n_features=16, shuffle=True)
+    oz = InterclusterDistance(KMeans(9), ax=newfig())
+    oz.fit(X)
+    savefig(oz, "icdm")
+
+
+##########################################################################
+## Model Selection
+##########################################################################
+
+def validation():
+    X, y = load_energy()
+    oz = ValidationCurve(
+            DecisionTreeRegressor(), param_name="max_depth",
+            param_range=np.arange(1, 11), cv=10, scoring="r2", ax=newfig()
+        )
+    oz.fit(X, y)
+    savefig(oz, "validation_curve")
+
+
+def learning():
+    X, y = load_energy()
+    sizes = np.linspace(0.3, 1.0, 10)
+    oz = LearningCurve(RidgeCV(), train_sizes=sizes, scoring='r2', ax=newfig())
+    oz.fit(X, y)
+    savefig(oz, "learning_curve")
+
+
+def cvscores():
+    X, y = load_energy()
+    oz = CVScores(Ridge(), scoring='r2', cv=10, ax=newfig())
+    oz.fit(X, y)
+    savefig(oz, "cv_scores")
+
+
+##########################################################################
+## Main Method
+##########################################################################
+
 if __name__ == "__main__":
     plots = {
         "all": None,
@@ -285,6 +358,12 @@ if __name__ == "__main__":
         "prcurve_multi": lambda: prcurve("multiclass"),
         "classprede": classprede,
         "discrimination": discrimination,
+        "elbow": elbow,
+        "silhouette": silhouette,
+        "icdm": icdm,
+        "validation": validation,
+        "learning": learning,
+        "cvscores": cvscores,
     }
 
     parser = argparse.ArgumentParser(description="gallery image generator")

@@ -161,19 +161,19 @@ Classification Visualizers
 Clustering Visualizers
 ----------------------
 
-.. image:: api/cluster/images/elbow.png
+.. image:: images/gallery/elbow.png
     :width: 200px
     :height: 100px
     :alt: Distortion Score Elbow for Mini Batch Means Clustering
     :target: api/cluster/elbow.html#elbow-method
 
-.. image:: api/cluster/images/silhouette.png
+.. image:: images/gallery/silhouette.png
     :width: 200px
     :height: 100px
     :alt: Silhoutte Plot of Mini Batch Kmeans Clustering
     :target: api/cluster/silhouette.html#silhouette-visualizer
 
-.. image:: api/cluster/images/icdm.png
+.. image:: images/gallery/icdm.png
     :width: 200px
     :height: 100px
     :alt: Intercluster Distance Maps
@@ -182,35 +182,23 @@ Clustering Visualizers
 Model Selection Visualizers
 ---------------------------
 
-.. image:: api/model_selection/images/validation_curve_regressor.png
+.. image:: images/gallery/validation_curve.png
     :width: 200px
     :height: 100px
-    :alt: Validation Curve for Decision Tree Regresor
+    :alt: Validation Curve Hyperparameter Tuning
     :target: api/model_selection/validation_curve.html#validation-curve
 
-.. image:: api/model_selection/images/learning_curve_classifier.png
+.. image:: images/gallery/learning_curve.png
     :width: 200px
     :height: 100px
-    :alt: Learning Curve for MultinomialNB
-    :target: api/model_selection/learning_curve.html#classification
+    :alt: Learning Curves for Data Sufficiency
+    :target: api/model_selection/learning_curve.html
 
-.. image:: api/model_selection/images/learning_curve_clusterer.png
+.. image:: images/gallery/cv_scores.png
     :width: 200px
     :height: 100px
-    :alt: Learning Curve for KMeans
-    :target: api/model_selection/learning_curve.html#clustering
-
-.. image:: api/model_selection/images/cv_scores_classifier.png
-    :width: 200px
-    :height: 100px
-    :alt: CV Scores for MultinomialNB Classification
-    :target: api/model_selection/cross_validation.html#classification
-
-.. image:: api/model_selection/images/cv_scores_regressor.png
-    :width: 200px
-    :height: 100px
-    :alt: CV Scores for Ridge Regression
-    :target: api/model_selection/cross_validation.html#regression
+    :alt: Cross Validation Scores
+    :target: api/model_selection/cross_validation.html
 
 Text Modeling Visualizers
 ---------------------------
