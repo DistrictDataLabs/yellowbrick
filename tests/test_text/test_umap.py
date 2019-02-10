@@ -20,9 +20,9 @@ import sys
 import pytest
 import warnings
 
-from yellowbrick.text.umap_vis import *
 from tests.base import VisualTestCase
-from tests.dataset import DatasetMixin
+from yellowbrick.text.umap_vis import *
+from yellowbrick.datasets import load_hobbies
 from yellowbrick.exceptions import YellowbrickValueError
 
 from sklearn.datasets import make_classification
@@ -48,6 +48,11 @@ except (RuntimeError, AttributeError):
         "Error Importing UMAP.  UMAP does not support python 2.7 on Windows 32 bit."
     )
 
+##########################################################################
+## Data
+##########################################################################
+
+corpus = load_hobbies()
 
 ##########################################################################
 ## UMAP Tests
@@ -86,7 +91,6 @@ class TestUMAP(VisualTestCase, DatasetMixin):
         """
         Check UMAP integrated visualization on the hobbies corpus
         """
-        corpus = self.load_data('hobbies')
         tfidf  = TfidfVectorizer()
 
         docs   = tfidf.fit_transform(corpus.data)

@@ -22,7 +22,7 @@ import pytest
 
 from yellowbrick.text.tsne import *
 from tests.base import VisualTestCase
-from tests.dataset import DatasetMixin
+from yellowbrick.datasets import load_hobbies
 from yellowbrick.exceptions import YellowbrickValueError
 
 from sklearn.manifold import TSNE
@@ -40,10 +40,16 @@ except ImportError:
     import mock
 
 ##########################################################################
+## Data
+##########################################################################
+
+corpus = load_hobbies()
+
+##########################################################################
 ## TSNE Tests
 ##########################################################################
 
-class TestTSNE(VisualTestCase, DatasetMixin):
+class TestTSNE(VisualTestCase):
     """
     TSNEVisualizer tests
     """
@@ -76,7 +82,6 @@ class TestTSNE(VisualTestCase, DatasetMixin):
         """
         Check tSNE integrated visualization on the hobbies corpus
         """
-        corpus = self.load_data('hobbies')
         tfidf  = TfidfVectorizer()
 
         docs   = tfidf.fit_transform(corpus.data)
