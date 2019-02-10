@@ -30,11 +30,12 @@ from yellowbrick.contrib.classifier import DecisionViz
 
 from yellowbrick.text import FreqDistVisualizer, TSNEVisualizer, DispersionPlot
 
+from yellowbrick.target import BalancedBinningReference, ClassBalance, FeatureCorrelation
+
 from sklearn.tree import DecisionTreeRegressor
 from sklearn.preprocessing import StandardScaler
 from sklearn.linear_model import RidgeClassifier
 from sklearn.neighbors import KNeighborsClassifier
-from sklearn.datasets import load_iris, load_digits
 from sklearn.cluster import KMeans, MiniBatchKMeans
 from sklearn.linear_model import LogisticRegression
 from sklearn.ensemble import RandomForestClassifier
@@ -42,6 +43,7 @@ from sklearn.naive_bayes import GaussianNB, MultinomialNB
 from sklearn.model_selection import train_test_split as tts
 from sklearn.preprocessing import OrdinalEncoder, LabelEncoder
 from sklearn.linear_model import Ridge, Lasso, LassoCV, RidgeCV
+from sklearn.datasets import load_iris, load_digits, load_diabetes
 from sklearn.datasets import make_classification, make_blobs, make_moons
 from sklearn.feature_extraction.text import CountVectorizer, TfidfVectorizer
 
@@ -377,6 +379,34 @@ def dispersion():
 
 
 ##########################################################################
+## Target Visualizations
+##########################################################################
+
+def binning():
+    _, y = load_concrete()
+    oz = BalancedBinningReference(ax=newfig())
+    oz.fit(y)
+    savefig(oz, "balanced_binning_reference")
+
+
+def balance():
+    X, y = load_occupancy()
+    _, _, y_train, y_test = tts(X, y, test_size=0.2)
+
+    oz = ClassBalance(ax=newfig(), labels=["unoccupied", "occupied"])
+    oz.fit(y_train, y_test)
+    savefig(oz, "class_balance")
+
+
+def featcorr():
+    data = load_diabetes()
+
+    oz = FeatureCorrelation(ax=newfig())
+    oz.fit(data.data, data.target)
+    savefig(oz, "feature_correlation")
+
+
+##########################################################################
 ## Main Method
 ##########################################################################
 
@@ -417,6 +447,9 @@ if __name__ == "__main__":
         "tsne": tsne,
         "dispersion": dispersion,
         "decision": decision,
+        "binning": binning,
+        "balance": balance,
+        "featcorr": featcorr,
     }
 
     parser = argparse.ArgumentParser(description="gallery image generator")

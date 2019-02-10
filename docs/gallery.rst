@@ -231,32 +231,20 @@ Text Modeling Visualizers
 Target Visualizers
 ------------------
 
-.. image:: api/target/images/balanced_binning_reference.png
+.. image:: images/gallery/balanced_binning_reference.png
     :width: 200px
     :height: 100px
     :alt: Balanced Binning Reference
     :target: api/target/binning.html#balanced-binning-reference
 
-.. image:: api/target/images/class_balance_compare.png
+.. image:: images/gallery/class_balance.png
     :width: 200px
     :height: 100px
     :alt: Class Balance
     :target: api/target/class_balance.html#class-balance
 
-.. image:: api/target/images/feature_correlation_pearson.png
+.. image:: images/gallery/feature_correlation.png
     :width: 200px
     :height: 100px
     :alt: Feature Correlation Pearson Correlation Coefficients
     :target: api/target/feature_correlation.html#pearson-correlation
-
-.. image:: api/target/images/feature_correlation_mutual_info_regression.png
-    :width: 200px
-    :height: 100px
-    :alt: Feature Correlation Mutual Information - Regression
-    :target: api/target/feature_correlation.html#mutual-information-regression
-
-.. image:: api/target/images/feature_correlation_mutual_info_classification.png
-    :width: 200px
-    :height: 100px
-    :alt: Feature Correlation Mutual Information - Classification
-    :target: api/target/feature_correlation.html#mutual-information-classification
