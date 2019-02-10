@@ -36,7 +36,7 @@ Compatibility Notes:
 Hotfix 0.9.1
 ------------
 
-This hotfix adds matplotlib3 support by requiring any version of matplotlib except for 3.0.0 which had a backend bug that affected Yellowbrick. 
+This hotfix adds matplotlib3 support by requiring any version of matplotlib except for 3.0.0 which had a backend bug that affected Yellowbrick.
 
 * Tag: v0.9.1_
 * Deployed: Tuesday, February 5, 2019
