@@ -248,6 +248,9 @@ This is a pretty good structure for a documentation page; a brief introduction f
 
 At this point there are several places where you can list your visualizer, but to ensure it is included in the documentation it *must be listed in the TOC of the local index*. Find the ``index.rst`` file in your subdirectory and add your rst file (without the ``.rst`` extension) to the ``..toctree::`` directive. This will ensure the documentation is included when it is built.
 
+Building the Docs 
+~~~~~~~~~~~~~~~~~
+
 Speaking of, you can build your documentation by changing into the ``docs`` directory and running ``make html``, the documentation will be built and rendered in the ``_build/html`` directory. You can view it by opening ``_build/html/index.html`` then navigating to your documentation in the browser.
 
 There are several other places that you can list your visualizer including:
