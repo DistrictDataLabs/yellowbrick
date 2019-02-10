@@ -200,35 +200,33 @@ Model Selection Visualizers
     :alt: Cross Validation Scores
     :target: api/model_selection/cross_validation.html
 
+.. image:: images/gallery/decision_boundaries.png
+    :width: 200px
+    :height: 100px
+    :alt: Nearest Neighbor Decision Boundary Prototype
+    :target: api/contrib/boundaries.html#decisionboundaries-vizualizer
+
+
 Text Modeling Visualizers
 ---------------------------
 
-.. image:: api/text/images/freqdist_corpus.png
+.. image:: images/gallery/freqdist.png
     :width: 200px
     :height: 100px
-    :alt: Validation Curve for Decision Tree Regresor
+    :alt: Token Frequency Distribution
     :target: api/text/freqdist.html#token-frequency-distribution
 
-.. image:: api/text/images/tsne_all_docs.png
+.. image:: images/gallery/corpus_tsne.png
     :width: 200px
     :height: 100px
     :alt: TSNE Projection of Documents
     :target: api/text/tsne.html#t-sne-corpus-visualization
 
-.. image:: api/text/images/dispersion_docs.png
+.. image:: images/gallery/dispersion.png
     :width: 200px
     :height: 100px
-    :alt: Dispersion Plot
+    :alt: Dispersion of Words in a Corpus
     :target: api/text/dispersion.html#dispersion-plot
-
-Decision Boundaries Visualizer
-------------------------------
-
-.. image:: api/contrib/images/knn_decisionviz.png
-    :width: 200px
-    :height: 100px
-    :alt: Nearest Neighbor Boundary Visualizer
-    :target: api/contrib/boundaries.html#decisionboundaries-vizualizer
 
 Target Visualizers
 ------------------

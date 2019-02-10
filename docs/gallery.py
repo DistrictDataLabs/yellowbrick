@@ -8,7 +8,7 @@ import os.path as path
 import matplotlib.pyplot as plt
 
 from yellowbrick.datasets import load_occupancy, load_credit, load_concrete
-from yellowbrick.datasets import load_spam, load_game, load_energy
+from yellowbrick.datasets import load_spam, load_game, load_energy, load_hobbies
 
 from yellowbrick.features import RFECV, JointPlot
 from yellowbrick.features import RadViz, Rank1D, Rank2D, ParallelCoordinates
@@ -26,18 +26,24 @@ from yellowbrick.cluster import KElbowVisualizer, SilhouetteVisualizer
 from yellowbrick.cluster import InterclusterDistance
 
 from yellowbrick.model_selection import ValidationCurve, LearningCurve, CVScores
+from yellowbrick.contrib.classifier import DecisionViz
+
+from yellowbrick.text import FreqDistVisualizer, TSNEVisualizer, DispersionPlot
 
 from sklearn.tree import DecisionTreeRegressor
+from sklearn.preprocessing import StandardScaler
 from sklearn.linear_model import RidgeClassifier
+from sklearn.neighbors import KNeighborsClassifier
 from sklearn.datasets import load_iris, load_digits
 from sklearn.cluster import KMeans, MiniBatchKMeans
 from sklearn.linear_model import LogisticRegression
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.naive_bayes import GaussianNB, MultinomialNB
 from sklearn.model_selection import train_test_split as tts
-from sklearn.datasets import make_classification, make_blobs
 from sklearn.preprocessing import OrdinalEncoder, LabelEncoder
 from sklearn.linear_model import Ridge, Lasso, LassoCV, RidgeCV
+from sklearn.datasets import make_classification, make_blobs, make_moons
+from sklearn.feature_extraction.text import CountVectorizer, TfidfVectorizer
 
 
 GALLERY = path.join(path.dirname(__file__), "images", "gallery")
@@ -238,7 +244,7 @@ def prcurve(dataset):
     elif dataset == "multiclass":
         X, y = load_game()
         X = OrdinalEncoder().fit_transform(X)
-        # y = LabelEncoder().fit_transform(y)
+        y = LabelEncoder().fit_transform(y)
         model = MultinomialNB()
         kws = {"per_class":True, "iso_f1_curves":True, "fill_area":False, "micro": False}
     else:
@@ -327,6 +333,49 @@ def cvscores():
     savefig(oz, "cv_scores")
 
 
+def decision():
+    X, y = make_moons(noise=0.3)
+    X = StandardScaler().fit_transform(X)
+    X_train, X_test, y_train, y_test = tts(X, y, test_size=0.20)
+
+    oz = DecisionViz(KNeighborsClassifier(3), ax=newfig())
+    oz.fit(X_train, y_train)
+    oz.draw(X_test, y_test)
+    savefig(oz, "decision_boundaries")
+
+
+##########################################################################
+## Text Model Diagnostics
+##########################################################################
+
+def freqdist():
+    corpus = load_hobbies()
+    vecs = CountVectorizer()
+    docs = vecs.fit_transform(corpus.data)
+
+    oz = FreqDistVisualizer(features=vecs.get_feature_names(), ax=newfig())
+    oz.fit(docs)
+    savefig(oz, "freqdist")
+
+
+def tsne():
+    corpus = load_hobbies()
+    docs = TfidfVectorizer().fit_transform(corpus.data)
+
+    oz = TSNEVisualizer(ax=newfig())
+    oz.fit(docs, corpus.target)
+    savefig(oz, "corpus_tsne")
+
+
+def dispersion():
+    corpus = load_hobbies()
+    target_words = ['Game', 'player', 'score', 'oil', 'Man']
+
+    oz = DispersionPlot(target_words, ax=newfig())
+    oz.fit([doc.split() for doc in corpus.data])
+    savefig(oz, "dispersion")
+
+
 ##########################################################################
 ## Main Method
 ##########################################################################
@@ -364,6 +413,10 @@ if __name__ == "__main__":
         "validation": validation,
         "learning": learning,
         "cvscores": cvscores,
+        "freqdist": freqdist,
+        "tsne": tsne,
+        "dispersion": dispersion,
+        "decision": decision,
     }
 
     parser = argparse.ArgumentParser(description="gallery image generator")
