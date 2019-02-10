@@ -8,6 +8,7 @@ import os.path as path
 import matplotlib.pyplot as plt
 
 from yellowbrick.datasets import load_occupancy, load_credit, load_concrete
+from yellowbrick.datasets import load_spam, load_game
 
 from yellowbrick.features import RFECV, JointPlot
 from yellowbrick.features import RadViz, Rank1D, Rank2D, ParallelCoordinates
@@ -17,9 +18,19 @@ from yellowbrick.contrib.scatter import ScatterVisualizer
 
 from yellowbrick.regressor import ResidualsPlot, PredictionError, AlphaSelection
 
+from yellowbrick.classifier import DiscriminationThreshold
+from yellowbrick.classifier import ClassificationReport, ConfusionMatrix
+from yellowbrick.classifier import ROCAUC, PRCurve, ClassPredictionError
+
+from sklearn.linear_model import RidgeClassifier
+from sklearn.datasets import make_classification
+from sklearn.datasets import load_iris, load_digits
+from sklearn.linear_model import LogisticRegression
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.linear_model import Ridge, Lasso, LassoCV
+from sklearn.naive_bayes import GaussianNB, MultinomialNB
 from sklearn.model_selection import train_test_split as tts
+from sklearn.preprocessing import OrdinalEncoder, LabelEncoder
 
 
 GALLERY = path.join(path.dirname(__file__), "images", "gallery")
@@ -162,6 +173,91 @@ def alphas():
     savefig(oz, "alpha_selection")
 
 
+def classreport():
+    X, y = load_occupancy()
+    X_train, X_test, y_train, y_test = tts(X, y, test_size=0.2)
+    oz = ClassificationReport(GaussianNB(), support=True, ax=newfig())
+    oz.fit(X_train, y_train)
+    oz.score(X_test, y_test)
+    savefig(oz, "classification_report")
+
+
+def confusion(dataset):
+    if dataset == "iris":
+        data = load_iris()
+    elif dataset == "digits":
+        data = load_digits()
+    else:
+        raise ValueError("uknown dataset")
+
+    X_train, X_test, y_train, y_test = tts(data.data, data.target, test_size =0.2)
+    oz = ConfusionMatrix(LogisticRegression(), ax=newfig())
+    oz.fit(X_train, y_train)
+    oz.score(X_test, y_test)
+    savefig(oz, "confusion_matrix_{}".format(dataset))
+
+
+def rocauc(dataset):
+    if dataset == "binary":
+        X, y = load_occupancy()
+        model = GaussianNB()
+    elif dataset == "multiclass":
+        X, y = load_game()
+        X = OrdinalEncoder().fit_transform(X)
+        model = RidgeClassifier()
+    else:
+        raise ValueError("uknown dataset")
+
+    X_train, X_test, y_train, y_test = tts(X, y, test_size =0.2)
+    oz = ROCAUC(model, ax=newfig())
+    oz.fit(X_train, y_train)
+    oz.score(X_test, y_test)
+    savefig(oz, "rocauc_{}".format(dataset))
+
+
+def prcurve(dataset):
+    if dataset == "binary":
+        X, y = load_spam()
+        model = RidgeClassifier()
+        kws = {}
+    elif dataset == "multiclass":
+        X, y = load_game()
+        X = OrdinalEncoder().fit_transform(X)
+        # y = LabelEncoder().fit_transform(y)
+        model = MultinomialNB()
+        kws = {"per_class":True, "iso_f1_curves":True, "fill_area":False, "micro": False}
+    else:
+        raise ValueError("uknown dataset")
+
+    X_train, X_test, y_train, y_test = tts(X, y, test_size=0.2, shuffle=True)
+    oz = PRCurve(model, ax=newfig(), **kws)
+    oz.fit(X_train, y_train)
+    oz.score(X_test, y_test)
+    savefig(oz, "precision_recall_{}".format(dataset))
+
+
+def classprede():
+    X, y = make_classification(
+        n_samples=1000, n_classes=5, n_informative=3, n_clusters_per_class=1
+    )
+
+    classes = ["apple", "kiwi", "pear", "banana", "orange"]
+
+    # Perform 80/20 training/test split
+    X_train, X_test, y_train, y_test = tts(X, y, test_size=0.20)
+    oz = ClassPredictionError(RandomForestClassifier(), classes=classes, ax=newfig())
+    oz.fit(X_train, y_train)
+    oz.score(X_test, y_test)
+    savefig(oz, "class_prediction_error")
+
+
+def discrimination():
+    X, y = load_spam()
+    oz = DiscriminationThreshold(LogisticRegression(solver="lbfgs"), ax=newfig())
+    oz.fit(X, y)
+    savefig(oz, "discrimination_threshold")
+
+
 if __name__ == "__main__":
     plots = {
         "all": None,
@@ -180,6 +276,15 @@ if __name__ == "__main__":
         "residuals": residuals,
         "peplot": peplot,
         "alphas": alphas,
+        "classreport": classreport,
+        "confusion_digits": lambda: confusion("digits"),
+        "confusion_iris": lambda: confusion("iris"),
+        "rocauc_binary": lambda: rocauc("binary"),
+        "rocauc_multi": lambda: rocauc("multiclass"),
+        "prcurve_binary": lambda: prcurve("binary"),
+        "prcurve_multi": lambda: prcurve("multiclass"),
+        "classprede": classprede,
+        "discrimination": discrimination,
     }
 
     parser = argparse.ArgumentParser(description="gallery image generator")

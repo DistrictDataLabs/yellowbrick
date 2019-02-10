@@ -104,58 +104,58 @@ Regression Visualizers
 Classification Visualizers
 --------------------------
 
-.. image:: api/classifier/images/classification_report.png
+.. image:: images/gallery/classification_report.png
     :width: 200px
     :height: 100px
     :alt: GaussianNB Classification Report
     :target: api/classifier/classification_report.html#classification-report
 
-.. image:: api/classifier/images/confusion_matrix_digits.png
+.. image:: images/gallery/confusion_matrix_digits.png
     :width: 200px
     :height: 100px
     :alt: Logistic Regression Confusion Matrix with Numeric Labels
     :target: api/classifier/confusion_matrix.html#confusion-matrix
 
-.. image:: api/classifier/images/confusion_matrix_iris.png
+.. image:: images/gallery/confusion_matrix_iris.png
     :width: 200px
     :height: 100px
     :alt: Logistic Regression Confusion Matrix with Class Name Labels
     :target: api/classifier/confusion_matrix.html#plotting-with-class-names
 
-.. image:: api/classifier/images/rocauc_binary.png
+.. image:: images/gallery/rocauc_binary.png
     :width: 200px
     :height: 100px
-    :alt: Binary ROC Curves for Logistic Regression
+    :alt: Binary ROC Curves
     :target: api/classifier/rocauc.html#rocauc
 
-.. image:: api/classifier/images/rocauc_multiclass.png
+.. image:: images/gallery/rocauc_multiclass.png
     :width: 200px
     :height: 100px
     :alt: Multiclass ROC Curves
     :target: api/classifier/rocauc.html#multi-class-rocauc-curves
 
-.. image:: api/classifier/images/binary_precision_recall.png
+.. image:: images/gallery/precision_recall_binary.png
     :width: 200px
     :height: 100px
     :alt: Precision-Recall Curves
     :target: api/classifier/prcurve.html
 
-.. image:: api/classifier/images/multiclass_precision_recall_full.png
+.. image:: images/gallery/precision_recall_multiclass.png
     :width: 200px
     :height: 100px
-    :alt: Multi-Label Precision-Recall Curves
+    :alt: Multiclass Precision-Recall Curves
     :target: api/classifier/prcurve.html#multi-label-classification
 
-.. image:: api/classifier/images/class_prediction_error.png
+.. image:: images/gallery/class_prediction_error.png
     :width: 200px
     :height: 100px
-    :alt: Class Prediction Error for Random Forest Classifier
+    :alt: Class Prediction Error of Classifier
     :target: api/classifier/class_prediction_error.html#class-prediction-error
 
-.. image:: api/classifier/images/spam_discrimination_threshold.png
+.. image:: images/gallery/discrimination_threshold.png
     :width: 200px
     :height: 100px
-    :alt: Threshold Plot for Logistic Regression
+    :alt: Discrimination Threshold Plot
     :target: api/classifier/threshold.html#discrimination-threshold
 
 Clustering Visualizers
