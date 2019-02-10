@@ -4,7 +4,7 @@
 # Author:   Benjamin Bengfort <benjamin@bengfort.com>
 # Created:  Mon Feb 20 07:23:53 2017 -0500
 #
-# Copyright (C) 2016 Bengfort.com
+# Copyright (C) 2018 The scikit-yb developers
 # For license information, see LICENSE.txt
 #
 # ID: test_tsne.py [6aa9198] benjamin@bengfort.com $

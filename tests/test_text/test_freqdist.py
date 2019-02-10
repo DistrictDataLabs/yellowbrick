@@ -2,13 +2,12 @@
 # Tests for the frequency distribution visualization
 #
 # Author:   Rebecca Bilbro
-# Github:   @rebeccabilbro
 # Created:  2017-03-22 15:27
 #
-# Copyright (C) 2018
+# Copyright (C) 2018 The scikit-yb developers
 # For license information, see LICENSE.txt
 #
-# ID: test_freqdist.py [bd9cbb9] rbilbro@districtdatalabs.com $
+# ID: test_freqdist.py [bd9cbb9] $
 
 """
 Tests for the frequency distribution text visualization

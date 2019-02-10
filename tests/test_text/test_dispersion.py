@@ -5,7 +5,7 @@
 # Github:   @lwgray
 # Created:  2018-06-22 15:27
 #
-# Copyright (C) 2018
+# Copyright (C) 2018 The scikit-yb developers
 # For license information, see LICENSE.txt
 #
 # ID: test_dispersion.py [] lwgray@gmail.com $

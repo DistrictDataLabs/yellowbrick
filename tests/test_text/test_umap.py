@@ -4,10 +4,9 @@
 # Author:   John Healy <jchealy@gmail.com>
 # Created:  Mon Dec 03, 14:00:00
 #
-# Copyright (C) 2016 Bengfort.com
+# Copyright (C) 2018 The scikit-yb developers
 # For license information, see LICENSE.txt
-#
-#
+
 
 """
 Tests for the UMAP visual corpus embedding mechanism.
