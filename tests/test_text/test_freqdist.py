@@ -20,17 +20,23 @@ Tests for the frequency distribution text visualization
 import sys
 import pytest
 
+from yellowbrick.datasets import load_hobbies
 from yellowbrick.text.freqdist import *
-from tests.dataset import DatasetMixin
 from tests.base import VisualTestCase
+
 from sklearn.feature_extraction.text import CountVectorizer
 
+##########################################################################
+## Data
+##########################################################################
+
+corpus = load_hobbies()
 
 ##########################################################################
 ## FreqDist Tests
 ##########################################################################
 
-class FreqDistTests(VisualTestCase, DatasetMixin):
+class FreqDistTests(VisualTestCase):
 
     @pytest.mark.xfail(
         sys.platform == 'win32', reason="images not close on windows"
@@ -39,7 +45,6 @@ class FreqDistTests(VisualTestCase, DatasetMixin):
         """
         Assert no errors occur during freqdist integration
         """
-        corpus     = self.load_data('hobbies')
         vectorizer = CountVectorizer()
 
         docs       = vectorizer.fit_transform(corpus.data)
