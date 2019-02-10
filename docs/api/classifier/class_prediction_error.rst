@@ -37,19 +37,20 @@ The class prediction error chart provides a way to quickly understand how good y
     # Draw visualization
     visualizer.poof()
 
+
 .. plot::
-    :nofigs: True
+    :context: close-figs
     :include-source: False
-    
+    :nofigs:
+
     from sklearn.model_selection import train_test_split
     from sklearn.ensemble import RandomForestClassifier
     from yellowbrick.classifier import ClassPredictionError
     from yellowbrick.datasets import load_credit
 
-    data = load_credit()
+    X, y = load_credit()
     
-    classes = data.meta['labels'].keys()
-    X, y = data.to_pandas()
+    classes = ['default', 'current']
 
     # Perform 80/20 training/test split
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.20,
