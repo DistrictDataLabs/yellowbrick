@@ -58,7 +58,7 @@ class JointPlot(FeatureVisualizer):
     feature-to-target plots. For pairwise feature analysis, the ``columns`` argument can
     be used to specify the index of the two desired columns in ``X``. If ``y`` is also
     specified, the plot can be colored with a heatmap or by class. For feature-to-target
-    plots, the user can provide either ``X`` and ``y` as 1D vectors, or a ``columns``
+    plots, the user can provide either ``X`` and ``y`` as 1D vectors, or a ``columns``
     argument with an index to a single feature in ``X`` to be plotted against ``y``.
 
     Histograms can be included by setting the ``hist`` argument to ``True`` for a
