@@ -8,8 +8,7 @@ If you're looking for information about how to use Yellowbrick, for our contribu
 
 To build the documents locally, first install the documentation-specific requirements with `pip` using the `requirements.txt` file in the `docs` directory:
 
-```
-$ pip install -r tests/requirements.txt
+```bash
 $ pip install -r docs/requirements.txt
 ```
 
@@ -34,33 +33,33 @@ If you are adding a new visualizer to the docs, there are quite a few examples i
 The primary format for the API section is as follows:
 
 ```
-    .. -*- mode: rst -*-
+.. -*- mode: rst -*-
 
-    My Visualizer
-    =============
+My Visualizer
+=============
 
-    A brief introduction to my visualizer and how it is useful in the machine learning process.
+A brief introduction to my visualizer and how it is useful in the machine learning process.
 
-    .. plot::
-        :context: close-figs
-        :include-source: False
-        :alt: Example using MyVisualizer
+.. plot::
+    :context: close-figs
+    :include-source: False
+    :alt: Example using MyVisualizer
 
-        visualizer = MyVisualizer(LinearRegression())
+    visualizer = MyVisualizer(LinearRegression())
 
-        visualizer.fit(X, y)
-        g = visualizer.poof()
+    visualizer.fit(X, y)
+    g = visualizer.poof()
 
-    Discussion about my visualizer and some interpretation of the above plot.
+Discussion about my visualizer and some interpretation of the above plot.
 
 
-    API Reference
-    -------------
+API Reference
+-------------
 
-    .. automodule:: yellowbrick.regressor.mymodule
-        :members: MyVisualizer
-        :undoc-members:
-        :show-inheritance:
+.. automodule:: yellowbrick.regressor.mymodule
+    :members: MyVisualizer
+    :undoc-members:
+    :show-inheritance:
 ```
 
 This is a pretty good structure for a documentation page; a brief introduction followed by a code example with a visualization included using [the plot directive](https://matplotlib.org/devel/plot_directive.html). This will render the `MyVisualizer` image in the document along with links for the complete source code, the png, and the pdf versions of the image. It will also have the "alt-text" (for screen-readers) and will not display the source because of the `:include-source:` option. If `:include-source:` is omitted, the source will also be included. 
