@@ -72,7 +72,7 @@ def test_umap_unavailable():
 
 @pytest.mark.skipif(UMAP is None, reason="tests require the umap library")
 @pytest.mark.xfail(sys.platform == 'win32', reason="not supported on windows 32bit with Python 2.7")
-class TestUMAP(VisualTestCase, DatasetMixin):
+class TestUMAP(VisualTestCase):
     """
     UMAPVisualizer tests
     """
