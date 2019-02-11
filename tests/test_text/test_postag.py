@@ -2,13 +2,13 @@
 # tests.test_text.test_postag
 # Tests for the part-of-speech tagging visualization
 #
-# Author:   Rebecca Bilbro <rbilbro@districtdatalabs.com>
+# Author:   Rebecca Bilbro
 # Created:  2017-03-22 15:46
 #
-# Copyright (C) 2017 District Data Labs
+# Copyright (C) 2018 The scikit-yb developers
 # For license information, see LICENSE.txt
 #
-# ID: test_postag.py [bd9cbb9] rebecca.bilbro@bytecubed.com $
+# ID: test_postag.py [bd9cbb9] $
 
 """
 Tests for the part-of-speech tagging visualization
