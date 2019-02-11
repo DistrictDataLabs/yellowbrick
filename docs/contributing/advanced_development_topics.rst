@@ -5,6 +5,24 @@ Advanced Development Topics
 
 In this section we discuss more advanced contributing guidelines such as code conventions,the release life cycle or branch management. This section is intended for maintainers and core contributors of the Yellowbrick project. If you would like to be a maintainer please contact one of the current maintainers of the project.
 
+Reviewing Pull Requests
+-----------------------
+
+We use several strategies when reviewing pull requests from contributors to Yellowbrick. If the pull request affects only a single file or a small portion of the code base, it is sometimes sufficient to review the code using `GitHub's lightweight code review feature <https://github.com/features/code-review/>`_. However, if the changes impact a number of files or modify the documentation, our convention is to add the contributor's fork as a remote, pull, and check out their feature branch locally. From inside your fork of Yellowbrick, this can be done as follows::
+
+    $ git remote add contribsusername https://github.com/contribsusername/yellowbrick.git
+    $ git fetch contribsusername
+    $ git checkout -b contribsfeaturebranch contribsusername/contribsfeaturebranch
+
+This will allow you to inspect their changes, run the tests, and build the docs locally. If the contributor has elected to allow reviewers to modify their feature branch, you will also be able to push changes directly to their branch::
+
+    $ git add filethatyouchanged.py
+    $ git commit -m "Adjusted tolerance levels to appease AppVeyor"
+    $ git push contribsusername contribsfeaturebranch
+
+These changes will automatically go into the pull request, which can be useful for making small modifications (e.g. visual test tolerance levels) to get the PR over the finish line.
+
+
 Visualizer Review Checklist
 ---------------------------
 
@@ -101,38 +119,17 @@ Documentation Conventions
 
     To reduce the time it takes to put together the changelog, we'd like to update it when we add new features and visualizers rather than right before the release.
 
-Branching Convention
---------------------
+Merging Pull Requests
+---------------------
 
-The Yellowbrick repository is set up in a typical production/release/development cycle as described in "`A Successful Git Branching Model <http://nvie.com/posts/a-successful-git-branching-model/>`_." The primary working branch is the ``develop`` branch. This should be the branch that you are working on and from, since this has all the latest code. The ``master`` branch contains the latest stable version and release_, which is pushed to PyPI_. No one but core contributors will generally push to master.
+Our convention is that the person who performs the code review should merge the pull request (since reviewing is hard work and deserves due credit!). Only core contributors have write access to the repository and can merge pull requests. Some preferences for commit messages when merging in pull requests:
 
-.. note:: All pull requests should be into the ``yellowbrick/develop`` branch from your forked repository.
-
-You can work directly in your fork and create a pull request from your fork's develop branch into ours. We also recommend setting up an ``upstream`` remote so that you can easily pull the latest development changes from the main Yellowbrick repository (see `configuring a remote for a fork <https://help.github.com/articles/configuring-a-remote-for-a-fork/>`_). You can do that as follows::
-
-    $ git remote add upstream https://github.com/DistrictDataLabs/yellowbrick.git
-    $ git remote -v
-    origin    https://github.com/YOUR_USERNAME/YOUR_FORK.git (fetch)
-    origin    https://github.com/YOUR_USERNAME/YOUR_FORK.git (push)
-    upstream  https://github.com/DistrictDataLabs/yellowbrick.git (fetch)
-    upstream  https://github.com/DistrictDataLabs/yellowbrick.git (push)
-
-When you're ready, request a code review for your pull request. Then, when reviewed and approved, you can merge your fork into our main branch. Make sure to use the "Squash and Merge" option in order to create a Git history that is understandable.
+- Make sure to use the "Squash and Merge" option in order to create a Git history that is understandable. 
+- Keep the title of the commit short and descriptive; be sure it includes the PR #.
+- Craft a commit message body that is 1-3 sentences, depending on the complexity of the commit; it should explicitly reference any issues being closed or opened using `GitHub's commit message keywords <https://help.github.com/articles/closing-issues-using-keywords/>`_.
 
 .. note:: When merging a pull request, use the "squash and merge" option.
 
-Core contributors have write access to the repository. In order to reduce the number of merges (and merge conflicts) we recommend that you utilize a feature branch off of develop to do intermediate work in::
-
-    $ git checkout -b feature-myfeature develop
-
-Once you are done working (and everything is tested) merge your feature into develop.::
-
-    $ git checkout develop
-    $ git merge --no-ff feature-myfeature
-    $ git branch -d feature-myfeature
-    $ git push origin develop
-
-Head back to Waffle and checkout another issue!
 
 Releases
 --------
@@ -167,4 +164,3 @@ Check that the PyPI page is updated with the correct version and that ``pip inst
 Hotfixes and minor releases also follow a similar pattern; the goal is to effectively get new code to users as soon as possible!
 
 .. _release: https://github.com/DistrictDataLabs/yellowbrick/releases
-.. _PyPI: https://pypi.python.org/pypi/yellowbrick

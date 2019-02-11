@@ -51,6 +51,6 @@ API Reference
 -------------
 
 .. automodule:: yellowbrick.features.jointplot
-    :members: JointPlotVisualizer
+    :members: JointPlot
     :undoc-members:
     :show-inheritance:
