@@ -117,7 +117,7 @@ When the following is true:
 3. Code coverage and quality have not decreased
 4. Code is up to date with the yellowbrick develop branch
 
-Then we will "Squash and Merge" your contribution, combining all of your commits into a single commit and merging it into the ``develop ``branch of Yellowbrick. Congratulations! Once your contribution has been merged into master, you will be officially listed as a contributor.
+Then we will "Squash and Merge" your contribution, combining all of your commits into a single commit and merging it into the ``develop`` branch of Yellowbrick. Congratulations! Once your contribution has been merged into master, you will be officially listed as a contributor.
 
 After Your Pull Request is Merged
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
