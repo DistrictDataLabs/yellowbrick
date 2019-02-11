@@ -53,7 +53,7 @@ class MyVisualizerTests(VisualTestCase):
         try:
             visualizer = MyVisualizer()
             visualizer.fit(X)
-            visualizer.poof()
+            visualizer.finalize()
         except Exception as e:
             pytest.fail("my visualizer didn't work")
 ```
@@ -73,7 +73,7 @@ from tests.base import VisualTestCase
         ...
         visualizer = MyVisualizer()
         visualizer.fit(X)
-        visualizer.poof()
+        visualizer.finalize()
         self.assert_images_similar(visualizer)
 ```
 
