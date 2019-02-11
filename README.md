@@ -13,15 +13,15 @@
 
 **Visual analysis and diagnostic tools to facilitate machine learning model selection.**
 
-[![Classifiers](docs/images/readme_classifiers.png)](https://www.scikit-yb.org/en/latest/gallery.html)
-[![Clusterers](docs/images/readme_clusterers.png)](https://www.scikit-yb.org/en/latest/gallery.html)
-[![Regressors](docs/images/readme_regressors.png)](https://www.scikit-yb.org/en/latest/gallery.html)
+[![Classifiers](docs/images/readme/classifiers.png)](https://www.scikit-yb.org/en/latest/gallery.html)
+[![Clusterers](docs/images/readme/clusterers.png)](https://www.scikit-yb.org/en/latest/gallery.html)
+[![Regressors](docs/images/readme/regressors.png)](https://www.scikit-yb.org/en/latest/gallery.html)
 
 ## What is Yellowbrick?
 
 Yellowbrick is a suite of visual diagnostic tools called "Visualizers" that extend the scikit-learn API to allow human steering of the model selection process. In a nutshell, Yellowbrick combines scikit-learn with matplotlib in the best tradition of the scikit-learn documentation, but to produce visualizations for _your_ machine learning workflow!
 
-For complete documentation on the Yellowbrick API, a gallery of available visualizers, the contributor's guide, tutorials and teaching resources, frequently asked questions, and more, please visit our documentation at [www.scikit-yb.org](https://www.scikit-yb.org/). 
+For complete documentation on the Yellowbrick API, a gallery of available visualizers, the contributor's guide, tutorials and teaching resources, frequently asked questions, and more, please visit our documentation at [www.scikit-yb.org](https://www.scikit-yb.org/).
 
 ## Installing Yellowbrick
 
