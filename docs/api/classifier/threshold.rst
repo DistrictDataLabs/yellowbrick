@@ -25,9 +25,11 @@ A visualization of precision, recall, f1 score, and queue rate with respect to t
     visualizer.poof()     # Draw/show/poof the data
 
 .. plot::
-    :nofigs: True
+    :nofigs:
     :include-source: False
 
+    import os
+    import pandas as pd
     from sklearn.ensemble import RandomForestClassifier
     from sklearn.preprocessing import LabelEncoder
     from functools import partial
