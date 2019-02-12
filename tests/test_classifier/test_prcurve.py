@@ -239,10 +239,7 @@ class TestPrecisionRecallCurve(VisualTestCase):
         self.assert_images_similar(oz, tol=tol)
 
     def test_multiclass_probability_with_class_labels(self):
-        """
-        Visual similarity of multiclass classifier with predict_proba function
-        with class labels
-        """
+        """Visual similarity of multiclass classifier with class labels."""
         # Create and fit the visualizer
         oz = PrecisionRecallCurve(
             GaussianNB(), per_class=True, micro=False, fill_area=False,
@@ -271,8 +268,32 @@ class TestPrecisionRecallCurve(VisualTestCase):
         assert len(oz.precision_) == len(oz.classes_) + 1
         assert len(oz.recall_) == len(oz.classes_) + 1
 
-        # Compare the images
+        # Finalize image
         oz.finalize()
+
+        # Compare texts of the images.
+        assert oz.ax.get_xlabel() == "Recall"
+        oz.ax.set_xlabel("")
+        assert oz.ax.get_ylabel() == "Precision"
+        oz.ax.set_ylabel("")
+        assert oz.ax.get_title() == "Precision-Recall Curve for GaussianNB"
+        oz.ax.set_title("")
+        oz_legend_txt = [x.get_text() for x in oz.ax.legend().get_texts()]
+        expected_legend_txt = [
+            "PR for class a (area=0.42)",
+            "PR for class b (area=0.36)",
+            "PR for class c (area=0.44)",
+            "PR for class d (area=0.52)",
+            "PR for class e (area=0.37)",
+            "PR for class f (area=0.49)",
+        ]
+        assert oz_legend_txt == expected_legend_txt
+        handles, _ = oz.ax.get_legend_handles_labels()
+        empty_labels = ["" for _ in handles]
+        oz.ax.legend(handles=handles, labels=empty_labels, loc='lower left',
+                     frameon=True)
+
+        # Compare the images
         tol = 6.6 if sys.platform == 'win32' else 1.0 # fails with RMSE 6.583 on AppVeyor
         self.assert_images_similar(oz, tol=tol)
 
