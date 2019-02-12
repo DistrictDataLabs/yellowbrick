@@ -4,7 +4,7 @@
 # Author:   Benjamin Bengfort <benjamin@bengfort.com>
 # Created:  Mon Feb 20 07:23:53 2017 -0500
 #
-# Copyright (C) 2016 Bengfort.com
+# Copyright (C) 2018 The scikit-yb developers
 # For license information, see LICENSE.txt
 #
 # ID: test_tsne.py [6aa9198] benjamin@bengfort.com $
@@ -22,7 +22,7 @@ import pytest
 
 from yellowbrick.text.tsne import *
 from tests.base import VisualTestCase
-from tests.dataset import DatasetMixin
+from yellowbrick.datasets import load_hobbies
 from yellowbrick.exceptions import YellowbrickValueError
 
 from sklearn.manifold import TSNE
@@ -40,10 +40,16 @@ except ImportError:
     import mock
 
 ##########################################################################
+## Data
+##########################################################################
+
+corpus = load_hobbies()
+
+##########################################################################
 ## TSNE Tests
 ##########################################################################
 
-class TestTSNE(VisualTestCase, DatasetMixin):
+class TestTSNE(VisualTestCase):
     """
     TSNEVisualizer tests
     """
@@ -76,7 +82,6 @@ class TestTSNE(VisualTestCase, DatasetMixin):
         """
         Check tSNE integrated visualization on the hobbies corpus
         """
-        corpus = self.load_data('hobbies')
         tfidf  = TfidfVectorizer()
 
         docs   = tfidf.fit_transform(corpus.data)

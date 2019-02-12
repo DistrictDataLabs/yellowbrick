@@ -118,15 +118,6 @@ class BalancedBinningReference(TargetVisualizer):
         self.draw(y)
         return self
 
-
-    def poof(self, **kwargs):
-        """
-        Creates the labels for the feature and target variables.
-        """
-
-        self.ax.set_xlabel(self.target)
-        self.finalize(**kwargs)
-
     def finalize(self, **kwargs):
         """
         Finalize executes any subclass-specific axes finalization steps.
@@ -137,14 +128,14 @@ class BalancedBinningReference(TargetVisualizer):
         kwargs: generic keyword arguments.
 
         """
-
+        self.ax.set_xlabel(self.target)
         for tk in self.ax.get_xticklabels():
             tk.set_visible(True)
-            
+
         for tk in self.ax.get_yticklabels():
             tk.set_visible(True)
-        
-        
+
+
 ##########################################################################
 ## Quick Method
 ##########################################################################

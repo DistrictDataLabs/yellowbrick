@@ -33,6 +33,18 @@ Compatibility Notes:
 .. _v1.0: https://github.com/DistrictDataLabs/yellowbrick/releases/tag/v1.0
 
 
+Hotfix 0.9.1
+------------
+
+This hotfix adds matplotlib3 support by requiring any version of matplotlib except for 3.0.0 which had a backend bug that affected Yellowbrick.
+
+* Tag: v0.9.1_
+* Deployed: Tuesday, February 5, 2019
+* Contributors: Benjamin Bengfort, Rebecca Bilbro, Ian Ozsvald
+
+.. _v0.9.1: https://github.com/DistrictDataLabs/yellowbrick/releases/tag/v0.9.1
+
+
 Version 0.9
 -----------
 * Tag: v0.9_
