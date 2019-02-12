@@ -18,8 +18,8 @@ Intercluster distance maps display an embedding of the cluster centers in 2 dime
     X, y = make_blobs(n_samples=1000, n_features=12, centers=12, random_state=42)
 
     # Instantiate the clustering model and visualizer
-    model = KMeans()
-    visualizer = InterclusterDistance(model, k=9)
+    model = KMeans(6)
+    visualizer = InterclusterDistance(model)
 
     visualizer.fit(X)        # Fit the data to the visualizer
     visualizer.poof()        # Draw/show/poof the data
