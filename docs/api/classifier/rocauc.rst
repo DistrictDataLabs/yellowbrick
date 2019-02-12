@@ -35,12 +35,11 @@ This leads to another metric, area under the curve (AUC), which is a computation
 
 
 .. warning::
-    Binary classification using a Scikit-learn-style estimator with only a
-    ``decision_function``, triggers an ``IndexError`` because the predictions
-    will be a 1D array, meaning there is only sufficient information to plot a
-    single curve. More on this bug can be found in this `notebook <https://github.com/DistrictDataLabs/yellowbrick/blob/develop/examples/rebeccabilbro/rocauc_bug_research.ipynb>`_. The bug was addressed in a `July 2018 PR <https://github.com/DistrictDataLabs/yellowbrick/pull/533>`_
-    and will be fixed in v0.9, where the solution will be to set the ``micro``,
-    ``macro``, and ``per-class`` parameters of ``ROCAUC`` to ``False``.
+    Versions of Yellowbrick =< v0.8 had a `bug <https://github.com/DistrictDataLabs/yellowbrick/blob/develop/examples/rebeccabilbro/rocauc_bug_research.ipynb>`_ 
+    that triggered an `IndexError` when attempting binary classification using 
+    a Scikit-learn-style estimator with only a `decision_function`. This has been
+    fixed as of v0.9, where the `micro`, `macro`, and `per-class` parameters of 
+    `ROCAUC` are set to `False` for such classifiers.
 
 
 Multi-class ROCAUC Curves
