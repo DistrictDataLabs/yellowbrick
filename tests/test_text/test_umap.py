@@ -4,10 +4,9 @@
 # Author:   John Healy <jchealy@gmail.com>
 # Created:  Mon Dec 03, 14:00:00
 #
-# Copyright (C) 2016 Bengfort.com
+# Copyright (C) 2018 The scikit-yb developers
 # For license information, see LICENSE.txt
-#
-#
+
 
 """
 Tests for the UMAP visual corpus embedding mechanism.
@@ -21,9 +20,9 @@ import sys
 import pytest
 import warnings
 
-from yellowbrick.text.umap_vis import *
 from tests.base import VisualTestCase
-from tests.dataset import DatasetMixin
+from yellowbrick.text.umap_vis import *
+from yellowbrick.datasets import load_hobbies
 from yellowbrick.exceptions import YellowbrickValueError
 
 from sklearn.datasets import make_classification
@@ -49,6 +48,11 @@ except (RuntimeError, AttributeError):
         "Error Importing UMAP.  UMAP does not support python 2.7 on Windows 32 bit."
     )
 
+##########################################################################
+## Data
+##########################################################################
+
+corpus = load_hobbies()
 
 ##########################################################################
 ## UMAP Tests
@@ -68,7 +72,7 @@ def test_umap_unavailable():
 
 @pytest.mark.skipif(UMAP is None, reason="tests require the umap library")
 @pytest.mark.xfail(sys.platform == 'win32', reason="not supported on windows 32bit with Python 2.7")
-class TestUMAP(VisualTestCase, DatasetMixin):
+class TestUMAP(VisualTestCase):
     """
     UMAPVisualizer tests
     """
@@ -87,7 +91,6 @@ class TestUMAP(VisualTestCase, DatasetMixin):
         """
         Check UMAP integrated visualization on the hobbies corpus
         """
-        corpus = self.load_data('hobbies')
         tfidf  = TfidfVectorizer()
 
         docs   = tfidf.fit_transform(corpus.data)
