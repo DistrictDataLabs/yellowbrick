@@ -29,7 +29,7 @@ environment:
 
         - PYTHON: "C:\\Miniconda3-x64"
           PYTHON_VERSION: "3.6.4"
-          MINICONDA_VERSION: "4.4.10"
+          MINICONDA_VERSION: "4.5.12"
           PYTHON_ARCH: "64"
 
 
