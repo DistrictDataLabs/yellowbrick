@@ -40,21 +40,21 @@ matrix:
     fast_finish: true
 
 install:
-    - "set PATH=%MINICONDA%;%MINICONDA%\\Scripts;%PATH%"
-    - conda update --all"
-    - "%PYTHON%\\python.exe -m pip install wheel"
-    - "%PYTHON%\\python.exe -m pip install -r requirements.txt"
-    - "%PYTHON%\\python.exe -m pip install -r tests/requirements.txt"
-    - "%PYTHON%\\python.exe -m nltk.downloader popular"
+    - "SET PATH=%PYTHON%;%PYTHON%\\Scripts;%PATH%"
+    - "python -m pip install -U pip"
+    - "python -m pip install -U wheel"
+    - "python -m pip install -U -r requirements.txt"
+    - "python -m pip install -U -r tests/requirements.txt"
+    - "python -m nltk.downloader popular"
 
 # No requirement to build any C libraries
 build: off
 
 test_script:
-    - "%PYTHON%\\python.exe setup.py test"
+    - "python setup.py test"
 
 after_test:
-    - "%PYTHON%\\python.exe setup.py bdist_wheel"
+    - "python setup.py bdist_wheel"
 
 artifacts:
     - path: dist\*
