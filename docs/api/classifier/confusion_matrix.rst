@@ -16,15 +16,14 @@ Below are a few examples of using the ``ConfusionMatrix`` visualizer; more
 information can be found by looking at the
 scikit-learn documentation on `confusion matrices <http://scikit-learn.org/stable/modules/generated/sklearn.metrics.confusion_matrix.html>`_.
 
-.. code:: python
+.. plot::
+    :context: close-figs
+    :alt: ConfusionMatrix plot of sklearn Digits dataset
 
-    from sklearn.datasets import load_digits, load_iris
+    from sklearn.datasets import load_digits
     from sklearn.model_selection import train_test_split
     from sklearn.linear_model import LogisticRegression
-
     from yellowbrick.classifier import ConfusionMatrix
-
-.. code:: python
 
     # We'll use the handwritten digits data set from scikit-learn.
     # Each feature of this dataset is an 8x8 pixel image of a handwritten number.
@@ -51,16 +50,20 @@ scikit-learn documentation on `confusion matrices <http://scikit-learn.org/stabl
     cm.poof()
 
 
-.. image:: images/confusion_matrix_digits.png
-
-
 Plotting with Class Names
 -------------------------
 
 Class names can be added to a ``ConfusionMatrix`` plot using the ``label_encoder`` argument. The ``label_encoder`` can be a `sklearn.preprocessing.LabelEncoder <http://scikit-learn.org/stable/modules/generated/sklearn.preprocessing.LabelEncoder.html>`_ (or anything with an ``inverse_transform`` method that performs the mapping), or a ``dict`` with the encoding-to-string mapping as in the example below:
 
-.. code:: python
+.. plot:: 
+    :context: close-figs
+    :alt: ConfusionMatrix plot with class names
 
+    from sklearn.datasets import load_iris
+    from sklearn.model_selection import train_test_split
+    from sklearn.linear_model import LogisticRegression
+    from yellowbrick.classifier import ConfusionMatrix
+    
     iris = load_iris()
     X = iris.data
     y = iris.target
@@ -79,9 +82,6 @@ Class names can be added to a ``ConfusionMatrix`` plot using the ``label_encoder
     iris_cm.score(X_test, y_test)
 
     iris_cm.poof()
-
-
-.. image:: images/confusion_matrix_iris.png
 
 
 API Reference
