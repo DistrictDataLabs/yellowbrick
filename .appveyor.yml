@@ -42,6 +42,7 @@ matrix:
 install:
     - "SET PATH=%MINICONDA3%;%MINICONDA3%\\Scripts;%PATH%"
     - "SET PATH=%PYTHON%;%PYTHON%\\Scripts;%PATH%"
+    - "conda update --all"
     - "python -m pip install -U pip"
     - "python -m pip install -U wheel"
     - "python -m pip install -U -r requirements.txt"
