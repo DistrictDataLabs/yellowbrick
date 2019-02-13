@@ -40,7 +40,7 @@ matrix:
     fast_finish: true
 
 install:
-    - "%MINICONDA%\\Scripts\\conda update --all"
+    - conda update --all"
     - "%PYTHON%\\python.exe -m pip install wheel"
     - "%PYTHON%\\python.exe -m pip install -r requirements.txt"
     - "%PYTHON%\\python.exe -m pip install -r tests/requirements.txt"
@@ -68,7 +68,6 @@ notifications:
         - bbengfort@districtdatalabs.com
         - rbilbro@districtdatalabs.com
         - nathan.danielsen@gmail.com
-        - tojeda@districtdatalabs.com
       on_build_success: false
       on_build_failure: false
       on_build_status_changed: true
