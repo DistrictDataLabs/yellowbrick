@@ -23,6 +23,5 @@ notifications:
       - bbengfort@districtdatalabs.com
       - rbilbro@districtdatalabs.com
       - nathan.danielsen@gmail.com
-      - tojeda@districtdatalabs.com
     on_success: change
     on_failure: always
