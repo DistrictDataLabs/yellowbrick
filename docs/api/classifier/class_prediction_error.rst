@@ -2,10 +2,10 @@
 
 Class Prediction Error
 ======================
-The class prediction error chart provides a way to quickly understand how good your classifier is at predicting the right classes.
-The Yellowbrick `ClassPredictionError` plot is a twist on other and sometimes more familiar classification model diagnostic tools like `ConfusionMatrix` and `ClassificationReport`. Like the `ClassificationReport`, this plot shows the support (number of training samples) for each class in the fitted classification model as a stacked bar chart. Each bar is segmented to show the proportion of predictions (including false negatives and false positives, like a `ConfusionMatrix`) for each class. You can use a `ClassPredictionError` to visualize which classes your classifier is having a particularly difficult time with, and more importantly, what incorrect answers it is giving on a per-class basis. This can often enable you to better understand strengths and weaknesses of different models and particular challenges unique to your dataset.
 
-In this example, while the `RandomForestClassifier` appears to be fairly good at correctly predicting apples based on the features of the fruit, it often incorrectly labels pears as oranges and mistakes kiwis for pears.
+The Yellowbrick ``ClassPredictionError`` plot is a twist on other and sometimes more familiar classification model diagnostic tools like the :doc:`confusion_matrix` and :doc:`classification_report`. Like the :doc:`classification_report`, this plot shows the support (number of training samples) for each class in the fitted classification model as a stacked bar chart. Each bar is segmented to show the proportion of predictions (including false negatives and false positives, like a :doc:`confusion_matrix`) for each class. You can use a ``ClassPredictionError`` to visualize which classes your classifier is having a particularly difficult time with, and more importantly, what incorrect answers it is giving on a per-class basis. This can often enable you to better understand strengths and weaknesses of different models and particular challenges unique to your dataset.
+
+The class prediction error chart provides a way to quickly understand how good your classifier is at predicting the right classes.
 
 .. plot::
     :context: close-figs
@@ -41,7 +41,9 @@ In this example, while the `RandomForestClassifier` appears to be fairly good at
     # Draw visualization
     visualizer.poof()
 
-In this example again, the `RandomForestClassifier` does a great job at correctly predicting accounts in default while it is a toss of a coin in predicting if they are current on bills.
+In the above example, while the ``RandomForestClassifier`` appears to be fairly good at correctly predicting apples based on the features of the fruit, it often incorrectly labels pears as kiwis and mistakes kiwis for bananas.
+
+By contrast, in the following example, the ``RandomForestClassifier`` does a great job at correctly predicting accounts in default, but it is a bit of a coin toss in predicting account holders who stayed current on bills.
 
 .. plot::
     :context: close-figs
@@ -73,7 +75,7 @@ In this example again, the `RandomForestClassifier` does a great job at correctl
     # Draw visualization
     visualizer.poof()
 
-    
+   
     
 API Reference
 -------------
