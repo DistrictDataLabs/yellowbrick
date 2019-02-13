@@ -14,6 +14,7 @@ Tests for the Precision-Recall curves visualizer
 ## Imports
 ##########################################################################
 
+import matplotlib
 import sys
 import pytest
 
@@ -29,7 +30,6 @@ from sklearn.naive_bayes import GaussianNB
 from sklearn.datasets import make_regression
 from sklearn.tree import DecisionTreeClassifier
 from sklearn.linear_model import RidgeClassifier
-from sklearn.model_selection import train_test_split as tts
 from sklearn.ensemble import RandomForestClassifier, AdaBoostClassifier
 
 
@@ -273,12 +273,14 @@ class TestPrecisionRecallCurve(VisualTestCase):
         oz.finalize()
 
         # Compare texts of the images.
+        # Labels
         assert oz.ax.get_xlabel() == "Recall"
         oz.ax.set_xlabel("")
         assert oz.ax.get_ylabel() == "Precision"
         oz.ax.set_ylabel("")
         assert oz.ax.get_title() == "Precision-Recall Curve for GaussianNB"
         oz.ax.set_title("")
+        # Legend
         oz_legend_txt = [x.get_text() for x in oz.ax.legend().get_texts()]
         expected_legend_txt = [
             "PR for class a (area=0.42)",
@@ -290,9 +292,21 @@ class TestPrecisionRecallCurve(VisualTestCase):
         ]
         assert oz_legend_txt == expected_legend_txt
         handles, _ = oz.ax.get_legend_handles_labels()
-        empty_labels = ["" for _ in handles]
+        empty_labels = [""] * len(handles)
         oz.ax.legend(handles=handles, labels=empty_labels, loc='lower left',
                      frameon=True)
+        # Text in iso_f1_curves
+        oz_iso_f1_text = [
+            child for child in oz.ax.get_children() if
+            isinstance(child, matplotlib.text.Annotation)
+        ]
+        expected_iso_f1_text = [
+            "$f_1=0.2$", "$f_1=0.4$", "$f_1=0.6$", "$f_1=0.8$"
+        ]
+        assert [text.get_text() for text in oz_iso_f1_text] \
+            == expected_iso_f1_text
+        for text in oz_iso_f1_text:
+            oz.ax.texts.remove(text)
 
         # Compare the images
         tol = 6.6 if sys.platform == 'win32' else 1.0 # fails with RMSE 6.583 on AppVeyor
@@ -322,55 +336,3 @@ class TestPrecisionRecallCurve(VisualTestCase):
         oz = PrecisionRecallCurve(FakeClassifier())
         with pytest.raises(ModelError, match="requires .* predict_proba or decision_function"):
             oz._get_y_scores(self.binary.X.train)
-
-    def test_custom_iso_f1_scores(self):
-        """
-        Test using custom ISO F1 Values
-        """
-
-        iris = load_iris()
-        x = iris.data[:, :]
-        y = iris.target
-
-        vals = (0.1,0.6,0.3,0.9,0.9)
-        viz = PrecisionRecallCurve(RandomForestClassifier(random_state=27),iso_f1_curves=True,iso_f1_values=vals)
-        x_train, x_test, y_train, y_test = tts(x, y, test_size=0.2, shuffle=True,random_state=555)
-
-        assert viz.fit(x_train,y_train) is viz
-        viz.score(x_test, y_test)
-        viz.finalize()
-
-        tol = 4.5 if sys.platform == 'win32' else 1.0 # fails with RMSE 4.358 on AppVeyor
-        self.assert_images_similar(viz,tol=tol)
-
-    def test_quick_method_with_test_set(self):
-        """
-        Test quick method when both train and test data is supplied
-        """
-
-        iris = load_iris()
-        x = iris.data[:, :]
-        y = iris.target
-
-        x_train, x_test, y_train, y_test = tts(x, y, test_size=0.2, shuffle=True,random_state = 555)
-        viz = precision_recall_curve(RandomForestClassifier(random_state=27),x_train, y_train,X_test=x_test,y_test=y_test,random_state=7)
-
-        tol = 1.5 if sys.platform == 'win32' else 1.0 # fails with RMSE 1.231 on AppVeyor
-        self.assert_images_similar(viz, tol=tol)
-
-    def test_missing_test_data_in_quick_method(self):
-        """
-        Test quick method when test data is missing.
-        """
-
-        iris = load_iris()
-        x = iris.data[:, :]
-        y = iris.target
-
-        x_train, x_test, y_train, y_test = tts(x, y, test_size=0.2, shuffle=True,random_state = 555)
-
-        with pytest.raises(YellowbrickValueError, match="both X_test and y_test are required if one is specified"):
-            precision_recall_curve(RandomForestClassifier(random_state=27),x_train, y_train,y_test=y_test,random_state=7)
-
-        with pytest.raises(YellowbrickValueError, match="both X_test and y_test are required if one is specified"):
-            precision_recall_curve(RandomForestClassifier(random_state=27),x_train, y_train,X_test=x_test,random_state=7)
