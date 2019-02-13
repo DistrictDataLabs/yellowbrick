@@ -40,6 +40,7 @@ matrix:
     fast_finish: true
 
 install:
+    - "set PATH=%MINICONDA%;%MINICONDA%\\Scripts;%PATH%"
     - conda update --all"
     - "%PYTHON%\\python.exe -m pip install wheel"
     - "%PYTHON%\\python.exe -m pip install -r requirements.txt"
