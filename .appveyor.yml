@@ -30,7 +30,7 @@ environment:
         #   PYTHON_ARCH: "32"
 
         - PYTHON: "C:\\Miniconda3-x64"
-          PYTHON_VERSION: "3.6.4"
+          PYTHON_VERSION: "3.7.2"
           MINICONDA_VERSION: "4.5.12"
           PYTHON_ARCH: "64"
 
@@ -42,7 +42,6 @@ matrix:
 install:
     - "SET PATH=%MINICONDA3%;%MINICONDA3%\\Scripts;%PATH%"
     - "SET PATH=%PYTHON%;%PYTHON%\\Scripts;%PATH%"
-    - "conda update --all"
     - "python -m pip install -U pip"
     - "python -m pip install -U wheel"
     - "python -m pip install -U -r requirements.txt"
