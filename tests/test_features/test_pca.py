@@ -20,12 +20,18 @@ Tests for the PCA based feature visualizer.
 import sys
 import pytest
 import numpy as np
+from collections import namedtuple
 
-from tests.dataset import Dataset
 from tests.base import VisualTestCase
 from yellowbrick.features.pca import *
 from yellowbrick.exceptions import YellowbrickError
 from sklearn.datasets import make_classification
+
+##########################################################################
+## Data
+##########################################################################
+
+Dataset = namedtuple('Dataset', 'X,y')
 
 
 ##########################################################################

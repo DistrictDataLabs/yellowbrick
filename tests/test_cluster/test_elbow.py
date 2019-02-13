@@ -22,8 +22,9 @@ import pytest
 import numpy as np
 import matplotlib.pyplot as plt
 
+from yellowbrick.datasets import load_hobbies
+
 from ..base import VisualTestCase
-from ..dataset import DatasetMixin
 
 from scipy.sparse import csc_matrix, csr_matrix
 from numpy.testing.utils import assert_array_almost_equal
@@ -43,7 +44,7 @@ except ImportError:
 
 
 ##########################################################################
-## K-Elbow Helpers Test Cases
+## Data
 ##########################################################################
 
 X = np.array(
@@ -68,6 +69,10 @@ X = np.array(
 )
 
 y = np.array([0, 0, 1, 1, 0, 0, 1, 1, 0, 1, 0, 0, 1, 1, 1, 1, 0, 0])
+
+##########################################################################
+## K-Elbow Helpers Test Cases
+##########################################################################
 
 
 class TestKElbowHelper(object):
@@ -108,7 +113,7 @@ class TestKElbowHelper(object):
 ## KElbowVisualizer Test Cases
 ##########################################################################
 
-class TestKElbowVisualizer(VisualTestCase, DatasetMixin):
+class TestKElbowVisualizer(VisualTestCase):
     """
     K-Elbow Visualizer Tests
     """
@@ -167,7 +172,7 @@ class TestKElbowVisualizer(VisualTestCase, DatasetMixin):
         """
         Test topic modeling k-means on the hobbies corpus
         """
-        corpus = self.load_corpus("hobbies")
+        corpus = load_hobbies()
 
         tfidf  = TfidfVectorizer()
         docs   = tfidf.fit_transform(corpus.data)

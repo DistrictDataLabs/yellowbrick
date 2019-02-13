@@ -17,12 +17,12 @@ Tests for the intercluster distance map visualizer.
 import sys
 import pytest
 import matplotlib as mpl
+from collections import namedtuple
 
 from yellowbrick.cluster.icdm import *
 from yellowbrick.exceptions import YellowbrickValueError
 
 from tests.base import VisualTestCase
-from tests.dataset import DatasetMixin, Dataset
 
 from sklearn.datasets import make_blobs
 from sklearn.cluster import Birch, AgglomerativeClustering
@@ -42,6 +42,8 @@ MPL_VERS_MAJ = int(mpl.__version__.split(".")[0])
 ##########################################################################
 ## Fixtures
 ##########################################################################
+
+Dataset = namedtuple('Dataset', 'X,y')
 
 @pytest.fixture(scope='class')
 def blobs12(request):
@@ -81,7 +83,7 @@ def assert_not_fitted(oz):
 ##########################################################################
 
 @pytest.mark.usefixtures("blobs12", "blobs4")
-class TestInterclusterDistance(VisualTestCase, DatasetMixin):
+class TestInterclusterDistance(VisualTestCase):
     """
     Test the InterclusterDistance visualizer
     """

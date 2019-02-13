@@ -20,11 +20,12 @@ Testing for the parallel coordinates feature visualizers
 
 import pytest
 import numpy as np
+from collections import namedtuple
 
 from yellowbrick.features.pcoords import *
+from yellowbrick.datasets import load_occupancy
 
 from tests.base import VisualTestCase
-from tests.dataset import DatasetMixin, Dataset
 from sklearn.datasets import make_classification
 
 
@@ -33,6 +34,12 @@ try:
 except ImportError:
     pd = None
 
+
+##########################################################################
+## Data
+##########################################################################
+
+Dataset = namedtuple('Dataset', 'X,y')
 
 ##########################################################################
 ## Fixtures
@@ -59,7 +66,7 @@ def dataset(request):
 ##########################################################################
 
 @pytest.mark.usefixtures('dataset')
-class TestParallelCoordinates(VisualTestCase, DatasetMixin):
+class TestParallelCoordinates(VisualTestCase):
     """
     Test the ParallelCoordinates visualizer
     """
@@ -163,11 +170,12 @@ class TestParallelCoordinates(VisualTestCase, DatasetMixin):
         """
         Test on a real dataset with pandas DataFrame and Series sampled for speed
         """
-        df = self.load_pandas("occupancy")
+        data = load_occupancy(return_dataset=True)
+        df = data.to_dataframe()
 
         target = "occupancy"
         features = [
-            'temperature', 'relative humidity', 'light', 'C02', 'humidity'
+            'temperature', 'relative humidity', 'light', 'CO2', 'humidity'
         ]
 
         X = df[features]
@@ -189,11 +197,12 @@ class TestParallelCoordinates(VisualTestCase, DatasetMixin):
         """
         Test on a real dataset with pandas DataFrame and Series in fast mode
         """
-        df = self.load_pandas("occupancy")
+        data = load_occupancy(return_dataset=True)
+        df = data.to_dataframe()
 
         target = "occupancy"
         features = [
-            'temperature', 'relative humidity', 'light', 'C02', 'humidity'
+            'temperature', 'relative humidity', 'light', 'CO2', 'humidity'
         ]
 
         X = df[features]

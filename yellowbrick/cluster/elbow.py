@@ -18,7 +18,7 @@ https://bl.ocks.org/rpgove/0060ff3b656618e9136b
 ## Imports
 ##########################################################################
 
-import collections
+from collections.abc import Iterable
 import time
 import numpy as np
 import scipy.sparse as sp
@@ -194,7 +194,7 @@ class KElbowVisualizer(ClusteringScoreVisualizer):
 
     For a discussion on the Elbow method, read more at
     `Robert Gove's Block <https://bl.ocks.org/rpgove/0060ff3b656618e9136b>`_.
-    
+
     .. seealso:: The scikit-learn documentation for the `silhouette_score
         <https://bit.ly/2LYWjYb>`_ and `calinski_harabaz_score
         <https://bit.ly/2LW3Zu9>`_. The default, `distortion_score`, is
@@ -226,7 +226,7 @@ class KElbowVisualizer(ClusteringScoreVisualizer):
         elif isinstance(k, tuple) and len(k) == 2 and \
                 all(isinstance(x, (int, np.integer)) for x in k):
             self.k_values_ = list(range(*k))
-        elif isinstance(k, collections.Iterable) and \
+        elif isinstance(k, Iterable) and \
                 all(isinstance(x, (int, np.integer)) for x in k):
             self.k_values_ = list(k)
         else:
