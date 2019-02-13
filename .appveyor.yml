@@ -30,7 +30,7 @@ environment:
         #   PYTHON_ARCH: "32"
 
         - PYTHON: "C:\\Miniconda3-x64"
-          PYTHON_VERSION: "3.7.2"
+          PYTHON_VERSION: "3.6.4"
           MINICONDA_VERSION: "4.5.12"
           PYTHON_ARCH: "64"
 
@@ -46,7 +46,8 @@ install:
     - "python -m pip install -U wheel"
     - "python -m pip install -U -r requirements.txt"
     - "python -m pip install -U -r tests/requirements.txt"
-    - "python -m nltk.downloader popular"
+    - "python -m pip uninstall -y nltk"
+    # - "python -m nltk.downloader popular"
 
 # No requirement to build any C libraries
 build: off
