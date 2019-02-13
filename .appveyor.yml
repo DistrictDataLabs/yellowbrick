@@ -1,6 +1,10 @@
 # AppVeyor is a CI service to build and run tests under Windows
 # https://ci.appveyor.com/project/districtdatalabs/yellowbrick
 
+# Temporary work around see #744
+image:
+  - Previous Visual Studio 2015
+
 environment:
 
     matrix:
@@ -27,11 +31,10 @@ environment:
         #   MINICONDA_VERSION: "4.4.10"
         #   PYTHON_ARCH: "32"
 
-        # Currently broken, see #744
-        # - PYTHON: "C:\\Miniconda3-x64"
-        #   PYTHON_VERSION: "3.6.4"
-        #   MINICONDA_VERSION: "4.5.12"
-        #   PYTHON_ARCH: "64"
+        - PYTHON: "C:\\Miniconda3-x64"
+          PYTHON_VERSION: "3.6.4"
+          MINICONDA_VERSION: "4.5.12"
+          PYTHON_ARCH: "64"
 
 
 # Cancel pending jobs after first job failure
