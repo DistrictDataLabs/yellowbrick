@@ -10,17 +10,19 @@ environment:
         #   PYTHON_VERSION: "2.7.14"
         #   PYTHON_ARCH: "32"
 
-        - PYTHON: "C:\\Python27-x64"
-          PYTHON_VERSION: "2.7.14"
-          PYTHON_ARCH: "64"
+        # TODO: Put back in (for testing only)
+        # - PYTHON: "C:\\Python27-x64"
+        #   PYTHON_VERSION: "2.7.14"
+        #   PYTHON_ARCH: "64"
 
         # - PYTHON: "C:\\Python36"
         #   PYTHON_VERSION: "3.6.4"
         #   PYTHON_ARCH: "32"
 
-        - PYTHON: "C:\\Python36-x64"
-          PYTHON_VERSION: "3.6.4"
-          PYTHON_ARCH: "64"
+        # TODO: Put back in (for testing only)
+        # - PYTHON: "C:\\Python36-x64"
+        #   PYTHON_VERSION: "3.6.4"
+        #   PYTHON_ARCH: "64"
 
         # - PYTHON: "C:\\Miniconda3"
         #   PYTHON_VERSION: "3.6.4"
@@ -38,6 +40,7 @@ matrix:
     fast_finish: true
 
 install:
+    - "%MINICONDA%\\Scripts\\conda update --all"
     - "%PYTHON%\\python.exe -m pip install wheel"
     - "%PYTHON%\\python.exe -m pip install -r requirements.txt"
     - "%PYTHON%\\python.exe -m pip install -r tests/requirements.txt"
