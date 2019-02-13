@@ -10,29 +10,28 @@ environment:
         #   PYTHON_VERSION: "2.7.14"
         #   PYTHON_ARCH: "32"
 
-        # TODO: Put back in (for testing only)
-        # - PYTHON: "C:\\Python27-x64"
-        #   PYTHON_VERSION: "2.7.14"
-        #   PYTHON_ARCH: "64"
+        - PYTHON: "C:\\Python27-x64"
+          PYTHON_VERSION: "2.7.14"
+          PYTHON_ARCH: "64"
 
         # - PYTHON: "C:\\Python36"
         #   PYTHON_VERSION: "3.6.4"
         #   PYTHON_ARCH: "32"
 
-        # TODO: Put back in (for testing only)
-        # - PYTHON: "C:\\Python36-x64"
-        #   PYTHON_VERSION: "3.6.4"
-        #   PYTHON_ARCH: "64"
+        - PYTHON: "C:\\Python36-x64"
+          PYTHON_VERSION: "3.6.4"
+          PYTHON_ARCH: "64"
 
         # - PYTHON: "C:\\Miniconda3"
         #   PYTHON_VERSION: "3.6.4"
         #   MINICONDA_VERSION: "4.4.10"
         #   PYTHON_ARCH: "32"
 
-        - PYTHON: "C:\\Miniconda3-x64"
-          PYTHON_VERSION: "3.6.4"
-          MINICONDA_VERSION: "4.5.12"
-          PYTHON_ARCH: "64"
+        # Currently broken, see #744
+        # - PYTHON: "C:\\Miniconda3-x64"
+        #   PYTHON_VERSION: "3.6.4"
+        #   MINICONDA_VERSION: "4.5.12"
+        #   PYTHON_ARCH: "64"
 
 
 # Cancel pending jobs after first job failure
@@ -46,8 +45,7 @@ install:
     - "python -m pip install -U wheel"
     - "python -m pip install -U -r requirements.txt"
     - "python -m pip install -U -r tests/requirements.txt"
-    - "python -m pip uninstall -y nltk"
-    # - "python -m nltk.downloader popular"
+    - "python -m nltk.downloader popular"
 
 # No requirement to build any C libraries
 build: off
