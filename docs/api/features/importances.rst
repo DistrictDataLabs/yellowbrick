@@ -98,7 +98,7 @@ Taking the mean of the importances may be undesirable for several reasons. For e
     data = load_iris()
     X, y = data.data, data.target
 
-    model = LogisticRegression(multi_class="auto", solver="lbfgs")
+    model = LogisticRegression(multi_class="auto", solver="liblinear")
     viz = FeatureImportances(model, stack=True, relative=False)
     viz.fit(X, y)
     viz.poof()
