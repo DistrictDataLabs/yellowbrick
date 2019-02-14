@@ -9,14 +9,11 @@ Generates the validation curve visualizations for the documentation
 ## Imports
 ##########################################################################
 
-import os
 import numpy as np
-import pandas as pd
 import matplotlib.pyplot as plt
 
 from sklearn.svm import SVC
 from sklearn.datasets import load_digits
-from sklearn.tree import DecisionTreeRegressor
 from sklearn.preprocessing import OneHotEncoder
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.model_selection import StratifiedKFold
@@ -62,7 +59,7 @@ def validation_curve_classifier_svc(path="images/validation_curve_classifier_svc
     oz.poof(outpath=path)
 
 
-def validation_curve_classifier_alt_knn(path="images/validation_curve_classifier_knn.png"):
+def validation_curve_classifier_knn(path="images/validation_curve_classifier_knn.png"):
     X, y = load_game()
     X = OneHotEncoder().fit_transform(X)
 
