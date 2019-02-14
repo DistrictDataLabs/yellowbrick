@@ -25,6 +25,7 @@ figure or create one). We can then fit a ``FeatureImportances`` visualizer
 with a ``GradientBoostingClassifier`` to visualize the ranked features.
 
 .. plot::
+    :context: close-figs
 
     from sklearn.ensemble import RandomForestClassifier
 
@@ -56,6 +57,7 @@ not have column names or to print better titles. In the example below we
 title case our features for better readability:
 
 .. plot::
+    :context: close-figs
 
     from sklearn.linear_model import Lasso
     from yellowbrick.datasets import load_concrete
@@ -83,6 +85,7 @@ Some estimators return a multi-dimensonal array for either ``feature_importances
 Taking the mean of the importances may be undesirable for several reasons. For example, a feature may be more informative for some classes than others. Multi-output estimators also do not benefit from having averages taken across what are essentially multiple internal models. In this case, use the ``stack=True`` parameter to draw a stacked bar chart of importances as follows:
 
 .. plot::
+    :context: close-figs
 
     from yellowbrick.features import FeatureImportances
     from sklearn.linear_model import LogisticRegression
