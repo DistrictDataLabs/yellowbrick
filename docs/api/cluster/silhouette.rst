@@ -9,6 +9,7 @@ The Silhouette Visualizer displays the silhouette coefficient for each sample on
 
 .. plot::
     :context: close-figs
+    :alt: SilhouetteVisualizer on synthetic dataset with 8 random clusters
 
     from sklearn.cluster import KMeans
     from sklearn.datasets import make_blobs
