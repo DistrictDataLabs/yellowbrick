@@ -11,7 +11,7 @@ The Silhouette Visualizer displays the silhouette coefficient for each sample on
     :context: close-figs
     :alt: SilhouetteVisualizer on synthetic dataset with 8 random clusters
 
-    from sklearn.cluster import KMeans
+    from sklearn.cluster import MiniBatchKMeans
     from sklearn.datasets import make_blobs
 
     from yellowbrick.cluster import SilhouetteVisualizer
@@ -20,7 +20,7 @@ The Silhouette Visualizer displays the silhouette coefficient for each sample on
     X, y = make_blobs(n_samples=1000, n_features=12, centers=8, random_state=42)
 
     # Instantiate the clustering model and visualizer
-    model = KMeans(6)
+    model = MiniBatchKMeans(6)
     visualizer = SilhouetteVisualizer(model)
 
     visualizer.fit(X)        # Fit the data to the visualizer
