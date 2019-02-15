@@ -29,7 +29,7 @@ The class prediction error chart provides a way to quickly understand how good y
                                                         random_state=42)
     # Instantiate the classification model and visualizer
     visualizer = ClassPredictionError(
-        RandomForestClassifier(random_state=42), classes=classes
+        RandomForestClassifier(random_state=42, n_estimators=10), classes=classes
     )
 
     # Fit the training data to the visualizer
@@ -63,7 +63,7 @@ By contrast, in the following example, the ``RandomForestClassifier`` does a gre
     
     # Instantiate the classification model and visualizer
     visualizer = ClassPredictionError(
-        RandomForestClassifier(), classes=classes
+        RandomForestClassifier(n_estimators=10), classes=classes
     )
 
     # Fit the training data to the visualizer

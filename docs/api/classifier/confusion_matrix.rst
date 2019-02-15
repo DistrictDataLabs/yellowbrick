@@ -21,7 +21,7 @@ scikit-learn documentation on `confusion matrices <http://scikit-learn.org/stabl
     :alt: ConfusionMatrix plot of sklearn Digits dataset
 
     from sklearn.datasets import load_digits
-    from sklearn.model_selection import train_test_split
+    from sklearn.model_selection import train_test_split as tts
     from sklearn.linear_model import LogisticRegression
     from yellowbrick.classifier import ConfusionMatrix
 
@@ -32,9 +32,9 @@ scikit-learn documentation on `confusion matrices <http://scikit-learn.org/stabl
     X = digits.data
     y = digits.target
 
-    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size =0.2, random_state=11)
+    X_train, X_test, y_train, y_test = tts(X, y, test_size =0.2, random_state=11)
 
-    model = LogisticRegression()
+    model = LogisticRegression(multi_class="auto", solver="liblinear")
 
     # The ConfusionMatrix visualizer taxes a model
     cm = ConfusionMatrix(model, classes=[0,1,2,3,4,5,6,7,8,9])
@@ -60,7 +60,7 @@ Class names can be added to a ``ConfusionMatrix`` plot using the ``label_encoder
     :alt: ConfusionMatrix plot with class names
 
     from sklearn.datasets import load_iris
-    from sklearn.model_selection import train_test_split
+    from sklearn.model_selection import train_test_split as tts
     from sklearn.linear_model import LogisticRegression
     from yellowbrick.classifier import ConfusionMatrix
     
@@ -69,9 +69,9 @@ Class names can be added to a ``ConfusionMatrix`` plot using the ``label_encoder
     y = iris.target
     classes = iris.target_names
 
-    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2)
+    X_train, X_test, y_train, y_test = tts(X, y, test_size=0.2)
 
-    model = LogisticRegression()
+    model = LogisticRegression(multi_class="auto", solver="liblinear")
 
     iris_cm = ConfusionMatrix(
         model, classes=classes,

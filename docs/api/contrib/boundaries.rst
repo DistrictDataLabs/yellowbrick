@@ -9,7 +9,7 @@ The DecisionBoundariesVisualizer is a bivariate data visualization algorithm tha
     :context: close-figs
     :alt: DecisionBoundariesVisualizer Nearest Neighbors
 
-    from sklearn.model_selection import train_test_split
+    from sklearn.model_selection import train_test_split as tts
     from sklearn.preprocessing import StandardScaler
     from sklearn.datasets import make_moons
     from sklearn.neighbors import KNeighborsClassifier
@@ -19,9 +19,12 @@ The DecisionBoundariesVisualizer is a bivariate data visualization algorithm tha
 
     X, y = data_set
     X = StandardScaler().fit_transform(X)
-    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=.4, random_state=42)
+    X_train, X_test, y_train, y_test = tts(X, y, test_size=.4, random_state=42)
 
-    viz = DecisionViz(KNeighborsClassifier(3), title="Nearest Neighbors", features=['Feature One', 'Feature Two'], classes=['A', 'B'])
+    viz = DecisionViz(
+        KNeighborsClassifier(3), title="Nearest Neighbors",
+        features=['Feature One', 'Feature Two'], classes=['A', 'B']
+    )
     viz.fit(X_train, y_train)
     viz.draw(X_test, y_test)
     viz.poof()
@@ -32,7 +35,7 @@ The DecisionBoundariesVisualizer is a bivariate data visualization algorithm tha
     :alt: DecisionBoundariesVisualizer Linear SVM
 
     from sklearn.svm import SVC
-    from sklearn.model_selection import train_test_split
+    from sklearn.model_selection import train_test_split as tts
     from sklearn.preprocessing import StandardScaler
     from sklearn.datasets import make_moons
     from sklearn.neighbors import KNeighborsClassifier
@@ -42,10 +45,13 @@ The DecisionBoundariesVisualizer is a bivariate data visualization algorithm tha
 
     X, y = data_set
     X = StandardScaler().fit_transform(X)
-    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=.4, random_state=42)
+    X_train, X_test, y_train, y_test = tts(X, y, test_size=.4, random_state=42)
 
 
-    viz = DecisionViz(SVC(kernel="linear", C=0.025), title="Linear SVM", features=['Feature One', 'Feature Two'], classes=['A', 'B'])
+    viz = DecisionViz(
+        SVC(kernel="linear", C=0.025), title="Linear SVM",
+        features=['Feature One', 'Feature Two'], classes=['A', 'B']
+    )
     viz.fit(X_train, y_train)
     viz.draw(X_test, y_test)
     viz.poof()

@@ -60,7 +60,7 @@ To support multi-label classification, the estimator is wrapped in a `OneVsRestC
     X_train, X_test, y_train, y_test = tts(X, y, test_size=0.2, shuffle=True)
 
     # Create the visualizer, fit, score, and poof it
-    viz = PrecisionRecallCurve(RandomForestClassifier())
+    viz = PrecisionRecallCurve(RandomForestClassifier(n_estimators=10))
     viz.fit(X_train, y_train)
     viz.score(X_test, y_test)
     viz.poof()
@@ -87,7 +87,6 @@ A more complex Precision-Recall curve can be computed, however, displaying the e
     X_train, X_test, y_train, y_test = tts(X, y, test_size=0.2, shuffle=True)
 
     # Create the visualizer, fit, score, and poof it
-
     viz = PrecisionRecallCurve(
         MultinomialNB(), per_class=True, iso_f1_curves=True,
         fill_area=False, micro=False, classes=encoder.classes_
