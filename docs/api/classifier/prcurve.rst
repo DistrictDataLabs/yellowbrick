@@ -81,7 +81,8 @@ A more complex Precision-Recall curve can be computed, however, displaying the e
     # Load dataset and encode categorical variables
     X, y = load_game()
     X = OrdinalEncoder().fit_transform(X)
-    y = LabelEncoder().fit_transform(y)
+    encoder = LabelEncoder()
+    y = encoder.fit_transform(y)
 
     X_train, X_test, y_train, y_test = tts(X, y, test_size=0.2, shuffle=True)
 
@@ -89,7 +90,7 @@ A more complex Precision-Recall curve can be computed, however, displaying the e
 
     viz = PrecisionRecallCurve(
         MultinomialNB(), per_class=True, iso_f1_curves=True,
-        fill_area=False, micro=False
+        fill_area=False, micro=False, classes=encoder.classes_
     )
     viz.fit(X_train, y_train)
     viz.score(X_test, y_test)
