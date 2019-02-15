@@ -20,8 +20,8 @@ After importing the required tools, we can :doc:`load the corpus <corpus>` and v
     corpus = load_corpus('hobbies')
     tfidf  = TfidfVectorizer()
 
-    docs   = tfidf.fit_transform(corpus.data)
-    labels = corpus.target
+    X   = tfidf.fit_transform(corpus.data)
+    y   = corpus.target
 
 Now that the corpus is vectorized we can visualize it, showing the distribution of classes.
 
@@ -29,10 +29,21 @@ Now that the corpus is vectorized we can visualize it, showing the distribution 
 
     # Create the visualizer and draw the vectors
     tsne = TSNEVisualizer()
-    tsne.fit(docs, labels)
+    tsne.fit(X,y)
     tsne.poof()
 
 .. image:: images/tsne_all_docs.png
+
+Now,we can also take a list of labels as such:
+
+.. code:: python
+
+    #Passing labels as a list
+    labels = corpus.categories
+
+    tsne = TSNEVisualizer(labels=labels)
+    tsne.fit(X, y)
+    tsne.poof()
 
 If we omit the target during fit, we can visualize the whole dataset to see if any meaningful patterns are observed.
 
