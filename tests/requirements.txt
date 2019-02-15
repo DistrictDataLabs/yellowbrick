@@ -6,10 +6,10 @@ numpy>=1.13.0
 cycler>=0.10.0
 
 # Testing Requirements
-pytest>=4.2.0
+pytest>=4.2.1
 pytest-cov>=2.6.1
 pytest-flakes>=4.0.0
-#pytest-spec>=1.1.0
+pytest-spec>=1.1.0
 coverage>=4.5.2
 requests>=2.18.3
 six>=1.11.0
