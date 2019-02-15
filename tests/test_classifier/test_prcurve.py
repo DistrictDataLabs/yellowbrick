@@ -14,6 +14,7 @@ Tests for the Precision-Recall curves visualizer
 ## Imports
 ##########################################################################
 
+import matplotlib
 import sys
 import pytest
 
@@ -29,7 +30,6 @@ from sklearn.naive_bayes import GaussianNB
 from sklearn.datasets import make_regression
 from sklearn.tree import DecisionTreeClassifier
 from sklearn.linear_model import RidgeClassifier
-from sklearn.model_selection import train_test_split as tts
 from sklearn.ensemble import RandomForestClassifier, AdaBoostClassifier
 
 
@@ -236,6 +236,72 @@ class TestPrecisionRecallCurve(VisualTestCase):
 
         # Compare the images
         oz.finalize()
+        tol = 6.6 if sys.platform == 'win32' else 1.0 # fails with RMSE 6.583 on AppVeyor
+        self.assert_images_similar(oz, tol=tol)
+
+    def test_multiclass_probability_with_class_labels(self):
+        """Visual similarity of multiclass classifier with class labels."""
+        # Create and fit the visualizer
+        oz = PrecisionRecallCurve(
+            GaussianNB(), per_class=True, micro=False, fill_area=False,
+            iso_f1_curves=True, ap_score=False,
+            classes=["a", "b", "c", "d", "e", "f"]
+        )
+        assert_not_fitted(oz)
+
+        # Fit returns self
+        assert oz.fit(self.multiclass.X.train, self.multiclass.y.train) is oz
+
+        # Score the visualizer
+        s = oz.score(self.multiclass.X.test, self.multiclass.y.test)
+        assert_fitted(oz)
+
+        # Score should be between 0 and 1
+        assert 0.0 <= s <= 1.0
+
+        # Check the multiclass classification properties
+        assert oz.target_type_ == MULTICLASS
+        assert isinstance(oz.score_, dict)
+        assert oz.score_[MICRO] == s
+        assert isinstance(oz.precision_, dict)
+        assert isinstance(oz.recall_, dict)
+        assert len(oz.score_) == len(oz.classes_) + 1
+        assert len(oz.precision_) == len(oz.classes_) + 1
+        assert len(oz.recall_) == len(oz.classes_) + 1
+
+        # Finalize image
+        oz.finalize()
+
+        # Compare texts of the images.
+        # Labels
+        assert oz.ax.get_xlabel() == "Recall"
+        oz.ax.set_xlabel("")
+        assert oz.ax.get_ylabel() == "Precision"
+        oz.ax.set_ylabel("")
+        assert oz.ax.get_title() == "Precision-Recall Curve for GaussianNB"
+        oz.ax.set_title("")
+        # Legend
+        oz_legend_txt = [x.get_text() for x in oz.ax.legend().get_texts()]
+        expected_legend_txt = [
+            "PR for class a (area=0.42)",
+            "PR for class b (area=0.36)",
+            "PR for class c (area=0.44)",
+            "PR for class d (area=0.52)",
+            "PR for class e (area=0.37)",
+            "PR for class f (area=0.49)",
+        ]
+        assert oz_legend_txt == expected_legend_txt
+        handles, _ = oz.ax.get_legend_handles_labels()
+        empty_labels = [""] * len(handles)
+        oz.ax.legend(handles=handles, labels=empty_labels, loc='lower left',
+                     frameon=True)
+        # Text in iso_f1_curves.
+        # Will not check for these as they appears okay in other test images.
+        for child in oz.ax.get_children():
+            if isinstance(child, matplotlib.text.Annotation):
+                oz.ax.texts.remove(child)
+
+        # Compare the images
         tol = 6.6 if sys.platform == 'win32' else 1.0 # fails with RMSE 6.583 on AppVeyor
         self.assert_images_similar(oz, tol=tol)
 
