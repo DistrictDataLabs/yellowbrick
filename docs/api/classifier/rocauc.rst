@@ -11,6 +11,7 @@ This leads to another metric, area under the curve (AUC), which is a computation
 
 .. plot::
     :context: close-figs
+    :alt: ROCAUC Binary Classification
 
     from sklearn.model_selection import train_test_split
     from yellowbrick.classifier import ROCAUC
@@ -50,6 +51,7 @@ ROC curves are typically used in binary classification, and in fact the Scikit-L
 
 .. plot::
     :context: close-figs
+    :alt: ROCAUC multiclass classification curves
 
     from sklearn.model_selection import train_test_split
     from yellowbrick.classifier import ROCAUC

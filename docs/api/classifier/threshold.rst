@@ -9,6 +9,7 @@ A visualization of precision, recall, f1 score, and queue rate with respect to t
 
 .. plot::
     :context: close-figs
+    :alt: Discrimination Threshold of a binary classifier
 
     from yellowbrick.datasets import load_spam
     from sklearn.linear_model import LogisticRegression
@@ -18,49 +19,12 @@ A visualization of precision, recall, f1 score, and queue rate with respect to t
     X, y = load_spam()
 
     # Instantiate the classification model and visualizer
-    logistic = LogisticRegression()
+    logistic = LogisticRegression(multi_class="auto", solver="liblinear")
     visualizer = DiscriminationThreshold(logistic)
 
     visualizer.fit(X, y)  # Fit the training data to the visualizer
     visualizer.poof()     # Draw/show/poof the data
 
-.. plot::
-    :nofigs:
-    :include-source: False
-
-    import os
-    import pandas as pd
-    from sklearn.ensemble import RandomForestClassifier
-    from sklearn.preprocessing import LabelEncoder
-    from functools import partial
-   
-    BASE = os.path.join("..", "..", "..", os.path.dirname("__file__"))
-    EXAMPLES = os.path.join(BASE, "examples", "data")
-
-    CHURN_DATASET = os.path.join(EXAMPLES, "churn", "churn.txt")
-    
-    df = pd.read_csv(CHURN_DATASET)
-    df.columns = [
-        c.lower().replace(' ', '_').replace('?', '').replace("'", "")
-        for c in df.columns
-    ]
-
-    state_encoder = LabelEncoder()
-    df.state = state_encoder.fit_transform(df.state)
-
-    del df['phone']
-
-    for col in ['intl_plan', 'vmail_plan', 'churn']:
-        df[col] = df[col].map({'no': 0, 'False.': 0, 'yes': 1, 'True.': 1})
-
-    X = df[[c for c in df.columns if c != 'churn']]
-    y = df['churn']
-
-    _, ax = plt.subplots()
-
-    visualizer = DiscriminationThreshold(RandomForestClassifier, ax=ax)
-    visualizer.fit(X, y)
-    visualizer.poof()
 
 One common use of binary classification algorithms is to use the score or probability they produce to determine cases that require special treatment. For example, a fraud prevention application might use a classification algorithm to determine if a transaction is likely fraudulent and needs to be investigated in detail. In the figure above, we present an example where a binary classifier determines if an email is "spam" (the positive case) or "not spam" (the negative case). Emails that are detected as spam are moved to a hidden folder and eventually deleted.
 
