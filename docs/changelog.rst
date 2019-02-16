@@ -7,7 +7,9 @@ Version 1.0
 -----------
 * Tag: v1.0_
 * Deployed: Not yet deployed
-* Contributors: Benjamin Bengfort, Rebecca Bilbro, Nathan Danielsen, Kristen McIntyre, Larry Gray, Prema Roman, Ry Whittington, John Healy, Sourav Singh, Francois Dion, Jerome Massot, Zijie (ZJ) Poh, Rohit Ganapathy, Nabanita Dash
+* Contributors: Benjamin Bengfort, Rebecca Bilbro, Nathan Danielsen, Kristen McIntyre, Larry Gray, Prema Roman, Ry Whittington, John Healy, Sourav Singh, Francois Dion, Jerome Massot, Zijie (ZJ) Poh, Rohit Ganapathy, Nabanita Dash, Justin Ormont
+
+.. warning:: **Python 2 Deprecation**: Please note that this release deprecates Yellowbrick's support for Python 2.7. After careful consideration and following the lead of our primary dependencies (NumPy, scikit-learn, and Matplolib), we have chosen to move forward with the community and support Python 3.4 and later.
 
 Major Changes:
     - New ``JointPlot`` visualizer that is specifically designed for machine learning. The new visualizer can compare a feature to a target, features to features, and even feature to feature to target using color. The visualizer gives correlation information at a glance and is designed to work on ML datasets.
