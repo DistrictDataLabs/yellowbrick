@@ -18,7 +18,6 @@ Test the Rankd feature analysis visualizers
 ##########################################################################
 
 import sys
-import six
 import pytest
 import numpy as np
 import numpy.testing as npt
@@ -203,7 +202,7 @@ class TestRank2D(VisualTestCase, DatasetMixin):
 
         # Image similarity comparision
         oz.finalize()
-        self.assert_images_similar(oz, tol=10 if six.PY2 else 0.1)
+        self.assert_images_similar(oz, tol=0.1)
 
     @pytest.mark.xfail(
         sys.platform == 'win32', reason="images not close on windows"
@@ -233,7 +232,7 @@ class TestRank2D(VisualTestCase, DatasetMixin):
 
         # Image similarity comparision
         oz.finalize()
-        self.assert_images_similar(oz, tol=10 if six.PY2 else 0.1)
+        self.assert_images_similar(oz, tol=0.1)
 
     @pytest.mark.xfail(
         sys.platform == 'win32', reason="images not close on windows"
@@ -263,7 +262,7 @@ class TestRank2D(VisualTestCase, DatasetMixin):
 
         # Image similarity comparision
         oz.finalize()
-        self.assert_images_similar(oz, tol=10 if six.PY2 else 0.1)
+        self.assert_images_similar(oz, tol=0.1)
 
     @pytest.mark.xfail(
         sys.platform == 'win32', reason="images not close on windows"
@@ -293,7 +292,7 @@ class TestRank2D(VisualTestCase, DatasetMixin):
 
         # Image similarity comparision
         oz.finalize()
-        self.assert_images_similar(oz, tol=10 if six.PY2 else 0.1)
+        self.assert_images_similar(oz, tol=0.1)
 
     @pytest.mark.xfail(
         sys.platform == 'win32', reason="images not close on windows"
@@ -319,5 +318,4 @@ class TestRank2D(VisualTestCase, DatasetMixin):
         oz.finalize()
 
         # Image similarity testing
-        tol = 10 if six.PY2 else 0.1
-        self.assert_images_similar(oz, tol=tol)
+        self.assert_images_similar(oz, tol=0.1)

@@ -20,6 +20,7 @@ import sys
 import pytest
 import warnings
 
+from unittest import mock
 from tests.base import VisualTestCase
 from yellowbrick.text.umap_vis import *
 from yellowbrick.datasets import load_hobbies
@@ -34,11 +35,6 @@ except ImportError:
     pandas = None
 
 try:
-    from unittest import mock
-except ImportError:
-    import mock
-
-try:
     from umap import UMAP
 except ImportError:
     UMAP = None
@@ -47,6 +43,7 @@ except (RuntimeError, AttributeError):
     warnings.warn(
         "Error Importing UMAP.  UMAP does not support python 2.7 on Windows 32 bit."
     )
+
 
 ##########################################################################
 ## Data
@@ -189,9 +186,7 @@ class TestUMAP(VisualTestCase):
         umap = UMAPVisualizer(random_state=87)
         umap.fit(X, y)
 
-#        tol = 0.1 if six.PY3 else 40
-        tol = 40
-        self.assert_images_similar(umap, tol=tol)
+        self.assert_images_similar(umap, tol=40)
 
     def test_make_classification_umap_class_labels(self):
         """
@@ -207,9 +202,7 @@ class TestUMAP(VisualTestCase):
         umap = UMAPVisualizer(random_state=87, labels=['a', 'b', 'c'])
         umap.fit(X, y)
 
-        #tol = 0.1 if six.PY3 else 40
-        tol = 40
-        self.assert_images_similar(umap, tol=tol)
+        self.assert_images_similar(umap, tol=40)
 
     def test_umap_mismtached_labels(self):
         """
@@ -261,9 +254,7 @@ class TestUMAP(VisualTestCase):
         umap = UMAPVisualizer(random_state=64)
         umap.fit(X, y)
 
-        #tol = 0.1 if six.PY3 else 40
-        tol = 40
-        self.assert_images_similar(umap, tol=tol)
+        self.assert_images_similar(umap, tol=40)
 
     def test_alpha_param(self):
         """

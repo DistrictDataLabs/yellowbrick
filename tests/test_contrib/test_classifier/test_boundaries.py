@@ -17,7 +17,6 @@ Ensure that the Decision Boundary visualizations work.
 ##########################################################################
 
 import sys
-import six
 import pytest
 import numpy as np
 
@@ -92,7 +91,6 @@ class DecisionBoundariesVisualizerTest(VisualTestCase):
             model = neighbors.KNeighborsClassifier(3)
             DecisionViz(model)
 
-    @pytest.mark.skipif(six.PY2, reason="deprecation warnings filtered in PY2")
     def test_deprecated_message(self):
         """
         Test the deprecation warning message

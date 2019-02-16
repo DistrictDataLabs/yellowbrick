@@ -17,12 +17,7 @@ Downloads the example datasets for running the examples.
 ##########################################################################
 
 import os
-import six
 import zipfile
-
-if six.PY2:
-    # backport for encoding in open for python2
-    from io import open
 
 try:
     from urllib.request import urlopen

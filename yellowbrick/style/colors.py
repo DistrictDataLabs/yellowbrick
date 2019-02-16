@@ -25,7 +25,7 @@ import matplotlib as mpl
 import matplotlib.cm as cm
 
 from copy import copy
-from six import string_types
+
 from yellowbrick.exceptions import YellowbrickValueError
 
 
@@ -87,7 +87,7 @@ def resolve_colors(n_colors=None, colormap=None, colors=None):
 
     # Work with the colormap if specified and colors is not
     if colormap is not None and colors is None:
-        if isinstance(colormap, string_types):
+        if isinstance(colormap, str):
             try:
                 colormap = cm.get_cmap(colormap)
             except ValueError as e:
@@ -146,7 +146,7 @@ class ColorMap(object):
         """
         Converts color strings into a color listing.
         """
-        if isinstance(value, string_types):
+        if isinstance(value, str):
             # Must import here to avoid recursive import
             from .palettes import PALETTES
 

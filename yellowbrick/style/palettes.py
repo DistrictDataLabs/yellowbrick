@@ -28,8 +28,6 @@ import matplotlib.pyplot as plt
 import matplotlib.colors as mplcol
 
 from itertools import cycle
-from six import string_types
-from six.moves import range
 
 from .colors import get_color_cycle
 from yellowbrick.exceptions import YellowbrickValueError
@@ -393,7 +391,7 @@ class ColorPalette(list):
             specify a palette name or a list of RGB or Hex values
 
         """
-        if isinstance(name_or_list, string_types):
+        if isinstance(name_or_list, str):
             if name_or_list not in PALETTES:
                 raise YellowbrickValueError(
                     "'{}' is not a recognized palette!".format(name_or_list)
@@ -527,7 +525,7 @@ def color_palette(palette=None, n_colors=None):
         if n_colors is None:
             n_colors = len(palette)
 
-    elif not isinstance(palette, string_types):
+    elif not isinstance(palette, str):
         if n_colors is None:
             n_colors = len(palette)
 
@@ -670,7 +668,7 @@ def color_sequence(palette=None, n_colors=None):
     palette = palette or DEFAULT_SEQUENCE
 
     # Create a listed color map from the sequence
-    if not isinstance(palette, string_types):
+    if not isinstance(palette, str):
         return mplcol.ListedColormap(palette)
 
     # Otherwise perform a case-insensitive lookup
