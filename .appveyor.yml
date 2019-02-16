@@ -3,7 +3,7 @@
 
 # Temporary work around see #744
 image:
-  - Visual Studio 2017
+  - Previous Visual Studio 2017
 
 version: 0.9.{build}
 pull_requests:
