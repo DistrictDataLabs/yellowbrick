@@ -20,8 +20,6 @@ Note that these functions alter the matplotlib rc dictionary on the fly.
 ## Imports
 #########################################################################
 
-from __future__ import division
-
 import numpy as np
 import matplotlib as mpl
 import matplotlib.pyplot as plt
