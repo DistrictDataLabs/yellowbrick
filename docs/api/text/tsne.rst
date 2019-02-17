@@ -34,11 +34,11 @@ Now that the corpus is vectorized we can visualize it, showing the distribution 
 
 .. image:: images/tsne_all_docs.png
 
-Now,let's pass on a list of labels to TSNEVisualizer.
+Note that you can pass the class labels or document categories directly to the ``TSNEVisualizer`` as follows:
 
 .. code:: python
 
-    #Pass on a list of labels
+    #Pass on a list of labels for the legend
     labels = corpus.categories
     tsne = TSNEVisualizer(labels=labels)
     tsne.fit(X, y)
@@ -49,8 +49,8 @@ If we omit the target during fit, we can visualize the whole dataset to see if a
 .. code:: python
 
     # Don't color points with their classes
-    tsne = TSNEVisualizer(labels=["documents"])
-    tsne.fit(docs)
+    tsne = TSNEVisualizer(y=["documents"])
+    tsne.fit(X)
     tsne.poof()
 
 .. image:: images/tsne_no_labels.png
@@ -63,10 +63,10 @@ This means we don't have to use class labels at all. Instead we can use cluster 
     from sklearn.cluster import KMeans
 
     clusters = KMeans(n_clusters=5)
-    clusters.fit(docs)
+    clusters.fit(X)
 
     tsne = TSNEVisualizer()
-    tsne.fit(docs, ["c{}".format(c) for c in clusters.labels_])
+    tsne.fit(X, ["c{}".format(c) for c in clusters.labels_])
     tsne.poof()
 
 .. image:: images/tsne_kmeans.png
