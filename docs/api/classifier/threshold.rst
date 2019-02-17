@@ -7,30 +7,24 @@ Discrimination Threshold
 
 A visualization of precision, recall, f1 score, and queue rate with respect to the discrimination threshold of a binary classifier. The *discrimination threshold* is the probability or score at which the positive class is chosen over the negative class. Generally, this is set to 50% but the threshold can be adjusted to increase or decrease the sensitivity to false positives or to other application factors.
 
-.. code:: python
-
-    # Load a binary classification dataset
-    data = load_data("spam")
-    target = "is_spam"
-    features = [col for col in data.columns if col != target]
-
-    # Extract the instances and target from the dataset
-    X = data[features]
-    y = data[target]
-
-.. code:: python
+.. plot::
+    :context: close-figs
+    :alt: Discrimination Threshold of a binary classifier
 
     from sklearn.linear_model import LogisticRegression
+
     from yellowbrick.classifier import DiscriminationThreshold
+    from yellowbrick.datasets import load_spam
+
+    # Load a binary classification dataset
+    X, y = load_spam()
 
     # Instantiate the classification model and visualizer
-    logistic = LogisticRegression()
-    visualizer = DiscriminationThreshold(logistic)
+    model = LogisticRegression(multi_class="auto", solver="liblinear")
+    visualizer = DiscriminationThreshold(model)
 
-    visualizer.fit(X, y)  # Fit the training data to the visualizer
-    visualizer.poof()     # Draw/show/poof the data
-
-.. image:: images/spam_discrimination_threshold.png
+    visualizer.fit(X, y)        # Fit the data to the visualizer
+    visualizer.poof()           # Draw/show/poof the data
 
 One common use of binary classification algorithms is to use the score or probability they produce to determine cases that require special treatment. For example, a fraud prevention application might use a classification algorithm to determine if a transaction is likely fraudulent and needs to be investigated in detail. In the figure above, we present an example where a binary classifier determines if an email is "spam" (the positive case) or "not spam" (the negative case). Emails that are detected as spam are moved to a hidden folder and eventually deleted.
 
