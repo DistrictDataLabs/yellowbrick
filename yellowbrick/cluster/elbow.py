@@ -99,7 +99,7 @@ def distortion_score(X, labels, metric='euclidean'):
         distances = distances ** 2
 
         # Add the mean square distance to the distortion
-        distortion += distances.mean()
+        distortion += distances.sum()
 
     return distortion
 
