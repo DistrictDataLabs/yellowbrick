@@ -32,7 +32,7 @@ class RFECV(ModelVisualizer):
     """
     Recursive Feature Elimination, Cross-Validated (RFECV) feature selection.
 
-    Selects the best subset of features for the suplied estimator by removing
+    Selects the best subset of features for the supplied estimator by removing
     0 to N features (where N is the number of features) using recursive
     feature elimination, then selecting the best subset based on the
     cross-validation score of the model. Recursive feature elimination
@@ -112,6 +112,10 @@ class RFECV(ModelVisualizer):
         functions such as ``predict()`` and ``score()`` are passed through to
         this estimator (it rewraps the original model).
 
+    n_feature_subsets_ : array of shape [n_subsets_of_features]
+        The number of features removed on each iteration of RFE, computed by the
+        number of features in the dataset and the step parameter.
+
     Notes
     -----
     This model wraps ``sklearn.feature_selection.RFE`` and not
@@ -172,7 +176,7 @@ class RFECV(ModelVisualizer):
 
         # Create the RFE model
         rfe = RFE(self.estimator, step=step)
-        n_feature_subsets = np.arange(1, n_features+1)
+        self.n_feature_subsets_ = np.arange(1, n_features+step, step)
 
         # Create the cross validation params
         # TODO: handle random state
@@ -183,7 +187,7 @@ class RFECV(ModelVisualizer):
 
         # Perform cross-validation for each feature subset
         scores = []
-        for n_features_to_select in n_feature_subsets:
+        for n_features_to_select in self.n_feature_subsets_:
             rfe.set_params(n_features_to_select=n_features_to_select)
             scores.append(cross_val_score(rfe, X, y, **cv_params))
 
@@ -192,7 +196,7 @@ class RFECV(ModelVisualizer):
 
         # Find the best RFE model
         bestidx = self.cv_scores_.mean(axis=1).argmax()
-        self.n_features_ = n_feature_subsets[bestidx]
+        self.n_features_ = self.n_feature_subsets_[bestidx]
 
         # Fit the final RFE model for the number of features
         self.rfe_estimator_ = rfe
@@ -214,7 +218,7 @@ class RFECV(ModelVisualizer):
         Renders the rfecv curve.
         """
         # Compute the curves
-        x = np.arange(1, len(self.cv_scores_)+1)
+        x = self.n_feature_subsets_
         means = self.cv_scores_.mean(axis=1)
         sigmas = self.cv_scores_.std(axis=1)
 

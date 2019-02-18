@@ -1,7 +1,7 @@
 .. -*- mode: rst -*-
 
 MissingValues Bar
-=============================
+=================
 
 The MissingValues Bar visualizer creates a bar graph that counts the number of missing values per feature column.
 
@@ -22,9 +22,9 @@ If the target y is supplied to fit, then produces a stacked bar chart.
     X[X > 1.5] = np.nan
     features = ["Feature {}".format(str(n)) for n in range(10)]
 
--------------------------------------------
+
 Without Targets Supplied
--------------------------------------------
+------------------------
 
 .. code:: python
 
@@ -36,9 +36,9 @@ Without Targets Supplied
 
 .. image:: images/missingbar.png
 
--------------------------------------------
+
 With Targets (y) Supplied
--------------------------------------------
+-------------------------
 
 .. code:: python
 

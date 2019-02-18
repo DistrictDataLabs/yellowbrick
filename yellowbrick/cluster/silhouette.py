@@ -18,6 +18,7 @@ Implements visualizers that use the silhouette metric for cluster evaluation.
 ##########################################################################
 
 import numpy as np
+import matplotlib.ticker as ticker
 
 from ..style import color_palette
 from .base import ClusteringScoreVisualizer
@@ -75,7 +76,7 @@ class SilhouetteVisualizer(ClusteringScoreVisualizer):
         Mean Silhouette Coefficient for all samples. Computed via scikit-learn
         `sklearn.metrics.silhouette_score`.
 
-    silhouette_samples_ : array, shape = [n_samples_]
+    silhouette_samples_ : array, shape = [n_samples]
         Silhouette Coefficient for each samples. Computed via scikit-learn
         `sklearn.metrics.silhouette_samples`.
 
@@ -194,8 +195,15 @@ class SilhouetteVisualizer(ClusteringScoreVisualizer):
         ))
 
         # Set the X and Y limits
-        # The silhouette coefficient can range from -1, 1
-        self.ax.set_xlim([-1, 1])
+        # The silhouette coefficient can range from -1, 1;
+        # but here we scale the plot according to our visualizations
+
+        # l_xlim and u_xlim are lower and upper limits of the x-axis,
+        # set according to our calculated maximum and minimum silhouette score along with necessary padding
+        l_xlim = max(-1, min(-0.1, round(min(self.silhouette_samples_) - 0.1, 1)))
+        u_xlim = min(1, round(max(self.silhouette_samples_) + 0.1, 1))
+        self.ax.set_xlim([l_xlim, u_xlim])
+
         # The (n_clusters_+1)*10 is for inserting blank space between
         # silhouette plots of individual clusters, to demarcate them clearly.
         self.ax.set_ylim([0, self.n_samples_ + (self.n_clusters_ + 1) * 10])
@@ -206,4 +214,4 @@ class SilhouetteVisualizer(ClusteringScoreVisualizer):
 
         # Set the ticks on the axis object.
         self.ax.set_yticks([])  # Clear the yaxis labels / ticks
-        self.ax.set_xticks(np.linspace(-1,1,11))
+        self.ax.xaxis.set_major_locator(ticker.MultipleLocator(0.1))  # Set the ticks at multiples of 0.1

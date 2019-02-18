@@ -1,7 +1,7 @@
 .. -*- mode: rst -*-
 
 MissingValues Dispersion
-=============================
+========================
 
 The MissingValues Dispersion visualizer creates a chart that maps the position of missing values by the order of the index.
 
@@ -20,9 +20,9 @@ The MissingValues Dispersion visualizer creates a chart that maps the position o
     X[X > 1.5] = np.nan
     features = ["Feature {}".format(str(n)) for n in range(10)]
 
--------------------------------------------
+
 Without Targets Supplied
--------------------------------------------
+------------------------
 
 .. code:: python
 
@@ -34,9 +34,9 @@ Without Targets Supplied
 
 .. image:: images/missingdispersion.png
 
--------------------------------------------
+
 With Targets (y) Supplied
--------------------------------------------
+-------------------------
 
 .. code:: python
 

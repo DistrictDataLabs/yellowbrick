@@ -61,6 +61,7 @@ docs/_build/
 # IDE/editor droppings
 *.swp
 *.swo
+.vscode/settings.json
 
 # OS droppings
 .DS_Store
@@ -120,6 +121,4 @@ fabric.properties
 
 # Data downloaded from Yellowbrick
 data/
-.vscode/settings.json
-
 yellowbrick/datasets/fixtures

@@ -17,44 +17,28 @@ Random Forest, Gradient Boosting, and Ada Boost provide a
 ``feature_importances_`` attribute when fitted. The Yellowbrick
 ``FeatureImportances`` visualizer utilizes this attribute to rank and plot
 relative importances. Let's start with an example; first load a
-classification dataset as follows:
+classification dataset.
 
-.. code:: python
-
-    # Load the classification data set
-    data = load_data("occupancy")
-
-    # Specify the features of interest
-    features = [
-        "temperature", "relative humidity", "light", "C02", "humidity"
-    ]
-
-    # Extract the instances and target
-    X = data[features]
-    y = data.occupancy
-
-Once the dataset has been loaded, we can create a new figure (this is
+Then we can create a new figure (this is
 optional, if an ``Axes`` isn't specified, Yellowbrick will use the current
 figure or create one). We can then fit a ``FeatureImportances`` visualizer
-with a ``GradientBoostingClassifier`` to visualize the ranked features:
+with a ``GradientBoostingClassifier`` to visualize the ranked features.
 
-.. code:: python
+.. plot::
+    :context: close-figs
 
-    import matplotlib.pyplot as plt
+    from sklearn.ensemble import RandomForestClassifier
 
-    from sklearn.ensemble import GradientBoostingClassifier
+    from yellowbrick.datasets import load_occupancy
+    from yellowbrick.features import FeatureImportances
 
-    from yellowbrick.features.importances import FeatureImportances
+    # Load the classification data set
+    X, y = load_occupancy()
 
-    # Create a new matplotlib figure
-    fig = plt.figure()
-    ax = fig.add_subplot()
-
-    viz = FeatureImportances(GradientBoostingClassifier(), ax=ax)
+    viz = FeatureImportances(RandomForestClassifier())
     viz.fit(X, y)
     viz.poof()
 
-.. image:: images/feature_importances.png
 
 The above figure shows the features ranked according to the explained variance
 each feature contributes to the model. In this case the features are plotted
@@ -64,22 +48,7 @@ most important feature. The visualizer also contains ``features_`` and
 
 For models that do not support a ``feature_importances_`` attribute, the
 ``FeatureImportances`` visualizer will also draw a bar plot for the ``coef_``
-attribute that many linear models provide. First we start by loading a
-regression dataset:
-
-.. code:: python
-
-    # Load a regression data set
-    data = load_data("concrete")
-
-    # Specify the features of interest
-    features = [
-        "cement","slag","ash","water","splast","coarse","fine","age"
-    ]
-
-    # Extract the instances and target
-    X = data[features]
-    y = data.strength
+attribute that many linear models provide.
 
 When using a model with a ``coef_`` attribute, it is better to set
 ``relative=False`` to draw the true magnitude of the coefficient (which may
@@ -87,30 +56,48 @@ be negative). We can also specify our own set of labels if the dataset does
 not have column names or to print better titles. In the example below we
 title case our features for better readability:
 
-.. code:: python
+.. plot::
+    :context: close-figs
 
-    import matplotlib.pyplot as plt
-    
     from sklearn.linear_model import Lasso
-    
-    from yellowbrick.features.importances import FeatureImportances
+    from yellowbrick.datasets import load_concrete
+    from yellowbrick.features import FeatureImportances
 
-    # Create a new figure
-    fig = plt.figure()
-    ax = fig.add_subplot()
+    # Load the regression dataset
+    dataset = load_concrete(return_dataset=True)
+    X, y = dataset.to_data()
 
     # Title case the feature for better display and create the visualizer
-    labels = list(map(lambda s: s.title(), features))
-    viz = FeatureImportances(Lasso(), ax=ax, labels=labels, relative=False)
+    labels = list(map(lambda s: s.title(), dataset.meta['features']))
+    viz = FeatureImportances(Lasso(), labels=labels, relative=False)
 
     # Fit and show the feature importances
     viz.fit(X, y)
     viz.poof()
 
-
-.. image:: images/feature_importances_coef.png
-
 .. NOTE:: The interpretation of the importance of coeficients depends on the model; see the discussion below for more details.
+
+Stacked Feature Importances
+---------------------------
+
+Some estimators return a multi-dimensonal array for either ``feature_importances_`` or ``coef_`` attributes. For example the ``LogisticRegression`` classifier returns a ``coef_`` array in the shape of ``(n_classes, n_features)`` in the multiclass case. These coefficients map the importance of the feature to the prediction of the probability of a specific class. Although the interpretation of multi-dimensional feature importances depends on the specific estimator and model family, the data is treated the same in the ``FeatureImportances`` visualizer -- namely the importances are averaged.
+
+Taking the mean of the importances may be undesirable for several reasons. For example, a feature may be more informative for some classes than others. Multi-output estimators also do not benefit from having averages taken across what are essentially multiple internal models. In this case, use the ``stack=True`` parameter to draw a stacked bar chart of importances as follows:
+
+.. plot::
+    :context: close-figs
+
+    from yellowbrick.features import FeatureImportances
+    from sklearn.linear_model import LogisticRegression
+    from sklearn.datasets import load_iris
+
+    data = load_iris()
+    X, y = data.data, data.target
+
+    viz = FeatureImportances(LogisticRegression(), stack=True, relative=False)
+    viz.fit(X, y)
+    viz.poof()
+
 
 Discussion
 ----------

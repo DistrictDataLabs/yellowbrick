@@ -21,13 +21,14 @@ is generally used for feature engineering.
 ## Imports
 ##########################################################################
 
+import warnings
 import numpy as np
 import matplotlib.pyplot as plt
 
-from yellowbrick.utils import is_dataframe, is_classifier
 from yellowbrick.base import ModelVisualizer
-from yellowbrick.exceptions import YellowbrickTypeError, NotFitted
-from ..style.palettes import color_palette
+from yellowbrick.style.palettes import color_palette
+from yellowbrick.utils import is_dataframe, is_classifier
+from yellowbrick.exceptions import YellowbrickTypeError, NotFitted, YellowbrickWarning
 
 
 ##########################################################################
@@ -150,8 +151,11 @@ class FeatureImportances(ModelVisualizer):
         # therefore we flatten by taking the average by
         # column to get shape (n_features,)  (see LogisticRegression)
         if not self.stack and self.feature_importances_.ndim > 1:
-            self.feature_importances_ = np.mean(self.feature_importances_,
-                                                axis=0)
+            self.feature_importances_ = np.mean(self.feature_importances_, axis=0)
+            warnings.warn((
+                "detected multi-dimensional feature importances but stack=False, "
+                "using mean to aggregate them."
+            ), YellowbrickWarning)
 
         # Apply absolute value filter before normalization
         if self.absolute:

@@ -73,10 +73,10 @@ X_two_cols = X[:, :2]
 @pytest.mark.filterwarnings('ignore')
 class DecisionBoundariesVisualizerTest(VisualTestCase):
     """
-    DecisionBoundariesVisualizer
+    Test DecisionBoundariesVisualizer
     """
 
-    def test_decision_bounardies(self):
+    def test_decision_boundaries(self):
         """
         Assert no errors during kNN DecisionBoundariesVisualizer integration
         """
@@ -85,12 +85,18 @@ class DecisionBoundariesVisualizerTest(VisualTestCase):
         viz.fit_draw_poof(X_two_cols, y=y)
 
     def test_deprecated(self):
+        """
+        Assert the DecisionViz class issues deprecation warning
+        """
         with pytest.deprecated_call():
             model = neighbors.KNeighborsClassifier(3)
             DecisionViz(model)
 
     @pytest.mark.skipif(six.PY2, reason="deprecation warnings filtered in PY2")
     def test_deprecated_message(self):
+        """
+        Test the deprecation warning message
+        """
         with pytest.warns(DeprecationWarning, match='Will be moved to yellowbrick.contrib in v0.8'):
             model = neighbors.KNeighborsClassifier(3)
             DecisionViz(model)
@@ -320,9 +326,7 @@ class DecisionBoundariesVisualizerTest(VisualTestCase):
         viz.draw.assert_called_once_with(X_two_cols, y)
         viz.poof.assert_called_once_with()
 
-    @pytest.mark.xfail(
-        sys.platform == 'win32', reason="images not close on windows"
-    )
+    @pytest.mark.xfail(reason="numpy structured arrays have changed since v1.14")
     def test_integrated_plot_numpy_named_arrays(self):
         """
         Test integration of visualizer with numpy named arrays

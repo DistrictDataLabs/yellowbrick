@@ -1,29 +1,33 @@
 ## Dependencies
-matplotlib>=1.5.1
-scipy>=0.19
-scikit-learn>=0.19
+matplotlib>=1.5.1,!=3.0.0
+scipy>=1.0.0
+scikit-learn>=0.20
 numpy>=1.13.0
 cycler>=0.10.0
 
-## Testing Requirements (uncomment for development)
-#pytest>=3.4.1
-#pytest-cov>=2.5.1
-#pytest-flakes>=2.0.0
+## Optional Dependencies (uncomment to use)
+#umap-learn>=0.3
+
+## Testing Requirements (pip install -r tests/requirements.txt)
+#pytest>=4.2.0
+#pytest-cov>=2.6.1
+#pytest-flakes>=4.0.0
 #pytest-spec>=1.1.0
-#coverage>=4.4.1
+#coverage>=4.5.2
 #requests>=2.18.3
 #six==1.11.0
 
 ## Python 2 Testing Requirements
 #mock>=2.0.0
 
-## Optional Testing Dependencies (uncomment for development)
+## Optional Testing Dependencies (pip install -r tests/requirements.txt)
 #nltk>=3.2
 #pandas>=0.20
+#umap-learn>=0.3
 
-## Documentation (uncomment to build documentation)
-#Sphinx>=1.7.5
-#sphinx-rtd-theme>=0.4.0
+## Documentation (pip install -r docs/requirements.txt)
+#Sphinx>=1.8.3
+#sphinx-rtd-theme>=0.4.2
 #numpydoc>=0.8.0
 
 ## Build Requirements (uncomment for deployment)

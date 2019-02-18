@@ -28,6 +28,7 @@ from .classification_report import ClassificationReport, classification_report
 from .confusion_matrix import ConfusionMatrix, confusion_matrix
 from .rocauc import ROCAUC, roc_auc
 from .threshold import DiscriminationThreshold, discrimination_threshold
+from .prcurve import PrecisionRecallCurve, PRCurve, precision_recall_curve
 
 ## Import from target for backward compatibility and classifier association
 from ..target.class_balance import ClassBalance, class_balance

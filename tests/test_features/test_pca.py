@@ -184,6 +184,7 @@ class PCADecompositionTests(VisualTestCase):
         X = np.random.normal(loc=2, size=(100, 2))
         params = {'scale': True, 'proj_dim': 3}
 
-        with pytest.raises(ValueError, match="n_components=3 must be between 0 and n_features"):
+        e = r'n_components=3 must be between 0 and min\(n_samples, n_features\)=2'
+        with pytest.raises(ValueError, match=e):
             pca = PCADecomposition(**params)
             pca.fit(X)

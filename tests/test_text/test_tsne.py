@@ -4,7 +4,7 @@
 # Author:   Benjamin Bengfort <benjamin@bengfort.com>
 # Created:  Mon Feb 20 07:23:53 2017 -0500
 #
-# Copyright (C) 2016 Bengfort.com
+# Copyright (C) 2018 The scikit-yb developers
 # For license information, see LICENSE.txt
 #
 # ID: test_tsne.py [6aa9198] benjamin@bengfort.com $
@@ -22,7 +22,7 @@ import pytest
 
 from yellowbrick.text.tsne import *
 from tests.base import VisualTestCase
-from tests.dataset import DatasetMixin
+from yellowbrick.datasets import load_hobbies
 from yellowbrick.exceptions import YellowbrickValueError
 
 from sklearn.manifold import TSNE
@@ -40,10 +40,16 @@ except ImportError:
     import mock
 
 ##########################################################################
+## Data
+##########################################################################
+
+corpus = load_hobbies()
+
+##########################################################################
 ## TSNE Tests
 ##########################################################################
 
-class TestTSNE(VisualTestCase, DatasetMixin):
+class TestTSNE(VisualTestCase):
     """
     TSNEVisualizer tests
     """
@@ -76,7 +82,6 @@ class TestTSNE(VisualTestCase, DatasetMixin):
         """
         Check tSNE integrated visualization on the hobbies corpus
         """
-        corpus = self.load_data('hobbies')
         tfidf  = TfidfVectorizer()
 
         docs   = tfidf.fit_transform(corpus.data)
@@ -125,6 +130,41 @@ class TestTSNE(VisualTestCase, DatasetMixin):
         tsne = TSNEVisualizer(size=(100, 50))
 
         assert tsne._size == (100, 50)
+
+    def test_custom_colors_tsne(self):
+        """
+        Check tSNE accepts and properly handles custom colors from user
+        """
+        ## produce random data
+        X, y = make_classification(n_samples=200, n_features=100,
+                               n_informative=20, n_redundant=10, 
+                               n_classes=5, random_state=42)
+        
+        ## specify a list of custom colors >= n_classes
+        purple_blues = ["indigo", "orchid", "plum", "navy", "purple", "blue"]
+        
+        ## instantiate the visualizer and check that self.colors is correct
+        purple_tsne = TSNEVisualizer(colors=purple_blues, random_state=87)
+        assert purple_tsne.colors == purple_blues
+        
+        ## fit the visualizer and check that self.color_values is as long as
+        ## n_classes and is the first n_classes items in self.colors
+        purple_tsne.fit(X,y)
+        assert len(purple_tsne.color_values_) == len(purple_tsne.classes_)
+        assert purple_tsne.color_values_ == purple_blues[:len(purple_tsne.classes_)]
+
+        ## specify a list of custom colors < n_classes
+        greens = ["green", "lime", "teal"]
+
+        ## instantiate the visualizer and check that self.colors is correct
+        green_tsne = TSNEVisualizer(colors=greens, random_state=87)
+        assert green_tsne.colors == greens
+
+        ## fit the visualizer and check that self.color_values is as long as
+        ## n_classes and the user-supplied color list gets recycled as expected
+        green_tsne.fit(X,y)
+        assert len(green_tsne.color_values_) == len(green_tsne.classes_)
+        assert green_tsne.color_values_ == ["green", "lime", "teal", "green", "lime"]
 
     def test_make_classification_tsne(self):
         """

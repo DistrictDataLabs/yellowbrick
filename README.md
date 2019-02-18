@@ -5,7 +5,6 @@
 [![Coverage Status](https://coveralls.io/repos/github/DistrictDataLabs/yellowbrick/badge.svg?branch=master)](https://coveralls.io/github/DistrictDataLabs/yellowbrick?branch=master)
 [![Total Alerts](https://img.shields.io/lgtm/alerts/g/DistrictDataLabs/yellowbrick.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/DistrictDataLabs/yellowbrick/alerts/)
 [![Language Grade: Python](https://img.shields.io/lgtm/grade/python/g/DistrictDataLabs/yellowbrick.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/DistrictDataLabs/yellowbrick/context:python)
-
 [![PyPI version](https://badge.fury.io/py/yellowbrick.svg)](https://badge.fury.io/py/yellowbrick)
 [![Documentation Status](https://readthedocs.org/projects/yellowbrick/badge/?version=latest)](http://yellowbrick.readthedocs.io/en/latest/?badge=latest)
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.1206239.svg)](https://doi.org/10.5281/zenodo.1206239)
@@ -14,73 +13,19 @@
 
 **Visual analysis and diagnostic tools to facilitate machine learning model selection.**
 
-![Follow the yellow brick road](docs/images/yellowbrickroad.jpg)
-Image by [Quatro Cinco](https://flic.kr/p/2Yj9mj), used with permission, Flickr Creative Commons.
-
-This README is a guide for developers, if you're new to Yellowbrick, get started at our [documentation](http://www.scikit-yb.org/).
+[![Classifiers](docs/images/readme/classifiers.png)](https://www.scikit-yb.org/en/latest/gallery.html)
+[![Clusterers](docs/images/readme/clusterers.png)](https://www.scikit-yb.org/en/latest/gallery.html)
+[![Regressors](docs/images/readme/regressors.png)](https://www.scikit-yb.org/en/latest/gallery.html)
 
 ## What is Yellowbrick?
 
-Yellowbrick is a suite of visual diagnostic tools called "Visualizers" that extend the scikit-learn API to allow human steering of the model selection process. In a nutshell, Yellowbrick combines scikit-learn with matplotlib in the best tradition of the scikit-learn documentation, but to produce visualizations for _your_ models!
+Yellowbrick is a suite of visual diagnostic tools called "Visualizers" that extend the scikit-learn API to allow human steering of the model selection process. In a nutshell, Yellowbrick combines scikit-learn with matplotlib in the best tradition of the scikit-learn documentation, but to produce visualizations for _your_ machine learning workflow!
 
-![Visualizers](docs/images/visualizers.png)
-
-### Visualizers
-
-Visualizers are estimators (objects that learn from data) whose primary objective is to create visualizations that allow insight into the model selection process. In scikit-learn terms, they can be similar to transformers when visualizing the data space or wrapping a model estimator similar to how the "ModelCV" (e.g. RidgeCV, LassoCV) methods work. The primary goal of Yellowbrick is to create a sensical API similar to scikit-learn. Some of our most popular visualizers include:
-
-#### Feature Visualization
-
-- **Rank Features**: single or pairwise ranking of features to detect relationships
-- **Parallel Coordinates**: horizontal visualization of instances
-- **Radial Visualization**: separation of instances around a circular plot
-- **PCA Projection**: projection of instances based on principal components
-- **Manifold Visualization**: high dimensional visualization with manifold learning
-- **Feature Importances**: rank features based on their in-model performance
-- **Recursive Feature Elimination**: find the best subset of features by importance
-- **Joint Plots**: direct data visualization with feature selection
-
-#### Classification Visualization
-
-- **Class Balance**: see how the distribution of classes affects the model
-- **Class Prediction Error**: shows error and support in classification
-- **Classification Report**: visual representation of precision, recall, and F1
-- **ROC/AUC Curves**: receiver operator characteristics and area under the curve
-- **Confusion Matrices**: visual description of class decision making
-- **Discrimination Threshold**: find a threshold that best separates binary classes
-
-#### Regression Visualization
-
-- **Prediction Error Plots**: find model breakdowns along the domain of the target
-- **Residuals Plot**: show the difference in residuals of training and test data
-- **Alpha Selection**: show how the choice of alpha influences regularization
-
-#### Clustering Visualization
-
-- **K-Elbow Plot**: select k using the elbow method and various metrics
-- **Silhouette Plot**: select k by visualizing silhouette coefficient values
-- **Intercluster Distance Maps**: show relative distance and size of clusters
-
-#### Model Selection Visualization
-
-- **Validation Curve**: tune a model with respect to a single hyperparameter
-- **Learning Curve**: show if a model might benefit from more data or less complexity
-
-#### Text Visualization
-
-- **Term Frequency**: visualize the frequency distribution of terms in the corpus
-- **t-SNE Corpus Visualization**: use stochastic neighbor embedding to project documents.
-- **Dispersion Plot**: visualize how key terms are dispersed throughout a corpus
-
-#### Target Visualization
-
-- **Feature Correlation**: visualize the correlation between the dependent variables and the target
-
-And more! Visualizers are being added all the time, so be sure to check the examples (or even the develop branch) and feel free to contribute your ideas for Visualizers!
+For complete documentation on the Yellowbrick API, a gallery of available visualizers, the contributor's guide, tutorials and teaching resources, frequently asked questions, and more, please visit our documentation at [www.scikit-yb.org](https://www.scikit-yb.org/).
 
 ## Installing Yellowbrick
 
-Yellowbrick is compatible with Python 2.7 or later but it is preferred to use Python 3.5 or later to take full advantage of all functionality. Yellowbrick also depends on scikit-learn 0.18 or later and matplotlib 1.5 or later. The simplest way to install Yellowbrick is from PyPI with pip, Python's preferred package installer.
+Yellowbrick is compatible with Python 3.4 or later and also depends on scikit-learn and matplotlib. The simplest way to install Yellowbrick and its dependencies is from PyPI with pip, Python's preferred package installer.
 
     $ pip install yellowbrick
 
@@ -107,10 +52,12 @@ In this example, we see how Rank2D performs pairwise comparisons of each feature
 ```python
 from yellowbrick.features import Rank2D
 
-visualizer = Rank2D(features=features, algorithm='covariance')
+visualizer = Rank2D(
+    features=features, algorithm='covariance'
+)
 visualizer.fit(X, y)                # Fit the data to the visualizer
 visualizer.transform(X)             # Transform the data
-visualizer.poof()                   # Draw/show/poof the data
+visualizer.poof()                   # Show the data
 ```
 
 ### Model Visualization
@@ -128,23 +75,19 @@ visualizer.score(X,y)
 visualizer.poof()
 ```
 
-For additional information on getting started with Yellowbrick, check out our [examples notebook](https://github.com/DistrictDataLabs/yellowbrick/blob/develop/examples/examples.ipynb).
-
-We also have a [quick start guide](https://github.com/DistrictDataLabs/yellowbrick/blob/master/docs/quickstart.rst).
+For additional information on getting started with Yellowbrick, view the quickstart guide in the [documentation](https://www.scikit-yb.org/en/latest/) and check out our [examples notebook](https://github.com/DistrictDataLabs/yellowbrick/blob/develop/examples/examples.ipynb).
 
 ## Contributing to Yellowbrick
 
 Yellowbrick is an open source project that is supported by a community who will gratefully and humbly accept any contributions you might make to the project. Large or small, any contribution makes a big difference; and if you've never contributed to an open source project before, we hope you will start with Yellowbrick!
 
-Principally, Yellowbrick development is about the addition and creation of *visualizers* -- objects that learn from data and create a visual representation of the data or model. Visualizers integrate with scikit-learn estimators, transformers, and pipelines for specific purposes and as a result can be simple to build and deploy. The most common contribution is therefore a new visualizer for a specific model or model family. We'll discuss in detail how to build visualizers later.
-
-Beyond creating visualizers, there are many ways to contribute:
+If you are interested in contributing, check out our [contributor's guide](https://www.scikit-yb.org/en/latest/contributing.html). Beyond creating visualizers, there are many ways to contribute:
 
 - Submit a bug report or feature request on [GitHub Issues](https://github.com/DistrictDataLabs/yellowbrick/issues).
 - Contribute a Jupyter notebook to our examples[ gallery](https://github.com/DistrictDataLabs/yellowbrick/tree/develop/examples).
-- Assist us with [user testing](http://www.scikit-yb.org/en/latest/evaluation.html).
-- Add to the documentation or help with our website, [scikit-yb.org](http://www.scikit-yb.org).
-- Write unit or integration tests for our project.
+- Assist us with [user testing](https://www.scikit-yb.org/en/latest/evaluation.html).
+- Add to the documentation or help with our website, [scikit-yb.org](https://www.scikit-yb.org).
+- [Write unit or integration tests](https://www.scikit-yb.org/en/latest/contributing.html#testing) for our project.
 - Answer questions on our issues, mailing list, Stack Overflow, and elsewhere.
 - Translate our documentation into another language.
 - Write a blog post, tweet, or share our project with others.
@@ -152,30 +95,24 @@ Beyond creating visualizers, there are many ways to contribute:
 
 As you can see, there are lots of ways to get involved and we would be very happy for you to join us! The only thing we ask is that you abide by the principles of openness, respect, and consideration of others as described in the [Python Software Foundation Code of Conduct](https://www.python.org/psf/codeofconduct/).
 
-For more information, checkout the `CONTRIBUTING.md` file in the root of the repository or the detailed documentation at [Contributing to Yellowbrick](http://www.scikit-yb.org/en/latest/contributing.html)
+For more information, checkout the `CONTRIBUTING.md` file in the root of the repository or the detailed documentation at [Contributing to Yellowbrick](https://www.scikit-yb.org/en/latest/contributing.html)
 
-## Development Scripts
+## Yellowbrick Datasets
 
-Yellowbrick contains scripts to help with development, including downloading fixture data for tests and managing images for comparison.
+Yellowbrick gives easy access to several datasets that are used for the examples in the documentation and testing. These datasets are hosted in our CDN and must be downloaded for use. Typically, when a user calls one of the data loader functions, e.g. `load_bikeshare()` the data is automatically downloaded if it's not already on the user's computer. However, for development and testing, or if you know you will be working without internet access, it might be easier to simply download all the data at once.
 
-### Images
+The data downloader script can be run as follows:
 
-The image comparison helper script manages the test directory's `baseline_images` folder by copying files from the `actual_images` folder to setup baselines. To use this script, first run the tests (which will cause image not found errors) then copy the images into baseline as follows:
+    $ python -m yellowbrick.download
 
-```
-$ python -m tests.images tests/test_visualizer.py
-```
+This will download the data to the fixtures directory inside of the Yellowbrick site packages. You can specify the location of the download either as an argument to the downloader script (use `--help` for more details) or by setting the `$YELLOWBRICK_DATA` environment variable. This is the preferred mechanism because this will also influence how data is loaded in Yellowbrick.
 
-Where `tests/test_visualizer.py` is the test file that contains the image comparison tests. All related tests will be discovered, validated, and copied to the baseline directory. To clear out images from both actual and baseline to reset tests, use the `-C` flag:
+_Note: Developers who have downloaded data from Yellowbrick versions earlier than v1.0 may experience some problems with the older data format. If this occurs, you can clear out your data cache as follows:_
 
-```
-$ python -m tests.images -C tests/test_visualizer.py
-```
+    $ python -m yellowbrick.download --cleanup
 
-Glob syntax can be used to move multiple files. For example to reset all the classifier tests:
+_This will remove old datasets and download the new ones. You can also use the `--no-download` flag to simply clear the cache without re-downloading data. Users who are having difficulty with datasets can also use this or they can uninstall and reinstall Yellowbrick using `pip`._
 
-```
-$ python -m tests.images tests/test_classifier/*
-```
+## Citing Yellowbrick
 
-Though it is recommended that specific test cases are targeted, rather than updating entire directories.
+We would be glad if you used Yellowbrick in your scientific publications! If you do, please cite us using the [citation guidelines](https://www.scikit-yb.org/en/latest/about.html#citing-yellowbrick).
