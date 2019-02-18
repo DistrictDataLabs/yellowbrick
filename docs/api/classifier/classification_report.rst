@@ -7,6 +7,7 @@ The classification report visualizer displays the precision, recall, F1, and sup
 
 .. plot::
     :context: close-figs
+    :alt:  Classification Report
 
     from sklearn.model_selection import train_test_split
     from sklearn.naive_bayes import GaussianNB

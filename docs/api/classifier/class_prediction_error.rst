@@ -9,6 +9,7 @@ The class prediction error chart provides a way to quickly understand how good y
 
 .. plot::
     :context: close-figs
+    :alt:  Class Prediction Error plot on Fruit
 
     from sklearn.datasets import make_classification
     from sklearn.model_selection import train_test_split
@@ -47,6 +48,7 @@ By contrast, in the following example, the ``RandomForestClassifier`` does a gre
 
 .. plot::
     :context: close-figs
+    :alt: Class Prediction Error on account standing
 
     from sklearn.model_selection import train_test_split
     from sklearn.ensemble import RandomForestClassifier
