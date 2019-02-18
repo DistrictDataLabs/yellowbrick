@@ -11,6 +11,7 @@ Data scientists use this method to detect clusters of instances that have simila
 
 .. plot::
     :context: close-figs
+    :alt: Parallel Coordinates
 
     from yellowbrick.features import ParallelCoordinates
     from yellowbrick.datasets import load_occupancy
@@ -44,6 +45,7 @@ Normalization techniques can be directly applied to the visualizer without pre-t
 
 .. plot::
     :context: close-figs
+    :alt: Parallel Coordinates with Normalization
 
     from yellowbrick.features import ParallelCoordinates
     from yellowbrick.datasets import load_occupancy
@@ -85,6 +87,7 @@ The "fast" drawing mode vastly improves the performance of the parallel coordina
 .. plot::
     :include-source: False
     :context: close-figs
+    :alt: Parallel Coordinates in fast drawing mode
 
     import matplotlib.pyplot as plt
     from sklearn.datasets import load_iris
