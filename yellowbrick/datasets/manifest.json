@@ -21,11 +21,11 @@
   },
   "game": {
     "url": "https://s3.amazonaws.com/ddl-data-lake/yellowbrick/v1.0/game.zip",
-    "signature": "288ead65e8515f18d3cdb6659ad1c33f7a290159a9667744f211a7d1d2d7d237"
+    "signature": "ce799d1c55fcf1985a02def4d85672ac86c022f8f7afefbe42b20364fba47d7a"
   },
   "mushroom": {
     "url": "https://s3.amazonaws.com/ddl-data-lake/yellowbrick/v1.0/mushroom.zip",
-    "signature": "65ca038f15e4fb9868558b96936d325873782e6db2c257492709220ea5a51fa3"
+    "signature": "f79fdbc33b012dabd06a8f3cb3007d244b6aab22d41358b9aeda74417c91f300"
   },
   "occupancy": {
     "url": "https://s3.amazonaws.com/ddl-data-lake/yellowbrick/v1.0/occupancy.zip",
