@@ -20,15 +20,11 @@ Tests to ensure that the visual pipeline works as expected.
 import os
 import unittest
 
+from unittest import mock
 from yellowbrick.base import Visualizer
 from yellowbrick.pipeline import VisualPipeline
 from sklearn.pipeline import Pipeline
 from sklearn.base import BaseEstimator, TransformerMixin
-
-try:
-    from unittest import mock
-except ImportError:
-    import mock
 
 
 ##########################################################################

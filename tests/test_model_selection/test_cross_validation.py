@@ -17,6 +17,7 @@ Tests for the CVScores visualizer
 import pytest
 import numpy.testing as npt
 
+from unittest.mock import patch
 from tests.base import VisualTestCase
 from tests.dataset import DatasetMixin
 
@@ -34,11 +35,6 @@ try:
     import pandas as pd
 except ImportError:
     pd = None
-
-try:
-    from unittest.mock import patch
-except ImportError:
-    from mock import patch
 
 
 ##########################################################################

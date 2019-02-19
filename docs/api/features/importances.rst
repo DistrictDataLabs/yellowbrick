@@ -26,6 +26,7 @@ with a ``GradientBoostingClassifier`` to visualize the ranked features.
 
 .. plot::
     :context: close-figs
+    :alt: Feature importances of Random Forest classifier
 
     from sklearn.ensemble import RandomForestClassifier
 
@@ -35,7 +36,8 @@ with a ``GradientBoostingClassifier`` to visualize the ranked features.
     # Load the classification data set
     X, y = load_occupancy()
 
-    viz = FeatureImportances(RandomForestClassifier())
+    model = RandomForestClassifier(n_estimators=10)
+    viz = FeatureImportances(model)
     viz.fit(X, y)
     viz.poof()
 
@@ -58,6 +60,7 @@ title case our features for better readability:
 
 .. plot::
     :context: close-figs
+    :alt: Coefficient importances for LASSO regression
 
     from sklearn.linear_model import Lasso
     from yellowbrick.datasets import load_concrete
@@ -86,6 +89,7 @@ Taking the mean of the importances may be undesirable for several reasons. For e
 
 .. plot::
     :context: close-figs
+    :alt: Stacked per-class importances with Logistic Regression
 
     from yellowbrick.features import FeatureImportances
     from sklearn.linear_model import LogisticRegression
@@ -94,7 +98,8 @@ Taking the mean of the importances may be undesirable for several reasons. For e
     data = load_iris()
     X, y = data.data, data.target
 
-    viz = FeatureImportances(LogisticRegression(), stack=True, relative=False)
+    model = LogisticRegression(multi_class="auto", solver="liblinear")
+    viz = FeatureImportances(model, stack=True, relative=False)
     viz.fit(X, y)
     viz.poof()
 
