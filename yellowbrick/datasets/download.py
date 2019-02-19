@@ -19,11 +19,7 @@ Downloads the example datasets for running the examples.
 import os
 import zipfile
 
-try:
-    from urllib.request import urlopen
-except ImportError:
-    # python 2
-    from urllib2 import urlopen
+from urllib.request import urlopen
 
 from .signature import sha256sum
 from .path import get_data_home, cleanup_dataset
