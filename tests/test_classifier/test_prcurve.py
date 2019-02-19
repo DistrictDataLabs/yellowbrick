@@ -16,6 +16,7 @@ Tests for the Precision-Recall curves visualizer
 
 import sys
 import pytest
+import matplotlib
 
 from yellowbrick.exceptions import *
 from yellowbrick.classifier.prcurve import *
@@ -239,6 +240,69 @@ class TestPrecisionRecallCurve(VisualTestCase):
         tol = 6.6 if sys.platform == 'win32' else 1.0 # fails with RMSE 6.583 on AppVeyor
         self.assert_images_similar(oz, tol=tol)
 
+    def test_multiclass_probability_with_class_labels(self):
+        """Visual similarity of multiclass classifier with class labels."""
+        # Create and fit the visualizer
+        oz = PrecisionRecallCurve(
+            GaussianNB(), per_class=True, micro=False, fill_area=False,
+            iso_f1_curves=True, ap_score=False,
+            classes=["a", "b", "c", "d", "e", "f"]
+        )
+        assert_not_fitted(oz)
+
+        # Fit returns self
+        assert oz.fit(self.multiclass.X.train, self.multiclass.y.train) is oz
+
+        # Score the visualizer
+        s = oz.score(self.multiclass.X.test, self.multiclass.y.test)
+        assert_fitted(oz)
+
+        # Score should be between 0 and 1
+        assert 0.0 <= s <= 1.0
+
+        # Check the multiclass classification properties
+        assert oz.target_type_ == MULTICLASS
+        assert isinstance(oz.score_, dict)
+        assert oz.score_[MICRO] == s
+        assert isinstance(oz.precision_, dict)
+        assert isinstance(oz.recall_, dict)
+        assert len(oz.score_) == len(oz.classes_) + 1
+        assert len(oz.precision_) == len(oz.classes_) + 1
+        assert len(oz.recall_) == len(oz.classes_) + 1
+
+        # Finalize image
+        oz.finalize()
+
+        # Compare the label text of the images.
+        assert oz.ax.get_xlabel() == "Recall"
+        oz.ax.set_xlabel("")
+        assert oz.ax.get_ylabel() == "Precision"
+        oz.ax.set_ylabel("")
+        assert oz.ax.get_title() == "Precision-Recall Curve for GaussianNB"
+        oz.ax.set_title("")
+
+        # Compare the Legend text
+        expected_legend_txt = [
+            "PR for class a (area=0.42)",
+            "PR for class b (area=0.36)",
+            "PR for class c (area=0.44)",
+            "PR for class d (area=0.52)",
+            "PR for class e (area=0.37)",
+            "PR for class f (area=0.49)",
+        ]
+        assert [x.get_text() for x in oz.ax.legend().get_texts()] == expected_legend_txt
+        oz.ax.get_legend().remove()
+
+        # Text in iso_f1_curves.
+        # Will not check for these as they appears okay in other test images.
+        for child in oz.ax.get_children():
+            if isinstance(child, matplotlib.text.Annotation):
+                oz.ax.texts.remove(child)
+
+        # Compare the images
+        tol = 6.6 if sys.platform == 'win32' else 1.0 # fails with RMSE 6.583 on AppVeyor
+        self.assert_images_similar(oz, tol=tol)
+
     @pytest.mark.filterwarnings("ignore:From version 0.21")
     def test_quick_method(self):
         """
@@ -270,6 +334,7 @@ class TestPrecisionRecallCurve(VisualTestCase):
         """
 
         iris = load_iris()
+<<<<<<< HEAD
         x = iris.data[:, :]
         y = iris.target
 
@@ -279,6 +344,23 @@ class TestPrecisionRecallCurve(VisualTestCase):
 
         assert viz.fit(x_train,y_train) is viz
         viz.score(x_test, y_test)
+=======
+        X = iris.data
+        y = iris.target
+
+        vals = (0.1,0.6,0.3,0.9,0.9)
+        viz = PrecisionRecallCurve(
+            RandomForestClassifier(random_state=27),
+            iso_f1_curves=True, iso_f1_values=vals
+        )
+
+        X_train, X_test, y_train, y_test = tts(
+            X, y, test_size=0.2, shuffle=True, random_state=555
+        )
+
+        assert viz.fit(X_train, y_train) is viz
+        viz.score(X_test, y_test)
+>>>>>>> upstream/develop
         viz.finalize()
 
         tol = 4.5 if sys.platform == 'win32' else 1.0 # fails with RMSE 4.358 on AppVeyor
@@ -290,11 +372,26 @@ class TestPrecisionRecallCurve(VisualTestCase):
         """
 
         iris = load_iris()
+<<<<<<< HEAD
         x = iris.data[:, :]
         y = iris.target
 
         x_train, x_test, y_train, y_test = tts(x, y, test_size=0.2, shuffle=True,random_state = 555)
         viz = precision_recall_curve(RandomForestClassifier(random_state=27),x_train, y_train,X_test=x_test,y_test=y_test,random_state=7)
+=======
+        X = iris.data
+        y = iris.target
+
+        X_train, X_test, y_train, y_test = tts(
+            X, y, test_size=0.2, shuffle=True, random_state=555
+        )
+
+        viz = precision_recall_curve(
+            RandomForestClassifier(random_state=72),
+            X_train, y_train, X_test, y_test,
+            random_state=7,
+        )
+>>>>>>> upstream/develop
 
         tol = 1.5 if sys.platform == 'win32' else 1.0 # fails with RMSE 1.231 on AppVeyor
         self.assert_images_similar(viz, tol=tol)
@@ -305,6 +402,7 @@ class TestPrecisionRecallCurve(VisualTestCase):
         """
 
         iris = load_iris()
+<<<<<<< HEAD
         x = iris.data[:, :]
         y = iris.target
 
@@ -315,3 +413,23 @@ class TestPrecisionRecallCurve(VisualTestCase):
 
         with pytest.raises(YellowbrickValueError, match="both X_test and y_test are required if one is specified"):
             precision_recall_curve(RandomForestClassifier(random_state=27),x_train, y_train,X_test=x_test,random_state=7)
+=======
+        X = iris.data
+        y = iris.target
+
+        X_train, X_test, y_train, y_test = tts(
+            X, y, test_size=0.2, shuffle=True, random_state=55555
+        )
+
+        emsg = "both X_test and y_test are required if one is specified"
+
+        with pytest.raises(YellowbrickValueError, match=emsg):
+            precision_recall_curve(
+                RandomForestClassifier(), X_train, y_train, y_test=y_test
+            )
+
+        with pytest.raises(YellowbrickValueError, match=emsg):
+            precision_recall_curve(
+                RandomForestClassifier(), X_train, y_train, X_test
+            )
+>>>>>>> upstream/develop

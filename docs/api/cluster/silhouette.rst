@@ -7,29 +7,24 @@ The Silhouette Coefficient is used when the ground-truth about the dataset is un
 
 The Silhouette Visualizer displays the silhouette coefficient for each sample on a per-cluster basis, visualizing which clusters are dense and which are not. This is particularly useful for determining cluster imbalance, or for selecting a value for :math:`K` by comparing multiple visualizers.
 
-.. code:: python
-
-    from sklearn.datasets import make_blobs
-
-    # Make 8 blobs dataset
-    X, y = make_blobs(centers=8)
-
-.. code:: python
+.. plot::
+    :context: close-figs
+    :alt: SilhouetteVisualizer on synthetic dataset with 8 random clusters
 
     from sklearn.cluster import MiniBatchKMeans
+    from sklearn.datasets import make_blobs
 
     from yellowbrick.cluster import SilhouetteVisualizer
+
+    # Generate synthetic dataset with 8 random clusters
+    X, y = make_blobs(n_samples=1000, n_features=12, centers=8, random_state=42)
 
     # Instantiate the clustering model and visualizer
     model = MiniBatchKMeans(6)
     visualizer = SilhouetteVisualizer(model)
 
-    visualizer.fit(X) # Fit the training data to the visualizer
-    visualizer.poof() # Draw/show/poof the data
-
-
-.. image:: images/silhouette.png
-
+    visualizer.fit(X)        # Fit the data to the visualizer
+    visualizer.poof()        # Draw/show/poof the data
 
 
 API Reference

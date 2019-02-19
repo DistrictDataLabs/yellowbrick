@@ -42,10 +42,12 @@ Once forked, use the following steps to get your development environment set up 
 
 3. Install dependencies.
 
-    Yellowbrick's dependencies are in the ``requirements.txt`` document at the root of the repository. Open this file and uncomment the dependencies that are for development only. Then install the dependencies with ``pip``::
+    Yellowbrick's dependencies are in the ``requirements.txt`` document at the root of the repository. Open this file and uncomment any dependencies marked as for development only. Then install the package in editable mode::
 
-        $ pip install -r requirements.txt
+        $ pip install -e .
 
+    This will add Yellowbrick to your PYTHONPATH so that you don't need to reinstall it each time you make a change during development.
+    
     Note that there may be other dependencies required for development and testing; you can simply install them with ``pip``. For example to install
     the additional dependencies for building the documentation or to run the
     test suite, use the ``requirements.txt`` files in those directories::
@@ -62,6 +64,26 @@ Once forked, use the following steps to get your development environment set up 
 
 At this point you're ready to get started writing code. If you're going to take on a specific task, we'd strongly encourage you to check out the issue on `Waffle <https://waffle.io/DistrictDataLabs/yellowbrick>`_ and create a `pull request <https://github.com/DistrictDataLabs/yellowbrick/pulls>`_ *before you start coding* to better foster communication with other contributors. More on this in the next section.
 
+Branching Convention
+--------------------
+
+The Yellowbrick repository is set up in a typical production/release/development cycle as described in "`A Successful Git Branching Model <http://nvie.com/posts/a-successful-git-branching-model/>`_." The primary working branch is the ``develop`` branch. This should be the branch that you are working on and from, since this has all the latest code. The ``master`` branch contains the latest stable version and release_, which is pushed to PyPI_. No one but core contributors will generally push to master.
+
+You should work directly in your fork. In order to reduce the number of merges (and merge conflicts) we kindly request that you utilize a feature branch off of ``develop`` to work in::
+
+    $ git checkout -b feature-myfeature develop
+
+We also recommend setting up an ``upstream`` remote so that you can easily pull the latest development changes from the main Yellowbrick repository (see `configuring a remote for a fork <https://help.github.com/articles/configuring-a-remote-for-a-fork/>`_). You can do that as follows::
+
+    $ git remote add upstream https://github.com/DistrictDataLabs/yellowbrick.git
+    $ git remote -v
+    origin    https://github.com/YOUR_USERNAME/YOUR_FORK.git (fetch)
+    origin    https://github.com/YOUR_USERNAME/YOUR_FORK.git (push)
+    upstream  https://github.com/DistrictDataLabs/yellowbrick.git (fetch)
+    upstream  https://github.com/DistrictDataLabs/yellowbrick.git (push)
+
+When you're ready, request a code review for your pull request. 
+
 Pull Requests
 -------------
 
@@ -71,7 +93,12 @@ When starting a Yellowbrick contribution, *open the pull request as soon as poss
 
 .. note:: For a great example of a pull request for a new feature visualizer, check out `this one <https://github.com/DistrictDataLabs/yellowbrick/pull/232>`_ by `Carlo Morales <https://github.com/cjmorale>`_.
 
+Opening a Pull Request
+~~~~~~~~~~~~~~~~~~~~~~
+
 When you open a pull request, ensure it is from your forked repository to the develop branch of `github.com/districtdatalabs/yellowbrick <https://github.com/districtdatalabs/yellowbrick>`_; we will not merge a PR into the master branch. Title your Pull Request so that it is easy to understand what you're working on at a glance. Also be sure to include a reference to the issue that you're working on so that correct references are set up.
+
+.. note:: All pull requests should be into the ``yellowbrick/develop`` branch from your forked repository.
 
 After you open a PR, you should get a message from one of the maintainers. Use that time to discuss your idea and where best to implement your work. Feel free to go back and forth as you are developing with questions in the comment thread of the PR. Once you are ready, please ensure that you explicitly ping the maintainer to do a code review. Before code review, your PR should contain the following:
 
@@ -90,4 +117,24 @@ When the following is true:
 3. Code coverage and quality have not decreased
 4. Code is up to date with the yellowbrick develop branch
 
-Then we will "Squash and Merge" your contribution, combining all of your commits into a single commit and merging it into the develop branch of Yellowbrick. Congratulations! Once your contribution has been merged into master, you will be officially listed as a contributor.
+Then we will "Squash and Merge" your contribution, combining all of your commits into a single commit and merging it into the ``develop`` branch of Yellowbrick. Congratulations! Once your contribution has been merged into master, you will be officially listed as a contributor.
+
+After Your Pull Request is Merged
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+After your pull request is merged, you should update your local fork, either by pulling from ``upstream`` ``develop``::
+
+    $ git checkout develop
+    $ git pull upstream develop
+    $ git push origin develop
+
+or by manually merging your feature into your fork's ``develop`` branch.::
+
+    $ git checkout develop
+    $ git merge --no-ff feature-myfeature
+    $ git push origin develop
+
+Then you can safely delete the old feature branch, both locally and on GitHub. Now head back to `the backlog <https://github.com/districtdatalabs/yellowbrick/issues>`_ and checkout another issue!
+
+.. _release: https://github.com/DistrictDataLabs/yellowbrick/releases
+.. _PyPI: https://pypi.python.org/pypi/yellowbrick

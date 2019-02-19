@@ -153,6 +153,7 @@ The machine learning workflow is the art of creating *model selection triples*, 
 
 .. plot::
     :include-source: False
+    :context: close-figs
     :alt: Rank2D of Bikeshare Features
 
     import matplotlib.pyplot as plt
@@ -179,6 +180,7 @@ In this chart, we see that the features ``temp`` and ``feelslike`` have a strong
 
 .. plot::
     :include-source: False
+    :context: close-figs
     :alt: JointPlot of temp vs feelslike
 
     from yellowbrick.features import JointPlotVisualizer
@@ -217,6 +219,7 @@ At this point, we can train our model; let's fit a linear regression to our mode
 
 .. plot::
     :include-source: False
+    :context: close-figs
     :alt: ResidualsPlot of a simple LinearRegression
 
     from yellowbrick.datasets import load_bikeshare
@@ -258,6 +261,7 @@ Along with generating the residuals plot, we also measured the performance by "s
 
 .. plot::
     :include-source: False
+    :context: close-figs
     :alt: AlphaSelection for L2 Regularization using RidgeCV
 
     import numpy as np
@@ -292,6 +296,7 @@ We can now train our final model and visualize it with the ``PredictionError`` v
 
 .. plot::
     :include-source: False
+    :context: close-figs
     :alt: PredictionError for L2 Regularization using Ridge
 
     from yellowbrick.datasets import load_bikeshare
