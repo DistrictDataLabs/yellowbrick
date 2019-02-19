@@ -17,8 +17,6 @@ Use manifold algorithms for high dimensional visualization.
 import numpy as np
 import matplotlib.pyplot as plt
 
-from six import string_types
-
 from yellowbrick.utils.timer import Timer
 from yellowbrick.draw import manual_legend
 from yellowbrick.utils.types import is_estimator
@@ -302,7 +300,7 @@ class Manifold(FeatureVisualizer):
 
             color_kwargs = {'n_colors': len(self.classes_)}
 
-            if isinstance(self.colors, string_types):
+            if isinstance(self.colors, str):
                 color_kwargs['colormap'] = self.colors
             else:
                 color_kwargs['colors'] = self.colors
