@@ -17,8 +17,6 @@ Helper functions and generic utilities for use in Yellowbrick code.
 ## Imports
 ##########################################################################
 
-from __future__ import division
-
 import re
 import numpy as np
 

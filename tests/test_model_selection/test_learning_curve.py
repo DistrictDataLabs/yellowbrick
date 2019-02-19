@@ -18,6 +18,7 @@ import sys
 import pytest
 import numpy as np
 
+from unittest.mock import patch
 from tests.base import VisualTestCase
 from tests.dataset import DatasetMixin
 
@@ -36,11 +37,6 @@ try:
     import pandas as pd
 except ImportError:
     pd = None
-
-try:
-    from unittest.mock import patch
-except ImportError:
-    from mock import patch
 
 
 ##########################################################################

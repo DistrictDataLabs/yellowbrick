@@ -93,9 +93,6 @@ def test_find_dataset_path(tmpdir):
     data_home = tmpdir.mkdir("fixtures")
     foo = data_home.mkdir("foo")
 
-    # Stringify FilePath for Py2 tests
-    data_home = str(data_home)
-
     # Test the default lookup of foo/foo.csv.gz
     fpath = foo.join("foo.csv.gz")
     fpath.write("1,2,3")
@@ -177,9 +174,6 @@ def test_dataset_archive(tmpdir):
     fpath = data_home.join("foo.zip")
     fpath.write("this is a data archive")
 
-    # Stringify FilePath for Py2 tests
-    data_home = str(data_home)
-
     # When archive exists
     assert dataset_archive("foo", sig, data_home=data_home)
 
@@ -200,11 +194,6 @@ def test_cleanup_dataset(tmpdir):
 
     fzip = data_home.join("foo.zip")
     fzip.write("this is the archive file")
-
-    # Stringify FilePath for Py2 tests
-    data_home = str(data_home)
-    fzip = str(fzip)
-    fdata = str(fdata)
 
     # Make sure the files exist
     assert os.path.exists(fzip)
