@@ -17,10 +17,10 @@ Ensure that the Decision Boundary visualizations work.
 ##########################################################################
 
 import sys
-import six
 import pytest
 import numpy as np
 
+from unittest import mock
 from tests.base import VisualTestCase
 
 from yellowbrick.contrib.classifier import *
@@ -30,11 +30,6 @@ from yellowbrick.exceptions import YellowbrickValueError
 from sklearn import datasets
 from sklearn import neighbors
 from sklearn import naive_bayes
-
-try:
-    from unittest import mock
-except ImportError:
-    import mock
 
 try:
     import pandas as pd
@@ -92,7 +87,6 @@ class DecisionBoundariesVisualizerTest(VisualTestCase):
             model = neighbors.KNeighborsClassifier(3)
             DecisionViz(model)
 
-    @pytest.mark.skipif(six.PY2, reason="deprecation warnings filtered in PY2")
     def test_deprecated_message(self):
         """
         Test the deprecation warning message

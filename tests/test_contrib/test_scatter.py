@@ -26,17 +26,13 @@ from yellowbrick.datasets import load_occupancy
 from yellowbrick.exceptions import YellowbrickValueError
 from yellowbrick.exceptions import ImageComparisonFailure
 
+from unittest import mock
 from tests.base import VisualTestCase
 
 try:
     import pandas as pd
 except ImportError:
     pd = None
-
-try:
-    from unittest import mock
-except ImportError:
-    import mock
 
 
 ##########################################################################

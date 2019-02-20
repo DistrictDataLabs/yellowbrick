@@ -17,18 +17,9 @@ Downloads the example datasets for running the examples.
 ##########################################################################
 
 import os
-import six
 import zipfile
 
-if six.PY2:
-    # backport for encoding in open for python2
-    from io import open
-
-try:
-    from urllib.request import urlopen
-except ImportError:
-    # python 2
-    from urllib2 import urlopen
+from urllib.request import urlopen
 
 from .signature import sha256sum
 from .path import get_data_home, cleanup_dataset

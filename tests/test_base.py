@@ -25,17 +25,13 @@ from yellowbrick.base import VisualizerGrid
 from yellowbrick.exceptions import YellowbrickWarning
 from yellowbrick.exceptions import YellowbrickValueError
 
+from unittest.mock import patch
+from unittest.mock import MagicMock
 from tests.base import VisualTestCase
 from tests.rand import RandomVisualizer
 
-from sklearn.datasets import make_classification
 
-try:
-    from unittest.mock import patch
-    from unittest.mock import MagicMock
-except ImportError:
-    from mock import patch
-    from mock import MagicMock
+from sklearn.datasets import make_classification
 
 
 ##########################################################################

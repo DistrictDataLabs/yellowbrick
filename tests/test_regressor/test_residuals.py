@@ -26,6 +26,7 @@ import matplotlib.pyplot as plt
 from yellowbrick.regressor.residuals import *
 from yellowbrick.exceptions import YellowbrickValueError
 
+from unittest import mock
 from tests.base import VisualTestCase
 from tests.dataset import DatasetMixin, Dataset, Split
 
@@ -42,10 +43,6 @@ try:
 except ImportError:
     pd = None
 
-try:
-    from unittest import mock
-except ImportError:
-    import mock
 
 # Determine version of matplotlib
 MPL_VERS_MAJ = int(mpl.__version__.split(".")[0])
