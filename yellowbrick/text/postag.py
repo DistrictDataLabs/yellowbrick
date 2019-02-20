@@ -19,8 +19,6 @@ small subset of documents.
 # Imports
 ##########################################################################
 
-import numpy as np
-
 from yellowbrick.text.base import TextVisualizer
 from yellowbrick.style.colors import resolve_colors
 
