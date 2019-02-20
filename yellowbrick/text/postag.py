@@ -40,11 +40,21 @@ TAGSET_NAMES = {
 
 class PosTagVisualizer(TextVisualizer):
     """
-    A part-of-speech tag visualizer that creates a bar chart to visualize 
-    the relative proportions of different parts-of-speech in a corpus
-    
-    PosTagVisualize requires documents be in the form of (tag, token) 
-    tuples.
+    Parts of speech (e.g. verbs, nouns, prepositions, adjectives) 
+    indicate how a word is functioning within the context of a sentence. 
+    In English as in many other languages, a single word can function in 
+    multiple ways. Part-of-speech tagging lets us encode information not 
+    only about a word’s definition, but also its use in context (for 
+    example the words “ship” and “shop” can be either a verb or a noun, 
+    depending on the context). 
+
+    The PosTagVisualizer creates a bar chart to visualize the relative 
+    proportions of different parts-of-speech in a corpus.
+
+    Note that the PosTagVisualizer requires documents to already be 
+    part-of-speech tagged; the visualizer expects the corpus to come in
+    the form of a list of (document) lists of (sentence) lists of 
+    (tag, token) tuples.
 
     Parameters
     ----------
@@ -60,6 +70,12 @@ class PosTagVisualizer(TextVisualizer):
         Specify a colormap to color the parts-of-speech.
     kwargs : dict
         Pass any additional keyword arguments to the PosTagVisualizer.
+
+    Examples
+    --------
+    >>> viz = PosTagVisualizer()
+    >>> viz.fit(X)
+    >>> viz.poof()
     """
     def __init__(
         self, 
@@ -89,7 +105,7 @@ class PosTagVisualizer(TextVisualizer):
     def fit(self, X, y=None, **kwargs):
         """
         Fits the corpus to the appropriate tag map.
-        Text documents must be tokenized & tagged before passing to fit
+        Text documents must be tokenized & tagged before passing to fit.
 
         Parameters
         ----------
