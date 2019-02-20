@@ -142,7 +142,7 @@ def get_tagged_docs(X, model="nltk", tagger="word"):
     elif model=="nltk":
         if tagger == "wordpunct":
             for doc in X:
-                yield 
+                yield [
                     pos_tag(wordpunct_tokenize(sent)) 
                     for sent in sent_tokenize(doc)
                 ]
