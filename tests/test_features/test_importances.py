@@ -35,12 +35,8 @@ from sklearn.linear_model import LogisticRegression, Lasso
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.ensemble import GradientBoostingClassifier
 
+from unittest import mock
 from tests.base import VisualTestCase
-
-try:
-    from unittest import mock
-except ImportError:
-    import mock
 
 try:
     import pandas as pd

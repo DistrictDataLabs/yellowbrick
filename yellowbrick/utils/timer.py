@@ -32,7 +32,7 @@ class Timer:
     A context object timer. Usage:
         >>> with Timer() as timer:
         ...     do_something()
-        >>> print timer.interval
+        >>> print(timer.interval)
     """
     def __init__(self):
         self.time = time.time

@@ -19,7 +19,6 @@ Ensure that the DiscriminationThreshold visualizations work.
 ##########################################################################
 
 import sys
-import six
 import pytest
 import yellowbrick as yb
 import matplotlib.pyplot as plt
@@ -27,6 +26,7 @@ import matplotlib.pyplot as plt
 from yellowbrick.classifier.threshold import *
 from yellowbrick.utils import is_probabilistic, is_classifier
 
+from unittest.mock import patch
 from tests.base import VisualTestCase
 from tests.dataset import DatasetMixin
 from numpy.testing.utils import assert_array_equal
@@ -43,11 +43,6 @@ try:
     import pandas as pd
 except ImportError:
     pd = None
-
-try:
-    from unittest.mock import patch
-except ImportError:
-    from mock import patch
 
 
 ##########################################################################
@@ -160,8 +155,7 @@ class TestDiscriminationThreshold(VisualTestCase, DatasetMixin):
         out = visualizer.fit(X, y)
 
         assert out is visualizer
-        if six.PY3:
-            mock_draw.assert_called_once()
+        mock_draw.assert_called_once()
         assert hasattr(visualizer, "thresholds_")
         assert hasattr(visualizer, "cv_scores_")
 
