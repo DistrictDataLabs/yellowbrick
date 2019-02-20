@@ -135,14 +135,14 @@ def get_tagged_docs(X, model="nltk", tagger="word"):
         for doc in X:
             tagged = nlp(doc)
             yield [
-                [(token.text,token.pos_) for token in sent]
+                list((token.text,token.pos_) for token in sent)
                 for sent in tagged.sents
             ]
 
     elif model=="nltk":
         if tagger == "wordpunct":
             for doc in X:
-                yield [
+                yield 
                     pos_tag(wordpunct_tokenize(sent)) 
                     for sent in sent_tokenize(doc)
                 ]

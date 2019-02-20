@@ -333,7 +333,7 @@ class PosTagVisualizer(TextVisualizer):
         )
         
         self.ax.set_xticks(range(len(self.tag_map)))
-        self.ax.set_xticklabels([self.tag_map.keys()], rotation=90)
+        self.ax.set_xticklabels(list(self.tag_map.keys()), rotation=90)
         
         # Set the axis labels
         self.ax.set_xlabel(
