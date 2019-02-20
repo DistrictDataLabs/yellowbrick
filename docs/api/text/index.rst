@@ -11,6 +11,7 @@ We currently have four text-specific visualizations implemented:
 -  :doc:`tsne`: plot similar documents closer together to discover clusters
 -  :doc:`umap_vis`: plot similar documents closer together to discover clusters
 -  :doc:`dispersion`: plot the dispersion of target words throughout a corpus
+-  :doc:`postag`: plot the counts of different parts-of-speech throughout a tagged corpus
 
 Note that the examples in this section require a corpus of text data, see :doc:`loading a text corpus <corpus>` for more information.
 
@@ -20,6 +21,7 @@ Note that the examples in this section require a corpus of text data, see :doc:`
     from yellowbrick.text import TSNEVisualizer
     from yellowbrick.text import UMAPVisualizer
     from yellowbrick.text import DispersionPlot
+    from yellowbrick.text import PosTagVisualizer
 
     from sklearn.feature_extraction.text import TfidfVectorizer
     from sklearn.feature_extraction.text import CountVectorizer
@@ -32,3 +34,4 @@ Note that the examples in this section require a corpus of text data, see :doc:`
    tsne
    umap_vis
    dispersion
+   postag
