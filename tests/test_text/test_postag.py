@@ -165,6 +165,9 @@ class TestPosTag(VisualTestCase):
         """
         Assert no errors occur when using the quick method
         """
+        # Fail if data hasn't been downloaded
+        check_nltk_data()
+
         _, ax = plt.subplots()
         tagged_docs = list(get_tagged_docs(sonnets))
 
@@ -186,7 +189,6 @@ class TestPosTag(VisualTestCase):
         """
         Assert no errors occur during postag integration
         """
-
         # Fail if data hasn't been downloaded
         check_nltk_data()
         check_spacy_data()
@@ -206,6 +208,9 @@ class TestPosTag(VisualTestCase):
         Assert no errors occur during PosTagVisualizer integration
         with word tokenized corpus
         """
+        # Fail if data hasn't been downloaded
+        check_nltk_data()
+
         tagged_docs = list(
             get_tagged_docs(sonnets, model="nltk", tagger="word")
         )
@@ -223,6 +228,9 @@ class TestPosTag(VisualTestCase):
         Assert no errors occur during PosTagVisualizer integration
         with wordpunct tokenized corpus
         """
+        # Fail if data hasn't been downloaded
+        check_nltk_data()
+
         wordpunct_tagged_docs = list(
             get_tagged_docs(sonnets, model="nltk", tagger="wordpunct")
         )
@@ -240,6 +248,9 @@ class TestPosTag(VisualTestCase):
         Assert no errors occur during PosTagVisualizer integration
         with spacy tokenized corpus
         """
+        # Fail if data hasn't been downloaded
+        check_spacy_data()
+        
         spacy_tagged_docs = list(get_tagged_docs(sonnets, model="spacy"))
 
         visualizer = PosTagVisualizer(tagset="universal")
