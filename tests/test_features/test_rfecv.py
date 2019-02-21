@@ -130,21 +130,12 @@ class TestRFECV(VisualTestCase):
     @pytest.mark.xfail(
         sys.platform == 'win32', reason="images not close on windows"
     )
-    @pytest.mark.skipif(pd is None, reason="test requires pandas")
     def test_pandas_integration(self):
         """
         Test on a real dataset with pandas DataFrame and Series
         """
         data = load_occupancy(return_dataset=True)
-        df = data.to_dataframe()
-
-        target = "occupancy"
-        features = [
-            'temperature', 'relative humidity', 'light', 'CO2', 'humidity'
-        ]
-
-        X = df[features]
-        y = df[target]
+        X, y = data.to_data()
 
         assert isinstance(X, pd.DataFrame)
         assert isinstance(y, pd.Series)
