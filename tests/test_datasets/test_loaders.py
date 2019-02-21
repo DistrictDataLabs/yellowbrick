@@ -17,6 +17,8 @@ Test the dataset loading utilities
 import pytest
 import numpy as np
 
+from unittest.mock import patch
+
 from yellowbrick.datasets.loaders import *
 from yellowbrick.datasets.loaders import DATASETS
 from yellowbrick.datasets.base import Dataset, Corpus
@@ -28,11 +30,6 @@ try:
     import pandas as pd
 except ImportError:
     pd = None
-
-try:
-    from unittest.mock import patch
-except ImportError:
-    from mock import patch
 
 
 ##########################################################################

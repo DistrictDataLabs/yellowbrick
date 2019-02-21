@@ -29,6 +29,8 @@ import numpy as np
 from functools import partial
 from tests.dataset import Dataset
 from tests.base import VisualTestCase
+from unittest.mock import patch, MagicMock
+
 from yellowbrick.features.jointplot import *
 from yellowbrick.exceptions import YellowbrickValueError
 from sklearn.datasets import make_classification, make_regression
@@ -38,11 +40,6 @@ try:
     from mpl_toolkits.axes_grid1 import make_axes_locatable
 except ImportError:
     make_axes_locatable = None
-
-try:
-    from unittest.mock import patch, MagicMock
-except ImportError:
-    from mock import patch, MagicMock
 
 try:
     import pandas as pd

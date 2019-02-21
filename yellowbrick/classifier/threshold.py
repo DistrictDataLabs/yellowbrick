@@ -15,7 +15,6 @@ DiscriminationThreshold visualizer for probabilistic classifiers.
 ## Imports
 ##########################################################################
 
-import six
 import bisect
 import numpy as np
 
@@ -440,7 +439,7 @@ class DiscriminationThreshold(ModelVisualizer):
         """
         if val is None:
             exclude = frozenset()
-        elif isinstance(val, six.string_types):
+        elif isinstance(val, str):
             exclude = frozenset([val.lower()])
         else:
             exclude = frozenset(map(lambda s: s.lower(), val))

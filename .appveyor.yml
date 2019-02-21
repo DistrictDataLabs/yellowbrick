@@ -3,37 +3,43 @@
 
 # Temporary work around see #744
 image:
-  - Previous Visual Studio 2015
+  - Previous Visual Studio 2017
+
+version: 0.9.{build}
+pull_requests:
+  do_not_increment_build_number: true
+
+branches:
+  only:
+  - master
+  - develop
 
 environment:
 
     matrix:
         # Tests failing on 32 bit architectures
         # https://github.com/numpy/numpy/issues/4384
-        # - PYTHON: "C:\\Python27"
-        #   PYTHON_VERSION: "2.7.14"
-        #   PYTHON_ARCH: "32"
-
-        - PYTHON: "C:\\Python27-x64"
-          PYTHON_VERSION: "2.7.14"
-          PYTHON_ARCH: "64"
 
         # - PYTHON: "C:\\Python36"
         #   PYTHON_VERSION: "3.6.4"
         #   PYTHON_ARCH: "32"
-
-        - PYTHON: "C:\\Python36-x64"
-          PYTHON_VERSION: "3.6.4"
-          PYTHON_ARCH: "64"
 
         # - PYTHON: "C:\\Miniconda3"
         #   PYTHON_VERSION: "3.6.4"
         #   MINICONDA_VERSION: "4.4.10"
         #   PYTHON_ARCH: "32"
 
+        - PYTHON: "C:\\Python36-x64"
+          PYTHON_VERSION: "3.6"
+          PYTHON_ARCH: "64"
+
+        - PYTHON: "C:\\Python37-x64"
+          PYTHON_VERSION: "3.7"
+          PYTHON_ARCH: "64"
+
         - PYTHON: "C:\\Miniconda3-x64"
-          PYTHON_VERSION: "3.6.4"
-          MINICONDA_VERSION: "4.5.12"
+          PYTHON_VERSION: "3.6"
+          MINICONDA_VERSION: "4.5"
           PYTHON_ARCH: "64"
 
 
@@ -67,11 +73,10 @@ cache:
     - '%APPDATA%\pip\Cache'
 
 notifications:
-    - provider: Email
-      to:
-        - bbengfort@districtdatalabs.com
-        - rbilbro@districtdatalabs.com
-        - nathan.danielsen@gmail.com
+    - provider: Slack
+      auth_token:
+        secure: 6hd0IQ66qUUiStas9s304izgV7Wh0XyY0gFjuua7H8gtYle41gbFozkfKgzs110oK/iT4XKWrNfWOgz3S5Jcp2SGFXQ9IvF5ZqYmX71ZQRY=
+      channel: '#yb-ci'
       on_build_success: false
       on_build_failure: false
       on_build_status_changed: true
