@@ -21,8 +21,9 @@ import numpy.testing as npt
 
 from unittest.mock import patch
 from tests.base import VisualTestCase
-from tests.dataset import DatasetMixin, Dataset
+from ..fixtures import TestDataset
 
+from yellowbrick.datasets import load_occupancy
 from yellowbrick.features.rfecv import *
 from yellowbrick.exceptions import YellowbrickValueError
 
@@ -53,7 +54,7 @@ def dataset(request):
         n_repeated=0, n_classes=8, n_clusters_per_class=1, random_state=0
     )
 
-    dataset = Dataset(X, y)
+    dataset = TestDataset(X, y)
     request.cls.dataset = dataset
 
 
@@ -62,7 +63,7 @@ def dataset(request):
 ##########################################################################
 
 @pytest.mark.usefixtures("dataset")
-class TestRFECV(VisualTestCase, DatasetMixin):
+class TestRFECV(VisualTestCase):
     """
     Test the RFECV visualizer
     """
@@ -134,11 +135,12 @@ class TestRFECV(VisualTestCase, DatasetMixin):
         """
         Test on a real dataset with pandas DataFrame and Series
         """
-        df = self.load_pandas("occupancy")
+        data = load_occupancy(return_dataset=True)
+        df = data.to_dataframe()
 
         target = "occupancy"
         features = [
-            'temperature', 'relative humidity', 'light', 'C02', 'humidity'
+            'temperature', 'relative humidity', 'light', 'CO2', 'humidity'
         ]
 
         X = df[features]

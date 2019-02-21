@@ -20,18 +20,12 @@ Tests for the PCA based feature visualizer.
 import sys
 import pytest
 import numpy as np
-from collections import namedtuple
 
 from tests.base import VisualTestCase
+from ..fixtures import TestDataset
 from yellowbrick.features.pca import *
 from yellowbrick.exceptions import YellowbrickError
 from sklearn.datasets import make_classification
-
-##########################################################################
-## Data
-##########################################################################
-
-Dataset = namedtuple('Dataset', 'X,y')
 
 
 ##########################################################################
@@ -51,7 +45,7 @@ def binary(request):
     )
 
     # Set a class attribute for digits
-    request.cls.dataset = Dataset(X, y)
+    request.cls.dataset = TestDataset(X, y)
 
 
 ##########################################################################

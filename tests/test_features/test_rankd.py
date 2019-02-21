@@ -23,8 +23,8 @@ import numpy as np
 import numpy.testing as npt
 
 from tests.base import VisualTestCase
-from tests.dataset import DatasetMixin
 
+from yellowbrick.datasets import load_occupancy
 from yellowbrick.features.rankd import *
 from yellowbrick.features.rankd import kendalltau
 from sklearn.datasets import make_regression
@@ -102,7 +102,7 @@ class TestKendallTau(object):
 ##########################################################################
 
 @pytest.mark.usefixtures("dataset")
-class TestRank1D(VisualTestCase, DatasetMixin):
+class TestRank1D(VisualTestCase):
     """
     Test the Rank1D visualizer
     """
@@ -145,11 +145,12 @@ class TestRank1D(VisualTestCase, DatasetMixin):
         """
         Test Rank1D on occupancy dataset with pandas DataFrame and Series
         """
-        df = self.load_pandas("occupancy")
+        data = load_occupancy(return_dataset=True)
+        df = data.to_dataframe()
 
         # Load the data from the fixture
         features = [
-            "temperature", "relative humidity", "light", "C02", "humidity"
+            "temperature", "relative humidity", "light", "CO2", "humidity"
         ]
         X = df[features]
         y = df['occupancy']
@@ -169,7 +170,7 @@ class TestRank1D(VisualTestCase, DatasetMixin):
 ##########################################################################
 
 @pytest.mark.usefixtures("dataset")
-class TestRank2D(VisualTestCase, DatasetMixin):
+class TestRank2D(VisualTestCase):
     """
     Test the Rank2D visualizer
     """
@@ -302,11 +303,12 @@ class TestRank2D(VisualTestCase, DatasetMixin):
         """
         Test Rank2D on occupancy dataset with pandas DataFrame and Series
         """
-        df = self.load_pandas("occupancy")
+        data = load_occupancy(return_dataset=True)
+        df = data.to_dataframe()
 
         # Load the data from the fixture
         features = [
-            "temperature", "relative humidity", "light", "C02", "humidity"
+            "temperature", "relative humidity", "light", "CO2", "humidity"
         ]
         X = df[features]
         y = df['occupancy']

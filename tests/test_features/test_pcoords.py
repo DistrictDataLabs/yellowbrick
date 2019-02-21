@@ -20,12 +20,12 @@ Testing for the parallel coordinates feature visualizers
 
 import pytest
 import numpy as np
-from collections import namedtuple
 
-from yellowbrick.features.pcoords import *
 from yellowbrick.datasets import load_occupancy
+from yellowbrick.features.pcoords import *
 
 from tests.base import VisualTestCase
+from ..fixtures import TestDataset
 from sklearn.datasets import make_classification
 
 
@@ -34,12 +34,6 @@ try:
 except ImportError:
     pd = None
 
-
-##########################################################################
-## Data
-##########################################################################
-
-Dataset = namedtuple('Dataset', 'X,y')
 
 ##########################################################################
 ## Fixtures
@@ -56,7 +50,7 @@ def dataset(request):
         class_sep=3, scale=np.array([1.0, 2.0, 100.0, 20.0, 1.0])
     )
 
-    dataset = Dataset(X, y)
+    dataset = TestDataset(X, y)
     request.cls.dataset = dataset
 
 

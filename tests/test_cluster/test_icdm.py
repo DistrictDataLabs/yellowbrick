@@ -17,12 +17,12 @@ Tests for the intercluster distance map visualizer.
 import sys
 import pytest
 import matplotlib as mpl
-from collections import namedtuple
 
 from yellowbrick.cluster.icdm import *
 from yellowbrick.exceptions import YellowbrickValueError
 
 from tests.base import VisualTestCase
+from ..fixtures import TestDataset
 
 from sklearn.datasets import make_blobs
 from sklearn.cluster import Birch, AgglomerativeClustering
@@ -43,8 +43,6 @@ MPL_VERS_MAJ = int(mpl.__version__.split(".")[0])
 ## Fixtures
 ##########################################################################
 
-Dataset = namedtuple('Dataset', 'X,y')
-
 @pytest.fixture(scope='class')
 def blobs12(request):
     """
@@ -53,7 +51,7 @@ def blobs12(request):
     X, y = make_blobs(
         centers=12, n_samples=1000, n_features=16, shuffle=True, random_state=2121
     )
-    request.cls.blobs12 = Dataset(X, y)
+    request.cls.blobs12 = TestDataset(X, y)
 
 
 @pytest.fixture(scope='class')
@@ -64,7 +62,7 @@ def blobs4(request):
     X, y = make_blobs(
         centers=4, n_samples=400, n_features=16, shuffle=True, random_state=1212
     )
-    request.cls.blobs4 = Dataset(X, y)
+    request.cls.blobs4 = TestDataset(X, y)
 
 
 def assert_fitted(oz):
@@ -75,7 +73,6 @@ def assert_fitted(oz):
 def assert_not_fitted(oz):
     for param in ('embedded_centers_', 'scores_', 'fit_time_'):
         assert not hasattr(oz, param)
-
 
 
 ##########################################################################

@@ -22,9 +22,10 @@ import pytest
 import numpy.testing as npt
 
 from tests.base import VisualTestCase
-from tests.dataset import DatasetMixin, Dataset
+from ..fixtures import TestDataset
 from sklearn.datasets import make_classification
 
+from yellowbrick.datasets import load_occupancy
 from yellowbrick.features.radviz import *
 
 try:
@@ -48,7 +49,7 @@ def dataset(request):
         class_sep=3, scale=np.array([1.0, 2.0, 100.0, 20.0, 1.0])
     )
 
-    dataset = Dataset(X, y)
+    dataset = TestDataset(X, y)
     request.cls.dataset = dataset
 
 
@@ -57,7 +58,7 @@ def dataset(request):
 ##########################################################################
 
 @pytest.mark.usefixtures('dataset')
-class TestRadViz(VisualTestCase, DatasetMixin):
+class TestRadViz(VisualTestCase):
     """
     Test the RadViz visualizer
     """
@@ -116,11 +117,12 @@ class TestRadViz(VisualTestCase, DatasetMixin):
         """
         Test RadViz with Pandas on the occupancy dataset
         """
-        occupancy = self.load_pandas("occupancy")
+        data = load_occupancy(return_dataset=True)
+        occupancy = data.to_dataframe()
 
         # Load the data from the fixture
         X = occupancy[[
-            "temperature", "relative humidity", "light", "C02", "humidity"
+            "temperature", "relative humidity", "light", "CO2", "humidity"
         ]]
         y = occupancy['occupancy'].astype(int)
 
@@ -138,7 +140,9 @@ class TestRadViz(VisualTestCase, DatasetMixin):
         Test RadViz with classes and features specified
         """
         # Load the data from the fixture
-        occupancy = self.load_pandas("occupancy")
+        data = load_occupancy(return_dataset=True)
+        occupancy = data.to_dataframe()
+
         features = ["temperature", "relative humidity", "light"]
         classes = ['unoccupied', 'occupied']
 
