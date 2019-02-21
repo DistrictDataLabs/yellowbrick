@@ -7,31 +7,25 @@ Sometimes for feature analysis you simply need a scatter plot to determine the d
 
 A scatter visualizer simply plots two features against each other and colors the points according to the target. This can be useful in assessing the relationship of pairs of features to an individual target.
 
-.. code:: python
+.. plot::
+    :context: close-figs
+    :alt: ScatterVisualizer on occupancy dataset
 
-    # Load the classification data set
-    data = load_data("occupancy")
+    from yellowbrick.contrib import ScatterVisualizer
+    from yellowbrick.datasets import load_occupancy
 
-    # Specify the features of interest and the classes of the target
-    features = ["temperature", "relative humidity", "light", "C02", "humidity"]
+    # Load the classification dataset
+    X, y = load_occupancy()
+
+    # Specify the target classes
     classes = ["unoccupied", "occupied"]
 
-    # Extract the numpy arrays from the data frame
-    X = data[features]
-    y = data.occupancy
+    # Instantiate the visualizer
+    visualizer = ScatterVisualizer(x="light", y="CO2", classes=classes)
 
-.. code:: python
-
-    from yellowbrick.contrib.scatter import ScatterVisualizer
-
-    visualizer = ScatterVisualizer(x="light", y="C02", classes=classes)
-
-    visualizer.fit(X, y)
-    visualizer.transform(X)
-    visualizer.poof()
-
-
-.. image:: images/scatter.png
+    visualizer.fit(X, y)           # Fit the data to the visualizer
+    visualizer.transform(X)        # Transform the data
+    visualizer.poof()              # Draw/show/poof the data
 
 
 API Reference

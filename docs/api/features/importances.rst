@@ -25,6 +25,8 @@ figure or create one). We can then fit a ``FeatureImportances`` visualizer
 with a ``GradientBoostingClassifier`` to visualize the ranked features.
 
 .. plot::
+    :context: close-figs
+    :alt: Feature importances of Random Forest classifier
 
     from sklearn.ensemble import RandomForestClassifier
 
@@ -34,7 +36,8 @@ with a ``GradientBoostingClassifier`` to visualize the ranked features.
     # Load the classification data set
     X, y = load_occupancy()
 
-    viz = FeatureImportances(RandomForestClassifier())
+    model = RandomForestClassifier(n_estimators=10)
+    viz = FeatureImportances(model)
     viz.fit(X, y)
     viz.poof()
 
@@ -56,6 +59,8 @@ not have column names or to print better titles. In the example below we
 title case our features for better readability:
 
 .. plot::
+    :context: close-figs
+    :alt: Coefficient importances for LASSO regression
 
     from sklearn.linear_model import Lasso
     from yellowbrick.datasets import load_concrete
@@ -83,6 +88,8 @@ Some estimators return a multi-dimensonal array for either ``feature_importances
 Taking the mean of the importances may be undesirable for several reasons. For example, a feature may be more informative for some classes than others. Multi-output estimators also do not benefit from having averages taken across what are essentially multiple internal models. In this case, use the ``stack=True`` parameter to draw a stacked bar chart of importances as follows:
 
 .. plot::
+    :context: close-figs
+    :alt: Stacked per-class importances with Logistic Regression
 
     from yellowbrick.features import FeatureImportances
     from sklearn.linear_model import LogisticRegression
@@ -91,7 +98,8 @@ Taking the mean of the importances may be undesirable for several reasons. For e
     data = load_iris()
     X, y = data.data, data.target
 
-    viz = FeatureImportances(LogisticRegression(), stack=True, relative=False)
+    model = LogisticRegression(multi_class="auto", solver="liblinear")
+    viz = FeatureImportances(model, stack=True, relative=False)
     viz.fit(X, y)
     viz.poof()
 

@@ -20,7 +20,6 @@ Implementation of parallel coordinates for multi-dimensional feature analysis.
 
 import numpy as np
 
-from six import string_types
 from numpy.random import RandomState
 from sklearn.preprocessing import MinMaxScaler, MaxAbsScaler
 from sklearn.preprocessing import Normalizer, StandardScaler
@@ -426,7 +425,7 @@ class ParallelCoordinates(DataVisualizer):
             yi = y[idx]
 
             # TODO: generalize this duplicated code into a single function
-            if isinstance(yi, string_types):
+            if isinstance(yi, str):
                 label = yi
             else:
                 # TODO: what happens if yi is not in classes?!
@@ -470,7 +469,7 @@ class ParallelCoordinates(DataVisualizer):
 
         # Plot each class as a single line plot
         for yi in y_values:
-            if isinstance(yi, string_types):
+            if isinstance(yi, str):
                 label = yi
             else:
                 # TODO: what happens if yi is not in classes?!

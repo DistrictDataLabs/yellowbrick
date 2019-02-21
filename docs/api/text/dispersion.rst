@@ -6,6 +6,8 @@ Dispersion Plot
 A word's importance can be weighed by its dispersion in a corpus.  Lexical dispersion is a measure of a word's homogeneity across the parts of a corpus.  This plot notes the occurrences of a word and how many words from the beginning of the corpus it appears.
 
 .. plot::
+    :context: close-figs
+    :alt: Dispersion Plot
 
     from yellowbrick.text import DispersionPlot
     from yellowbrick.datasets import load_hobbies

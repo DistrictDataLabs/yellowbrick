@@ -16,7 +16,6 @@ Tests for the confusion matrix visualizer
 ##########################################################################
 
 import sys
-import six
 import pytest
 import yellowbrick as yb
 import numpy.testing as npt
@@ -290,8 +289,7 @@ class ConfusionMatrixTests(VisualTestCase):
         cm.fit(X_train, y_train)
         cm.score(X_test, y_test)
 
-        tol = 0.1 if six.PY3 else 40
-        self.assert_images_similar(cm, tol=tol)
+        self.assert_images_similar(cm, tol=0.1)
 
         # Ensure correct confusion matrix under the hood
         npt.assert_array_equal(cm.confusion_matrix_, np.array([
@@ -315,8 +313,7 @@ class ConfusionMatrixTests(VisualTestCase):
         model = DecisionTreeClassifier(random_state=25)
         confusion_matrix(model, X, y, ax=ax, random_state=23)
 
-        tol = 0.1 if six.PY3 else 10
-        self.assert_images_similar(ax=ax, tol=tol)
+        self.assert_images_similar(ax=ax, tol=0.1)
 
     def test_isclassifier(self):
         """

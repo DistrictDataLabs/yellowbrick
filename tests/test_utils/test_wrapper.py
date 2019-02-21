@@ -17,15 +17,12 @@ Testing for the wrapping utility.
 ## Imports
 ##########################################################################
 
+from unittest import mock
+
 from yellowbrick.base import Visualizer
 from yellowbrick.utils.wrapper import *
 from sklearn.naive_bayes import MultinomialNB
 from sklearn.naive_bayes import GaussianNB
-
-try:
-    from unittest import mock
-except ImportError:
-    import mock
 
 
 ##########################################################################

@@ -11,6 +11,7 @@ This leads to another metric, area under the curve (AUC), which is a computation
 
 .. plot::
     :context: close-figs
+    :alt: ROCAUC Binary Classification
 
     from sklearn.model_selection import train_test_split
     from yellowbrick.classifier import ROCAUC
@@ -27,8 +28,10 @@ This leads to another metric, area under the curve (AUC), which is a computation
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2)
 
     # Instantiate the visualizer with the classification model
-    visualizer = ROCAUC(LogisticRegression(), classes=classes)
-
+    visualizer = ROCAUC(LogisticRegression(
+        multi_class="auto", solver="liblinear"
+        ), classes=classes
+    )
     visualizer.fit(X_train, y_train)  # Fit the training data to the visualizer
     visualizer.score(X_test, y_test)  # Evaluate the model on the test data
     visualizer.poof()             # Draw/show/poof the data
@@ -50,6 +53,7 @@ ROC curves are typically used in binary classification, and in fact the Scikit-L
 
 .. plot::
     :context: close-figs
+    :alt: ROCAUC multiclass classification curves
 
     from sklearn.model_selection import train_test_split
     from yellowbrick.classifier import ROCAUC

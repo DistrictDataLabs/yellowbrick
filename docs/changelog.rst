@@ -7,24 +7,35 @@ Version 1.0
 -----------
 * Tag: v1.0_
 * Deployed: Not yet deployed
-* Contributors: Benjamin Bengfort, Rebecca Bilbro, Nathan Danielsen, Kristen McIntyre, Larry Gray, Prema Roman, John Healy, Sourav Singh, Francois Dion, Jerome Massot
+* Contributors: Benjamin Bengfort, Rebecca Bilbro, Nathan Danielsen, Kristen McIntyre, Larry Gray, Prema Roman, Ry Whittington, John Healy, Sourav Singh, Francois Dion, Jerome Massot, Zijie (ZJ) Poh, Rohit Ganapathy, Nabanita Dash, Justin Ormont
+
+.. warning:: **Python 2 Deprecation**: Please note that this release deprecates Yellowbrick's support for Python 2.7. After careful consideration and following the lead of our primary dependencies (NumPy, scikit-learn, and Matplolib), we have chosen to move forward with the community and support Python 3.4 and later.
 
 Major Changes:
+    - New ``JointPlot`` visualizer that is specifically designed for machine learning. The new visualizer can compare a feature to a target, features to features, and even feature to feature to target using color. The visualizer gives correlation information at a glance and is designed to work on ML datasets.
     - New datasets module that provide greater support for interacting with Yellowbrick example datasets including support for Pandas, npz, and text corpora.
     - Management repository for Yellowbrick example data, yellowbrick-datasets.
     - Add support for matplotlib 3.0.1 or greater.
     - ``UMAPVisualizer`` as an alternative manifold to TSNE for corpus visualization that is fast enough to not require preprocessing PCA or SVD decomposition and preserves higher order similarities and distances.
+    - Added ``..plot::`` directives to the documentation to automatically build the images along with the docs and keep them as up to date as possible. The directives also include the source code making it much simpler to recreate examples.
 
 Minor Changes:
     - Updated Rank2D to include Kendall-Tau metric.
     - Added ``target_color_type`` functionality to determine continuous or discrete color representations based on the type of the target variable.
-    - Added code review checklist and conventions to the documentation and expanded the contributing docs.
+    - Added user specification of ISO F1 values to ``PrecisionRecallCurve`` and updated the quick method to accept train and test splits.
+    - Added code review checklist and conventions to the documentation and expanded the contributing docs to include other tricks and tips.
     - Added polish to missing value visualizers code, tests, and documentation.
     - Improved RankD tests for better coverage.
     - Added quick method test for ``DispersionPlot`` visualizer.
     - BugFix: fixed resolve colors bug in TSNE and UMAP text visualizers and added regression tests to prevent future errors.
+    - BugFix: fixed ``PrecisionRecallCurve`` visual display problem with multi-class labels.
+    - BugFix: fixed the ``RFECV`` step display bug.
     - Extended FeatureImportances documentation and tests for stacked importances and added a warning when stack should be true.
     - Improved the documentation readability and structure.
+    - Refreshed the README.md and added testing and documentation READMEs.
+    - Updated the gallery to generate thumbnail-quality images.
+    - Updated the example notebooks and created a quickstart notebook.
+    - Fixed broken links in the documentation.
 
 Compatibility Notes:
     - This version provides support for matplotlib 3.0.1 or greater and drops support for matplotlib versions less than 2.0.
@@ -40,7 +51,7 @@ This hotfix adds matplotlib3 support by requiring any version of matplotlib exce
 
 * Tag: v0.9.1_
 * Deployed: Tuesday, February 5, 2019
-* Contributors: Benjamin Bengfort, Rebecca Bilbro, Ian Ozsvald
+* Contributors: Benjamin Bengfort, Rebecca Bilbro, Ian Ozsvald, Francois Dion
 
 .. _v0.9.1: https://github.com/DistrictDataLabs/yellowbrick/releases/tag/v0.9.1
 
