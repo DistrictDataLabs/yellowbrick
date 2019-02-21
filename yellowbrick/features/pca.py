@@ -24,7 +24,6 @@ import matplotlib.pyplot as plt
 from yellowbrick.features.base import MultiFeatureVisualizer
 from yellowbrick.style import palettes
 from yellowbrick.exceptions import YellowbrickValueError
-from yellowbrick.draw import manual_legend
 
 from sklearn.pipeline import Pipeline
 from sklearn.decomposition import PCA
@@ -65,11 +64,6 @@ class PCADecomposition(MultiFeatureVisualizer):
 
     color : list or tuple of colors, default: None
         Specify the colors for each individual class.
-        
-    classes : list, default: None
-        a list of class names for the legend
-        If classes is None and a y value is passed to fit then the classes
-        are selected from the target vector..
 
     colormap : string or cmap, default: None
         Optional string or matplotlib cmap to colorize lines.
@@ -104,7 +98,6 @@ class PCADecomposition(MultiFeatureVisualizer):
                  proj_dim=2,
                  proj_features=False,
                  color=None,
-                 classes=None,
                  colormap=palettes.DEFAULT_SEQUENCE,
                  random_state=None,
                  **kwargs):
@@ -128,7 +121,6 @@ class PCADecomposition(MultiFeatureVisualizer):
 
         # Visual Parameters
         self.color = color
-        self.classes_ = classes
         self.colormap = colormap
 
     def fit(self, X, y=None, **kwargs):
@@ -215,10 +207,6 @@ class PCADecomposition(MultiFeatureVisualizer):
         self.ax.set_ylabel('Principal Component 2')
         if self.proj_dim == 3:
             self.ax.set_zlabel('Principal Component 3')
-        if self.classes_ is not None:
-              manual_legend(
-              self, self.classes_, self.color, frameon=True, loc='best'
-            )
 
 
 ##########################################################################
@@ -227,7 +215,7 @@ class PCADecomposition(MultiFeatureVisualizer):
 
 def pca_decomposition(X, y=None, ax=None, features=None, scale=True,
                       proj_dim=2, proj_features=False, color=None,
-                      classes=None,colormap=palettes.DEFAULT_SEQUENCE,
+                      colormap=palettes.DEFAULT_SEQUENCE,
                       random_state=None, **kwargs):
     """Produce a two or three dimensional principal component plot of the data array ``X``
     projected onto it's largest sequential principal components. It is common practice to scale the
@@ -263,11 +251,6 @@ def pca_decomposition(X, y=None, ax=None, features=None, scale=True,
 
     color : list or tuple of colors, default: None
         Specify the colors for each individual class.
-        
-    classes : list, default: None
-         a list of class names for the legend
-         If classes is None and a y value is passed to fit then the classes
-         are selected from the target vector.
 
     colormap : string or cmap, default: None
         Optional string or matplotlib cmap to colorize lines.
@@ -296,8 +279,8 @@ def pca_decomposition(X, y=None, ax=None, features=None, scale=True,
     # Instantiate the visualizer
     visualizer = PCADecomposition(
         ax=ax, features=features, scale=scale, proj_dim=proj_dim,
-        proj_features=proj_features, color=color, classes=classes,
-        colormap=colormap, random_state=random_state, **kwargs
+        proj_features=proj_features, color=color, colormap=colormap,
+        random_state=random_state, **kwargs
     )
 
     # Fit and transform the visualizer (calls draw)
