@@ -310,7 +310,7 @@ class PosTagVisualizer(TextVisualizer):
             color=colors
         )
         return self.ax
-        
+
     def finalize(self, **kwargs):
         """
         Finalize the plot with ticks, labels, and title
@@ -326,10 +326,10 @@ class PosTagVisualizer(TextVisualizer):
                 (sum(self.pos_tag_counts_.values()))
             )
         )
-        
+
         self.ax.set_xticks(range(len(self.pos_tag_counts_)))
         self.ax.set_xticklabels(list(self.pos_tag_counts_.keys()), rotation=90)
-        
+
         # Set the axis labels
         self.ax.set_xlabel(
             '{} part-of-speech tags'.format(
@@ -338,23 +338,29 @@ class PosTagVisualizer(TextVisualizer):
         )
         self.ax.set_ylabel('Count')
 
+    def poof(self, outpath=None, **kwargs):
+        if outpath is not None:
+            kwargs["bbox_inches"] = kwargs.get("bbox_inches", "tight")
+        return super(PosTagVisualizer, self).poof(outpath, **kwargs)
+
+
 ##########################################################################
 ## Quick Method
 ##########################################################################
 
-def postag(X, ax=None, tagset="penn_treebank", colormap=None, 
-            colors=None, **kwargs):
+def postag(X, ax=None, tagset="penn_treebank", colormap=None,
+           colors=None, **kwargs):
     """
     Display a barchart with the counts of different parts of speech
     in X, which consists of a part-of-speech-tagged corpus, which the
-    visualizer expects to be a list of lists of lists of (token, tag) 
+    visualizer expects to be a list of lists of lists of (token, tag)
     tuples.
 
     Parameters
     ----------
     X : list or generator
         Should be provided as a list of documents or a generator
-        that yields a list of documents that contain a list of 
+        that yields a list of documents that contain a list of
         sentences that contain (token, tag) tuples.
     ax : matplotlib axes
         The axes to plot the figure on.
@@ -367,7 +373,7 @@ def postag(X, ax=None, tagset="penn_treebank", colormap=None,
     colormap : string or matplotlib cmap
         Specify a colormap to color the parts-of-speech.
     kwargs : dict
-        Pass any additional keyword arguments to the PosTagVisualizer. 
+        Pass any additional keyword arguments to the PosTagVisualizer.
 
     Returns
     -------
@@ -384,6 +390,6 @@ def postag(X, ax=None, tagset="penn_treebank", colormap=None,
 
     # Return the axes object on the visualizer
     return visualizer
-        
-        
-        
+
+
+
