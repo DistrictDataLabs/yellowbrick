@@ -21,13 +21,15 @@ small subset of documents.
 
 from yellowbrick.text.base import TextVisualizer
 from yellowbrick.style.colors import resolve_colors
+from yellowbrick.exceptions import YellowbrickValueError
 
 
 ##########################################################################
 # Part-of-speech tag punctuation and labels
 ##########################################################################
 
-PUNCT_LIST = [".", ":", ",", "``", "''", "(", ")", "#", "$"]
+# NOTE: Penn Treebank converts all sentence closers (!,?,;) to periods
+PUNCT_TAGS = [".", ":", ",", "``", "''", "(", ")", "#", "$"]
 TAGSET_NAMES = {
     "penn_treebank" : "Penn Treebank",
     "universal" : "Universal Dependencies"
@@ -71,6 +73,11 @@ class PosTagVisualizer(TextVisualizer):
     kwargs : dict
         Pass any additional keyword arguments to the PosTagVisualizer.
 
+    Attributes
+    ----------
+    pos_tag_counts_: dict
+        Mapping of part-of-speech tags to counts.
+
     Examples
     --------
     >>> viz = PosTagVisualizer()
@@ -90,15 +97,13 @@ class PosTagVisualizer(TextVisualizer):
         self.tagset_names = TAGSET_NAMES
         
         if tagset not in self.tagset_names:
-            raise NotImplementedError(
-                "PosTagVisualizer not implemented for {} tags.".format(
-                    tagset
-                )
-            )
+            raise YellowbrickValueError((
+                "'{}' is an invalid tagset. Please choose one of {}."
+            ).format(tagset, ", ".join(self.tagset_names.keys())))
         else:
             self.tagset = tagset
         
-        self.punct_list = PUNCT_LIST
+        self.punct_tags = frozenset(PUNCT_TAGS)
         self.colormap = colormap
         self.colors = colors
 
@@ -115,8 +120,8 @@ class PosTagVisualizer(TextVisualizer):
             sentences that contain (token, tag) tuples.
 
         y : ndarray or Series of length n
-            An optional array or series of target or class values for
-            instances.
+            An optional array of target values that are ignored by the 
+            visualizer.
 
         kwargs : dict
             Pass generic arguments to the drawing method
@@ -128,11 +133,11 @@ class PosTagVisualizer(TextVisualizer):
         """
         # TODO: add support for other tagsets?
         if self.tagset == "penn_treebank":
-            self.tag_map = self._penn_tag_map()
+            self.pos_tag_counts_ = self._penn_tag_map()
             self._handle_treebank(X)
 
         elif self.tagset == "universal":
-            self.tag_map = self._uni_tag_map()
+            self.pos_tag_counts_ = self._uni_tag_map()
             self._handle_universal(X)
       
         self.draw()
@@ -198,39 +203,29 @@ class PosTagVisualizer(TextVisualizer):
             that yields a list of documents that contain a list of 
             sentences that contain (token, tag) tuples.
         """
+        jump = {
+            # combine proper and regular nouns 
+            "NOUN": "noun", "PROPN": "noun",
+            "ADJ": "adjective",
+            "VERB": "verb",
+            # include particles with adverbs 
+            "ADV": "adverb", "PART": "adverb",
+            "ADP": "adposition",
+            "PRON": "pronoun",
+            "CCONJ": "conjunction",
+            "PUNCT": "punctuation",
+            "DET": "determiner",
+            "NUM": "number",
+            "INTJ": "interjection",
+            "SYM": "symbol",
+        }
+
         for tagged_doc in X:
             for tagged_sent in tagged_doc:
                 for _, tag in tagged_sent:
-                    # combine proper and regular nouns
-                    if tag in ["NOUN", "PROPN"]:
-                        self.tag_map["noun"] += 1
-                    elif tag == "ADJ":
-                        self.tag_map["adjective"] += 1
-                    elif tag == "VERB":
-                        self.tag_map["verb"] += 1 
-                    # include particles with adverbs
-                    elif tag in ["ADV", "PART"]:
-                        self.tag_map["adverb"] += 1
-                    elif tag == "ADP":
-                        self.tag_map["adposition"] += 1
-                    elif tag == "PRON":
-                        self.tag_map["pronoun"] += 1
-                    elif tag == "CCONJ":
-                        self.tag_map["conjunction"] += 1
-                    elif tag == "PUNCT":
-                        self.tag_map["punctuation"] += 1
-                    elif tag == "DET":
-                        self.tag_map["determiner"] += 1
-                    elif tag == "NUM":
-                        self.tag_map["number"] += 1
-                    elif tag == "INTJ":
-                        self.tag_map["interjection"] += 1
-                    elif tag == "SYM":
-                        self.tag_map["symbol"] += 1
-                    elif tag == "SPACE":
+                    if tag == "SPACE":
                         continue
-                    else:
-                        self.tag_map["other"] += 1                
+                    self.pos_tag_counts_[jump.get(tag, "other")] += 1            
                 
     def _handle_treebank(self, X):
         """
@@ -247,47 +242,47 @@ class PosTagVisualizer(TextVisualizer):
             for tagged_sent in tagged_doc:
                 for _, tag in tagged_sent:
                     if tag.startswith("N"):
-                        self.tag_map["noun"] += 1
+                        self.pos_tag_counts_["noun"] += 1
                     elif tag.startswith("J"):
-                        self.tag_map["adjective"] += 1
+                        self.pos_tag_counts_["adjective"] += 1
                     elif tag.startswith("V"):
-                        self.tag_map["verb"] += 1
+                        self.pos_tag_counts_["verb"] += 1
                     # include particles with adverbs
                     elif tag.startswith("RB") or tag == "RP":
-                        self.tag_map["adverb"] += 1
+                        self.pos_tag_counts_["adverb"] += 1
                     elif tag.startswith("PR"):
-                        self.tag_map["pronoun"] += 1
+                        self.pos_tag_counts_["pronoun"] += 1
                     elif tag.startswith("W"):
-                        self.tag_map["wh- word"] += 1
+                        self.pos_tag_counts_["wh- word"] += 1
                     elif tag == "CC":
-                        self.tag_map["conjunction"] += 1
+                        self.pos_tag_counts_["conjunction"] += 1
                     elif tag == "CD":
-                        self.tag_map["digit"] += 1
+                        self.pos_tag_counts_["digit"] += 1
                     # combine predeterminer and determiner
                     elif tag in ["DT" or "PDT"]:
-                        self.tag_map["determiner"] += 1
+                        self.pos_tag_counts_["determiner"] += 1
                     elif tag == "EX":
-                        self.tag_map["existential"] += 1
+                        self.pos_tag_counts_["existential"] += 1
                     elif tag == "FW":
-                        self.tag_map["non-English"] += 1
+                        self.pos_tag_counts_["non-English"] += 1
                     elif tag == "IN":
-                        self.tag_map["preposition"] += 1
+                        self.pos_tag_counts_["preposition"] += 1
                     elif tag == "POS":
-                        self.tag_map["possessive"] += 1
+                        self.pos_tag_counts_["possessive"] += 1
                     elif tag == "LS":
-                        self.tag_map["list"] += 1
+                        self.pos_tag_counts_["list"] += 1
                     elif tag == "MD":
-                        self.tag_map["modal"] += 1
-                    elif tag in self.punct_list:
-                        self.tag_map["punctuation"] += 1
+                        self.pos_tag_counts_["modal"] += 1
+                    elif tag in self.punct_tags:
+                        self.pos_tag_counts_["punctuation"] += 1
                     elif tag == "TO":
-                        self.tag_map["infinitive"] += 1
+                        self.pos_tag_counts_["infinitive"] += 1
                     elif tag == "UH":
-                        self.tag_map["interjection"] += 1
+                        self.pos_tag_counts_["interjection"] += 1
                     elif tag == "SYM":
-                        self.tag_map["symbol"] += 1
+                        self.pos_tag_counts_["symbol"] += 1
                     else:
-                        self.tag_map["other"] += 1
+                        self.pos_tag_counts_["other"] += 1
                 
     def draw(self, **kwargs):
         """
@@ -305,13 +300,13 @@ class PosTagVisualizer(TextVisualizer):
             Axes on which the PosTagVisualizer was drawn.
         """
         colors = resolve_colors(
-            n_colors=len(self.tag_map), 
+            n_colors=len(self.pos_tag_counts_), 
             colormap=self.colormap, 
             colors=self.colors
         )
         self.ax.bar(
-            range(len(self.tag_map)), 
-            list(self.tag_map.values()), 
+            range(len(self.pos_tag_counts_)), 
+            list(self.pos_tag_counts_.values()), 
             color=colors
         )
         return self.ax
@@ -328,12 +323,12 @@ class PosTagVisualizer(TextVisualizer):
         # NOTE: not deduping here, so this is total, not unique
         self.set_title(
             "PosTag plot for {}-token corpus".format(
-                (sum(self.tag_map.values()))
+                (sum(self.pos_tag_counts_.values()))
             )
         )
         
-        self.ax.set_xticks(range(len(self.tag_map)))
-        self.ax.set_xticklabels(list(self.tag_map.keys()), rotation=90)
+        self.ax.set_xticks(range(len(self.pos_tag_counts_)))
+        self.ax.set_xticklabels(list(self.pos_tag_counts_.keys()), rotation=90)
         
         # Set the axis labels
         self.ax.set_xlabel(
@@ -347,7 +342,7 @@ class PosTagVisualizer(TextVisualizer):
 ## Quick Method
 ##########################################################################
 
-def postag(X, y=None, ax=None, tagset="penn_treebank", colormap=None, 
+def postag(X, ax=None, tagset="penn_treebank", colormap=None, 
             colors=None, **kwargs):
     """
     Display a barchart with the counts of different parts of speech
@@ -357,6 +352,10 @@ def postag(X, y=None, ax=None, tagset="penn_treebank", colormap=None,
 
     Parameters
     ----------
+    X : list or generator
+        Should be provided as a list of documents or a generator
+        that yields a list of documents that contain a list of 
+        sentences that contain (token, tag) tuples.
     ax : matplotlib axes
         The axes to plot the figure on.
     tagset: string
@@ -381,10 +380,10 @@ def postag(X, y=None, ax=None, tagset="penn_treebank", colormap=None,
     )
 
     # Fit and transform the visualizer (calls draw)
-    visualizer.fit(X, y, **kwargs)
+    visualizer.fit(X, **kwargs)
 
     # Return the axes object on the visualizer
-    return visualizer.ax
+    return visualizer
         
         
         

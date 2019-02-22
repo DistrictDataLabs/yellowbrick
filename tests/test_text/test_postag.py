@@ -20,6 +20,7 @@ Tests for the part-of-speech tagging visualization
 
 import pytest
 
+from yellowbrick.exceptions import YellowbrickValueError
 from yellowbrick.text.postag import *
 from tests.base import VisualTestCase
 import matplotlib.pyplot as plt
@@ -112,7 +113,7 @@ def check_spacy_data():
     try:
         spacy.load('en_core_web_sm')
         return True
-    except OSError: # should this be OSError?
+    except OSError:
         pytest.xfail("error occured because spacy data model is not available")
 
 def get_tagged_docs(X, model="nltk", tagger="word"):
@@ -180,7 +181,7 @@ class TestPosTag(VisualTestCase):
         """
         Ensure an exception is raised if the specified tagset is unknown
         """
-        with pytest.raises(NotImplementedError):
+        with pytest.raises(YellowbrickValueError):
             PosTagVisualizer(tagset="brill")
 
     @pytest.mark.skipif(nltk is None, reason="test requires nltk")
