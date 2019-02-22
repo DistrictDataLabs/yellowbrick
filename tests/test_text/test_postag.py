@@ -100,7 +100,7 @@ def check_nltk_data():
     Returns True if NLTK data has been downloaded, False otherwise
     """
     try:
-        nltk.data.find('corpora')
+        nltk.data.find('corpora/treebank')
         return True
     except LookupError:
         pytest.xfail("error occured because nltk postag data is not available")
@@ -184,26 +184,7 @@ class TestPosTag(VisualTestCase):
             PosTagVisualizer(tagset="brill")
 
     @pytest.mark.skipif(nltk is None, reason="test requires nltk")
-    @pytest.mark.skipif(spacy is None, reason="test requires spacy")
-    def test_integrated_postag(self):
-        """
-        Assert no errors occur during postag integration
-        """
-        # Fail if data hasn't been downloaded
-        check_nltk_data()
-        check_spacy_data()
-
-        # get corpus as list of lists of lists of token,tag tuples
-        tagged_docs = list(get_tagged_docs(sonnets))
-
-        visualizer = PosTagVisualizer()
-        visualizer.fit(tagged_docs)
-        visualizer.ax.grid(False)
-
-        self.assert_images_similar(visualizer)
-
-    @pytest.mark.skipif(nltk is None, reason="test requires nltk")
-    def test_wordpunct_tagged(self):
+    def test_word_tagged(self):
         """
         Assert no errors occur during PosTagVisualizer integration
         with word tokenized corpus
@@ -223,7 +204,7 @@ class TestPosTag(VisualTestCase):
         self.assert_images_similar(visualizer)
 
     @pytest.mark.skipif(nltk is None, reason="test requires nltk")
-    def test_word_tagged(self):
+    def test_wordpunct_tagged(self):
         """
         Assert no errors occur during PosTagVisualizer integration
         with wordpunct tokenized corpus
