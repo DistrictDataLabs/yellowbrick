@@ -10,6 +10,9 @@ The ``PosTagVisualizer`` is intended to support grammar-based feature extraction
 .. note::
     The ``PosTagVisualizer`` currently works with both Penn-Treebank (e.g. via NLTK) and Universal Dependencies (e.g. via SpaCy)-tagged corpora, but expects corpora that have already been tagged, and which take the form of a list of (document) lists of (sentence) lists of ``(token, tag)`` tuples, as in the example below.
 
+Penn Treebank Tags
+------------------
+
 .. plot::
     :context: close-figs
     :alt: PosTag plot with Penn Treebank tags
@@ -75,6 +78,72 @@ The ``PosTagVisualizer`` is intended to support grammar-based feature extraction
     # Create the visualizer, fit, score, and poof it
     viz = PosTagVisualizer()
     viz.fit(tagged_stanzas)
+    viz.poof()
+
+Universal Dependencies Tags
+---------------------------
+
+Libraries like SpaCy use tags from the Universal Dependencies (UD) framework. The ``PosTagVisualizer`` can also be used with text tagged using this framework by specifying the ``tagset`` keyword as "universal" on instantiation.
+
+.. code:: python
+
+    tagged_speech = [
+        [
+            [
+                ('In', 'ADP'),('all', 'DET'),('honesty', 'NOUN'),(',', 'PUNCT'),
+                ('I', 'PRON'),('said', 'VERB'),('yes', 'INTJ'),('to', 'ADP'),
+                ('the', 'DET'),('fear', 'NOUN'),('of', 'ADP'),('being', 'VERB'),
+                ('on', 'ADP'),('this', 'DET'),('stage', 'NOUN'),('tonight', 'NOUN'),
+                ('because', 'ADP'),('I', 'PRON'),('wanted', 'VERB'),('to', 'PART'),
+                ('be', 'VERB'),('here', 'ADV'),(',', 'PUNCT'),('to', 'PART'),
+                ('look', 'VERB'),('out', 'PART'),('into', 'ADP'),('this', 'DET'),
+                ('audience', 'NOUN'),(',', 'PUNCT'),('and', 'CCONJ'),
+                ('witness', 'VERB'),('this', 'DET'),('moment', 'NOUN'),('of', 'ADP'),
+                ('change', 'NOUN')
+                ],
+            [
+                ('and', 'CCONJ'),('I', 'PRON'),("'m", 'VERB'),('not', 'ADV'),
+                ('fooling', 'VERB'),('myself', 'PRON'),('.', 'PUNCT')
+                ],
+            [
+                ('I', 'PRON'),("'m", 'VERB'),('not', 'ADV'),('fooling', 'VERB'),
+                ('myself', 'PRON'),('.', 'PUNCT')
+                ],
+            [
+                ('Next', 'ADJ'),('year', 'NOUN'),('could', 'VERB'),('be', 'VERB'),
+                ('different', 'ADJ'),('.', 'PUNCT')
+                ],
+            [
+                ('It', 'PRON'),('probably', 'ADV'),('will', 'VERB'),('be', 'VERB'),
+                (',', 'PUNCT'),('but', 'CCONJ'),('right', 'ADV'),('now', 'ADV'),
+                ('this', 'DET'),('moment', 'NOUN'),('is', 'VERB'),('real', 'ADJ'),
+                ('.', 'PUNCT')
+                ],
+            [
+                ('Trust', 'VERB'),('me', 'PRON'),(',', 'PUNCT'),('it', 'PRON'),
+                ('is', 'VERB'),('real', 'ADJ'),('because', 'ADP'),('I', 'PRON'),
+                ('see', 'VERB'),('you', 'PRON')
+                ],
+            [
+                ('and', 'CCONJ'), ('I', 'PRON'), ('see', 'VERB'), ('you', 'PRON')
+                ],
+            [
+                ('—', 'PUNCT')
+                ],
+            [
+                ('all', 'ADJ'),('these', 'DET'),('faces', 'NOUN'),('of', 'ADP'),
+                ('change', 'NOUN')
+                ],
+            [
+                ('—', 'PUNCT'),('and', 'CCONJ'),('now', 'ADV'),('so', 'ADV'),
+                ('will', 'VERB'),('everyone', 'NOUN'),('else', 'ADV'), ('.', 'PUNCT')
+                ]
+        ]
+    ]
+
+    # Create the visualizer, fit, score, and poof it
+    viz = PosTagVisualizer(tagset="universal")
+    viz.fit(tagged_speech)
     viz.poof()
 
 

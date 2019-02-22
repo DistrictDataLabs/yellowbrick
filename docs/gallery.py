@@ -433,7 +433,7 @@ def postag():
                 ]
         ]
     ]
-    oz = PosTagVisualizer()
+    oz = PosTagVisualizer(ax=newfig())
     oz.fit(tagged_stanzas)
     savefig(oz, "postag")
 
