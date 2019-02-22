@@ -228,6 +228,13 @@ Text Modeling Visualizers
     :alt: Dispersion of Words in a Corpus
     :target: api/text/dispersion.html#dispersion-plot
 
+.. image:: images/gallery/postag.png
+    :width: 200px
+    :height: 100px
+    :alt: Parts-of-Speech in a Tagged Corpus
+    :target: api/text/postag.html#postag-visualization
+
+
 Target Visualizers
 ------------------
 

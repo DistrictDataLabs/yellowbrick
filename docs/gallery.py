@@ -28,7 +28,7 @@ from yellowbrick.cluster import InterclusterDistance
 from yellowbrick.model_selection import ValidationCurve, LearningCurve, CVScores
 from yellowbrick.contrib.classifier import DecisionViz
 
-from yellowbrick.text import FreqDistVisualizer, TSNEVisualizer, DispersionPlot
+from yellowbrick.text import FreqDistVisualizer, TSNEVisualizer, DispersionPlot, PosTagVisualizer
 
 from yellowbrick.target import BalancedBinningReference, ClassBalance, FeatureCorrelation
 
@@ -378,6 +378,65 @@ def dispersion():
     savefig(oz, "dispersion")
 
 
+def postag():
+    tagged_stanzas = [
+        [
+            [
+                ('Whose', 'JJ'),('woods', 'NNS'),('these', 'DT'),
+                ('are', 'VBP'),('I', 'PRP'),('think', 'VBP'),('I', 'PRP'),
+                ('know', 'VBP'),('.', '.')
+                ],
+            [
+                ('His', 'PRP$'),('house', 'NN'),('is', 'VBZ'),('in', 'IN'),
+                ('the', 'DT'),('village', 'NN'),('though', 'IN'),(';', ':'),
+                ('He', 'PRP'),('will', 'MD'),('not', 'RB'),('see', 'VB'),
+                ('me', 'PRP'),('stopping', 'VBG'), ('here', 'RB'),('To', 'TO'),
+                ('watch', 'VB'),('his', 'PRP$'),('woods', 'NNS'),('fill', 'VB'),
+                ('up', 'RP'),('with', 'IN'),('snow', 'NNS'),('.', '.')
+                ]
+            ],
+        [
+            [
+                ('My', 'PRP$'),('little', 'JJ'),('horse', 'NN'),('must', 'MD'),
+                ('think', 'VB'),('it', 'PRP'),('queer', 'JJR'),('To', 'TO'),
+                ('stop', 'VB'),('without', 'IN'),('a', 'DT'),('farmhouse', 'NN'),
+                ('near', 'IN'),('Between', 'NNP'),('the', 'DT'),('woods', 'NNS'),
+                ('and', 'CC'),('frozen', 'JJ'),('lake', 'VB'),('The', 'DT'),
+                ('darkest', 'JJS'),('evening', 'NN'),('of', 'IN'),('the', 'DT'),
+                ('year', 'NN'),('.', '.')
+                ]
+            ],
+        [
+            [  
+                ('He', 'PRP'),('gives', 'VBZ'),('his', 'PRP$'),('harness', 'NN'),
+                ('bells', 'VBZ'),('a', 'DT'),('shake', 'NN'),('To', 'TO'),
+                ('ask', 'VB'),('if', 'IN'),('there', 'EX'),('is', 'VBZ'),
+                ('some', 'DT'),('mistake', 'NN'),('.', '.')
+                ],
+            [
+                ('The', 'DT'),('only', 'JJ'),('other', 'JJ'),('sound', 'NN'),
+                ('’', 'NNP'),('s', 'VBZ'),('the', 'DT'),('sweep', 'NN'), 
+                ('Of', 'IN'),('easy', 'JJ'),('wind', 'NN'),('and', 'CC'),
+                ('downy', 'JJ'),('flake', 'NN'),('.', '.')
+                ]
+            ],
+        [
+            [
+                ('The', 'DT'),('woods', 'NNS'),('are', 'VBP'),('lovely', 'RB'),
+                (',', ','),('dark', 'JJ'),('and', 'CC'),('deep', 'JJ'),(',', ','),
+                ('But', 'CC'),('I', 'PRP'),('have', 'VBP'),('promises', 'NNS'),
+                ('to', 'TO'),('keep', 'VB'),(',', ','),('And', 'CC'),('miles', 'NNS'),
+                ('to', 'TO'),('go', 'VB'),('before', 'IN'),('I', 'PRP'),
+                ('sleep', 'VBP'),(',', ','),('And', 'CC'),('miles', 'NNS'),
+                ('to', 'TO'),('go', 'VB'),('before', 'IN'),('I', 'PRP'),
+                ('sleep', 'VBP'),('.', '.')
+                ]
+        ]
+    ]
+    oz = PosTagVisualizer(ax=newfig())
+    oz.fit(tagged_stanzas)
+    savefig(oz, "postag")
+
 ##########################################################################
 ## Target Visualizations
 ##########################################################################
@@ -446,6 +505,7 @@ if __name__ == "__main__":
         "freqdist": freqdist,
         "tsne": tsne,
         "dispersion": dispersion,
+        "postag": postag,
         "decision": decision,
         "binning": binning,
         "balance": balance,
