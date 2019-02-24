@@ -90,6 +90,7 @@ class PosTagVisualizer(TextVisualizer):
         tagset="penn_treebank", 
         colormap=None, 
         colors=None, 
+        frequency_sort=False,
         **kwargs
     ):
         super(PosTagVisualizer, self).__init__(ax=ax, **kwargs)
@@ -106,6 +107,7 @@ class PosTagVisualizer(TextVisualizer):
         self.punct_tags = frozenset(PUNCT_TAGS)
         self.colormap = colormap
         self.colors = colors
+        self.frequency_sort = frequency_sort
 
     def fit(self, X, y=None, **kwargs):
         """
@@ -304,6 +306,18 @@ class PosTagVisualizer(TextVisualizer):
             colormap=self.colormap, 
             colors=self.colors
         )
+
+        if self.frequency_sort == True:
+            sorted_tags = sorted(self.pos_tag_counts_, key=self.pos_tag_counts_.get, reverse=True)
+            sorted_counts = [self.pos_tag_counts_[tag] for tag in sorted_tags]
+
+            self.ax.bar(
+                range(len(sorted_tags)), 
+                sorted_counts, 
+                color=colors
+            )
+            return self.ax
+
         self.ax.bar(
             range(len(self.pos_tag_counts_)), 
             list(self.pos_tag_counts_.values()), 

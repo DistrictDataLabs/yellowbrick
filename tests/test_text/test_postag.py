@@ -183,6 +183,17 @@ class TestPosTag(VisualTestCase):
         """
         with pytest.raises(YellowbrickValueError):
             PosTagVisualizer(tagset="brill")
+            
+    def test_frequency_sort_mode(self):
+        check_nltk_data()
+
+        _, ax = plt.subplots()
+        tagged_docs = list(get_tagged_docs(sonnets))
+
+        postag(tagged_docs, ax=ax, frequency_sort=True)
+        ax.grid(False)
+
+        self.assert_images_similar(ax=ax)
 
     @pytest.mark.skipif(nltk is None, reason="test requires nltk")
     def test_word_tagged(self):
