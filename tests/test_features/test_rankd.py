@@ -139,21 +139,21 @@ class TestRank1D(VisualTestCase):
         oz.finalize()
         self.assert_images_similar(oz)
 
-    @pytest.mark.skipif(pd is None, reason="requires pandas")
     @pytest.mark.filterwarnings("ignore:p-value")
     def test_rank1d_integrated(self):
         """
         Test Rank1D on occupancy dataset with pandas DataFrame and Series
         """
         data = load_occupancy(return_dataset=True)
-        df = data.to_dataframe()
+        X, y = data.to_data()
 
-        # Load the data from the fixture
-        features = [
-            "temperature", "relative humidity", "light", "CO2", "humidity"
-        ]
-        X = df[features]
-        y = df['occupancy']
+        if pd is None:
+            features = data.meta["features"]
+        else:
+            assert isinstance(X, pd.DataFrame)
+            assert isinstance(y, pd.Series)
+
+            features = X.columns
 
         # Test the visualizer
         oz = Rank1D(features=features, show_feature_names=True)
@@ -298,20 +298,20 @@ class TestRank2D(VisualTestCase):
     @pytest.mark.xfail(
         sys.platform == 'win32', reason="images not close on windows"
     )
-    @pytest.mark.skipif(pd is None, reason="requires pandas")
     def test_rank2d_integrated(self):
         """
         Test Rank2D on occupancy dataset with pandas DataFrame and Series
         """
         data = load_occupancy(return_dataset=True)
-        df = data.to_dataframe()
+        X, y = data.to_data()
 
-        # Load the data from the fixture
-        features = [
-            "temperature", "relative humidity", "light", "CO2", "humidity"
-        ]
-        X = df[features]
-        y = df['occupancy']
+        if pd is None:
+            features = data.meta["features"]
+        else:
+            assert isinstance(X, pd.DataFrame)
+            assert isinstance(y, pd.Series)
+
+            features = X.columns
 
         # Test the visualizer
         oz = Rank2D(features=features, show_feature_names=True)

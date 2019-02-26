@@ -137,8 +137,9 @@ class TestRFECV(VisualTestCase):
         data = load_occupancy(return_dataset=True)
         X, y = data.to_data()
 
-        assert isinstance(X, pd.DataFrame)
-        assert isinstance(y, pd.Series)
+        if pd is not None:
+            assert isinstance(X, pd.DataFrame)
+            assert isinstance(y, pd.Series)
 
         cv = StratifiedKFold(n_splits=4, random_state=32)
         oz = RFECV(RandomForestClassifier(random_state=83), cv=cv)

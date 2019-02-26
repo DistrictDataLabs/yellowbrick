@@ -112,44 +112,52 @@ class TestRadViz(VisualTestCase):
     @pytest.mark.xfail(
         sys.platform == 'win32', reason="images not close on windows"
     )
-    @pytest.mark.skipif(pandas is None, reason="test requires Pandas")
     def test_integrated_radiz_with_pandas(self):
         """
         Test RadViz with Pandas on the occupancy dataset
         """
         data = load_occupancy(return_dataset=True)
-        occupancy = data.to_dataframe()
+        X, y = data.to_data()
 
-        # Load the data from the fixture
-        X = occupancy[[
-            "temperature", "relative humidity", "light", "CO2", "humidity"
-        ]]
-        y = occupancy['occupancy'].astype(int)
+        if pandas is None:
+            features = data.meta["features"]
+        else:
+            assert isinstance(X, pandas.DataFrame)
+            assert isinstance(y, pandas.Series)
+
+            npt.assert_equal(X.columns.values, data.meta["features"])
+
+            features = None
 
         # Test the visualizer
-        visualizer = RadViz()
+        visualizer = RadViz(features=features)
         visualizer.fit_transform_poof(X, y)
-        self.assert_images_similar(visualizer)
+        self.assert_images_similar(visualizer, tol=0.1)
 
     @pytest.mark.xfail(
         sys.platform == 'win32', reason="images not close on windows"
     )
-    @pytest.mark.skipif(pandas is None, reason="test requires Pandas")
     def test_integrated_radiz_pandas_classes_features(self):
         """
         Test RadViz with classes and features specified
         """
         # Load the data from the fixture
         data = load_occupancy(return_dataset=True)
-        occupancy = data.to_dataframe()
+        X, y = data.to_data()
 
         features = ["temperature", "relative humidity", "light"]
         classes = ['unoccupied', 'occupied']
 
-        X = occupancy[features]
-        y = occupancy['occupancy'].astype(int)
+        if pandas is None:
+            X = X[:, :3]
+        else:
+            X = X[features]
+            y = y.astype(int)
+
+            assert isinstance(X, pandas.DataFrame)
+            assert isinstance(y, pandas.Series)
 
         # Test the visualizer
         visualizer = RadViz(features=features, classes=classes)
         visualizer.fit_transform_poof(X, y)
-        self.assert_images_similar(visualizer)
+        self.assert_images_similar(visualizer, tol=0.1)
