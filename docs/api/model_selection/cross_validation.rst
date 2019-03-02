@@ -17,7 +17,7 @@ In Yellowbrick, the ``CVScores`` visualizer displays cross-validated scores as a
 Classification
 --------------
 
-In the following example we show how to visualize cross-validated scores for a classification model. After loading a ``DataFrame``, we create a ``StratifiedKFold`` cross-validation strategy to ensure all of our classes in each split are represented with the same proportion. We then fit the ``CVScores`` visualizer using the ``f1_weighted`` scoring metric as opposed to the default metric, accuracy, to get a better sense of the relationship of precision and recall in our classifier across all of our folds.
+In the following example we show how to visualize cross-validated scores for a classification model. After loading our occupancy data as a ``DataFrame``, we created a ``StratifiedKFold`` cross-validation strategy to ensure all of our classes in each split are represented with the same proportion. We then fit the ``CVScores`` visualizer using the ``f1_weighted`` scoring metric as opposed to the default metric, accuracy, to get a better sense of the relationship of precision and recall in our classifier across all of our folds.
 
 .. plot::
     :context: close-figs
@@ -58,7 +58,7 @@ Our resulting visualization shows that while our average cross-validation score 
 Regression
 ----------
 
-In this next example we show how to visualize cross-validated scores for a regression model. After loading our energy data into a ``DataFrame``, we instantiate a simple ``KFold`` cross-validation strategy. We then fit the ``CVScores`` visualizer using the ``r2`` scoring metric, to get a sense of the coefficient of determination for our regressor across all of our folds.
+In this next example we show how to visualize cross-validated scores for a regression model. After loading our energy data as a ``DataFrame``, we instantiated a simple ``KFold`` cross-validation strategy. We then fit the ``CVScores`` visualizer using the ``r2`` scoring metric, to get a sense of the coefficient of determination for our regressor across all of our folds.
 
 .. plot::
     :context: close-figs
