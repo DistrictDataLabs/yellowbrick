@@ -76,7 +76,7 @@ In this next example we show how to visualize cross-validated scores for a regre
     # Create a new figure and axes
     _, ax = plt.subplots()
 
-    cv = KFold(12)
+    cv = KFold(12, random_state=42)
 
     visualizer = CVScores(
         Ridge(), ax=ax, cv=cv, scoring='r2'
