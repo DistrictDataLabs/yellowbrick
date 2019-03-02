@@ -11,7 +11,9 @@ Pearson Correlation
 
 The default calculation is Pearson correlation, which is perform with ``scipy.stats.pearsonr``.
 
-.. code:: python
+.. plot::
+    :context: close-figs
+    :alt: FeatureCorrelation on the diabetes dataset using Pearson correlation
 
     from sklearn import datasets
     from yellowbrick.target import FeatureCorrelation
@@ -25,7 +27,6 @@ The default calculation is Pearson correlation, which is perform with ``scipy.st
     visualizer.fit(X, y)
     visualizer.poof()
 
-.. image:: images/feature_correlation_pearson.png
 
 Mutual Information - Regression
 -------------------------------
@@ -34,7 +35,9 @@ Mutual information between features and the dependent variable is calculated wit
 It is very important to specify discrete features when calculating mutual information because the calculation for continuous and discrete variables are different.
 See `scikit-learn documentation <http://scikit-learn.org/stable/modules/generated/sklearn.feature_selection.mutual_info_classif.html>`_ for more details.
 
-.. code:: python
+.. plot::
+    :context: close-figs
+    :alt: FeatureCorrelation on the diabetes dataset using mutual_info-regression
 
     from sklearn import datasets
     from yellowbrick.target import FeatureCorrelation
@@ -49,10 +52,9 @@ See `scikit-learn documentation <http://scikit-learn.org/stable/modules/generate
 
     visualizer = FeatureCorrelation(method='mutual_info-regression',
                                     labels=feature_names)
-    visualizer.fit(X, y, discrete_features=discrete_features, random_state=0)
+    visualizer.fit(X, y, discrete_features=discrete_features, random_state=42)
     visualizer.poof()
 
-.. image:: images/feature_correlation_mutual_info_regression.png
 
 Mutual Information - Classification
 -----------------------------------
@@ -60,25 +62,29 @@ Mutual Information - Classification
 By fitting with a pandas DataFrame, the feature labels are automatically obtained from the column names.
 This visualizer also allows sorting of the bar plot according to the calculated mutual information (or Pearson correlation coefficients) and selecting features to plot by specifying the names of the features or the feature index.
 
-.. code:: python
+.. plot::
+    :context: close-figs
+    :alt: FeatureCorrelation on the diabetes dataset using mutual_info-classification
 
     from sklearn import datasets
     from yellowbrick.target import FeatureCorrelation
+    import pandas as pd
+    import numpy as np
 
     # Load the regression data set
-    data = datasets.load_diabetes()
+    data = datasets.load_wine()
     X, y = data['data'], data['target']
     feature_names = np.array(data['feature_names'])
     X_pd = pd.DataFrame(X, columns=feature_names)
 
     feature_to_plot = ['alcohol', 'ash', 'hue', 'proline', 'total_phenols']
 
+
     visualizer = FeatureCorrelation(method='mutual_info-classification',
                                     feature_names=feature_to_plot, sort=True)
-    visualizer.fit(X_pd, y, random_state=0)
+    visualizer.fit(X_pd, y, random_state=42)
     visualizer.poof()
 
-.. image:: images/feature_correlation_mutual_info_classification.png
 
 API Reference
 -------------
