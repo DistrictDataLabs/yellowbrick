@@ -52,7 +52,7 @@ See `scikit-learn documentation <http://scikit-learn.org/stable/modules/generate
 
     visualizer = FeatureCorrelation(method='mutual_info-regression',
                                     labels=feature_names)
-    visualizer.fit(X, y, discrete_features=discrete_features, random_state=42)
+    visualizer.fit(X, y, discrete_features=discrete_features, random_state=0)
     visualizer.poof()
 
 
@@ -82,7 +82,7 @@ This visualizer also allows sorting of the bar plot according to the calculated 
 
     visualizer = FeatureCorrelation(method='mutual_info-classification',
                                     feature_names=feature_to_plot, sort=True)
-    visualizer.fit(X_pd, y, random_state=42)
+    visualizer.fit(X_pd, y, random_state=0)
     visualizer.poof()
 
 
