@@ -17,42 +17,32 @@ In Yellowbrick, the ``CVScores`` visualizer displays cross-validated scores as a
 Classification
 --------------
 
-In the following example we show how to visualize cross-validated scores for a classification model. After loading our occupancy data as a ``DataFrame``, we created a ``StratifiedKFold`` cross-validation strategy to ensure all of our classes in each split are represented with the same proportion. We then fit the ``CVScores`` visualizer using the ``f1_weighted`` scoring metric as opposed to the default metric, accuracy, to get a better sense of the relationship of precision and recall in our classifier across all of our folds.
+In the following example, we show how to visualize cross-validated scores for a classification model. After loading our occupancy data as a ``DataFrame``, we created a ``StratifiedKFold`` cross-validation strategy to ensure all of our classes in each split are represented with the same proportion. We then fit the ``CVScores`` visualizer using the ``f1_weighted`` scoring metric as opposed to the default metric, accuracy, to get a better sense of the relationship of precision and recall in our classifier across all of our folds.
 
 .. plot::
     :context: close-figs
     :alt: Cross validation on the occupancy data set using StratifiedKFold
 
-    import matplotlib.pyplot as plt
-
-    from sklearn.naive_bayes import MultinomialNB
     from sklearn.model_selection import StratifiedKFold
+    from sklearn.naive_bayes import MultinomialNB
 
     from yellowbrick.datasets import load_occupancy
     from yellowbrick.model_selection import CVScores
 
-
-    # Load the classification data set
+    # Load the classification dataset
     X, y = load_occupancy()
 
-    # Create a new figure and axes
-    _, ax = plt.subplots()
-
     # Create a cross-validation strategy
-    cv = StratifiedKFold(12)
+    cv = StratifiedKFold(n_splits=12, random_state=42)
 
-    # Create the cv score visualizer
-    visualizer = CVScores(
-        MultinomialNB(), ax=ax, cv=cv, scoring='f1_weighted'
-    )
+    # Instantiate the classification model and visualizer
+    model = MultinomialNB()
+    visualizer = CVScores(model, cv=cv, scoring='f1_weighted')
 
-    visualizer.fit(X, y)
-    visualizer.poof()
-
+    visualizer.fit(X, y)        # Fit the data to the visualizer
+    visualizer.poof()           # Draw/show/poof the data
 
 Our resulting visualization shows that while our average cross-validation score is quite high, there are some splits for which our fitted ``MultinomialNB`` classifier performs significantly less well.
-
-
 
 
 Regression
@@ -67,28 +57,22 @@ In this next example we show how to visualize cross-validated scores for a regre
     from sklearn.linear_model import Ridge
     from sklearn.model_selection import KFold
 
-
     from yellowbrick.datasets import load_energy
     from yellowbrick.model_selection import CVScores
-    # Load the regression data set
+
+    # Load the regression dataset
     X, y = load_energy()
 
-    # Create a new figure and axes
-    _, ax = plt.subplots()
+    # Instantiate the regression model and visualizer
+    cv = KFold(n_splits=12, random_state=42)
 
-    cv = KFold(12, random_state=42)
+    model = Ridge()
+    visualizer = CVScores(model, cv=cv, scoring='r2')
 
-    visualizer = CVScores(
-        Ridge(), ax=ax, cv=cv, scoring='r2'
-    )
-
-    visualizer.fit(X, y)
-    visualizer.poof()
-
+    visualizer.fit(X, y)        # Fit the data to the visualizer
+    visualizer.poof()           # Draw/show/poof the data
 
 As with our classification ``CVScores`` visualization, our regression visualization suggests that our ``Ridge`` regressor performs very well (e.g. produces a high coefficient of determination) across nearly every fold, resulting in another fairly high overall R2 score.
-
-
 
 API Reference
 -------------
