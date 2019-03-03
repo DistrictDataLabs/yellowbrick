@@ -64,7 +64,7 @@ This visualizer also allows sorting of the bar plot according to the calculated 
 
 .. plot::
     :context: close-figs
-    :alt: FeatureCorrelation on the diabetes dataset using mutual_info-classification
+    :alt: FeatureCorrelation on the wine dataset using mutual_info-classification
 
     from sklearn import datasets
     from yellowbrick.target import FeatureCorrelation

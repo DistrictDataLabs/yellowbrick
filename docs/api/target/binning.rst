@@ -17,7 +17,7 @@ To help the user select the optimal number of bins, the ``BalancedBinningReferen
     from yellowbrick.target import BalancedBinningReference
     from yellowbrick.datasets import load_concrete
 
-    # Load the a concrete data set
+    # Load the concrete data set
     X, y = load_concrete()
 
     # Instantiate the visualizer
