@@ -26,12 +26,8 @@ from sklearn.manifold import LocallyLinearEmbedding
 from sklearn.datasets.samples_generator import make_s_curve
 from sklearn.datasets import make_classification, make_regression, make_blobs
 
+from unittest.mock import patch
 from tests.base import VisualTestCase
-
-try:
-    from unittest.mock import patch
-except ImportError:
-    from mock import patch
 
 try:
     import pandas as pd

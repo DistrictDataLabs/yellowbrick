@@ -15,11 +15,8 @@ Tests for the stand alone timer functions in Yellowbrick utils.
 ##########################################################################
 
 import pytest
-try:
-    from unittest import mock
-except ImportError:
-    import mock
 
+from unittest import mock
 from yellowbrick.utils.timer import *
 
 ##########################################################################

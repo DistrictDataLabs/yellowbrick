@@ -17,13 +17,8 @@ Loading utilities for the yellowbrick datasets.
 ##########################################################################
 
 import os
-import six
 import json
 import numpy as np
-
-if six.PY2:
-    # backport for encoding in open for python2
-    from io import open
 
 from .download import download_data
 from .path import find_dataset_path, dataset_exists
@@ -192,7 +187,7 @@ class Dataset(BaseDataset):
             A numpy array describing the target vector.
         """
         path = find_dataset_path(self.name, ext=".npz", data_home=self.data_home)
-        with np.load(path) as npf:
+        with np.load(path, allow_pickle=False) as npf:
             if "X" not in npf or "y" not in npf:
                 raise DatasetsError((
                     "the downloaded dataset was improperly packaged without numpy arrays "

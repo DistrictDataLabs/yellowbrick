@@ -1,27 +1,23 @@
+dist: xenial
 language: python
 python:
-  - '2.7'
-  - '3.6'
+- '3.6'
+- '3.7'
 
 before_install:
-  - sudo apt-get update
-  - sudo apt-get build-dep python-scipy
+- sudo apt-get update
+- sudo apt-get build-dep python-scipy
 
 install:
-  - pip install -r requirements.txt
-  - pip install -r tests/requirements.txt
-  - pip install coveralls
-  - python -m nltk.downloader popular
+- pip install -r requirements.txt
+- pip install -r tests/requirements.txt
+- pip install coveralls
+- python -m nltk.downloader popular
 
 script: make test
 
 after_success: coveralls
 
 notifications:
-  email:
-    recipients:
-      - bbengfort@districtdatalabs.com
-      - rbilbro@districtdatalabs.com
-      - nathan.danielsen@gmail.com
-    on_success: change
-    on_failure: always
+  slack:
+    secure: mWKVHmEc22FJSp6Rrnd1j4QYCgZY4NJSrA8kZ5wj2/lf1iHI/CfWGTf7+Qihqe+rt0FOU0+UA9SzvSHRD1bV76q/zINayQ0EyJAfQzvIWIRGGnnMSO/79WoEYF56wwjpc5pLUTh6QV5qqfy+8nNGQ1/uJ0h6FtsUaSa/g61a5ZJEVBIjIpH8PgMxM64dRgJCmAdQuXkBP5Uf3yHlCtYk+Jr+gyXU2oqwMZ1VWgZkEo1Tqo7W9WY8dkOaAkzXDT61OqtcyyTuVSYbmK4i3c84681NBpb7wT6BfiCCAd3tn5AIKCkJVJ0ga0XeF6MdDpnicpku4FaN+fQjwkPiU47o/aFp8RNp27JQ9AhvH7wMuu5O8HDhszjRkfGOlUbuPOTavc22o4j0ShsrLiTQRJRhQQzJoquPuPj5wHqCCN+ice7IVUHj3ZC2jpJKDEYUNnr1fATtOwocimc6PhJM/IoeHgEEHpi37b+AxnhgOFoBlgsq2f4nsRD9JsLHqIpJCHgMjKxc6p3FtcFcXZDlDXQIcCzSRiPhG207dahspA3aPLj4Z+tOLJwh7/PSEfp02kcgPMM/MLYTWcaBv14aYi69kvQoZTfqVY8tIohg3ygda5siOCTTgqGriJYzkmdY5/Dp51kabhl+cEVIxPyY0miqyl3hZjqkqCnnOtg06qqxLLM=

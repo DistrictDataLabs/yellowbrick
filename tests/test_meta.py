@@ -19,15 +19,11 @@ import pytest
 import inspect
 
 from tests.rand import RandomVisualizer
+from unittest.mock import MagicMock, patch
 from tests.base import ACTUAL_IMAGES, BASELINE_IMAGES
 from tests.base import VisualTestCase, ImageComparison
 
 from yellowbrick.exceptions import ImageComparisonFailure
-
-try:
-    from unittest.mock import MagicMock, patch
-except ImportError:
-    from mock import MagicMock, patch
 
 
 def assert_path_exists(*parts):

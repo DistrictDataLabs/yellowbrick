@@ -7,6 +7,7 @@ A word's importance can be weighed by its dispersion in a corpus.  Lexical dispe
 
 .. plot::
     :context: close-figs
+    :alt: Dispersion Plot
 
     from yellowbrick.text import DispersionPlot
     from yellowbrick.datasets import load_hobbies
