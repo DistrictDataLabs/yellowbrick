@@ -5,19 +5,19 @@ Rank Features
 
 Rank1D and Rank2D evaluate single features or pairs of features using a variety of metrics that score the features on the scale [-1, 1] or [0, 1] allowing them to be ranked. A similar concept to SPLOMs, the scores are visualized on a lower-left triangle heatmap so that patterns between pairs of features can be easily discerned for downstream analysis.
 
-In this example, we'll use the credit default data set from the UCI Machine Learning repository to rank features. The code below creates our instance matrix and target vector.
+In this example, we'll use the credit default data set from the UCI Machine Learning repository to rank features. The code below creates our instance matrix and target vector. Download dataset from https://archive.ics.uci.edu/ml/datasets/default+of+credit+card+clients , delete first column (ID) and first row, then convert XLS to CSV.
 
 .. code:: python
-
+    
+    import pandas as pd
     # Load the dataset
-    data = load_data('credit')
+    data = pd.read_csv('credit.csv') # Path to CSV file
 
     # Specify the features of interest
     features = [
-            'limit', 'sex', 'edu', 'married', 'age', 'apr_delay', 'may_delay',
-            'jun_delay', 'jul_delay', 'aug_delay', 'sep_delay', 'apr_bill', 'may_bill',
-            'jun_bill', 'jul_bill', 'aug_bill', 'sep_bill', 'apr_pay', 'may_pay', 'jun_pay',
-            'jul_pay', 'aug_pay', 'sep_pay',
+            'LIMIT_BAL','SEX','EDUCATION','MARRIAGE','AGE','PAY_0','PAY_2','PAY_3','PAY_4','PAY_5','PAY_6','BILL_AMT1',
+            'BILL_AMT2','BILL_AMT3','BILL_AMT4','BILL_AMT5','BILL_AMT6','PAY_AMT1','PAY_AMT2','PAY_AMT3','PAY_AMT4',
+            'PAY_AMT5','PAY_AMT6'
         ]
 
     # Extract the instances and target
