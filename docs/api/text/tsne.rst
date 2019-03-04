@@ -41,15 +41,14 @@ Note that you can pass the class labels or document categories directly to the `
     #Pass on a list of labels for the legend
     labels = corpus.categories
     tsne = TSNEVisualizer(labels=labels)
-    tsne.fit(X, y)
-    tsne.poof()
+    
 
 If we omit the target during fit, we can visualize the whole dataset to see if any meaningful patterns are observed.
 
 .. code:: python
 
     # Don't color points with their classes
-    tsne = TSNEVisualizer(y=["documents"])
+    tsne = TSNEVisualizer(labels=["documents"])
     tsne.fit(X)
     tsne.poof()
 
