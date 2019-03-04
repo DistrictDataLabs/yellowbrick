@@ -17,89 +17,62 @@ In Yellowbrick, the ``CVScores`` visualizer displays cross-validated scores as a
 Classification
 --------------
 
-In the following example we show how to visualize cross-validated scores for a classification model. After loading a ``DataFrame``, we create a ``StratifiedKFold`` cross-validation strategy to ensure all of our classes in each split are represented with the same proportion. We then fit the ``CVScores`` visualizer using the ``f1_weighted`` scoring metric as opposed to the default metric, accuracy, to get a better sense of the relationship of precision and recall in our classifier across all of our folds.
+In the following example, we show how to visualize cross-validated scores for a classification model. After loading our occupancy data as a ``DataFrame``, we created a ``StratifiedKFold`` cross-validation strategy to ensure all of our classes in each split are represented with the same proportion. We then fit the ``CVScores`` visualizer using the ``f1_weighted`` scoring metric as opposed to the default metric, accuracy, to get a better sense of the relationship of precision and recall in our classifier across all of our folds.
 
-.. code:: python
+.. plot::
+    :context: close-figs
+    :alt: Cross validation on the occupancy data set using StratifiedKFold
 
-    import pandas as pd
-    import matplotlib.pyplot as plt
-
-    from sklearn.naive_bayes import MultinomialNB
     from sklearn.model_selection import StratifiedKFold
+    from sklearn.naive_bayes import MultinomialNB
 
+    from yellowbrick.datasets import load_occupancy
     from yellowbrick.model_selection import CVScores
 
-
-    # Load the classification data set
-    data = load_data("occupancy")
-
-    # Specify the features of interest
-    features = ["temperature", "relative humidity", "light", "C02", "humidity"]
-
-    # Extract the instances and target
-    X = data[features]
-    y = data.occupancy
-
-    # Create a new figure and axes
-    _, ax = plt.subplots()
+    # Load the classification dataset
+    X, y = load_occupancy()
 
     # Create a cross-validation strategy
-    cv = StratifiedKFold(12)
+    cv = StratifiedKFold(n_splits=12, random_state=42)
 
-    # Create the cv score visualizer
-    oz = CVScores(
-        MultinomialNB(), ax=ax, cv=cv, scoring='f1_weighted'
-    )
+    # Instantiate the classification model and visualizer
+    model = MultinomialNB()
+    visualizer = CVScores(model, cv=cv, scoring='f1_weighted')
 
-    oz.fit(X, y)
-    oz.poof()
-
+    visualizer.fit(X, y)        # Fit the data to the visualizer
+    visualizer.poof()           # Draw/show/poof the data
 
 Our resulting visualization shows that while our average cross-validation score is quite high, there are some splits for which our fitted ``MultinomialNB`` classifier performs significantly less well.
-
-
-.. image:: images/cv_scores_classifier.png
 
 
 Regression
 ----------
 
-In this next example we show how to visualize cross-validated scores for a regression model. After loading our energy data into a ``DataFrame``, we instantiate a simple ``KFold`` cross-validation strategy. We then fit the ``CVScores`` visualizer using the ``r2`` scoring metric, to get a sense of the coefficient of determination for our regressor across all of our folds.
+In this next example we show how to visualize cross-validated scores for a regression model. After loading our energy data as a ``DataFrame``, we instantiated a simple ``KFold`` cross-validation strategy. We then fit the ``CVScores`` visualizer using the ``r2`` scoring metric, to get a sense of the coefficient of determination for our regressor across all of our folds.
 
-.. code:: python
+.. plot::
+    :context: close-figs
+    :alt: Cross validation on the energy data set using KFold
 
     from sklearn.linear_model import Ridge
     from sklearn.model_selection import KFold
 
+    from yellowbrick.datasets import load_energy
+    from yellowbrick.model_selection import CVScores
 
-    # Load the regression data set
-    data = load_data("energy")
+    # Load the regression dataset
+    X, y = load_energy()
 
-    # Specify the features of interest and the target
-    targets = ["heating load", "cooling load"]
-    features = [col for col in data.columns if col not in targets]
+    # Instantiate the regression model and visualizer
+    cv = KFold(n_splits=12, random_state=42)
 
-    # Extract the instances and target
-    X = data[features]
-    y = data[targets[1]]
+    model = Ridge()
+    visualizer = CVScores(model, cv=cv, scoring='r2')
 
-    # Create a new figure and axes
-    _, ax = plt.subplots()
-
-    cv = KFold(12)
-
-    oz = CVScores(
-        Ridge(), ax=ax, cv=cv, scoring='r2'
-    )
-
-    oz.fit(X, y)
-    oz.poof()
-
+    visualizer.fit(X, y)        # Fit the data to the visualizer
+    visualizer.poof()           # Draw/show/poof the data
 
 As with our classification ``CVScores`` visualization, our regression visualization suggests that our ``Ridge`` regressor performs very well (e.g. produces a high coefficient of determination) across nearly every fold, resulting in another fairly high overall R2 score.
-
-.. image:: images/cv_scores_regressor.png
-
 
 API Reference
 -------------
