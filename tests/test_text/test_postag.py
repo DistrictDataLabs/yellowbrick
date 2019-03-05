@@ -185,6 +185,9 @@ class TestPosTag(VisualTestCase):
             PosTagVisualizer(tagset="brill")
             
     def test_frequency_sort_mode(self):
+        """
+        Assert no errors occur when the visualizer is run on frequency_sort mode
+        """
         check_nltk_data()
 
         _, ax = plt.subplots()
