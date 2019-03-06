@@ -14,17 +14,17 @@ To help the user select the optimal number of bins, the ``BalancedBinningReferen
     :context: close-figs
     :alt: BalancedBinningReference on concrete dataset
 
-    from yellowbrick.target import BalancedBinningReference
     from yellowbrick.datasets import load_concrete
+    from yellowbrick.target import BalancedBinningReference
 
-    # Load the concrete data set
+    # Load the concrete dataset
     X, y = load_concrete()
 
     # Instantiate the visualizer
     visualizer = BalancedBinningReference()
 
-    visualizer.fit(y)          # Fit the data to the visualizer
-    visualizer.poof()          # Draw/show/poof the data
+    visualizer.fit(y)        # Fit the data to the visualizer
+    visualizer.poof()        # Draw/show/poof the data
 
 
 .. seealso::

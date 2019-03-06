@@ -18,15 +18,18 @@ The default calculation is Pearson correlation, which is perform with ``scipy.st
     from sklearn import datasets
     from yellowbrick.target import FeatureCorrelation
 
-    # Load the regression data set
+    # Load the regression dataset
     data = datasets.load_diabetes()
     X, y = data['data'], data['target']
-    feature_names = np.array(data['feature_names'])
 
-    visualizer = FeatureCorrelation(labels=feature_names)
-    visualizer.fit(X, y)
-    visualizer.poof()
+    # Create a list of the feature names
+    features = np.array(data['feature_names'])
 
+    # Instantiate the visualizer
+    visualizer = FeatureCorrelation(labels=features)
+
+    visualizer.fit(X, y)        # Fit the data to the visualizer
+    visualizer.poof()           # Draw/show/poof the data
 
 Mutual Information - Regression
 -------------------------------
@@ -42,17 +45,21 @@ See `scikit-learn documentation <http://scikit-learn.org/stable/modules/generate
     from sklearn import datasets
     from yellowbrick.target import FeatureCorrelation
 
-    # Load the regression data set
+    # Load the regression dataset
     data = datasets.load_diabetes()
     X, y = data['data'], data['target']
-    feature_names = np.array(data['feature_names'])
 
-    discrete_features = [False for _ in range(len(feature_names))]
-    discrete_features[1] = True
+    # Create a list of the feature names
+    features = np.array(data['feature_names'])
 
-    visualizer = FeatureCorrelation(method='mutual_info-regression',
-                                    labels=feature_names)
-    visualizer.fit(X, y, discrete_features=discrete_features, random_state=0)
+    # Create a list of the discrete features
+    discrete = [False for _ in range(len(features))]
+    discrete[1] = True
+
+    # Instantiate the visualizer
+    visualizer = FeatureCorrelation(method='mutual_info-regression', labels=features)
+
+    visualizer.fit(X, y, discrete_features=discrete, random_state=0)
     visualizer.poof()
 
 
@@ -66,24 +73,26 @@ This visualizer also allows sorting of the bar plot according to the calculated 
     :context: close-figs
     :alt: FeatureCorrelation on the wine dataset using mutual_info-classification
 
+    import pandas as pd
+
     from sklearn import datasets
     from yellowbrick.target import FeatureCorrelation
-    import pandas as pd
-    import numpy as np
-
-    # Load the regression data set
+    
+    # Load the regression dataset
     data = datasets.load_wine()
     X, y = data['data'], data['target']
-    feature_names = np.array(data['feature_names'])
-    X_pd = pd.DataFrame(X, columns=feature_names)
+    X_pd = pd.DataFrame(X, columns=data['feature_names'])
 
-    feature_to_plot = ['alcohol', 'ash', 'hue', 'proline', 'total_phenols']
+    # Create a list of the features to plot
+    features = ['alcohol', 'ash', 'hue', 'proline', 'total_phenols']
 
+    # Instaniate the visualizer
+    visualizer = FeatureCorrelation(
+        method='mutual_info-classification', feature_names=features, sort=True
+    )
 
-    visualizer = FeatureCorrelation(method='mutual_info-classification',
-                                    feature_names=feature_to_plot, sort=True)
-    visualizer.fit(X_pd, y, random_state=0)
-    visualizer.poof()
+    visualizer.fit(X_pd, y)        # Fit the data to the visualizer
+    visualizer.poof()              # Draw/show/poof the data
 
 
 API Reference
