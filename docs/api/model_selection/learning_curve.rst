@@ -29,8 +29,6 @@ In the following example we show how to visualize the learning curve of a classi
 
     import numpy as np
 
-    import numpy as np
-
     from sklearn.naive_bayes import MultinomialNB
     from sklearn.model_selection import StratifiedKFold
     from sklearn.preprocessing import OneHotEncoder, LabelEncoder
