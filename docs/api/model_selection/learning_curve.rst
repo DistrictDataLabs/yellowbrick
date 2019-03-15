@@ -29,20 +29,23 @@ In the following example we show how to visualize the learning curve of a classi
 
     import numpy as np
 
+    import numpy as np
+
     from sklearn.naive_bayes import MultinomialNB
     from sklearn.model_selection import StratifiedKFold
-    from sklearn.preprocessing import OneHotEncoder
+    from sklearn.preprocessing import OneHotEncoder, LabelEncoder
     from yellowbrick.model_selection import LearningCurve
     from yellowbrick.datasets import load_game
 
-    # Load a classification dataset
+    # Load a classification data set
     X, y = load_game()
 
-    # Encode the categorical data with one-hot encoding
+    # Encode the categorical data
     X = OneHotEncoder().fit_transform(X)
+    y = LabelEncoder().fit_transform(y)
 
     # Create the learning curve visualizer
-    cv = StratifiedKFold(n_splits=12, random_state=42)
+    cv = StratifiedKFold(n_splits=12)
     sizes = np.linspace(0.3, 1.0, 10)
 
     # Instantiate the classification model and visualizer
