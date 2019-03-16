@@ -12,7 +12,7 @@ Consider the following learning curves (generated with Yellowbrick, but from `Pl
 
 .. image:: images/learning_curve_sklearn_example.png
 
-If the training and cross validation scores converge together as more data is added (shown in the left figure), then the model will probably not benefit from more data. If the training score is much greater than the validation score then the model probably requires more training examples in order to generalize more effectively.
+If the training and cross-validation scores converge together as more data is added (shown in the left figure), then the model will probably not benefit from more data. If the training score is much greater than the validation score then the model probably requires more training examples in order to generalize more effectively.
 
 The curves are plotted with the mean scores, however variability during cross-validation is shown with the shaded areas that represent a standard deviation above and below the mean for all cross-validations. If the model suffers from error due to bias, then there will likely be more variability around the training score curve. If the model suffers from error due to variance, then there will be more variability around the cross validated score.
 
@@ -21,7 +21,7 @@ The curves are plotted with the mean scores, however variability during cross-va
 Classification
 --------------
 
-In the following example we show how to visualize the learning curve of a classification model. After loading a ``DataFrame`` and performing categorical encoding, we create a ``StratifiedKFold`` cross-validation strategy to ensure all of our classes in each split are represented with the same proportion. We then fit the visualizer using the ``f1_weighted`` scoring metric as opposed to the default metric, accuracy, to get a better sense of the relationship of precision and recall in our classifier.
+In the following example, we show how to visualize the learning curve of a classification model. After loading a ``DataFrame`` and performing categorical encoding, we create a ``StratifiedKFold`` cross-validation strategy to ensure all of our classes in each split are represented with the same proportion. We then fit the visualizer using the ``f1_weighted`` scoring metric as opposed to the default metric, accuracy, to get a better sense of the relationship of precision and recall in our classifier.
 
 .. plot::
     :context: close-figs
@@ -29,13 +29,14 @@ In the following example we show how to visualize the learning curve of a classi
 
     import numpy as np
 
-    from sklearn.naive_bayes import MultinomialNB
     from sklearn.model_selection import StratifiedKFold
+    from sklearn.naive_bayes import MultinomialNB
     from sklearn.preprocessing import OneHotEncoder, LabelEncoder
-    from yellowbrick.model_selection import LearningCurve
-    from yellowbrick.datasets import load_game
 
-    # Load a classification data set
+    from yellowbrick.datasets import load_game
+    from yellowbrick.model_selection import LearningCurve
+
+    # Load a classification dataset
     X, y = load_game()
 
     # Encode the categorical data
@@ -48,9 +49,9 @@ In the following example we show how to visualize the learning curve of a classi
 
     # Instantiate the classification model and visualizer
     model = MultinomialNB()
-    visualizer = LearningCurve(model, cv=cv, scoring='f1_weighted',
-                               train_sizes=sizes, n_jobs=4
-                               )
+    visualizer = LearningCurve(
+        model, cv=cv, scoring='f1_weighted', train_sizes=sizes, n_jobs=4
+    )
 
     visualizer.fit(X, y)        # Fit the data to the visualizer
     visualizer.poof()           # Draw/show/poof the data
@@ -67,14 +68,16 @@ Building a learning curve for a regression is straight forward and very similar.
     :alt: Learning Curve on the Energy dataset using RidgeCV
 
     from sklearn.linear_model import RidgeCV
+
     from yellowbrick.datasets import load_energy
+    from yellowbrick.model_selection import LearningCurve
 
     # Load a regression dataset
     X, y = load_energy()
 
     # Instantiate the regression model and visualizer
     model = RidgeCV()
-    visualizer = LearningCurve(model, train_sizes=sizes, scoring='r2')
+    visualizer = LearningCurve(model, scoring='r2')
 
     visualizer.fit(X, y)        # Fit the data to the visualizer
     visualizer.poof()           # Draw/show/poof the data
@@ -93,18 +96,17 @@ Learning curves also work for clustering models and can use metrics that specify
     from sklearn.cluster import KMeans
     from sklearn.datasets import make_blobs
 
+    from yellowbrick.model_selection import LearningCurve
+
     # Generate synthetic dataset with 5 random clusters
     X, y = make_blobs(n_samples=1000, centers=5, random_state=42)
 
     # Instantiate the clustering model and visualizer
-    model = KMeans(random_state=42)
-    visualizer = LearningCurve(model, cv=cv, train_sizes=sizes,
-                                scoring="adjusted_rand_score", random_state=42
-                                )
+    model = KMeans()
+    visualizer = LearningCurve(model, scoring="adjusted_rand_score", random_state=42)
 
     visualizer.fit(X, y)        # Fit the data to the visualizer
     visualizer.poof()           # Draw/show/poof the data
-
 
 Unfortunately, with random data these curves are highly variable, but serve to point out some clustering-specific items. First, note the y-axis is very narrow, roughly speaking these curves are converged and actually the clustering algorithm is performing very well. Second, for clustering, convergence for data points is not necessarily a bad thing; in fact we want to ensure as more data is added, the training and cross-validation scores do not diverge.
 
