@@ -24,7 +24,7 @@ import numpy as np
 import scipy.sparse as sp
 
 from .base import ClusteringScoreVisualizer
-from ..exceptions import YellowbrickValueError
+from ..exceptions import YellowbrickValueError,YellowbrickTypeError
 
 from sklearn.metrics import silhouette_score
 from sklearn.metrics import calinski_harabaz_score
@@ -34,7 +34,7 @@ from sklearn.preprocessing import LabelEncoder
 
 ## Packages for export
 __all__ = [
-    "KElbowVisualizer", "distortion_score"
+    "KElbowVisualizer", "distortion_score","inertia_score"
 ]
 
 
@@ -103,7 +103,13 @@ def distortion_score(X, labels, metric='euclidean'):
 
     return distortion
 
-
+def inertia_score(estimator):
+    try:
+        return estimator.inertia_
+    except KeyError:
+        raise YellowbrickTypeError(
+            "Estimator '{}' does not contain inertia_ property".format(estimator)
+        )
 ##########################################################################
 ## Elbow Method
 ##########################################################################
@@ -112,6 +118,7 @@ KELBOW_SCOREMAP = {
     "distortion": distortion_score,
     "silhouette": silhouette_score,
     "calinski_harabaz": calinski_harabaz_score,
+    "inertia":inertia_score
 }
 
 
@@ -258,9 +265,14 @@ class KElbowVisualizer(ClusteringScoreVisualizer):
 
             # Append the time and score to our plottable metrics
             self.k_timers_.append(time.time() - start)
-            self.k_scores_.append(
-                self.scoring_metric(X, self.estimator.labels_)
-            )
+            if self.scoring_metric.__name__ is not "inertia_score":
+                self.k_scores_.append(
+                    self.scoring_metric(X, self.estimator.labels_)
+                )
+            else:
+                self.k_scores_.append(
+                    self.scoring_metric(self.estimator)
+                )
 
         self.draw()
 
