@@ -17,4 +17,4 @@ requests>=2.18.3
 nltk>=3.2
 # spacy>=2.0.18 
 pandas>=0.20
-umap-learn>=0.3
+umap-learn==0.3
