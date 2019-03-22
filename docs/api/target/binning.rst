@@ -10,24 +10,22 @@ Sometimes when the your target variable is continuously-valued, there simply are
 To help the user select the optimal number of bins, the ``BalancedBinningReference`` visualizer takes the target variable ``y`` as input and generates a histogram with vertical lines indicating the recommended value points to ensure that the data is evenly distributed into each bin.
 
 
-.. code:: python
+.. plot::
+    :context: close-figs
+    :alt: BalancedBinningReference on concrete dataset
 
+    from yellowbrick.datasets import load_concrete
     from yellowbrick.target import BalancedBinningReference
 
-    # Load the a regression data set
-    data = load_data("concrete")
-
-    # Extract the target of interest
-    y = data["strength"]
+    # Load the concrete dataset
+    X, y = load_concrete()
 
     # Instantiate the visualizer
     visualizer = BalancedBinningReference()
 
-    visualizer.fit(y)          # Fit the data to the visualizer
-    visualizer.poof()          # Draw/show/poof the data
+    visualizer.fit(y)        # Fit the data to the visualizer
+    visualizer.poof()        # Draw/show/poof the data
 
-
-.. image:: images/balanced_binning_reference.png
 
 .. seealso::
 
