@@ -18,3 +18,4 @@ nltk>=3.2
 # spacy>=2.0.18 
 pandas>=0.20
 umap-learn==0.3
+numba==0.42
