@@ -100,6 +100,7 @@ class PCADecomposition(MultiFeatureVisualizer):
                  color=None,
                  colormap=palettes.DEFAULT_SEQUENCE,
                  random_state=None,
+                 alpha = 1,
                  **kwargs):
         super(PCADecomposition, self).__init__(ax=ax,
                                                features=features,
@@ -118,7 +119,7 @@ class PCADecomposition(MultiFeatureVisualizer):
             [('scale', StandardScaler(with_std=self.scale)),
              ('pca', PCA(self.proj_dim, random_state=random_state))]
         )
-
+        self.alpha=alpha
         # Visual Parameters
         self.color = color
         self.colormap = colormap
@@ -154,7 +155,7 @@ class PCADecomposition(MultiFeatureVisualizer):
     def draw(self, **kwargs):
         X = self.pca_features_
         if self.proj_dim == 2:
-            self.ax.scatter(X[:, 0], X[:, 1], c=self.color, cmap=self.colormap)
+            self.ax.scatter(X[:, 0], X[:, 1], c=self.color, cmap=self.colormap,alpha=self.alpha)
             if self.proj_features:
                 x_vector = self.pca_components_[0]
                 y_vector = self.pca_components_[1]
@@ -177,7 +178,7 @@ class PCADecomposition(MultiFeatureVisualizer):
             self.fig = plt.figure()
             self.ax = self.fig.add_subplot(111, projection='3d')
             self.ax.scatter(X[:, 0], X[:, 1], X[:, 2],
-                            c=self.color, cmap=self.colormap)
+                            c=self.color, cmap=self.colormap,alpha=self.alpha)
             if self.proj_features:
                 x_vector = self.pca_components_[0]
                 y_vector = self.pca_components_[1]
@@ -280,7 +281,7 @@ def pca_decomposition(X, y=None, ax=None, features=None, scale=True,
     visualizer = PCADecomposition(
         ax=ax, features=features, scale=scale, proj_dim=proj_dim,
         proj_features=proj_features, color=color, colormap=colormap,
-        random_state=random_state, **kwargs
+        random_state=random_state, alpha= self.alpha,**kwargs
     )
 
     # Fit and transform the visualizer (calls draw)
