@@ -89,32 +89,35 @@ sonnets = [
     Despite of wrinkles this thy golden time.
     But if thou live, remember'd not to be,
     Die single, and thine image dies with thee.
-    """
+    """,
 ]
 
 ##########################################################################
 ## PosTag Utils
 ##########################################################################
 
+
 def check_nltk_data():
     """
     Returns True if NLTK data has been downloaded, False otherwise
     """
     try:
-        nltk.data.find('corpora/treebank')
+        nltk.data.find("corpora/treebank")
         return True
     except LookupError:
         pytest.xfail("error occured because nltk postag data is not available")
+
 
 def check_spacy_data():
     """
     Returns True if SpaCy data has been downloaded, False otherwise
     """
     try:
-        spacy.load('en_core_web_sm')
+        spacy.load("en_core_web_sm")
         return True
     except OSError:
         pytest.xfail("error occured because spacy data model is not available")
+
 
 def get_tagged_docs(X, model="nltk", tagger="word"):
     """
@@ -131,37 +134,34 @@ def get_tagged_docs(X, model="nltk", tagger="word"):
     If model=="spacy", `SpaCy` will be used to sentence and word
     tokenize the incoming documents.
     """
-    if model=="spacy":
-        nlp = spacy.load('en_core_web_sm')
+    if model == "spacy":
+        nlp = spacy.load("en_core_web_sm")
         for doc in X:
             tagged = nlp(doc)
             yield [
-                list((token.text,token.pos_) for token in sent)
+                list((token.text, token.pos_) for token in sent)
                 for sent in tagged.sents
             ]
 
-    elif model=="nltk":
+    elif model == "nltk":
         if tagger == "wordpunct":
             for doc in X:
-                yield [
-                    pos_tag(wordpunct_tokenize(sent)) 
-                    for sent in sent_tokenize(doc)
-                ]
+                yield [pos_tag(wordpunct_tokenize(sent)) for sent in sent_tokenize(doc)]
         else:
             for doc in X:
-                yield [
-                    pos_tag(word_tokenize(sent)) 
-                    for sent in sent_tokenize(doc)
-                ]
+                yield [pos_tag(word_tokenize(sent)) for sent in sent_tokenize(doc)]
+
 
 ##########################################################################
 ## PosTag Tests
 ##########################################################################
 
+
 class TestPosTag(VisualTestCase):
     """
     PosTag (Part of Speech Tagging Visualizer) Tests
     """
+
     def test_quick_method(self):
         """
         Assert no errors occur when using the quick method
@@ -183,17 +183,17 @@ class TestPosTag(VisualTestCase):
         """
         with pytest.raises(YellowbrickValueError):
             PosTagVisualizer(tagset="brill")
-            
-    def test_frequency_sort_mode(self):
+
+    def test_frequency_mode(self):
         """
-        Assert no errors occur when the visualizer is run on frequency_sort mode
+        Assert no errors occur when the visualizer is run on frequency mode
         """
         check_nltk_data()
 
         _, ax = plt.subplots()
         tagged_docs = list(get_tagged_docs(sonnets))
 
-        postag(tagged_docs, ax=ax, frequency_sort=True)
+        postag(tagged_docs, ax=ax, frequency=True)
         ax.grid(False)
 
         self.assert_images_similar(ax=ax)
@@ -207,9 +207,7 @@ class TestPosTag(VisualTestCase):
         # Fail if data hasn't been downloaded
         check_nltk_data()
 
-        tagged_docs = list(
-            get_tagged_docs(sonnets, model="nltk", tagger="word")
-        )
+        tagged_docs = list(get_tagged_docs(sonnets, model="nltk", tagger="word"))
 
         visualizer = PosTagVisualizer(tagset="penn_treebank")
 
@@ -246,7 +244,7 @@ class TestPosTag(VisualTestCase):
         """
         # Fail if data hasn't been downloaded
         check_spacy_data()
-        
+
         spacy_tagged_docs = list(get_tagged_docs(sonnets, model="spacy"))
 
         visualizer = PosTagVisualizer(tagset="universal")
