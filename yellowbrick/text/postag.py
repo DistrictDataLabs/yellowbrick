@@ -350,9 +350,14 @@ class PosTagVisualizer(TextVisualizer):
         self.ax.set_xticklabels(list(self.pos_tag_counts_.keys()), rotation=90)
 
         # Set the axis labels
-        self.ax.set_xlabel(
-            "{} part-of-speech tags".format(self.tagset_names[self.tagset])
-        )
+        if self.frequency:
+            self.ax.set_xlabel(
+                "{} part-of-speech tags, sorted by frequency".format(self.tagset_names[self.tagset])
+            )
+        else:
+            self.ax.set_xlabel(
+                "{} part-of-speech tags".format(self.tagset_names[self.tagset])
+            )
         self.ax.set_ylabel("Count")
 
 
