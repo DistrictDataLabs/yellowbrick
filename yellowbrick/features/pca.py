@@ -211,7 +211,6 @@ class PCADecomposition(MultiFeatureVisualizer):
                 x_vector = self.pca_components_[0]
                 y_vector = self.pca_components_[1]
                 z_vector = self.pca_components_[2]
-                print(self.pca_components)
                 max_x = max(X[:, 0])
                 max_y = max(X[:, 1])
                 max_z = max(X[:, 1])
@@ -220,13 +219,13 @@ class PCADecomposition(MultiFeatureVisualizer):
                         [0, x_vector[i] * max_x],
                         [0, y_vector[i] * max_y],
                         [0, z_vector[i] * max_z],
-                        color='y'
+                        color='r'
                     )
                     self.ax.text(
                         x_vector[i] * max_x * 1.05,
                         y_vector[i] * max_y * 1.05,
                         z_vector[i] * max_z * 1.05,
-                        self.features_[i], color='y'
+                        self.features_[i], color='r'
                     )
         return self.ax
 
