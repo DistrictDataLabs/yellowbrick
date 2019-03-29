@@ -376,7 +376,7 @@ class ResidualsPlot(RegressionScoreVisualizer):
         and 0 is completely transparent. This property makes densely clustered 
         points more visible.
     
-    test_alpha : float, default: 0.25
+    test_alpha : float, default: 0.75
         Specify a transparency for test data, where 1 is completely opaque 
         and 0 is completely transparent. This property makes densely clustered 
         points more visible.

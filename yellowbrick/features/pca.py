@@ -281,7 +281,7 @@ def pca_decomposition(X, y=None, ax=None, features=None, scale=True,
     visualizer = PCADecomposition(
         ax=ax, features=features, scale=scale, proj_dim=proj_dim,
         proj_features=proj_features, color=color, colormap=colormap,
-        random_state=random_state, alpha= self.alpha,**kwargs
+        random_state=random_state, alpha= alpha,**kwargs
     )
 
     # Fit and transform the visualizer (calls draw)
