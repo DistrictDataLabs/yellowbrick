@@ -356,11 +356,14 @@ class TestResidualsPlot(VisualTestCase, DatasetMixin):
         """
         # Instantiate a prediction error plot, provide custom alpha
         visualizer = ResidualsPlot(
-            Ridge(random_state=8893), alpha=0.3, hist=False
+            Ridge(random_state=8893), train_alpha=0.3,test_alpha=0.75, hist=False
         )
-
+        alpha = {
+                'train_point': 0.3,
+                'test_point':75
+        }
         # Test param gets set correctly
-        assert visualizer.alpha == 0.3
+        assert visualizer.alpha == alpha
 
         visualizer.ax = mock.MagicMock()
         visualizer.fit(self.data.X.train, self.data.y.train)
