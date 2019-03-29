@@ -72,6 +72,9 @@ Presentations
 
 Yellowbrick has enjoyed the spotlight in several presentations at recent conferences. We hope that these notebooks, talks, and slides will help you understand Yellowbrick a bit better.
 
+Papers:
+    - `Yellowbrick: Visualizing the Scikit-Learn Model Selection Process <http://joss.theoj.org/papers/10.21105/joss.01075>`_
+
 Conference Presentations (videos):
     - `Visual Diagnostics for More Informed Machine Learning: Within and Beyond Scikit-Learn (PyCon 2016) <https://youtu.be/c5DaaGZWQqY>`_
     - `Yellowbrick: Steering Machine Learning with Visual Transformers (PyData London 2017) <https://youtu.be/2ZKng7pCB5k>`_
@@ -95,6 +98,9 @@ Citing Yellowbrick
 .. image:: https://zenodo.org/badge/DOI/10.5281/zenodo.1206239.svg
    :target: https://doi.org/10.5281/zenodo.1206239
 
+.. image:: http://joss.theoj.org/papers/10.21105/joss.01075/status.svg
+   :target: https://doi.org/10.21105/joss.01075
+
 We hope that Yellowbrick facilitates machine learning of all kinds and we're particularly fond of academic work and research. If you're writing a scientific publication that uses Yellowbrick you can cite *Bengfort et al. (2018)* with the following BibTex:
 
 .. code-block:: bibtex
@@ -112,18 +118,33 @@ We hope that Yellowbrick facilitates machine learning of all kinds and we're par
             performance, stability, and predictive value of machine learning
             models, and assist in diagnosing problems throughout the machine
             learning workflow.},
-        version = {0.6},
-        author = {Bengfort, Benjamin and Danielsen, Nathan and
-            Bilbro, Rebecca and Gray, Larry and {McIntyre}, Kristen and
-            Richardson, George and Miller, Taylor and Mayfield, Gary and
-            Schafer, Phillip and Keung, Jason},
-        date = {2018-03-17},
+        version = {0.9.1},
+        author = {Bengfort, Benjamin and Bilbro, Rebecca and Danielsen, Nathan and
+            Gray, Larry and {McIntyre}, Kristen and Roman, Prema and Poh, Zijie and
+            others},
+        date = {2018-11-14},
+        year = {2018},
         doi = {10.5281/zenodo.1206264}
     }
 
 You can also find DOI (digital object identifiers) for every version of Yellowbrick on `zenodo.org <https://doi.org/10.5281/zenodo.1206239>`_; use the BibTeX on this site to reference specific versions or changes made to the software.
 
-We're also currently working on a scientific paper that describes Yellowbrick in the context of *steering the model selection process*. Stay tuned for a pre-release of this paper on arXiv.
+We've also published a paper in the `Journal of Open Source Software (JOSS) <http://joss.theoj.org/papers/10.21105/joss.01075>`_ that discusses how Yellowbrick is designed to influence the model selection workflow. You may cite this paper if you are discussing Yellowbrick more generally in your research (instead of a specific version) or are interested in discussing visual analytics or visualization for machine learning. Please cite *Bengfort and Bilbro (2019)* with the following BibTex:
+
+.. code-block:: bibtex
+
+    @article{bengfort_yellowbrick_2019,
+        title = {Yellowbrick: {{Visualizing}} the {{Scikit}}-{{Learn Model Selection Process}}},
+        journaltitle = {The Journal of Open Source Software},
+        volume = {4},
+        number = {35},
+        series = {1075},
+        date = {2019-03-24},
+        year = {2019},
+        author = {Bengfort, Benjamin and Bilbro, Rebecca},
+        url = {http://joss.theoj.org/papers/10.21105/joss.01075},
+        doi = {10.21105/joss.01075}
+    }
 
 Contacting Us
 -------------
