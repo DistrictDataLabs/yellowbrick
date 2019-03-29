@@ -360,7 +360,7 @@ class TestResidualsPlot(VisualTestCase, DatasetMixin):
         )
         alpha = {
                 'train_point': 0.3,
-                'test_point':75
+                'test_point':0.75
         }
         # Test param gets set correctly
         assert visualizer.alpha == alpha
@@ -372,4 +372,4 @@ class TestResidualsPlot(VisualTestCase, DatasetMixin):
         # Test that alpha was passed to internal matplotlib scatterplot
         _, scatter_kwargs = visualizer.ax.scatter.call_args
         assert "alpha" in scatter_kwargs
-        assert scatter_kwargs["alpha"] == 0.3
+        assert scatter_kwargs["alpha"] == 0.75

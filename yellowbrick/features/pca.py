@@ -216,7 +216,7 @@ class PCADecomposition(MultiFeatureVisualizer):
 
 def pca_decomposition(X, y=None, ax=None, features=None, scale=True,
                       proj_dim=2, proj_features=False, color=None,
-                      colormap=palettes.DEFAULT_SEQUENCE,
+                      colormap=palettes.DEFAULT_SEQUENCE,alpha=1,
                       random_state=None, **kwargs):
     """Produce a two or three dimensional principal component plot of the data array ``X``
     projected onto it's largest sequential principal components. It is common practice to scale the

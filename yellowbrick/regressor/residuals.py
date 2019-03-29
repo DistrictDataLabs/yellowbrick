@@ -371,12 +371,12 @@ class ResidualsPlot(RegressionScoreVisualizer):
     line_color : color, default: dark grey
         Defines the color of the zero error line, can be any matplotlib color.
 
-    train_alpha : float, default: 0.25
+    train_alpha : float, default: 1
         Specify a transparency for traininig data, where 1 is completely opaque 
         and 0 is completely transparent. This property makes densely clustered 
         points more visible.
     
-    test_alpha : float, default: 0.75
+    test_alpha : float, default: 1
         Specify a transparency for test data, where 1 is completely opaque 
         and 0 is completely transparent. This property makes densely clustered 
         points more visible.
@@ -403,8 +403,8 @@ class ResidualsPlot(RegressionScoreVisualizer):
     The residuals histogram feature requires matplotlib 2.0.2 or greater.
     """
     def __init__(self, model, ax=None, hist=True, train_color='b',
-                 test_color='g', line_color=LINE_COLOR, train_alpha=0.25,
-                 test_alpha=0.75,**kwargs):
+                 test_color='g', line_color=LINE_COLOR, train_alpha=1,
+                 test_alpha=1,**kwargs):
 
         super(ResidualsPlot, self).__init__(model, ax=ax, **kwargs)
 
@@ -605,8 +605,8 @@ def residuals_plot(model,
                    test_color='g',
                    line_color=LINE_COLOR,
                    random_state=None,
-                   train_alpha=0.25,
-                   test_alpha=0.75,
+                   train_alpha=1,
+                   test_alpha=1,
                    **kwargs):
     """Quick method:
 
@@ -661,12 +661,12 @@ def residuals_plot(model,
     random_state : int, RandomState instance or None, optional
         Passed to the train_test_split function.
 
-    train_alpha : float, default: 0.25
+    train_alpha : float, default: 1
         Specify a transparency for traininig data, where 1 is completely opaque 
         and 0 is completely transparent. This property makes densely clustered 
         points more visible.
     
-    test_alpha : float, default: 0.25
+    test_alpha : float, default: 1
         Specify a transparency for test data, where 1 is completely opaque and 
         0 is completely transparent. This property makes densely clustered 
         points more visible.
