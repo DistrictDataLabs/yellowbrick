@@ -68,3 +68,17 @@ The primary section is wrapped up with a discussion about how to interpret the v
 
 There are several other places where you can list your visualizer, but to ensure it is included in the documentation it *must be listed in the TOC of the local index*. Find the `index.rst` file in your subdirectory and add your rst file (without the `.rst` extension) to the `..toctree::` directive. This will ensure your documentation is included when it is built.
 
+## Troubleshooting
+
+Occasionally, there can be issues with generating images due to Matplotlib crashing.  Typically, the following error is seen:
+
+``
+Terminating app due to uncaught exception 'NSInvalidArgumentException'
+``
+
+This can be resolved by adding the following two lines before running the code to generate the images:
+
+```bash
+$ mkdir -p ~/.matplotlib
+$ echo "backend: TkAgg" > ~/.matplotlib/matplotlibrc
+```
