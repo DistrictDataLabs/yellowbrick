@@ -68,3 +68,20 @@ The primary section is wrapped up with a discussion about how to interpret the v
 
 There are several other places where you can list your visualizer, but to ensure it is included in the documentation it *must be listed in the TOC of the local index*. Find the `index.rst` file in your subdirectory and add your rst file (without the `.rst` extension) to the `..toctree::` directive. This will ensure your documentation is included when it is built.
 
+## Generating the Gallery
+
+In v1.0, we have adopted Matplotlib's [plot directive](https://matplotlib.org/devel/plot_directive.html) which means that the majority of the images generated for the documentation are generated automatically. One exception is the gallery; the images for the gallery must still be generated manually.
+
+If you have contributed a new visualizer as described in the above section, please also add it to the gallery, both to `docs/gallery.py` and to `docs/gallery.rst`. (Make sure you have already installed Yellowbrick in editable mode, from the top level directory: `pip install -e` .)
+
+If you want to regenerate a single image (e.g. the elbow curve plot), you can do so as follows:
+
+```bash
+$ python docs/gallery.py elbow
+```
+
+If you want to regenerate them all (note: this takes a long time!)
+
+```bash
+$ python docs/gallery.py all
+```
