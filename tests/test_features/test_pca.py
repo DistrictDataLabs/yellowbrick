@@ -96,7 +96,7 @@ class PCADecompositionTests(VisualTestCase):
         pca_array = visualizer.transform(self.dataset.X)
 
         # Image comparison tests
-        self.assert_images_similar(visualizer)
+        self.assert_images_similar(visualizer,tol=0.03)
 
         # Assert PCA transformation occurred successfully
         assert pca_array.shape == (self.dataset.X.shape[0], 2)
@@ -130,7 +130,7 @@ class PCADecompositionTests(VisualTestCase):
         pca_array = visualizer.transform(self.dataset.X)
 
         # Image comparison tests
-        self.assert_images_similar(visualizer)
+        self.assert_images_similar(visualizer,tol=10)
 
         # Assert PCA transformation occurred successfully
         assert pca_array.shape == (self.dataset.X.shape[0], 3)
@@ -144,7 +144,7 @@ class PCADecompositionTests(VisualTestCase):
         pca_array = visualizer.transform(self.dataset.X)
 
         # Image comparison tests
-        self.assert_images_similar(visualizer)
+        self.assert_images_similar(visualizer,tol=10)
 
         # Assert PCA transformation occurred successfully
         assert pca_array.shape == (self.dataset.X.shape[0], 3)
@@ -164,7 +164,7 @@ class PCADecompositionTests(VisualTestCase):
         pca_array = visualizer.transform(self.dataset.X)
 
         # Image comparison tests
-        self.assert_images_similar(visualizer)
+        self.assert_images_similar(visualizer,tol=10)
 
         # Assert PCA transformation occurred successfully
         assert pca_array.shape == (self.dataset.X.shape[0], 3)
