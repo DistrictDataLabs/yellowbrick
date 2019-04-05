@@ -161,6 +161,7 @@ class PredictionError(RegressionScoreVisualizer):
         return self.score_
 
     def draw(self, y, y_pred):
+        
         """
         Parameters
         ----------
@@ -370,9 +371,15 @@ class ResidualsPlot(RegressionScoreVisualizer):
     line_color : color, default: dark grey
         Defines the color of the zero error line, can be any matplotlib color.
 
-    alpha : float, default: 0.75
-        Specify a transparency where 1 is completely opaque and 0 is completely
-        transparent. This property makes densely clustered points more visible.
+    train_alpha : float, default: 1
+        Specify a transparency for traininig data, where 1 is completely opaque 
+        and 0 is completely transparent. This property makes densely clustered 
+        points more visible.
+    
+    test_alpha : float, default: 1
+        Specify a transparency for test data, where 1 is completely opaque 
+        and 0 is completely transparent. This property makes densely clustered 
+        points more visible.
 
     kwargs : dict
         Keyword arguments that are passed to the base class and may influence
@@ -396,8 +403,8 @@ class ResidualsPlot(RegressionScoreVisualizer):
     The residuals histogram feature requires matplotlib 2.0.2 or greater.
     """
     def __init__(self, model, ax=None, hist=True, train_color='b',
-                 test_color='g', line_color=LINE_COLOR, alpha=0.75,
-                 **kwargs):
+                 test_color='g', line_color=LINE_COLOR, train_alpha=1,
+                 test_alpha=1,**kwargs):
 
         super(ResidualsPlot, self).__init__(model, ax=ax, **kwargs)
 
@@ -422,7 +429,10 @@ class ResidualsPlot(RegressionScoreVisualizer):
         # Store labels and colors for the legend ordered by call
         self._labels, self._colors = [], []
 
-        self.alpha = alpha
+        self.alpha = {
+                'train_point': train_alpha,
+                'test_point':test_alpha
+        }
 
     @memoized
     def hax(self):
@@ -496,7 +506,7 @@ class ResidualsPlot(RegressionScoreVisualizer):
         y_pred = self.predict(X)
         scores = y_pred - y
         self.draw(y_pred, scores, train=train)
-
+        
         return score
 
     def draw(self, y_pred, residuals, train=False, **kwargs):
@@ -528,17 +538,19 @@ class ResidualsPlot(RegressionScoreVisualizer):
         if train:
             color = self.colors['train_point']
             label = "Train $R^2 = {:0.3f}$".format(self.train_score_)
+            alpha = self.alpha['train_point']
         else:
             color = self.colors['test_point']
             label = "Test $R^2 = {:0.3f}$".format(self.test_score_)
-
+            alpha = self.alpha['test_point']
+            
         # Update the legend information
         self._labels.append(label)
         self._colors.append(color)
 
         # Draw the residuals scatter plot
         self.ax.scatter(
-            y_pred, residuals, c=color, alpha=self.alpha, label=label
+            y_pred, residuals, c=color, alpha=alpha, label=label
         )
 
         # Add residuals histogram
@@ -593,7 +605,8 @@ def residuals_plot(model,
                    test_color='g',
                    line_color=LINE_COLOR,
                    random_state=None,
-                   alpha=0.75,
+                   train_alpha=1,
+                   test_alpha=1,
                    **kwargs):
     """Quick method:
 
@@ -648,9 +661,15 @@ def residuals_plot(model,
     random_state : int, RandomState instance or None, optional
         Passed to the train_test_split function.
 
-    alpha : float, default: 0.75
-        Specify a transparency where 1 is completely opaque and 0 is completely
-        transparent. This property makes densely clustered points more visible.
+    train_alpha : float, default: 1
+        Specify a transparency for traininig data, where 1 is completely opaque 
+        and 0 is completely transparent. This property makes densely clustered 
+        points more visible.
+    
+    test_alpha : float, default: 1
+        Specify a transparency for test data, where 1 is completely opaque and 
+        0 is completely transparent. This property makes densely clustered 
+        points more visible.
 
     kwargs : dict
         Keyword arguments that are passed to the base class and may influence
@@ -662,9 +681,10 @@ def residuals_plot(model,
         Returns the axes that the residuals plot was drawn on.
     """
     # Instantiate the visualizer
+    
     visualizer = ResidualsPlot(
         model=model, ax=ax, hist=hist, train_color=train_color,
-        test_color=test_color, line_color=line_color, alpha=alpha,
+        test_color=test_color, line_color=line_color, train_alpha=train_alpha,test_alpha=test_alpha,
         **kwargs
     )
 
