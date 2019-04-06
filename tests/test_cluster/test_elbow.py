@@ -80,7 +80,7 @@ class TestKElbowHelper(object):
         Test the distortion score metric function
         """
         score = distortion_score(X, y)
-        assert score == 69.10006514142941
+        assert score == pytest.approx(69.10006514142941)
 
     @pytest.mark.parametrize("Xs", [
         csc_matrix(X), csr_matrix(X),
