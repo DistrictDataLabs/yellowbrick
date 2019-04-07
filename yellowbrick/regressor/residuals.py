@@ -371,12 +371,12 @@ class ResidualsPlot(RegressionScoreVisualizer):
     line_color : color, default: dark grey
         Defines the color of the zero error line, can be any matplotlib color.
 
-    train_alpha : float, default: 1
+    train_alpha : float, default: 0.75
         Specify a transparency for traininig data, where 1 is completely opaque 
         and 0 is completely transparent. This property makes densely clustered 
         points more visible.
     
-    test_alpha : float, default: 1
+    test_alpha : float, default: 0.75
         Specify a transparency for test data, where 1 is completely opaque 
         and 0 is completely transparent. This property makes densely clustered 
         points more visible.
@@ -403,8 +403,8 @@ class ResidualsPlot(RegressionScoreVisualizer):
     The residuals histogram feature requires matplotlib 2.0.2 or greater.
     """
     def __init__(self, model, ax=None, hist=True, train_color='b',
-                 test_color='g', line_color=LINE_COLOR, train_alpha=1,
-                 test_alpha=1,**kwargs):
+                 test_color='g', line_color=LINE_COLOR, train_alpha=0.75,
+                 test_alpha=0.75,**kwargs):
 
         super(ResidualsPlot, self).__init__(model, ax=ax, **kwargs)
 
@@ -429,7 +429,7 @@ class ResidualsPlot(RegressionScoreVisualizer):
         # Store labels and colors for the legend ordered by call
         self._labels, self._colors = [], []
 
-        self.alpha = {
+        self.alphas = {
                 'train_point': train_alpha,
                 'test_point':test_alpha
         }
@@ -538,11 +538,11 @@ class ResidualsPlot(RegressionScoreVisualizer):
         if train:
             color = self.colors['train_point']
             label = "Train $R^2 = {:0.3f}$".format(self.train_score_)
-            alpha = self.alpha['train_point']
+            alpha = self.alphas['train_point']
         else:
             color = self.colors['test_point']
             label = "Test $R^2 = {:0.3f}$".format(self.test_score_)
-            alpha = self.alpha['test_point']
+            alpha = self.alphas['test_point']
             
         # Update the legend information
         self._labels.append(label)
@@ -605,8 +605,8 @@ def residuals_plot(model,
                    test_color='g',
                    line_color=LINE_COLOR,
                    random_state=None,
-                   train_alpha=1,
-                   test_alpha=1,
+                   train_alpha=0.75,
+                   test_alpha=0.75,
                    **kwargs):
     """Quick method:
 
@@ -661,12 +661,12 @@ def residuals_plot(model,
     random_state : int, RandomState instance or None, optional
         Passed to the train_test_split function.
 
-    train_alpha : float, default: 1
+    train_alpha : float, default: 0.75
         Specify a transparency for traininig data, where 1 is completely opaque 
         and 0 is completely transparent. This property makes densely clustered 
         points more visible.
     
-    test_alpha : float, default: 1
+    test_alpha : float, default: 0.75
         Specify a transparency for test data, where 1 is completely opaque and 
         0 is completely transparent. This property makes densely clustered 
         points more visible.
@@ -684,7 +684,8 @@ def residuals_plot(model,
     
     visualizer = ResidualsPlot(
         model=model, ax=ax, hist=hist, train_color=train_color,
-        test_color=test_color, line_color=line_color, train_alpha=train_alpha,test_alpha=test_alpha,
+        test_color=test_color, line_color=line_color, 
+        train_alpha=train_alpha,test_alpha=test_alpha,
         **kwargs
     )
 
