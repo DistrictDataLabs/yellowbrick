@@ -358,12 +358,12 @@ class TestResidualsPlot(VisualTestCase, DatasetMixin):
         visualizer = ResidualsPlot(
             Ridge(random_state=8893), train_alpha=0.3,test_alpha=0.75, hist=False
         )
-        alpha = {
+        alphas = {
                 'train_point': 0.3,
                 'test_point':0.75
         }
         # Test param gets set correctly
-        assert visualizer.alpha == alpha
+        assert visualizer.alphas == alphas
 
         visualizer.ax = mock.MagicMock()
         visualizer.fit(self.data.X.train, self.data.y.train)
