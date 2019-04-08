@@ -431,7 +431,7 @@ class ResidualsPlot(RegressionScoreVisualizer):
 
         self.alphas = {
                 'train_point': train_alpha,
-                'test_point':test_alpha
+                'test_point': test_alpha
         }
 
     @memoized
