@@ -10,7 +10,7 @@
 
 <!-- If you are fixing a bug, provide a description such as the following. 
      Remember to fill in the blanks, including the issue number! -->
-This PR fixes #, which reported a bug that caused a problem to occurred when...
+This PR fixes #, which reported a bug that caused a problem to occur when users...
 
 <!-- If you are introducing a new feature, provide a description such as the 
      following. Remember to fill in the blanks, including the issue number! -->
@@ -23,6 +23,9 @@ I have made the following changes
 1.      
 2.     
 3.     
+
+<!-- If you are adding/modifying a visualizer, include a sample plot of the newly 
+     added/modified visualizer here. -->
 
 <!-- If this is a work-in-progress (WIP), list the changes you still need to 
      make. HINT: See the CHECKLIST below!-->
@@ -41,6 +44,7 @@ Questions I have for the Yellowbrick team:
      - Have you noted the new functionality/bugfix in the release notes of the next release?
      
      (If you've changed any code) 
+     - Included a sample plot to visually illustrate your changes? 
      - Do all of your functions and methods have docstrings?
      - Have you added/updated unit tests where appropriate? 
      - Have you updated the baseline images if necessary?
