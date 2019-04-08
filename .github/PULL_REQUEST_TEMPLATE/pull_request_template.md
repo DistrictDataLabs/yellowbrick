@@ -8,10 +8,13 @@
      - "Corrects bug in {existing visualizer name}"
      - "Implements {new feature} inside the {Yellowbrick module name}" -->
 
-<!-- Next, provide a description such as the following. Remember to fill in 
-     the blanks, including the issue number! Make sure to specify if you are 
-     adding a feature or fixing a bug. -->
-This PR fixes #_____, which {requested a feature to allow users to _______} {reported a bug that caused a problem to occure when ______}.
+<!-- If you are fixing a bug, provide a description such as the following. 
+     Remember to fill in the blanks, including the issue number! -->
+This PR fixes #, which reported a bug that caused a problem to occurred when...
+
+<!-- If you are introducing a new feature, provide a description such as the 
+     following. Remember to fill in the blanks, including the issue number! -->
+This PR fixes #, which requested a feature to allow users to...
 
 <!-- Next, briefly summarize the changes you have made in the PR to help the 
      reviewers understand exactly what you did and why. HINT: See the CHECKLIST
