@@ -1,16 +1,52 @@
-<!-- Please add the number of the issue fixed after the # -->
-Fixes #
+<!-- First, make sure you are merging from a FEATURE BRANCH into the 
+     Yellowbrick DEVELOP BRANCH. We only review PRs of feature branches
+     and only accept PRs into our develop branch. -->
 
-<!-- Add a short description of the fix here -->
+<!-- Second, please ensure your PR has a short, informative title. 
+     Example templates: 
+     - "Enhances {existing visualizer name} with new {feature}"
+     - "Corrects bug in {existing visualizer name}"
+     - "Implements {new feature} inside the {Yellowbrick module name}" -->
 
-<!-- If this is a WIP, list the changes you will make, otherwise, list the
-     primary changes you have made in the PR to help the reviewers understand
-     exactly what you did and why. -->
-Changes proposed in this pull request:
+<!-- Next, provide a description such as the following. Remember to fill in 
+     the blanks, including the issue number! Make sure to specify if you are 
+     adding a feature or fixing a bug. -->
+This PR fixes #_____, which {requested a feature to allow users to _______} {reported a bug that caused a problem to occure when ______}.
 
--
--
--
+<!-- Next, briefly summarize the changes you have made in the PR to help the 
+     reviewers understand exactly what you did and why. HINT: See the CHECKLIST
+     below! -->
+I have made the following changes
+1.      
+2.     
+3.     
+
+<!-- If this is a work-in-progress (WIP), list the changes you still need to 
+     make. HINT: See the CHECKLIST below!-->
+Still to do:
+- [ ]     
+- [ ]     
+- [ ]     
+
+<!-- If you have any specific questions, please list them here. -->
+Questions I have for the Yellowbrick team:
+- [ ]     
+- [ ]      
+
+<!-- CHECKLIST: Here's a handy checklist to go through before submitting a PR 
+     - Is the commit message formatted correctly?
+     - Have you noted the new functionality/bugfix in the release notes of the next release?
+     
+     (If you've changed any code) 
+     - Do all of your functions and methods have docstrings?
+     - Have you added/updated unit tests where appropriate? 
+     - Have you updated the baseline images if necessary?
+     - Have you run the unit tests using `pytest`?
+     - Is your code style correct (are you using PEP8, pyflakes)? 
+     - Have you documented your new feature/functionality in the docs?
+     
+     (If you've added to the docs) 
+     - Have you built the docs using `make html`? -->
 
 <!-- This alerts the maintainers to do a review, feel free to ping us in
      comments using this address as well! -->
