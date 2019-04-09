@@ -87,4 +87,4 @@ def manual_legend(g, labels, colors, **legend_kwargs):
     ]
 
     # Return the Legend artist
-    return g.legend(handles=handles, **legend_kwargs)
+    return g.legend(handles=handles, frameon=True, **legend_kwargs)
