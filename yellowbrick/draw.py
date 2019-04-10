@@ -87,7 +87,7 @@ def manual_legend(g, labels, colors, **legend_kwargs):
     ]
 
     #Checks to see if frameon is already specified in legend_kwargs
-    if 'frameon' not in legend_kwargs.keys():
+    if 'frameon' in legend_kwargs.keys():
         frameon = legend_kwargs['frameon']
     else:
         frameon = True
