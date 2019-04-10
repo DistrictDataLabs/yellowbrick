@@ -1,60 +1,52 @@
-<!-- First, make sure you are merging from a FEATURE BRANCH into the 
-     Yellowbrick DEVELOP BRANCH. We only review PRs of feature branches
-     and only accept PRs into our develop branch. -->
+### Welcome, Contributor! 
+This template is meant to get your PR started off on the right foot.
 
-<!-- Second, please ensure your PR has a short, informative title. 
-     Example templates: 
-     - "Enhances {existing visualizer name} with new {feature}"
-     - "Corrects bug in {existing visualizer name}"
-     - "Implements {new feature} inside the {Yellowbrick module name}" -->
+### I. Are you merging from a feature branch into develop?
+_If not, please create a feature branch and change your PR to merge from that branch into Yellowbrick `develop`._
 
-<!-- If you are fixing a bug, provide a description such as the following. 
-     Remember to fill in the blanks, including the issue number! -->
-This PR fixes #, which reported a bug that caused a problem to occur when users...
+### II. Does your PR have a title?
+_Please ensure your PR has a short, informative title, e.g. "Enhances ParallelCoordinates with new andrews_curve parameter" or "Corrects bug in WhiskerPlot that causes index error"_
 
-<!-- If you are introducing a new feature, provide a description such as the 
-     following. Remember to fill in the blanks, including the issue number! -->
-This PR fixes #, which requested a feature to allow users to...
+### III. Summarize your PR (HINT: See CHECKLIST below!)
+This PR fixes #issue_number _(If you are fixing a bug)_ which reported a bug that caused a problem to occur when users...
+_(or if you are introducing a new feature)_ which requested a feature to allow the user to...
 
-<!-- Next, briefly summarize the changes you have made in the PR to help the 
-     reviewers understand exactly what you did and why. HINT: See the CHECKLIST
-     below! -->
-I have made the following changes
+I have made the following changes    
 1.      
 2.     
 3.     
 
-<!-- If you are adding/modifying a visualizer, include a sample plot of the newly 
-     added/modified visualizer here. -->
+### IV. Include a sample plot
+_If you are adding or modifying a visualizer, PLEASE include a sample plot here._
 
-<!-- If this is a work-in-progress (WIP), list the changes you still need to 
-     make. HINT: See the CHECKLIST below!-->
+### V. List any TODOs or questions
+_If this is a work-in-progress (WIP), list the changes you still need to make and/or questions or the Yellowbrick team:_
+
 Still to do:
 - [ ]     
 - [ ]     
 - [ ]     
 
-<!-- If you have any specific questions, please list them here. -->
-Questions I have for the Yellowbrick team:
+Questions for the @DistrictDataLabs/team-oz-maintainers:
 - [ ]     
 - [ ]      
 
-<!-- CHECKLIST: Here's a handy checklist to go through before submitting a PR 
-     - Is the commit message formatted correctly?
-     - Have you noted the new functionality/bugfix in the release notes of the next release?
-     
-     (If you've changed any code) 
-     - Included a sample plot to visually illustrate your changes? 
-     - Do all of your functions and methods have docstrings?
-     - Have you added/updated unit tests where appropriate? 
-     - Have you updated the baseline images if necessary?
-     - Have you run the unit tests using `pytest`?
-     - Is your code style correct (are you using PEP8, pyflakes)? 
-     - Have you documented your new feature/functionality in the docs?
-     
-     (If you've added to the docs) 
-     - Have you built the docs using `make html`? -->
+### VI. CHECKLIST
+_Here's a handy checklist to go through before submitting a PR_
+- _Is the commit message formatted correctly?_
+- _Have you noted the new functionality/bugfix in the release notes of the next release?_
 
-<!-- This alerts the maintainers to do a review, feel free to ping us in
-     comments using this address as well! -->
-@DistrictDataLabs/team-oz-maintainers
+_If you've changed any code_
+- _Included a sample plot to visually illustrate your changes?_
+- _Do all of your functions and methods have docstrings?_
+- _Have you added/updated unit tests where appropriate?_ 
+- _Have you updated the baseline images if necessary?_
+- _Have you run the unit tests using `pytest`?_
+- _Is your code style correct (are you using PEP8, pyflakes)?_
+- _Have you documented your new feature/functionality in the docs?_
+     
+_If you've added to the docs_
+- _Have you built the docs using `make html`?_
+
+
+
