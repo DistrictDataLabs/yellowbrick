@@ -80,7 +80,7 @@ class TestKElbowHelper(object):
         Test the distortion score metric function
         """
         score = distortion_score(X, y)
-        assert score == 7.6777850157143783
+        assert score == pytest.approx(69.10006514142941)
 
     @pytest.mark.parametrize("Xs", [
         csc_matrix(X), csr_matrix(X),
@@ -90,7 +90,7 @@ class TestKElbowHelper(object):
         Test the distortion score metric on a sparse array
         """
         score = distortion_score(Xs, y)
-        assert score == pytest.approx(7.6777850157143783)
+        assert score == pytest.approx(69.10006514142938)
 
     @pytest.mark.skipif(pd is None, reason="pandas is required")
     def test_distortion_score_pandas_input(self):
@@ -101,7 +101,7 @@ class TestKElbowHelper(object):
         s = pd.Series(y)
 
         score = distortion_score(df, s)
-        assert score == pytest.approx(7.6777850157143783)
+        assert score == pytest.approx(69.10006514142941)
 
 
 ##########################################################################
@@ -221,7 +221,7 @@ class TestKElbowVisualizer(VisualTestCase, DatasetMixin):
         )
         visualizer.fit(X)
 
-        expected = np.array([ 7.677785,  8.364319,  8.893634,  8.013021])
+        expected = np.array([ 69.100065, 54.081571, 43.146921, 34.978487])
         assert len(visualizer.k_scores_) == 4
 
         visualizer.poof()

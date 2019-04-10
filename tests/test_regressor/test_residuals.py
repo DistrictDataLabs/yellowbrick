@@ -356,11 +356,14 @@ class TestResidualsPlot(VisualTestCase, DatasetMixin):
         """
         # Instantiate a prediction error plot, provide custom alpha
         visualizer = ResidualsPlot(
-            Ridge(random_state=8893), alpha=0.3, hist=False
+            Ridge(random_state=8893), train_alpha=0.3,test_alpha=0.75, hist=False
         )
-
+        alphas = {
+                'train_point': 0.3,
+                'test_point': 0.75
+        }
         # Test param gets set correctly
-        assert visualizer.alpha == 0.3
+        assert visualizer.alphas == alphas
 
         visualizer.ax = mock.MagicMock()
         visualizer.fit(self.data.X.train, self.data.y.train)
@@ -369,4 +372,4 @@ class TestResidualsPlot(VisualTestCase, DatasetMixin):
         # Test that alpha was passed to internal matplotlib scatterplot
         _, scatter_kwargs = visualizer.ax.scatter.call_args
         assert "alpha" in scatter_kwargs
-        assert scatter_kwargs["alpha"] == 0.3
+        assert scatter_kwargs["alpha"] == 0.75
