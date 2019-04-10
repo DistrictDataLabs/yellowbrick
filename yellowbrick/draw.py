@@ -86,5 +86,12 @@ def manual_legend(g, labels, colors, **legend_kwargs):
         for color, label in zip(colors, labels)
     ]
 
+    #Checks to see if frameon is already specified in legend_kwargs
+    if 'frameon' not in legend_kwargs.keys():
+        frameon = legend_kwargs['frameon']
+    else:
+        frameon = True
+
     # Return the Legend artist
-    return g.legend(handles=handles, frameon=True, **legend_kwargs)
+    return g.legend(handles=handles, frameon=frameon, **legend_kwargs)
+
