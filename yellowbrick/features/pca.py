@@ -70,7 +70,7 @@ class PCADecomposition(MultiFeatureVisualizer):
         Use either color to colorize the lines on a per class basis or
         colormap to color them on a continuous scale.
     
-    alpha : float, default: 0.75
+    alpha : float, default: 1
         Specify a transparency where 1 is completely opaque and 0 is completely
         transparent. This property makes densely clustered points more visible.
 
@@ -263,7 +263,7 @@ def pca_decomposition(X, y=None, ax=None, features=None, scale=True,
         Use either color to colorize the lines on a per class basis or
         colormap to color them on a continuous scale.
         
-    alpha : float, default: 0.75
+    alpha : float, default: 1
         Specify a transparency where 1 is completely opaque and 0 is completely
         transparent. This property makes densely clustered points more visible.
 
@@ -290,7 +290,7 @@ def pca_decomposition(X, y=None, ax=None, features=None, scale=True,
     visualizer = PCADecomposition(
         ax=ax, features=features, scale=scale, proj_dim=proj_dim,
         proj_features=proj_features, color=color, colormap=colormap,
-        alpha= alpha, random_state=random_state,**kwargs
+        alpha=alpha, random_state=random_state,**kwargs
     )
 
     # Fit and transform the visualizer (calls draw)

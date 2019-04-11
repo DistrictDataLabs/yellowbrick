@@ -213,3 +213,4 @@ class PCADecompositionTests(VisualTestCase):
         assert "alpha" in scatter_kwargs
         assert scatter_kwargs["alpha"] == 0.3
         assert pca_array.shape == (self.dataset.X.shape[0], 2)
+        
