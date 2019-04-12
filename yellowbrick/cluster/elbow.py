@@ -22,6 +22,7 @@ import collections
 import time
 import numpy as np
 import scipy.sparse as sp
+from kneed import KneeLocator
 
 from .base import ClusteringScoreVisualizer
 from ..exceptions import YellowbrickValueError
@@ -247,6 +248,8 @@ class KElbowVisualizer(ClusteringScoreVisualizer):
 
         self.k_scores_ = []
         self.k_timers_ = []
+        self.kneedle=None
+        self.knee_value=None
 
         for k in self.k_values_:
             # Compute the start time for each  model
@@ -261,7 +264,9 @@ class KElbowVisualizer(ClusteringScoreVisualizer):
             self.k_scores_.append(
                 self.scoring_metric(X, self.estimator.labels_)
             )
-
+            
+        self.kneedle=KneeLocator(self.k_values_,self.k_scores_,curve='convex',direction='decreasing')
+        self.knee_value=self.kneedle.find_knee()[0]       
         self.draw()
 
         return self
@@ -272,6 +277,8 @@ class KElbowVisualizer(ClusteringScoreVisualizer):
         """
         # Plot the silhouette score against k
         self.ax.plot(self.k_values_, self.k_scores_, marker="D", label="score")
+        self.ax.axvline(self.knee_value,c='black',linestyle='--',label='Optimal K')
+        self.ax.legend()
 
         # If we're going to plot the timings, create a twinx axis
         if self.timings:
