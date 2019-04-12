@@ -201,8 +201,7 @@ class PCADecompositionTests(VisualTestCase):
         params = {'alpha': 0.3, 'proj_dim': 2, 'random_state': 9932}
         visualizer = PCADecomposition(**params).fit(self.dataset.X)
         pca_array = visualizer.transform(self.dataset.X)
-        alpha=0.3
-        assert visualizer.alpha == alpha
+        assert visualizer.alpha == 0.3
         
         visualizer.ax = mock.MagicMock()
         visualizer.fit(self.dataset.X)
