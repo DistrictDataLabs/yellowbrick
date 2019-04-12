@@ -400,7 +400,7 @@ class Manifold(FeatureVisualizer):
 
         if self._target_color_type == DISCRETE:
             # Add the legend
-            manual_legend(self, self.classes_, self._colors)
+            manual_legend(self, self.classes_, self._colors, frameon=True)
 
         elif self._target_color_type == CONTINUOUS:
             # Add the color bar
