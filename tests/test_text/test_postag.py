@@ -89,13 +89,13 @@ sonnets = [
     Despite of wrinkles this thy golden time.
     But if thou live, remember'd not to be,
     Die single, and thine image dies with thee.
-    """,
+    """
 ]
+
 
 ##########################################################################
 ## PosTag Utils
 ##########################################################################
-
 
 def check_nltk_data():
     """
@@ -122,15 +122,15 @@ def check_spacy_data():
 def get_tagged_docs(X, model="nltk", tagger="word"):
     """
     X is a list of strings; each string is a single document.
-    For each document, perform part-of-speech tagging, and 
-    yield a list of sentences, where each sentence is a list 
+    For each document, perform part-of-speech tagging, and
+    yield a list of sentences, where each sentence is a list
     of (token, tag) tuples
-    
+
     If model=="nltk", `NLTK` will be used to sentence and word
     tokenize the incoming documents. User may select the `NLTK`
     tagger to be used; (for now) either the word tokenizer or the
     workpunct tokenizer.
-    
+
     If model=="spacy", `SpaCy` will be used to sentence and word
     tokenize the incoming documents.
     """
@@ -146,16 +146,21 @@ def get_tagged_docs(X, model="nltk", tagger="word"):
     elif model == "nltk":
         if tagger == "wordpunct":
             for doc in X:
-                yield [pos_tag(wordpunct_tokenize(sent)) for sent in sent_tokenize(doc)]
+                yield [
+                    pos_tag(wordpunct_tokenize(sent))
+                    for sent in sent_tokenize(doc)
+                ]
         else:
             for doc in X:
-                yield [pos_tag(word_tokenize(sent)) for sent in sent_tokenize(doc)]
+                yield [
+                    pos_tag(word_tokenize(sent))
+                    for sent in sent_tokenize(doc)
+                ]
 
 
 ##########################################################################
 ## PosTag Tests
 ##########################################################################
-
 
 class TestPosTag(VisualTestCase):
     """

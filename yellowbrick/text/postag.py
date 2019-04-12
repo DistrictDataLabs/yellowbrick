@@ -30,30 +30,32 @@ from yellowbrick.exceptions import YellowbrickValueError
 
 # NOTE: Penn Treebank converts all sentence closers (!,?,;) to periods
 PUNCT_TAGS = [".", ":", ",", "``", "''", "(", ")", "#", "$"]
-TAGSET_NAMES = {"penn_treebank": "Penn Treebank", "universal": "Universal Dependencies"}
+TAGSET_NAMES = {
+    "penn_treebank": "Penn Treebank",
+    "universal": "Universal Dependencies"
+}
 
 
 ##########################################################################
 # PosTagVisualizer
 ##########################################################################
 
-
 class PosTagVisualizer(TextVisualizer):
     """
-    Parts of speech (e.g. verbs, nouns, prepositions, adjectives) 
-    indicate how a word is functioning within the context of a sentence. 
-    In English as in many other languages, a single word can function in 
-    multiple ways. Part-of-speech tagging lets us encode information not 
-    only about a word’s definition, but also its use in context (for 
-    example the words “ship” and “shop” can be either a verb or a noun, 
-    depending on the context). 
+    Parts of speech (e.g. verbs, nouns, prepositions, adjectives)
+    indicate how a word is functioning within the context of a sentence.
+    In English as in many other languages, a single word can function in
+    multiple ways. Part-of-speech tagging lets us encode information not
+    only about a word’s definition, but also its use in context (for
+    example the words “ship” and “shop” can be either a verb or a noun,
+    depending on the context).
 
-    The PosTagVisualizer creates a bar chart to visualize the relative 
+    The PosTagVisualizer creates a bar chart to visualize the relative
     proportions of different parts-of-speech in a corpus.
 
-    Note that the PosTagVisualizer requires documents to already be 
+    Note that the PosTagVisualizer requires documents to already be
     part-of-speech tagged; the visualizer expects the corpus to come in
-    the form of a list of (document) lists of (sentence) lists of 
+    the form of a list of (document) lists of (sentence) lists of
     (tag, token) tuples.
 
     Parameters
@@ -100,11 +102,11 @@ class PosTagVisualizer(TextVisualizer):
         self.tagset_names = TAGSET_NAMES
 
         if tagset not in self.tagset_names:
-            raise YellowbrickValueError(
-                ("'{}' is an invalid tagset. Please choose one of {}.").format(
+            raise YellowbrickValueError((
+                "'{}' is an invalid tagset. Please choose one of {}."
+                ).format(
                     tagset, ", ".join(self.tagset_names.keys())
-                )
-            )
+            ))
         else:
             self.tagset = tagset
 
@@ -122,11 +124,11 @@ class PosTagVisualizer(TextVisualizer):
         ----------
         X : list or generator
             Should be provided as a list of documents or a generator
-            that yields a list of documents that contain a list of 
+            that yields a list of documents that contain a list of
             sentences that contain (token, tag) tuples.
 
         y : ndarray or Series of length n
-            An optional array of target values that are ignored by the 
+            An optional array of target values that are ignored by the
             visualizer.
 
         kwargs : dict
@@ -206,18 +208,16 @@ class PosTagVisualizer(TextVisualizer):
         ----------
         X : list or generator
             Should be provided as a list of documents or a generator
-            that yields a list of documents that contain a list of 
+            that yields a list of documents that contain a list of
             sentences that contain (token, tag) tuples.
         """
         jump = {
             # combine proper and regular nouns
-            "NOUN": "noun",
-            "PROPN": "noun",
+            "NOUN": "noun", "PROPN": "noun",
             "ADJ": "adjective",
             "VERB": "verb",
             # include particles with adverbs
-            "ADV": "adverb",
-            "PART": "adverb",
+            "ADV": "adverb", "PART": "adverb",
             "ADP": "adposition",
             "PRON": "pronoun",
             "CCONJ": "conjunction",
@@ -238,12 +238,12 @@ class PosTagVisualizer(TextVisualizer):
     def _handle_treebank(self, X):
         """
         Create a part-of-speech tag mapping using the Penn Treebank tags
-        
+
         Parameters
         ----------
         X : list or generator
             Should be provided as a list of documents or a generator
-            that yields a list of documents that contain a list of 
+            that yields a list of documents that contain a list of
             sentences that contain (token, tag) tuples.
         """
         for tagged_doc in X:
@@ -378,14 +378,14 @@ def postag(
     """
     Display a barchart with the counts of different parts of speech
     in X, which consists of a part-of-speech-tagged corpus, which the
-    visualizer expects to be a list of lists of lists of (token, tag) 
+    visualizer expects to be a list of lists of lists of (token, tag)
     tuples.
 
     Parameters
     ----------
     X : list or generator
         Should be provided as a list of documents or a generator
-        that yields a list of documents that contain a list of 
+        that yields a list of documents that contain a list of
         sentences that contain (token, tag) tuples.
     ax : matplotlib axes
         The axes to plot the figure on.
@@ -395,13 +395,13 @@ def postag(
         Use "universal" if corpus has been tagged using SpaCy.
     colors : list or tuple of colors
         Specify the colors for each individual part-of-speech.
+    colormap : string or matplotlib cmap
+        Specify a colormap to color the parts-of-speech.
     frequency: bool {True, False}, default: False
         If set to True, part-of-speech tags will be plotted according to frequency,
         from most to least frequent.
-    colormap : string or matplotlib cmap
-        Specify a colormap to color the parts-of-speech.
     kwargs : dict
-        Pass any additional keyword arguments to the PosTagVisualizer. 
+        Pass any additional keyword arguments to the PosTagVisualizer.
 
     Returns
     -------
@@ -409,7 +409,10 @@ def postag(
         Returns the axes on which the PosTagVisualizer was drawn.
     """
     # Instantiate the visualizer
-    visualizer = PosTagVisualizer(ax, tagset, colors, colormap, **kwargs)
+    visualizer = PosTagVisualizer(
+        ax=ax, tagset=tagset, colors=colors, colormap=colormap,
+        frequency=frequency, **kwargs
+    )
 
     # Fit and transform the visualizer (calls draw)
     visualizer.fit(X, **kwargs)
