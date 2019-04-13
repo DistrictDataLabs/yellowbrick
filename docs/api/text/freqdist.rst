@@ -5,7 +5,7 @@ Token Frequency Distribution
 
 A method for visualizing the frequency of tokens within and across corpora is frequency distribution. A frequency distribution tells us the frequency of each vocabulary item in the text. In general, it could count any kind of observable event. It is a distribution because it tells us how the total number of word tokens in the text are distributed across the vocabulary items.
 
-Note that the ``FreqDistVisualizer`` does not perform any normalization or vectorization, and it expects text that has already be count vectorized.
+.. NOTE:: The ``FreqDistVisualizer`` does not perform any normalization or vectorization, and it expects text that has already been count vectorized.
 
 We first instantiate a ``FreqDistVisualizer`` object, and then call ``fit()`` on that object with the count vectorized documents and the features (i.e. the words from the corpus), which computes the frequency distribution. The visualizer then plots a bar chart of the top 50 most frequent terms in the corpus, with the terms listed along the x-axis and frequency counts depicted at y-axis values. As with other Yellowbrick visualizers, when the user invokes ``poof()``, the finalized visualization is shown.  Note that in this plot and in the subsequent one, we can orient our plot vertically by passing in ``orient='v'`` on instantiation (the plot will orient horizontally by default):
 
@@ -73,6 +73,7 @@ Here is the plot for the cooking corpus (oriented horizontally this time):
     # Load the text data
     corpus = load_hobbies()
 
+    # Create a dict to map target labels to documents of that category
     hobbies = defaultdict(list)
     for text, label in zip(corpus.data, corpus.target):
         hobbies[label].append(text)
@@ -104,6 +105,7 @@ And for the gaming corpus (again oriented horizontally):
     # Load the text data
     corpus = load_hobbies()
 
+    # Create a dict to map target labels to documents of that category
     hobbies = defaultdict(list)
     for text, label in zip(corpus.data, corpus.target):
         hobbies[label].append(text)
