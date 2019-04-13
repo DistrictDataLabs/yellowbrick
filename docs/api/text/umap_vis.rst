@@ -26,36 +26,28 @@ documents. The yellowbrick visualizer then plots the scatter plot,
 coloring by cluster or by class, or neither if a structural analysis is
 required.
 
-.. code:: python
+After importing the required tools, we can :doc:`load the corpus <corpus>` and vectorize the text using TF-IDF. Once the corpus is vectorized we can visualize it, showing the
+distribution of classes.
 
-    from yellowbrick.text import UMAPVisualizer
+.. plot::
+    :context: close-figs
+    :alt: UMAP Plot
+
     from sklearn.feature_extraction.text import TfidfVectorizer
-    from yellowbrick.datasets.utils import load_corpus
 
+    from yellowbrick.datasets import load_hobbies
+    from yellowbrick.text import UMAPVisualizer
 
-After importing the required tools, we can :doc:`load the corpus <corpus>` and vectorize the text using TF-IDF.
+    # Load the text data
+    corpus = load_hobbies()
 
-.. code:: python
-
-    # Load the data and create document vectors
-    corpus = load_corpus('hobbies')
     tfidf  = TfidfVectorizer()
     docs   = tfidf.fit_transform(corpus.data)
     labels = corpus.target
 
-
-Now that the corpus is vectorized we can visualize it, showing the
-distribution of classes.
-
-.. code:: python
-
     umap   = UMAPVisualizer()
     umap.fit(docs,labels)
     umap.poof()
-
-
-.. image:: images/umap_all_docs_euclidean.png
-
 
 Alternatively, if we believed that cosine distance was a more
 appropriate metric on our feature space we could specify that via a
@@ -69,13 +61,24 @@ the ``UMAPVisualizer``.
     umap.poof()
 
 
-.. image:: images/umap_all_docs_cosine.png
-
-
 If we omit the target during fit, we can visualize the whole dataset to
 see if any meaningful patterns are observed.
 
-.. code:: python
+.. plot::
+    :context: close-figs
+    :include-source: False 
+    :alt: UMAP Plot without Target
+
+    from sklearn.feature_extraction.text import TfidfVectorizer
+
+    from yellowbrick.datasets import load_hobbies
+    from yellowbrick.text import UMAPVisualizer
+
+    # Load the text data
+    corpus = load_hobbies()
+
+    tfidf  = TfidfVectorizer()
+    docs   = tfidf.fit_transform(corpus.data)
 
     # Don't color points with their classes
     umap = UMAPVisualizer(labels=["documents"], metric='cosine')
@@ -83,17 +86,27 @@ see if any meaningful patterns are observed.
     umap.poof()
 
 
-.. image:: images/umap_no_labels.png
-
-
 This means we don’t have to use class labels at all. Instead we can use
 cluster membership from K-Means to label each document. This will allow
 us to look for clusters of related text by their contents:
 
-.. code:: python
 
-    # Apply clustering instead of class names.
+.. plot::
+    :context: close-figs
+    :include-source: False 
+    :alt: UMAP Plot with Clustering
+
+    from sklearn.feature_extraction.text import TfidfVectorizer
     from sklearn.cluster import KMeans
+
+    from yellowbrick.datasets import load_hobbies
+    from yellowbrick.text import UMAPVisualizer
+
+    # Load the text data
+    corpus = load_hobbies()
+
+    tfidf  = TfidfVectorizer()
+    docs   = tfidf.fit_transform(corpus.data)
 
     clusters = KMeans(n_clusters=5)
     clusters.fit(docs)
@@ -101,10 +114,6 @@ us to look for clusters of related text by their contents:
     umap = UMAPVisualizer()
     umap.fit(docs, ["c{}".format(c) for c in clusters.labels_])
     umap.poof()
-
-
-.. image:: images/umap_kmeans.png
-
 
 On one hand, these clusters aren’t particularly well concentrated by the
 two dimensional embedding of UMAP, on the other hand, the true labels
