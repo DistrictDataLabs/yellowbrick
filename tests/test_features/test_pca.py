@@ -71,7 +71,7 @@ class PCADecompositionTests(VisualTestCase):
         ax = pca_decomposition(
             X=self.dataset.X, proj_dim=2, scale=True, random_state=28
         )
-        self.assert_images_similar(ax=ax)
+        self.assert_images_similar(ax=ax, tol=5)
 
     @pytest.mark.xfail(
         sys.platform == 'win32', reason="images not close on windows (RMSE=?)"
@@ -99,7 +99,7 @@ class PCADecompositionTests(VisualTestCase):
         pca_array = visualizer.transform(self.dataset.X)
 
         # Image comparison tests
-        self.assert_images_similar(visualizer)
+        self.assert_images_similar(visualizer, tol=0.03)
 
         # Assert PCA transformation occurred successfully
         assert pca_array.shape == (self.dataset.X.shape[0], 2)
@@ -119,7 +119,7 @@ class PCADecompositionTests(VisualTestCase):
         pca_array = visualizer.transform(self.dataset.X)
 
         # Image comparison tests
-        self.assert_images_similar(visualizer)
+        self.assert_images_similar(visualizer, tol=5)
 
         # Assert PCA transformation occurred successfully
         assert pca_array.shape == (self.dataset.X.shape[0], 2)
@@ -167,7 +167,7 @@ class PCADecompositionTests(VisualTestCase):
         pca_array = visualizer.transform(self.dataset.X)
 
         # Image comparison tests
-        self.assert_images_similar(visualizer)
+        self.assert_images_similar(visualizer, tol=5)
 
         # Assert PCA transformation occurred successfully
         assert pca_array.shape == (self.dataset.X.shape[0], 3)
