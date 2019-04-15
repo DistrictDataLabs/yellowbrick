@@ -19,9 +19,8 @@ Decomposition based feature visualization with PCA.
 
 # NOTE: must import mplot3d to load the 3D projection
 import mpl_toolkits.mplot3d # noqa
-from mpl_toolkits.axes_grid1 import make_axes_locatable
 import matplotlib.pyplot as plt
-import numpy as np
+
 from yellowbrick.features.base import MultiFeatureVisualizer
 from yellowbrick.style import palettes
 from yellowbrick.exceptions import YellowbrickValueError
@@ -70,6 +69,10 @@ class PCADecomposition(MultiFeatureVisualizer):
         Optional string or matplotlib cmap to colorize lines.
         Use either color to colorize the lines on a per class basis or
         colormap to color them on a continuous scale.
+    
+    alpha : float, default: 0.75
+        Specify a transparency where 1 is completely opaque and 0 is completely
+        transparent. This property makes densely clustered points more visible.
 
     random_state : int, RandomState instance or None, optional (default None)
         If input data is larger than 500x500 and the number of components to
@@ -98,10 +101,9 @@ class PCADecomposition(MultiFeatureVisualizer):
                  scale=True,
                  proj_dim=2,
                  proj_features=False,
-                 colorbar = False,
-                 heatmap = False,
                  color=None,
                  colormap=palettes.DEFAULT_SEQUENCE,
+                 alpha=0.75,
                  random_state=None,
                  **kwargs):
         super(PCADecomposition, self).__init__(ax=ax,
@@ -115,15 +117,13 @@ class PCADecomposition(MultiFeatureVisualizer):
         self.scale = scale
         self.proj_dim = proj_dim
         self.proj_features = proj_features
-        self.colorbar = colorbar 
-        self.heatmap = heatmap
 
         # Create the PCA transformer
         self.pca_transformer = Pipeline(
             [('scale', StandardScaler(with_std=self.scale)),
              ('pca', PCA(self.proj_dim, random_state=random_state))]
         )
-
+        self.alpha = alpha
         # Visual Parameters
         self.color = color
         self.colormap = colormap
@@ -152,7 +152,6 @@ class PCADecomposition(MultiFeatureVisualizer):
         return self
 
     def transform(self, X, y=None, **kwargs):
-        self.orig_X = X
         self.pca_features_ = self.pca_transformer.transform(X)
         self.draw()
         return self.pca_features_
@@ -160,21 +159,8 @@ class PCADecomposition(MultiFeatureVisualizer):
     def draw(self, **kwargs):
         X = self.pca_features_
         if self.proj_dim == 2:
-            self.fig = plt.figure()
-            if(self.heatmap):
-                self.ax = self.fig.add_subplot(2,1,1)
-            else:
-                self.ax = self.fig.add_subplot(1,1,1)
-            im = self.ax.scatter(X[:,0], X[:,1], c=self.color, cmap=self.colormap, edgecolors='black',
-                             vmin= self.pca_components_.min(), vmax = self.pca_components_.max())
-            if self.colorbar:
-                divider = make_axes_locatable(self.ax)
-                cax = divider.append_axes("bottom", size="10%", pad=0.63)
-                plt.colorbar(im, cax = cax, orientation='horizontal',ticks=[self.pca_components_.min(), 0,self.pca_components_.max()])
-            if self.heatmap:
-                self.ax1 = self.fig.add_subplot(2,1,2)
-                self.ax1.imshow(self.pca_components_, interpolation = 'none', cmap = self.colormap)
-            
+            self.ax.scatter(X[:, 0], X[:, 1], c=self.color, cmap=self.colormap, 
+                            alpha=self.alpha)
             if self.proj_features:
                 x_vector = self.pca_components_[0]
                 y_vector = self.pca_components_[1]
@@ -195,18 +181,9 @@ class PCADecomposition(MultiFeatureVisualizer):
                     )
         if self.proj_dim == 3:
             self.fig = plt.figure()
-            if(self.heatmap):
-                self.ax = self.fig.add_subplot(211, projection='3d')
-            else:
-                self.ax = self.fig.add_subplot(111, projection='3d')
-            
-            im = self.ax.scatter(X[:,0], X[:,1], X[:, 2], c=self.color, cmap=self.colormap, alpha=0.4, edgecolors='black',
-                             vmin= self.pca_components_.min(), vmax = self.pca_components_.max())
-            if self.colorbar:
-                plt.colorbar(im, orientation='horizontal', ticks=[self.pca_components_.min(), 0,self.pca_components_.max()])
-            if self.heatmap:
-                self.ax1 = self.fig.add_subplot(2,1,2)
-                self.ax1.imshow(self.pca_components_, interpolation = 'none', cmap = self.colormap)
+            self.ax = self.fig.add_subplot(111, projection='3d')
+            self.ax.scatter(X[:, 0], X[:, 1], X[:, 2],
+                            c=self.color, cmap=self.colormap, alpha=self.alpha)
             if self.proj_features:
                 x_vector = self.pca_components_[0]
                 y_vector = self.pca_components_[1]
@@ -231,22 +208,11 @@ class PCADecomposition(MultiFeatureVisualizer):
 
     def finalize(self, **kwargs):
         # Set the title
-        orig_X = self.orig_X
         self.ax.set_title('Principal Component Plot')
-        self.ax.set_xlabel('\nPrincipal Component 1',linespacing=1.2)
-        self.ax.set_ylabel('\nPrincipal Component 2',linespacing=1.2)
-        if self.heatmap == True:
-            feature_names = list(orig_X.columns)
-            plt.gca().set_xticks(np.arange(-.5, len(feature_names)))
-            plt.gca().set_xticklabels(feature_names, rotation=90, ha='left', fontsize=12)
-            if self.proj_dim == 2:
-                plt.gca().set_yticks(np.arange(0.5, 2))
-                plt.gca().set_yticklabels(['First PC', 'Second PC'], va='bottom', fontsize=12)
-            if self.proj_dim == 3:
-                plt.gca().set_yticks(np.arange(0.5, 3))
-                plt.gca().set_yticklabels(['First PC', 'Second PC', 'Third PC'], va='bottom', fontsize=12)
+        self.ax.set_xlabel('Principal Component 1')
+        self.ax.set_ylabel('Principal Component 2')
         if self.proj_dim == 3:
-            self.ax.set_zlabel('Principal Component 3',linespacing=1.2)
+            self.ax.set_zlabel('Principal Component 3')
 
 
 ##########################################################################
@@ -255,7 +221,7 @@ class PCADecomposition(MultiFeatureVisualizer):
 
 def pca_decomposition(X, y=None, ax=None, features=None, scale=True,
                       proj_dim=2, proj_features=False, color=None,
-                      colormap=palettes.DEFAULT_SEQUENCE,
+                      colormap=palettes.DEFAULT_SEQUENCE, alpha=0.75,
                       random_state=None, **kwargs):
     """Produce a two or three dimensional principal component plot of the data array ``X``
     projected onto it's largest sequential principal components. It is common practice to scale the
@@ -296,6 +262,10 @@ def pca_decomposition(X, y=None, ax=None, features=None, scale=True,
         Optional string or matplotlib cmap to colorize lines.
         Use either color to colorize the lines on a per class basis or
         colormap to color them on a continuous scale.
+        
+    alpha : float, default: 0.75
+        Specify a transparency where 1 is completely opaque and 0 is completely
+        transparent. This property makes densely clustered points more visible.
 
     random_state : int, RandomState instance or None, optional (default None)
         If input data is larger than 500x500 and the number of components to
@@ -320,7 +290,7 @@ def pca_decomposition(X, y=None, ax=None, features=None, scale=True,
     visualizer = PCADecomposition(
         ax=ax, features=features, scale=scale, proj_dim=proj_dim,
         proj_features=proj_features, color=color, colormap=colormap,
-        random_state=random_state, **kwargs
+        alpha=alpha, random_state=random_state, **kwargs
     )
 
     # Fit and transform the visualizer (calls draw)
