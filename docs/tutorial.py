@@ -3,7 +3,6 @@
 
 import matplotlib.pyplot as plt
 
-from sklearn.metrics import f1_score
 from sklearn.pipeline import Pipeline
 from sklearn.svm import LinearSVC, NuSVC, SVC
 from sklearn.neighbors import KNeighborsClassifier
