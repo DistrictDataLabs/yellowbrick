@@ -22,10 +22,10 @@ import collections
 import time
 import numpy as np
 import scipy.sparse as sp
-from kneed import KneeLocator
 
 from .base import ClusteringScoreVisualizer
 from ..exceptions import YellowbrickValueError
+from ..utils import KneeLocator
 
 from sklearn.metrics import silhouette_score
 from sklearn.metrics import calinski_harabaz_score
@@ -171,6 +171,9 @@ class KElbowVisualizer(ClusteringScoreVisualizer):
         Display the fitting time per k to evaluate the amount of time required
         to train the clustering model.
 
+    knee : bool, default=True
+        Display the vertical line corresponding to the optimal value of k.      
+
     kwargs : dict
         Keyword arguments that are passed to the base class and may influence
         the visualization as defined in other Visualizers.
@@ -207,7 +210,7 @@ class KElbowVisualizer(ClusteringScoreVisualizer):
     """
 
     def __init__(self, model, ax=None, k=10,
-                 metric="distortion", timings=True, **kwargs):
+                 metric="distortion", timings=True, knee=True, **kwargs):
         super(KElbowVisualizer, self).__init__(model, ax=ax, **kwargs)
 
         # Get the scoring method
@@ -220,6 +223,7 @@ class KElbowVisualizer(ClusteringScoreVisualizer):
         # Store the arguments
         self.scoring_metric = KELBOW_SCOREMAP[metric]
         self.timings = timings
+        self.knee=knee
 
         # Convert K into a tuple argument if an integer
         if isinstance(k, int):
@@ -250,6 +254,7 @@ class KElbowVisualizer(ClusteringScoreVisualizer):
         self.k_timers_ = []
         self.kneedle=None
         self.knee_value=None
+        self.score=None
 
         for k in self.k_values_:
             # Compute the start time for each  model
@@ -264,9 +269,10 @@ class KElbowVisualizer(ClusteringScoreVisualizer):
             self.k_scores_.append(
                 self.scoring_metric(X, self.estimator.labels_)
             )
-            
+
         self.kneedle=KneeLocator(self.k_values_,self.k_scores_,curve='convex',direction='decreasing')
-        self.knee_value=self.kneedle.find_knee()[0]       
+        self.knee_value=self.kneedle.find_knee()[0]
+        self.score=self.k_scores_[self.k_values_.index(self.knee_value)]
         self.draw()
 
         return self
@@ -276,10 +282,10 @@ class KElbowVisualizer(ClusteringScoreVisualizer):
         Draw the elbow curve for the specified scores and values of K.
         """
         # Plot the silhouette score against k
-        self.ax.plot(self.k_values_, self.k_scores_, marker="D", label="score")
-        self.ax.axvline(self.knee_value,c='black',linestyle='--',label='Optimal K')
-        self.ax.legend()
-
+        self.ax.plot(self.k_values_, self.k_scores_, marker="D")
+        if self.knee:
+            self.ax.axvline(self.knee_value,c='black',linestyle='--')
+            self.ax.legend(['Score={}'.format(round(self.score,3)),'Optimal k={}'.format(self.knee_value)],loc='best')
         # If we're going to plot the timings, create a twinx axis
         if self.timings:
             self.axes = [self.ax, self.ax.twinx()]
@@ -287,6 +293,7 @@ class KElbowVisualizer(ClusteringScoreVisualizer):
                 self.k_values_, self.k_timers_, label="fit time",
                 c='g', marker="o", linestyle="--", alpha=0.75,
             )
+
 
         return self.ax
 
