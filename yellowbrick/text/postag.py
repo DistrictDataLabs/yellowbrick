@@ -21,6 +21,7 @@ small subset of documents.
 
 from yellowbrick.text.base import TextVisualizer
 from yellowbrick.style.colors import resolve_colors
+from yellowbrick.draw import manual_legend
 from yellowbrick.exceptions import YellowbrickValueError
 
 
@@ -73,6 +74,8 @@ class PosTagVisualizer(TextVisualizer):
     frequency: bool {True, False}, default: False
         If set to True, part-of-speech tags will be plotted according to frequency,
         from most to least frequent.
+    stack : bool {True, False}, default : False
+        If set to True, stacked barplot will be plotted.
     kwargs : dict
         Pass any additional keyword arguments to the PosTagVisualizer.
 
@@ -95,6 +98,7 @@ class PosTagVisualizer(TextVisualizer):
         colormap=None,
         colors=None,
         frequency=False,
+        stack=False,
         **kwargs
     ):
         super(PosTagVisualizer, self).__init__(ax=ax, **kwargs)
@@ -114,6 +118,7 @@ class PosTagVisualizer(TextVisualizer):
         self.colormap = colormap
         self.colors = colors
         self.frequency = frequency
+        self.stack=stack
 
     def fit(self, X, y=None, **kwargs):
         """
@@ -139,16 +144,33 @@ class PosTagVisualizer(TextVisualizer):
         self : instance
             Returns the instance of the transformer/visualizer
         """
-        # TODO: add support for other tagsets?
-        if self.tagset == "penn_treebank":
-            self.pos_tag_counts_ = self._penn_tag_map()
-            self._handle_treebank(X)
+        if(self.stack == True and y == None):
+            raise YellowbrickValueError("Specify y for stack=True")
+        
+        labeled = []
+        for i in range(len(y)):
+            labeled.append((X[0][i],y[i]))
+        self.label_ = set(map(lambda x:x[1], labeled))
+        
+        if(self.stack == True):
+            X = [[[y[0]] for y in labeled if y[1]==x] for x in self.label_]
+        else:
+            X = [X]
+        
+        self.last = None
+        self.stack_count = 0
+        
+        for x in X:
+            # TODO: add support for other tagsets?
+            if self.tagset == "penn_treebank":
+                self.pos_tag_counts_ = self._penn_tag_map()
+                self._handle_treebank(x)
+    
+            elif self.tagset == "universal":
+                self.pos_tag_counts_ = self._uni_tag_map()
+                self._handle_universal(x)
+            self.draw()
 
-        elif self.tagset == "universal":
-            self.pos_tag_counts_ = self._uni_tag_map()
-            self._handle_universal(X)
-
-        self.draw()
         return self
 
     def _penn_tag_map(self):
@@ -308,27 +330,58 @@ class PosTagVisualizer(TextVisualizer):
             Axes on which the PosTagVisualizer was drawn.
         """
         colors = resolve_colors(
-            n_colors=len(self.pos_tag_counts_),
+            n_colors=len(self.label_), 
             colormap=self.colormap,
-            colors=self.colors,
-        )
-
-        if self.frequency:
-            # Sort tags with respect to frequency in corpus
-            sorted_tags = sorted(
-                self.pos_tag_counts_, key=self.pos_tag_counts_.get, reverse=True
-            )
-            sorted_counts = [self.pos_tag_counts_[tag] for tag in sorted_tags]
-
-            self.ax.bar(range(len(sorted_tags)), sorted_counts, color=colors)
-            return self.ax
-
-        self.ax.bar(
-            range(len(self.pos_tag_counts_)),
-            list(self.pos_tag_counts_.values()),
-            color=colors,
-        )
+            colors=self.colors
+            )        
+        
+        if(self.last == None):
+            if self.stack:
+                #Plot first layer of stack
+                self.ax.bar(
+                    range(len(self.pos_tag_counts_)), 
+                    list(self.pos_tag_counts_.values()),
+                    color=colors[self.stack_count] 
+                    )
+                self.stack_count += 1
+                self.last = list(self.pos_tag_counts_.values())
+            else:
+                # Plot barplot(not stacked)
+                colors = resolve_colors(
+                    n_colors=len(self.pos_tag_counts_), 
+                    colormap=self.colormap, 
+                    colors=self.colors
+                    )
+                if self.frequency:
+                    # Sort tags with respect to frequency in corpus
+                    sorted_tags = sorted(
+                        self.pos_tag_counts_, key=self.pos_tag_counts_.get, 
+                        reverse=True
+                        )
+                    sorted_counts = [self.pos_tag_counts_[tag] for tag in sorted_tags]
+        
+                    self.ax.bar(range(len(sorted_tags)), sorted_counts, 
+                                color=colors)
+                    return self.ax
+        
+                self.ax.bar(
+                    range(len(self.pos_tag_counts_)),
+                    list(self.pos_tag_counts_.values()),
+                    color=colors,
+                    )
+        else:
+            #Plot stack barplot
+            self.ax.bar(
+                range(len(self.pos_tag_counts_)), 
+                list(self.pos_tag_counts_.values()), 
+                bottom=self.last, 
+                color=colors[self.stack_count]
+                )
+            self.stack_count += 1
+            self.last = [sum(x) for x in zip(list(self.last), 
+                             list(self.pos_tag_counts_.values()))]
         return self.ax
+        
 
     def finalize(self, **kwargs):
         """
@@ -359,6 +412,13 @@ class PosTagVisualizer(TextVisualizer):
                 "{} part-of-speech tags".format(self.tagset_names[self.tagset])
             )
         self.ax.set_ylabel("Count")
+        if(self.stack == True):
+            colors = resolve_colors(
+                    n_colors=len(self.label_), 
+                    colormap=self.colormap,
+                    colors=self.colors
+                    )
+            manual_legend(self, self.label_, colors, loc='best')
 
 
 ##########################################################################
@@ -368,11 +428,13 @@ class PosTagVisualizer(TextVisualizer):
 
 def postag(
     X,
+    y=None,
     ax=None,
     tagset="penn_treebank",
     colormap=None,
     colors=None,
     frequency=False,
+    stack=False,
     **kwargs
 ):
     """
@@ -411,11 +473,11 @@ def postag(
     # Instantiate the visualizer
     visualizer = PosTagVisualizer(
         ax=ax, tagset=tagset, colors=colors, colormap=colormap,
-        frequency=frequency, **kwargs
+        frequency=frequency, stack=stack, **kwargs
     )
 
     # Fit and transform the visualizer (calls draw)
-    visualizer.fit(X, **kwargs)
+    visualizer.fit(X, y=y, **kwargs)
 
     # Return the axes object on the visualizer
     return visualizer
