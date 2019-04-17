@@ -170,6 +170,14 @@ class KElbowVisualizer(ClusteringScoreVisualizer):
         Display the fitting time per k to evaluate the amount of time required
         to train the clustering model.
 
+    n_jobs  : int or None,(default=None)
+        This is used to specify how many concurrent processes/threads should be used
+        for parallelized routines.  If set to -1, all CPUs are used. If 1 is given,
+        no joblib level parallelism is used at all. Even with n_jobs = 1, parallelism
+        may occur due to numerical processing libraries (see FAQ).
+        For n_jobs below -1, (n_cpus + 1 + n_jobs) are used. Thus for n_jobs = -2
+        all CPUs but one are used.
+
     kwargs : dict
         Keyword arguments that are passed to the base class and may influence
         the visualization as defined in other Visualizers.
@@ -206,7 +214,7 @@ class KElbowVisualizer(ClusteringScoreVisualizer):
     """
 
     def __init__(self, model, ax=None, k=10,
-                 metric="distortion", timings=True, **kwargs):
+                 metric="distortion", timings=True, n_jobs=None, **kwargs):
         super(KElbowVisualizer, self).__init__(model, ax=ax, **kwargs)
 
         # Get the scoring method
@@ -219,6 +227,7 @@ class KElbowVisualizer(ClusteringScoreVisualizer):
         # Store the arguments
         self.scoring_metric = KELBOW_SCOREMAP[metric]
         self.timings = timings
+        self.n_jobs = n_jobs
 
         # Convert K into a tuple argument if an integer
         if isinstance(k, int):
@@ -237,6 +246,9 @@ class KElbowVisualizer(ClusteringScoreVisualizer):
 
         # Holds the values of the silhoutte scores
         self.k_scores_ = None
+
+        # Set value for n_jobs
+        self.estimator.set_params(n_jobs=n_jobs)
 
     def fit(self, X, y=None, **kwargs):
         """
