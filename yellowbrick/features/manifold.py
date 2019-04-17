@@ -200,7 +200,7 @@ class Manifold(FeatureVisualizer):
         self,
         ax=None,
         manifold="lle",
-        n_neighbors=10,
+        n_neighbors=None,
         colors=None,
         target=AUTO,
         alpha=0.7,
@@ -239,6 +239,20 @@ class Manifold(FeatureVisualizer):
                 raise YellowbrickValueError(
                     "could not create manifold for '%s'".format(str(transformer))
                 )
+            if self.n_neighbors == None:
+                if (str(transformer) != 'mds' and str(transformer) != 'tsne'):
+                    raise YellowbrickValueError(
+                        "n_neighbors parameter is required for '%s'".format(str(transformer))
+                )
+            if self.n_neighbors != None:
+                if (str(transformer) == 'mds' or str(transformer) == 'tsne'):
+                    raise YellowbrickValueError(
+                        "n_neighbors parameter must be None for '%s'".format(str(transformer))
+                )
+
+
+
+
 
             # Create a new transformer with the specified params
             self._name = MANIFOLD_NAMES[transformer]
