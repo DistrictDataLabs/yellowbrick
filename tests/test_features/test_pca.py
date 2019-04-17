@@ -21,10 +21,13 @@ import sys
 import pytest
 import numpy as np
 
+from unittest import mock
 from tests.dataset import Dataset
 from tests.base import VisualTestCase
+
 from yellowbrick.features.pca import *
 from yellowbrick.exceptions import YellowbrickError
+
 from sklearn.datasets import make_classification
 
 
@@ -68,7 +71,7 @@ class PCADecompositionTests(VisualTestCase):
         ax = pca_decomposition(
             X=self.dataset.X, proj_dim=2, scale=True, random_state=28
         )
-        self.assert_images_similar(ax=ax)
+        self.assert_images_similar(ax=ax, tol=5)
 
     @pytest.mark.xfail(
         sys.platform == 'win32', reason="images not close on windows (RMSE=?)"
@@ -96,7 +99,7 @@ class PCADecompositionTests(VisualTestCase):
         pca_array = visualizer.transform(self.dataset.X)
 
         # Image comparison tests
-        self.assert_images_similar(visualizer)
+        self.assert_images_similar(visualizer, tol=0.03)
 
         # Assert PCA transformation occurred successfully
         assert pca_array.shape == (self.dataset.X.shape[0], 2)
@@ -116,7 +119,7 @@ class PCADecompositionTests(VisualTestCase):
         pca_array = visualizer.transform(self.dataset.X)
 
         # Image comparison tests
-        self.assert_images_similar(visualizer)
+        self.assert_images_similar(visualizer, tol=5)
 
         # Assert PCA transformation occurred successfully
         assert pca_array.shape == (self.dataset.X.shape[0], 2)
@@ -164,7 +167,7 @@ class PCADecompositionTests(VisualTestCase):
         pca_array = visualizer.transform(self.dataset.X)
 
         # Image comparison tests
-        self.assert_images_similar(visualizer)
+        self.assert_images_similar(visualizer, tol=5)
 
         # Assert PCA transformation occurred successfully
         assert pca_array.shape == (self.dataset.X.shape[0], 3)
@@ -188,3 +191,25 @@ class PCADecompositionTests(VisualTestCase):
         with pytest.raises(ValueError, match=e):
             pca = PCADecomposition(**params)
             pca.fit(X)
+    
+    @mock.patch('yellowbrick.features.pca.plt.sca', autospec=True)
+    def test_alpha_param(self, mock_sca):
+        """
+        Test that the user can supply an alpha param on instantiation
+        """
+        # Instantiate a prediction error plot, provide custom alpha
+        params = {'alpha': 0.3, 'proj_dim': 2, 'random_state': 9932}
+        visualizer = PCADecomposition(**params).fit(self.dataset.X)
+        pca_array = visualizer.transform(self.dataset.X)
+        assert visualizer.alpha == 0.3
+        
+        visualizer.ax = mock.MagicMock()
+        visualizer.fit(self.dataset.X)
+        visualizer.transform(self.dataset.X)
+
+        # Test that alpha was passed to internal matplotlib scatterplot
+        _, scatter_kwargs = visualizer.ax.scatter.call_args
+        assert "alpha" in scatter_kwargs
+        assert scatter_kwargs["alpha"] == 0.3
+        assert pca_array.shape == (self.dataset.X.shape[0], 2)
+        
