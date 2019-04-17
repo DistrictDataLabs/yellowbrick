@@ -14,17 +14,17 @@ After importing the required tools, we can :doc:`load the corpus <corpus>` and v
     :context: close-figs
     :alt: TSNE Plot
 
+    from sklearn.feature_extraction.text import TfidfVectorizer
+
     from yellowbrick.text import TSNEVisualizer
     from yellowbrick.datasets import load_hobbies
 
-    from sklearn.feature_extraction.text import TfidfVectorizer
-
     # Load the data and create document vectors
     corpus = load_hobbies()
-    tfidf  = TfidfVectorizer()
+    tfidf = TfidfVectorizer()
 
-    X   = tfidf.fit_transform(corpus.data)
-    y   = corpus.target
+    X = tfidf.fit_transform(corpus.data)
+    y = corpus.target
 
     # Create the visualizer and draw the vectors
     tsne = TSNEVisualizer()
@@ -39,7 +39,6 @@ Note that you can pass the class labels or document categories directly to the `
     tsne = TSNEVisualizer(labels=labels)
     tsne.fit(X, y)
     tsne.poof()
-    
 
 If we omit the target during fit, we can visualize the whole dataset to see if any meaningful patterns are observed.
 
@@ -48,20 +47,19 @@ If we omit the target during fit, we can visualize the whole dataset to see if a
     :include-source: False 
     :alt: TSNE Plot without Class Coloring
 
+    from sklearn.feature_extraction.text import TfidfVectorizer
+
     from yellowbrick.text import TSNEVisualizer
     from yellowbrick.datasets import load_hobbies
 
-    from sklearn.feature_extraction.text import TfidfVectorizer
-
     # Load the data and create document vectors
     corpus = load_hobbies()
-    tfidf  = TfidfVectorizer()
+    tfidf = TfidfVectorizer()
 
-    X    = tfidf.fit_transform(corpus.data)
+    X = tfidf.fit_transform(corpus.data)
     tsne = TSNEVisualizer(labels=["documents"])
     tsne.fit(X)
     tsne.poof()
-
 
 This means we don't have to use class labels at all. Instead we can use cluster membership from K-Means to label each document. This will allow us to look for clusters of related text by their contents:
 
@@ -70,17 +68,17 @@ This means we don't have to use class labels at all. Instead we can use cluster 
     :include-source: False 
     :alt: TSNE Plot without Clustering
 
-    from yellowbrick.text import TSNEVisualizer
-    from yellowbrick.datasets import load_hobbies
-
     from sklearn.cluster import KMeans
     from sklearn.feature_extraction.text import TfidfVectorizer
 
+    from yellowbrick.text import TSNEVisualizer
+    from yellowbrick.datasets import load_hobbies
+
     # Load the data and create document vectors
     corpus = load_hobbies()
-    tfidf  = TfidfVectorizer()
+    tfidf = TfidfVectorizer()
 
-    X   = tfidf.fit_transform(corpus.data)
+    X = tfidf.fit_transform(corpus.data)
 
     clusters = KMeans(n_clusters=5)
     clusters.fit(X)
