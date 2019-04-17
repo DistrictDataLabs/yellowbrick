@@ -60,11 +60,42 @@ Yellowbrick is proud to be affiliated with several organizations that provide in
 
 `District Data Labs`_: District Data Labs incubated Yellowbrick and sponsors research labs by purchasing food and organizing events. Research labs are semester long sprints that allow Yellowbrick contributors to meet in person, share a meal, and hack on the project. DDL also sponsors travel to PyCon and PyData conferences for Yellowbrick maintainers and helps us buy promotional material such as stickers and t-shirts.
 
-`NumFOCUS`_: Yellowbrick is a NumFOCUS affiliated project (not a fiscally sponsored project). Our relationship with NumFOCUS has given us a lot of data science cred in the community by being listed on their website. We are also able to apply for small development grants and infrastructure support. We often participate in the project developers mailing list and other activities such as Google Summer of Code.
+`NumFOCUS`_: Yellowbrick is a NumFOCUS affiliated project (not a fiscally sponsored project). Our relationship with NumFOCUS has given us a lot of data science cred in the community by being listed on their website. We are also eligible to apply for small development grants and infrastructure support. We often participate in the project developers mailing list and other activities such as Google Summer of Code.
 
 `Georgetown University`_: Georgetown primarily provides space for Yellowbrick events including the research labs. Additionally, Georgetown Data Science Certificate students are introduced to Yellowbrick at the beginning of their machine learning education and we often perform user testing of new features on them!
 
-Yellowbrick is developed by volunteers who work on the project in their spare time and not as part of their regular work. If Yellowbrick has become critical to the success of your organization, please consider giving back to Yellowbrick. One way would be to make a financial donation to NumFOCUS on behalf of Yellowbrick. Another would be to contract DDL to give a corporate training on visual machine learning with Yellowbrick. If interested in a more formal affiliate relationship, please get in touch with us directly.
+How to Support Yellowbrick
+~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Yellowbrick is developed by volunteers who work on the project in their spare time and not as part of their regular full-time work. If Yellowbrick has become critical to the success of your organization, please consider giving back to Yellowbrick.
+
+    "... open source thrives on human rather than financial resources. There
+    are many ways to grow human resources, such as distributing the
+    workload among more contributors or encouraging companies to
+    make open source part of their employees’ work. An effective
+    support strategy must include multiple ways to generate time and
+    resources besides directly financing development. It must start from
+    the principle that the open source approach is not inherently flawed,
+    but rather under-resourced."
+
+    -- `Roads and Bridges: The Unseen Labor Behind our Digital Infrastructure <https://www.fordfoundation.org/about/library/reports-and-studies/roads-and-bridges-the-unseen-labor-behind-our-digital-infrastructure/>`_
+
+The main thing that the Yellowbrick maintainers need is *time*. There are many ways to provide that time through non-financial mechanisms such as:
+
+- Create a written policy in your company handbook that dedicates time for your employees to contribute to open source projects like Yellowbrick.
+- Interact with our community giving encouragement and advice, particularly for long term planning and non-code related activities like design and documentation.
+- Advocate and evangelize your use of Yellowbrick and other open source software through blog posts and social media.
+- Consider long term support strategies rather than ad hoc or one-off actions.
+- Teach your students Machine Learning with Yellowbrick.
+
+More concrete and financial support is also welcome, particularly if it's directed through a specific effort. If you are interested in this kind of support consider:
+
+- Making a donation to NumFOCUS on behalf of Yellowbrick.
+- Engaging District Data Labs for coporate training on visual machine learning with Yellowbrick (which will directly support Yellowbrick maintainers).
+- Supporting your employee's continuing professional education in the Georgetown Data Science Certificate.
+- Providing long term support for fixed costs such as hosting.
+
+Yellowbrick's mission is to enhance the machine learning workflow through open source visual steering and diagnostics. If you're interested in a more formal affiliate relationship to support this mission, please get in contact with us directly.
 
 License
 -------
