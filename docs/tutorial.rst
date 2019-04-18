@@ -41,7 +41,7 @@ Let's load the data:
     from yellowbrick.datasets import load_mushroom
 
     X, y = load_mushroom()
-    print(X[:4]) # inspect the first five rows
+    print(X[:5]) # inspect the first five rows
 
 .. parsed-literal::
 
