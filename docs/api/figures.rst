@@ -3,6 +3,8 @@
 Figures and Axes
 ================
 
+This document is an open letter to the PyData community, particularly those that are involved in matplotlib development. We'd like to get some advice on the API choice we've made and thoughts about our use of the matplotlib Axes objects.
+
 One of the most complex parts of designing a visualization library around matplotlib is working with figures and axes. As defined in `The Lifecycle of a Plot <https://matplotlib.org/tutorials/introductory/lifecycle.html>`_, these central objects of matplotlib plots are as follows:
 
 - A Figure is the final image that may contain 1 or more Axes.
@@ -70,7 +72,7 @@ Generally, it appears that the `AxesGrid Toolkit <https://matplotlib.org/mpl_too
 
 At this point we are left with some important questions about Yellowbrick's development roadmap:
 
-1. Like Seaborn, should YB have to classes of visualizer, one that wraps an axes and one that wraps a figure?
+1. Like Seaborn, should YB have two classes of visualizer, one that wraps an axes and one that wraps a figure?
 2. Should we go all in on the AxesGrid toolkit and continue to restrict our use of the figure, will this method be supported in the long run?
 
 
