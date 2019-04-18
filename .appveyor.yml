@@ -1,6 +1,10 @@
 # AppVeyor is a CI service to build and run tests under Windows
 # https://ci.appveyor.com/project/districtdatalabs/yellowbrick
 
+# Temporary work around see #744
+image:
+  - Previous Visual Studio 2015
+
 version: 0.9.{build}
 pull_requests:
   do_not_increment_build_number: true
