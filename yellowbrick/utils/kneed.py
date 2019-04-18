@@ -44,30 +44,49 @@ from scipy import interpolate
 from scipy.signal import argrelextrema
 import warnings
 
+from yellowbrick.exceptions import YellowbrickWarning
+
 
 class KneeLocator(object):
+    """
+    Finds the "elbow" or "knee" which is a value corresponding to the point of maximum curvature 
+    in an elbow curve, using knee point detection algorithm. This point is accessible via the
+    `knee` attribute.
 
-    def __init__(self, x, y, S=1.0, curve='concave', direction='increasing'):
-        """
-        Once instantiated, this class attempts to find the point of maximum
-        curvature on a line. The knee is accessible via the `.knee` attribute.
-        :param x: x values.
-        :type x: list or array.
-        :param y: y values.
-        :type y: list or array.
-        :param S: Sensitivity, original paper suggests default of 1.0
-        :type S: float
-        :param curve: If 'concave', algorithm will detect knees. If 'convex', it
-            will detect elbows.
-        :type curve: string
-        :param direction: one of {"increasing", "decreasing"}
-        :type direction: string
-        """
-        # Step 0: Raw Input
+    Parameters
+    ----------
+    x : list
+       A list of k values representing the no. of clusters in KMeans Clustering algorithm.
+
+    y : list
+       A list of silhouette score corresponding to each value of k.
+    
+    S : float, default: 1.0
+       Sensitivity parameter that allows us to adjust how aggressive we want KneeLocator to 
+       be when detecting "knees" or "elbows".
+
+    curve_nature : string, default: 'convace'
+       A string that determines the nature of the elbow curve in which "knee" or "elbow" is 
+       to be found.
+
+    curve_direction : string, default: 'increasing'
+       A string that determines tha increasing or decreasing nature of the elbow curve in 
+       which "knee" or "elbow" is to be found.
+    
+    Notes
+    -----
+    The KneeLocator is implemented using the "knee point detection algorithm" which can be read at
+    `<https://www1.icsi.berkeley.edu/~barath/papers/kneedle-simplex11.pdf>`
+
+    """
+
+    def __init__(self, x, y, S=1.0, curve_nature='concave', curve_direction='increasing'):
+
+        # Raw Input
         self.x = x
         self.y = y
-        self.curve = curve
-        self.direction = direction
+        self.curve_nature = curve_nature
+        self.curve_direction = curve_direction
         self.N = len(self.x)
         self.S = S
 
@@ -82,14 +101,14 @@ class KneeLocator(object):
 
         # Step 3: Calculate difference curve
         self.xd = self.xsn
-        if self.curve == 'convex' and direction == 'decreasing':
+        if self.curve_nature == 'convex' and curve_direction == 'decreasing':
             self.yd = self.ysn + self.xsn
             self.yd = 1 - self.yd
-        elif self.curve == 'concave' and direction == 'decreasing':
+        elif self.curve_nature == 'concave' and curve_direction == 'decreasing':
             self.yd = self.ysn + self.xsn
-        elif self.curve == 'concave' and direction == 'increasing':
+        elif self.curve_nature == 'concave' and curve_direction == 'increasing':
             self.yd = self.ysn - self.xsn
-        if self.curve == 'convex' and direction == 'increasing':
+        if self.curve_nature == 'convex' and curve_direction == 'increasing':
             self.yd = abs(self.ysn - self.xsn)
 
         # Step 4: Identify local maxima/minima
@@ -111,31 +130,40 @@ class KneeLocator(object):
 
     @staticmethod
     def __normalize(a):
-        """normalize an array
-        :param a: The array to normalize
-        :type a: array
+        """
+        Normalizes an array.
+
+        Parameters
+        -----------
+        a : list 
+           The array to normalize
         """
         return (a - min(a)) / (max(a) - min(a))
 
     def __threshold(self, ymx_i):
-        """Calculates the difference threshold for a
-        given difference local maximum
-        :param ymx_i: the normalized y value of a local maximum
+        """
+        Calculates the difference threshold for a
+        given difference local maximum.
+
+        Parameters
+        -----------
+        ymx_i : float 
+           The normalized y value of a local maximum.
         """
         return ymx_i - (self.S * np.diff(self.xsn).mean())
 
     def find_knee(self, ):
-        """This function finds and returns the knee value, the normalized knee
+        """
+        Finds and returns the "knee"or "elbow" value, the normalized knee
         value, and the x value where the knee is located.
-        :returns: tuple(knee, norm_knee, knee_x)
-        :rtype: (float, float, int)
-        )
+
         """
         if not self.xmx_idx.size:
-            warnings.warn("No local maxima found in the distance curve\n"
-                          "The line is probably not polynomial, try plotting\n"
-                          "the distance curve with plt.plot(knee.xd, knee.yd)\n"
-                          "Also check that you aren't mistakenly setting the curve argument", RuntimeWarning)
+            warning_message = \
+                'No "knee" or "elbow point" detected ' \
+                'This could be due to bad clustering, no '\
+                'actual clusters being formed etc.'        
+            warnings.warn(warning_message,YellowbrickWarning)
             return None, None, None
 
         mxmx_iter = np.arange(self.xmx_idx[0], len(self.xsn))
@@ -159,8 +187,9 @@ class KneeLocator(object):
                         self.Tmx[mxmx_i] = 0
                         knee_x = None  # reset x where yd crossed Tmx
                     elif self.yd[j + 1] <= self.yd[j]:
-                        warnings.warn("If this is a minima, "
-                                      "how would you ever get here:", RuntimeWarning)
+                        warning_message="If this is a minima, " \
+                                        "how would you ever get here."
+                        warnings.warn(warning_message, YellowbrickWarning)
                 if self.yd[j] < self.Tmx[mxmx_i] or self.Tmx[mxmx_i] < 0:
                     # declare a knee
                     if not knee_x:
@@ -170,8 +199,10 @@ class KneeLocator(object):
         return knee_, norm_knee_, knee_x
 
     def plot_knee_normalized(self, ):
-        """Plot the normalized curve, the distance curve (xd, ysn) and the
+        """
+        Plots the normalized curve, the distance curve (xd, ysn) and the
         knee, if it exists.
+
         """
         import matplotlib.pyplot as plt
 
@@ -184,7 +215,10 @@ class KneeLocator(object):
         plt.vlines(self.norm_knee, plt.ylim()[0], plt.ylim()[1])
 
     def plot_knee(self, ):
-        """Plot the curve and the knee, if it exists"""
+        """
+        Plot the curve and the knee, if it exists
+        
+        """
         import matplotlib.pyplot as plt
 
         plt.figure(figsize=(8, 8))
