@@ -22,9 +22,11 @@ import collections
 import time
 import numpy as np
 import scipy.sparse as sp
+import warnings
 
 from .base import ClusteringScoreVisualizer
-from ..exceptions import YellowbrickValueError
+from ..style.palettes import LINE_COLOR
+from ..exceptions import YellowbrickValueError, YellowbrickWarning
 from ..utils import KneeLocator
 
 from sklearn.metrics import silhouette_score
@@ -171,12 +173,30 @@ class KElbowVisualizer(ClusteringScoreVisualizer):
         Display the fitting time per k to evaluate the amount of time required
         to train the clustering model.
 
-    knee : bool, default=True
-        Display the vertical line corresponding to the optimal value of k.      
+    locate_elbow : bool, default: True 
+        Automatically find the "elbow" or "knee" which likely corresponds to the optimal 
+        value of k using the "knee point detection algorithm". The knee point detection 
+        algorithm finds the point of maximum curvature, which in a well-behaved clustering
+        problem also represents the pivot of the elbow curve. The point is labeled with a
+        dashed line and annotated with the score and k values.      
 
     kwargs : dict
         Keyword arguments that are passed to the base class and may influence
         the visualization as defined in other Visualizers.
+
+    Attributes
+    ----------
+    k_scores_ : array of shape (n,) where n is no. of k values
+        The silhouette score corresponding to each k value.
+
+    k_timers_ : array of shape (n,) where n is no. of k values
+        The time taken to fit n KMeans model corresponding to each k value.
+
+    elbow_value_ : integer
+        The optimal value of k.
+
+    elbow_score_ : float
+        The silhouette score corresponding to the optimal value of k.         
 
     Examples
     --------
@@ -210,7 +230,7 @@ class KElbowVisualizer(ClusteringScoreVisualizer):
     """
 
     def __init__(self, model, ax=None, k=10,
-                 metric="distortion", timings=True, knee=True, **kwargs):
+                 metric="distortion", timings=True, locate_elbow=True, **kwargs):
         super(KElbowVisualizer, self).__init__(model, ax=ax, **kwargs)
 
         # Get the scoring method
@@ -222,8 +242,9 @@ class KElbowVisualizer(ClusteringScoreVisualizer):
 
         # Store the arguments
         self.scoring_metric = KELBOW_SCOREMAP[metric]
+        self.metric = metric
         self.timings = timings
-        self.knee=knee
+        self.locate_elbow=locate_elbow
 
         # Convert K into a tuple argument if an integer
         if isinstance(k, int):
@@ -252,9 +273,13 @@ class KElbowVisualizer(ClusteringScoreVisualizer):
 
         self.k_scores_ = []
         self.k_timers_ = []
-        self.kneedle=None
-        self.knee_value=None
-        self.score=None
+
+        if self.locate_elbow:
+            self.elbow_locator = None
+            self.elbow_value_ = None
+            self.elbow_score_ = None
+            self.curve_direction = None
+            self.curve_nature = None
 
         for k in self.k_values_:
             # Compute the start time for each  model
@@ -268,11 +293,26 @@ class KElbowVisualizer(ClusteringScoreVisualizer):
             self.k_timers_.append(time.time() - start)
             self.k_scores_.append(
                 self.scoring_metric(X, self.estimator.labels_)
-            )
+            )    
 
-        self.kneedle=KneeLocator(self.k_values_,self.k_scores_,curve='convex',direction='decreasing')
-        self.knee_value=self.kneedle.find_knee()[0]
-        self.score=self.k_scores_[self.k_values_.index(self.knee_value)]
+        if self.locate_elbow:
+            if self.metric == 'distortion':
+                self.curve_nature = 'convex'
+                self.curve_direction = 'decreasing'
+            elif self.metric=='silhouette' or self.metric=='calinski_harabaz':
+                self.curve_nature = 'concave'
+                self.curve_direction = 'increasing'    
+            self.elbow_locator = KneeLocator(self.k_values_,self.k_scores_,curve_nature=self.curve_nature,curve_direction=self.curve_direction)
+            self.elbow_value_ = self.elbow_locator.knee
+            if self.elbow_value_ == None:
+                warning_message=\
+                "No 'knee' or 'elbow' point detected, " \
+                "pass `locate_elbow=False` to remove the warning"   
+                warnings.warn(warning_message,YellowbrickWarning) 
+            else:
+                self.elbow_score_ = self.k_scores_[self.k_values_.index(self.elbow_value_)]
+                   
+
         self.draw()
 
         return self
@@ -283,9 +323,10 @@ class KElbowVisualizer(ClusteringScoreVisualizer):
         """
         # Plot the silhouette score against k
         self.ax.plot(self.k_values_, self.k_scores_, marker="D")
-        if self.knee:
-            self.ax.axvline(self.knee_value,c='black',linestyle='--')
-            self.ax.legend(['Score={}'.format(round(self.score,3)),'Optimal k={}'.format(self.knee_value)],loc='best')
+        if self.locate_elbow and self.elbow_value_!=None:
+            elbow_label = "$elbow\ at\ k={}, score={}$".format(self.elbow_value_, np.round(self.elbow_score_,3))
+            self.ax.axvline(self.elbow_value_, c=LINE_COLOR, linestyle="--", label=elbow_label)
+            
         # If we're going to plot the timings, create a twinx axis
         if self.timings:
             self.axes = [self.ax, self.ax.twinx()]
@@ -301,6 +342,7 @@ class KElbowVisualizer(ClusteringScoreVisualizer):
         """
         Prepare the figure for rendering by setting the title as well as the
         X and Y axis labels and adding the legend.
+        
         """
         # Get the metric name
         metric = self.scoring_metric.__name__.replace("_", " ").title()
@@ -313,6 +355,10 @@ class KElbowVisualizer(ClusteringScoreVisualizer):
         # Set the x and y labels
         self.ax.set_xlabel('k')
         self.ax.set_ylabel(metric.lower())
+        
+        #set the legend if locate_elbow=True
+        if self.locate_elbow and self.elbow_value_!=None:
+            self.ax.legend(loc='best', fontsize='medium')
 
         # Set the second y axis labels
         if self.timings:
