@@ -275,11 +275,8 @@ class KElbowVisualizer(ClusteringScoreVisualizer):
         self.k_timers_ = []
 
         if self.locate_elbow:
-            self.elbow_locator = None
             self.elbow_value_ = None
             self.elbow_score_ = None
-            self.curve_direction = None
-            self.curve_nature = None
 
         for k in self.k_values_:
             # Compute the start time for each  model
@@ -296,14 +293,13 @@ class KElbowVisualizer(ClusteringScoreVisualizer):
             )    
 
         if self.locate_elbow:
-            if self.metric == 'distortion':
-                self.curve_nature = 'convex'
-                self.curve_direction = 'decreasing'
-            elif self.metric=='silhouette' or self.metric=='calinski_harabaz':
-                self.curve_nature = 'concave'
-                self.curve_direction = 'increasing'    
-            self.elbow_locator = KneeLocator(self.k_values_,self.k_scores_,curve_nature=self.curve_nature,curve_direction=self.curve_direction)
-            self.elbow_value_ = self.elbow_locator.knee
+            locator_kwargs = {
+                'distortion': {'curve_nature': 'convex', 'curve_direction': 'decreasing'},
+                'silhouette': {'curve_nature': 'concave', 'curve_direction': 'increasing'},
+                'calinski_harabaz': {'curve_nature': 'concave', 'curve_direction': 'increasing'},
+                }.get(self.metric, {})   
+            elbow_locator = KneeLocator(self.k_values_,self.k_scores_,**locator_kwargs)
+            self.elbow_value_ = elbow_locator.knee
             if self.elbow_value_ == None:
                 warning_message=\
                 "No 'knee' or 'elbow' point detected, " \
@@ -324,7 +320,7 @@ class KElbowVisualizer(ClusteringScoreVisualizer):
         # Plot the silhouette score against k
         self.ax.plot(self.k_values_, self.k_scores_, marker="D")
         if self.locate_elbow and self.elbow_value_!=None:
-            elbow_label = "$elbow\ at\ k={}, score={}$".format(self.elbow_value_, np.round(self.elbow_score_,3))
+            elbow_label = "$elbow\ at\ k={}, score={:0.3f}$".format(self.elbow_value_, self.elbow_score_,3)
             self.ax.axvline(self.elbow_value_, c=LINE_COLOR, linestyle="--", label=elbow_label)
             
         # If we're going to plot the timings, create a twinx axis
