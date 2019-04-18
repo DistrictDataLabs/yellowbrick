@@ -320,7 +320,7 @@ class KElbowVisualizer(ClusteringScoreVisualizer):
         # Plot the silhouette score against k
         self.ax.plot(self.k_values_, self.k_scores_, marker="D")
         if self.locate_elbow and self.elbow_value_!=None:
-            elbow_label = "$elbow\ at\ k={}, score={:0.3f}$".format(self.elbow_value_, self.elbow_score_,3)
+            elbow_label = "$elbow\ at\ k={}, score={:0.3f}$".format(self.elbow_value_, self.elbow_score_)
             self.ax.axvline(self.elbow_value_, c=LINE_COLOR, linestyle="--", label=elbow_label)
             
         # If we're going to plot the timings, create a twinx axis
