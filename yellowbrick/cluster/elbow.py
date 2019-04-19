@@ -172,11 +172,9 @@ class KElbowVisualizer(ClusteringScoreVisualizer):
 
     n_jobs  : int or None,(default=None)
         This is used to specify how many concurrent processes/threads should be used
-        for parallelized routines.  If set to -1, all CPUs are used. If 1 is given,
-        no joblib level parallelism is used at all. Even with n_jobs = 1, parallelism
-        may occur due to numerical processing libraries (see FAQ).
-        For n_jobs below -1, (n_cpus + 1 + n_jobs) are used. Thus for n_jobs = -2
-        all CPUs but one are used.
+        for parallelized routines for each estimator. If set to -1, all CPUs are used.
+        If 1 is given, no joblib level parallelism is used at all. For n_jobs below -1,
+        (n_cpus + 1 + n_jobs) are used. Thus for n_jobs = -2, all CPUs but one are used.
 
     kwargs : dict
         Keyword arguments that are passed to the base class and may influence
