@@ -218,6 +218,8 @@ class KElbowVisualizer(ClusteringScoreVisualizer):
 
     For a discussion on the Elbow method, read more at
     `Robert Gove's Block <https://bl.ocks.org/rpgove/0060ff3b656618e9136b>`_.
+    To know about 'Knee Point Detection Algorithm' read at `Finding a "kneedle" in a Haystack
+    <https://raghavan.usc.edu//papers/kneedle-simplex11.pdf>`_.  
     
     .. seealso:: The scikit-learn documentation for the `silhouette_score
         <https://bit.ly/2LYWjYb>`_ and `calinski_harabaz_score
@@ -267,7 +269,9 @@ class KElbowVisualizer(ClusteringScoreVisualizer):
     def fit(self, X, y=None, **kwargs):
         """
         Fits n KMeans models where n is the length of ``self.k_values_``,
-        storing the silhoutte scores in the ``self.k_scores_`` attribute.
+        storing the silhouette scores in the ``self.k_scores_`` attribute.
+        The "elbow" and silhouette score corresponding to it are stored in
+        ``self.elbow_value`` and ``self.elbow_score`` respectively.
         This method finishes up by calling draw to create the plot.
         """
 
