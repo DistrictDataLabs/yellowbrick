@@ -22,3 +22,4 @@ Utility functions and helpers for the Yellowbrick library.
 
 from .helpers import *
 from .types import *
+from .kneed import *

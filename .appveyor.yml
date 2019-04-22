@@ -37,10 +37,11 @@ environment:
           PYTHON_VERSION: "3.7"
           PYTHON_ARCH: "64"
 
-        - PYTHON: "C:\\Miniconda3-x64"
-          PYTHON_VERSION: "3.6"
-          MINICONDA_VERSION: "4.5"
-          PYTHON_ARCH: "64"
+        # Temporary work around see #744
+        # - PYTHON: "C:\\Miniconda3-x64"
+        #   PYTHON_VERSION: "3.6"
+        #   MINICONDA_VERSION: "4.5"
+        #   PYTHON_ARCH: "64"
 
 
 # Cancel pending jobs after first job failure
