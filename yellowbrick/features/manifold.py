@@ -239,7 +239,11 @@ class Manifold(FeatureVisualizer):
                 raise YellowbrickValueError(
                     "could not create manifold for '%s'".format(str(transformer))
                 )
-
+        if transformer not in ('tsne','mds'):
+            if self.n_neighbors is None:
+                raise YellowbrickValueError(
+                    "could not create manifold for '%s'".format(str(transformer))
+                    )
 
 
             # Create a new transformer with the specified params
