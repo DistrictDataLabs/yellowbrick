@@ -239,18 +239,6 @@ class Manifold(FeatureVisualizer):
                 raise YellowbrickValueError(
                     "could not create manifold for '%s'".format(str(transformer))
                 )
-            if self.n_neighbors is None:
-                if (str(transformer) != 'mds' and str(transformer) != 'tsne'):
-                    raise YellowbrickValueError(
-                        "n_neighbors parameter is required for '%s'".format(str(transformer))
-                )
-            if self.n_neighbors is not None:
-                if (str(transformer) == 'mds' or str(transformer) == 'tsne'):
-                    raise YellowbrickValueError(
-                        "n_neighbors parameter must be None for '%s'".format(str(transformer))
-                )
-
-
 
 
 
