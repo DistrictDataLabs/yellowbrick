@@ -236,14 +236,14 @@ class Manifold(FeatureVisualizer):
         """
         if not is_estimator(transformer):
             if transformer not in self.ALGORITHMS:
-                raise YellowbrickValueError(
-                    "could not create manifold for '%s'".format(str(transformer))
+                    raise YellowbrickValueError("could not create manifold for '{}'".format(str(transformer))
                 )
-        if transformer not in ('tsne','mds'):
-            if self.n_neighbors is None:
-                raise YellowbrickValueError(
-                    "could not create manifold for '%s'".format(str(transformer))
-                    )
+
+            if (transformer not in ('tsne','mds') and self.n_neighbors is None):
+                self.n_neighbors = 10
+                raise YellowbrickWarning(
+                    "n_neighbors will be set to 10. Please pass it in as a parameter for the '{}' manifold".format(str(transformer))
+                )
 
 
             # Create a new transformer with the specified params
