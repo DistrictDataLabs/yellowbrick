@@ -22,7 +22,7 @@ from yellowbrick.draw import manual_legend
 from yellowbrick.utils.types import is_estimator
 from yellowbrick.style import palettes, resolve_colors
 from yellowbrick.features.base import FeatureVisualizer
-from yellowbrick.exceptions import YellowbrickValueError, NotFitted, YellowbrickWarning
+from yellowbrick.exceptions import YellowbrickValueError, NotFitted
 
 from sklearn.base import clone
 from sklearn.manifold import LocallyLinearEmbedding
@@ -241,7 +241,7 @@ class Manifold(FeatureVisualizer):
 
             if (transformer not in ('tsne','mds','spectral') and self.n_neighbors is None):
                 self.n_neighbors = 10
-                raise YellowbrickWarning(
+                print(
                     "n_neighbors will be set to 10. Please pass it in as a parameter for the '{}' manifold".format(str(transformer))
                 )
 
