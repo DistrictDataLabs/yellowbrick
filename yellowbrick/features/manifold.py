@@ -16,13 +16,14 @@ Use manifold algorithms for high dimensional visualization.
 
 import numpy as np
 import matplotlib.pyplot as plt
+import warnings
 
 from yellowbrick.utils.timer import Timer
 from yellowbrick.draw import manual_legend
 from yellowbrick.utils.types import is_estimator
 from yellowbrick.style import palettes, resolve_colors
 from yellowbrick.features.base import FeatureVisualizer
-from yellowbrick.exceptions import YellowbrickValueError, NotFitted
+from yellowbrick.exceptions import YellowbrickValueError, YellowbrickWarning, NotFitted
 
 from sklearn.base import clone
 from sklearn.manifold import LocallyLinearEmbedding
@@ -113,11 +114,12 @@ class Manifold(FeatureVisualizer):
         transformer. The constructed manifold is accessible with the manifold
         property, so as to modify hyperparameters before fit.
 
-    n_neighbors : int, default: 10
+    n_neighbors : int, default: None
         Many manifold algorithms are nearest neighbors based, for those that
         are, this parameter specfies the number of neighbors to use in the
-        embedding. If the manifold algorithm doesn't use nearest neighbors,
-        then this parameter is ignored.
+        embedding. If n_neighbors is not specified for those embeddings, it is
+        set to 5 and a warning is issued. If the manifold algorithm doesn't use
+        nearest neighbors, then this parameter is ignored.
 
     colors : str or list of colors, default: None
         Specify the colors used, though note that the specification depends
@@ -218,6 +220,7 @@ class Manifold(FeatureVisualizer):
         self.alpha = alpha
         self.random_state = random_state
         self.manifold = manifold # must be set last
+        self.n_components = None
 
     @property
     def manifold(self):
@@ -239,19 +242,18 @@ class Manifold(FeatureVisualizer):
                     raise YellowbrickValueError("could not create manifold for '{}'".format(str(transformer))
                 )
 
-            if (transformer not in ('tsne','mds','spectral') and self.n_neighbors is None):
-                self.n_neighbors = 10
-                print(
-                    "n_neighbors will be set to 10. Please pass it in as a parameter for the '{}' manifold".format(str(transformer))
-                )
+            if (transformer not in ('tsne','mds','hessian') and self.n_neighbors is None):
+                self.n_neighbors = 5
+                warnmsg = "using n_neighbors={}; please explicitly pass this argument for the '{}' manifold".format(self.n_neighbors, str(transformer))
+                warnings.warn(warnmsg, YellowbrickWarning)
 
 
             # Create a new transformer with the specified params
             self._name = MANIFOLD_NAMES[transformer]
             transformer = clone(self.ALGORITHMS[transformer])
             params = {
-                "n_components": 2,
-                "n_neighbors": self.n_neighbors,
+                "n_components": self.n_components,
+                "n_neighbors": 1 + (self.n_components * (1 + (self.n_components + 1) / 2)),
                 "random_state": self.random_state,
             }
 
