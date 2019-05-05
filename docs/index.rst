@@ -113,6 +113,7 @@ The following is a complete listing of the Yellowbrick documentation for this ve
    faq
    code_of_conduct
    changelog
+   governance
 
 Indices and tables
 ------------------
