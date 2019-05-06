@@ -17,6 +17,7 @@ This leads to another metric, area under the curve (AUC), which is a computation
     from yellowbrick.classifier import ROCAUC
     from sklearn.linear_model import LogisticRegression
     from yellowbrick.datasets import load_occupancy
+    %matplotlib inline
 
     # Load the classification data set
     X, y = load_occupancy()
@@ -24,8 +25,15 @@ This leads to another metric, area under the curve (AUC), which is a computation
     # Specify the classes of the target
     classes = ["unoccupied", "occupied"]
 
-    # Create the train and test data
-    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2)
+    X = X.to_numpy()  # Original X comes in Pandas DataFrame format
+    y = y.to_numpy()  # Original y comes in Pandas Series format
+    from sklearn.model_selection import TimeSeriesSplit
+    tscv = TimeSeriesSplit(n_splits=3)
+
+    for train_index, test_index in tscv.split(X):
+        X_train, X_test = X[train_index], X[test_index]
+        y_train, y_test = y[train_index], y[test_index]
+        break # taking only the first split as the example data to visualize
 
     # Instantiate the visualizer with the classification model
     visualizer = ROCAUC(LogisticRegression(

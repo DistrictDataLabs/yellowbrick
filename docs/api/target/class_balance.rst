@@ -37,21 +37,31 @@ The ``ClassBalance`` visualizer has a "compare" mode, where the train and test d
     :alt: ClassBalance Visualizer on the occupancy dataset
 
     from sklearn.model_selection import train_test_split
-    
+
     from yellowbrick.datasets import load_occupancy
     from yellowbrick.target import ClassBalance
 
     # Load the classification dataset
     X, y = load_occupancy()
 
-    # Create the train and test data
-    _, _, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+    X = X.to_numpy()  # transform from pandas to numpy
+    y = y.to_numpy()  # transform from pandas to numpy
 
-    # Instantiate the visualizer
-    visualizer = ClassBalance(labels=["unoccupied", "occupied"])
+    # Specify the classes of the target
+    classes = ["unoccupied", "occupied"]
 
-    visualizer.fit(y_train, y_test)        # Fit the data to the visualizer
-    visualizer.poof()                      # Draw/show/poof the data
+    from sklearn.model_selection import TimeSeriesSplit
+    tscv = TimeSeriesSplit(n_splits=3)
+
+    for train_index, test_index in tscv.split(X):
+        X_train, X_test = X[train_index], X[test_index]
+        y_train, y_test = y[train_index], y[test_index]
+
+        # Instantiate the visualizer
+        visualizer = ClassBalance(labels=["unoccupied", "occupied"])
+
+        visualizer.fit(y_train, y_test)        # Fit the data to the visualizer
+        visualizer.poof()                      # Draw/show/poof the data
 
 This visualization allows us to do a quick check to ensure that the proportion of each class is roughly similar in both splits. This visualization should be a first stop particularly when evaluation metrics are highly variable across different splits.
 
