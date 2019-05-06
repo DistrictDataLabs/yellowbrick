@@ -36,8 +36,6 @@ The ``ClassBalance`` visualizer has a "compare" mode, where the train and test d
     :context: close-figs
     :alt: ClassBalance Visualizer on the occupancy dataset
 
-    from sklearn.model_selection import train_test_split
-
     from yellowbrick.datasets import load_occupancy
     from yellowbrick.target import ClassBalance
 

@@ -9,7 +9,6 @@ The classification report visualizer displays the precision, recall, F1, and sup
     :context: close-figs
     :alt:  Classification Report
 
-    from sklearn.model_selection import train_test_split
     from sklearn.naive_bayes import GaussianNB
     from yellowbrick.classifier import ClassificationReport
     from yellowbrick.datasets import load_occupancy
@@ -17,8 +16,9 @@ The classification report visualizer displays the precision, recall, F1, and sup
     # Load the classification data set
     X, y = load_occupancy()
 
-    X = X.to_numpy()  # transform from pandas to numpy
-    y = y.to_numpy()  # transform from pandas to numpy
+    # Transform Pandas to numpy
+    X = X.to_numpy()
+    y = y.to_numpy()
 
     # Specify the classes of the target
     classes = ["unoccupied", "occupied"]
@@ -28,16 +28,16 @@ The classification report visualizer displays the precision, recall, F1, and sup
 
     from sklearn.model_selection import TimeSeriesSplit
     tscv = TimeSeriesSplit(n_splits=3)
-
     for train_index, test_index in tscv.split(X):
         X_train, X_test = X[train_index], X[test_index]
         y_train, y_test = y[train_index], y[test_index]
+        break # taking only the first split as the example data to visualize.
 
-        visualizer = ClassificationReport(bayes, classes=classes, support=True)
+    visualizer = ClassificationReport(bayes, classes=classes, support=True)
 
-        visualizer.fit(X_train, y_train)  # Fit the visualizer and the model
-        visualizer.score(X_test, y_test)  # Evaluate the model on the test data
-        visualizer.poof()             # Draw/show/poof the data
+    visualizer.fit(X_train, y_train)  # Fit the visualizer and the model
+    visualizer.score(X_test, y_test)  # Evaluate the model on the test data
+    visualizer.poof()             # Draw/show/poof the data
 
 
 The classification report shows a representation of the main classification metrics on a per-class basis. This gives a deeper intuition of the classifier behavior over global accuracy which can mask functional weaknesses in one class of a multiclass problem. Visual classification reports are used to compare classification models to select models that are "redder", e.g. have stronger classification metrics or that are more balanced.
