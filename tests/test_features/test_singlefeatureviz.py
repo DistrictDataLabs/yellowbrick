@@ -18,6 +18,7 @@ Test the SingleFeatureViz visualizer
 
 import sys
 import pytest
+import numpy as np
 
 from tests.base import VisualTestCase
 from tests.dataset import DatasetMixin, Dataset
