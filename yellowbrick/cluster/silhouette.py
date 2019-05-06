@@ -20,7 +20,7 @@ Implements visualizers that use the silhouette metric for cluster evaluation.
 import numpy as np
 import matplotlib.ticker as ticker
 
-from ..style import color_palette
+from ..style import resolve_colors
 from .base import ClusteringScoreVisualizer
 
 from sklearn.metrics import silhouette_score, silhouette_samples
@@ -66,6 +66,12 @@ class SilhouetteVisualizer(ClusteringScoreVisualizer):
         The axes to plot the figure on. If None is passed in the current axes
         will be used (or generated if required).
 
+    colormap : str, default: Set1
+        The name of the matplotlib color map to use for each cluster group. If None, the colormap Set1 is used.
+
+    colors : iterable, default: None
+        A collection of colors to use for each cluster group. If there are fewer colors than cluster groups, colors will repeat. Overrides colormap if both are specified.
+
     kwargs : dict
         Keyword arguments that are passed to the base class and may influence
         the visualization as defined in other Visualizers.
@@ -97,13 +103,12 @@ class SilhouetteVisualizer(ClusteringScoreVisualizer):
     >>> model.poof()
     """
 
-    def __init__(self, model, ax=None, **kwargs):
+    def __init__(self, model, ax=None, colormap='Set1', colors=None, **kwargs):
         super(SilhouetteVisualizer, self).__init__(model, ax=ax, **kwargs)
 
         # Visual Properties
-        # TODO: Fix the color handling
-        self.colormap = kwargs.get('colormap', 'set1')
-        self.color = kwargs.get('color', None)
+        self.colormap = colormap
+        self.colors = colors
 
     def fit(self, X, y=None, **kwargs):
         """
@@ -148,8 +153,9 @@ class SilhouetteVisualizer(ClusteringScoreVisualizer):
         y_lower = 10 # The bottom of the silhouette
 
         # Get the colors from the various properties
-        # TODO: Use resolve_colors instead of this
-        colors = color_palette(self.colormap, self.n_clusters_)
+        colors = resolve_colors(n_colors=self.n_clusters_,
+                                colormap=self.colormap,
+                                colors=self.colors)
 
         # For each cluster, plot the silhouette scores
         for idx in range(self.n_clusters_):

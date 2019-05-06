@@ -38,6 +38,7 @@ Minor Changes:
     - Updated the example notebooks and created a quickstart notebook.
     - Fixed broken links in the documentation.
     - Add legend to SilhouetteVisualizer for the average score axis
+    - Add color and colormap options to SilhouetteVisualizer
 
 Compatibility Notes:
     - This version provides support for matplotlib 3.0.1 or greater and drops support for matplotlib versions less than 2.0.
