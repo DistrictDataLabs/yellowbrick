@@ -79,18 +79,18 @@ class SingleFeatureViz(DataVisualizer):
         
         if self.plot_type == 'hist':
             self.ax.hist(X[:,self.idx],)
-            if self.features_:
+            if self.features_ is not None:
                 self.ax.set_xlabel(self.features_[self.idx])
             self.ax.set_ylabel('frequency', fontsize=16)
 
         elif self.plot_type == 'box':
             self.ax.boxplot([X[:,self.idx]])
-            if self.features_:
+            if self.features_ is not None:
                 self.ax.set_xlabel(self.features_[self.idx])
                 
         elif self.plot_type == 'violin':
             self.ax.violinplot(X[:,self.idx],)
-            if self.features_:
+            if self.features_ is not None:
                 self.ax.set_xlabel(self.features_[self.idx])
 
         else:

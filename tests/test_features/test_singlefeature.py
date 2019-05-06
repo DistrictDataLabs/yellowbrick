@@ -76,7 +76,7 @@ class TestSingleFeatureViz(VisualTestCase, DatasetMixin):
         Assert image similarity on test dataset       
         """
 
-        visualizer = SingleFeatureViz(idx="", features=["a", "b", "c", "d", "e"])
+        visualizer = SingleFeatureViz(idx="a", features=["a", "b", "c", "d", "e"])
         visualizer.fit_transform(self.dataset.X, self.dataset.y)
         visualizer.poof()
         self.assert_images_similar(visualizer, tol=0.25)
@@ -96,7 +96,7 @@ class TestSingleFeatureViz(VisualTestCase, DatasetMixin):
         Assert image similarity on test dataset       
         """
 
-        visualizer = SingleFeatureViz(idx="", features=["a", "b", "c", "d", "e"], plot_type="hist")
+        visualizer = SingleFeatureViz(idx="a", features=["a", "b", "c", "d", "e"], plot_type="hist")
         visualizer.fit_transform(self.dataset.X, self.dataset.y)
         visualizer.poof()
         self.assert_images_similar(visualizer, tol=0.25)
@@ -116,7 +116,7 @@ class TestSingleFeatureViz(VisualTestCase, DatasetMixin):
         Assert image similarity on test dataset       
         """
 
-        visualizer = SingleFeatureViz(idx="", features=["a", "b", "c", "d", "e"], plot_type="box")
+        visualizer = SingleFeatureViz(idx="a", features=["a", "b", "c", "d", "e"], plot_type="box")
         visualizer.fit_transform(self.dataset.X, self.dataset.y)
         visualizer.poof()
         self.assert_images_similar(visualizer, tol=0.25)
@@ -136,7 +136,7 @@ class TestSingleFeatureViz(VisualTestCase, DatasetMixin):
         Assert image similarity on test dataset       
         """
 
-        visualizer = SingleFeatureViz(idx="", features=["a", "b", "c", "d", "e"], plot_type="violin")
+        visualizer = SingleFeatureViz(idx="a", features=["a", "b", "c", "d", "e"], plot_type="violin")
         visualizer.fit_transform(self.dataset.X, self.dataset.y)
         visualizer.poof()
         self.assert_images_similar(visualizer, tol=0.25)        
