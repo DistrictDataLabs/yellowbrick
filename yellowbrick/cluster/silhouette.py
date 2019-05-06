@@ -152,6 +152,7 @@ class SilhouetteVisualizer(ClusteringScoreVisualizer):
         colors = color_palette(self.colormap, self.n_clusters_)
 
         # For each cluster, plot the silhouette scores
+        self.y_tick_pos = []
         for idx in range(self.n_clusters_):
 
             # Collect silhouette scores for samples in the current cluster .
@@ -168,8 +169,8 @@ class SilhouetteVisualizer(ClusteringScoreVisualizer):
                 facecolor=color, edgecolor=color, alpha=0.5
             )
 
-            # Label the silhouette plots with their cluster numbers
-            self.ax.text(-0.05, y_lower + 0.5 * size, str(idx))
+            # Collect the tick position for each cluster
+            self.y_tick_pos.append(y_lower + 0.5 * size)
 
             # Compute the new y_lower for next plot
             y_lower = y_upper + 10
@@ -214,7 +215,8 @@ class SilhouetteVisualizer(ClusteringScoreVisualizer):
         self.ax.set_ylabel("cluster label")
 
         # Set the ticks on the axis object.
-        self.ax.set_yticks([])  # Clear the yaxis labels / ticks
+        self.ax.set_yticks(self.y_tick_pos)
+        self.ax.set_yticklabels(str(idx) for idx in range(self.n_clusters_))
         self.ax.xaxis.set_major_locator(ticker.MultipleLocator(0.1))  # Set the ticks at multiples of 0.1
 
         # Show legend (Average Silhouette Score axis)
