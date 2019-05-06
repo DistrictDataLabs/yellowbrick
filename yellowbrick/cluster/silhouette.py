@@ -21,6 +21,7 @@ import numpy as np
 import matplotlib.ticker as ticker
 
 from ..style import resolve_colors
+from ..style.palettes import PALETTES
 from .base import ClusteringScoreVisualizer
 
 from sklearn.metrics import silhouette_score, silhouette_samples
@@ -103,12 +104,12 @@ class SilhouetteVisualizer(ClusteringScoreVisualizer):
     >>> model.poof()
     """
 
-    def __init__(self, model, ax=None, colormap='Set1', colors=None, **kwargs):
+    def __init__(self, model, ax=None, colormap='set1', colors=None, **kwargs):
         super(SilhouetteVisualizer, self).__init__(model, ax=ax, **kwargs)
 
         # Visual Properties
         self.colormap = colormap
-        self.colors = colors
+        self.colors = colors if colors else PALETTES.get(colormap, colors)
 
     def fit(self, X, y=None, **kwargs):
         """
