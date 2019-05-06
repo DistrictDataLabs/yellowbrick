@@ -52,8 +52,8 @@ class SingleFeatureViz(DataVisualizer):
         self.color = color
         self.colormap = colormap
 
-        if self.plot_type not in ["violin", "hist", "box"]:
-            raise YellowBrickValueError("{plot_type} is not a valid plot_type for SingleFeatureViz".format(plot_type=x))
+        if plot_type not in ["violin", "hist", "box"]:
+            raise YellowbrickValueError("{plot_type} is not a valid plot_type for SingleFeatureViz".format(plot_type=plot_type))
 
     
     def fit(self, X, y=None, **kwargs):
@@ -82,14 +82,14 @@ class SingleFeatureViz(DataVisualizer):
 
         if pd and isinstance(X, pd.DataFrame):
             if isinstance(self.idx, int):
-                raise YellowBrickValueError("A string index is required for a Pandas DataFrame")
+                raise YellowbrickValueError("A string index is required for a Pandas DataFrame")
             x = X[self.idx]
             self.ax.set_xlabel(self.idx)
         else:
             if isinstance(self.idx, str):
-                if features is None:
-                    raise YellowBrickValueError("A string index is specified without a features list on a NumPy array")
-                self.idx = features.index(self.idx)
+                if self.features_ is None:
+                    raise YellowbrickValueError("A string index is specified without a features list on a NumPy array")
+                self.idx = list(self.features_).index(self.idx)
             x = X[:,self.idx]
             if self.features_ is not None:
                 self.ax.set_xlabel(self.features_[self.idx])

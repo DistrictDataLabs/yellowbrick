@@ -66,7 +66,7 @@ class TestSingleFeatureViz(VisualTestCase, DatasetMixin):
         Assert image similarity on test dataset
         """
 
-        visualizer = SingleFeatureViz(idx=1)
+        visualizer = SingleFeatureViz(idx=1, features=["a", "b", "c", "d", "e"])
         visualizer.fit_transform(self.dataset.X, self.dataset.y)
         visualizer.poof()
         self.assert_images_similar(visualizer, tol=0.25)
@@ -86,7 +86,7 @@ class TestSingleFeatureViz(VisualTestCase, DatasetMixin):
         Assert image similarity on test dataset
         """
 
-        visualizer = SingleFeatureViz(idx=1)
+        visualizer = SingleFeatureViz(idx=1, features=["a", "b", "c", "d", "e"])
         visualizer.fit_transform(self.dataset.X, self.dataset.y, plot_type="hist")
         visualizer.poof()
         self.assert_images_similar(visualizer, tol=0.25)
@@ -106,7 +106,7 @@ class TestSingleFeatureViz(VisualTestCase, DatasetMixin):
         Assert image similarity on test dataset
         """
 
-        visualizer = SingleFeatureViz(idx=1, plot_type="box")
+        visualizer = SingleFeatureViz(idx=1, plot_type="box", features=["a", "b", "c", "d", "e"])
         visualizer.fit_transform(self.dataset.X, self.dataset.y)
         visualizer.poof()
         self.assert_images_similar(visualizer, tol=0.25)
@@ -126,28 +126,15 @@ class TestSingleFeatureViz(VisualTestCase, DatasetMixin):
         Assert image similarity on test dataset
         """
 
-        visualizer = SingleFeatureViz(idx=1, plot_type="violin")
+        visualizer = SingleFeatureViz(idx=1, plot_type="violin", features=["a", "b", "c", "d", "e"])
         visualizer.fit_transform(self.dataset.X, self.dataset.y)
-        visualizer.poof()
+        visualizer.poof("test_singlefeatureviz_violinplot.png")
         self.assert_images_similar(visualizer, tol=0.25)
-
-    def test_singlefeatureviz_stridx_no_features(self):
-        with pytest.raises(YellowbrickValueError, match="A string index is specified without a features list on a NumPy array"):
-            visualizer = SingleFeatureViz(idx="foo", plot_type="violin")
-            visualizer.fit_transform(self.dataset.X, self.dataset.y)
-            visualizer.poof()
-
-    def test_singlefeatureviz_intidx_pandas(self):
-        with pytest.raises(YellowbrickValueError, match="A string index is required for a Pandas DataFrame"):
-            visualizer = SingleFeatureViz(idx="foo", plot_type="violin")
-            visualizer.fit_transform(self.dataset.X, self.dataset.y)
-            visualizer.poof()
 
     def test_singlefeatureviz_invalidplottype(self):
         with pytest.raises(YellowbrickValueError, match="my_fake_plot_type is not a valid plot_type for SingleFeatureViz"):
-            visualizer = SingleFeatureViz(idx="foo", plot_type="my_fake_plot_type")
+            visualizer = SingleFeatureViz(idx=1, plot_type="my_fake_plot_type")
             visualizer.fit_transform(self.dataset.X, self.dataset.y)
-            visualizer.poof()
         
     def test_singlefeatureviz_stridx_violinplot(self):
         """ 
