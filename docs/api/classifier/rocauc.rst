@@ -43,6 +43,7 @@ This leads to another metric, area under the curve (AUC), which is a computation
     visualizer.score(X_test, y_test)  # Evaluate the model on the test data
     visualizer.poof()             # Draw/show/poof the data
 
+This example uses TimeSeriesSplit to split time series data. Please check scikit-learn documentation: `TimeSeriesSplit <https://scikit-learn.org/stable/modules/generated/sklearn.model_selection.TimeSeriesSplit.html>`_.
 
 .. warning::
     Versions of Yellowbrick =< v0.8 had a `bug <https://github.com/DistrictDataLabs/yellowbrick/blob/develop/examples/rebeccabilbro/rocauc_bug_research.ipynb>`_ 
