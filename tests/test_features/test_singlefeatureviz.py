@@ -24,7 +24,7 @@ from tests.base import VisualTestCase
 from tests.dataset import DatasetMixin, Dataset
 from sklearn.datasets import make_classification
 
-from yellowbrick.exceptions import YellowBrickValueError
+from yellowbrick.exceptions import YellowbrickValueError
 from yellowbrick.features.singlefeatureviz import *
 
 try:
@@ -133,19 +133,19 @@ class TestSingleFeatureViz(VisualTestCase, DatasetMixin):
         self.assert_images_similar(visualizer, tol=0.25)
 
     def test_singlefeatureviz_stridx_no_features(self):
-        with pytest.raises(YellowBrickValueError, match="A string index is specified without a features list on a NumPy array"):
+        with pytest.raises(YellowbrickValueError, match="A string index is specified without a features list on a NumPy array"):
             visualizer = SingleFeatureViz(idx="foo", plot_type="violin")
             visualizer.fit_transform(self.dataset.X, self.dataset.y)
             visualizer.poof()
 
     def test_singlefeatureviz_intidx_pandas(self):
-        with pytest.raises(YellowBrickValueError, match="A string index is required for a Pandas DataFrame"):
+        with pytest.raises(YellowbrickValueError, match="A string index is required for a Pandas DataFrame"):
             visualizer = SingleFeatureViz(idx="foo", plot_type="violin")
             visualizer.fit_transform(self.dataset.X, self.dataset.y)
             visualizer.poof()
 
     def test_singlefeatureviz_invalidplottype(self):
-        with pytest.raises(YellowBrickValueError, match="my_fake_plot_type is not a valid plot_type for SingleFeatureViz"):
+        with pytest.raises(YellowbrickValueError, match="my_fake_plot_type is not a valid plot_type for SingleFeatureViz"):
             visualizer = SingleFeatureViz(idx="foo", plot_type="my_fake_plot_type")
             visualizer.fit_transform(self.dataset.X, self.dataset.y)
             visualizer.poof()
@@ -177,7 +177,7 @@ class TestSingleFeatureViz(VisualTestCase, DatasetMixin):
         y = occupancy['occupancy'].astype(int)
 
 
-        with pytest.raises(YellowBrickValueError, match="A string index is required for a Pandas DataFrame"):
+        with pytest.raises(YellowbrickValueError, match="A string index is required for a Pandas DataFrame"):
             visualizer = SingleFeatureViz(idx=0, plot_type="violin")
             visualizer.fit_transform(X, y)
             visualizer.poof()
