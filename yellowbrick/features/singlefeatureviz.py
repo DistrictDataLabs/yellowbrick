@@ -45,24 +45,12 @@ class SingleFeatureViz(DataVisualizer):
         # Data Parameters
         self.features_  = features
         self.classes_  = classes
+        self.idx = idx
 
         # Visual Parameters
         self.plot_type = plot_type
         self.color = color
         self.colormap = colormap
-
-        if pd:
-            if isinstance(idx, int):
-                raise YellowBrickValueError("A string index is required for a Pandas DataFrame")
-            else:
-                self.idx = idx
-        else:
-            if isinstance(idx, str):
-                if features is None:
-                    raise YellowBrickValueError("A string index is specified without a features list on a NumPy array")
-                self.idx = features.index(idx)
-            else:
-                self.idx = idx
 
         if self.plot_type not in ["violin", "hist", "box"]:
             raise YellowBrickValueError("{plot_type} is not a valid plot_type for SingleFeatureViz".format(plot_type=x))
@@ -92,15 +80,19 @@ class SingleFeatureViz(DataVisualizer):
         """
         super(DataVisualizer, self).fit(X, y, **kwargs)
 
-        if pd:
+        if pd and isinstance(X, df.DataFrame):
+            if isinstance(self.idx, int):
+                raise YellowBrickValueError("A string index is required for a Pandas DataFrame")
             x = X[self.idx]
-        else:
-            x = X[:,self.idx]
-
-        if pd:
             self.ax.set_xlabel(self.idx)
-        elif self.features_ is not None:
-            self.ax.set_xlabel(self.features_[self.idx])
+        else:
+            if isinstance(idx, str):
+                if features is None:
+                    raise YellowBrickValueError("A string index is specified without a features list on a NumPy array")
+                self.idx = features.index(self.idx)
+            x = X[:,self.idx]
+            if self.features_ is not None:
+                self.ax.set_xlabel(self.features_[self.idx])
 
         if self.plot_type == 'hist':
             self.ax.hist(x)
