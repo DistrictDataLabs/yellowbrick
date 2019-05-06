@@ -16,6 +16,11 @@ import numpy as np
 from yellowbrick.features.base import DataVisualizer
 from yellowbrick.exceptions import YellowbrickValueError
 
+try:
+    import pandas as pd
+except ImportError:
+    pd = None
+
 ##########################################################################
 ## SingleFeatureViz class definition
 ##########################################################################
@@ -45,13 +50,23 @@ class SingleFeatureViz(DataVisualizer):
         self.plot_type = plot_type
         self.color = color
         self.colormap = colormap
-        
-        if isinstance(idx, str):
-            if features is None:
-                raise YellowBrickValueError("A string index is specified, but no features list has been specified")
-            self.idx = features.index(idx)
+
+        if pd:
+            if isinstance(idx, int):
+                raise YellowBrickValueError("A string index is required for a Pandas DataFrame")
+            else:
+                self.idx = idx
         else:
-            self.idx = idx
+            if isinstance(idx, str):
+                if features is None:
+                    raise YellowBrickValueError("A string index is specified without a features list on a NumPy array")
+                self.idx = features.index(idx)
+            else:
+                self.idx = idx
+
+        if self.plot_type not in ["violin", "hist", "box"]:
+            raise YellowBrickValueError("{plot_type} is not a valid plot_type for SingleFeatureViz".format(plot_type=x))
+
     
     def fit(self, X, y=None, **kwargs):
         """
@@ -76,25 +91,26 @@ class SingleFeatureViz(DataVisualizer):
             Returns the instance of the transformer/visualizer
         """
         super(DataVisualizer, self).fit(X, y, **kwargs)
-        
+
+        if pd:
+            x = X[self.idx]
+        else:
+            x = X[:,self.idx]
+
+        if pd:
+            self.ax.set_xlabel(self.idx)
+        elif self.features_ is not None:
+            self.ax.set_xlabel(self.features_[self.idx])
+
         if self.plot_type == 'hist':
-            self.ax.hist(X[:,self.idx],)
-            if self.features_ is not None:
-                self.ax.set_xlabel(self.features_[self.idx])
+            self.ax.hist(x)
             self.ax.set_ylabel('frequency', fontsize=16)
 
         elif self.plot_type == 'box':
-            self.ax.boxplot([X[:,self.idx]])
-            if self.features_ is not None:
-                self.ax.set_xlabel(self.features_[self.idx])
+            self.ax.boxplot([x])
                 
         elif self.plot_type == 'violin':
-            self.ax.violinplot(X[:,self.idx],)
-            if self.features_ is not None:
-                self.ax.set_xlabel(self.features_[self.idx])
-
-        else:
-            raise YellowBrickValueError("{plot_type} is not a valid plot_type for SingleFeatureViz".format(plot_type=x))
+            self.ax.violinplot(x)
                 
         # Fit always returns self.
         return self

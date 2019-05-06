@@ -1,4 +1,4 @@
-# tests.test_features.test_singlefeature
+# tests.test_features.test_singlefeatureviz
 # Test the SingleFeatureViz visualizer
 #
 # Author:   Liam Schumm <lschumm@protonmail.com>
@@ -131,6 +131,24 @@ class TestSingleFeatureViz(VisualTestCase, DatasetMixin):
         visualizer.poof()
         self.assert_images_similar(visualizer, tol=0.25)
 
+    def test_singlefeatureviz_stridx_no_features(self):
+        with pytest.raises(YellowBrickValueError, match="A string index is specified without a features list on a NumPy array"):
+        visualizer = SingleFeatureViz(idx="foo", plot_type="violin")
+        visualizer.fit_transform(self.dataset.X, self.dataset.y)
+        visualizer.poof()
+
+    def test_singlefeatureviz_intidx_pandas(self):
+        with pytest.raises(YellowBrickValueError, match="A string index is required for a Pandas DataFrame"):
+            visualizer = SingleFeatureViz(idx="foo", plot_type="violin")
+            visualizer.fit_transform(self.dataset.X, self.dataset.y)
+            visualizer.poof()
+
+    def test_singlefeatureviz_invalidplottype(self):
+        with pytest.raises(YellowBrickValueError, match="my_fake_plot_type is not a valid plot_type for SingleFeatureViz")
+            visualizer = SingleFeatureViz(idx="foo", plot_type="my_fake_plot_type")
+            visualizer.fit_transform(self.dataset.X, self.dataset.y)
+            visualizer.poof()
+        
     def test_singlefeatureviz_stridx_violinplot(self):
         """ 
         Assert image similarity on test dataset       
@@ -145,7 +163,26 @@ class TestSingleFeatureViz(VisualTestCase, DatasetMixin):
         sys.platform == 'win32', reason="images not close on windows"
     )
     @pytest.mark.skipif(pandas is None, reason="test requires Pandas")
-    def test_singlefeatureviz_with_pandas(self):
+    def test_singlefeatureviz_with_pandas_intidx(self):
+        """
+        Test SingleFeatureViz with Pandas on the occupancy dataset
+        """
+        occupancy = self.load_pandas("occupancy")
+
+        # Load the data from the fixture
+        X = occupancy[[
+            "temperature", "relative humidity", "light", "C02", "humidity"
+        ]]
+        y = occupancy['occupancy'].astype(int)
+
+
+        with pytest.raises(YellowBrickValueError, match="A string index is required for a Pandas DataFrame"):
+            visualizer = SingleFeatureViz(idx=0, plot_type="violin")
+            visualizer.fit_transform(X, y)
+            visualizer.poof()
+
+    @pytest.mark.skipif(pandas is None, reason="test requires Pandas")
+    def test_singlefeatureviz_with_pandas_stridx(self):
         """
         Test SingleFeatureViz with Pandas on the occupancy dataset
         """
@@ -158,6 +195,6 @@ class TestSingleFeatureViz(VisualTestCase, DatasetMixin):
         y = occupancy['occupancy'].astype(int)
 
         # Test the visualizer
-        visualizer = SingleFeatureViz(idx=0)
+        visualizer = SingleFeatureViz(idx="relative humidity")
         visualizer.fit_transform_poof(X, y)
         self.assert_images_similar(visualizer)
