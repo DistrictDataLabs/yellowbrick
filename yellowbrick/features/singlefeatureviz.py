@@ -80,7 +80,7 @@ class SingleFeatureViz(DataVisualizer):
         """
         super(DataVisualizer, self).fit(X, y, **kwargs)
 
-        if pd and isinstance(X, df.DataFrame):
+        if pd and isinstance(X, pd.DataFrame):
             if isinstance(self.idx, int):
                 raise YellowBrickValueError("A string index is required for a Pandas DataFrame")
             x = X[self.idx]

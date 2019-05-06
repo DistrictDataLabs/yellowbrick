@@ -24,7 +24,7 @@ from tests.base import VisualTestCase
 from tests.dataset import DatasetMixin, Dataset
 from sklearn.datasets import make_classification
 
-from yellowbrick.exceptions import YellowbrickValueError
+from yellowbrick.exceptions import YellowBrickValueError
 from yellowbrick.features.singlefeatureviz import *
 
 try:
