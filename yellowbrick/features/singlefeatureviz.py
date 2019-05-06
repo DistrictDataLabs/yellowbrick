@@ -21,7 +21,7 @@ from yellowbrick.exceptions import YellowbrickValueError
 ##########################################################################
 
 class SingleFeatureViz(DataVisualizer):
-    def __init__(self, idx, plot_Type="violin", ax=None, features=None, classes=None, color=None,
+    def __init__(self, idx, plot_type="violin", ax=None, features=None, classes=None, color=None,
                  colormap=None, **kwargs):
         """
         Initialize the data visualization with many of the options required
@@ -78,13 +78,13 @@ class SingleFeatureViz(DataVisualizer):
         super(DataVisualizer, self).fit(X, y, **kwargs)
         
         if self.plot_type == 'hist':
-            self.ax.hist(X[:,self.idx],) #**self.hist_params)
+            self.ax.hist(X[:,self.idx],)
             if self.features_:
                 self.ax.set_xlabel(self.features_[self.idx])
             self.ax.set_ylabel('frequency', fontsize=16)
 
         elif self.plot_type == 'box':
-            self.ax.boxplot([X[:,self.idx]],vert=0) #**self.hist_params)
+            self.ax.boxplot([X[:,self.idx]])
             if self.features_:
                 self.ax.set_xlabel(self.features_[self.idx])
                 
