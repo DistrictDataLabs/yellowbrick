@@ -16,7 +16,6 @@ This leads to another metric, area under the curve (AUC), which is a computation
     from yellowbrick.classifier import ROCAUC
     from sklearn.linear_model import LogisticRegression
     from yellowbrick.datasets import load_occupancy
-    %matplotlib inline
 
     # Load the classification data set
     X, y = load_occupancy()
