@@ -12,7 +12,6 @@
 ## Imports
 ##########################################################################
 
-import numpy as np
 from yellowbrick.features.base import DataVisualizer
 from yellowbrick.exceptions import YellowbrickValueError
 
