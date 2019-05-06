@@ -133,9 +133,9 @@ class TestSingleFeatureViz(VisualTestCase, DatasetMixin):
 
     def test_singlefeatureviz_stridx_no_features(self):
         with pytest.raises(YellowBrickValueError, match="A string index is specified without a features list on a NumPy array"):
-        visualizer = SingleFeatureViz(idx="foo", plot_type="violin")
-        visualizer.fit_transform(self.dataset.X, self.dataset.y)
-        visualizer.poof()
+            visualizer = SingleFeatureViz(idx="foo", plot_type="violin")
+            visualizer.fit_transform(self.dataset.X, self.dataset.y)
+            visualizer.poof()
 
     def test_singlefeatureviz_intidx_pandas(self):
         with pytest.raises(YellowBrickValueError, match="A string index is required for a Pandas DataFrame"):
@@ -144,7 +144,7 @@ class TestSingleFeatureViz(VisualTestCase, DatasetMixin):
             visualizer.poof()
 
     def test_singlefeatureviz_invalidplottype(self):
-        with pytest.raises(YellowBrickValueError, match="my_fake_plot_type is not a valid plot_type for SingleFeatureViz")
+        with pytest.raises(YellowBrickValueError, match="my_fake_plot_type is not a valid plot_type for SingleFeatureViz"):
             visualizer = SingleFeatureViz(idx="foo", plot_type="my_fake_plot_type")
             visualizer.fit_transform(self.dataset.X, self.dataset.y)
             visualizer.poof()
