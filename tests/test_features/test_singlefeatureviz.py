@@ -18,7 +18,6 @@ Test the SingleFeatureViz visualizer
 
 import sys
 import pytest
-import numpy.testing as npt
 
 from tests.base import VisualTestCase
 from tests.dataset import DatasetMixin, Dataset
@@ -180,7 +179,6 @@ class TestSingleFeatureViz(VisualTestCase, DatasetMixin):
         with pytest.raises(YellowbrickValueError, match="A string index is required for a Pandas DataFrame"):
             visualizer = SingleFeatureViz(idx=0, plot_type="violin")
             visualizer.fit_transform(X, y)
-            visualizer.poof()
 
     @pytest.mark.skipif(pandas is None, reason="test requires Pandas")
     def test_singlefeatureviz_with_pandas_stridx(self):

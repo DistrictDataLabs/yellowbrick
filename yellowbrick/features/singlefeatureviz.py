@@ -86,7 +86,7 @@ class SingleFeatureViz(DataVisualizer):
             x = X[self.idx]
             self.ax.set_xlabel(self.idx)
         else:
-            if isinstance(idx, str):
+            if isinstance(self.idx, str):
                 if features is None:
                     raise YellowBrickValueError("A string index is specified without a features list on a NumPy array")
                 self.idx = features.index(self.idx)
