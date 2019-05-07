@@ -23,7 +23,8 @@ At the moment we have the following feature analysis visualizers implemented:
 -  :doc:`importances`: rank features by relative importance in a model
 -  :doc:`rfecv`: select a subset of features by importance
 -  :doc:`jointplot`: (aka Jointplots) plot 2D correlation between features and target
-
+-  :doc:`singlefeatureviz`: visualize the distribution of an individual feature
+   
 Feature analysis visualizers implement the ``Transformer`` API from
 scikit-learn, meaning they can be used as intermediate transform steps
 in a ``Pipeline`` (particularly a ``VisualPipeline``). They are
@@ -43,7 +44,7 @@ is called which displays the image.
     from yellowbrick.features.manifold import Manifold
     from yellowbrick.features.importances import FeatureImportances
     from yellowbrick.features.rfecv import RFECV
-
+    from yellowbrick.features.singlefeatureviz import SingleFeatureViz
 
 .. toctree::
    :maxdepth: 2
@@ -56,3 +57,4 @@ is called which displays the image.
    importances
    rfecv
    jointplot
+   singlefeatureviz
