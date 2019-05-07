@@ -108,8 +108,11 @@ class SilhouetteVisualizer(ClusteringScoreVisualizer):
         super(SilhouetteVisualizer, self).__init__(model, ax=ax, **kwargs)
 
         # Visual Properties
+        # Use colors if it is given, otherwise attempt to find a colormap in
+        # styles.PALETTES. If not found, default to None. The colormap may
+        # yet still be found in resolve_colors
         self.colormap = colormap
-        self.colors = colors if colors else PALETTES.get(colormap, colors)
+        self.colors = colors if colors else PALETTES.get(colormap, None)
 
     def fit(self, X, y=None, **kwargs):
         """
