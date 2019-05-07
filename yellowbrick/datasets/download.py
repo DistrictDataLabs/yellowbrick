@@ -75,7 +75,7 @@ def download_data(url, signature, data_home=None, replace=False, extract=True):
     if os.path.exists(archive):
         if not replace:
             raise DatasetsError((
-                "dataset already exists at {}, set replace=False to overwrite"
+                "dataset already exists at {}, set replace=True to overwrite"
             ).format(archive))
 
         cleanup_dataset(name, data_home=data_home)
