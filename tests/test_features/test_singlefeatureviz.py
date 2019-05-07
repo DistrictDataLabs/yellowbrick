@@ -100,7 +100,7 @@ class TestSingleFeatureViz(VisualTestCase, DatasetMixin):
         visualizer = SingleFeatureViz(idx="a", features=["a", "b", "c", "d", "e"], plot_type="hist")
         visualizer.fit_transform(self.dataset.X, self.dataset.y)
         visualizer.poof()
-        self.assert_images_similar(visualizer, tol=0.25)
+        self.assert_images_similar(visualizer, tol=(8 if sys.platform == "win32" else 0.25))
 
     def test_singlefeatureviz_boxplot(self):
         """
@@ -129,7 +129,7 @@ class TestSingleFeatureViz(VisualTestCase, DatasetMixin):
 
         visualizer = SingleFeatureViz(idx=1, plot_type="violin", features=["a", "b", "c", "d", "e"])
         visualizer.fit_transform(self.dataset.X, self.dataset.y)
-        visualizer.poof("test_singlefeatureviz_violinplot.png")
+        visualizer.poof()
         self.assert_images_similar(visualizer, tol=0.25)
 
     def test_singlefeatureviz_invalidplottype(self):
@@ -183,5 +183,6 @@ class TestSingleFeatureViz(VisualTestCase, DatasetMixin):
 
         # Test the visualizer
         visualizer = SingleFeatureViz(idx="relative humidity")
-        visualizer.fit_transform_poof(X, y)
-        self.assert_images_similar(visualizer)
+        visualizer.fit_transform(X, y)
+        visualizer.poof()
+        self.assert_images_similar(visualizer, tol=(5 if sys.platform == "win32" else 0.25))
