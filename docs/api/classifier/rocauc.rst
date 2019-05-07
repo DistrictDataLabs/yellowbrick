@@ -28,11 +28,12 @@ This leads to another metric, area under the curve (AUC), which is a computation
     y = y.to_numpy()
 
     from sklearn.model_selection import TimeSeriesSplit
-    tscv = TimeSeriesSplit(n_splits=3)
-    for train_index, test_index in tscv.split(X):
-        X_train, X_test = X[train_index], X[test_index]
-        y_train, y_test = y[train_index], y[test_index]
-        break # taking only the first split as the example data to visualize.
+    tscv = TimeSeriesSplit()
+
+    # taking only the first train/test set as example data for visualization
+    train_index, test_index = next(tscv.split(X))
+    X_train, X_test = X[train_index], X[test_index]
+    y_train, y_test = y[train_index], y[test_index]
 
     # Instantiate the visualizer with the classification model
     visualizer = ROCAUC(LogisticRegression(
@@ -41,7 +42,7 @@ This leads to another metric, area under the curve (AUC), which is a computation
     )
     visualizer.fit(X_train, y_train)  # Fit the training data to the visualizer
     visualizer.score(X_test, y_test)  # Evaluate the model on the test data
-    visualizer.poof()             # Draw/show/poof the data
+    visualizer.poof()  # Draw/show/poof the data
 
 This example uses TimeSeriesSplit to split time series data. Please check scikit-learn documentation: `TimeSeriesSplit <https://scikit-learn.org/stable/modules/generated/sklearn.model_selection.TimeSeriesSplit.html>`_.
 
