@@ -57,6 +57,7 @@ The metrics are defined in terms of true and false positives, and true and false
 **support**
     Support is the number of actual occurrences of the class in the specified dataset. Imbalanced support in the training data may indicate structural weaknesses in the reported scores of the classifier and could indicate the need for stratified sampling or rebalancing. Support doesn't change between models but instead diagnoses the evaluation process.
 
+This example uses TimeSeriesSplit to split time series data. Please check scikit-learn documentation: `TimeSeriesSplit <https://scikit-learn.org/stable/modules/generated/sklearn.model_selection.TimeSeriesSplit.html>`_.
 
 API Reference
 -------------

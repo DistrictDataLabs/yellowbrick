@@ -63,6 +63,7 @@ The ``ClassBalance`` visualizer has a "compare" mode, where the train and test d
 
 This visualization allows us to do a quick check to ensure that the proportion of each class is roughly similar in both splits. This visualization should be a first stop particularly when evaluation metrics are highly variable across different splits.
 
+This example uses TimeSeriesSplit to split time series data. Please check scikit-learn documentation: `TimeSeriesSplit <https://scikit-learn.org/stable/modules/generated/sklearn.model_selection.TimeSeriesSplit.html>`_.
 
 API Reference
 -------------
