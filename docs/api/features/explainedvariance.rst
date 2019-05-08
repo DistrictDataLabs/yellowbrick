@@ -16,9 +16,7 @@ If the ``scree`` option is set to ``True``, the visualizer will return a
 Scree plot, showing the fraction of total variance that all principal components
 including and before the ``n``\ th component explain.
 
-.. plot::
-    :context: close-figs
-    :alt: ExplainedVariance on the Concrete Dataset
+.. code::
 
     from yellowbrick.datasets import load_concrete
     from yellowbrick.features import ExplainedVariance
@@ -33,7 +31,7 @@ including and before the ``n``\ th component explain.
     viz.poof()              # Draw/show/poof the data
 
     # Scree plot
-    viz2 = ExplainedVariance(screen=True)
+    viz2 = ExplainedVariance(scree=True)
     viz2.fit(X)
     viz2.transform(X)
     viz2.poof()

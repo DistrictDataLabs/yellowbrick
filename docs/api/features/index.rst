@@ -19,6 +19,7 @@ At the moment we have the following feature analysis visualizers implemented:
 -  :doc:`pcoords`: plot instances as lines along vertical axes to
    detect classes or clusters
 -  :doc:`pca`: project higher dimensions into a visual space using PCA
+-  :doc:`explainedvariance`: visualize the variance of individual features for PCA
 -  :doc:`manifold`: visualize high dimensional data using manifold learning
 -  :doc:`importances`: rank features by relative importance in a model
 -  :doc:`rfecv`: select a subset of features by importance
@@ -43,7 +44,7 @@ is called which displays the image.
     from yellowbrick.features.manifold import Manifold
     from yellowbrick.features.importances import FeatureImportances
     from yellowbrick.features.rfecv import RFECV
-
+    from yellowbrick.features.decomposition import ExplainedVariance
 
 .. toctree::
    :maxdepth: 2
@@ -56,3 +57,4 @@ is called which displays the image.
    importances
    rfecv
    jointplot
+   explainedvariance
