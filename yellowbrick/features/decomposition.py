@@ -4,7 +4,9 @@
 
 from .base import FeatureVisualizer
 from yellowbrick.style import palettes
+from yellowbrick.exceptions import YellowbrickValueError
 
+import numpy as np
 from sklearn.pipeline import Pipeline
 from sklearn.decomposition import PCA
 from sklearn.preprocessing import StandardScaler
@@ -89,7 +91,8 @@ class ExplainedVariance(FeatureVisualizer):
     
     """
 
-    def __init__(self, n_components=None, ax=None, scale=True, center=True, 
+    def __init__(self, n_components=None, ax=None, scree=False, kaiser=False,
+                 kaiser_thresh=1.0, scale=True, center=True,
                  colormap=palettes.DEFAULT_SEQUENCE, **kwargs):
 
         super(ExplainedVariance, self).__init__(ax=ax, **kwargs)
@@ -97,9 +100,12 @@ class ExplainedVariance(FeatureVisualizer):
         self.colormap = colormap
         self.n_components = n_components
         self.center = center
+        self.scree = scree
         self.scale = scale
+        self.kaiser = kaiser
+        self.kaiser_thresh = kaiser_thresh
         self.pipeline = Pipeline([('scale', StandardScaler(with_mean=self.center,
-                                                           with_std=self.scale)), 
+                                                          with_std=self.scale)),
                                   ('pca', PCA(n_components=self.n_components))])
         self.pca_features = None
 
@@ -118,7 +124,16 @@ class ExplainedVariance(FeatureVisualizer):
 
     def draw(self):
         X = self.explained_variance_
-        self.ax.plot(X)
+        if self.scree:
+                if self.kaiser:
+                        raise YellowbrickValueError("Cannot plot a Kaiser threshold on a cumulative Scree plot")
+                self.ax.plot(range(1, len(X) + 1), np.cumsum(X) / np.sum(X))
+        else:
+                self.ax.plot(X)
+                if self.kaiser:
+                        self.ax.axhline(self.kaiser_thresh, color="red", linestyle="--")
+
+                        
         return self.ax
 
     def finalize(self, **kwargs):
@@ -126,6 +141,8 @@ class ExplainedVariance(FeatureVisualizer):
         self.set_title('Explained Variance Plot')
 
         # Set the axes labels
-        self.ax.set_ylabel('Explained Variance')
+        if self.scree:
+                self.ax.set_ylabel('% of Variance Explained')
+        else:
+                self.ax.set_ylabel('Explained Variance')
         self.ax.set_xlabel('Number of Components')
-
