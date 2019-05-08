@@ -27,9 +27,7 @@ objects must have ``idx`` set to a string value (the name of the
 column), and ``Numpy`` arrays must have an integer ``idx``, unless
 a ``features`` array of ``str`` column names are specified.
 
-.. plot::
-    :context: close-figs
-    :alt: SingleFeatureViz on the Occupancy Dataset
+.. code::
 
     from yellowbrick.datasets import load_occupancy
     from yellowbrick.features import SingleFeatureViz
