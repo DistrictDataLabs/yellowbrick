@@ -60,7 +60,7 @@ class TestExplainedVariance(VisualTestCase, DatasetMixin):
         visualizer = ExplainedVariance()
         visualizer.fit_transform(self.dataset.X)
         visualizer.poof()
-        self.assert_images_similar(visualizer, tol=0.25)
+        self.assert_images_similar(visualizer, tol=(5 if sys.platform == 'win32' else 0.25))
 
     def test_explainedvariance_kaiser(self):
         """
@@ -69,7 +69,7 @@ class TestExplainedVariance(VisualTestCase, DatasetMixin):
         visualizer = ExplainedVariance(kaiser=True)
         visualizer.fit_transform(self.dataset.X)
         visualizer.poof()
-        self.assert_images_similar(visualizer, tol=0.25)
+        self.assert_images_similar(visualizer, tol=(5 if sys.platform == 'win32' else 0.25))
 
     def test_explainedvariance_kaiser_thresh(self):
         """
@@ -79,7 +79,7 @@ class TestExplainedVariance(VisualTestCase, DatasetMixin):
         visualizer = ExplainedVariance(kaiser=True, kaiser_thresh=2.0)
         visualizer.fit_transform(self.dataset.X)
         visualizer.poof()
-        self.assert_images_similar(visualizer, tol=0.25)
+        self.assert_images_similar(visualizer, tol=(5 if sys.platform == 'win32' else 0.25))
         
     def test_explainedvariance_scree(self):
         """
@@ -88,7 +88,7 @@ class TestExplainedVariance(VisualTestCase, DatasetMixin):
         visualizer = ExplainedVariance(scree=True)
         visualizer.fit_transform(self.dataset.X)
         visualizer.poof()
-        self.assert_images_similar(visualizer, tol=0.25)
+        self.assert_images_similar(visualizer, tol=(5 if sys.platform == 'win32' else 0.25))
 
     def test_explainedvariance_scree_kaiser_error(self):
         """
