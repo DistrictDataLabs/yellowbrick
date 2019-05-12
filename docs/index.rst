@@ -30,7 +30,8 @@ Recommended Learning Path
 Contributing
 ------------
 
-Interested in contributing to Yellowbrick? Yellowbrick is a welcoming, inclusive project and we would love to have you. We follow the `Python Software Foundation Code of Conduct <http://www.python.org/psf/codeofconduct/>`_. 
+Interested in contributing to Yellowbrick? Yellowbrick is a welcoming, inclusive project and we would love to have you. 
+We follow the `Python Software Foundation Code of Conduct <http://www.python.org/psf/codeofconduct/>`_. 
 
 No matter your level of technical skill, you can be helpful. We appreciate bug reports, user testing, feature requests, bug fixes, product enhancements, and documentation improvements. 
 
@@ -47,9 +48,12 @@ Concepts & API
 
 Visualizers
 -----------
-We strive to maintain a brain-friendly API. Our API is similar to Scikit-Learn's API.
+The primary goal of Yellowbrick is to create a sensical API similar to Scikit-Learn. 
 
-Visualizers are the core objects in Yellowbrick. They are similar to transformers in Scikit-Learn. Visualizers can wrap a model estimator - similar to how the "ModelCV" (e.g. `RidgeCV <http://scikit-learn.org/stable/modules/generated/sklearn.linear_model.RidgeCV.html>`_, `LassoCV <http://scikit-learn.org/stable/modules/generated/sklearn.linear_model.LassoCV.html>`_) methods work.  
+Visualizers are the core objects in Yellowbrick. 
+They are similar to transformers in Scikit-Learn. 
+Visualizers can wrap a model estimator - similar to how the "ModelCV" (e.g. `RidgeCV <http://scikit-learn.org/stable/modules/generated/sklearn.linear_model.RidgeCV.html>`_, `LassoCV <http://scikit-learn.org/stable/modules/generated/sklearn.linear_model.LassoCV.html>`_) methods work.  
+
 
 Some of our most popular visualizers include:
 
@@ -116,17 +120,12 @@ Text Visualization
 Getting Help
 ------------
 
-Can't get someting to work? Here are places to search for answers:
+Can't get someting to work? Here are places you can find help.
 
 1. The docs (you're here!).
-2. The internet (especially `Stack Overflow <http://stackoverflow.com/questions/tagged/yellowbrick>`_).
+2. `Stack Overflow <http://stackoverflow.com/questions/tagged/yellowbrick>`_. If you ask a question, please tag it with "yellowbrick".
 3. The Yellowbrick `Google Groups Listserv <https://groups.google.com/forum/#!forum/yellowbrick>`_.
-
-Still No Luck? Here are places to ask a question:
-
-1. Send a message to the Yellowbrick `Google Groups Listserv <https://groups.google.com/forum/#!forum/yellowbrick>`_
-2. Ask a question on `Stack Overflow <http://stackoverflow.com/questions/tagged/yellowbrick>`_ and tag it with "yellowbrick".
-3. You can also Tweet or direct message us on Twitter `@scikit_yb <https://twitter.com/scikit_yb>`_.
+4. You can also Tweet or direct message us on Twitter `@scikit_yb <https://twitter.com/scikit_yb>`_.
 
 
 Find a Bug? 
