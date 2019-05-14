@@ -49,6 +49,7 @@ except ImportError:
 
 @pytest.fixture(scope="class")
 def clusters(request):
+    # TODO: replace with make_blobs
     X = np.array(
           [[-0.40020753, -4.67055317, -0.27191127, -1.49156318],
            [ 0.37143349, -4.89391622, -1.23893945,  0.48318165],
