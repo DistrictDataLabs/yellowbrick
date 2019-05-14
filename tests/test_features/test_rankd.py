@@ -316,20 +316,40 @@ class TestRank2D(VisualTestCase):
     @pytest.mark.xfail(
         sys.platform == 'win32', reason="images not close on windows"
     )
-    def test_rank2d_integrated(self):
+    @pytest.mark.skipif(pd is None, reason="test requires pandas")
+    def test_rank2d_integrated_pandas(self):
         """
         Test Rank2D on occupancy dataset with pandas DataFrame and Series
         """
         data = load_occupancy(return_dataset=True)
-        X, y = data.to_data()
+        X, y = data.to_pandas()
+        features = data.meta["features"]
 
-        if pd is None:
-            features = data.meta["features"]
-        else:
-            assert isinstance(X, pd.DataFrame)
-            assert isinstance(y, pd.Series)
+        assert isinstance(X, pd.DataFrame)
+        assert isinstance(y, pd.Series)
 
-            features = X.columns
+        # Test the visualizer
+        oz = Rank2D(features=features, show_feature_names=True)
+        assert oz.fit(X, y) is oz
+        assert oz.transform(X) is X
+        oz.finalize()
+
+        # Image similarity testing
+        self.assert_images_similar(oz, tol=0.1)
+
+    @pytest.mark.xfail(
+        sys.platform == 'win32', reason="images not close on windows"
+    )
+    def test_rank2d_integrated_numpy(self):
+        """
+        Test Rank2D on occupancy dataset with numpy ndarray
+        """
+        data = load_occupancy(return_dataset=True)
+        X, y = data.to_numpy()
+        features = data.meta["features"]
+
+        assert isinstance(X, np.ndarray)
+        assert isinstance(y, np.ndarray)
 
         # Test the visualizer
         oz = Rank2D(features=features, show_feature_names=True)
