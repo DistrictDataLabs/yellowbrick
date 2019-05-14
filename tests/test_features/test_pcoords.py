@@ -5,7 +5,8 @@
 # Author:  @thekylesaurus
 # Created: Thu Oct 06 11:21:27 2016 -0400
 #
-# Copyright (C) 2016 District Data Labs # For license information, see LICENSE.txt
+# Copyright (C) 2017 The scikit-yb developers.
+# For license information, see LICENSE.txt
 #
 # ID: test_pcoords.py [1d407ab] benjamin@bengfort.com $
 
@@ -157,35 +158,17 @@ class TestParallelCoordinates(VisualTestCase):
         visualizer.poof()
         self.assert_images_similar(visualizer, tol=0.25)
 
+    @pytest.mark.skipif(pd is None, reason="test requires pandas")
     def test_pandas_integration_sampled(self):
         """
         Test on a real dataset with pandas DataFrame and Series sampled for speed
         """
         data = load_occupancy(return_dataset=True)
-        X, y = data.to_data()
+        X, y = data.to_pandas()
+        classes = [k for k, _ in sorted(data.meta['labels'].items(), key=lambda i: i[1])]
 
-        if pd is None:
-            # Switching y labels so that it is consistent with Pandas.
-            # With pandas occupied is plotted before unoccupied
-            # (because of alphabetical order)
-            # and with numpy 0 is plotted before 1 (because 0 < 1).
-            # Without switching 1 and 0, the color will be flipped
-            # because 1 == occupied and 0 == unoccupied.
-            y = np.array([1 if each == 0 else 0 for each in y])
-
-            # NOTE: The order of the class name in list matters.
-            # The order of the list must be the same as the order of the
-            # target integer.
-            classes = list(data.meta["labels"].keys())
-        else:
-            y = pd.Series([
-                'occupied' if yi == 1 else 'unoccupied' for yi in y
-            ])
-
-            assert isinstance(X, pd.DataFrame)
-            assert isinstance(y, pd.Series)
-
-            classes = None
+        assert isinstance(X, pd.DataFrame)
+        assert isinstance(y, pd.Series)
 
         oz = ParallelCoordinates(
             sample=0.05, shuffle=True, random_state=4291, classes=classes
@@ -195,35 +178,53 @@ class TestParallelCoordinates(VisualTestCase):
 
         self.assert_images_similar(oz, tol=0.1)
 
+    def test_numpy_integration_sampled(self):
+        """
+        Ensure visualizer works in default case with numpy arrays and sampling
+        """
+        data = load_occupancy(return_dataset=True)
+        X, y = data.to_numpy()
+        classes = [k for k, _ in sorted(data.meta['labels'].items(), key=lambda i: i[1])]
+
+        assert isinstance(X, np.ndarray)
+        assert isinstance(y, np.ndarray)
+
+        oz = ParallelCoordinates(
+            sample=0.05, shuffle=True, random_state=4291, classes=classes
+        )
+        oz.fit_transform(X, y)
+        oz.poof()
+
+        self.assert_images_similar(oz, tol=0.1)
+
+    @pytest.mark.skipif(pd is None, reason="test requires pandas")
     def test_pandas_integration_fast(self):
         """
         Test on a real dataset with pandas DataFrame and Series in fast mode
         """
         data = load_occupancy(return_dataset=True)
-        X, y = data.to_data()
+        X, y = data.to_pandas()
+        classes = [k for k, _ in sorted(data.meta['labels'].items(), key=lambda i: i[1])]
 
-        if pd is None:
-            # Switching y labels so that it is consistent with Pandas.
-            # With pandas occupied is plotted before unoccupied
-            # (because of alphabetical order)
-            # and with numpy 0 is plotted before 1 (because 0 < 1).
-            # Without switching 1 and 0, the color will be flipped
-            # because 1 == occupied and 0 == unoccupied.
-            y = np.array([1 if each == 0 else 0 for each in y])
+        assert isinstance(X, pd.DataFrame)
+        assert isinstance(y, pd.Series)
 
-            # NOTE: The order of the class name in list matters.
-            # The order of the list must be the same as the order of the
-            # target integer.
-            classes = list(data.meta["labels"].keys())
-        else:
-            y = pd.Series([
-                'occupied' if yi == 1 else 'unoccupied' for yi in y
-            ])
+        oz = ParallelCoordinates(fast=True, classes=classes)
+        oz.fit_transform(X, y)
+        oz.poof()
 
-            assert isinstance(X, pd.DataFrame)
-            assert isinstance(y, pd.Series)
+        self.assert_images_similar(oz, tol=0.1)
 
-            classes = None
+    def test_numpy_integration_fast(self):
+        """
+        Ensure visualizer works in default case with numpy arrays and fast mode
+        """
+        data = load_occupancy(return_dataset=True)
+        X, y = data.to_numpy()
+        classes = [k for k, _ in sorted(data.meta['labels'].items(), key=lambda i: i[1])]
+
+        assert isinstance(X, np.ndarray)
+        assert isinstance(y, np.ndarray)
 
         oz = ParallelCoordinates(fast=True, classes=classes)
         oz.fit_transform(X, y)
