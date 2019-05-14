@@ -25,9 +25,9 @@ import numpy as np
 import numpy.testing as npt
 import matplotlib.pyplot as plt
 
+from yellowbrick.datasets import load_occupancy, load_concrete
 from yellowbrick.exceptions import NotFitted
 from yellowbrick.features.importances import *
-from yellowbrick.datasets import load_occupancy, load_concrete
 
 from sklearn.datasets import load_iris
 from sklearn.base import BaseEstimator, ClassifierMixin

@@ -23,7 +23,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 from ..base import VisualTestCase
-from ..dataset import DatasetMixin
+from ..fixtures import TestDataset
 
 from scipy.sparse import csc_matrix, csr_matrix
 from numpy.testing.utils import assert_array_almost_equal
@@ -34,6 +34,7 @@ from sklearn.feature_extraction.text import TfidfVectorizer
 
 from yellowbrick.cluster.elbow import distortion_score
 from yellowbrick.cluster.elbow import KElbowVisualizer
+from yellowbrick.datasets import load_hobbies
 from yellowbrick.exceptions import YellowbrickValueError
 
 try:
@@ -43,33 +44,43 @@ except ImportError:
 
 
 ##########################################################################
+## Data
+##########################################################################
+
+@pytest.fixture(scope="class")
+def clusters(request):
+    # TODO: replace with make_blobs
+    X = np.array(
+          [[-0.40020753, -4.67055317, -0.27191127, -1.49156318],
+           [ 0.37143349, -4.89391622, -1.23893945,  0.48318165],
+           [ 8.625142  , -1.2372284 ,  1.39301471,  4.3394457 ],
+           [ 7.65803596, -2.21017215,  1.99175714,  3.71004654],
+           [ 0.89319875, -5.37152317,  1.50313598,  1.95284886],
+           [ 2.68362166, -5.78810913, -0.41233406,  1.94638989],
+           [ 7.63541182, -1.99606076,  0.9241231 ,  4.53478238],
+           [ 9.04699415, -0.74540679,  0.98042851,  5.99569071],
+           [ 1.02552122, -5.73874278, -1.74804915, -0.07831216],
+           [ 7.18135665, -3.49473178,  1.14300963,  4.46065816],
+           [ 0.58812902, -4.66559815, -0.72831685,  1.40171779],
+           [ 1.48620862, -5.9963108 ,  0.19145963, -1.11369256],
+           [ 7.6625556 , -1.21328083,  2.06361094,  6.2643551 ],
+           [ 9.45050727, -1.36536078,  1.31154384,  3.89103468],
+           [ 6.88203724, -1.62040255,  3.89961049,  2.12865388],
+           [ 5.60842705, -2.10693356,  1.93328514,  3.90825432],
+           [ 2.35150936, -6.62836131, -1.84278374,  0.51540886],
+           [ 1.17446451, -5.62506058, -2.18420699,  1.21385128]]
+    )
+
+    y = np.array([0, 0, 1, 1, 0, 0, 1, 1, 0, 1, 0, 0, 1, 1, 1, 1, 0, 0])
+
+    request.cls.clusters = TestDataset(X, y)
+
+
+##########################################################################
 ## K-Elbow Helpers Test Cases
 ##########################################################################
 
-X = np.array(
-      [[-0.40020753, -4.67055317, -0.27191127, -1.49156318],
-       [ 0.37143349, -4.89391622, -1.23893945,  0.48318165],
-       [ 8.625142  , -1.2372284 ,  1.39301471,  4.3394457 ],
-       [ 7.65803596, -2.21017215,  1.99175714,  3.71004654],
-       [ 0.89319875, -5.37152317,  1.50313598,  1.95284886],
-       [ 2.68362166, -5.78810913, -0.41233406,  1.94638989],
-       [ 7.63541182, -1.99606076,  0.9241231 ,  4.53478238],
-       [ 9.04699415, -0.74540679,  0.98042851,  5.99569071],
-       [ 1.02552122, -5.73874278, -1.74804915, -0.07831216],
-       [ 7.18135665, -3.49473178,  1.14300963,  4.46065816],
-       [ 0.58812902, -4.66559815, -0.72831685,  1.40171779],
-       [ 1.48620862, -5.9963108 ,  0.19145963, -1.11369256],
-       [ 7.6625556 , -1.21328083,  2.06361094,  6.2643551 ],
-       [ 9.45050727, -1.36536078,  1.31154384,  3.89103468],
-       [ 6.88203724, -1.62040255,  3.89961049,  2.12865388],
-       [ 5.60842705, -2.10693356,  1.93328514,  3.90825432],
-       [ 2.35150936, -6.62836131, -1.84278374,  0.51540886],
-       [ 1.17446451, -5.62506058, -2.18420699,  1.21385128]]
-)
-
-y = np.array([0, 0, 1, 1, 0, 0, 1, 1, 0, 1, 0, 0, 1, 1, 1, 1, 0, 0])
-
-
+@pytest.mark.usefixtures("clusters")
 class TestKElbowHelper(object):
     """
     Helper functions for K-Elbow Visualizer
@@ -79,17 +90,17 @@ class TestKElbowHelper(object):
         """
         Test the distortion score metric function
         """
-        score = distortion_score(X, y)
+        score = distortion_score(self.clusters.X, self.clusters.y)
         assert score == pytest.approx(69.10006514142941)
 
-    @pytest.mark.parametrize("Xs", [
-        csc_matrix(X), csr_matrix(X),
+    @pytest.mark.parametrize("func", [
+        csc_matrix, csr_matrix,
     ], ids=["csc", "csr"])
-    def test_distortion_score_sparse_matrix_input(self, Xs):
+    def test_distortion_score_sparse_matrix_input(self, func):
         """
         Test the distortion score metric on a sparse array
         """
-        score = distortion_score(Xs, y)
+        score = distortion_score(func(self.clusters.X), self.clusters.y)
         assert score == pytest.approx(69.10006514142938)
 
     @pytest.mark.skipif(pd is None, reason="pandas is required")
@@ -97,8 +108,8 @@ class TestKElbowHelper(object):
         """
         Test the distortion score metric on pandas DataFrame and Series
         """
-        df = pd.DataFrame(X)
-        s = pd.Series(y)
+        df = pd.DataFrame(self.clusters.X)
+        s = pd.Series(self.clusters.y)
 
         score = distortion_score(df, s)
         assert score == pytest.approx(69.10006514142941)
@@ -108,7 +119,8 @@ class TestKElbowHelper(object):
 ## KElbowVisualizer Test Cases
 ##########################################################################
 
-class TestKElbowVisualizer(VisualTestCase, DatasetMixin):
+@pytest.mark.usefixtures("clusters")
+class TestKElbowVisualizer(VisualTestCase):
     """
     K-Elbow Visualizer Tests
     """
@@ -167,7 +179,7 @@ class TestKElbowVisualizer(VisualTestCase, DatasetMixin):
         """
         Test topic modeling k-means on the hobbies corpus
         """
-        corpus = self.load_corpus("hobbies")
+        corpus = load_hobbies()
 
         tfidf  = TfidfVectorizer()
         docs   = tfidf.fit_transform(corpus.data)
@@ -219,7 +231,7 @@ class TestKElbowVisualizer(VisualTestCase, DatasetMixin):
         visualizer = KElbowVisualizer(
             KMeans(random_state=0), k=5, metric="distortion", timings=False, locate_elbow=False
         )
-        visualizer.fit(X)
+        visualizer.fit(self.clusters.X)
 
         expected = np.array([ 69.100065, 54.081571, 43.146921, 34.978487])
         assert len(visualizer.k_scores_) == 4
@@ -238,7 +250,7 @@ class TestKElbowVisualizer(VisualTestCase, DatasetMixin):
         visualizer = KElbowVisualizer(
             KMeans(random_state=0), k=5, metric="silhouette", timings=False, locate_elbow=False
         )
-        visualizer.fit(X)
+        visualizer.fit(self.clusters.X)
 
         expected = np.array([ 0.691636,  0.456646,  0.255174,  0.239842])
         assert len(visualizer.k_scores_) == 4
@@ -258,7 +270,7 @@ class TestKElbowVisualizer(VisualTestCase, DatasetMixin):
             KMeans(random_state=0), k=5,
             metric="calinski_harabaz", timings=False, locate_elbow=False
         )
-        visualizer.fit(X)
+        visualizer.fit(self.clusters.X)
         assert len(visualizer.k_scores_) == 4
 
         expected = np.array([
@@ -288,7 +300,7 @@ class TestKElbowVisualizer(VisualTestCase, DatasetMixin):
         visualizer = KElbowVisualizer(
             KMeans(random_state=0), k=5, timings=True, locate_elbow=False
         )
-        visualizer.fit(X)
+        visualizer.fit(self.clusters.X)
 
         # Check that we kept track of time
         assert len(visualizer.k_timers_) == 4
