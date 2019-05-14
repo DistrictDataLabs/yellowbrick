@@ -130,16 +130,36 @@ class TestRFECV(VisualTestCase):
     @pytest.mark.xfail(
         sys.platform == 'win32', reason="images not close on windows"
     )
+    @pytest.mark.skipif(pd is None, reason="test requires pandas")
     def test_pandas_integration(self):
         """
         Test on a real dataset with pandas DataFrame and Series
         """
         data = load_occupancy(return_dataset=True)
-        X, y = data.to_data()
+        X, y = data.to_pandas()
 
-        if pd is not None:
-            assert isinstance(X, pd.DataFrame)
-            assert isinstance(y, pd.Series)
+        assert isinstance(X, pd.DataFrame)
+        assert isinstance(y, pd.Series)
+
+        cv = StratifiedKFold(n_splits=4, random_state=32)
+        oz = RFECV(RandomForestClassifier(random_state=83), cv=cv)
+        oz.fit(X, y)
+        oz.poof()
+
+        self.assert_images_similar(oz)
+
+    @pytest.mark.xfail(
+        sys.platform == 'win32', reason="images not close on windows"
+    )
+    def test_numpy_integration(self):
+        """
+        Test on a real dataset with numpy ndarray
+        """
+        data = load_occupancy(return_dataset=True)
+        X, y = data.to_numpy()
+
+        assert isinstance(X, np.ndarray)
+        assert isinstance(y, np.ndarray)
 
         cv = StratifiedKFold(n_splits=4, random_state=32)
         oz = RFECV(RandomForestClassifier(random_state=83), cv=cv)
