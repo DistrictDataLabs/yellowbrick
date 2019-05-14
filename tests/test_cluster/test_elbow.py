@@ -228,7 +228,7 @@ class TestKElbowVisualizer(VisualTestCase):
         Test the distortion metric of the k-elbow visualizer
         """
         visualizer = KElbowVisualizer(
-            KMeans(random_state=0), k=5, metric="distortion", timings=False
+            KMeans(random_state=0), k=5, metric="distortion", timings=False, locate_elbow=False
         )
         visualizer.fit(self.clusters.X)
 
@@ -247,7 +247,7 @@ class TestKElbowVisualizer(VisualTestCase):
         Test the silhouette metric of the k-elbow visualizer
         """
         visualizer = KElbowVisualizer(
-            KMeans(random_state=0), k=5, metric="silhouette", timings=False
+            KMeans(random_state=0), k=5, metric="silhouette", timings=False, locate_elbow=False
         )
         visualizer.fit(self.clusters.X)
 
@@ -267,7 +267,7 @@ class TestKElbowVisualizer(VisualTestCase):
         """
         visualizer = KElbowVisualizer(
             KMeans(random_state=0), k=5,
-            metric="calinski_harabaz", timings=False
+            metric="calinski_harabaz", timings=False, locate_elbow=False
         )
         visualizer.fit(self.clusters.X)
         assert len(visualizer.k_scores_) == 4
@@ -297,7 +297,7 @@ class TestKElbowVisualizer(VisualTestCase):
         Test the twinx double axes with k-elbow timings
         """
         visualizer = KElbowVisualizer(
-            KMeans(random_state=0), k=5, timings=True
+            KMeans(random_state=0), k=5, timings=True, locate_elbow=False
         )
         visualizer.fit(self.clusters.X)
 

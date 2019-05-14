@@ -36,7 +36,7 @@ Once forked, use the following steps to get your development environment set up 
 
 2. Create a virtual environment.
 
-    Yellowbrick developers typically use `virtualenv <https://virtualenv.pypa.io/en/stable/>`_ (and `virtualenvwrapper <https://virtualenvwrapper.readthedocs.io/en/latest/>`_), `pyenv <https://github.com/pyenv/pyenv-virtualenv>`_ or `conda envs <https://conda.io/docs/using/envs.html>`_ in order to manage their Python version and dependencies. Using the virtual environment tool of your choice, create one for Yellowbrick. Here's how with virtualenv::
+    Yellowbrick developers typically use `virtualenv <https://virtualenv.pypa.io/en/stable/>`_ (and `virtualenvwrapper <https://virtualenvwrapper.readthedocs.io/en/latest/>`_), `pyenv <https://github.com/pyenv/pyenv-virtualenv>`_ or `conda envs <https://conda.io/projects/conda/en/latest/user-guide/tasks/manage-environments.html>`_ in order to manage their Python version and dependencies. Using the virtual environment tool of your choice, create one for Yellowbrick. Here's how with virtualenv::
 
         $ virtualenv venv
 
