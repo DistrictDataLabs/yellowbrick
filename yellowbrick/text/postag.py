@@ -371,6 +371,12 @@ class PosTagVisualizer(TextVisualizer):
                     )
         else:
             #Plot stack barplot
+            colors = resolve_colors(
+                        n_colors=len(self.label_), 
+                        colormap=self.colormap,
+                        colors=self.colors
+                        )
+            
             self.ax.bar(
                 range(len(self.pos_tag_counts_)), 
                 list(self.pos_tag_counts_.values()), 
