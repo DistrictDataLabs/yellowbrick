@@ -140,20 +140,38 @@ class TestRank1D(VisualTestCase):
         self.assert_images_similar(oz)
 
     @pytest.mark.filterwarnings("ignore:p-value")
-    def test_rank1d_integrated(self):
+    @pytest.mark.skipif(pd is None, reason="test requires pandas")
+    def test_rank1d_integrated_pandas(self):
         """
         Test Rank1D on occupancy dataset with pandas DataFrame and Series
         """
         data = load_occupancy(return_dataset=True)
-        X, y = data.to_data()
+        X, y = data.to_pandas()
+        features = data.meta["features"]
 
-        if pd is None:
-            features = data.meta["features"]
-        else:
-            assert isinstance(X, pd.DataFrame)
-            assert isinstance(y, pd.Series)
+        assert isinstance(X, pd.DataFrame)
+        assert isinstance(y, pd.Series)
 
-            features = X.columns
+        # Test the visualizer
+        oz = Rank1D(features=features, show_feature_names=True)
+        assert oz.fit(X, y) is oz
+        assert oz.transform(X) is X
+
+        # Image similarity testing
+        oz.finalize()
+        self.assert_images_similar(oz)
+
+    @pytest.mark.filterwarnings("ignore:p-value")
+    def test_rank1d_integrated_numpy(self):
+        """
+        Test Rank1D on occupancy dataset with default numpy data structures
+        """
+        data = load_occupancy(return_dataset=True)
+        X, y = data.to_numpy()
+        features = data.meta["features"]
+
+        assert isinstance(X, np.ndarray)
+        assert isinstance(y, np.ndarray)
 
         # Test the visualizer
         oz = Rank1D(features=features, show_feature_names=True)
