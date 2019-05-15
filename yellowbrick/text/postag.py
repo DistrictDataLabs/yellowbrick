@@ -427,10 +427,15 @@ class PosTagVisualizer(TextVisualizer):
             manual_legend(self, self.label_, colors, loc='best')
 
 
+    def poof(self, outpath=None, **kwargs):
+        if outpath is not None:
+            kwargs["bbox_inches"] = kwargs.get("bbox_inches", "tight")
+        return super(PosTagVisualizer, self).poof(outpath, **kwargs)
+
+
 ##########################################################################
 ## Quick Method
 ##########################################################################
-
 
 def postag(
     X,
@@ -443,6 +448,7 @@ def postag(
     stack=False,
     **kwargs
 ):
+
     """
     Display a barchart with the counts of different parts of speech
     in X, which consists of a part-of-speech-tagged corpus, which the
@@ -487,3 +493,4 @@ def postag(
 
     # Return the axes object on the visualizer
     return visualizer
+
