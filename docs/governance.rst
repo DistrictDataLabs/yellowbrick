@@ -3,7 +3,7 @@
 Governance
 ==========
 
-**Version 1.0 on March 28, 2019**
+**Version 1.1 on May 15, 2019**
 
 Purpose
 -------
@@ -81,6 +81,27 @@ If a semester has a large enough group of maintainers and core-contributors, we 
 - Organize meetups, video calls, and other social and engagement activities.
 
 The coordinator’s role is mostly about communication and the amount of dedicated effort can vary depending on external factors. Based on our experience it could be as little as a couple of hours per week to as much work as being a maintainer. The coordinator’s responsibilities are organizational and are ideal for someone who wants to be a part of the community but has less of a software background. In fact, we see this role as being similar to a tech project management role, which is often entry level and serves as experience to propel coordinators into more active development. Alternatively, the coordinator can be a more experienced maintainer who needs a break from review but is willing to focus on coaching.
+
+Mentor-Contributor
+^^^^^^^^^^^^^^^^^^
+
+A mentor-contributor assumes all the responsibilities of a core contributor but commits 25-50% of their time toward mentoring a new contributor with little or no experience. The purpose of the mentor-contributor role is assist in recruiting and developing a pipeline of new contributors for Yellowbrick.
+
+A mentor-contributor would guide a new contributor in understanding the community, roles, ethos, expectations, systems, and processes in participating and contributing to an open source project such as Yellowbrick. A new contributor is someone who is interested in open source software projects but has little to no experience working on an open source project or participating in the community.
+
+The mentor-contributor would work in tandem with the new contributor during the semester to complete assigned issues and prepare the new contributor to be a core contributor in a future semester. A mentor-contributor would mostly likely work on fewer issues during the semester in order to allocate time for mentoring. Mentor-contributors would be matched with new contributors prior to the start of each semester or recruit their own contributor (eg. colleague or friend). The responsibilities of mentor-contributors are as follows:
+
+- When possible, recruit new contributors to Yellowbrick
+- Schedule weekly mentoring sessions and assign discrete yet increasingly complex tasks to the new contributor
+- Work with the new contributor to complete assigned issues during the semester
+- Set specific and reasonable goals for contributions over the semester.
+- Work with maintainers to complete issues and goals for the next release.
+- Respond to maintainer requests and be generally available for discussion.
+- Participating actively on the #yellowbrick Slack channel.
+- Join any co-working or pair-programming sessions required to achieve goals.
+- Make a determination at the end of the semester on the readiness of the new contributor to be a core-contributor
+
+The mentor-contributor role may also appeal to students who use Yellowbrick in a machine learning course and seek the experience of contributing to an open source project.
 
 Advisor
 ^^^^^^^
