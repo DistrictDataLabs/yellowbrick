@@ -24,7 +24,7 @@ from yellowbrick.style.colors import resolve_colors
 from yellowbrick.draw import manual_legend
 from yellowbrick.exceptions import YellowbrickValueError
 
-
+import  numpy as np
 ##########################################################################
 # Part-of-speech tag punctuation and labels
 ##########################################################################
@@ -75,7 +75,8 @@ class PosTagVisualizer(TextVisualizer):
         If set to True, part-of-speech tags will be plotted according to frequency,
         from most to least frequent.
     stack : bool {True, False}, default : False
-        If set to True, stacked barplot will be plotted.
+        Plot the PosTag frequency chart as a per-class stacked bar chart. 
+        Note that fit() requires y for this visualization.
     kwargs : dict
         Pass any additional keyword arguments to the PosTagVisualizer.
 
@@ -144,121 +145,127 @@ class PosTagVisualizer(TextVisualizer):
         self : instance
             Returns the instance of the transformer/visualizer
         """
-        if(self.stack == True and y == None):
+        if self.stack and y is None:
             raise YellowbrickValueError("Specify y for stack=True")
         
-        labeled = []
-        if(y!=None):
-            for i in range(len(y)):
-                labeled.append((X[0][i],y[i]))
-        self.label_ = set(map(lambda x:x[1], labeled))
+        self.labels_=np.unique(y)
         
-        if(self.stack == True):
-            X = [[[y[0]] for y in labeled if y[1]==x] for x in self.label_]
-        else:
-            X = [X]
-        
-        self.last = None
-        self.stack_count = 0
-        
-        for x in X:
-            # TODO: add support for other tagsets?
-            if self.tagset == "penn_treebank":
-                self.pos_tag_counts_ = self._penn_tag_map()
-                self._handle_treebank(x)
-    
-            elif self.tagset == "universal":
-                self.pos_tag_counts_ = self._uni_tag_map()
-                self._handle_universal(x)
-            self.draw()
-
+        if self.tagset == "penn_treebank":
+            self.pos_tag_counts_ = self._penn_tag_map()
+            self._handle_treebank(X,y)
+        elif self.tagset == "universal":
+            self.pos_tag_counts_ = self._uni_tag_map()
+            self._handle_universal(X,y)
+        self.draw()
         return self
 
     def _penn_tag_map(self):
         """
         Returns a Penn Treebank part-of-speech tag map.
         """
-        return {
-            "noun": 0,
-            "verb": 0,
-            "adjective": 0,
-            "adverb": 0,
-            "preposition": 0,
-            "determiner": 0,
-            "pronoun": 0,
-            "conjunction": 0,
-            "infinitive": 0,
-            "wh- word": 0,
-            "modal": 0,
-            "possessive": 0,
-            "existential": 0,
-            "punctuation": 0,
-            "digit": 0,
-            "non-English": 0,
-            "interjection": 0,
-            "list": 0,
-            "symbol": 0,
-            "other": 0,
-        }
+        
+        default_dic =  {
+                            "noun": 0,
+                            "verb": 0,
+                            "adjective": 0,
+                            "adverb": 0,
+                            "preposition": 0,
+                            "determiner": 0,
+                            "pronoun": 0,
+                            "conjunction": 0,
+                            "infinitive": 0,
+                            "wh- word": 0,
+                            "modal": 0,
+                            "possessive": 0,
+                            "existential": 0,
+                            "punctuation": 0,
+                            "digit": 0,
+                            "non-English": 0,
+                            "interjection": 0,
+                            "list": 0,
+                            "symbol": 0,
+                            "other": 0,
+                        }
+        if self.stack:
+            penn_tag_map={}
+            for i in self.labels_:
+                penn_tag_map[i]=default_dic.copy()
+            return penn_tag_map
+        else:
+            return default_dic
 
     def _uni_tag_map(self):
         """
         Returns a Universal Dependencies part-of-speech tag map.
         """
-        return {
-            "noun": 0,
-            "verb": 0,
-            "adjective": 0,
-            "adverb": 0,
-            "adposition": 0,
-            "determiner": 0,
-            "pronoun": 0,
-            "conjunction": 0,
-            "infinitive": 0,
-            "punctuation": 0,
-            "number": 0,
-            "interjection": 0,
-            "symbol": 0,
-            "other": 0,
-        }
+        default_dic = {
+                        "noun": 0,
+                        "verb": 0,
+                        "adjective": 0,
+                        "adverb": 0,
+                        "adposition": 0,
+                        "determiner": 0,
+                        "pronoun": 0,
+                        "conjunction": 0,
+                        "infinitive": 0,
+                        "punctuation": 0,
+                        "number": 0,
+                        "interjection": 0,
+                        "symbol": 0,
+                        "other": 0,
+                    }
+        if self.stack:
+            uni_tag_map={}
+            for i in self.labels_:
+                uni_tag_map[i]=default_dic.copy()
+            return uni_tag_map
+        else:
+            return default_dic
 
-    def _handle_universal(self, X):
-        """
-        Scan through the corpus to compute counts of each Universal
-        Dependencies part-of-speech.
+    def _handle_universal(self, X,y):
+            """
+            Scan through the corpus to compute counts of each Universal
+            Dependencies part-of-speech.
+    
+            Parameters
+            ----------
+            X : list or generator
+                Should be provided as a list of documents or a generator
+                that yields a list of documents that contain a list of
+                sentences that contain (token, tag) tuples.
+            """
+            jump = {
+                # combine proper and regular nouns
+                "NOUN": "noun", "PROPN": "noun",
+                "ADJ": "adjective",
+                "VERB": "verb",
+                # include particles with adverbs
+                "ADV": "adverb", "PART": "adverb",
+                "ADP": "adposition",
+                "PRON": "pronoun",
+                "CCONJ": "conjunction",
+                "PUNCT": "punctuation",
+                "DET": "determiner",
+                "NUM": "number",
+                "INTJ": "interjection",
+                "SYM": "symbol",
+            }
+            if self.stack: 
+                for tagged_doc in X:
+                    for tagged_sent, y in zip(tagged_doc, y):
+                        for _, tag in tagged_sent:
+                            if tag == "SPACE":
+                                continue
+                            self.pos_tag_counts_[y][jump.get(tag, "other")] += 1
+            else:
+                for tagged_doc in X:
+                    for tagged_sent in tagged_doc:
+                        for _, tag in tagged_sent:
+                            if tag == "SPACE":
+                                continue
+                            self.pos_tag_counts_[jump.get(tag, "other")] += 1
 
-        Parameters
-        ----------
-        X : list or generator
-            Should be provided as a list of documents or a generator
-            that yields a list of documents that contain a list of
-            sentences that contain (token, tag) tuples.
-        """
-        jump = {
-            # combine proper and regular nouns
-            "NOUN": "noun", "PROPN": "noun",
-            "ADJ": "adjective",
-            "VERB": "verb",
-            # include particles with adverbs
-            "ADV": "adverb", "PART": "adverb",
-            "ADP": "adposition",
-            "PRON": "pronoun",
-            "CCONJ": "conjunction",
-            "PUNCT": "punctuation",
-            "DET": "determiner",
-            "NUM": "number",
-            "INTJ": "interjection",
-            "SYM": "symbol",
-        }
-
-        for tagged_doc in X:
-            for tagged_sent in tagged_doc:
-                for _, tag in tagged_sent:
-                    if tag == "SPACE":
-                        continue
-                    self.pos_tag_counts_[jump.get(tag, "other")] += 1
-
-    def _handle_treebank(self, X):
+    def _handle_treebank(self, X,y):
         """
         Create a part-of-speech tag mapping using the Penn Treebank tags
 
@@ -269,51 +276,98 @@ class PosTagVisualizer(TextVisualizer):
             that yields a list of documents that contain a list of
             sentences that contain (token, tag) tuples.
         """
-        for tagged_doc in X:
-            for tagged_sent in tagged_doc:
-                for _, tag in tagged_sent:
-                    if tag.startswith("N"):
-                        self.pos_tag_counts_["noun"] += 1
-                    elif tag.startswith("J"):
-                        self.pos_tag_counts_["adjective"] += 1
-                    elif tag.startswith("V"):
-                        self.pos_tag_counts_["verb"] += 1
-                    # include particles with adverbs
-                    elif tag.startswith("RB") or tag == "RP":
-                        self.pos_tag_counts_["adverb"] += 1
-                    elif tag.startswith("PR"):
-                        self.pos_tag_counts_["pronoun"] += 1
-                    elif tag.startswith("W"):
-                        self.pos_tag_counts_["wh- word"] += 1
-                    elif tag == "CC":
-                        self.pos_tag_counts_["conjunction"] += 1
-                    elif tag == "CD":
-                        self.pos_tag_counts_["digit"] += 1
-                    # combine predeterminer and determiner
-                    elif tag in ["DT" or "PDT"]:
-                        self.pos_tag_counts_["determiner"] += 1
-                    elif tag == "EX":
-                        self.pos_tag_counts_["existential"] += 1
-                    elif tag == "FW":
-                        self.pos_tag_counts_["non-English"] += 1
-                    elif tag == "IN":
-                        self.pos_tag_counts_["preposition"] += 1
-                    elif tag == "POS":
-                        self.pos_tag_counts_["possessive"] += 1
-                    elif tag == "LS":
-                        self.pos_tag_counts_["list"] += 1
-                    elif tag == "MD":
-                        self.pos_tag_counts_["modal"] += 1
-                    elif tag in self.punct_tags:
-                        self.pos_tag_counts_["punctuation"] += 1
-                    elif tag == "TO":
-                        self.pos_tag_counts_["infinitive"] += 1
-                    elif tag == "UH":
-                        self.pos_tag_counts_["interjection"] += 1
-                    elif tag == "SYM":
-                        self.pos_tag_counts_["symbol"] += 1
-                    else:
-                        self.pos_tag_counts_["other"] += 1
+        if self.stack:
+            for tagged_doc in X:
+                for tagged_sent,y in zip(tagged_doc,y):
+                    for _, tag in tagged_sent:
+                        if tag.startswith("N"):
+                            self.pos_tag_counts_[y]["noun"] += 1
+                        elif tag.startswith("J"):
+                            self.pos_tag_counts_[y]["adjective"] += 1
+                        elif tag.startswith("V"):
+                            self.pos_tag_counts_[y]["verb"] += 1
+                        # include particles with adverbs
+                        elif tag.startswith("RB") or tag == "RP":
+                            self.pos_tag_counts_[y]["adverb"] += 1
+                        elif tag.startswith("PR"):
+                            self.pos_tag_counts_[y]["pronoun"] += 1
+                        elif tag.startswith("W"):
+                            self.pos_tag_counts_[y]["wh- word"] += 1
+                        elif tag == "CC":
+                            self.pos_tag_counts_[y]["conjunction"] += 1
+                        elif tag == "CD":
+                            self.pos_tag_counts_[y]["digit"] += 1
+                        # combine predeterminer and determiner
+                        elif tag in ["DT" or "PDT"]:
+                            self.pos_tag_counts_[y]["determiner"] += 1
+                        elif tag == "EX":
+                            self.pos_tag_counts_[y]["existential"] += 1
+                        elif tag == "FW":
+                            self.pos_tag_counts_[y]["non-English"] += 1
+                        elif tag == "IN":
+                            self.pos_tag_counts_[y]["preposition"] += 1
+                        elif tag == "POS":
+                            self.pos_tag_counts_[y]["possessive"] += 1
+                        elif tag == "LS":
+                            self.pos_tag_counts_[y]["list"] += 1
+                        elif tag == "MD":
+                            self.pos_tag_counts_[y]["modal"] += 1
+                        elif tag in self.punct_tags:
+                            self.pos_tag_counts_[y]["punctuation"] += 1
+                        elif tag == "TO":
+                            self.pos_tag_counts_[y]["infinitive"] += 1
+                        elif tag == "UH":
+                            self.pos_tag_counts_[y]["interjection"] += 1
+                        elif tag == "SYM":
+                            self.pos_tag_counts_[y]["symbol"] += 1
+                        else:
+                            self.pos_tag_counts_[y]["other"] += 1
+        else:
+            for tagged_doc in X:
+                for tagged_sent in tagged_doc:
+                    for _, tag in tagged_sent:
+                        if tag.startswith("N"):
+                            self.pos_tag_counts_["noun"] += 1
+                        elif tag.startswith("J"):
+                            self.pos_tag_counts_["adjective"] += 1
+                        elif tag.startswith("V"):
+                            self.pos_tag_counts_["verb"] += 1
+                        # include particles with adverbs
+                        elif tag.startswith("RB") or tag == "RP":
+                            self.pos_tag_counts_["adverb"] += 1
+                        elif tag.startswith("PR"):
+                            self.pos_tag_counts_["pronoun"] += 1
+                        elif tag.startswith("W"):
+                            self.pos_tag_counts_["wh- word"] += 1
+                        elif tag == "CC":
+                            self.pos_tag_counts_["conjunction"] += 1
+                        elif tag == "CD":
+                            self.pos_tag_counts_["digit"] += 1
+                        # combine predeterminer and determiner
+                        elif tag in ["DT" or "PDT"]:
+                            self.pos_tag_counts_["determiner"] += 1
+                        elif tag == "EX":
+                            self.pos_tag_counts_["existential"] += 1
+                        elif tag == "FW":
+                            self.pos_tag_counts_["non-English"] += 1
+                        elif tag == "IN":
+                            self.pos_tag_counts_["preposition"] += 1
+                        elif tag == "POS":
+                            self.pos_tag_counts_["possessive"] += 1
+                        elif tag == "LS":
+                            self.pos_tag_counts_["list"] += 1
+                        elif tag == "MD":
+                            self.pos_tag_counts_["modal"] += 1
+                        elif tag in self.punct_tags:
+                            self.pos_tag_counts_["punctuation"] += 1
+                        elif tag == "TO":
+                            self.pos_tag_counts_["infinitive"] += 1
+                        elif tag == "UH":
+                            self.pos_tag_counts_["interjection"] += 1
+                        elif tag == "SYM":
+                            self.pos_tag_counts_["symbol"] += 1
+                        else:
+                            self.pos_tag_counts_["other"] += 1
 
     def draw(self, **kwargs):
         """
@@ -330,62 +384,51 @@ class PosTagVisualizer(TextVisualizer):
         ax : matplotlib axes
             Axes on which the PosTagVisualizer was drawn.
         """
-        if(self.last == None):
-            if self.stack:
-                #Plot first layer of stack
-                colors = resolve_colors(
-                            n_colors=len(self.label_), 
-                            colormap=self.colormap,
-                            colors=self.colors
-                            )
-                self.ax.bar(
-                    range(len(self.pos_tag_counts_)), 
-                    list(self.pos_tag_counts_.values()),
-                    color=colors[self.stack_count] 
-                    )
-                self.stack_count += 1
-                self.last = list(self.pos_tag_counts_.values())
-            else:
-                # Plot barplot(not stacked)
-                colors = resolve_colors(
-                    n_colors=len(self.pos_tag_counts_), 
-                    colormap=self.colormap, 
-                    colors=self.colors
-                    )
-                if self.frequency:
-                    # Sort tags with respect to frequency in corpus
-                    sorted_tags = sorted(
-                        self.pos_tag_counts_, key=self.pos_tag_counts_.get, 
-                        reverse=True
-                        )
-                    sorted_counts = [self.pos_tag_counts_[tag] for tag in sorted_tags]
-        
-                    self.ax.bar(range(len(sorted_tags)), sorted_counts, 
-                                color=colors)
-                    return self.ax
-        
-                self.ax.bar(
-                    range(len(self.pos_tag_counts_)),
-                    list(self.pos_tag_counts_.values()),
-                    color=colors,
-                    )
-        else:
-            #Plot stack barplot
+        if self.stack:
+            #Plot stack barchart
             colors = resolve_colors(
-                        n_colors=len(self.label_), 
+                        n_colors=len(self.labels_), 
                         colormap=self.colormap,
                         colors=self.colors
                         )
-            
-            self.ax.bar(
-                range(len(self.pos_tag_counts_)), 
-                list(self.pos_tag_counts_.values()), 
-                bottom=self.last, 
-                color=colors[self.stack_count]
+            last=[0]*len(self.pos_tag_counts_[self.labels_[0]])
+            for i in range(len(self.labels_)):
+                self.ax.bar(
+                range(len(self.pos_tag_counts_[self.labels_[i]])), 
+                list(self.pos_tag_counts_[self.labels_[i]].values()),
+                bottom=last,
+                color=colors[i] 
                 )
-            self.stack_count += 1
-            self.last = [sum(x) for x in zip(list(self.last), 
-                             list(self.pos_tag_counts_.values()))]
+                last = [sum(x) for x in zip(list(last), 
+                         list(self.pos_tag_counts_[self.labels_[i]].values()))]
+
+#            self.stack_count += 1
+#            self.last = list(self.pos_tag_counts_.values())
+        
+        else:
+            # Plot barplot(not stacked)
+            colors = resolve_colors(
+                n_colors=len(self.pos_tag_counts_), 
+                colormap=self.colormap, 
+                colors=self.colors
+                )
+            if self.frequency:
+                # Sort tags with respect to frequency in corpus
+                sorted_tags = sorted(
+                    self.pos_tag_counts_, key=self.pos_tag_counts_.get, 
+                    reverse=True
+                    )
+                sorted_counts = [self.pos_tag_counts_[tag] for tag in sorted_tags]
+    
+                self.ax.bar(range(len(sorted_tags)), sorted_counts, 
+                            color=colors)
+                return self.ax
+    
+            self.ax.bar(
+                range(len(self.pos_tag_counts_)),
+                list(self.pos_tag_counts_.values()),
+                color=colors,
+                )
         return self.ax
         
 
@@ -399,32 +442,39 @@ class PosTagVisualizer(TextVisualizer):
             generic keyword arguments.
         """
         # NOTE: not deduping here, so this is total, not unique
-        self.set_title(
-            "PosTag plot for {}-token corpus".format(
-                (sum(self.pos_tag_counts_.values()))
-            )
-        )
-
-        self.ax.set_xticks(range(len(self.pos_tag_counts_)))
-        self.ax.set_xticklabels(list(self.pos_tag_counts_.keys()), rotation=90)
-
-        # Set the axis labels
-        if self.frequency:
-            self.ax.set_xlabel(
-                "{} part-of-speech tags, sorted by frequency".format(self.tagset_names[self.tagset])
-            )
-        else:
-            self.ax.set_xlabel(
-                "{} part-of-speech tags".format(self.tagset_names[self.tagset])
-            )
+        
         self.ax.set_ylabel("Count")
-        if(self.stack == True):
+        if self.stack:
+            self.ax.set_xticks(range(len(self.pos_tag_counts_[self.labels_[0]])))
+            self.ax.set_xticklabels(list(self.pos_tag_counts_[self.labels_[0]].keys()),
+                                    rotation=90)
             colors = resolve_colors(
-                    n_colors=len(self.label_), 
+                    n_colors=len(self.labels_), 
                     colormap=self.colormap,
                     colors=self.colors
                     )
-            manual_legend(self, self.label_, colors, loc='best')
+            manual_legend(self, self.labels_, colors, loc='best')
+            self.set_title(
+                "PosTag plot for {}-token corpus".format(
+                    (sum([sum(i.values()) for i in self.pos_tag_counts_.values()]))
+                )
+            )
+        else:
+            self.ax.set_xticks(range(len(self.pos_tag_counts_)))
+            self.ax.set_xticklabels(list(self.pos_tag_counts_.keys()), rotation=90)
+            if self.frequency:
+                self.ax.set_xlabel(
+                    "{} part-of-speech tags, sorted by frequency".format(self.tagset_names[self.tagset])
+                )
+            else:
+                self.ax.set_xlabel(
+                    "{} part-of-speech tags".format(self.tagset_names[self.tagset])
+                )
+            self.set_title(
+                "PosTag plot for {}-token corpus".format(
+                    (sum(self.pos_tag_counts_.values()))
+                )
+            )
 
 
     def poof(self, outpath=None, **kwargs):
