@@ -401,10 +401,6 @@ class PosTagVisualizer(TextVisualizer):
                 )
                 last = [sum(x) for x in zip(list(last), 
                          list(self.pos_tag_counts_[self.labels_[i]].values()))]
-
-#            self.stack_count += 1
-#            self.last = list(self.pos_tag_counts_.values())
-        
         else:
             # Plot barplot(not stacked)
             colors = resolve_colors(
@@ -464,7 +460,8 @@ class PosTagVisualizer(TextVisualizer):
             self.ax.set_xticklabels(list(self.pos_tag_counts_.keys()), rotation=90)
             if self.frequency:
                 self.ax.set_xlabel(
-                    "{} part-of-speech tags, sorted by frequency".format(self.tagset_names[self.tagset])
+                    "{} part-of-speech tags, sorted by frequency".format(
+                            self.tagset_names[self.tagset])
                 )
             else:
                 self.ax.set_xlabel(
