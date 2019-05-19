@@ -171,8 +171,9 @@ class ImageComparison(object):
     ValueError : at least one of visualizer or ax must be specified.
     """
 
-    def __init__(self, stack, visualizer=None, ax=None, tol=0.01, windows_tol=0.01, ext=".png",
-                 remove_ticks=True, remove_title=True, remove_legend=False):
+    def __init__(self, stack, visualizer=None, ax=None, tol=0.01, 
+                 windows_tol=0.01, ext=".png", remove_ticks=True, 
+                 remove_title=True, remove_labels=True, remove_legend=True):
 
         # Ensure we have something to draw on
         if visualizer is None and ax is None:
@@ -212,6 +213,7 @@ class ImageComparison(object):
         self.ext = ext
         self.remove_ticks = remove_ticks
         self.remove_title = remove_title
+        self.remove_labels = remove_labels
         self.remove_legend = remove_legend
 
     def __call__(self):
@@ -279,7 +281,11 @@ class ImageComparison(object):
                 except AttributeError:
                     continue
 
-        if self.remove_legend:
+        if self.remove_labels:
+            self.ax.set_xlabel("")
+            self.ax.set_ylabel("")
+
+        if self.remove_legend and self.ax.get_legend() is not None:
             self.ax.legend_.remove()
 
     def save(self):

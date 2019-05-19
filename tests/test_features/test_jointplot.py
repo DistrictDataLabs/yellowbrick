@@ -23,17 +23,17 @@ be tested.
 ##########################################################################
 
 import sys
-import pytest
-import numpy as np
-
 from functools import partial
-from tests.base import VisualTestCase
-from ..fixtures import TestDataset
 from unittest.mock import patch, MagicMock
 
-from yellowbrick.features.jointplot import *
-from yellowbrick.exceptions import YellowbrickValueError
+import numpy as np
+import pytest
 from sklearn.datasets import make_classification, make_regression
+
+from tests.base import VisualTestCase
+from yellowbrick.exceptions import YellowbrickValueError
+from yellowbrick.features.jointplot import *
+from ..fixtures import TestDataset
 
 try:
     # Only available in Matplotlib >= 2.0.2
