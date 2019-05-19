@@ -36,34 +36,30 @@ The ``ClassBalance`` visualizer has a "compare" mode, where the train and test d
     :context: close-figs
     :alt: ClassBalance Visualizer on the occupancy dataset
 
+    from sklearn.model_selection import TimeSeriesSplit
+
     from yellowbrick.datasets import load_occupancy
     from yellowbrick.target import ClassBalance
 
     # Load the classification dataset
     X, y = load_occupancy()
 
-    X = X.to_numpy()  # transform from pandas to numpy
-    y = y.to_numpy()  # transform from pandas to numpy
-
-    # Specify the classes of the target
-    classes = ["unoccupied", "occupied"]
-
-    from sklearn.model_selection import TimeSeriesSplit
-    tscv = TimeSeriesSplit(n_splits=3)
-
+    # Create the training and test data
+    tscv = TimeSeriesSplit()
     for train_index, test_index in tscv.split(X):
-        X_train, X_test = X[train_index], X[test_index]
-        y_train, y_test = y[train_index], y[test_index]
+        X_train, X_test = X.iloc[train_index], X.iloc[test_index]
+        y_train, y_test = y.iloc[train_index], y.iloc[test_index]
 
-        # Instantiate the visualizer
-        visualizer = ClassBalance(labels=["unoccupied", "occupied"])
+    # Instantiate the visualizer
+    visualizer = ClassBalance(labels=["unoccupied", "occupied"])
 
-        visualizer.fit(y_train, y_test)        # Fit the data to the visualizer
-        visualizer.poof()                      # Draw/show/poof the data
+    visualizer.fit(y_train, y_test)        # Fit the data to the visualizer
+    visualizer.poof()                      # Draw/show/poof the data
+
 
 This visualization allows us to do a quick check to ensure that the proportion of each class is roughly similar in both splits. This visualization should be a first stop particularly when evaluation metrics are highly variable across different splits.
 
-This example uses TimeSeriesSplit to split time series data. Please check scikit-learn documentation: `TimeSeriesSplit <https://scikit-learn.org/stable/modules/generated/sklearn.model_selection.TimeSeriesSplit.html>`_.
+.. note:: This example uses ``TimeSeriesSplit`` to split the data into the training and test sets. For more information on this cross-validation method, please refer to the scikit-learn `documentation <https://scikit-learn.org/stable/modules/generated/sklearn.model_selection.TimeSeriesSplit.html>`_.
 
 API Reference
 -------------
