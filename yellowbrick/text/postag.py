@@ -25,6 +25,7 @@ from yellowbrick.draw import manual_legend
 from yellowbrick.exceptions import YellowbrickValueError
 
 import  numpy as np
+from collections import Counter
 ##########################################################################
 # Part-of-speech tag punctuation and labels
 ##########################################################################
@@ -50,15 +51,12 @@ class PosTagVisualizer(TextVisualizer):
     only about a word’s definition, but also its use in context (for
     example the words “ship” and “shop” can be either a verb or a noun,
     depending on the context).
-
     The PosTagVisualizer creates a bar chart to visualize the relative
     proportions of different parts-of-speech in a corpus.
-
     Note that the PosTagVisualizer requires documents to already be
     part-of-speech tagged; the visualizer expects the corpus to come in
     the form of a list of (document) lists of (sentence) lists of
     (tag, token) tuples.
-
     Parameters
     ----------
     ax : matplotlib axes
@@ -79,12 +77,10 @@ class PosTagVisualizer(TextVisualizer):
         Note that fit() requires y for this visualization.
     kwargs : dict
         Pass any additional keyword arguments to the PosTagVisualizer.
-
     Attributes
     ----------
     pos_tag_counts_: dict
         Mapping of part-of-speech tags to counts.
-
     Examples
     --------
     >>> viz = PosTagVisualizer()
@@ -125,21 +121,17 @@ class PosTagVisualizer(TextVisualizer):
         """
         Fits the corpus to the appropriate tag map.
         Text documents must be tokenized & tagged before passing to fit.
-
         Parameters
         ----------
         X : list or generator
             Should be provided as a list of documents or a generator
             that yields a list of documents that contain a list of
             sentences that contain (token, tag) tuples.
-
         y : ndarray or Series of length n
             An optional array of target values that are ignored by the
             visualizer.
-
         kwargs : dict
             Pass generic arguments to the drawing method
-
         Returns
         -------
         self : instance
@@ -251,8 +243,8 @@ class PosTagVisualizer(TextVisualizer):
                 "SYM": "symbol",
             }
             if self.stack: 
-                for tagged_doc in X:
-                    for tagged_sent, y in zip(tagged_doc, y):
+                for tagged_doc,y in zip(X,y):
+                    for tagged_sent in tagged_doc:
                         for _, tag in tagged_sent:
                             if tag == "SPACE":
                                 continue
@@ -268,7 +260,6 @@ class PosTagVisualizer(TextVisualizer):
     def _handle_treebank(self, X,y):
         """
         Create a part-of-speech tag mapping using the Penn Treebank tags
-
         Parameters
         ----------
         X : list or generator
@@ -277,8 +268,8 @@ class PosTagVisualizer(TextVisualizer):
             sentences that contain (token, tag) tuples.
         """
         if self.stack:
-            for tagged_doc in X:
-                for tagged_sent,y in zip(tagged_doc,y):
+            for tagged_doc,y in zip(X,y):
+                for tagged_sent in tagged_doc:
                     for _, tag in tagged_sent:
                         if tag.startswith("N"):
                             self.pos_tag_counts_[y]["noun"] += 1
@@ -373,12 +364,10 @@ class PosTagVisualizer(TextVisualizer):
         """
         Called from the fit method, this method creates the canvas and
         draws the part-of-speech tag mapping as a bar chart.
-
         Parameters
         ----------
         kwargs: dict
             generic keyword arguments.
-
         Returns
         -------
         ax : matplotlib axes
@@ -391,6 +380,30 @@ class PosTagVisualizer(TextVisualizer):
                         colormap=self.colormap,
                         colors=self.colors
                         )
+            # Sort tags with respect to frequency in corpus
+            if self.frequency:
+                collected = sum((Counter(game) for game in self.pos_tag_counts_.values())
+                                , Counter())
+                self.sorted_tags = sorted(
+                        collected, key=collected.get, 
+                        reverse=True
+                        )
+                sorted_list=[]
+                for i in self.labels_:
+                    sorted_list.append([self.pos_tag_counts_[i][tag] for tag in self.sorted_tags])
+                last=[0]*len(sorted_list[0])
+                for i in range(len(sorted_list)):
+                    self.ax.bar(
+                            range(len(sorted_list[i])), 
+                            sorted_list[i],
+                            bottom=last,
+                            color=colors[i]
+                            )
+                    last = [sum(x) for x in zip(list(last), 
+                                sorted_list[i])]
+                return self.ax
+            
+            # Non-sorted stack barplot
             last=[0]*len(self.pos_tag_counts_[self.labels_[0]])
             for i in range(len(self.labels_)):
                 self.ax.bar(
@@ -410,16 +423,16 @@ class PosTagVisualizer(TextVisualizer):
                 )
             if self.frequency:
                 # Sort tags with respect to frequency in corpus
-                sorted_tags = sorted(
+                self.sorted_tags = sorted(
                     self.pos_tag_counts_, key=self.pos_tag_counts_.get, 
                     reverse=True
                     )
-                sorted_counts = [self.pos_tag_counts_[tag] for tag in sorted_tags]
+                sorted_counts = [self.pos_tag_counts_[tag] for tag in self.sorted_tags]
     
-                self.ax.bar(range(len(sorted_tags)), sorted_counts, 
+                self.ax.bar(range(len(self.sorted_tags)), sorted_counts, 
                             color=colors)
                 return self.ax
-    
+            
             self.ax.bar(
                 range(len(self.pos_tag_counts_)),
                 list(self.pos_tag_counts_.values()),
@@ -431,7 +444,6 @@ class PosTagVisualizer(TextVisualizer):
     def finalize(self, **kwargs):
         """
         Finalize the plot with ticks, labels, and title
-
         Parameters
         ----------
         kwargs: dict
@@ -442,7 +454,10 @@ class PosTagVisualizer(TextVisualizer):
         self.ax.set_ylabel("Count")
         if self.stack:
             self.ax.set_xticks(range(len(self.pos_tag_counts_[self.labels_[0]])))
-            self.ax.set_xticklabels(list(self.pos_tag_counts_[self.labels_[0]].keys()),
+            if self.frequency:
+                self.ax.set_xticklabels(self.sorted_tags, rotation=90)
+            else:
+                self.ax.set_xticklabels(list(self.pos_tag_counts_[self.label_[0]].keys()),
                                     rotation=90)
             colors = resolve_colors(
                     n_colors=len(self.labels_), 
@@ -459,11 +474,14 @@ class PosTagVisualizer(TextVisualizer):
             self.ax.set_xticks(range(len(self.pos_tag_counts_)))
             self.ax.set_xticklabels(list(self.pos_tag_counts_.keys()), rotation=90)
             if self.frequency:
+                self.ax.set_xticklabels(list(self.sorted_tags), rotation=90)
                 self.ax.set_xlabel(
                     "{} part-of-speech tags, sorted by frequency".format(
-                            self.tagset_names[self.tagset])
+                            self.tagset_names[self.tagset]
+                            )
                 )
             else:
+                self.ax.set_xticklabels(list(self.pos_tag_counts_.keys()), rotation=90)
                 self.ax.set_xlabel(
                     "{} part-of-speech tags".format(self.tagset_names[self.tagset])
                 )
@@ -501,7 +519,6 @@ def postag(
     in X, which consists of a part-of-speech-tagged corpus, which the
     visualizer expects to be a list of lists of lists of (token, tag)
     tuples.
-
     Parameters
     ----------
     X : list or generator
@@ -523,7 +540,6 @@ def postag(
         from most to least frequent.
     kwargs : dict
         Pass any additional keyword arguments to the PosTagVisualizer.
-
     Returns
     -------
     ax : matplotlib axes
@@ -540,4 +556,3 @@ def postag(
 
     # Return the axes object on the visualizer
     return visualizer
-
