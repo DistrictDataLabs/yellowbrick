@@ -23,8 +23,8 @@ import numpy as np
 import numpy.testing as npt
 
 from tests.base import VisualTestCase
-from tests.dataset import DatasetMixin
 
+from yellowbrick.datasets import load_occupancy
 from yellowbrick.features.rankd import *
 from yellowbrick.features.rankd import kendalltau
 from sklearn.datasets import make_regression
@@ -102,7 +102,7 @@ class TestKendallTau(object):
 ##########################################################################
 
 @pytest.mark.usefixtures("dataset")
-class TestRank1D(VisualTestCase, DatasetMixin):
+class TestRank1D(VisualTestCase):
     """
     Test the Rank1D visualizer
     """
@@ -139,20 +139,39 @@ class TestRank1D(VisualTestCase, DatasetMixin):
         oz.finalize()
         self.assert_images_similar(oz)
 
-    @pytest.mark.skipif(pd is None, reason="requires pandas")
     @pytest.mark.filterwarnings("ignore:p-value")
-    def test_rank1d_integrated(self):
+    @pytest.mark.skipif(pd is None, reason="test requires pandas")
+    def test_rank1d_integrated_pandas(self):
         """
         Test Rank1D on occupancy dataset with pandas DataFrame and Series
         """
-        df = self.load_pandas("occupancy")
+        data = load_occupancy(return_dataset=True)
+        X, y = data.to_pandas()
+        features = data.meta["features"]
 
-        # Load the data from the fixture
-        features = [
-            "temperature", "relative humidity", "light", "C02", "humidity"
-        ]
-        X = df[features]
-        y = df['occupancy']
+        assert isinstance(X, pd.DataFrame)
+        assert isinstance(y, pd.Series)
+
+        # Test the visualizer
+        oz = Rank1D(features=features, show_feature_names=True)
+        assert oz.fit(X, y) is oz
+        assert oz.transform(X) is X
+
+        # Image similarity testing
+        oz.finalize()
+        self.assert_images_similar(oz)
+
+    @pytest.mark.filterwarnings("ignore:p-value")
+    def test_rank1d_integrated_numpy(self):
+        """
+        Test Rank1D on occupancy dataset with default numpy data structures
+        """
+        data = load_occupancy(return_dataset=True)
+        X, y = data.to_numpy()
+        features = data.meta["features"]
+
+        assert isinstance(X, np.ndarray)
+        assert isinstance(y, np.ndarray)
 
         # Test the visualizer
         oz = Rank1D(features=features, show_feature_names=True)
@@ -169,7 +188,7 @@ class TestRank1D(VisualTestCase, DatasetMixin):
 ##########################################################################
 
 @pytest.mark.usefixtures("dataset")
-class TestRank2D(VisualTestCase, DatasetMixin):
+class TestRank2D(VisualTestCase):
     """
     Test the Rank2D visualizer
     """
@@ -297,19 +316,40 @@ class TestRank2D(VisualTestCase, DatasetMixin):
     @pytest.mark.xfail(
         sys.platform == 'win32', reason="images not close on windows"
     )
-    @pytest.mark.skipif(pd is None, reason="requires pandas")
-    def test_rank2d_integrated(self):
+    @pytest.mark.skipif(pd is None, reason="test requires pandas")
+    def test_rank2d_integrated_pandas(self):
         """
         Test Rank2D on occupancy dataset with pandas DataFrame and Series
         """
-        df = self.load_pandas("occupancy")
+        data = load_occupancy(return_dataset=True)
+        X, y = data.to_pandas()
+        features = data.meta["features"]
 
-        # Load the data from the fixture
-        features = [
-            "temperature", "relative humidity", "light", "C02", "humidity"
-        ]
-        X = df[features]
-        y = df['occupancy']
+        assert isinstance(X, pd.DataFrame)
+        assert isinstance(y, pd.Series)
+
+        # Test the visualizer
+        oz = Rank2D(features=features, show_feature_names=True)
+        assert oz.fit(X, y) is oz
+        assert oz.transform(X) is X
+        oz.finalize()
+
+        # Image similarity testing
+        self.assert_images_similar(oz, tol=0.1)
+
+    @pytest.mark.xfail(
+        sys.platform == 'win32', reason="images not close on windows"
+    )
+    def test_rank2d_integrated_numpy(self):
+        """
+        Test Rank2D on occupancy dataset with numpy ndarray
+        """
+        data = load_occupancy(return_dataset=True)
+        X, y = data.to_numpy()
+        features = data.meta["features"]
+
+        assert isinstance(X, np.ndarray)
+        assert isinstance(y, np.ndarray)
 
         # Test the visualizer
         oz = Rank2D(features=features, show_feature_names=True)

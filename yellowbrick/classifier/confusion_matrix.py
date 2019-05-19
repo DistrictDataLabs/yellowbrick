@@ -270,6 +270,11 @@ class ConfusionMatrix(ClassificationScoreVisualizer):
         # Return the axes being drawn on
         return self.ax
 
+    def poof(self, outpath=None, **kwargs):
+        if outpath is not None:
+            kwargs["bbox_inches"] = kwargs.get("bbox_inches", "tight")
+        return super(ConfusionMatrix, self).poof(outpath, **kwargs)
+
     def finalize(self, **kwargs):
         self.set_title('{} Confusion Matrix'.format(self.name))
         self.ax.set_ylabel('True Class')

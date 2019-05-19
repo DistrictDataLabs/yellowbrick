@@ -9,14 +9,53 @@ Yellowbrick: Machine Learning Visualization
 
 .. image:: images/visualizers.png
 
-Yellowbrick is a suite of visual diagnostic tools called "Visualizers" that extend the Scikit-Learn API to allow human steering of the model selection process. In a nutshell, Yellowbrick combines scikit-learn with matplotlib in the best tradition of the scikit-learn documentation, but to produce visualizations for *your* models! For more on Yellowbrick, please see the :doc:`about`.
+Yellowbrick helps you make better models through visualization. 
+________________________________________________________________
 
-If you're new to Yellowbrick, checkout the :doc:`quickstart` or skip ahead to the :doc:`tutorial`. Yellowbrick is a rich library with many Visualizers being added on a regular basis. For details on specific Visualizers and extended usage head over to the :doc:`api/index`. Interested in contributing to Yellowbrick? Checkout the :ref:`contributing guide <contributing>` . If you've signed up to do user testing, head over to the :doc:`evaluation` (and thank you!).
+Yellowbrick extends the Scikit-Learn API to make model selection and hyperparameter tuning easier. Under the hood, it's using Matplotlib. 
+
+Recommended Learning Path
+-------------------------
+
+1. Check out the :doc:`quickstart` 
+
+2. Try the the :doc:`tutorial`. 
+
+3. Use Yellowbrick in your project. 
+
+4. For details on specific Visualizers and extended usage head over to the :doc:`api/index`. 
+
+5. Follow us on Twitter `@scikit_yb <https://twitter.com/scikit_yb>`_. You'll hear about new visualizers as they're added. 
+
+Contributing
+------------
+
+Interested in contributing to Yellowbrick? Yellowbrick is a welcoming, inclusive project and we would love to have you. 
+We follow the `Python Software Foundation Code of Conduct <http://www.python.org/psf/codeofconduct/>`_. 
+
+No matter your level of technical skill, you can be helpful. We appreciate bug reports, user testing, feature requests, bug fixes, product enhancements, and documentation improvements. 
+
+Check out the :doc:`contributing/index` guide!
+
+If you've signed up to do user testing, head over to the :doc:`evaluation`.
+
+Please consider joining the `Google Groups Listserv <https://groups.google.com/forum/#!forum/yellowbrick>`_ listserve so you can respond to questions.
+
+Thank you for your contributions!
+
+Concepts & API
+--------------
 
 Visualizers
 -----------
+The primary goal of Yellowbrick is to create a sensical API similar to Scikit-Learn. 
 
-Visualizers are estimators (objects that learn from data) whose primary objective is to create visualizations that allow insight into the model selection process. In Scikit-Learn terms, they can be similar to transformers when visualizing the data space or wrap an model estimator similar to how the "ModelCV" (e.g. `RidgeCV <http://scikit-learn.org/stable/modules/generated/sklearn.linear_model.RidgeCV.html>`_, `LassoCV <http://scikit-learn.org/stable/modules/generated/sklearn.linear_model.LassoCV.html>`_) methods work. The primary goal of Yellowbrick is to create a sensical API similar to Scikit-Learn. Some of our most popular visualizers include:
+Visualizers are the core objects in Yellowbrick. 
+They are similar to transformers in Scikit-Learn. 
+Visualizers can wrap a model estimator - similar to how the "ModelCV" (e.g. `RidgeCV <http://scikit-learn.org/stable/modules/generated/sklearn.linear_model.RidgeCV.html>`_, `LassoCV <http://scikit-learn.org/stable/modules/generated/sklearn.linear_model.LassoCV.html>`_) methods work.  
+
+
+Some of our most popular visualizers include:
 
 Feature Visualization
 ~~~~~~~~~~~~~~~~~~~~~
@@ -36,7 +75,7 @@ Classification Visualization
 - :doc:`api/classifier/class_prediction_error`: shows error and support in classification
 - :doc:`api/classifier/classification_report`: visual representation of precision, recall, and F1
 - :doc:`ROC/AUC Curves <api/classifier/rocauc>`: receiver operator characteristics and area under the curve
--  :doc:`api/classifier/prcurve`: precision vs recall for different probability thresholds
+- :doc:`api/classifier/prcurve`: precision vs recall for different probability thresholds
 - :doc:`Confusion Matrices <api/classifier/confusion_matrix>`: visual description of class decision making
 - :doc:`Discrimination Threshold <api/classifier/threshold>`: find a threshold that best separates binary classes
 
@@ -76,27 +115,35 @@ Text Visualization
 - :doc:`api/text/umap_vis`: plot similar documents closer together to discover clusters
 - :doc:`api/text/postag`: plot the counts of different parts-of-speech throughout a tagged corpus
 
-... and more! Visualizers are being added all the time; be sure to check the examples (or even the `develop branch <https://github.com/DistrictDataLabs/yellowbrick/tree/develop>`_) and feel free to contribute your ideas for new Visualizers!
+... and more! Visualizers are being added all the time. Check the examples (or even the `develop branch <https://github.com/DistrictDataLabs/yellowbrick/tree/develop>`_). Feel free to contribute your ideas for new Visualizers!
 
 Getting Help
 ------------
 
-Yellowbrick is a welcoming, inclusive project in the tradition of matplotlib and scikit-learn. Similar to those projects, we follow the `Python Software Foundation Code of Conduct <http://www.python.org/psf/codeofconduct/>`_. Please don't hesitate to reach out to us for help or if you have any contributions or bugs to report!
+Can't get someting to work? Here are places you can find help.
 
-The primary way to ask for help with Yellowbrick is to post on our `Google Groups Listserv <https://groups.google.com/forum/#!forum/yellowbrick>`_. This is an email list/forum that members of the community can join and respond to each other; you should be able to receive the quickest response here. Please also consider joining the group so you can respond to questions! You can also ask questions on `Stack Overflow <http://stackoverflow.com/questions/tagged/yellowbrick>`_ and tag them with "yellowbrick". Or you can add issues on GitHub. You can also tweet or direct message us on Twitter `@scikit_yb <https://twitter.com/scikit_yb>`_.
+1. The docs (you're here!).
+2. `Stack Overflow <http://stackoverflow.com/questions/tagged/yellowbrick>`_. If you ask a question, please tag it with "yellowbrick".
+3. The Yellowbrick `Google Groups Listserv <https://groups.google.com/forum/#!forum/yellowbrick>`_.
+4. You can also Tweet or direct message us on Twitter `@scikit_yb <https://twitter.com/scikit_yb>`_.
+
+
+Find a Bug? 
+-----------
+
+Check if there's already an open `issue <https://github.com/DistrictDataLabs/yellowbrick/issues/>`_ on the topic. If needed, file an `issue <https://github.com/DistrictDataLabs/yellowbrick/issues/>`_.
+
 
 Open Source
 -----------
 
-The Yellowbrick `license <https://github.com/DistrictDataLabs/yellowbrick/blob/master/LICENSE.txt>`_ is an open source `Apache 2.0 <http://www.apache.org/licenses/LICENSE-2.0>`_ license. Yellowbrick enjoys a very active developer community; please consider joining them and `contributing <https://github.com/DistrictDataLabs/yellowbrick/blob/develop/CONTRIBUTING.md>`_!
+The Yellowbrick `license <https://github.com/DistrictDataLabs/yellowbrick/blob/master/LICENSE.txt>`_ is an open source `Apache 2.0 <http://www.apache.org/licenses/LICENSE-2.0>`_ license. Yellowbrick enjoys a very active developer community; please consider :doc:`contributing/index`!
 
 Yellowbrick is hosted on `GitHub <https://github.com/DistrictDataLabs/yellowbrick/>`_. The `issues <https://github.com/DistrictDataLabs/yellowbrick/issues/>`_ and `pull requests <https://github.com/DistrictDataLabs/yellowbrick/pulls>`_ are tracked there.
 
 
-Table of Contents
------------------
-
-The following is a complete listing of the Yellowbrick documentation for this version of the library:
+Documentation Table of Contents
+---------------------------
 
 .. toctree::
    :maxdepth: 2
