@@ -130,6 +130,7 @@ class SilhouetteVisualizerTests(VisualTestCase):
     def test_colors_silhouette(self):
         """
         Test no exceptions for modifying the colors in a silhouette visualizer
+        with a list of color names
         """
         # Generate a blobs data set
         X, y = make_blobs(
@@ -143,6 +144,28 @@ class SilhouetteVisualizerTests(VisualTestCase):
             visualizer = SilhouetteVisualizer(MiniBatchKMeans(random_state=0), ax=ax,
                 colors=['red', 'green', 'blue', 'indigo', 'cyan', 'lavender']
             )
+            visualizer.fit(X)
+            visualizer.poof()
+
+            self.assert_images_similar(visualizer)
+        except Exception as e:
+            self.fail("error during silhouette: {}".format(e))
+
+    def test_colormap_as_colors_silhouette(self):
+        """
+        Test no exceptions for modifying the colors in a silhouette visualizer
+        by using a matplotlib colormap as colors
+        """
+        # Generate a blobs data set
+        X, y = make_blobs(
+            n_samples=1000, n_features=12, centers=8, shuffle=False, random_state=0
+        )
+
+        try:
+            fig = plt.figure()
+            ax = fig.add_subplot()
+
+            visualizer = SilhouetteVisualizer(MiniBatchKMeans(random_state=0), ax=ax, colors='cool')
             visualizer.fit(X)
             visualizer.poof()
 
