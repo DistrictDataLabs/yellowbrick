@@ -37,6 +37,7 @@ Minor Changes:
     - Updated the gallery to generate thumbnail-quality images.
     - Updated the example notebooks and created a quickstart notebook.
     - Fixed broken links in the documentation.
+    - Add legend to SilhouetteVisualizer for the average score axis
 
 Compatibility Notes:
     - This version provides support for matplotlib 3.0.1 or greater and drops support for matplotlib versions less than 2.0.
