@@ -21,7 +21,6 @@ import numpy as np
 import matplotlib.ticker as ticker
 
 from ..style import resolve_colors
-from ..style.palettes import PALETTES
 from .base import ClusteringScoreVisualizer
 
 from sklearn.metrics import silhouette_score, silhouette_samples
