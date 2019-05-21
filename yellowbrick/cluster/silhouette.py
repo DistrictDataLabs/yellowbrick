@@ -68,10 +68,13 @@ class SilhouetteVisualizer(ClusteringScoreVisualizer):
         will be used (or generated if required).
 
     colormap : str, default: None
-        The name of the matplotlib color map to use for each cluster group. If None, the colormap Set1 is used. Overrides colors if both are specified.
+        The name of the matplotlib color map to use for each cluster group. Overrides colors if both are specified.
 
-    colors : iterable, default: None
-        A collection of colors to use for each cluster group. If there are fewer colors than cluster groups, colors will repeat.
+    colors : iterable or string, default: None
+        A collection of colors to use for each cluster group. If there are
+        fewer colors than cluster groups, colors will repeat. May also be a
+        matplotlib colormap string.
+
 
     kwargs : dict
         Keyword arguments that are passed to the base class and may influence
