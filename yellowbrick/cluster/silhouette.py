@@ -176,7 +176,8 @@ class SilhouetteVisualizer(ClusteringScoreVisualizer):
 
         # The vertical line for average silhouette score of all the values
         self.ax.axvline(
-            x=self.silhouette_score_, color="red", linestyle="--"
+            x=self.silhouette_score_, color="red", linestyle="--",
+            label="Average Silhouette Score"
         )
 
         return self.ax
@@ -215,3 +216,6 @@ class SilhouetteVisualizer(ClusteringScoreVisualizer):
         # Set the ticks on the axis object.
         self.ax.set_yticks([])  # Clear the yaxis labels / ticks
         self.ax.xaxis.set_major_locator(ticker.MultipleLocator(0.1))  # Set the ticks at multiples of 0.1
+
+        # Show legend (Average Silhouette Score axis)
+        self.ax.legend(loc='best')
