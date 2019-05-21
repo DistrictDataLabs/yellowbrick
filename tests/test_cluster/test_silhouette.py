@@ -120,7 +120,7 @@ class SilhouetteVisualizerTests(VisualTestCase):
             visualizer.fit(X)
             visualizer.poof()
 
-            self.assert_images_similar(visualizer)
+            self.assert_images_similar(visualizer, remove_legend=True)
         except Exception as e:
             self.fail("error during silhouette: {}".format(e))
 
@@ -147,7 +147,7 @@ class SilhouetteVisualizerTests(VisualTestCase):
             visualizer.fit(X)
             visualizer.poof()
 
-            self.assert_images_similar(visualizer)
+            self.assert_images_similar(visualizer, remove_legend=True)
         except Exception as e:
             self.fail("error during silhouette: {}".format(e))
 
@@ -169,6 +169,6 @@ class SilhouetteVisualizerTests(VisualTestCase):
             visualizer.fit(X)
             visualizer.poof()
 
-            self.assert_images_similar(visualizer)
+            self.assert_images_similar(visualizer, remove_legend=True)
         except Exception as e:
             self.fail("error during silhouette: {}".format(e))
