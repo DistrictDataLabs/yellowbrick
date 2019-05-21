@@ -27,8 +27,8 @@ import pytest
 import numpy as np
 
 from functools import partial
-from tests.dataset import Dataset
 from tests.base import VisualTestCase
+from ..fixtures import TestDataset
 from unittest.mock import patch, MagicMock
 
 from yellowbrick.features.jointplot import *
@@ -67,7 +67,7 @@ def discrete(request):
         n_classes=3, n_clusters_per_class=1, random_state=2221,
     )
 
-    request.cls.discrete = Dataset(X, y)
+    request.cls.discrete = TestDataset(X, y)
 
 
 @pytest.fixture(scope='class')
@@ -79,7 +79,7 @@ def continuous(request):
         n_samples=120, n_features=2, random_state=1112,
     )
 
-    request.cls.continuous = Dataset(X, y)
+    request.cls.continuous = TestDataset(X, y)
 
 
 ##########################################################################

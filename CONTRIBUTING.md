@@ -8,7 +8,7 @@ For more on the development path, goals, and motivations behind Yellowbrick, che
 
 Yellowbrick is an open source project that is supported by a community who will gratefully and humbly accept any contributions you might make to the project. Large or small, any contribution makes a big difference; and if you've never contributed to an open source project before, we hope you will start with Yellowbrick!
 
-Principally, Yellowbrick development is about the addition and creation of *visualizers* --- objects that learn from data and create a visual representation of the data or model. Visualizers integrate with scikit-learn estimators, transformers, and pipelines for specific purposes and as a result, can be simple to build and deploy. The most common contribution is therefore a new visualizer for a specific model or model family. We'll discuss in detail how to build visualizers later.
+Principally, Yellowbrick development is about the addition and creation of *visualizers* &mdash; objects that learn from data and create a visual representation of the data or model. Visualizers integrate with scikit-learn estimators, transformers, and pipelines for specific purposes and as a result, can be simple to build and deploy. The most common contribution is therefore a new visualizer for a specific model or model family. We'll discuss in detail how to build visualizers later.
 
 Beyond creating visualizers, there are many ways to contribute:
 
@@ -30,18 +30,17 @@ Yellowbrick is hosted on GitHub at https://github.com/DistrictDataLabs/yellowbri
 
 The typical workflow for a contributor to the codebase is as follows:
 
-1. **Discover** a bug or a feature by using Yellowbrick.
+1. **Discover** a bug or a feature by using Yellowbrick. 
 2. **Discuss** with the core contributes by [adding an issue](https://github.com/DistrictDataLabs/yellowbrick/issues).
-3. **Assign** yourself the task by pulling a card from our [Waffle Kanban](https://waffle.io/DistrictDataLabs/yellowbrick).
-4. **Fork** the repository into your own GitHub account.
-5. Create a **Pull Request** first thing to [connect with us](https://github.com/DistrictDataLabs/yellowbrick/pulls) about your task.
-6. **Code** the feature, write the documentation, add your contribution.
-7. **Review** the code with core contributors who will guide you to a high quality submission.
-8. **Merge** your contribution into the Yellowbrick codebase.
+3. **Fork** the repository into your own GitHub account.
+4. Create a **Pull Request** first thing to [connect with us](https://github.com/DistrictDataLabs/yellowbrick/pulls) about your task.
+5. **Code** the feature, write the documentation, add your contribution.
+6. **Review** the code with core contributors who will guide you to a high quality submission.
+7. **Merge** your contribution into the Yellowbrick codebase.
 
-**Note**: Create a pull request as soon as possible, even before you've started coding. This will allow the core contributors to give you advice about where to add your code or utilities and discuss other style choices and implementation details as you go. Don't wait!
+We believe that *contribution is collaboration* and therefore emphasize *communication* throughout the open source process. We rely heavily on GitHub's social coding tools to allow us to do this. For instance, we use GitHub's [milestone](https://help.github.com/en/articles/about-milestones) feature to focus our development efforts for each Yellowbrick semester, so be sure to check out the issues associated with our [current milestone](https://github.com/districtdatalabs/yellowbrick/milestones)!
 
-We believe that *contribution is collaboration* and therefore emphasize *communication* throughout the open source process. We rely heavily on GitHub's social coding tools to allow us to do this.
+Once you have a good sense of how you are going to implement the new feature (or fix the bug!), you can reach out for feedback from the maintainers by creating a [pull request](https://github.com/DistrictDataLabs/yellowbrick/pulls). Please note that if we feel your solution has not been thought out in earnest, or if the PR is not aligned with our [current milestone](https://github.com/districtdatalabs/yellowbrick/milestones) goals, we may reach out to ask that you close the PR so that we can prioritize reviewing the most critical feature requests and bug fixes.
 
 Ideally, any pull request should be capable of resolution within 6 weeks of being opened. This timeline helps to keep our pull request queue small and allows Yellowbrick to maintain a robust release schedule to give our users the best experience possible. However, the most important thing is to keep the dialogue going! And if you're unsure whether you can complete your idea within 6 weeks, you should still go ahead and open a PR and we will be happy to help you scope it down as needed.
 
@@ -104,7 +103,7 @@ Once forked, use the following steps to get your development environment set up 
     $ git checkout develop
     ```
 
-At this point you're ready to get started writing code. If you're going to take on a specific task, we'd strongly encourage you to check out the issue on [Waffle](https://waffle.io/DistrictDataLabs/yellowbrick) and create a [pull request](https://github.com/DistrictDataLabs/yellowbrick/pulls) **before you start coding** to better foster communication with other contributors.
+At this point you're ready to get started writing code!
 
 ### Branching Conventions
 
@@ -144,7 +143,7 @@ $ git branch -d feature-myfeature
 $ git push origin --delete feature-myfeature
 ```
 
-Head back to Waffle and checkout another issue!
+Head back to Github and checkout another issue!
 
 ## Developing Visualizers
 
@@ -304,7 +303,3 @@ class MyVisualizer(Visualizer):
 ```
 
 This is a very good start to producing a high quality visualizer, but unless it is part of the documentation on our website, it will not be visible. For details on including documentation in the `docs` directory see the [Contributing Documentation](http://www.scikit-yb.org/en/latest/contributing.html#documentation) section in the larger contributing guide.
-
-## Throughput
-
-[![Throughput Graph](https://graphs.waffle.io/DistrictDataLabs/yellowbrick/throughput.svg)](https://waffle.io/DistrictDataLabs/yellowbrick/metrics/throughput)
