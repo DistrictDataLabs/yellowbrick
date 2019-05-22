@@ -249,7 +249,7 @@ class Manifold(FeatureVisualizer):
                     self.n_neighbors = 1 + (n_components * (1 + (n_components + 1) / 2))
                 else:
                     self.n_neighbors = 5
-                warnmsg = "using n_neighbors={}; please explicity specify for the '{}' manifold".format(self.n_neighbors, str(transfomrer))
+                warnmsg = "using n_neighbors={}; please explicity specify for the '{}' manifold".format(self.n_neighbors, str(transformer))
                 warnings.warn(warnmsg, YellowbrickWarning)
 
 
