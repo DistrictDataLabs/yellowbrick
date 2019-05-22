@@ -176,7 +176,7 @@ The build process should create ``build`` and ``dist`` directories containing th
 Deploying to Anaconda Cloud
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-To deploy release to Anaconda Cloud you first need to have Miniconda or Anaconda installed along with ``conda-build`` and ``anaconda-client`` (which can be installed using ``conda``). Make sure that you run the ``anaconda login`` command using the credentials that allow access to the Yellowbrick channel. If you have an old skeleton directory, make sure to save it with a different name (e.g. yellowbrick.old) before running the skeleton command::
+These instructions follow the tutorial `"Building conda packages with conda skeleton" <https://conda.io/projects/conda-build/en/latest/user-guide/tutorials/build-pkgs-skeleton.html>`_. To deploy release to Anaconda Cloud you first need to have Miniconda or Anaconda installed along with ``conda-build`` and ``anaconda-client`` (which can be installed using ``conda``). Make sure that you run the ``anaconda login`` command using the credentials that allow access to the Yellowbrick channel. If you have an old skeleton directory, make sure to save it with a different name (e.g. yellowbrick.old) before running the skeleton command::
 
     $ conda skeleton pypi yellowbrick
 
