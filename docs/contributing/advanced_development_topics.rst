@@ -176,7 +176,34 @@ The build process should create ``build`` and ``dist`` directories containing th
 Deploying to Anaconda Cloud
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-.. todo:: finish up this section
+To deploy release to Anaconda Cloud you first need to have Miniconda or Anaconda installed along with ``conda-build`` and ``anaconda-client`` (which can be installed using ``conda``). Make sure that you run the ``anaconda login`` command using the credentials that allow access to the Yellowbrick channel. If you have an old skeleton directory, make sure to save it with a different name (e.g. yellowbrick.old) before running the skeleton command::
+
+    $ conda skeleton pypi yellowbrick
+
+This should install the latest version of yellowbrick from PyPI - make sure the version matches the expected version of the release! There are some edits that must be made to the ``yellowbrick/meta.yaml`` that is generated as follows::
+
+    about:
+        home: http://scikit-yb.org/
+        license_file: LICENSE.txt
+        doc_url: https://www.scikit-yb.org/en/latest/
+        dev_url: https://github.com/DistrictDataLabs/yellowbrick
+
+In addition, you must remove the entire ``test:`` section of the yaml file and add the following to the ``requirements:`` under both ``host:`` and ``run:``. See `example meta.yaml <https://gist.github.com/bbengfort/a77dd0ff610fd10f40926f7426a89486>`_ for a detailed version. Note that the description field in the metadata is pulled from the ``DESCRIPTION.rst`` in the root of the Yellowbrick project. However, Anaconda Cloud requires a Markdown description - the easiest thing to do is to copy it from the existing description.
+
+With the ``meta.yaml`` file setup you can now run the build command for the various Python distributes that Yellowbrick supports::
+
+    $ conda build --python 3.6 yellowbrick
+    $ conda build --python 3.7 yellowbrick
+
+After this command completes you should have build files in ``$MINICONDA_HOME/conda-bld/[OS]/yellowbrick-x.x-py3.x_0.tar.bz2``. You can now run conda convert for each of the Python versions using this directory as follows::
+
+    $ conda convert --platform all [path to build] -o $MINICONDA_HOME/conda-bld
+
+At this point you should have builds for all the versions of Python and all platforms Yellowbrick supports. Unfortunately at this point you have to upload them all to Anaconda Cloud::
+
+    $ anaconda upload $MINICONDA_HOME/conda-bld/[OS]/yellowbrick-x.x-py3.x_0.tar.bz2
+
+Once uploaded, the Anaconda Cloud page should reflect the latest version, you may have to edit the description to make sure it's in Markdown format.
 
 Finalizing the Release
 ~~~~~~~~~~~~~~~~~~~~~~
