@@ -9,31 +9,28 @@ Yellowbrick: Machine Learning Visualization
 
 .. image:: images/visualizers.png
 
-Yellowbrick helps you make better models through visualization. 
-________________________________________________________________
-
-Yellowbrick extends the Scikit-Learn API to make model selection and hyperparameter tuning easier. Under the hood, it's using Matplotlib. 
+Yellowbrick extends the Scikit-Learn API to make model selection and hyperparameter tuning easier. Under the hood, it's using Matplotlib.
 
 Recommended Learning Path
 -------------------------
 
-1. Check out the :doc:`quickstart` 
+1. Check out the :doc:`quickstart`
 
-2. Try the the :doc:`tutorial`. 
+2. Try the the :doc:`tutorial`.
 
-3. Use Yellowbrick in your project. 
+3. Use Yellowbrick in your project.
 
-4. For details on specific Visualizers and extended usage head over to the :doc:`api/index`. 
+4. For details on specific Visualizers and extended usage head over to the :doc:`api/index`.
 
-5. Follow us on Twitter `@scikit_yb <https://twitter.com/scikit_yb>`_. You'll hear about new visualizers as they're added. 
+5. Follow us on Twitter `@scikit_yb <https://twitter.com/scikit_yb>`_. You'll hear about new visualizers as they're added.
 
 Contributing
 ------------
 
-Interested in contributing to Yellowbrick? Yellowbrick is a welcoming, inclusive project and we would love to have you. 
-We follow the `Python Software Foundation Code of Conduct <http://www.python.org/psf/codeofconduct/>`_. 
+Interested in contributing to Yellowbrick? Yellowbrick is a welcoming, inclusive project and we would love to have you.
+We follow the `Python Software Foundation Code of Conduct <http://www.python.org/psf/codeofconduct/>`_.
 
-No matter your level of technical skill, you can be helpful. We appreciate bug reports, user testing, feature requests, bug fixes, product enhancements, and documentation improvements. 
+No matter your level of technical skill, you can be helpful. We appreciate bug reports, user testing, feature requests, bug fixes, product enhancements, and documentation improvements.
 
 Check out the :doc:`contributing/index` guide!
 
@@ -48,11 +45,11 @@ Concepts & API
 
 Visualizers
 -----------
-The primary goal of Yellowbrick is to create a sensical API similar to Scikit-Learn. 
+The primary goal of Yellowbrick is to create a sensical API similar to Scikit-Learn.
 
-Visualizers are the core objects in Yellowbrick. 
-They are similar to transformers in Scikit-Learn. 
-Visualizers can wrap a model estimator - similar to how the "ModelCV" (e.g. `RidgeCV <http://scikit-learn.org/stable/modules/generated/sklearn.linear_model.RidgeCV.html>`_, `LassoCV <http://scikit-learn.org/stable/modules/generated/sklearn.linear_model.LassoCV.html>`_) methods work.  
+Visualizers are the core objects in Yellowbrick.
+They are similar to transformers in Scikit-Learn.
+Visualizers can wrap a model estimator - similar to how the "ModelCV" (e.g. `RidgeCV <http://scikit-learn.org/stable/modules/generated/sklearn.linear_model.RidgeCV.html>`_, `LassoCV <http://scikit-learn.org/stable/modules/generated/sklearn.linear_model.LassoCV.html>`_) methods work.
 
 
 Some of our most popular visualizers include:
@@ -128,7 +125,7 @@ Can't get someting to work? Here are places you can find help.
 4. You can also Tweet or direct message us on Twitter `@scikit_yb <https://twitter.com/scikit_yb>`_.
 
 
-Find a Bug? 
+Find a Bug?
 -----------
 
 Check if there's already an open `issue <https://github.com/DistrictDataLabs/yellowbrick/issues/>`_ on the topic. If needed, file an `issue <https://github.com/DistrictDataLabs/yellowbrick/issues/>`_.
@@ -142,8 +139,8 @@ The Yellowbrick `license <https://github.com/DistrictDataLabs/yellowbrick/blob/m
 Yellowbrick is hosted on `GitHub <https://github.com/DistrictDataLabs/yellowbrick/>`_. The `issues <https://github.com/DistrictDataLabs/yellowbrick/issues/>`_ and `pull requests <https://github.com/DistrictDataLabs/yellowbrick/pulls>`_ are tracked there.
 
 
-Documentation Table of Contents
----------------------------
+Table of Contents
+-----------------
 
 .. toctree::
    :maxdepth: 2
