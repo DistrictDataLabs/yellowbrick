@@ -14,6 +14,7 @@ Use manifold algorithms for high dimensional visualization.
 ## Imports
 ##########################################################################
 
+import warnings
 import numpy as np
 import matplotlib.pyplot as plt
 
@@ -22,7 +23,7 @@ from yellowbrick.draw import manual_legend
 from yellowbrick.utils.types import is_estimator
 from yellowbrick.style import palettes, resolve_colors
 from yellowbrick.features.base import FeatureVisualizer
-from yellowbrick.exceptions import YellowbrickValueError, NotFitted
+from yellowbrick.exceptions import YellowbrickValueError, YellowbrickWarning, NotFitted
 
 from sklearn.base import clone
 from sklearn.manifold import LocallyLinearEmbedding
@@ -107,17 +108,18 @@ class Manifold(FeatureVisualizer):
         The axes to plot the figure on. If None, the current axes will be used
         or generated if required.
 
-    manifold : str or Transformer, default: "lle"
+    manifold : str or Transformer, default: "mds"
         Specify the manifold algorithm to perform the embedding. Either one of
         the strings listed in the table above, or an actual scikit-learn
         transformer. The constructed manifold is accessible with the manifold
         property, so as to modify hyperparameters before fit.
 
-    n_neighbors : int, default: 10
+    n_neighbors : int, default: None
         Many manifold algorithms are nearest neighbors based, for those that
         are, this parameter specfies the number of neighbors to use in the
-        embedding. If the manifold algorithm doesn't use nearest neighbors,
-        then this parameter is ignored.
+        embedding. If n_neighbors is not specified for those embeddings, it is
+        set to 5 and a warning is issued. If the manifold algorithm doesn't use
+        nearest neighbors, then this parameter is ignored.
 
     colors : str or list of colors, default: None
         Specify the colors used, though note that the specification depends
@@ -199,8 +201,8 @@ class Manifold(FeatureVisualizer):
     def __init__(
         self,
         ax=None,
-        manifold="lle",
-        n_neighbors=10,
+        manifold="mds",
+        n_neighbors=None,
         colors=None,
         target=AUTO,
         alpha=0.7,
@@ -219,6 +221,7 @@ class Manifold(FeatureVisualizer):
         self.random_state = random_state
         self.manifold = manifold # must be set last
 
+
     @property
     def manifold(self):
         """
@@ -236,15 +239,35 @@ class Manifold(FeatureVisualizer):
         """
         if not is_estimator(transformer):
             if transformer not in self.ALGORITHMS:
-                raise YellowbrickValueError(
-                    "could not create manifold for '%s'".format(str(transformer))
-                )
+                    raise YellowbrickValueError(
+                        "could not create manifold for '{}'".format(str(transformer))
+                    )
+
+            # 2 components is required for 2D plots
+            # TODO: allow 3 components for 3D plots in future
+            n_components = 2
+            requires_default_neighbors = {
+                'lle', 'ltsa', 'isomap', 'hessian', 'spectral', 'modified'
+            }
+
+            # Check if the n_neighbors attribute needs to be set.
+            if self.n_neighbors is None and transformer in requires_default_neighbors:
+                if transformer == 'hessian':
+                    self.n_neighbors = int(1 + (n_components * (1 + (n_components + 1) / 2)))
+                else:
+                    self.n_neighbors = 5
+
+                # Issue a warning that the n_neighbors was set to a default.
+                warnmsg = (
+                    "using n_neighbors={}; please explicitly specify for the '{}' manifold"
+                ).format(self.n_neighbors, str(transformer))
+                warnings.warn(warnmsg, YellowbrickWarning)
 
             # Create a new transformer with the specified params
             self._name = MANIFOLD_NAMES[transformer]
             transformer = clone(self.ALGORITHMS[transformer])
             params = {
-                "n_components": 2,
+                "n_components": n_components,
                 "n_neighbors": self.n_neighbors,
                 "random_state": self.random_state,
             }
