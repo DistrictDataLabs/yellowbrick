@@ -5,7 +5,7 @@
 # Author:  @thekylesaurus
 # Created: Thu Oct 06 11:21:27 2016 -0400
 #
-# Copyright (C) 2016 District Data Labs
+# Copyright (C) 2017 The scikit-yb developers.
 # For license information, see LICENSE.txt
 #
 # ID: test_pcoords.py [1d407ab] benjamin@bengfort.com $
@@ -21,10 +21,11 @@ Testing for the parallel coordinates feature visualizers
 import pytest
 import numpy as np
 
+from yellowbrick.datasets import load_occupancy
 from yellowbrick.features.pcoords import *
 
 from tests.base import VisualTestCase
-from tests.dataset import DatasetMixin, Dataset
+from ..fixtures import TestDataset
 from sklearn.datasets import make_classification
 
 
@@ -49,9 +50,8 @@ def dataset(request):
         class_sep=3, scale=np.array([1.0, 2.0, 100.0, 20.0, 1.0])
     )
 
-    dataset = Dataset(X, y)
+    dataset = TestDataset(X, y)
     request.cls.dataset = dataset
-
 
 
 ##########################################################################
@@ -59,7 +59,7 @@ def dataset(request):
 ##########################################################################
 
 @pytest.mark.usefixtures('dataset')
-class TestParallelCoordinates(VisualTestCase, DatasetMixin):
+class TestParallelCoordinates(VisualTestCase):
     """
     Test the ParallelCoordinates visualizer
     """
@@ -163,22 +163,35 @@ class TestParallelCoordinates(VisualTestCase, DatasetMixin):
         """
         Test on a real dataset with pandas DataFrame and Series sampled for speed
         """
-        df = self.load_pandas("occupancy")
-
-        target = "occupancy"
-        features = [
-            'temperature', 'relative humidity', 'light', 'C02', 'humidity'
-        ]
-
-        X = df[features]
-        y = pd.Series([
-            'occupied' if yi == 1 else 'unoccupied' for yi in df[target]
-        ])
+        data = load_occupancy(return_dataset=True)
+        X, y = data.to_pandas()
+        classes = [k for k, _ in sorted(data.meta['labels'].items(), key=lambda i: i[1])]
 
         assert isinstance(X, pd.DataFrame)
         assert isinstance(y, pd.Series)
 
-        oz = ParallelCoordinates(sample=0.05, shuffle=True, random_state=4291)
+        oz = ParallelCoordinates(
+            sample=0.05, shuffle=True, random_state=4291, classes=classes
+        )
+        oz.fit_transform(X, y)
+        oz.poof()
+
+        self.assert_images_similar(oz, tol=0.1)
+
+    def test_numpy_integration_sampled(self):
+        """
+        Ensure visualizer works in default case with numpy arrays and sampling
+        """
+        data = load_occupancy(return_dataset=True)
+        X, y = data.to_numpy()
+        classes = [k for k, _ in sorted(data.meta['labels'].items(), key=lambda i: i[1])]
+
+        assert isinstance(X, np.ndarray)
+        assert isinstance(y, np.ndarray)
+
+        oz = ParallelCoordinates(
+            sample=0.05, shuffle=True, random_state=4291, classes=classes
+        )
         oz.fit_transform(X, y)
         oz.poof()
 
@@ -189,22 +202,31 @@ class TestParallelCoordinates(VisualTestCase, DatasetMixin):
         """
         Test on a real dataset with pandas DataFrame and Series in fast mode
         """
-        df = self.load_pandas("occupancy")
-
-        target = "occupancy"
-        features = [
-            'temperature', 'relative humidity', 'light', 'C02', 'humidity'
-        ]
-
-        X = df[features]
-        y = pd.Series([
-            'occupied' if yi == 1 else 'unoccupied' for yi in df[target]
-        ])
+        data = load_occupancy(return_dataset=True)
+        X, y = data.to_pandas()
+        classes = [k for k, _ in sorted(data.meta['labels'].items(), key=lambda i: i[1])]
 
         assert isinstance(X, pd.DataFrame)
         assert isinstance(y, pd.Series)
 
-        oz = ParallelCoordinates(fast=True)
+        oz = ParallelCoordinates(fast=True, classes=classes)
+        oz.fit_transform(X, y)
+        oz.poof()
+
+        self.assert_images_similar(oz, tol=0.1)
+
+    def test_numpy_integration_fast(self):
+        """
+        Ensure visualizer works in default case with numpy arrays and fast mode
+        """
+        data = load_occupancy(return_dataset=True)
+        X, y = data.to_numpy()
+        classes = [k for k, _ in sorted(data.meta['labels'].items(), key=lambda i: i[1])]
+
+        assert isinstance(X, np.ndarray)
+        assert isinstance(y, np.ndarray)
+
+        oz = ParallelCoordinates(fast=True, classes=classes)
         oz.fit_transform(X, y)
         oz.poof()
 

@@ -13,28 +13,25 @@ This leads to another metric, area under the curve (AUC), which is a computation
     :context: close-figs
     :alt: ROCAUC Binary Classification
 
-    from sklearn.model_selection import train_test_split
-    from yellowbrick.classifier import ROCAUC
     from sklearn.linear_model import LogisticRegression
-    from yellowbrick.datasets import load_occupancy
+    from sklearn.model_selection import train_test_split
 
-    # Load the classification data set
-    X, y = load_occupancy()
+    from yellowbrick.classifier import ROCAUC
+    from yellowbrick.datasets import load_spam
 
-    # Specify the classes of the target
-    classes = ["unoccupied", "occupied"]
+    # Load the classification dataset
+    X, y = load_spam()
 
-    # Create the train and test data
-    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2)
+    # Create the training and test data
+    X_train, X_test, y_train, y_test = train_test_split(X, y, random_state=42)
 
     # Instantiate the visualizer with the classification model
-    visualizer = ROCAUC(LogisticRegression(
-        multi_class="auto", solver="liblinear"
-        ), classes=classes
-    )
-    visualizer.fit(X_train, y_train)  # Fit the training data to the visualizer
-    visualizer.score(X_test, y_test)  # Evaluate the model on the test data
-    visualizer.poof()             # Draw/show/poof the data
+    model = LogisticRegression(multi_class="auto", solver="liblinear")
+    visualizer = ROCAUC(model, classes=["not_spam", "is_spam"])
+
+    visualizer.fit(X_train, y_train)        # Fit the training data to the visualizer
+    visualizer.score(X_test, y_test)        # Evaluate the model on the test data
+    visualizer.poof()                       # Draw/show/poof the data
 
 
 .. warning::
@@ -55,30 +52,30 @@ ROC curves are typically used in binary classification, and in fact the Scikit-L
     :context: close-figs
     :alt: ROCAUC multiclass classification curves
 
+    from sklearn.linear_model import RidgeClassifier
     from sklearn.model_selection import train_test_split
+    from sklearn.preprocessing import OrdinalEncoder, LabelEncoder
+
     from yellowbrick.classifier import ROCAUC
     from yellowbrick.datasets import load_game
-    from sklearn.linear_model import RidgeClassifier
-    from sklearn.preprocessing import OrdinalEncoder, LabelEncoder
 
     # Load multi-class classification dataset
     X, y = load_game()
 
-    classes = ["win", "loss", "draw"]
-
     # Encode the non-numeric columns
     X = OrdinalEncoder().fit_transform(X)
-
     y = LabelEncoder().fit_transform(y)
 
     # Create the train and test data
-    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2)
+    X_train, X_test, y_train, y_test = train_test_split(X, y, random_state=42)
 
-    visualizer = ROCAUC(RidgeClassifier(), classes=classes)
+    # Instaniate the classification model and visualizer
+    model = RidgeClassifier()
+    visualizer = ROCAUC(model, classes=["win", "loss", "draw"])
 
-    visualizer.fit(X_train, y_train)  # Fit the training data to the visualizer
-    visualizer.score(X_test, y_test)  # Evaluate the model on the test data
-    visualizer.poof()             # Draw/show/poof the data
+    visualizer.fit(X_train, y_train)        # Fit the training data to the visualizer
+    visualizer.score(X_test, y_test)        # Evaluate the model on the test data
+    visualizer.poof()                       # Draw/show/poof the data
 
 .. warning::
     The target ``y`` must be numeric for this figure to work, or update to the latest version of sklearn.

@@ -22,15 +22,16 @@ import pytest
 import numpy.testing as npt
 
 from tests.base import VisualTestCase
-from tests.dataset import DatasetMixin, Dataset
+from ..fixtures import TestDataset
 from sklearn.datasets import make_classification
 
+from yellowbrick.datasets import load_occupancy
 from yellowbrick.features.radviz import *
 
 try:
-    import pandas
+    import pandas as pd
 except ImportError:
-    pandas = None
+    pd = None
 
 
 ##########################################################################
@@ -48,7 +49,7 @@ def dataset(request):
         class_sep=3, scale=np.array([1.0, 2.0, 100.0, 20.0, 1.0])
     )
 
-    dataset = Dataset(X, y)
+    dataset = TestDataset(X, y)
     request.cls.dataset = dataset
 
 
@@ -57,7 +58,7 @@ def dataset(request):
 ##########################################################################
 
 @pytest.mark.usefixtures('dataset')
-class TestRadViz(VisualTestCase, DatasetMixin):
+class TestRadViz(VisualTestCase):
     """
     Test the RadViz visualizer
     """
@@ -111,41 +112,90 @@ class TestRadViz(VisualTestCase, DatasetMixin):
     @pytest.mark.xfail(
         sys.platform == 'win32', reason="images not close on windows"
     )
-    @pytest.mark.skipif(pandas is None, reason="test requires Pandas")
-    def test_integrated_radiz_with_pandas(self):
+    @pytest.mark.skipif(pd is None, reason="test requires pandas")
+    def test_integrated_radviz_with_pandas(self):
         """
         Test RadViz with Pandas on the occupancy dataset
         """
-        occupancy = self.load_pandas("occupancy")
+        data = load_occupancy(return_dataset=True)
+        X, y = data.to_pandas()
 
-        # Load the data from the fixture
-        X = occupancy[[
-            "temperature", "relative humidity", "light", "C02", "humidity"
-        ]]
-        y = occupancy['occupancy'].astype(int)
+        assert isinstance(X, pd.DataFrame)
+        assert isinstance(y, pd.Series)
 
         # Test the visualizer
         visualizer = RadViz()
         visualizer.fit_transform_poof(X, y)
-        self.assert_images_similar(visualizer)
+        self.assert_images_similar(visualizer, tol=0.1)
 
     @pytest.mark.xfail(
         sys.platform == 'win32', reason="images not close on windows"
     )
-    @pytest.mark.skipif(pandas is None, reason="test requires Pandas")
-    def test_integrated_radiz_pandas_classes_features(self):
+    def test_integrated_radviz_with_numpy(self):
         """
-        Test RadViz with classes and features specified
+        Test RadViz with numpy on the occupancy dataset
+        """
+        data = load_occupancy(return_dataset=True)
+        X, y = data.to_numpy()
+
+        assert isinstance(X, np.ndarray)
+        assert isinstance(y, np.ndarray)
+
+        # Test the visualizer
+        visualizer = RadViz()
+        visualizer.fit_transform_poof(X, y)
+        self.assert_images_similar(visualizer, tol=0.1)
+
+
+    @pytest.mark.xfail(
+        sys.platform == 'win32', reason="images not close on windows"
+    )
+    @pytest.mark.skipif(pd is None, reason="test requires pandas")
+    def test_integrated_radviz_pandas_classes_features(self):
+        """
+        Test RadViz with classes and features specified using Pandas
         """
         # Load the data from the fixture
-        occupancy = self.load_pandas("occupancy")
-        features = ["temperature", "relative humidity", "light"]
-        classes = ['unoccupied', 'occupied']
+        data = load_occupancy(return_dataset=True)
+        X, y = data.to_pandas()
 
-        X = occupancy[features]
-        y = occupancy['occupancy'].astype(int)
+        features = ["temperature", "relative humidity", "light"]
+        classes = [k for k, _ in sorted(data.meta['labels'].items(), key=lambda i: i[1])]
+
+        assert isinstance(X, pd.DataFrame)
+        assert isinstance(y, pd.Series)
+
+        # Filter the dataset to make sure it's not just class names
+        X = X[features]
+        y = y.astype(int)
 
         # Test the visualizer
         visualizer = RadViz(features=features, classes=classes)
         visualizer.fit_transform_poof(X, y)
-        self.assert_images_similar(visualizer)
+        self.assert_images_similar(visualizer, tol=0.1)
+
+    @pytest.mark.xfail(
+        sys.platform == 'win32', reason="images not close on windows"
+    )
+    def test_integrated_radviz_numpy_classes_features(self):
+        """
+        Test RadViz with classes and features specified using numpy
+        """
+        # Load the data from the fixture
+        data = load_occupancy(return_dataset=True)
+        X, y = data.to_numpy()
+
+        features = data.meta['features'][0:3]
+        classes = [k for k, _ in sorted(data.meta['labels'].items(), key=lambda i: i[1])]
+
+        assert isinstance(X, np.ndarray)
+        assert isinstance(y, np.ndarray)
+
+        # Filter the dataset to make sure it's not just class names
+        X = X[:, :3]
+        y = y.astype(int)
+
+        # Test the visualizer
+        visualizer = RadViz(features=features, classes=classes)
+        visualizer.fit_transform_poof(X, y)
+        self.assert_images_similar(visualizer, tol=0.1)

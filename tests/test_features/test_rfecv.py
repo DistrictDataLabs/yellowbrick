@@ -21,8 +21,9 @@ import numpy.testing as npt
 
 from unittest.mock import patch
 from tests.base import VisualTestCase
-from tests.dataset import DatasetMixin, Dataset
+from ..fixtures import TestDataset
 
+from yellowbrick.datasets import load_occupancy
 from yellowbrick.features.rfecv import *
 from yellowbrick.exceptions import YellowbrickValueError
 
@@ -53,7 +54,7 @@ def dataset(request):
         n_repeated=0, n_classes=8, n_clusters_per_class=1, random_state=0
     )
 
-    dataset = Dataset(X, y)
+    dataset = TestDataset(X, y)
     request.cls.dataset = dataset
 
 
@@ -62,7 +63,7 @@ def dataset(request):
 ##########################################################################
 
 @pytest.mark.usefixtures("dataset")
-class TestRFECV(VisualTestCase, DatasetMixin):
+class TestRFECV(VisualTestCase):
     """
     Test the RFECV visualizer
     """
@@ -134,18 +135,31 @@ class TestRFECV(VisualTestCase, DatasetMixin):
         """
         Test on a real dataset with pandas DataFrame and Series
         """
-        df = self.load_pandas("occupancy")
-
-        target = "occupancy"
-        features = [
-            'temperature', 'relative humidity', 'light', 'C02', 'humidity'
-        ]
-
-        X = df[features]
-        y = df[target]
+        data = load_occupancy(return_dataset=True)
+        X, y = data.to_pandas()
 
         assert isinstance(X, pd.DataFrame)
         assert isinstance(y, pd.Series)
+
+        cv = StratifiedKFold(n_splits=4, random_state=32)
+        oz = RFECV(RandomForestClassifier(random_state=83), cv=cv)
+        oz.fit(X, y)
+        oz.poof()
+
+        self.assert_images_similar(oz)
+
+    @pytest.mark.xfail(
+        sys.platform == 'win32', reason="images not close on windows"
+    )
+    def test_numpy_integration(self):
+        """
+        Test on a real dataset with numpy ndarray
+        """
+        data = load_occupancy(return_dataset=True)
+        X, y = data.to_numpy()
+
+        assert isinstance(X, np.ndarray)
+        assert isinstance(y, np.ndarray)
 
         cv = StratifiedKFold(n_splits=4, random_state=32)
         oz = RFECV(RandomForestClassifier(random_state=83), cv=cv)

@@ -18,7 +18,7 @@ https://bl.ocks.org/rpgove/0060ff3b656618e9136b
 ## Imports
 ##########################################################################
 
-import collections
+from collections.abc import Iterable
 import time
 import numpy as np
 import scipy.sparse as sp
@@ -173,12 +173,12 @@ class KElbowVisualizer(ClusteringScoreVisualizer):
         Display the fitting time per k to evaluate the amount of time required
         to train the clustering model.
 
-    locate_elbow : bool, default: True 
-        Automatically find the "elbow" or "knee" which likely corresponds to the optimal 
-        value of k using the "knee point detection algorithm". The knee point detection 
+    locate_elbow : bool, default: True
+        Automatically find the "elbow" or "knee" which likely corresponds to the optimal
+        value of k using the "knee point detection algorithm". The knee point detection
         algorithm finds the point of maximum curvature, which in a well-behaved clustering
         problem also represents the pivot of the elbow curve. The point is labeled with a
-        dashed line and annotated with the score and k values.      
+        dashed line and annotated with the score and k values.
 
     kwargs : dict
         Keyword arguments that are passed to the base class and may influence
@@ -196,7 +196,7 @@ class KElbowVisualizer(ClusteringScoreVisualizer):
         The optimal value of k.
 
     elbow_score_ : float
-        The silhouette score corresponding to the optimal value of k.         
+        The silhouette score corresponding to the optimal value of k.
 
     Examples
     --------
@@ -218,9 +218,9 @@ class KElbowVisualizer(ClusteringScoreVisualizer):
 
     For a discussion on the Elbow method, read more at
     `Robert Gove's Block <https://bl.ocks.org/rpgove/0060ff3b656618e9136b>`_.
-    To know about 'Knee Point Detection Algorithm' read at `Finding a "kneedle" in a Haystack
-    <https://raghavan.usc.edu//papers/kneedle-simplex11.pdf>`_.  
-    
+    For more on the 'Knee Point Detection Algorithm' see the paper `Finding a "kneedle"
+    in a Haystack <https://raghavan.usc.edu//papers/kneedle-simplex11.pdf>`_.
+
     .. seealso:: The scikit-learn documentation for the `silhouette_score
         <https://bit.ly/2LYWjYb>`_ and `calinski_harabaz_score
         <https://bit.ly/2LW3Zu9>`_. The default, `distortion_score`, is
@@ -254,7 +254,7 @@ class KElbowVisualizer(ClusteringScoreVisualizer):
         elif isinstance(k, tuple) and len(k) == 2 and \
                 all(isinstance(x, (int, np.integer)) for x in k):
             self.k_values_ = list(range(*k))
-        elif isinstance(k, collections.Iterable) and \
+        elif isinstance(k, Iterable) and \
                 all(isinstance(x, (int, np.integer)) for x in k):
             self.k_values_ = list(k)
         else:
@@ -294,24 +294,24 @@ class KElbowVisualizer(ClusteringScoreVisualizer):
             self.k_timers_.append(time.time() - start)
             self.k_scores_.append(
                 self.scoring_metric(X, self.estimator.labels_)
-            )    
+            )
 
         if self.locate_elbow:
             locator_kwargs = {
                 'distortion': {'curve_nature': 'convex', 'curve_direction': 'decreasing'},
                 'silhouette': {'curve_nature': 'concave', 'curve_direction': 'increasing'},
                 'calinski_harabaz': {'curve_nature': 'concave', 'curve_direction': 'increasing'},
-                }.get(self.metric, {})   
+                }.get(self.metric, {})
             elbow_locator = KneeLocator(self.k_values_,self.k_scores_,**locator_kwargs)
             self.elbow_value_ = elbow_locator.knee
             if self.elbow_value_ == None:
                 warning_message=\
                 "No 'knee' or 'elbow' point detected, " \
-                "pass `locate_elbow=False` to remove the warning"   
-                warnings.warn(warning_message,YellowbrickWarning) 
+                "pass `locate_elbow=False` to remove the warning"
+                warnings.warn(warning_message,YellowbrickWarning)
             else:
                 self.elbow_score_ = self.k_scores_[self.k_values_.index(self.elbow_value_)]
-                   
+
 
         self.draw()
 
@@ -326,7 +326,7 @@ class KElbowVisualizer(ClusteringScoreVisualizer):
         if self.locate_elbow and self.elbow_value_!=None:
             elbow_label = "$elbow\ at\ k={}, score={:0.3f}$".format(self.elbow_value_, self.elbow_score_)
             self.ax.axvline(self.elbow_value_, c=LINE_COLOR, linestyle="--", label=elbow_label)
-            
+
         # If we're going to plot the timings, create a twinx axis
         if self.timings:
             self.axes = [self.ax, self.ax.twinx()]
@@ -342,7 +342,7 @@ class KElbowVisualizer(ClusteringScoreVisualizer):
         """
         Prepare the figure for rendering by setting the title as well as the
         X and Y axis labels and adding the legend.
-        
+
         """
         # Get the metric name
         metric = self.scoring_metric.__name__.replace("_", " ").title()
@@ -355,7 +355,7 @@ class KElbowVisualizer(ClusteringScoreVisualizer):
         # Set the x and y labels
         self.ax.set_xlabel('k')
         self.ax.set_ylabel(metric.lower())
-        
+
         #set the legend if locate_elbow=True
         if self.locate_elbow and self.elbow_value_!=None:
             self.ax.legend(loc='best', fontsize='medium')

@@ -9,7 +9,7 @@ Yellowbrick has two primary dependencies: `scikit-learn <http://scikit-learn.org
 
 Yellowbrick is also commonly used inside of a `Jupyter Notebook <http://jupyter.org/>`_ alongside `Pandas <http://pandas.pydata.org/>`_ data frames. Notebooks make it especially easy to coordinate code and visualizations; however, you can also use Yellowbrick inside of regular Python scripts, either saving figures to disk or showing figures in a GUI window. If you're having trouble with this, please consult matplotlib's `backends documentation <https://matplotlib.org/faq/usage_faq.html#what-is-a-backend>`_.
 
-.. NOTE:: Jupyter, Pandas, and other ancillary libraries like NLTK for text visualizers are not installed with Yellowbrick and must be installed separately.
+.. NOTE:: Jupyter, Pandas, and other ancillary libraries like the Natural Language Toolkit (NLTK) for text visualizers are not installed with Yellowbrick and must be installed separately.
 
 Installation
 ------------
