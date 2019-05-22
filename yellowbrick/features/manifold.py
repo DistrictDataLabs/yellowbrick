@@ -201,7 +201,7 @@ class Manifold(FeatureVisualizer):
     def __init__(
         self,
         ax=None,
-        manifold="lle",
+        manifold="mds",
         n_neighbors=None,
         colors=None,
         target=AUTO,
@@ -220,7 +220,7 @@ class Manifold(FeatureVisualizer):
         self.alpha = alpha
         self.random_state = random_state
         self.manifold = manifold # must be set last
-        self.n_components = None
+
 
     @property
     def manifold(self):
@@ -241,19 +241,28 @@ class Manifold(FeatureVisualizer):
             if transformer not in self.ALGORITHMS:
                     raise YellowbrickValueError("could not create manifold for '{}'".format(str(transformer))
                 )
-
-            if (transformer not in ('tsne','mds','hessian') and self.n_neighbors is None):
-                self.n_neighbors = 5
-                warnmsg = "using n_neighbors={}; please explicitly pass this argument for the '{}' manifold".format(self.n_neighbors, str(transformer))
+            # 2 components is required for 2D plots, could optionally make it three for 3D plots in future
+            n_components = 2
+            requires_default_neighbors = {'lle', 'ltsa', 'isomap', 'hessian', 'spectral', 'modified'}
+            if self.n_neighbors is None and transformer in requires_default_neighbors:
+                if transformer == 'hessian':
+                    self.n_neighbors = 1 + (n_components * (1 + (n_components + 1) / 2))
+                else:
+                    self.n_neighbors = 5
+                warnmsg = "using n_neighbors={}; please explicity specify for the '{}' manifold".format(self.n_neighbors, transfomrer)
                 warnings.warn(warnmsg, YellowbrickWarning)
+
+
+
+
 
 
             # Create a new transformer with the specified params
             self._name = MANIFOLD_NAMES[transformer]
             transformer = clone(self.ALGORITHMS[transformer])
             params = {
-                "n_components": self.n_components,
-                "n_neighbors": 1 + (self.n_components * (1 + (self.n_components + 1) / 2)),
+                "n_components": n_components,
+                "n_neighbors": self.n_neighbors,
                 "random_state": self.random_state,
             }
 
