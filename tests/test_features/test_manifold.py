@@ -208,7 +208,7 @@ class TestManifold(VisualTestCase):
         y = pd.Series(y)
 
         oz = Manifold(
-            manifold='ltsa', colors='nipy_spectral', n_neighbors=5,
+            manifold='ltsa', colors='nipy_spectral', n_neighbors=10,
             target='continuous', random_state=223
         ).fit(X, y)
 
