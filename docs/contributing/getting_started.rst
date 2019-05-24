@@ -9,16 +9,19 @@ The typical workflow for a contributor to the codebase is as follows:
 
 1. **Discover** a bug or a feature by using Yellowbrick.
 2. **Discuss** with the core contributors by `adding an issue <https://github.com/DistrictDataLabs/yellowbrick/issues>`_.
-3. **Assign** yourself the task by pulling a card from our `Waffle Kanban <https://waffle.io/DistrictDataLabs/yellowbrick>`_
-4. **Fork** the repository into your own GitHub account.
-5. Create a **Pull Request** first thing to `connect with us <https://github.com/DistrictDataLabs/yellowbrick/pulls>`_ about your task.
-6. **Code** the feature, write the tests and documentation, add your contribution.
-7. **Review** the code with core contributors who will guide you to a high quality submission.
-8. **Merge** your contribution into the Yellowbrick codebase.
+3. **Fork** the repository into your own GitHub account.
+4. Create a **Pull Request** first thing to `connect with us <https://github.com/DistrictDataLabs/yellowbrick/pulls>`_ about your task.
+5. **Code** the feature, write the tests and documentation, add your contribution.
+6. **Review** the code with core contributors who will guide you to a high quality submission.
+7. **Merge** your contribution into the Yellowbrick codebase.
 
-.. note:: Please create a pull request as soon as possible, even before you've started coding. This will allow the core contributors to give you advice about where to add your code or utilities and discuss other style choices and implementation details as you go. Don't wait!
+We believe that *contribution is collaboration* and therefore emphasize *communication* throughout the open source process. We rely heavily on GitHub's social coding tools to allow us to do this. For instance, we use GitHub's `milestone <https://help.github.com/en/articles/about-milestones>`_ feature to focus our development efforts for each Yellowbrick semester, so be sure to check out the issues associated with our `current milestone <https://github.com/districtdatalabs/yellowbrick/milestones>`_!
 
-We believe that *contribution is collaboration* and therefore emphasize *communication* throughout the open source process. We rely heavily on GitHub's social coding tools to allow us to do this.
+Once you have a good sense of how you are going to implement the new feature (or fix the bug!), you can reach out for feedback from the maintainers by creating a `pull request <https://github.com/DistrictDataLabs/yellowbrick/pulls>`_. Ideally, any pull request should be capable of resolution within 6 weeks of being opened. This timeline helps to keep our pull request queue small and allows Yellowbrick to maintain a robust release schedule to give our users the best experience possible. However, the most important thing is to keep the dialogue going! And if you're unsure whether you can complete your idea within 6 weeks, you should still go ahead and open a PR and we will be happy to help you scope it down as needed.
+
+If we have comments or questions when we evaluate your pull request and receive no response, we will also close the PR after this period of time. Please know that this does not mean we don't value your contribution, just that things go stale. If in the future you want to pick it back up, feel free to address our original feedback and to reference the original PR in a new pull request. 
+
+.. note:: Please note that if we feel your solution has not been thought out in earnest, or if the PR is not aligned with our `current milestone <https://github.com/districtdatalabs/yellowbrick/milestones>`_ goals, we may reach out to ask that you close the PR so that we can prioritize reviewing the most critical feature requests and bug fixes.
 
 Forking the Repository
 ----------------------
@@ -36,7 +39,7 @@ Once forked, use the following steps to get your development environment set up 
 
 2. Create a virtual environment.
 
-    Yellowbrick developers typically use `virtualenv <https://virtualenv.pypa.io/en/stable/>`_ (and `virtualenvwrapper <https://virtualenvwrapper.readthedocs.io/en/latest/>`_), `pyenv <https://github.com/pyenv/pyenv-virtualenv>`_ or `conda envs <https://conda.io/docs/using/envs.html>`_ in order to manage their Python version and dependencies. Using the virtual environment tool of your choice, create one for Yellowbrick. Here's how with virtualenv::
+    Yellowbrick developers typically use `virtualenv <https://virtualenv.pypa.io/en/stable/>`_ (and `virtualenvwrapper <https://virtualenvwrapper.readthedocs.io/en/latest/>`_), `pyenv <https://github.com/pyenv/pyenv-virtualenv>`_ or `conda envs <https://conda.io/projects/conda/en/latest/user-guide/tasks/manage-environments.html>`_ in order to manage their Python version and dependencies. Using the virtual environment tool of your choice, create one for Yellowbrick. Here's how with virtualenv::
 
         $ virtualenv venv
 
@@ -62,7 +65,7 @@ Once forked, use the following steps to get your development environment set up 
         $ git fetch
         $ git checkout develop
 
-At this point you're ready to get started writing code. If you're going to take on a specific task, we'd strongly encourage you to check out the issue on `Waffle <https://waffle.io/DistrictDataLabs/yellowbrick>`_ and create a `pull request <https://github.com/DistrictDataLabs/yellowbrick/pulls>`_ *before you start coding* to better foster communication with other contributors. More on this in the next section.
+At this point you're ready to get started writing code. 
 
 Branching Convention
 --------------------
