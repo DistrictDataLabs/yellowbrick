@@ -37,6 +37,7 @@ Minor Changes:
     - Updated the gallery to generate thumbnail-quality images.
     - Updated the example notebooks and created a quickstart notebook.
     - Fixed broken links in the documentation.
+    - Move SilhouetteVisualizer cluster identity labels from the middle to the y-axis.
     - Add legend to SilhouetteVisualizer for the average score axis
     - Add color and colormap options to SilhouetteVisualizer
 
