@@ -20,7 +20,7 @@ Implements visualizers that use the silhouette metric for cluster evaluation.
 import numpy as np
 import matplotlib.ticker as ticker
 
-from ..style import color_palette
+from ..style import resolve_colors
 from .base import ClusteringScoreVisualizer
 
 from sklearn.metrics import silhouette_score, silhouette_samples
@@ -66,6 +66,13 @@ class SilhouetteVisualizer(ClusteringScoreVisualizer):
         The axes to plot the figure on. If None is passed in the current axes
         will be used (or generated if required).
 
+
+    colors : iterable or string, default: None
+        A collection of colors to use for each cluster group. If there are
+        fewer colors than cluster groups, colors will repeat. May also be a
+        matplotlib colormap string.
+
+
     kwargs : dict
         Keyword arguments that are passed to the base class and may influence
         the visualization as defined in other Visualizers.
@@ -100,13 +107,16 @@ class SilhouetteVisualizer(ClusteringScoreVisualizer):
     >>> model.poof()
     """
 
-    def __init__(self, model, ax=None, **kwargs):
+    def __init__(self, model, ax=None, colors=None, **kwargs):
         super(SilhouetteVisualizer, self).__init__(model, ax=ax, **kwargs)
 
         # Visual Properties
-        # TODO: Fix the color handling
-        self.colormap = kwargs.get('colormap', 'set1')
-        self.color = kwargs.get('color', None)
+        # Use colors if it is given, otherwise attempt to use colormap which
+        # which will override colors. If neither is found, default to None.
+        # The colormap may yet still be found in resolve_colors
+        self.colors = colors
+        if 'colormap' in kwargs:
+            self.colors = kwargs['colormap']
 
     def fit(self, X, y=None, **kwargs):
         """
@@ -151,8 +161,16 @@ class SilhouetteVisualizer(ClusteringScoreVisualizer):
         y_lower = 10 # The bottom of the silhouette
 
         # Get the colors from the various properties
-        # TODO: Use resolve_colors instead of this
-        colors = color_palette(self.colormap, self.n_clusters_)
+        color_kwargs = {'n_colors': self.n_clusters_}
+
+        if self.colors is None:
+            color_kwargs['colormap'] = 'Set1'
+        elif isinstance(self.colors, str):
+            color_kwargs['colormap'] = self.colors
+        else:
+            color_kwargs['colors'] = self.colors
+
+        colors = resolve_colors(**color_kwargs)
 
         # For each cluster, plot the silhouette scores
         self.y_tick_pos_ = []
