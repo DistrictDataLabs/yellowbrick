@@ -20,6 +20,7 @@ http://www.dbs.ifi.lmu.de/~zimek/publications/SDM2014/DBCV.pdf
 
 import numpy as np
 from scipy.spatial.distance import cdist
+from scipy.sparse import coo_matrix
 # from .base import ClusteringScoreVisualizer
 # from ..style.palettes import LINE_COLOR
 # from ..exceptions import YellowbrickValueError, YellowbrickWarning
@@ -30,7 +31,7 @@ __all__ = [
 ]
 
 ##########################################################################
-## Metrics
+## Functions
 ##########################################################################
 
 """
@@ -70,7 +71,7 @@ def core_distance(X, labels, dist_func="euclidean"):
     assert len(X) == len(labels), ("Must have a label for each point, -1 for"
         "noise")
 
-    n_row, n_cols = X.shape
+    n_rows, n_cols = X.shape
     core_distances = np.zeros(n_rows)
     if (len(set(labels)) - (1 if -1 in labels else 0)) == 0:
         return core_distances
@@ -97,48 +98,42 @@ def mutual_reachability(X, core_dists, dist_func="euclidean"):
     """
     The mutual reachability between two objects
 
-    QUESTION: could create lower triangular matrix L such that the entries are
-    the mutual_reachability of for the coordinate pair. This could be hard on
-    memory though.  Is it better to go element wise as needed? 
-
-    If poinwise is better than this function call is likely unnecessary
-    complicaiton and can just be a line or two inside of the graph or tree
-
     Parameters
     ----------
 
     X:  (array) data matrix
-    core_distances
-    p0
-    p1
-    dist_func
+
+    core_distances:  (array) The core distances for each row/object 
+
+    dist_func:  (string) what distance metric to use in cdist
     """
 
-    mr_output = max(core_dists[p0], core_dists[p1], 
-        cdist(X[p0, :], X[p1, :], dist_func))
+    # the following cdist call is the slowest part of this function
+    # it computes a symmetirc matrix, but perhaps if there is a better way
+    # to use it and compute the lower triangle it would save time
+    # Might not be worth it, hard to tell.
+    dist_matrix = np.tril(cdist(X, X, dist_func))
+    n_row, n_col = dist_matrix.shape
 
-    if len(X) > 5000:
-        # Then it's worth using sparse vectors
-        dist_matrix = np.tril(cdist(X, X, dist_func))
-        n_row, n_col = dist_matrix.shape
-        rows = list(range(n_row))
-        entries = np.zeros(n_row*(n_row)/2)
-        columns = np.zeros(n_row*(n_row)/2)
-        for n in rows:
-            entries[(n* ]
+    # compute sparse matrix format
+    length = n_row * (n_row-1) // 2
+    dimensions = np.zeros((2, length), dtype=int)
+    entries = np.zeros((3, length))
+    for n in range(1, n_row):
+        start = (n * (n+1) // 2)-n
+        end = ((n+1) * (n+2) // 2)-n-1
+        dimensions[1, start:end] = list(range(n))  # cols
+        dimensions[0, start:end] = n               # rows
+        entries[0, start:end] = dist_matrix[n, :n]
+        entries[1, start:end] = core_dists[n]
+        entries[2, start:end] = core_dists[range(n)]
 
-    return mr_output
+    reachability = np.max(entries, axis = 0)
+    reachability_graph = coo_matrix( (reachability, (dimensions[0, :],
+        dimensions[1, :]))) 
 
-def mutual_reachability_distance_graph(X):
-    """
-    The graph is the matrix of the mr in each entry
-
-    Can iterate over the matrix and check each entry or turn it to a sparse
-    matrix, three vectors for entry, row, column, and comput it that way to save
-    memory Perhaps have a sparse option for large matrices?
-    """
-
-    return None
+    return reachability_graph.toarray()
+    
 
 def mutual_reachability_distance_MST(X):
     return None
@@ -159,8 +154,12 @@ def clustering_validity_index(X):
 if __name__ == "__main__":
     """
     Testing to make sure functions work as intended
+
+    Further testing in d_test.py file. This is mostly to ensure small
+    functionallity and checking along the way. 
     """
     from sklearn.cluster import DBSCAN
+
     X = np.array([[1, 2], [2, 2], [2, 3], [8, 7], [8, 8], [25, 80]])
     clustering = DBSCAN(eps=3, min_samples=2).fit(X)
     clusters = set(clustering.labels_)
@@ -174,4 +173,6 @@ if __name__ == "__main__":
     print(clustering)
     cd_output = core_distance(X, clustering.labels_)
     print(cd_output)
+    graph = mutual_reachability(X, cd_output, 'euclidean')
+    print("graph:\n", graph)
 
