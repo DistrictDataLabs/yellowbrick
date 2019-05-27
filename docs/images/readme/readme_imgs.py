@@ -256,19 +256,20 @@ if __name__ == "__main__":
     )
 
     parser.add_argument(
-        "-F", "--full-image", type=str, metavar="PATH", default="",
+        "-b", "--banner", type=str, metavar="PATH", default="",
         help="make full banner image and save to disk",
     )
 
     parser.add_argument(
-        "-y", "--yb", action="store_true", help="replace middle image with logo"
+        "-y", "--yb", action="store_true",
+        help="replace middle image of banner with logo"
     )
 
 
     args = parser.parse_args()
 
-    if args.full_image:
-        full_image(args.full_image, args.yb)
+    if args.banner:
+        full_image(args.banner, args.yb)
         sys.exit(0)
 
     if args.classifiers:
