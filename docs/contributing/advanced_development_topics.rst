@@ -124,7 +124,7 @@ Merging Pull Requests
 
 Our convention is that the person who performs the code review should merge the pull request (since reviewing is hard work and deserves due credit!). Only core contributors have write access to the repository and can merge pull requests. Some preferences for commit messages when merging in pull requests:
 
-- Make sure to use the "Squash and Merge" option in order to create a Git history that is understandable. 
+- Make sure to use the "Squash and Merge" option in order to create a Git history that is understandable.
 - Keep the title of the commit short and descriptive; be sure it includes the PR #.
 - Craft a commit message body that is 1-3 sentences, depending on the complexity of the commit; it should explicitly reference any issues being closed or opened using `GitHub's commit message keywords <https://help.github.com/articles/closing-issues-using-keywords/>`_.
 
@@ -134,33 +134,100 @@ Our convention is that the person who performs the code review should merge the 
 Releases
 --------
 
-When ready to create a new release we branch off of develop as follows::
+To ensure we get new code to our users as soon and as bug free as possible we periodically create major, minor, and hotfix version releases that are merged from the ``develop`` branch into ``master`` and pushed to PyPI and Anaconda Cloud. Our release cycle ensures that stable code can be found in the master branch and pip installed and that we can test our development code thoroughly before a release.
 
+.. note:: The following steps must be taken by a maintainer with access to the primary (upstream) Yellowbrick repository. Any reference to ``origin`` refers to github.com/DistrictDataLabs/yellowbrick.
+
+The first step is to create a release branch from develop - this allows us to do "release-work" (e.g. a version bump, changelog stuff, etc.) in a branch that is neither ``develop`` nor ``master`` and to test the release before deployment::
+
+    $ git checkout develop
+    $ git pull origin develop
     $ git checkout -b release-x.x
 
-This creates a release branch for version x.x. At this point do the version bump by modifying ``version.py`` and the test version in ``tests/__init__.py``. Make sure all tests pass for the release and that the documentation is up to date. Note, to build the docs see the :ref:`documentation notes <documentation>`. There may be style changes or deployment options that have to be done at this phase in the release branch. At this phase you'll also modify the ``changelog`` with the features and changes in the release that have not already been marked.
+This creates a release branch for version ``x.x`` where ``x`` is a digit. Release versions are described as a number ``x.y.z`` where ``x`` is the major version, ``y`` is the minor version and ``z`` is a patch version. Generally speaking most releases are minor version releases where ``x.y`` becomes ``x.y+1```. Patch versions are infrequent but may also be needed where very little has changed or something quick has to be pushed to fix a critical bug, e.g.g ``x.y`` becomes ``x.y.1``. Major version releases where ``x.y`` become ``x+1.0`` are rare.
+
+At this point do the version bump by modifying ``version.py`` and the test version in ``tests/__init__.py``. Make sure all tests pass for the release and that the documentation is up to date. To build the docs see the :ref:`documentation notes <documentation>`. There may be style changes or deployment options that have to be done at this phase in the release branch. At this phase you'll also modify the ``changelog`` with the features and changes in the release that have not already been marked.
+
+.. note:: Before merging the release to master make sure that the release checklist has been completed!
 
 Once the release is ready for prime-time, merge into master::
 
     $ git checkout master
     $ git merge --no-ff --no-edit release-x.x
+    $ git push origin master
 
 Tag the release in GitHub::
 
     $ git tag -a vx.x
     $ git push origin vx.x
 
-You'll have to go to the release_ page to edit the release with similar information as added to the changelog. Once done, push the release to PyPI::
+Now go to the release_ page to convert the tag into a release and add a Markdown version of the changelog notes for those that are accessing the release directly from GitHub.
+
+Deploying to PyPI
+~~~~~~~~~~~~~~~~~
+
+Deploying the release to PyPI is fairly straight forward. Ensure that you have valid PyPI login credentials in ``~/.pypirc`` and use the Makefile to deploy as follows::
 
     $ make build
     $ make deploy
 
-Check that the PyPI page is updated with the correct version and that ``pip install -U yellowbrick`` updates the version and works correctly. Also check the documentation on PyHosted, ReadTheDocs, and on our website to make sure that it was correctly updated. Finally merge the release into develop and clean up::
+The build process should create ``build`` and ``dist`` directories containing the wheel and source packages as well as a ``.egg-info`` file for deployment. The deploy command registers the version in PyPI and uploads it with Twine.
+
+Deploying to Anaconda Cloud
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+These instructions follow the tutorial `"Building conda packages with conda skeleton" <https://conda.io/projects/conda-build/en/latest/user-guide/tutorials/build-pkgs-skeleton.html>`_. To deploy release to Anaconda Cloud you first need to have Miniconda or Anaconda installed along with ``conda-build`` and ``anaconda-client`` (which can be installed using ``conda``). Make sure that you run the ``anaconda login`` command using the credentials that allow access to the Yellowbrick channel. If you have an old skeleton directory, make sure to save it with a different name (e.g. yellowbrick.old) before running the skeleton command::
+
+    $ conda skeleton pypi yellowbrick
+
+This should install the latest version of yellowbrick from PyPI - make sure the version matches the expected version of the release! There are some edits that must be made to the ``yellowbrick/meta.yaml`` that is generated as follows::
+
+    about:
+        home: http://scikit-yb.org/
+        license_file: LICENSE.txt
+        doc_url: https://www.scikit-yb.org/en/latest/
+        dev_url: https://github.com/DistrictDataLabs/yellowbrick
+
+In addition, you must remove the entire ``test:`` section of the yaml file and add the following to the ``requirements:`` under both ``host:`` and ``run:``. See `example meta.yaml <https://gist.github.com/bbengfort/a77dd0ff610fd10f40926f7426a89486>`_ for a detailed version. Note that the description field in the metadata is pulled from the ``DESCRIPTION.rst`` in the root of the Yellowbrick project. However, Anaconda Cloud requires a Markdown description - the easiest thing to do is to copy it from the existing description.
+
+With the ``meta.yaml`` file setup you can now run the build command for the various Python distributes that Yellowbrick supports::
+
+    $ conda build --python 3.6 yellowbrick
+    $ conda build --python 3.7 yellowbrick
+
+After this command completes you should have build files in ``$MINICONDA_HOME/conda-bld/[OS]/yellowbrick-x.x-py3.x_0.tar.bz2``. You can now run conda convert for each of the Python versions using this directory as follows::
+
+    $ conda convert --platform all [path to build] -o $MINICONDA_HOME/conda-bld
+
+At this point you should have builds for all the versions of Python and all platforms Yellowbrick supports. Unfortunately at this point you have to upload them all to Anaconda Cloud::
+
+    $ anaconda upload $MINICONDA_HOME/conda-bld/[OS]/yellowbrick-x.x-py3.x_0.tar.bz2
+
+Once uploaded, the Anaconda Cloud page should reflect the latest version, you may have to edit the description to make sure it's in Markdown format.
+
+Finalizing the Release
+~~~~~~~~~~~~~~~~~~~~~~
+
+The last steps in the release process are to check to make sure the release completed successfully. Make sure that the `PyPI page`_ and the `Anaconda Cloud Page`_ are correctly updated to the latest version. Also ensure that ReadTheDocs has correctly built the "latest" documentation on `scikit-yb.org <https://www.scikit-yb.org/en/latest/>`_.
+
+Make sure that you can update the package on your local machine, either in a virtual environment that does not include yellowbrick or in a Python install that is not used for development (e.g. not in the yellowbrick project directory)::
+
+    $ pip install -U yellowbrick
+    $ python -c "import yellowbrick; print(yellowbrick.__version__)"
+
+After verifying that the version has been correctly updated you can clean up the project directory::
+
+    $ make clean
+
+After this, it's time to merge the release into develop so that we can get started on the next version! ::
 
     $ git checkout develop
     $ git merge --no-ff --no-edit release-x.x
     $ git branch -d release-x.x
+    $ git push origin develop
 
-Hotfixes and minor releases also follow a similar pattern; the goal is to effectively get new code to users as soon as possible!
+Make sure to celebrate the release with the other maintainers and to tweet to everyone to let them know it's time to update Yellowbrick!
 
 .. _release: https://github.com/DistrictDataLabs/yellowbrick/releases
+.. _PyPI Page: https://pypi.org/project/yellowbrick/
+.. _Anaconda Cloud Page: https://anaconda.org/DistrictDataLabs/yellowbrick
