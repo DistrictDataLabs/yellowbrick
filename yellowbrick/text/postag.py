@@ -26,7 +26,6 @@ from yellowbrick.exceptions import YellowbrickValueError
 
 import  numpy as np
 from collections import Counter
-import copy
 
 
 ##########################################################################
