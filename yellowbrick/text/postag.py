@@ -175,14 +175,14 @@ class PosTagVisualizer(TextVisualizer):
         """
         Returns a Penn Treebank part-of-speech tag map.
         """
-        self.pos_tags = PENN_TAGS
+        self._pos_tags = PENN_TAGS
         return self._make_tag_map(PENN_TAGS)
     
     def _uni_tag_map(self):
         """
         Returns a Universal Dependencies part-of-speech tag map.
         """
-        self.pos_tags = UNIVERSAL_TAGS
+        self._pos_tags = UNIVERSAL_TAGS
         return self._make_tag_map(UNIVERSAL_TAGS)
 
     def _make_tag_map(self, tagset):
@@ -198,7 +198,7 @@ class PosTagVisualizer(TextVisualizer):
             }
         return dict(zip(tagset, zeros))
    
-    def _handle_universal(self, X,y):
+    def _handle_universal(self, X, y=None):
             """
             Scan through the corpus to compute counts of each Universal
             Dependencies part-of-speech.
@@ -235,7 +235,7 @@ class PosTagVisualizer(TextVisualizer):
                         counter = self.pos_tag_counts_[y[idx]] if self.stack else self.pos_tag_counts_
                         counter[jump.get(tag, "other")] += 1
 
-    def _handle_treebank(self, X,y):
+    def _handle_treebank(self, X, y=None):
         """
         Create a part-of-speech tag mapping using the Penn Treebank tags
         
@@ -308,38 +308,37 @@ class PosTagVisualizer(TextVisualizer):
         ax : matplotlib axes
             Axes on which the PosTagVisualizer was drawn.
         """
-        colors = resolve_colors(
-                    n_colors=len(self.pos_tag_counts_), 
-                    colormap=self.colormap,
-                    colors=self.colors
-                    )
+        colors = resolve_colors(n_colors=len(self.pos_tag_counts_), 
+                                colormap=self.colormap, 
+                                colors=self.colors)
         
-        pos_tag_sum = copy.deepcopy(self.pos_tag_counts_)
+    
+        #Raises an error if pos_tag_count is not in nested dictionary form 
         try:
             #Stores the tag-wise sum of each label
             pos_tag_sum = sum((Counter(i) for i in self.pos_tag_counts_.values())
                             , Counter())
-        except TypeError:
-            pass
+        except:
+            # copies the dictionary
+            pos_tag_sum = self.pos_tag_counts_.copy()
         
         #Sort the pos_tags by pos_tag_sum(if frequency is True)
         if self.frequency:
-            self.pos_tags = sorted(
-                        pos_tag_sum, key=pos_tag_sum.get, 
-                        reverse=True
-                        )    
+            self._pos_tags = sorted(pos_tag_sum, key=pos_tag_sum.get, 
+                                    reverse=True
+                                    )    
         
         if self.stack:
             colors = dict(zip(self.labels_, colors))
             #Sorted pos_tag_counts
             for i in self.labels_:
                 self.pos_tag_counts_[i] = {tag:self.pos_tag_counts_[i][tag] 
-                                                for tag in self.pos_tags}
+                                                for tag in self._pos_tags}
             
             # TODO: Create helper funtion for stacked  barcharts in draw
             #Layer by layer stack plot of tag_list
-            xidx = np.arange(len(self.pos_tags))
-            prev = np.zeros(len(self.pos_tags))
+            xidx = np.arange(len(self._pos_tags))
+            prev = np.zeros(len(self._pos_tags))
             for label, tags in self.pos_tag_counts_.items():
                 self.ax.bar(
                         xidx,
@@ -351,7 +350,7 @@ class PosTagVisualizer(TextVisualizer):
         else:
             # Sorted pos_tag_counts
             self.pos_tag_counts_ = {tag:self.pos_tag_counts_[tag] 
-                                            for tag in self.pos_tags}
+                                            for tag in self._pos_tags}
 
             self.ax.bar(
                 range(len(self.pos_tag_counts_)),
@@ -373,8 +372,8 @@ class PosTagVisualizer(TextVisualizer):
         """
         # NOTE: not deduping here, so this is total, not unique
         self.ax.set_ylabel("Count")
-        self.ax.set_xticks(range(len(self.pos_tags)))
-        self.ax.set_xticklabels(self.pos_tags, rotation=90)
+        self.ax.set_xticks(range(len(self._pos_tags)))
+        self.ax.set_xticklabels(self._pos_tags, rotation=90)
         
         if self.frequency:
             self.ax.set_xlabel(
