@@ -21,6 +21,7 @@ http://www.dbs.ifi.lmu.de/~zimek/publications/SDM2014/DBCV.pdf
 import numpy as np
 from scipy.spatial.distance import cdist
 from scipy.sparse import coo_matrix
+from scipy.sparse.csgraph import minimum_spanning_tree
 # from .base import ClusteringScoreVisualizer
 # from ..style.palettes import LINE_COLOR
 # from ..exceptions import YellowbrickValueError, YellowbrickWarning
@@ -37,11 +38,6 @@ __all__ = [
 """
 Start witht the eight definitions in the original paper
 """
-def dbcv(X):
-    """
-    Density-Based Cluster Validation
-    """
-    return None
 
 def core_distance(X, labels, dist_func="euclidean"):
     """
@@ -93,7 +89,6 @@ def core_distance(X, labels, dist_func="euclidean"):
     return core_distances
 
 
-
 def mutual_reachability(X, core_dists, dist_func="euclidean"):
     """
     The mutual reachability between two objects
@@ -132,11 +127,8 @@ def mutual_reachability(X, core_dists, dist_func="euclidean"):
     reachability_graph = coo_matrix( (reachability, (dimensions[0, :],
         dimensions[1, :]))) 
 
-    return reachability_graph.toarray()
+    return reachability_graph
     
-
-def mutual_reachability_distance_MST(X):
-    return None
 
 def cluster_density_sparseness(X):
     return None
@@ -150,6 +142,15 @@ def cluster_validity_index(X):
 def clustering_validity_index(X):
     return None
 
+def dbcv(X, labels, distance_function="euclidean"):
+    """
+    Density-Based Cluster Validation
+    """
+
+    distances = core_distance(X, labels, dist_func=distance_function)
+    graph = mutual_reachability(X, distances, dist_func=distance_function)
+    mst = minimum_spanning_tree(graph)  # need it to be symmetric?
+    return None
 
 if __name__ == "__main__":
     """
