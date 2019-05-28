@@ -26,6 +26,7 @@ from yellowbrick.exceptions import YellowbrickValueError
 
 import  numpy as np
 from collections import Counter
+import copy
 
 
 ##########################################################################
@@ -307,66 +308,57 @@ class PosTagVisualizer(TextVisualizer):
         ax : matplotlib axes
             Axes on which the PosTagVisualizer was drawn.
         """
-        if self.stack:
-            #Plot stack barchart
-            colors = resolve_colors(
-                        n_colors=len(self.labels_), 
-                        colormap=self.colormap,
-                        colors=self.colors
-                        )
-            
-            # Stores tag wise sum of all labels
-            collected = sum((Counter(i) for i in self.pos_tag_counts_.values())
-                            , Counter())
-            
-            tag_list=[]
-            if self.frequency:
-                # Sort tags with respect to frequency in corpus
-                self.pos_tags = sorted(
-                        collected, key=collected.get, 
-                        reverse=True
-                        )
-            
-            for i in self.labels_:
-                tag_list.append([self.pos_tag_counts_[i][tag] for tag in self.pos_tags])
-                
-            #Layer by layer stack plot of tag_list
-            last=[0]*len(tag_list[0])
-            for i in range(len(tag_list)):
-                self.ax.bar(
-                        range(len(tag_list[i])), 
-                        tag_list[i],
-                        bottom=last,
-                        color=colors[i]
-                        )
-                last = [sum(x) for x in zip(list(last), 
-                            tag_list[i])]
-                    
-        else:
-            # Plot barplot(not stacked)
-            colors = resolve_colors(
-                n_colors=len(self.pos_tag_counts_), 
-                colormap=self.colormap, 
-                colors=self.colors
-                )
-            
-            if self.frequency:
-                # Sort tags with respect to frequency in corpus
-                self.pos_tags = sorted(
-                    self.pos_tag_counts_, key=self.pos_tag_counts_.get, 
-                    reverse=True
+        colors = resolve_colors(
+                    n_colors=len(self.pos_tag_counts_), 
+                    colormap=self.colormap,
+                    colors=self.colors
                     )
-                sorted_counts = [self.pos_tag_counts_[tag] for tag in self.pos_tags]
-    
-                self.ax.bar(range(len(self.pos_tags)), sorted_counts, 
-                            color=colors)
-                return self.ax
+        
+        pos_tag_sum = copy.deepcopy(self.pos_tag_counts_)
+        try:
+            #Stores the tag-wise sum of each label
+            pos_tag_sum = sum((Counter(i) for i in self.pos_tag_counts_.values())
+                            , Counter())
+        except TypeError:
+            pass
+        
+        #Sort the pos_tags by pos_tag_sum(if frequency is True)
+        if self.frequency:
+            self.pos_tags = sorted(
+                        pos_tag_sum, key=pos_tag_sum.get, 
+                        reverse=True
+                        )    
+        
+        if self.stack:
+            colors = dict(zip(self.labels_, colors))
+            #Sorted pos_tag_counts
+            for i in self.labels_:
+                self.pos_tag_counts_[i] = {tag:self.pos_tag_counts_[i][tag] 
+                                                for tag in self.pos_tags}
             
+            # TODO: Create helper funtion for stacked  barcharts in draw
+            #Layer by layer stack plot of tag_list
+            xidx = np.arange(len(self.pos_tags))
+            prev = np.zeros(len(self.pos_tags))
+            for label, tags in self.pos_tag_counts_.items():
+                self.ax.bar(
+                        xidx,
+                        list(tags.values()),
+                        bottom=prev,
+                        color=colors[label]
+                        )
+                prev+=list(tags.values())
+        else:
+            # Sorted pos_tag_counts
+            self.pos_tag_counts_ = {tag:self.pos_tag_counts_[tag] 
+                                            for tag in self.pos_tags}
+
             self.ax.bar(
                 range(len(self.pos_tag_counts_)),
                 list(self.pos_tag_counts_.values()),
                 color=colors,
                 )
+        
         return self.ax
         
 
@@ -384,6 +376,16 @@ class PosTagVisualizer(TextVisualizer):
         self.ax.set_xticks(range(len(self.pos_tags)))
         self.ax.set_xticklabels(self.pos_tags, rotation=90)
         
+        if self.frequency:
+            self.ax.set_xlabel(
+                "{} part-of-speech tags, sorted by frequency".format(
+                        self.tagset_names[self.tagset]
+                        ))
+        else:
+            self.ax.set_xlabel(
+                "{} part-of-speech tags".format(self.tagset_names[self.tagset])
+                        )
+
         if self.stack:
             colors = resolve_colors(
                     n_colors=len(self.labels_), 
@@ -397,21 +399,11 @@ class PosTagVisualizer(TextVisualizer):
                 )
             )
         else:
-            if self.frequency:
-                self.ax.set_xlabel(
-                    "{} part-of-speech tags, sorted by frequency".format(
-                            self.tagset_names[self.tagset]
-                            ))
-            else:
-                self.ax.set_xlabel(
-                    "{} part-of-speech tags".format(self.tagset_names[self.tagset])
-                )
             self.set_title(
                 "PosTag plot for {}-token corpus".format(
                     (sum(self.pos_tag_counts_.values()))
                 )
             )
-
 
     def poof(self, outpath=None, **kwargs):
         if outpath is not None:
