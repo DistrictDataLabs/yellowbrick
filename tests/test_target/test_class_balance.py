@@ -199,7 +199,7 @@ class ClassBalanceTests(VisualTestCase, DatasetMixin):
         assert oz.fit(y_train, y_test) is oz
 
         #oz.finalize()
-        self.assert_images_similar(oz)
+        self.assert_images_similar(oz, remove_legend=True)
 
     def test_quick_method(self):
         """
