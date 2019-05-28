@@ -53,7 +53,6 @@ class VisualTestCase(unittest.TestCase):
 
         Note:
         """
-        klass._backend = mpl.get_backend()
         super(VisualTestCase, klass).setUpClass()
 
     def setUp(self):
@@ -68,8 +67,6 @@ class VisualTestCase(unittest.TestCase):
         # Travis-CI does not have san-serif
         rcParams['font.family'] = 'DejaVu Sans'
 
-        # Assert that the backend is agg
-        self.assertEqual(self._backend, 'agg')
         super(VisualTestCase, self).setUp()
 
     def assert_images_similar(self, visualizer=None, ax=None, tol=0.01, **kwargs):
