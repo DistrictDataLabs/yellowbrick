@@ -47,9 +47,8 @@ class VisualTestCase(unittest.TestCase):
     @classmethod
     def setUpClass(klass):
         """
-        In order for tests to pass on Travis-CI we must use the 'Agg'
-        matplotlib backend. This setup function ensures that all tests
-        that do visual work setup the backend correctly.
+        This setup function is available to ensure that all CI tests
+        that do visual work are set up correctly.
 
         Note:
         """
@@ -57,7 +56,7 @@ class VisualTestCase(unittest.TestCase):
 
     def setUp(self):
         """
-        Assert tthat the backend is 'Agg' and close all previous plots
+        Close all previous plots
         """
         # Reset the matplotlib environment
         plt.cla()        # clear current axis
