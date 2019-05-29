@@ -20,7 +20,7 @@ http://www.dbs.ifi.lmu.de/~zimek/publications/SDM2014/DBCV.pdf
 
 import numpy as np
 from scipy.spatial.distance import cdist
-from scipy.sparse import coo_matrix
+from scipy.sparse import coo_matrix, csr_matrix
 from scipy.sparse.csgraph import minimum_spanning_tree
 # from .base import ClusteringScoreVisualizer
 # from ..style.palettes import LINE_COLOR
@@ -63,9 +63,6 @@ def core_distance(X, labels, dist_func="euclidean"):
     input matrix is a numpy array:  
     https://stackoverflow.com/questions/12569452/how-to-identify-numpy-types-in-python
     """
-    assert isinstance(X, np.ndarray), "X must be a numpy array, np.ndarray"
-    assert len(X) == len(labels), ("Must have a label for each point, -1 for"
-        "noise")
 
     n_rows, n_cols = X.shape
     core_distances = np.zeros(n_rows)
@@ -127,14 +124,27 @@ def mutual_reachability(X, core_dists, dist_func="euclidean"):
     reachability_graph = coo_matrix( (reachability, (dimensions[0, :],
         dimensions[1, :]))) 
 
-    return reachability_graph
+    return reachability_graph.toarray()
     
 
+'''
+added to dbcv
 def cluster_density_sparseness(X):
+    """
+    the Density Sparseness of a Cluster(DSC)Ciis defined as the maximum edge 
+    weight of the internal edgesinMSTMRDof the cluster C_i, where MSTMRD is the 
+    minimum spanning tree constructed using a_pts-core-dist considering the 
+    objects in C_i
+    """
     return None
 
 def cluster_density_separation(X):
+    """
+    The minimum reachability distance between the internal nodes of the
+    MST<sub>MRD</sub>s of clusters C_i and C_j
+    """
     return None
+'''
 
 def cluster_validity_index(X):
     return None
@@ -145,11 +155,28 @@ def clustering_validity_index(X):
 def dbcv(X, labels, distance_function="euclidean"):
     """
     Density-Based Cluster Validation
+
+    QUESTION:  Better way to improve speed and/or memory?
     """
+    assert isinstance(X, np.ndarray), "X must be a numpy array, np.ndarray"
+    assert len(X) == len(labels), ("Must have a label for each point, -1 for"
+        "noise")
+
+    clusters = list(set(labels))
+    cardinality = len(X)
+
+    if -1 in clusters:
+        clusters.remove(-1)
 
     distances = core_distance(X, labels, dist_func=distance_function)
     graph = mutual_reachability(X, distances, dist_func=distance_function)
-    mst = minimum_spanning_tree(graph)  # need it to be symmetric?
+    spanning_trees = []
+    for c in clusters:
+        idx = np.where(labels == c)[0]
+        spanning_trees.append(minimum_spanning_tree(csr_matrix(
+            graph[idx,idx.reshape(sum(labels == c), 1)])))
+    density_sparseness = [tree.min() for tree in spanning_trees]
+
     return None
 
 if __name__ == "__main__":
@@ -176,4 +203,5 @@ if __name__ == "__main__":
     print(cd_output)
     graph = mutual_reachability(X, cd_output, 'euclidean')
     print("graph:\n", graph)
+    dbcv(X, clustering.labels_)
 
