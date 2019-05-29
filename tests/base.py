@@ -206,7 +206,7 @@ class ImageComparison(object):
         self.test_module_path = os.path.splitext(module_path)[0]
 
         # Set the error tolerance depending on the os
-        if os.name == "nt" and windows_tol is None:
+        if os.name == "nt" and windows_tol is not None:
             self.tol = windows_tol
         else:        
             self.tol = tol
