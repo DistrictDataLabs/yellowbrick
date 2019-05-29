@@ -205,9 +205,14 @@ class ImageComparison(object):
         module_path = os.path.relpath(frame[1], root)
         self.test_module_path = os.path.splitext(module_path)[0]
 
+        # Set the error tolerance betweening on os
+        if os.name == "nt" and windows_tol is None:
+            self.tol = windows_tol
+        else:        
+            self.tol = tol
+
+
         # Save other image comparison properties
-        self.tol = tol
-        self.windows_tol = windows_tol
         self.ext = ext
         self.remove_ticks = remove_ticks
         self.remove_title = remove_title
@@ -311,14 +316,8 @@ class ImageComparison(object):
             raise ImageComparisonFailure(
                 'baseline image does not exist:\n{}'.format(os.path.relpath(expected))
             )
-
-        if os.name == "nt" and self.windows_tol is not None:
-            err_tol = self.windows_tol
-        else:
-            err_tol = self.tol
-
         # Perform the comparison
-        err = compare_images(expected, actual, err_tol, in_decorator=True)
+        err = compare_images(expected, actual, self.tol, in_decorator=True)
 
         # Raise image comparison failure if not close
         if err:
