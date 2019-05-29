@@ -157,7 +157,7 @@ class ImageComparison(object):
         than this value.
 
     windows_tol : float, default: 0.01
-        The tolerace (tol) parament for the windows operating system environment. 
+        The tolerace (tol) parameter for the windows operating system environment. 
 
     ext : string, default: ".png"
         The file extension to save the actual and baseline images as.
@@ -205,7 +205,7 @@ class ImageComparison(object):
         module_path = os.path.relpath(frame[1], root)
         self.test_module_path = os.path.splitext(module_path)[0]
 
-        # Set the error tolerance betweening on os
+        # Set the error tolerance depending on the os
         if os.name == "nt" and windows_tol is None:
             self.tol = windows_tol
         else:        
