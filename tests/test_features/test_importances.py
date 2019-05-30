@@ -19,7 +19,6 @@ Test the feature importance visualizers
 ## Imports
 ##########################################################################
 
-import sys
 import pytest
 import numpy as np
 import numpy.testing as npt
@@ -53,9 +52,6 @@ class TestFeatureImportancesVisualizer(VisualTestCase):
     Test FeatureImportances visualizer
     """
 
-    @pytest.mark.xfail(
-        sys.platform == 'win32', reason="images not close on windows"
-    )
     def test_integration_feature_importances(self):
         """
         Integration test of visualizer with feature importances param
@@ -72,11 +68,8 @@ class TestFeatureImportancesVisualizer(VisualTestCase):
         viz.fit(X, y)
         viz.finalize()
 
-        self.assert_images_similar(viz)
+        self.assert_images_similar(viz, windows_tol=13.0)
 
-    @pytest.mark.xfail(
-        sys.platform == 'win32', reason="images not close on windows"
-    )
     def test_integration_coef(self):
         """
         Integration test of visualizer with coef param
@@ -96,11 +89,8 @@ class TestFeatureImportancesVisualizer(VisualTestCase):
         viz.fit(X, y)
         viz.finalize()
 
-        self.assert_images_similar(viz)
+        self.assert_images_similar(viz, windows_tol=16.2)
 
-    @pytest.mark.xfail(
-        sys.platform == 'win32', reason="images not close on windows"
-    )
     def test_integration_quick_method(self):
         """
         Integration test of quick method
@@ -115,7 +105,7 @@ class TestFeatureImportancesVisualizer(VisualTestCase):
         clf = RandomForestClassifier(random_state=42)
         g = feature_importances(clf, X, y, ax)
 
-        self.assert_images_similar(ax=g)
+        self.assert_images_similar(ax=g, windows_tol=15.0)
 
     def test_fit_no_importances_model(self):
         """
@@ -230,9 +220,6 @@ class TestFeatureImportancesVisualizer(VisualTestCase):
 
         npt.assert_equal(visualizer.feature_importances_.ndim, 1)
 
-    @pytest.mark.xfail(
-        sys.platform == 'win32', reason="images not close on windows"
-    )
     def test_multi_coefs_stacked(self):
         """
         Test stack plot with multidimensional coefficients
@@ -244,7 +231,7 @@ class TestFeatureImportancesVisualizer(VisualTestCase):
         viz.finalize()
 
         npt.assert_equal(viz.feature_importances_.shape, (3, 4))
-        self.assert_images_similar(viz)
+        self.assert_images_similar(viz, windows_tol=17.5)
 
 
     @pytest.mark.skipif(pd is None, reason="pandas is required for this test")
