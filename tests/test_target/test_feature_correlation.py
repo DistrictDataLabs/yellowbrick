@@ -58,7 +58,7 @@ class TestFeatureCorrelationVisualizer(VisualTestCase):
         """
         viz = FeatureCorrelation()
         viz.fit(self.X, self.y)
-        viz.poof()
+        viz.finalize()
 
         self.assert_images_similar(viz)
 
@@ -71,7 +71,7 @@ class TestFeatureCorrelationVisualizer(VisualTestCase):
         """
         viz = FeatureCorrelation(method='mutual_info-regression')
         viz.fit(self.X, self.y, random_state=23456)
-        viz.poof()
+        viz.finalize()
 
         self.assert_images_similar(viz)
 
@@ -88,7 +88,7 @@ class TestFeatureCorrelationVisualizer(VisualTestCase):
 
         viz = FeatureCorrelation(method='mutual_info-classification')
         viz.fit(X, y, random_state=12345)
-        viz.poof()
+        viz.finalize()
 
         self.assert_images_similar(viz)
 
