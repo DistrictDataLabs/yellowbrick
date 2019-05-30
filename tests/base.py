@@ -68,7 +68,7 @@ class VisualTestCase(unittest.TestCase):
 
         super(VisualTestCase, self).setUp()
 
-    def assert_images_similar(self, visualizer=None, ax=None, tol=0.01, **kwargs):
+    def assert_images_similar(self, visualizer=None, ax=None, tol=0.01, windows_tol=None,  **kwargs):
         """Accessible testing method for testing generation of a Visualizer.
 
         Requires the placement of a baseline image for comparison in the
@@ -100,6 +100,9 @@ class VisualTestCase(unittest.TestCase):
             maximal difference).  The test fails if the average pixel
             difference is greater than this value.
 
+        windows_tol: float, default: None
+            Similar to the tol parameter, but targeted for testing on a windows environment. 
+
         kwargs : dict
             Options to pass to the ImageComparison class.
         """
@@ -108,7 +111,7 @@ class VisualTestCase(unittest.TestCase):
 
         # Build and execute the image comparison
         compare = ImageComparison(
-            inspect.stack(), visualizer=visualizer, ax=ax, tol=tol, **kwargs
+            inspect.stack(), visualizer=visualizer, ax=ax, tol=tol, windows_tol=windows_tol, **kwargs
         )
         compare()
 
@@ -149,6 +152,9 @@ class ImageComparison(object):
         difference. The test fails if the average pixel difference is greater
         than this value.
 
+    windows_tol : float, default: 0.01
+        The tolerace (tol) parameter for the windows operating system environment. 
+
     ext : string, default: ".png"
         The file extension to save the actual and baseline images as.
 
@@ -165,7 +171,7 @@ class ImageComparison(object):
     ValueError : at least one of visualizer or ax must be specified.
     """
 
-    def __init__(self, stack, visualizer=None, ax=None, tol=0.01, ext=".png",
+    def __init__(self, stack, visualizer=None, ax=None, tol=0.01, windows_tol=0.01, ext=".png",
                  remove_ticks=True, remove_title=True, remove_legend=False):
 
         # Ensure we have something to draw on
@@ -195,8 +201,14 @@ class ImageComparison(object):
         module_path = os.path.relpath(frame[1], root)
         self.test_module_path = os.path.splitext(module_path)[0]
 
+        # Set the error tolerance depending on the os
+        if os.name == "nt" and windows_tol is not None:
+            self.tol = windows_tol
+        else:        
+            self.tol = tol
+
+
         # Save other image comparison properties
-        self.tol = tol
         self.ext = ext
         self.remove_ticks = remove_ticks
         self.remove_title = remove_title
@@ -300,7 +312,6 @@ class ImageComparison(object):
             raise ImageComparisonFailure(
                 'baseline image does not exist:\n{}'.format(os.path.relpath(expected))
             )
-
         # Perform the comparison
         err = compare_images(expected, actual, self.tol, in_decorator=True)
 
