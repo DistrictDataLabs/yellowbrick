@@ -47,18 +47,16 @@ class VisualTestCase(unittest.TestCase):
     @classmethod
     def setUpClass(klass):
         """
-        In order for tests to pass on Travis-CI we must use the 'Agg'
-        matplotlib backend. This setup function ensures that all tests
-        that do visual work setup the backend correctly.
+        This setup function is available to ensure that all CI tests
+        that do visual work are set up correctly.
 
         Note:
         """
-        klass._backend = mpl.get_backend()
         super(VisualTestCase, klass).setUpClass()
 
     def setUp(self):
         """
-        Assert tthat the backend is 'Agg' and close all previous plots
+        Close all previous plots
         """
         # Reset the matplotlib environment
         plt.cla()        # clear current axis
@@ -68,8 +66,6 @@ class VisualTestCase(unittest.TestCase):
         # Travis-CI does not have san-serif
         rcParams['font.family'] = 'DejaVu Sans'
 
-        # Assert that the backend is agg
-        self.assertEqual(self._backend, 'agg')
         super(VisualTestCase, self).setUp()
 
     def assert_images_similar(self, visualizer=None, ax=None, tol=0.01, windows_tol=None,  **kwargs):

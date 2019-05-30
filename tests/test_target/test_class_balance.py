@@ -178,6 +178,7 @@ class ClassBalanceTests(VisualTestCase, DatasetMixin):
         self.assert_images_similar(oz)
 
     @pytest.mark.skipif(pd is None, reason="test requires pandas")
+    @pytest.mark.xfail(reason="failing across platforms, appears to be aliasing")
     def test_pandas_occupancy_compare(self):
         """
         Test pandas data frame with string target in compare mode

@@ -109,7 +109,7 @@ class TestRFECV(VisualTestCase):
         oz.fit(self.dataset.X, self.dataset.y)
         oz.poof()
 
-        self.assert_images_similar(oz)
+        self.assert_images_similar(oz, remove_legend=True)
 
     @pytest.mark.xfail(
         sys.platform == 'win32', reason="images not close on windows"
@@ -125,7 +125,7 @@ class TestRFECV(VisualTestCase):
 
         ax = rfecv(model, X, y, step=2, cv=cv, scoring='f1_weighted')
 
-        self.assert_images_similar(ax=ax)
+        self.assert_images_similar(ax=ax, remove_legend=True)
 
     @pytest.mark.xfail(
         sys.platform == 'win32', reason="images not close on windows"
@@ -146,7 +146,7 @@ class TestRFECV(VisualTestCase):
         oz.fit(X, y)
         oz.poof()
 
-        self.assert_images_similar(oz)
+        self.assert_images_similar(oz, remove_legend=True)
 
     @pytest.mark.xfail(
         sys.platform == 'win32', reason="images not close on windows"
@@ -166,7 +166,7 @@ class TestRFECV(VisualTestCase):
         oz.fit(X, y)
         oz.poof()
 
-        self.assert_images_similar(oz)
+        self.assert_images_similar(oz, remove_legend=True)
 
     def test_invalid_step(self):
         """
@@ -192,4 +192,4 @@ class TestRFECV(VisualTestCase):
 
         oz.finalize()
         tol = 1.75 if sys.platform == "win32" else 0.25
-        self.assert_images_similar(oz, tol=tol)
+        self.assert_images_similar(oz, tol=tol, remove_legend=True)
