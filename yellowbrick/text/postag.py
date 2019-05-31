@@ -25,7 +25,6 @@ from yellowbrick.draw import manual_legend
 from yellowbrick.exceptions import YellowbrickValueError
 
 import  numpy as np
-from collections import Counter
 
 
 ##########################################################################
@@ -156,10 +155,11 @@ class PosTagVisualizer(TextVisualizer):
         self : instance
             Returns the instance of the transformer/visualizer
         """
-        if self.stack and y is None:
-            raise YellowbrickValueError("Specify y for stack=True")
-        
-        self.labels_=np.unique(y)
+        self.labels_=['documents']
+        if self.stack:
+            if y is None:
+                raise YellowbrickValueError("Specify y for stack=True")
+            self.labels_=np.unique(y)
         
         if self.tagset == "penn_treebank":
             self.pos_tag_counts_ = self._penn_tag_map()
@@ -190,8 +190,7 @@ class PosTagVisualizer(TextVisualizer):
         a map of labels to a map of tagset to counters. 
         """
         zeros = [0] * len(tagset) # ensures the dict contains a zero counter per tag
-        if self.stack:
-            return {
+        return {
                 label: dict(zip(tagset, zeros))
                 for label in self.labels_ 
             }
@@ -231,7 +230,11 @@ class PosTagVisualizer(TextVisualizer):
                     for _, tag in tagged_sent:
                         if tag == "SPACE":
                             continue
-                        counter = self.pos_tag_counts_[y[idx]] if self.stack else self.pos_tag_counts_
+                        if self.stack:
+                            counter = self.pos_tag_counts_[y[idx]] 
+                        else: 
+                            counter = self.pos_tag_counts_['documents']
+                        
                         counter[jump.get(tag, "other")] += 1
 
     def _handle_treebank(self, X, y=None):
@@ -248,7 +251,11 @@ class PosTagVisualizer(TextVisualizer):
         for idx,tagged_doc in enumerate(X):
             for tagged_sent in tagged_doc:
                 for _, tag in tagged_sent:
-                    counter = self.pos_tag_counts_[y[idx]] if self.stack else self.pos_tag_counts_
+                    if self.stack:
+                        counter = self.pos_tag_counts_[y[idx]] 
+                    else:
+                        counter = self.pos_tag_counts_['documents']
+                    
                     if tag.startswith("N"):
                         counter["noun"] += 1
                     elif tag.startswith("J"):
@@ -307,58 +314,40 @@ class PosTagVisualizer(TextVisualizer):
         ax : matplotlib axes
             Axes on which the PosTagVisualizer was drawn.
         """
-        colors = resolve_colors(n_colors=len(self.pos_tag_counts_), 
-                                colormap=self.colormap, 
-                                colors=self.colors)
+        # Converts nested dict to nested list
+        pos_tag_counts = np.array([list(i.values()) for i in self.pos_tag_counts_.values()])
+        # stores sum of nested list column wise
+        pos_tag_sum = np.sum(pos_tag_counts, axis=0)
         
-    
-        #Raises an error if pos_tag_count is not in nested dictionary form 
-        try:
-            #Stores the tag-wise sum of each label
-            pos_tag_sum = sum((Counter(i) for i in self.pos_tag_counts_.values())
-                            , Counter())
-        except:
-            # copies the dictionary
-            pos_tag_sum = self.pos_tag_counts_.copy()
-        
-        #Sort the pos_tags by pos_tag_sum(if frequency is True)
         if self.frequency:
-            self._pos_tags = sorted(pos_tag_sum, key=pos_tag_sum.get, 
-                                    reverse=True
-                                    )    
-        
-        if self.stack:
-            colors = dict(zip(self.labels_, colors))
-            #Sorted pos_tag_counts
-            for i in self.labels_:
-                self.pos_tag_counts_[i] = {tag:self.pos_tag_counts_[i][tag] 
-                                                for tag in self._pos_tags}
-            
-            # TODO: Create helper funtion for stacked  barcharts in draw
-            #Layer by layer stack plot of tag_list
-            xidx = np.arange(len(self._pos_tags))
-            prev = np.zeros(len(self._pos_tags))
-            for label, tags in self.pos_tag_counts_.items():
-                self.ax.bar(
-                        xidx,
-                        list(tags.values()),
-                        bottom=prev,
-                        color=colors[label]
-                        )
-                prev+=list(tags.values())
-        else:
-            # Sorted pos_tag_counts
-            self.pos_tag_counts_ = {tag:self.pos_tag_counts_[tag] 
-                                            for tag in self._pos_tags}
+            # sorts the count and tags by sum for frequency true
+            idx = (pos_tag_sum).argsort()[::-1]
+            self._pos_tags = np.array(self._pos_tags)[idx] 
+            pos_tag_counts = pos_tag_counts[:,idx]
 
-            self.ax.bar(
-                range(len(self.pos_tag_counts_)),
-                list(self.pos_tag_counts_.values()),
-                color=colors,
-                )
+        xidx = np.arange(len(self._pos_tags))
+        if self.stack:
+            colors = resolve_colors(n_colors=len(self.labels_), 
+                                    colormap=self.colormap, 
+                                    colors=self.colors)    
+            #layer by layer plot for stacked bar chart
+            prev = np.zeros(len(self._pos_tags))
+            for index,element in enumerate(pos_tag_counts):
+                self.ax.bar(xidx, 
+                            element, 
+                            bottom = prev, 
+                            color = colors[index])
+                prev+=element
+        else:
+            colors = resolve_colors(n_colors=len(self._pos_tags), 
+                                    colormap=self.colormap, 
+                                    colors=self.colors)
+            self.ax.bar(xidx,
+                        pos_tag_counts[0],
+                        color=colors,
+                        )
         
-        return self.ax
-        
+        return self.ax        
 
     def finalize(self, **kwargs):
         """
@@ -391,15 +380,10 @@ class PosTagVisualizer(TextVisualizer):
                     colors=self.colors
                     )
             manual_legend(self, self.labels_, colors, loc='best')
-            self.set_title(
+
+        self.set_title(
                 "PosTag plot for {}-token corpus".format(
                     (sum([sum(i.values()) for i in self.pos_tag_counts_.values()]))
-                )
-            )
-        else:
-            self.set_title(
-                "PosTag plot for {}-token corpus".format(
-                    (sum(self.pos_tag_counts_.values()))
                 )
             )
 
