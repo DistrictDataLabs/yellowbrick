@@ -33,7 +33,7 @@ class TestBalancedBinningReference(VisualTestCase, DatasetMixin):
 		
 		visualizer = BalancedBinningReference()
 		visualizer.fit(y)
-		visualizer.poof()
+		visualizer.finalize()
 		self.assert_images_similar(visualizer, tol=0.5)
 			
 		
