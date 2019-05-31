@@ -461,3 +461,27 @@ class TestRank2D(VisualTestCase):
 
         # Image similarity testing
         self.assert_images_similar(oz, tol=0.1)
+
+
+class TestRank1DQuick(VisualTestCase):
+    """
+    Test `rank1d` quick method
+    """
+    def test_rank1d_quick(self):
+        """
+        test rank2d using default parameters
+        """
+        X, y = load_energy()
+        self.assert_images_similar(ax=rank1d(X, y))
+
+
+class TestRank2DQuick(VisualTestCase):
+    """
+    Test `rank1d` quick method
+    """
+    def test_rank2d_quick(self):
+        """
+        Test rank1d using default parameters
+        """
+        X, y = load_energy()
+        self.assert_images_similar(ax=rank2d(X, y))
