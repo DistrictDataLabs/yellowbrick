@@ -133,18 +133,20 @@ class TestRank1D(VisualTestCase):
         oz.finalize()
         self.assert_images_similar(oz)
 
-    def test_rank1d_orientation(self):
+    def test_rank1d_vertical(self):
         """
         Test Rank1D using vertical orientation
         """
         X, y = load_energy()
         oz = Rank1D(orient='v')
-        npt.assert_array_equal(oz.fit_transform(X, y), X.to_numpy())
+        oz.fit_transform(X, y)
 
         # Image similarity comparison
         oz.finalize()
         self.assert_images_similar(oz)
 
+    def test_rank1d_invalid_orientation(self):
+        X, y = load_energy()
         with pytest.raises(YellowbrickValueError,
                            match="Orientation must be 'h' or 'v'"):
             oz = Rank1D(orient='x')
