@@ -22,6 +22,7 @@ be tested.
 ## Imports
 ##########################################################################
 
+import os
 import sys
 from functools import partial
 from unittest.mock import patch, MagicMock
@@ -46,6 +47,13 @@ try:
 except ImportError:
     pd = None
 
+
+def is_win_conda_env():
+    return (os.name == 'nt' and
+            os.path.exists(os.path.join(sys.prefix, 'conda-meta')))
+
+
+win_tol = 5.5 if is_win_conda_env() else None
 
 ##########################################################################
 ## Fixtures
@@ -183,7 +191,7 @@ class TestJointPlotNoHistogram(VisualTestCase):
 
         oz.finalize()
         tol = 2.0 if sys.platform == "win32" else 0.01 # Fails on AppVeyor with RMS 1.859
-        self.assert_images_similar(oz, tol=tol)
+        self.assert_images_similar(oz, tol=tol, windows_tol=win_tol)
 
     def test_columns_none_x(self):
         """
@@ -234,8 +242,7 @@ class TestJointPlotNoHistogram(VisualTestCase):
         assert hasattr(oz, "corr_")
 
         oz.finalize()
-        tol = 0.5 if sys.platform == "win32" else 0.01 # Fails on AppVeyor with RMS 0.442
-        self.assert_images_similar(oz, tol=tol)
+        self.assert_images_similar(oz, windows_tol=win_tol)
 
     @pytest.mark.skipif(pd is None, reason="test requires pandas")
     def test_columns_single_str_index_pandas(self):
@@ -249,8 +256,7 @@ class TestJointPlotNoHistogram(VisualTestCase):
         assert hasattr(oz, "corr_")
 
         oz.finalize()
-        tol = 0.5 if sys.platform == "win32" else 0.01 # Fails on AppVeyor with RMS 0.447
-        self.assert_images_similar(oz, tol=tol)
+        self.assert_images_similar(oz, windows_tol=win_tol)
 
     def test_columns_double_int_index_numpy_no_y(self):
         """
@@ -376,7 +382,7 @@ class TestJointPlotHistogram(VisualTestCase):
 
         oz.finalize()
         tol = 0.5 if sys.platform == "win32" else 0.01 # Fails on AppVeyor with RMS 0.470
-        self.assert_images_similar(oz, tol=tol)
+        self.assert_images_similar(oz, tol=tol, windows_tol=win_tol)
 
     @pytest.mark.skipif(pd is None, reason="test requires pandas")
     def test_columns_single_str_index_pandas_hist(self):
@@ -391,7 +397,7 @@ class TestJointPlotHistogram(VisualTestCase):
 
         oz.finalize()
         tol = 0.5 if sys.platform == "win32" else 0.01 # Fails on AppVeyor with RMS 0.470
-        self.assert_images_similar(oz, tol=tol)
+        self.assert_images_similar(oz, tol=tol, windows_tol=win_tol)
 
     def test_columns_double_int_index_numpy_no_y_hist(self):
         """
