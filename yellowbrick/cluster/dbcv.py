@@ -19,8 +19,8 @@ http://www.dbs.ifi.lmu.de/~zimek/publications/SDM2014/DBCV.pdf
 ##########################################################################
 
 import numpy as np
+import scipy.sparse as ss
 from scipy.spatial.distance import cdist
-from scipy.sparse import coo_matrix, csr_matrix
 from scipy.sparse.csgraph import minimum_spanning_tree
 # from .base import ClusteringScoreVisualizer
 # from ..style.palettes import LINE_COLOR
@@ -104,8 +104,8 @@ def mutual_reachability(X, core_dists, dist_func="euclidean"):
     # it computes a symmetirc matrix, but perhaps if there is a better way
     # to use it and compute the lower triangle it would save time
     # Might not be worth it, hard to tell.
-    dist_matrix = np.tril(cdist(X, X, dist_func))
-    n_row, n_col = dist_matrix.shape
+    dist_matrix = cdist(X, X, dist_func)
+    n_row, _ = dist_matrix.shape
 
     # compute sparse matrix format
     length = n_row * (n_row-1) // 2
@@ -121,30 +121,11 @@ def mutual_reachability(X, core_dists, dist_func="euclidean"):
         entries[2, start:end] = core_dists[range(n)]
 
     reachability = np.max(entries, axis = 0)
-    reachability_graph = coo_matrix( (reachability, (dimensions[0, :],
-        dimensions[1, :]))) 
+    reachability_graph = ss.csr_matrix((reachability, 
+        (dimensions[0, :], dimensions[1, :])), shape=(n_row, n_row))
 
-    return reachability_graph.toarray()
-    
+    return reachability_graph
 
-'''
-added to dbcv
-def cluster_density_sparseness(X):
-    """
-    the Density Sparseness of a Cluster(DSC)Ciis defined as the maximum edge 
-    weight of the internal edgesinMSTMRDof the cluster C_i, where MSTMRD is the 
-    minimum spanning tree constructed using a_pts-core-dist considering the 
-    objects in C_i
-    """
-    return None
-
-def cluster_density_separation(X):
-    """
-    The minimum reachability distance between the internal nodes of the
-    MST<sub>MRD</sub>s of clusters C_i and C_j
-    """
-    return None
-'''
 
 def cluster_validity_index(X):
     return None
@@ -164,7 +145,6 @@ def dbcv(X, labels, distance_function="euclidean"):
 
     clusters = list(set(labels))
     cardinality = len(X)
-
     if -1 in clusters:
         clusters.remove(-1)
 
@@ -173,9 +153,10 @@ def dbcv(X, labels, distance_function="euclidean"):
     spanning_trees = []
     for c in clusters:
         idx = np.where(labels == c)[0]
-        spanning_trees.append(minimum_spanning_tree(csr_matrix(
-            graph[idx,idx.reshape(sum(labels == c), 1)])))
-    density_sparseness = [tree.min() for tree in spanning_trees]
+        spanning_trees.append(minimum_spanning_tree(
+            graph[idx, idx.reshape(len(idx), 1)]))
+    density_sparseness = [np.min(tree[np.nonzero(tree)]) for tree in spanning_trees]
+    # density_seperation = np.zeros((10,10))  # between clusters not records
 
     return None
 
