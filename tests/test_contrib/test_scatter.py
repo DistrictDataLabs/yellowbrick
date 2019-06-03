@@ -230,17 +230,3 @@ class ScatterVizTests(VisualTestCase):
         visualizer.draw(X_two_cols, self.y)
 
         self.assert_images_similar(visualizer)
-
-    def test_scatter_image_fail(self):
-        """
-        Assert bad image similarity on scatterviz errors
-        """
-
-        X_two_cols = self.X[:, :2]
-        features = ["temperature", "relative humidity"]
-        visualizer = ScatterViz(features=features)
-        visualizer.fit(X_two_cols, self.y)
-        visualizer.draw(X_two_cols, self.y)
-
-        with self.assertRaises(ImageComparisonFailure):
-            self.assert_images_similar(visualizer)
