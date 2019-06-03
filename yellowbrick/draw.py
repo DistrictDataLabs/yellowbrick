@@ -133,7 +133,7 @@ def bar_stack(data, ax=None, labels=None, ticks=None, colors=None,
     
     idx = np.arange(data.shape[1])
     prev = np.zeros(data.shape[1])
-    if orientation is 'vertical':
+    if orientation == 'vertical':
         for index,element in enumerate(data):
             ax.bar(idx, 
                    element,
@@ -144,7 +144,7 @@ def bar_stack(data, ax=None, labels=None, ticks=None, colors=None,
         if ticks is not None:
             ax.set_xticklabels(ticks, rotation=90)
 
-    if orientation is 'horizontal':
+    if orientation == 'horizontal':
         for index,element in enumerate(data):
             ax.barh(idx, 
                    element,
