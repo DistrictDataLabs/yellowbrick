@@ -258,3 +258,37 @@ class TestPosTag(VisualTestCase):
         visualizer.ax.grid(False)
 
         self.assert_images_similar(visualizer)
+
+    def test_stack_mode(self):
+        """
+        Assert no errors occur when the visualizer is run on stack mode
+        """
+        check_nltk_data()
+
+        _, ax = plt.subplots()
+        tagged_docs = list(get_tagged_docs(sonnets))
+
+        visualizer = PosTagVisualizer(stack=True, ax=ax)
+        visualizer.fit(tagged_docs, y=['a','b','c'])
+        visualizer.ax.grid(False)
+
+        self.assert_images_similar(ax=ax)
+        
+    def test_stack_frequency_mode(self):
+        """
+        Assert no errors occur when the visualizer is run on both stack and 
+        frequency mode
+        """
+        check_nltk_data()
+
+        _, ax = plt.subplots()
+        tagged_docs = list(get_tagged_docs(sonnets))
+
+        visualizer = PosTagVisualizer(stack=True, frequency=True, ax=ax)
+        visualizer.fit(tagged_docs, y=['a','b','c'])
+        visualizer.ax.grid(False)
+
+        self.assert_images_similar(ax=ax)
+
+
+
