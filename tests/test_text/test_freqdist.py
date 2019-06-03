@@ -53,5 +53,5 @@ class FreqDistTests(VisualTestCase):
         visualizer = FreqDistVisualizer(features)
         visualizer.fit(docs)
 
-        visualizer.poof()
+        visualizer.finalize()
         self.assert_images_similar(visualizer, tol=1)

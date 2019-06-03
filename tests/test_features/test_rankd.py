@@ -27,7 +27,10 @@ from tests.base import VisualTestCase
 from yellowbrick.datasets import load_occupancy
 from yellowbrick.features.rankd import *
 from yellowbrick.features.rankd import kendalltau
+from yellowbrick.features.rankd import RankDBase
 from sklearn.datasets import make_regression
+
+from yellowbrick.exceptions import YellowbrickValueError
 
 try:
     import pandas as pd
@@ -95,6 +98,27 @@ class TestKendallTau(object):
         with pytest.raises(IndexError, match="tuple index out of range"):
             X = 0.1 * np.arange(10)
             kendalltau(X)
+
+
+##########################################################################
+## RankDBase Tests
+##########################################################################
+
+@pytest.mark.usefixtures("dataset")
+class TestRankDBase(VisualTestCase):
+    """
+    Test the RankDBase Visualizer
+    """
+
+    def test_rankdbase_unknown_algorithm(self):
+        """
+        Assert that unknown algorithms raise an exception
+        """
+        with pytest.raises(YellowbrickValueError,
+                           match='.* is unrecognized ranking method') as e:
+            oz = RankDBase(algorithm='unknown')
+            oz.fit_transform(self.dataset)
+            assert str(e.value) == "'unknown' is unrecognized ranking method"
 
 
 ##########################################################################
