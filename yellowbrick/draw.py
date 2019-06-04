@@ -133,31 +133,35 @@ def bar_stack(data, ax=None, labels=None, ticks=None, colors=None,
     
     idx = np.arange(data.shape[1])
     prev = np.zeros(data.shape[1])
-    if orientation == 'vertical':
-        for index,element in enumerate(data):
+    orientation = orientation.lower()
+    if orientation.startswith('v'):
+        for rdx,row in enumerate(data):
             ax.bar(idx, 
-                   element,
+                   row,
                    bottom = prev,
-                   color = colors[index])
-            prev+=element
+                   color = colors[rdx])
+            prev+=row
         ax.set_xticks(idx)
         if ticks is not None:
             ax.set_xticklabels(ticks, rotation=90)
 
-    if orientation == 'horizontal':
-        for index,element in enumerate(data):
+    elif orientation.startswith('h'):
+        for rdx,row in enumerate(data):
             ax.barh(idx, 
-                   element,
+                   row,
                    left = prev,
-                   color = colors[index])
-            prev+=element
+                   color = colors[rdx])
+            prev+=row
         ax.set_yticks(idx)
         if ticks is not None:
             ax.set_yticklabels(ticks)        
-
+    else:
+        raise YellowbrickValueError(
+                "unknown orientation '{}'".format(orientation)
+                )
+    
     # Generates default labels is labels are not specified.
-    if labels is None:
-        labels = np.arange(data.shape[0])
+    labels = labels or np.arange(data.shape[0])
 
     manual_legend(ax, labels=labels, colors=colors)
     return ax
