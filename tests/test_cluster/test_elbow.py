@@ -299,7 +299,7 @@ class TestKElbowVisualizer(VisualTestCase):
         ])
 
         visualizer.poof()
-        self.assert_images_similar(visualizer)
+        self.assert_images_similar(visualizer, windows_tol=2.2)
         assert_array_almost_equal(visualizer.k_scores_, expected)
 
 
