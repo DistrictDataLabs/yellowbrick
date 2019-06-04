@@ -16,11 +16,12 @@ Utilities for common matplotlib drawing procedures.
 
 from .base import Visualizer
 from .exceptions import YellowbrickValueError
+from .style.colors import resolve_colors
 
 from matplotlib import patches
 
 import matplotlib.pyplot as plt
-
+import numpy as np
 
 ##########################################################################
 ## Legend Drawing Utilities
@@ -89,3 +90,78 @@ def manual_legend(g, labels, colors, **legend_kwargs):
     # Return the Legend artist
     return g.legend(handles=handles, **legend_kwargs)
 
+
+def bar_stack(data, ax=None, labels=None, ticks=None, colors=None, 
+              orientation='vertical', colormap=None, **kwargs):
+    """
+    An advanced bar chart plotting utility that can draw bar and stacked bar charts from
+    data, wrapping calls to the specified matplotlib.Axes object. 
+
+    Parameters
+    ----------
+    data : 2D array-like 
+        The data associated with the bar chart where the columns represent each bar
+        and the rows represent each stack in the bar chart. A single bar chart would 
+        be a 2D array with only one row, a bar chart with three stacks per bar would 
+        have a shape of (3, b).  
+
+    ax : matplotlib.Axes, default: None
+        The axes object to draw the barplot on, uses plt.gca() if not specified.
+
+    labels : list of str, default: None
+        The labels for each row in the bar stack, used to create a legend. 
+
+    ticks : list of str, default: None
+        The labels for each bar, added to the x-axis for a vertical plot, or the y-axis
+        for a horizontal plot.  
+
+    colors : array-like, default: None
+        Specify the colors of each bar, each row in the stack, or every segment.
+
+    colormap : string or matplotlib cmap
+        Specify a colormap for each bar, each row in the stack, or every segment.
+
+    kwargs : dict 
+        Additional keyword arguments to pass to ``ax.bar``. 
+    """
+    if ax is None:
+        ax = plt.gca()
+    
+    colors = resolve_colors(n_colors=data.shape[0], 
+                            colormap=colormap, 
+                            colors=colors)    
+    
+    idx = np.arange(data.shape[1])
+    prev = np.zeros(data.shape[1])
+    orientation = orientation.lower()
+    if orientation.startswith('v'):
+        for rdx,row in enumerate(data):
+            ax.bar(idx, 
+                   row,
+                   bottom = prev,
+                   color = colors[rdx])
+            prev+=row
+        ax.set_xticks(idx)
+        if ticks is not None:
+            ax.set_xticklabels(ticks, rotation=90)
+
+    elif orientation.startswith('h'):
+        for rdx,row in enumerate(data):
+            ax.barh(idx, 
+                   row,
+                   left = prev,
+                   color = colors[rdx])
+            prev+=row
+        ax.set_yticks(idx)
+        if ticks is not None:
+            ax.set_yticklabels(ticks)        
+    else:
+        raise YellowbrickValueError(
+                "unknown orientation '{}'".format(orientation)
+                )
+    
+    # Generates default labels is labels are not specified.
+    labels = labels or np.arange(data.shape[0])
+
+    manual_legend(ax, labels=labels, colors=colors)
+    return ax
