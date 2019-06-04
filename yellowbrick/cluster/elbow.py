@@ -277,6 +277,8 @@ class KElbowVisualizer(ClusteringScoreVisualizer):
 
         self.k_scores_ = []
         self.k_timers_ = []
+        self.kneedle=None
+        self.knee_value=None
 
         if self.locate_elbow:
             self.elbow_value_ = None
