@@ -22,7 +22,6 @@ be tested.
 ## Imports
 ##########################################################################
 
-import os
 import sys
 from functools import partial
 from unittest.mock import patch, MagicMock
@@ -31,7 +30,7 @@ import numpy as np
 import pytest
 from sklearn.datasets import make_classification, make_regression
 
-from tests.base import VisualTestCase
+from tests.base import is_winconda_env, VisualTestCase
 from yellowbrick.exceptions import YellowbrickValueError
 from yellowbrick.features.jointplot import *
 from ..fixtures import TestDataset
@@ -47,13 +46,7 @@ try:
 except ImportError:
     pd = None
 
-
-def is_win_conda_env():
-    return (os.name == 'nt' and
-            os.path.exists(os.path.join(sys.prefix, 'conda-meta')))
-
-
-win_tol = 5.5 if is_win_conda_env() else None
+win_tol = 5.5 if is_winconda_env() else None
 
 ##########################################################################
 ## Fixtures
