@@ -278,10 +278,30 @@ class TestKElbowVisualizer(VisualTestCase):
             40.952179227847012, 35.939494
         ])
 
+        visualizer.poof()
+        self.assert_images_similar(visualizer)
+        assert_array_almost_equal(visualizer.k_scores_, expected)
+
+    def test_locate_elbow(self):
+        """
+        Test the addition of locate_elbow to an image 
+        """
+        visualizer = KElbowVisualizer(
+            KMeans(random_state=0), k=5,
+            metric="calinski_harabaz", timings=False, locate_elbow=True
+        )
+        visualizer.fit(self.clusters.X)
+        assert len(visualizer.k_scores_) == 4
+
+        expected = np.array([
+            81.662726256035683, 50.992378259195554,
+            40.952179227847012, 35.939494
+        ])
 
         visualizer.poof()
         self.assert_images_similar(visualizer)
         assert_array_almost_equal(visualizer.k_scores_, expected)
+
 
     def test_bad_metric(self):
         """
