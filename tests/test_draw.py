@@ -91,7 +91,7 @@ class TestDraw(VisualTestCase):
         bar_stack(self.data, ax=ax, orientation='v')
         
          # Assert image similarity
-        self.assert_images_similar(ax=ax)
+        self.assert_images_similar(ax=ax, tol=0.1)
         
     def test_horizontal_bar_stack(self):
         """
@@ -102,7 +102,7 @@ class TestDraw(VisualTestCase):
         bar_stack(self.data, ax=ax, orientation='h')
         
         # Assert image similarity
-        self.assert_images_similar(ax=ax)
+        self.assert_images_similar(ax=ax, tol=0.1)
         
     def test_single_row_bar_stack(self):
         """
@@ -116,7 +116,7 @@ class TestDraw(VisualTestCase):
         bar_stack(data, ax=ax)
         
         # Assert image similarity
-        self.assert_images_similar(ax=ax)
+        self.assert_images_similar(ax=ax, tol=0.1)
     
     def test_labels_vertical(self):
         """
@@ -136,7 +136,7 @@ class TestDraw(VisualTestCase):
         assert ticks_ax==ticks
         
         # Assert image similarity
-        self.assert_images_similar(ax=ax)
+        self.assert_images_similar(ax=ax, tol=0.1)
     
     def test_labels_horizontal(self):
         """
@@ -156,5 +156,5 @@ class TestDraw(VisualTestCase):
         assert ticks_ax==ticks
         
         # Assert image similarity
-        self.assert_images_similar(ax=ax)
+        self.assert_images_similar(ax=ax, tol=0.1)
         
