@@ -100,10 +100,10 @@ def bar_stack(data, ax=None, labels=None, ticks=None, colors=None,
     Parameters
     ----------
     data : 2D array-like 
-        The data associated with the bar chart where the columns represent each bar
-        and the rows represent each stack in the bar chart. A single bar chart would 
-        be a 2D array with only one row, a bar chart with three stacks per bar would 
-        have a shape of (3, b).  
+        The data passed to the Visualizer. Rows represent each stack in the bar chart and columns
+        represent each bar. Therefore, a single bar chart is created by passing a 2D array
+        containing a single row, while the data to create a bar chart with 3 stacks would have a
+        shape of (3, b).
 
     ax : matplotlib.Axes, default: None
         The axes object to draw the barplot on, uses plt.gca() if not specified.
