@@ -351,8 +351,8 @@ class PosTagVisualizer(TextVisualizer):
         """
         # NOTE: not deduping here, so this is total, not unique
         self.ax.set_ylabel("Count")
-        self.ax.set_xticks(range(len(self.pos_tags)))
-        self.ax.set_xticklabels(self.pos_tags, rotation=90)
+        self.ax.set_xticks(range(len(self._pos_tags)))
+        self.ax.set_xticklabels(self._pos_tags, rotation=90)
         
         if self.frequency:
             self.ax.set_xlabel(
