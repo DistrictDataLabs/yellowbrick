@@ -89,7 +89,13 @@ def resolve_colors(n_colors=None, colormap=None, colors=None):
     if colormap is not None and colors is None:
         if isinstance(colormap, str):
             try:
-                colormap = cm.get_cmap(colormap)
+                # Must import here to avoid recursive import
+                from .palettes import PALETTES, SEQUENCES
+
+                _colormap = PALETTES.get(colormap, None)
+                if _colormap is None:
+                    _colormap = cm.get_cmap(colormap)
+                colormap = _colormap
             except ValueError as e:
                 raise YellowbrickValueError(e)
 
