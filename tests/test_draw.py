@@ -128,7 +128,8 @@ class TestDraw(VisualTestCase):
         _, ax = plt.subplots()
         
         # Plots stacked bar charts
-        bar_stack(self.data, labels = labels, ticks=ticks)
+        bar_stack(self.data, labels = labels, ticks=ticks, 
+                  colors=['r','b','g','y'])
         
         # Extract tick labels from the plot
         ticks_ax = [tick.get_text() for tick in ax.xaxis.get_ticklabels()]
@@ -136,7 +137,7 @@ class TestDraw(VisualTestCase):
         assert ticks_ax==ticks
         
         # Assert image similarity
-        self.assert_images_similar(ax=ax, tol=0.1)
+        self.assert_images_similar(ax=ax, tol=0.05)
     
     def test_labels_horizontal(self):
         """
@@ -148,7 +149,8 @@ class TestDraw(VisualTestCase):
         _, ax = plt.subplots()
         
         # Plots stacked bar charts
-        bar_stack(self.data, labels = labels, ticks=ticks, orientation='h')
+        bar_stack(self.data, labels = labels, ticks=ticks, orientation='h', 
+                  colormap='cool')
         
         # Extract tick labels from the plot
         ticks_ax = [tick.get_text() for tick in ax.yaxis.get_ticklabels()]
@@ -156,5 +158,5 @@ class TestDraw(VisualTestCase):
         assert ticks_ax==ticks
         
         # Assert image similarity
-        self.assert_images_similar(ax=ax, tol=0.1)
+        self.assert_images_similar(ax=ax, tol=0.05)
         
