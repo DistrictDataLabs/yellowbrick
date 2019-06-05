@@ -327,7 +327,8 @@ class PosTagVisualizer(TextVisualizer):
 
         if self.stack:
             bar_stack(pos_tag_counts, ax=self.ax, labels=list(self.labels_), 
-                      colors=self.colors, colormap = self.colormap)
+                      ticks=self._pos_tags, colors=self.colors, 
+                      colormap = self.colormap)
         else:
             xidx = np.arange(len(self._pos_tags))
             colors = resolve_colors(n_colors=len(self._pos_tags), 
@@ -351,8 +352,6 @@ class PosTagVisualizer(TextVisualizer):
         """
         # NOTE: not deduping here, so this is total, not unique
         self.ax.set_ylabel("Count")
-        self.ax.set_xticks(range(len(self._pos_tags)))
-        self.ax.set_xticklabels(self._pos_tags, rotation=90)
         
         if self.frequency:
             self.ax.set_xlabel(
@@ -364,6 +363,11 @@ class PosTagVisualizer(TextVisualizer):
                 "{} part-of-speech tags".format(self.tagset_names[self.tagset])
                         )
 
+        #bar stack(helper) sets the ticks if stack is true
+        if not self.stack:
+            self.ax.set_xticks(range(len(self._pos_tags)))
+            self.ax.set_xticklabels(self._pos_tags, rotation=90)
+            
         self.set_title(
             "PosTag plot for {}-token corpus".format(
                 (sum([sum(i.values()) for i in self.pos_tag_counts_.values()]))
