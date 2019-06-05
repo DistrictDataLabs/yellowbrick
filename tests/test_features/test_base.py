@@ -17,10 +17,10 @@ Tests for the feature selection and analysis base classes
 ## Imports
 ##########################################################################
 
-import unittest
+from yellowbrick.base import Visualizer
+from yellowbrick.features.base import FeatureVisualizer
+from tests.base import VisualTestCase
 
-from yellowbrick.base import *
-from yellowbrick.features.base import *
 from sklearn.base import BaseEstimator, TransformerMixin
 
 
@@ -28,7 +28,7 @@ from sklearn.base import BaseEstimator, TransformerMixin
 ## FeatureVisualizer Base Tests
 ##########################################################################
 
-class FeatureVisualizerBaseTests(unittest.TestCase):
+class FeatureVisualizerBaseTests(VisualTestCase):
 
     def test_subclass(self):
         """
