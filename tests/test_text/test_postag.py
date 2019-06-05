@@ -212,7 +212,7 @@ class TestPosTag(VisualTestCase):
         #Assert that ticks are set properly
         assert ticks_ax==sorted_tags
 
-        self.assert_images_similar(ax=ax)
+        self.assert_images_similar(ax=ax, tol=0.5)
 
     @pytest.mark.skipif(nltk is None, reason="test requires nltk")
     def test_word_tagged(self):
