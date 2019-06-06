@@ -25,7 +25,6 @@ from sklearn.metrics.classification import _check_targets
 from sklearn.model_selection import train_test_split as tts
 
 from ..exceptions import ModelError, YellowbrickValueError
-from ..style.colors import resolve_colors
 from ..draw import bar_stack
 
 
@@ -133,7 +132,7 @@ class ClassPredictionError(ClassificationScoreVisualizer):
 
         legend_kws = {'bbox_to_anchor':(1.04, 0.5), 'loc':"center left"}
         bar_stack(self.predictions_, self.ax, labels=list(self.classes_), 
-                  ticks=self.classes_, legend_kws=legend_kws)
+                  ticks=self.classes_, colors=self.colors, legend_kws=legend_kws)
         return self.ax
 
     def finalize(self, **kwargs):
