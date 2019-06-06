@@ -16,6 +16,7 @@ Helper functions and cases for making assertions on visualizations.
 
 import os
 import inspect
+import sys
 
 import unittest
 import matplotlib as mpl
@@ -26,6 +27,11 @@ from matplotlib import rcParams
 
 from matplotlib.testing.compare import compare_images
 from yellowbrick.exceptions import ImageComparisonFailure
+
+
+def is_winconda_env():
+    return (os.name == 'nt' and
+            os.path.exists(os.path.join(sys.prefix, 'conda-meta')))
 
 
 ##########################################################################
@@ -153,7 +159,7 @@ class ImageComparison(object):
         than this value.
 
     windows_tol : float, default: 0.01
-        The tolerace (tol) parameter for the windows operating system environment. 
+        The tolerance (tol) parameter for the windows operating system environment.
 
     ext : string, default: ".png"
         The file extension to save the actual and baseline images as.
@@ -166,13 +172,20 @@ class ImageComparison(object):
     remove_title : bool, default: True
         Remove the title since different OS may have varying fonts.
 
+    remove_labels : bool, default: True
+        Remove the x and y labels since different OS may have varying fonts.
+
+    remove_legend : bool, default: True
+        Remove the legend since different OS may have varying fonts.
+
     Raises
     ------
     ValueError : at least one of visualizer or ax must be specified.
     """
 
-    def __init__(self, stack, visualizer=None, ax=None, tol=0.01, windows_tol=0.01, ext=".png",
-                 remove_ticks=True, remove_title=True, remove_legend=False):
+    def __init__(self, stack, visualizer=None, ax=None, tol=0.01, 
+                 windows_tol=0.01, ext=".png", remove_ticks=True, 
+                 remove_title=True, remove_labels=True, remove_legend=True):
 
         # Ensure we have something to draw on
         if visualizer is None and ax is None:
@@ -212,6 +225,7 @@ class ImageComparison(object):
         self.ext = ext
         self.remove_ticks = remove_ticks
         self.remove_title = remove_title
+        self.remove_labels = remove_labels
         self.remove_legend = remove_legend
 
     def __call__(self):
@@ -279,7 +293,11 @@ class ImageComparison(object):
                 except AttributeError:
                     continue
 
-        if self.remove_legend:
+        if self.remove_labels:
+            self.ax.set_xlabel("")
+            self.ax.set_ylabel("")
+
+        if self.remove_legend and self.ax.get_legend() is not None:
             self.ax.legend_.remove()
 
     def save(self):
