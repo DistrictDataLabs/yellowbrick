@@ -170,3 +170,4 @@ def bar_stack(data, ax=None, labels=None, ticks=None, colors=None,
     legend_kws = legend_kws or {}
     manual_legend(ax, labels=labels, colors=colors, **legend_kws)
     return ax
+
