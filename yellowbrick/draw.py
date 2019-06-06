@@ -91,8 +91,8 @@ def manual_legend(g, labels, colors, **legend_kwargs):
     return g.legend(handles=handles, **legend_kwargs)
 
 
-def bar_stack(data, ax=None, labels=None, ticks=None, colors=None, 
-              orientation='vertical', colormap=None, legend_kws=None, **kwargs):
+def bar_stack(data, ax=None, labels=None, ticks=None, colors=None, colormap=None,
+              orientation='vertical', legend=True, legend_kws=None, **kwargs):
     """
     An advanced bar chart plotting utility that can draw bar and stacked bar charts from
     data, wrapping calls to the specified matplotlib.Axes object. 
@@ -121,6 +121,12 @@ def bar_stack(data, ax=None, labels=None, ticks=None, colors=None,
     colormap : string or matplotlib cmap
         Specify a colormap for each bar, each row in the stack, or every segment.
         
+    orientation:‘vertical’ or ‘horizontal’
+        Specifies a horizontal or vertical bar chart.
+        
+    legend : boolean, default: True
+        If True, the function add a legend with the plot
+
     legend_kws : dict, default: None
         Additional keyword arguments for the legend components.
 
@@ -167,7 +173,8 @@ def bar_stack(data, ax=None, labels=None, ticks=None, colors=None,
     # Generates default labels is labels are not specified.
     labels = labels or np.arange(data.shape[0])
 
-    legend_kws = legend_kws or {}
-    manual_legend(ax, labels=labels, colors=colors, **legend_kws)
+    if legend:
+        legend_kws = legend_kws or {}
+        manual_legend(ax, labels=labels, colors=colors, **legend_kws)
     return ax
 
