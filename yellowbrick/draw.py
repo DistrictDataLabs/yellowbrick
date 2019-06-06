@@ -141,30 +141,48 @@ def bar_stack(data, ax=None, labels=None, ticks=None, colors=None, colormap=None
                             colors=colors)    
     
     idx = np.arange(data.shape[1])
-    prev = np.zeros(data.shape[1])
+    zeros = np.zeros(data.shape[1])
+    # Stores stacks for both side of plotting axes
+    stack_arr = np.zeros((data.shape[1], 2))
     orientation = orientation.lower()
-    if orientation.startswith('v'):
-        for rdx,row in enumerate(data):
-            ax.bar(idx, 
-                   row,
-                   bottom = prev,
-                   color = colors[rdx], 
-                   **kwargs)
-            prev+=row
+
+    if orientation.startswith('h'):
+
+        for rdx in range(len(data)):
+            stack = [
+                stack_arr[j, int(data[rdx][j] > 0)]
+                for j in range(len(data[rdx]))
+            ]
+            ax.barh(idx, data[rdx], left=stack,
+                         color=colors[rdx])
+            #Updates the stack for negative side of y-axis
+            stack_arr[:, 0] += np.minimum(data[rdx],
+                                         zeros)
+            # Updates stack for positive side of y-axis
+            stack_arr[:, 1] += np.maximum(data[rdx],
+                                             zeros)
+        ax.set_yticks(idx)
+        if ticks is not None:
+            ax.set_yticklabels(ticks)        
+    
+    elif orientation.startswith('v'):
+        for rdx in range(len(data)):
+            stack = [
+                stack_arr[j, int(data[rdx][j] > 0)]
+                for j in range(len(data[rdx]))
+            ]
+            ax.bar(idx, data[rdx], bottom=stack,
+                         color=colors[rdx])
+          #Updates the stack for negative side of x-axis            
+            stack_arr[:, 0] += np.minimum(data[rdx],
+                                         zeros)
+           #Updates the stack for negative side of x-axis
+            stack_arr[:, 1] += np.maximum(data[rdx],
+                                             zeros)
         ax.set_xticks(idx)
         if ticks is not None:
             ax.set_xticklabels(ticks, rotation=90)
 
-    elif orientation.startswith('h'):
-        for rdx,row in enumerate(data):
-            ax.barh(idx, 
-                   row,
-                   left = prev,
-                   color = colors[rdx])
-            prev+=row
-        ax.set_yticks(idx)
-        if ticks is not None:
-            ax.set_yticklabels(ticks)        
     else:
         raise YellowbrickValueError(
                 "unknown orientation '{}'".format(orientation)
