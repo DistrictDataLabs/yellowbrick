@@ -199,7 +199,7 @@ class TestPosTag(VisualTestCase):
         tagged_docs = list(get_tagged_docs(sonnets))
 
         viz = postag(tagged_docs, ax=ax, frequency=True)
-        viz.poof()
+        viz.finalize()
         ax.grid(False)
         
         # Sorted tags i.e predetermined order
