@@ -92,7 +92,7 @@ def manual_legend(g, labels, colors, **legend_kwargs):
 
 
 def bar_stack(data, ax=None, labels=None, ticks=None, colors=None, 
-              orientation='vertical', colormap=None, legend_kws=None, **kwargs):
+              orientation='vertical', colormap=None, **kwargs):
     """
     An advanced bar chart plotting utility that can draw bar and stacked bar charts from
     data, wrapping calls to the specified matplotlib.Axes object. 
@@ -100,10 +100,10 @@ def bar_stack(data, ax=None, labels=None, ticks=None, colors=None,
     Parameters
     ----------
     data : 2D array-like 
-        The data associated with the bar chart where the columns represent each bar
-        and the rows represent each stack in the bar chart. A single bar chart would 
-        be a 2D array with only one row, a bar chart with three stacks per bar would 
-        have a shape of (3, b).  
+        The data passed to the Visualizer. Rows represent each stack in the bar chart and columns
+        represent each bar. Therefore, a single bar chart is created by passing a 2D array
+        containing a single row, while the data to create a bar chart with 3 stacks would have a
+        shape of (3, b).
 
     ax : matplotlib.Axes, default: None
         The axes object to draw the barplot on, uses plt.gca() if not specified.
@@ -120,10 +120,7 @@ def bar_stack(data, ax=None, labels=None, ticks=None, colors=None,
 
     colormap : string or matplotlib cmap
         Specify a colormap for each bar, each row in the stack, or every segment.
-    
-    legend_kws : dict, default: None
-        Additional keyword arguments for the legend components.
-    
+
     kwargs : dict 
         Additional keyword arguments to pass to ``ax.bar``. 
     """
@@ -142,8 +139,7 @@ def bar_stack(data, ax=None, labels=None, ticks=None, colors=None,
             ax.bar(idx, 
                    row,
                    bottom = prev,
-                   color = colors[rdx], 
-                   **kwargs)
+                   color = colors[rdx])
             prev+=row
         ax.set_xticks(idx)
         if ticks is not None:
@@ -167,6 +163,5 @@ def bar_stack(data, ax=None, labels=None, ticks=None, colors=None,
     # Generates default labels is labels are not specified.
     labels = labels or np.arange(data.shape[0])
 
-    legend_kws = legend_kws or {}
-    manual_legend(ax, labels=labels, colors=colors, **legend_kws)
+    manual_legend(ax, labels=labels, colors=colors)
     return ax
