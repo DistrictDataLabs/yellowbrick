@@ -15,7 +15,6 @@ Tests for the ClassBalance visualizer
 ##########################################################################
 
 import pytest
-import numpy as np
 
 from yellowbrick.target.class_balance import *
 from yellowbrick.exceptions import YellowbrickValueError
@@ -178,7 +177,6 @@ class ClassBalanceTests(VisualTestCase, DatasetMixin):
         self.assert_images_similar(oz)
 
     @pytest.mark.skipif(pd is None, reason="test requires pandas")
-    @pytest.mark.xfail(reason="failing across platforms, appears to be aliasing")
     def test_pandas_occupancy_compare(self):
         """
         Test pandas data frame with string target in compare mode
