@@ -42,14 +42,14 @@ class ClassPredictionError(ClassificationScoreVisualizer):
 
     Parameters
     ----------
-    ax: axes
-        the axis to plot the figure on.
-
     model: estimator
         Scikit-Learn estimator object. Should be an instance of a classifier,
         else ``__init__()`` will raise an exception.
 
-    classes: list
+    ax: axes, default=None
+        the axis to plot the figure on.
+
+    classes: list, default=None
         A list of class names for the legend. If classes is None and a y value
         is passed to fit then the classes are selected from the target vector.
 
@@ -131,7 +131,7 @@ class ClassPredictionError(ClassificationScoreVisualizer):
         """
 
         legend_kws = {'bbox_to_anchor':(1.04, 0.5), 'loc':"center left"}
-        bar_stack(self.predictions_, self.ax, labels=list(self.classes_), 
+        bar_stack(self.predictions_, self.ax, labels=list(self.classes_),
                   ticks=self.classes_, colors=self.colors, legend_kws=legend_kws)
         return self.ax
 
@@ -152,7 +152,8 @@ class ClassPredictionError(ClassificationScoreVisualizer):
         cmax = max([sum(predictions) for predictions in self.predictions_])
         self.ax.set_ylim(0, cmax + cmax * 0.1)
 
-        plt.tight_layout(rect=[0, 0, 0.85, 1])
+        # Ensure the legend fits on the figure
+        plt.tight_layout(rect=[0, 0, 0.90, 1])
 
 
 ##########################################################################
@@ -206,7 +207,7 @@ def class_prediction_error(
         Returns the axes that the class prediction error plot was drawn on.
     """
     # Instantiate the visualizer
-    visualizer = ClassPredictionError(model, ax, classes, **kwargs)
+    visualizer = ClassPredictionError(model=model, ax=ax, classes=classes, **kwargs)
 
     # Create the train and test splits
     X_train, X_test, y_train, y_test = tts(
@@ -217,5 +218,5 @@ def class_prediction_error(
     visualizer.fit(X_train, y_train, **kwargs)
     visualizer.score(X_test, y_test)
 
-    # Return the axes object on the visualizer
-    return visualizer.ax
+    # Return the visualizer
+    return visualizer

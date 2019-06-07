@@ -67,9 +67,9 @@ class ClassPredictionErrorTests(VisualTestCase, DatasetMixin):
         ax = fig.add_subplot()
 
         clf = LinearSVC(random_state=42)
-        g = class_prediction_error(clf, X, y, ax, random_state=42)
- 
-        self.assert_images_similar(ax=g, remove_legend=True)
+        viz = class_prediction_error(clf, X, y, ax=ax, random_state=42)
+
+        self.assert_images_similar(viz, remove_legend=True)
 
     def test_classes_greater_than_indices(self):
         """
