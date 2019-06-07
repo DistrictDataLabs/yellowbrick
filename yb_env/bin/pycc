@@ -1,3 +1,0 @@
-#!/home/mike/Documents/Git_Projects/yellowbrick/yb_env/bin/python3
-from numba.pycc import main
-main()

@@ -1,8 +1,0 @@
-#!/home/mike/Documents/Git_Projects/yellowbrick/yb_env/bin/python3
-# -*- coding: UTF-8 -*-
-from __future__ import print_function, division, absolute_import
-
-from numba.numba_entry import main
-
-if __name__ == "__main__":
-    main()
