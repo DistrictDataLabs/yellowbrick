@@ -145,6 +145,7 @@ class TestMetaImageComparison(VisualTestCase):
         """
         Test that not close visualizers raise an assertion error.
         """
+        # Baseline image random_state=225
         viz = RandomVisualizer(random_state=224).fit()
         viz.poof()
 
