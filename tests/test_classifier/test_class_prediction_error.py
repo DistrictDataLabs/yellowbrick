@@ -57,7 +57,7 @@ class ClassPredictionErrorTests(VisualTestCase, DatasetMixin):
         visualizer.score(X, y)
         visualizer.finalize()
 
-        self.assert_images_similar(visualizer, remove_legend=True)
+        self.assert_images_similar(visualizer, remove_legend=True, remove_labels=True)
 
     def test_class_prediction_error_quickmethod(self):
         """
