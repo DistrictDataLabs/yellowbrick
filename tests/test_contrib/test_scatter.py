@@ -16,18 +16,16 @@ Test the ScatterViz feature analysis visualizers
 # Imports
 ##########################################################################
 
-import pytest
-import numpy as np
-import matplotlib as mptl
+from unittest import mock
 
-from yellowbrick.style import palettes
+import matplotlib as mpl
+import pytest
+
+from tests.base import VisualTestCase
 from yellowbrick.contrib.scatter import *
 from yellowbrick.datasets import load_occupancy
 from yellowbrick.exceptions import YellowbrickValueError
-from yellowbrick.exceptions import ImageComparisonFailure
-
-from unittest import mock
-from tests.base import VisualTestCase
+from yellowbrick.style import palettes
 
 try:
     import pandas as pd
@@ -172,7 +170,7 @@ class ScatterVizTests(VisualTestCase):
         ax = scatterviz(X[:, :2], y=y, ax=None, features=features)
 
         # test that is returns a matplotlib obj with axes
-        self.assertIsInstance(ax, mptl.axes.Axes)
+        self.assertIsInstance(ax, mpl.axes.Axes)
 
     @pytest.mark.skipif(pd is None, reason="pandas is required for this test")
     def test_integrated_scatter_with_pandas(self):
@@ -230,17 +228,3 @@ class ScatterVizTests(VisualTestCase):
         visualizer.draw(X_two_cols, self.y)
 
         self.assert_images_similar(visualizer)
-
-    def test_scatter_image_fail(self):
-        """
-        Assert bad image similarity on scatterviz errors
-        """
-
-        X_two_cols = self.X[:, :2]
-        features = ["temperature", "relative humidity"]
-        visualizer = ScatterViz(features=features)
-        visualizer.fit(X_two_cols, self.y)
-        visualizer.draw(X_two_cols, self.y)
-
-        with self.assertRaises(ImageComparisonFailure):
-            self.assert_images_similar(visualizer)
