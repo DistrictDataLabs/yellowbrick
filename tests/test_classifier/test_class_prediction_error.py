@@ -57,7 +57,7 @@ class ClassPredictionErrorTests(VisualTestCase, DatasetMixin):
         visualizer.score(X, y)
         visualizer.finalize()
 
-        self.assert_images_similar(visualizer, remove_legend=True, remove_labels=True)
+        self.assert_images_similar(visualizer)
 
     def test_class_prediction_error_quickmethod(self):
         """
@@ -69,7 +69,7 @@ class ClassPredictionErrorTests(VisualTestCase, DatasetMixin):
         clf = LinearSVC(random_state=42)
         viz = class_prediction_error(clf, X, y, ax=ax, random_state=42)
 
-        self.assert_images_similar(viz, remove_legend=True)
+        self.assert_images_similar(viz)
 
     def test_classes_greater_than_indices(self):
         """
