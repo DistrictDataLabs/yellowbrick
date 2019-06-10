@@ -229,11 +229,12 @@ PyCon 2019 Debrief
 
 Yellowbrick had an open source booth at PyCon 2019 for the second time, manned by Larry, Nathan, Prema, and Kristen. There were lots of visitors to the booth who were genuinely excited about using Yellowbrick. Next year it would be great to have a large banner and vertical display of visualizers to help people learn more. Guido von Rossum even had lunch at the booth, which sparked a lot of attention! Special thank you to Tony for his financial support including shirts, stickers, transportation, and supplies.
 
-We also hosted two days of development sprints with 13 sprinters and 9 PRs. The majority of sprinters were there for both days. The sprints included a wide variety of people including a high schooler and even a second year sprinter. Guido von Rossum also stopped by during the sprints. Prema announced the sprints on stage and there is a great picture of her and Kristen. Special thank you to Daniel for creating the cheatsheets, which cut down a lot of explaining, and to Nathan for the appetizers. Beets are delicious!
+We also hosted two days of development sprints with 13 sprinters and 9 PRs. The majority of sprinters were there for both days. The sprints included a wide variety of people including a high schooler and even a second year sprinter. Guido von Rossum also stopped by during the sprints. Prema and Kristen announced the sprints on stage and there is a great picture of them that we tweeted. Special thank you to Daniel for creating the cheatsheets, which cut down a lot of explaining, and to Nathan for the appetizers. Beets are delicious!
 
 Hot takes from PyCon:
 
 - Cheatsheets were a huge success and very important
+- It would be good to have a "Contributing to Yellowbrick" cheatsheet for next year
 - Have to capitalize on attention before the conference starts
 - More visual stand out: e.g. metal grommets and banner with visualizers
 - NumFOCUS has an in-house designer who may be able to help
