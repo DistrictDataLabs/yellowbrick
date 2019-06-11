@@ -198,10 +198,21 @@ class TestPosTag(VisualTestCase):
         _, ax = plt.subplots()
         tagged_docs = list(get_tagged_docs(sonnets))
 
-        postag(tagged_docs, ax=ax, frequency=True)
+        viz = postag(tagged_docs, ax=ax, frequency=True)
+        viz.finalize()
         ax.grid(False)
+        
+        # Sorted tags i.e predetermined order
+        sorted_tags = ['noun', 'adjective', 'punctuation', 'verb', 'preposition',
+                       'determiner', 'adverb', 'conjunction', 'pronoun', 'wh- word', 
+                       'modal', 'infinitive', 'possessive', 'other', 'symbol', 
+                       'existential', 'digit', 'non-English', 'interjection', 'list']
+        # Extract tick labels from the plot
+        ticks_ax = [tick.get_text() for tick in ax.xaxis.get_ticklabels()]
+        #Assert that ticks are set properly
+        assert ticks_ax==sorted_tags
 
-        self.assert_images_similar(ax=ax)
+        self.assert_images_similar(ax=ax, tol=0.5)
 
     @pytest.mark.skipif(nltk is None, reason="test requires nltk")
     def test_word_tagged(self):
@@ -287,6 +298,16 @@ class TestPosTag(VisualTestCase):
         visualizer = PosTagVisualizer(stack=True, frequency=True, ax=ax)
         visualizer.fit(tagged_docs, y=['a','b','c'])
         visualizer.ax.grid(False)
+        
+        # Sorted tags i.e predetermined order
+        sorted_tags = ['noun', 'adjective', 'punctuation', 'verb', 'preposition',
+                       'determiner', 'adverb', 'conjunction', 'pronoun', 'wh- word', 
+                       'modal', 'infinitive', 'possessive', 'other', 'symbol', 
+                       'existential', 'digit', 'non-English', 'interjection', 'list']
+        # Extract tick labels from the plot
+        ticks_ax = [tick.get_text() for tick in ax.xaxis.get_ticklabels()]
+        #Assert that ticks are set properly
+        assert ticks_ax==sorted_tags
 
         self.assert_images_similar(ax=ax)
 
