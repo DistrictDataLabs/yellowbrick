@@ -21,7 +21,7 @@ small subset of documents.
 
 from yellowbrick.text.base import TextVisualizer
 from yellowbrick.style.colors import resolve_colors
-from yellowbrick.draw import manual_legend
+from yellowbrick.draw import bar_stack
 from yellowbrick.exceptions import YellowbrickValueError
 
 import  numpy as np
@@ -325,20 +325,12 @@ class PosTagVisualizer(TextVisualizer):
             self._pos_tags = np.array(self._pos_tags)[idx] 
             pos_tag_counts = pos_tag_counts[:,idx]
 
-        xidx = np.arange(len(self._pos_tags))
         if self.stack:
-            colors = resolve_colors(n_colors=len(self.labels_), 
-                                    colormap=self.colormap, 
-                                    colors=self.colors)    
-            #layer by layer plot for stacked bar chart
-            prev = np.zeros(len(self._pos_tags))
-            for index,element in enumerate(pos_tag_counts):
-                self.ax.bar(xidx, 
-                            element, 
-                            bottom = prev, 
-                            color = colors[index])
-                prev+=element
+            bar_stack(pos_tag_counts, ax=self.ax, labels=list(self.labels_), 
+                      ticks=self._pos_tags, colors=self.colors, 
+                      colormap = self.colormap)
         else:
+            xidx = np.arange(len(self._pos_tags))
             colors = resolve_colors(n_colors=len(self._pos_tags), 
                                     colormap=self.colormap, 
                                     colors=self.colors)
@@ -360,8 +352,6 @@ class PosTagVisualizer(TextVisualizer):
         """
         # NOTE: not deduping here, so this is total, not unique
         self.ax.set_ylabel("Count")
-        self.ax.set_xticks(range(len(self._pos_tags)))
-        self.ax.set_xticklabels(self._pos_tags, rotation=90)
         
         if self.frequency:
             self.ax.set_xlabel(
@@ -373,19 +363,16 @@ class PosTagVisualizer(TextVisualizer):
                 "{} part-of-speech tags".format(self.tagset_names[self.tagset])
                         )
 
-        if self.stack:
-            colors = resolve_colors(
-                    n_colors=len(self.labels_), 
-                    colormap=self.colormap,
-                    colors=self.colors
-                    )
-            manual_legend(self, self.labels_, colors, loc='best')
-
+        #bar stack(helper) sets the ticks if stack is true
+        if not self.stack:
+            self.ax.set_xticks(range(len(self._pos_tags)))
+            self.ax.set_xticklabels(self._pos_tags, rotation=90)
+            
         self.set_title(
-                "PosTag plot for {}-token corpus".format(
-                    (sum([sum(i.values()) for i in self.pos_tag_counts_.values()]))
-                )
+            "PosTag plot for {}-token corpus".format(
+                (sum([sum(i.values()) for i in self.pos_tag_counts_.values()]))
             )
+        )
 
     def poof(self, outpath=None, **kwargs):
         if outpath is not None:
