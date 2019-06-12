@@ -1,20 +1,49 @@
 dist: xenial
 language: python
-python:
-- '3.6'
-- '3.7'
+matrix:
+  include:
+    - name: "Python 3.6 on Xenial Linux"
+      python: '3.6'
+
+    - name: "Python 3.7 on Xenial Linux"
+      python: '3.7'
+
+    - name: "Miniconda 3.6 on Xenial Linux"
+      env: PYTHON="3.6"
+
+    - name: "Miniconda 3.7 on Xenial Linux"
+      env: PYTHON="3.7"
 
 before_install:
-- sudo apt-get update
-- sudo apt-get build-dep python-scipy
+- sudo apt-get update;
+- if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then
+    MINICONDA_OS="Linux";  
+    sudo apt-get build-dep python-scipy;
+  else
+    MINICONDA_OS="MacOSX";
+  fi
 
 install:
-- pip install -r requirements.txt
-- pip install -r tests/requirements.txt
-- pip install coveralls
-- python -m nltk.downloader popular
+- if [[ -z ${MINICONDA} ]]; then
+      pip install -r requirements.txt;
+      pip install -r tests/requirements.txt;
+      pip install coveralls;
+    else
+      wget https://repo.anaconda.com/miniconda/Miniconda3-latest-$MINICONDA_OS-x86_64.sh -O miniconda.sh;
+      bash miniconda.sh -b -p $HOME/miniconda;
+      export PATH="$HOME/miniconda/bin:$PATH";
+      hash -r;
+      conda config --set always_yes yes --set changeps1 no;
+      conda update -n base conda --yes;
+      conda config --add channels conda-forge;
+      conda env create -f tests/requirements.txt -n yellowbrick python=$PYTHON;
+      source activate yellowbrick;
+      conda install coveralls;
+  fi
 
-script: make test
+script: 
+- python -m nltk.downloader popular
+- make test
 
 after_success: coveralls
 
