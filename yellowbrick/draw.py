@@ -91,8 +91,8 @@ def manual_legend(g, labels, colors, **legend_kwargs):
     return g.legend(handles=handles, **legend_kwargs)
 
 
-def bar_stack(data, ax=None, labels=None, ticks=None, colors=None, 
-              orientation='vertical', colormap=None, **kwargs):
+def bar_stack(data, ax=None, labels=None, ticks=None, colors=None, colormap=None,
+              orientation='vertical', legend=True, legend_kws=None, **kwargs):
     """
     An advanced bar chart plotting utility that can draw bar and stacked bar charts from
     data, wrapping calls to the specified matplotlib.Axes object. 
@@ -120,6 +120,15 @@ def bar_stack(data, ax=None, labels=None, ticks=None, colors=None,
 
     colormap : string or matplotlib cmap
         Specify a colormap for each bar, each row in the stack, or every segment.
+        
+    orientation:‘vertical’ or ‘horizontal’
+        Specifies a horizontal or vertical bar chart.
+        
+    legend : boolean, default: True
+        If True, the function add a legend with the plot
+
+    legend_kws : dict, default: None
+        Additional keyword arguments for the legend components.
 
     kwargs : dict 
         Additional keyword arguments to pass to ``ax.bar``. 
@@ -132,29 +141,48 @@ def bar_stack(data, ax=None, labels=None, ticks=None, colors=None,
                             colors=colors)    
     
     idx = np.arange(data.shape[1])
-    prev = np.zeros(data.shape[1])
+    zeros = np.zeros(data.shape[1])
+    # Stores stacks for both side of plotting axes
+    stack_arr = np.zeros((data.shape[1], 2))
     orientation = orientation.lower()
-    if orientation.startswith('v'):
-        for rdx,row in enumerate(data):
-            ax.bar(idx, 
-                   row,
-                   bottom = prev,
-                   color = colors[rdx])
-            prev+=row
+
+    if orientation.startswith('h'):
+
+        for rdx in range(len(data)):
+            stack = [
+                stack_arr[j, int(data[rdx][j] > 0)]
+                for j in range(len(data[rdx]))
+            ]
+            ax.barh(idx, data[rdx], left=stack,
+                         color=colors[rdx])
+            #Updates the stack for negative side of y-axis
+            stack_arr[:, 0] += np.minimum(data[rdx],
+                                         zeros)
+            # Updates stack for positive side of y-axis
+            stack_arr[:, 1] += np.maximum(data[rdx],
+                                             zeros)
+        ax.set_yticks(idx)
+        if ticks is not None:
+            ax.set_yticklabels(ticks)        
+    
+    elif orientation.startswith('v'):
+        for rdx in range(len(data)):
+            stack = [
+                stack_arr[j, int(data[rdx][j] > 0)]
+                for j in range(len(data[rdx]))
+            ]
+            ax.bar(idx, data[rdx], bottom=stack,
+                         color=colors[rdx])
+          #Updates the stack for negative side of x-axis            
+            stack_arr[:, 0] += np.minimum(data[rdx],
+                                         zeros)
+           #Updates the stack for negative side of x-axis
+            stack_arr[:, 1] += np.maximum(data[rdx],
+                                             zeros)
         ax.set_xticks(idx)
         if ticks is not None:
             ax.set_xticklabels(ticks, rotation=90)
 
-    elif orientation.startswith('h'):
-        for rdx,row in enumerate(data):
-            ax.barh(idx, 
-                   row,
-                   left = prev,
-                   color = colors[rdx])
-            prev+=row
-        ax.set_yticks(idx)
-        if ticks is not None:
-            ax.set_yticklabels(ticks)        
     else:
         raise YellowbrickValueError(
                 "unknown orientation '{}'".format(orientation)
@@ -163,5 +191,8 @@ def bar_stack(data, ax=None, labels=None, ticks=None, colors=None,
     # Generates default labels is labels are not specified.
     labels = labels or np.arange(data.shape[0])
 
-    manual_legend(ax, labels=labels, colors=colors)
+    if legend:
+        legend_kws = legend_kws or {}
+        manual_legend(ax, labels=labels, colors=colors, **legend_kws)
     return ax
+

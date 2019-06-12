@@ -25,7 +25,7 @@ from sklearn.metrics.classification import _check_targets
 from sklearn.model_selection import train_test_split as tts
 
 from ..exceptions import ModelError, YellowbrickValueError
-from ..style.colors import resolve_colors
+from ..draw import bar_stack
 
 
 ##########################################################################
@@ -42,14 +42,14 @@ class ClassPredictionError(ClassificationScoreVisualizer):
 
     Parameters
     ----------
-    ax: axes
-        the axis to plot the figure on.
-
     model: estimator
         Scikit-Learn estimator object. Should be an instance of a classifier,
         else ``__init__()`` will raise an exception.
 
-    classes: list
+    ax: axes, default=None
+        the axis to plot the figure on.
+
+    classes: list, default=None
         A list of class names for the legend. If classes is None and a y value
         is passed to fit then the classes are selected from the target vector.
 
@@ -130,18 +130,9 @@ class ClassPredictionError(ClassificationScoreVisualizer):
         Renders the class prediction error across the axis.
         """
 
-        indices = np.arange(len(self.classes_))
-        prev = np.zeros(len(self.classes_))
-
-        colors = resolve_colors(
-            colors=self.colors,
-            n_colors=len(self.classes_))
-
-        for idx, row in enumerate(self.predictions_):
-            self.ax.bar(indices, row, label=self.classes_[idx],
-                        bottom=prev, color=colors[idx])
-            prev += row
-
+        legend_kws = {'bbox_to_anchor':(1.04, 0.5), 'loc':"center left"}
+        bar_stack(self.predictions_, self.ax, labels=list(self.classes_),
+                  ticks=self.classes_, colors=self.colors, legend_kws=legend_kws)
         return self.ax
 
     def finalize(self, **kwargs):
@@ -150,14 +141,8 @@ class ClassPredictionError(ClassificationScoreVisualizer):
         The user calls poof and poof calls finalize.
         """
 
-        indices = np.arange(len(self.classes_))
-
         # Set the title
         self.set_title("Class Prediction Error for {}".format(self.name))
-
-        # Set the x ticks with the class names
-        self.ax.set_xticks(indices)
-        self.ax.set_xticklabels(self.classes_)
 
         # Set the axes labels
         self.ax.set_xlabel("actual class")
@@ -167,9 +152,8 @@ class ClassPredictionError(ClassificationScoreVisualizer):
         cmax = max([sum(predictions) for predictions in self.predictions_])
         self.ax.set_ylim(0, cmax + cmax * 0.1)
 
-        # Put the legend outside of the graph
-        plt.legend(bbox_to_anchor=(1.04, 0.5), loc="center left")
-        plt.tight_layout(rect=[0, 0, 0.85, 1])
+        # Ensure the legend fits on the figure
+        plt.tight_layout(rect=[0, 0, 0.90, 1])
 
 
 ##########################################################################
@@ -223,7 +207,7 @@ def class_prediction_error(
         Returns the axes that the class prediction error plot was drawn on.
     """
     # Instantiate the visualizer
-    visualizer = ClassPredictionError(model, ax, classes, **kwargs)
+    visualizer = ClassPredictionError(model=model, ax=ax, classes=classes, **kwargs)
 
     # Create the train and test splits
     X_train, X_test, y_train, y_test = tts(
@@ -234,5 +218,5 @@ def class_prediction_error(
     visualizer.fit(X_train, y_train, **kwargs)
     visualizer.score(X_test, y_test)
 
-    # Return the axes object on the visualizer
-    return visualizer.ax
+    # Return the visualizer
+    return visualizer
