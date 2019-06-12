@@ -136,8 +136,6 @@ def clustering_validity_index(X):
 def dbcv(X, labels, distance_function="euclidean"):
     """
     Density-Based Cluster Validation
-
-    QUESTION:  Better way to improve speed and/or memory?
     """
     assert isinstance(X, np.ndarray), "X must be a numpy array, np.ndarray"
     assert len(X) == len(labels), ("Must have a label for each point, -1 for"
@@ -151,14 +149,26 @@ def dbcv(X, labels, distance_function="euclidean"):
     distances = core_distance(X, labels, dist_func=distance_function)
     graph = mutual_reachability(X, distances, dist_func=distance_function)
     spanning_trees = []
-    for c in clusters:
+    density_seperation = [ [ ] ] * len(clusters)  # list to hold all the seps
+    for i,c in enumerate(clusters):
         idx = np.where(labels == c)[0]
         spanning_trees.append(minimum_spanning_tree(
             graph[idx, idx.reshape(len(idx), 1)]))
-    density_sparseness = [np.min(tree[np.nonzero(tree)]) for tree in spanning_trees]
-    # density_seperation = np.zeros((10,10))  # between clusters not records
+        for cj in clusters:  # definitions 6
+            combined_idx = np.where( (labels == c) | (labels == cj)  )[0]
+            cltr_pts = graph[idx, idx.reshape(len(idx), 1)]
+            density_seperation[i].append(np.min(cltr_pts[np.nonzero(cltr_pts)]))
+    density_sparseness = [np.max(tree) for tree in spanning_trees]  # DSC 
 
-    return None
+    # definition 7 validity index of a  cluster
+    validity = [ (min(dspc) - dsc) / max(min(dspc), dsc) for dspc, dsc 
+        in zip(density_seperation, density_sparseness)]
+
+    # definition 8
+    dbcv = sum([np.sum(labels == c)/cardinality * vc for c,vc in
+        enumerate(validity)])
+
+    return dbcv
 
 if __name__ == "__main__":
     """
@@ -184,5 +194,6 @@ if __name__ == "__main__":
     print(cd_output)
     graph = mutual_reachability(X, cd_output, 'euclidean')
     print("graph:\n", graph)
-    dbcv(X, clustering.labels_)
+    output = dbcv(X, clustering.labels_)
+    print("dbcv:", output)
 
