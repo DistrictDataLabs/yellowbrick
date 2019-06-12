@@ -9,10 +9,10 @@ matrix:
       python: '3.7'
 
     - name: "Miniconda 3.6 on Xenial Linux"
-      env: PYTHON="3.6"
+      env: ANACONDA="3.6"
 
     - name: "Miniconda 3.7 on Xenial Linux"
-      env: PYTHON="3.7"
+      env: ANACONDA="3.7"
 
 before_install:
 - sudo apt-get update;
@@ -24,7 +24,7 @@ before_install:
   fi
 
 install:
-- if [[ -z ${MINICONDA} ]]; then
+- if [[ -z ${ANACONDA} ]]; then
       pip install -r requirements.txt;
       pip install -r tests/requirements.txt;
       pip install coveralls;
@@ -36,7 +36,7 @@ install:
       conda config --set always_yes yes --set changeps1 no;
       conda update -n base conda --yes;
       conda config --add channels conda-forge;
-      conda env create -f tests/requirements.txt -n yellowbrick python=$PYTHON;
+      conda env create -f tests/requirements.txt -n yellowbrick python=$ANACONDA;
       source activate yellowbrick;
       conda install coveralls;
   fi
