@@ -72,12 +72,12 @@ A special thank you to District Data Labs for covering travel costs to PyCon, th
 
 Motion: confirm the 2019 budget and advisor dues. Moved by Rebecca Bilbro, seconded by Nathan Danielsen.
 
-*The motion was adopted unamiously*.
+*The motion was adopted unanimously*.
 
 Governance Amendment
 ~~~~~~~~~~~~~~~~~~~~
 
-A proposed ammendment to the governance document adding a "mentor-contributor" role as follows:
+A proposed amendment to the governance document adding a "mentor-contributor" role as follows:
 
 .. code-block:: text
 
@@ -168,7 +168,7 @@ Kristen McIntyre     Maintainer
 Project Roadmap
 ~~~~~~~~~~~~~~~
 
-The v1.0 release has a number of significant changes that may not be backward compatible with previous versions (though for the most part it will be). Because of this, and becasue many of the issues are *contagious* (e.g. affect many files in Yellowbrick), we are reluctant to plan too much into the future for Yellowbrick. Instead we have created a `v1.1 milestone in GitHub <https://github.com/DistrictDataLabs/yellowbrick/milestone/14>`_ to start tracking issues there.
+The v1.0 release has a number of significant changes that may not be backward compatible with previous versions (though for the most part it will be). Because of this, and because many of the issues are *contagious* (e.g. affect many files in Yellowbrick), we are reluctant to plan too much into the future for Yellowbrick. Instead we have created a `v1.1 milestone in GitHub <https://github.com/DistrictDataLabs/yellowbrick/milestone/14>`_ to start tracking issues there.
 
 Broadly some roadmap items are:
 
@@ -188,6 +188,8 @@ Minutes
 
 Comments on the Inaugural Advisors Meeting
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+*Remarks delivered by Benjamin Bengfort*
 
 Welcome to the inaugural meeting of the Yellowbrick Board of Advisors. Due to the number of agenda items and limited time, this meeting will have a more formal tone than normal if simply to provide structure so that we can get to everything. Before we start, however, I wanted to say a few words to mark this occasion and to remark on the path that led us here.
 
@@ -239,7 +241,7 @@ Hot takes from PyCon:
 - More visual stand out: e.g. metal grommets and banner with visualizers
 - NumFOCUS has an in-house designer who may be able to help
 
-Important request: we know that there will be a large number of PRs after PyCon or doing Hacktoberfest, we need to *plan* for this and ensure we know who/how is triaging them and handling them ahead of the event. The maintainers who did not attend PyCon ended up slammed with work even though they couldn't enjoy participating in the event itself.
+Important request: we know that there will be a large number of PRs after PyCon or during Hacktoberfest, we need to *plan* for this and ensure we know who/how is triaging them and handling them ahead of the event. The maintainers who did not attend PyCon ended up slammed with work even though they couldn't enjoy participating in the event itself.
 
 Google Summer of Code
 ~~~~~~~~~~~~~~~~~~~~~
