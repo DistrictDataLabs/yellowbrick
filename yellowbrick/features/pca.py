@@ -206,8 +206,8 @@ class PCADecomposition(MultiFeatureVisualizer):
             if self.colorbar:
                 plt.colorbar(im, orientation='horizontal', ticks=[self.pca_components_.min(), 0,self.pca_components_.max()])
             if self.heatmap:
-                self.ax1 = self.fig.add_subplot(2,1,2)
-                self.ax1.imshow(self.pca_components_, interpolation = 'none', cmap = self.colormap)
+                ax = self.fig.add_subplot(2,1,2)
+                ax.imshow(self.pca_components_, interpolation = 'none', cmap = self.colormap)
             if self.proj_features:
                 x_vector = self.pca_components_[0]
                 y_vector = self.pca_components_[1]
