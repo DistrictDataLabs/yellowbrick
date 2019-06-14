@@ -29,16 +29,21 @@ from yellowbrick.regressor.influence import *
 ## Test CooksDistance Visualizer
 ##########################################################################
 
-class TestCooksDistance(VisualTestCase):
 
+class TestCooksDistance(VisualTestCase):
     def test_cooks_distance(self):
         """
         Test image similarity of Cook's Distance on a random dataset
         """
         # Make Test Dataset
         X, y = make_regression(
-            n_samples=100, n_features=14, n_informative=6, bias=1.2,
-            noise=49.8, tail_strength=0.6, random_state=637
+            n_samples=100,
+            n_features=14,
+            n_informative=6,
+            bias=1.2,
+            noise=49.8,
+            tail_strength=0.6,
+            random_state=637,
         )
 
         _, ax = plt.subplots()
@@ -53,8 +58,13 @@ class TestCooksDistance(VisualTestCase):
         """
         # Make Test Dataset
         X, y = make_regression(
-            n_samples=100, n_features=14, n_informative=6, bias=1.2,
-            noise=49.8, tail_strength=0.6, random_state=637
+            n_samples=100,
+            n_features=14,
+            n_informative=6,
+            bias=1.2,
+            noise=49.8,
+            tail_strength=0.6,
+            random_state=637,
         )
 
         _, ax = plt.subplots()

@@ -82,6 +82,7 @@ Regression Visualization
 - :doc:`api/regressor/peplot`: find model breakdowns along the domain of the target
 - :doc:`api/regressor/residuals`: show the difference in residuals of training and test data
 - :doc:`api/regressor/alphas`: show how the choice of alpha influences regularization
+- :doc:`api/regressor/influence`: show the influence of instances on linear regression
 
 Clustering Visualization
 ~~~~~~~~~~~~~~~~~~~~~~~~

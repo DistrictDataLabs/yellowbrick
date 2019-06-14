@@ -28,6 +28,7 @@ from sklearn.linear_model import LinearRegression
 ## Cook's Distance
 ##########################################################################
 
+
 class CooksDistance(Visualizer):
     """
     Cook's Distance is a measure of how influential an instance is to the computation of
@@ -35,7 +36,8 @@ class CooksDistance(Visualizer):
     underlying model be substantially changed? Because of this, Cook's Distance is
     generally used to detect outliers in standard, OLS regression. In fact, a general
     rule of thumb is that D(i) > 4/n is a good threshold for determining highly
-    influential points as outliers.
+    influential points as outliers and this visualizer can report the percentage of data
+    that is above that threshold.
 
     This implementation of Cook's Distance assumes Ordinary Least Squares regression,
     and therefore embeds a ``sklearn.linear_model.LinearRegression`` under the hood.
@@ -45,11 +47,10 @@ class CooksDistance(Visualizer):
     influence for other regression models requires leave one out validation and can be
     expensive to compute.
 
-    For more see:
-    https://songhuiming.github.io/pages/2016/11/27/linear-regression-in-python-outliers-leverage-detect/
-
-    Note that Cook's Distance is very similar to DFFITS, and that the Cook's Distance
-    scores can be easily transformed to DFFITS scores.
+    .. seealso::
+        For a longer discussion on detecting outliers in regression and computing
+        leverage and influence, see `linear regression in python, outliers/leverage
+        detect <http://bit.ly/2If2fga>`_ by Huiming Song.
 
     Parameters
     ----------
@@ -57,29 +58,61 @@ class CooksDistance(Visualizer):
         The axes to plot the figure on. If None is passed in the current axes
         will be used (or generated if required).
 
-    influence_threshold : bool, default: True
+    draw_threshold : bool, default: True
         Draw a horizontal line at D(i) == 4/n to easily identify the most influential
-        points on the final regression.
+        points on the final regression. This will also draw a legend that specifies the
+        percentage of data points that are above the threshold.
 
     linefmt : str, default: 'C0-'
         A string defining the properties of the vertical lines of the stem plot, usually
         this will be a color or a color and a line style. The default is simply a solid
         line with the first color of the color cycle.
 
-    markerfmt: str, default: ','
+    markerfmt : str, default: ','
         A string defining the properties of the markers at the stem plot heads. The
         default is "pixel", e.g. basically no marker head at the top of the stem plot.
 
     kwargs : dict
         Keyword arguments that are passed to the base class and may influence the final
         visualization (e.g. size or title parameters).
+
+    Attributes
+    ----------
+    distance_ : array, 1D
+        The Cook's distance value for each instance specified in ``X``, e.g. an 1D array
+        with shape ``(X.shape[0],)``.
+
+    p_values_ : array, 1D
+        The p values associated with the F-test of Cook's distance distribution. A 1D
+        array whose shape matches ``distance_``.
+
+    influence_threshold_ : float
+        A rule of thumb influence threshold to determine outliers in the regression
+        model, defined as It=4/n.
+
+    outlier_percentage_ : float
+        The percentage of instances whose Cook's distance is greater than the influnce
+        threshold, the percentage is 0.0 <= p  <= 100.0.
+
+    Notes
+    -----
+    Cook's Distance is very similar to DFFITS, another diagnostic that is meant to show
+    how influential a point is in a statistical regression. Although the computed values
+    of Cook's and DFFITS are different, they are conceptually identical and there even
+    exists a closed-form formula to convert one value to another. Because of this, we
+    have chosen to implement Cook's distance rather than or in addition to DFFITS.
     """
 
-    def __init__(self, ax=None, influence_threshold=True, linefmt="C0-", markerfmt=",", **kwargs):
+    def __init__(
+        self, ax=None, draw_threshold=True, linefmt="C0-", markerfmt=",", **kwargs
+    ):
+        # Initializ the visualizer
         super(CooksDistance, self).__init__(ax=ax, **kwargs)
-        self.influence_threshold = influence_threshold
-        self.linefmt = linefmt
-        self.markerfmt = markerfmt
+
+        # Set "hyperparameters"
+        self.set_params(
+            draw_threshold=draw_threshold, linefmt=linefmt, markerfmt=markerfmt,
+        )
 
         # An internal LinearRegression used to compute the residuals and MSE
         # This implementation doesn't support any regressor, it is OLS-specific
@@ -102,16 +135,20 @@ class CooksDistance(Visualizer):
         mse = np.dot(residuals, residuals) / df
 
         # Compute Cook's distance
-        residuals_studentized = residuals / np.sqrt(mse) / np.sqrt(1-leverage)
-        self.distance_ = residuals_studentized**2 / X.shape[1]
-        self.distance_ *= leverage / (1-leverage)
+        residuals_studentized = residuals / np.sqrt(mse) / np.sqrt(1 - leverage)
+        self.distance_ = residuals_studentized ** 2 / X.shape[1]
+        self.distance_ *= leverage / (1 - leverage)
 
         # Compute the p-values of Cook's Distance
+        # TODO: honestly this was done because it was only in the statsmodels
+        # implementation... I have no idea what this is or why its important.
         self.p_values_ = sp.stats.f.sf(self.distance_, X.shape[1], df)
 
         # Compute the influence threshold rule of thumb
         self.influence_threshold_ = 4 / X.shape[0]
-        self.outlier_percentage_ = sum(self.distance_ > self.influence_threshold_) / X.shape[0]
+        self.outlier_percentage_ = (
+            sum(self.distance_ > self.influence_threshold_) / X.shape[0]
+        )
         self.outlier_percentage_ *= 100.0
 
         self.draw()
@@ -127,28 +164,40 @@ class CooksDistance(Visualizer):
         self.ax.set_xlim(0, len(self.distance_))
 
         # Draw the threshold for most influential points
-        if self.influence_threshold:
-            label = r"{:0.2f}% > $I_t$ ($I_t=\frac {{4}} {{n}}$)".format(self.outlier_percentage_)
+        if self.draw_threshold:
+            label = r"{:0.2f}% > $I_t$ ($I_t=\frac {{4}} {{n}}$)".format(
+                self.outlier_percentage_
+            )
             self.ax.axhline(
-                self.influence_threshold_, ls='--', label=label,
-                c=baseline.get_color(), lw=baseline.get_linewidth(),
+                self.influence_threshold_,
+                ls="--",
+                label=label,
+                c=baseline.get_color(),
+                lw=baseline.get_linewidth(),
             )
 
     def finalize(self):
+        # Set the title and axis labels
+        self.set_title("Cook's Distance Outlier Detection")
         self.ax.set_xlabel("instance index")
         self.ax.set_ylabel("influence (I)")
-        self.ax.legend(loc="best", frameon=True)
-        self.set_title("Cook's Distance Outlier Detection")
+
+        # Only add the legend if the influence threshold has been plotted
+        if self.draw_threshold:
+            self.ax.legend(loc="best", frameon=True)
 
 
-def cooks_distance(X, y, ax=None, influence_threshold=True, linefmt="C0-", markerfmt=",", **kwargs):
+def cooks_distance(
+    X, y, ax=None, draw_threshold=True, linefmt="C0-", markerfmt=",", **kwargs
+):
     """
     Cook's Distance is a measure of how influential an instance is to the computation of
     a regression, e.g. if the instance is removed would the estimated coeficients of the
     underlying model be substantially changed? Because of this, Cook's Distance is
     generally used to detect outliers in standard, OLS regression. In fact, a general
     rule of thumb is that D(i) > 4/n is a good threshold for determining highly
-    influential points as outliers.
+    influential points as outliers and this visualizer can report the percentage of data
+    that is above that threshold.
 
     This implementation of Cook's Distance assumes Ordinary Least Squares regression,
     and therefore embeds a ``sklearn.linear_model.LinearRegression`` under the hood.
@@ -158,11 +207,10 @@ def cooks_distance(X, y, ax=None, influence_threshold=True, linefmt="C0-", marke
     influence for other regression models requires leave one out validation and can be
     expensive to compute.
 
-    For more see:
-    https://songhuiming.github.io/pages/2016/11/27/linear-regression-in-python-outliers-leverage-detect/
-
-    Note that Cook's Distance is very similar to DFFITS, and that the Cook's Distance
-    scores can be easily transformed to DFFITS scores.
+    .. seealso::
+        For a longer discussion on detecting outliers in regression and computing
+        leverage and influence, see `linear regression in python, outliers/leverage
+        detect <http://bit.ly/2If2fga>`_ by Huiming Song.
 
     Parameters
     ----------
@@ -176,9 +224,10 @@ def cooks_distance(X, y, ax=None, influence_threshold=True, linefmt="C0-", marke
         The axes to plot the figure on. If None is passed in the current axes
         will be used (or generated if required).
 
-    influence_threshold : bool, default: True
+    draw_threshold : bool, default: True
         Draw a horizontal line at D(i) == 4/n to easily identify the most influential
-        points on the final regression.
+        points on the final regression. This will also draw a legend that specifies the
+        percentage of data points that are above the threshold.
 
     linefmt : str, default: 'C0-'
         A string defining the properties of the vertical lines of the stem plot, usually
@@ -193,7 +242,13 @@ def cooks_distance(X, y, ax=None, influence_threshold=True, linefmt="C0-", marke
         Keyword arguments that are passed to the base class and may influence the final
         visualization (e.g. size or title parameters).
     """
-    viz = CooksDistance(ax=ax, influence_threshold=influence_threshold, linefmt=linefmt, markerfmt=markerfmt, **kwargs)
+    viz = CooksDistance(
+        ax=ax,
+        draw_threshold=draw_threshold,
+        linefmt=linefmt,
+        markerfmt=markerfmt,
+        **kwargs
+    )
     viz.fit(X, y)
     viz.finalize()
     return viz
