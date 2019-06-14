@@ -119,6 +119,25 @@ class CooksDistance(Visualizer):
         self._model = LinearRegression()
 
     def fit(self, X, y):
+        """
+        Computes the leverage of X and uses the residuals of a
+        ``sklearn.linear_model.LinearRegression`` to compute the Cook's Distance of each
+        observation in X, their p-values and the number of outliers defined by the
+        number of observations supplied.
+
+        Parameters
+        ----------
+        X : array-like, 2D
+            The exogenous design matrix, e.g. training data.
+
+        y : array-like, 1D
+            The endogenous response variable, e.g. target data.
+
+        Returns
+        -------
+        self : CooksDistance
+            Fit returns the visualizer instance.
+        """
         # Fit a linear model to X and y to compute MSE
         self._model.fit(X, y)
 
@@ -155,6 +174,10 @@ class CooksDistance(Visualizer):
         return self
 
     def draw(self):
+        """
+        Draws a stem plot where each stem is the Cook's Distance of the instance at the
+        index specified by the x axis. Optionaly draws a threshold line.
+        """
         # Draw a stem plot with the influence for each instance
         _, _, baseline = self.ax.stem(
             self.distance_, linefmt=self.linefmt, markerfmt=self.markerfmt
@@ -177,6 +200,9 @@ class CooksDistance(Visualizer):
             )
 
     def finalize(self):
+        """
+        Prepares the visualization for presentation and reporting.
+        """
         # Set the title and axis labels
         self.set_title("Cook's Distance Outlier Detection")
         self.ax.set_xlabel("instance index")
