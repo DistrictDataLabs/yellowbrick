@@ -127,12 +127,6 @@ def mutual_reachability(X, core_dists, dist_func="euclidean"):
     return reachability_graph
 
 
-def cluster_validity_index(X):
-    return None
-
-def clustering_validity_index(X):
-    return None
-
 def dbcv(X, labels, distance_function="euclidean"):
     """
     Density-Based Cluster Validation
@@ -154,11 +148,17 @@ def dbcv(X, labels, distance_function="euclidean"):
         idx = np.where(labels == c)[0]
         spanning_trees.append(minimum_spanning_tree(
             graph[idx, idx.reshape(len(idx), 1)]))
+        seperation = []
         for cj in clusters:  # definitions 6
-            combined_idx = np.where( (labels == c) | (labels == cj)  )[0]
-            cltr_pts = graph[idx, idx.reshape(len(idx), 1)]
-            density_seperation[i].append(np.min(cltr_pts[np.nonzero(cltr_pts)]))
+            if cj == c:
+                continue
+            idx_j = np.where(labels == cj)[0]
+            sep = np.min((graph + graph.T)[idx, idx_j.reshape(len(idx_j), 1)])
+            seperation.append(sep)
+        density_seperation[i] = seperation
     density_sparseness = [np.max(tree) for tree in spanning_trees]  # DSC 
+    print("seperation:", density_seperation)
+    print("sparseness:", density_sparseness)
 
     # definition 7 validity index of a  cluster
     validity = [ (min(dspc) - dsc) / max(min(dspc), dsc) for dspc, dsc 
