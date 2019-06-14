@@ -61,18 +61,33 @@ class CooksDistance(Visualizer):
         Draw a horizontal line at D(i) == 4/n to easily identify the most influential
         points on the final regression.
 
+    linefmt : str, default: 'C0-'
+        A string defining the properties of the vertical lines of the stem plot, usually
+        this will be a color or a color and a line style. The default is simply a solid
+        line with the first color of the color cycle.
+
+    markerfmt: str, default: ','
+        A string defining the properties of the markers at the stem plot heads. The
+        default is "pixel", e.g. basically no marker head at the top of the stem plot.
+
     kwargs : dict
         Keyword arguments that are passed to the base class and may influence the final
         visualization (e.g. size or title parameters).
     """
 
-    def __init__(self, ax=None, influence_threshold=True, **kwargs):
+    def __init__(self, ax=None, influence_threshold=True, linefmt="C0-", markerfmt=",", **kwargs):
         super(CooksDistance, self).__init__(ax=ax, **kwargs)
         self.influence_threshold = influence_threshold
+        self.linefmt = linefmt
+        self.markerfmt = markerfmt
+
+        # An internal LinearRegression used to compute the residuals and MSE
+        # This implementation doesn't support any regressor, it is OLS-specific
+        self._model = LinearRegression()
 
     def fit(self, X, y):
         # Fit a linear model to X and y to compute MSE
-        self.model = LinearRegression().fit(X, y)
+        self._model.fit(X, y)
 
         # Leverage is computed as the diagonal of the projection matrix of X
         # TODO: whiten X before computing leverage
@@ -83,7 +98,7 @@ class CooksDistance(Visualizer):
         df = X.shape[0] - rank
 
         # Compute the MSE from the residuals
-        residuals = y - self.model.predict(X)
+        residuals = y - self._model.predict(X)
         mse = np.dot(residuals, residuals) / df
 
         # Compute Cook's distance
@@ -94,24 +109,39 @@ class CooksDistance(Visualizer):
         # Compute the p-values of Cook's Distance
         self.p_values_ = sp.stats.f.sf(self.distance_, X.shape[1], df)
 
+        # Compute the influence threshold rule of thumb
+        self.influence_threshold_ = 4 / X.shape[0]
+        self.outlier_percentage_ = sum(self.distance_ > self.influence_threshold_) / X.shape[0]
+        self.outlier_percentage_ *= 100.0
+
         self.draw()
         return self
 
     def draw(self):
         # Draw a stem plot with the influence for each instance
-        self.ax.stem(self.distance_, markerfmt=",")
+        _, _, baseline = self.ax.stem(
+            self.distance_, linefmt=self.linefmt, markerfmt=self.markerfmt
+        )
+
+        # No padding on either side of the instance index
+        self.ax.set_xlim(0, len(self.distance_))
 
         # Draw the threshold for most influential points
         if self.influence_threshold:
-            self.ax.axhline(4/len(self.distance_), c='r', ls='--', lw=1)
+            label = r"{:0.2f}% > $I_t$ ($I_t=\frac {{4}} {{n}}$)".format(self.outlier_percentage_)
+            self.ax.axhline(
+                self.influence_threshold_, ls='--', label=label,
+                c=baseline.get_color(), lw=baseline.get_linewidth(),
+            )
 
     def finalize(self):
-        self.ax.set_xlabel("instance")
-        self.ax.set_ylabel("influence")
-        self.ax.set_title("Cook's Distance Outlier Detection")
+        self.ax.set_xlabel("instance index")
+        self.ax.set_ylabel("influence (I)")
+        self.ax.legend(loc="best", frameon=True)
+        self.set_title("Cook's Distance Outlier Detection")
 
 
-def cooks_distance(X, y, ax=None, influence_threshold=True, **kwargs):
+def cooks_distance(X, y, ax=None, influence_threshold=True, linefmt="C0-", markerfmt=",", **kwargs):
     """
     Cook's Distance is a measure of how influential an instance is to the computation of
     a regression, e.g. if the instance is removed would the estimated coeficients of the
@@ -150,10 +180,20 @@ def cooks_distance(X, y, ax=None, influence_threshold=True, **kwargs):
         Draw a horizontal line at D(i) == 4/n to easily identify the most influential
         points on the final regression.
 
+    linefmt : str, default: 'C0-'
+        A string defining the properties of the vertical lines of the stem plot, usually
+        this will be a color or a color and a line style. The default is simply a solid
+        line with the first color of the color cycle.
+
+    markerfmt: str, default: ','
+        A string defining the properties of the markers at the stem plot heads. The
+        default is "pixel", e.g. basically no marker head at the top of the stem plot.
+
     kwargs : dict
         Keyword arguments that are passed to the base class and may influence the final
         visualization (e.g. size or title parameters).
     """
-    viz = CooksDistance(ax=ax, influence_threshold=influence_threshold, **kwargs)
+    viz = CooksDistance(ax=ax, influence_threshold=influence_threshold, linefmt=linefmt, markerfmt=markerfmt, **kwargs)
     viz.fit(X, y)
+    viz.finalize()
     return viz

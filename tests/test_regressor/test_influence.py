@@ -2,7 +2,7 @@
 # Test the regressor influence visualizers.
 #
 # Author:   Benjamin Bengfort <benjamin@bengfort.com>
-# Created:  timestamp
+# Created:  Sun Jun 09 16:03:31 2019 -0400
 #
 # Copyright (C) 2019 The scikit-yb developers
 # For license information, see LICENSE.txt
