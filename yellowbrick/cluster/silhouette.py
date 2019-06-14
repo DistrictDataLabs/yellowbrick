@@ -20,7 +20,7 @@ Implements visualizers that use the silhouette metric for cluster evaluation.
 import numpy as np
 import matplotlib.ticker as ticker
 
-from ..style import color_palette
+from ..style import resolve_colors
 from .base import ClusteringScoreVisualizer
 
 from sklearn.metrics import silhouette_score, silhouette_samples
@@ -66,6 +66,13 @@ class SilhouetteVisualizer(ClusteringScoreVisualizer):
         The axes to plot the figure on. If None is passed in the current axes
         will be used (or generated if required).
 
+
+    colors : iterable or string, default: None
+        A collection of colors to use for each cluster group. If there are
+        fewer colors than cluster groups, colors will repeat. May also be a
+        matplotlib colormap string.
+
+
     kwargs : dict
         Keyword arguments that are passed to the base class and may influence
         the visualization as defined in other Visualizers.
@@ -87,6 +94,9 @@ class SilhouetteVisualizer(ClusteringScoreVisualizer):
         Number of clusters (e.g. n_clusters or k value) passed to internal
         scikit-learn model.
 
+    y_tick_pos_ : array of shape (n_clusters,)
+        The computed center positions of each cluster on the y-axis
+
     Examples
     --------
 
@@ -97,13 +107,16 @@ class SilhouetteVisualizer(ClusteringScoreVisualizer):
     >>> model.poof()
     """
 
-    def __init__(self, model, ax=None, **kwargs):
+    def __init__(self, model, ax=None, colors=None, **kwargs):
         super(SilhouetteVisualizer, self).__init__(model, ax=ax, **kwargs)
 
         # Visual Properties
-        # TODO: Fix the color handling
-        self.colormap = kwargs.get('colormap', 'set1')
-        self.color = kwargs.get('color', None)
+        # Use colors if it is given, otherwise attempt to use colormap which
+        # which will override colors. If neither is found, default to None.
+        # The colormap may yet still be found in resolve_colors
+        self.colors = colors
+        if 'colormap' in kwargs:
+            self.colors = kwargs['colormap']
 
     def fit(self, X, y=None, **kwargs):
         """
@@ -148,10 +161,19 @@ class SilhouetteVisualizer(ClusteringScoreVisualizer):
         y_lower = 10 # The bottom of the silhouette
 
         # Get the colors from the various properties
-        # TODO: Use resolve_colors instead of this
-        colors = color_palette(self.colormap, self.n_clusters_)
+        color_kwargs = {'n_colors': self.n_clusters_}
+
+        if self.colors is None:
+            color_kwargs['colormap'] = 'Set1'
+        elif isinstance(self.colors, str):
+            color_kwargs['colormap'] = self.colors
+        else:
+            color_kwargs['colors'] = self.colors
+
+        colors = resolve_colors(**color_kwargs)
 
         # For each cluster, plot the silhouette scores
+        self.y_tick_pos_ = []
         for idx in range(self.n_clusters_):
 
             # Collect silhouette scores for samples in the current cluster .
@@ -168,15 +190,16 @@ class SilhouetteVisualizer(ClusteringScoreVisualizer):
                 facecolor=color, edgecolor=color, alpha=0.5
             )
 
-            # Label the silhouette plots with their cluster numbers
-            self.ax.text(-0.05, y_lower + 0.5 * size, str(idx))
+            # Collect the tick position for each cluster
+            self.y_tick_pos_.append(y_lower + 0.5 * size)
 
             # Compute the new y_lower for next plot
             y_lower = y_upper + 10
 
         # The vertical line for average silhouette score of all the values
         self.ax.axvline(
-            x=self.silhouette_score_, color="red", linestyle="--"
+            x=self.silhouette_score_, color="red", linestyle="--",
+            label="Average Silhouette Score"
         )
 
         return self.ax
@@ -213,5 +236,9 @@ class SilhouetteVisualizer(ClusteringScoreVisualizer):
         self.ax.set_ylabel("cluster label")
 
         # Set the ticks on the axis object.
-        self.ax.set_yticks([])  # Clear the yaxis labels / ticks
+        self.ax.set_yticks(self.y_tick_pos_)
+        self.ax.set_yticklabels(str(idx) for idx in range(self.n_clusters_))
         self.ax.xaxis.set_major_locator(ticker.MultipleLocator(0.1))  # Set the ticks at multiples of 0.1
+
+        # Show legend (Average Silhouette Score axis)
+        self.ax.legend(loc='best')

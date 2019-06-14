@@ -16,6 +16,7 @@ Helper functions and cases for making assertions on visualizations.
 
 import os
 import inspect
+import sys
 
 import unittest
 import matplotlib as mpl
@@ -26,6 +27,11 @@ from matplotlib import rcParams
 
 from matplotlib.testing.compare import compare_images
 from yellowbrick.exceptions import ImageComparisonFailure
+
+
+def is_winconda_env():
+    return (os.name == 'nt' and
+            os.path.exists(os.path.join(sys.prefix, 'conda-meta')))
 
 
 ##########################################################################
@@ -47,18 +53,16 @@ class VisualTestCase(unittest.TestCase):
     @classmethod
     def setUpClass(klass):
         """
-        In order for tests to pass on Travis-CI we must use the 'Agg'
-        matplotlib backend. This setup function ensures that all tests
-        that do visual work setup the backend correctly.
+        This setup function is available to ensure that all CI tests
+        that do visual work are set up correctly.
 
         Note:
         """
-        klass._backend = mpl.get_backend()
         super(VisualTestCase, klass).setUpClass()
 
     def setUp(self):
         """
-        Assert tthat the backend is 'Agg' and close all previous plots
+        Close all previous plots
         """
         # Reset the matplotlib environment
         plt.cla()        # clear current axis
@@ -68,11 +72,9 @@ class VisualTestCase(unittest.TestCase):
         # Travis-CI does not have san-serif
         rcParams['font.family'] = 'DejaVu Sans'
 
-        # Assert that the backend is agg
-        self.assertEqual(self._backend, 'agg')
         super(VisualTestCase, self).setUp()
 
-    def assert_images_similar(self, visualizer=None, ax=None, tol=0.01, **kwargs):
+    def assert_images_similar(self, visualizer=None, ax=None, tol=0.01, windows_tol=None,  **kwargs):
         """Accessible testing method for testing generation of a Visualizer.
 
         Requires the placement of a baseline image for comparison in the
@@ -104,6 +106,9 @@ class VisualTestCase(unittest.TestCase):
             maximal difference).  The test fails if the average pixel
             difference is greater than this value.
 
+        windows_tol: float, default: None
+            Similar to the tol parameter, but targeted for testing on a windows environment. 
+
         kwargs : dict
             Options to pass to the ImageComparison class.
         """
@@ -112,7 +117,7 @@ class VisualTestCase(unittest.TestCase):
 
         # Build and execute the image comparison
         compare = ImageComparison(
-            inspect.stack(), visualizer=visualizer, ax=ax, tol=tol, **kwargs
+            inspect.stack(), visualizer=visualizer, ax=ax, tol=tol, windows_tol=windows_tol, **kwargs
         )
         compare()
 
@@ -153,6 +158,9 @@ class ImageComparison(object):
         difference. The test fails if the average pixel difference is greater
         than this value.
 
+    windows_tol : float, default: 0.01
+        The tolerance (tol) parameter for the windows operating system environment.
+
     ext : string, default: ".png"
         The file extension to save the actual and baseline images as.
 
@@ -164,13 +172,20 @@ class ImageComparison(object):
     remove_title : bool, default: True
         Remove the title since different OS may have varying fonts.
 
+    remove_labels : bool, default: True
+        Remove the x and y labels since different OS may have varying fonts.
+
+    remove_legend : bool, default: True
+        Remove the legend since different OS may have varying fonts.
+
     Raises
     ------
     ValueError : at least one of visualizer or ax must be specified.
     """
 
-    def __init__(self, stack, visualizer=None, ax=None, tol=0.01, ext=".png",
-                 remove_ticks=True, remove_title=True, remove_legend=False):
+    def __init__(self, stack, visualizer=None, ax=None, tol=0.01, 
+                 windows_tol=0.01, ext=".png", remove_ticks=True, 
+                 remove_title=True, remove_labels=True, remove_legend=True):
 
         # Ensure we have something to draw on
         if visualizer is None and ax is None:
@@ -199,11 +214,18 @@ class ImageComparison(object):
         module_path = os.path.relpath(frame[1], root)
         self.test_module_path = os.path.splitext(module_path)[0]
 
+        # Set the error tolerance depending on the os
+        if os.name == "nt" and windows_tol is not None:
+            self.tol = windows_tol
+        else:        
+            self.tol = tol
+
+
         # Save other image comparison properties
-        self.tol = tol
         self.ext = ext
         self.remove_ticks = remove_ticks
         self.remove_title = remove_title
+        self.remove_labels = remove_labels
         self.remove_legend = remove_legend
 
     def __call__(self):
@@ -271,7 +293,11 @@ class ImageComparison(object):
                 except AttributeError:
                     continue
 
-        if self.remove_legend:
+        if self.remove_labels:
+            self.ax.set_xlabel("")
+            self.ax.set_ylabel("")
+
+        if self.remove_legend and self.ax.get_legend() is not None:
             self.ax.legend_.remove()
 
     def save(self):
@@ -304,7 +330,6 @@ class ImageComparison(object):
             raise ImageComparisonFailure(
                 'baseline image does not exist:\n{}'.format(os.path.relpath(expected))
             )
-
         # Perform the comparison
         err = compare_images(expected, actual, self.tol, in_decorator=True)
 

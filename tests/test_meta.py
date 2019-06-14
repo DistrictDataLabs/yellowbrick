@@ -18,6 +18,8 @@ import os
 import pytest
 import inspect
 
+import matplotlib as mpl
+
 from tests.rand import RandomVisualizer
 from unittest.mock import MagicMock, patch
 from tests.base import ACTUAL_IMAGES, BASELINE_IMAGES
@@ -133,6 +135,8 @@ class TestMetaImageComparison(VisualTestCase):
         viz = RandomVisualizer(random_state=111).fit()
         viz.poof()
 
+        assert mpl.get_backend() == 'agg'
+
         compare = self.assert_images_similar(viz, tol=1.0)
         assert_path_exists(compare.actual_image_path)
         assert_path_exists(compare.baseline_image_path)
@@ -141,6 +145,7 @@ class TestMetaImageComparison(VisualTestCase):
         """
         Test that not close visualizers raise an assertion error.
         """
+        # Baseline image random_state=225
         viz = RandomVisualizer(random_state=224).fit()
         viz.poof()
 

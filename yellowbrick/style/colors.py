@@ -72,7 +72,7 @@ def resolve_colors(n_colors=None, colormap=None, colors=None):
         The name of the matplotlib color map with which to generate colors.
 
     colors : iterable, default: None
-        A collection of colors to use specifically with the plot.
+        A collection of colors to use specifically with the plot. Overrides colormap if both are specified.
 
     Returns
     -------

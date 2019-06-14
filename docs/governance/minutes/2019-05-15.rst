@@ -1,0 +1,287 @@
+.. -*- mode: rst -*-
+
+May 15, 2019
+============
+
+Yellowbrick Advisory Board Meeting Held on May 15, 2019 from 2030-2230 EST via Video Conference Call. Minutes taken by Benjamin Bengfort.
+
+Attendees: Edwin Schmierer, Kristen McIntyre, Larry Gray, Nathan Danielsen, Adam Morris, Prema Roman, Rebecca Bilbro, Tony Ojeda, Benjamin Bengfort.
+
+Agenda
+------
+
+A broad overview of the topics for discussion in the order they were presented:
+
+1. Welcome and introduction (Benjamin Bengfort)
+2. Officer nominations
+3. Advisor dues and Yellowbrick budget
+4. PyCon Sprints debrief (Larry Gray)
+5. Summer 2019 contributors and roles
+6. Google Summer of Code (Adam Morris)
+7. Yellowbrick v1.0 milestone planning
+8. Project roadmap through 2020
+9. Proposed amendment to governance: mentor role (Edwin Schmierer)
+10. Other business
+
+Votes and Resolutions
+---------------------
+
+Officer Elections
+~~~~~~~~~~~~~~~~~
+
+During the first advisory board meeting of the year, officers are nominated and elected to manage Yellowbrick for the year. The following nominations were proposed:
+
+Nominations for Chair:
+
+- Rebecca Bilbro by Benjamin Bengfort
+
+Nominations for Secretary:
+
+- Benjamin Bengfort by Rebecca Bilbro
+
+Nominations for Treasurer:
+
+- Edwin Schmierer by Rebecca Bilbro
+
+Motion: a vote to elect the nominated officers: Rebecca Bilbro as Chair, Benjamin Bengfort as Secretary, and Edwin Schmierer as Treasurer. Moved by Nathan Danielsen, seconded by Adam Morris.
+
+*The motion was adopted unanimously*.
+
+Operating Budget
+~~~~~~~~~~~~~~~~
+
+The following operating budget is proposed for 2019.
+
+Last year’s budget consisted of only two line items, which we believe will also primarily contribute to this year’s budget. The total budget is **$266.49** we have 9 advisors this year, therefore the dues are $29.61 per advisor.
+
+Budget breakdown:
+
+=============================================  ================  =========
+                  Description                      Frequency       Total
+=============================================  ================  =========
+Name.com domain registration (scikit-yb.org)         annually      $12.99
+Read the Docs Gold Membership                     $10 monthly     $120.00
+Stickers (StickerMule.com)                           annually     $133.50
+Datasets hosting on S3                          monthly (DDL)      $10-15
+Cheatsheets                                     annually (DDL)        $70
+=============================================  ================  =========
+
+Based on this budget, it is proposed that the dues are rounded to **$30.00** per advisor. Further, dues should be submitted to the treasurer via Venmo or PayPal no later than May 30, 2019. The treasurer will reimburse the payees of our expenses directly.
+
+A special thank you to District Data Labs for covering travel costs to PyCon, the printing of cheatsheets, and hosting our datasets on S3.
+
+Motion: confirm the 2019 budget and advisor dues. Moved by Rebecca Bilbro, seconded by Nathan Danielsen.
+
+*The motion was adopted unanimously*.
+
+Governance Amendment
+~~~~~~~~~~~~~~~~~~~~
+
+A proposed amendment to the governance document adding a "mentor-contributor" role as follows:
+
+.. code-block:: text
+
+    Mentor-Contributor
+    ^^^^^^^^^^^^^^^^^^
+
+    A mentor-contributor assumes all the responsibilities of a core contributor but
+    commits 25-50% of their time toward mentoring a new contributor who has
+    little-to-no experience. The purpose of the mentor-contributor role is to assist in
+    recruiting and developing a pipeline of new contributors for Yellowbrick.
+
+    A mentor-contributor would guide a new contributor in understanding the community,
+    roles, ethos, expectations, systems, and processes in participating and
+    contributing to an open source project such as Yellowbrick. A new contributor is
+    someone who is interested in open source software projects but has little-to-no
+    experience working on an open source project or participating in the community.
+
+    The mentor-contributor would work in tandem with the new contributor during the
+    semester to complete assigned issues and prepare the new contributor to be a core
+    contributor in a future semester. A mentor-contributor would mostly likely work on
+    fewer issues during the semester in order to allocate time for mentoring.
+    Mentor-contributors would be matched with new contributors prior to the start of
+    each semester or recruit their own contributor (eg. colleague or friend). The
+    responsibilities of mentor-contributors are as follows:
+
+    - When possible, recruit new contributors to Yellowbrick.
+    - Schedule weekly mentoring sessions and assign discrete yet increasingly complex tasks to the new contributor.
+    - Work with the new contributor to complete assigned issues during the semester.
+    - Set specific and reasonable goals for contributions over the semester.
+    - Work with maintainers to complete issues and goals for the next release.
+    - Respond to maintainer requests and be generally available for discussion.
+    - Participating actively on the #yellowbrick Slack channel.
+    - Join any co-working or pair-programming sessions required to achieve goals.
+    - Make a determination at the end of the semester on the readiness of the new contributor to be a core-contributor.
+
+    The mentor-contributor role may also appeal to students who use Yellowbrick in a
+    machine learning course and seek the experience of contributing to an open source
+    project.
+
+Motion: accept the amendment adding a mentor contributor role to the governance document. Moved by Edwin Schmierer, seconded by Rebecca Bilbro.
+
+*The motion was adopted unanimously without modifications*.
+
+Semester and Roadmap
+--------------------
+
+The summer semester will be dedicated to completing **Yellowbrick Version 1.0**. The issues associated with this release can be found in the `v1.0 Milestone on GitHub <https://github.com/DistrictDataLabs/yellowbrick/milestone/13>`_. This release has a number of deep issues: including figuring out the axes/figure API and compatibility. It is a year behind and it'll be good to move forward on it!
+
+We have a critical need for maintainers, we only have 2-3 people regularly reviewing PRs and far more PRs than we can handle. So far there have been no volunteers for summer maintainer status. We will address this in two ways:
+
+1. Maintainer mentorship
+2. Redirect non v1.0 PRs to the fall
+
+Rebecca will take the lead in mentoring new maintainers so that they feel more confident in conducting code reviews. This will include peer-reviews and a deep discussion of what we're looking for during code reviews. These code reviews will only be conducted on PRs by the summer contributors.
+
+Otherwise PRs will be handled as follows this semester:
+
+- Triage new PRs/Issues. If it is critical to v1.0 a bugfix or a docfix, assign a maintainer.
+- Otherwise we will request the contributor join the fall semester.
+- If a PR is older than 30 days it is "gone stale" and will be closed.
+- Recommend contributors push to ``yellowbrick.contrib`` or write blog post or notebook.
+
+We likely will need at least three maintainers per semester moving forward.
+
+Summer 2019 Contributors
+~~~~~~~~~~~~~~~~~~~~~~~~
+
+===================  =================
+Name                 Role
+===================  =================
+Lawrence Gray        Coordinator
+Prashi Doval         Core Contributor
+Benjamin Bengfort    Core Contributor
+Saurabh Daalia       Core Contributor
+Bashar Jaan Khan     Core Contributor
+Piyush Gautam        Core Contributor
+Naresh Bachwani      GSoC Student
+Xinyu You            Core Contributor
+Sandeep Banerjee     Core Contributor
+Carl Dawson          Core Contributor
+Mike Curry           Core Contributor
+Nathan Danielsen     Maintainer
+Rebecca Bilbro       Mentor
+Prema Roman          Maintainer
+Kristen McIntyre     Maintainer
+===================  =================
+
+Project Roadmap
+~~~~~~~~~~~~~~~
+
+The v1.0 release has a number of significant changes that may not be backward compatible with previous versions (though for the most part it will be). Because of this, and because many of the issues are *contagious* (e.g. affect many files in Yellowbrick), we are reluctant to plan too much into the future for Yellowbrick. Instead we have created a `v1.1 milestone in GitHub <https://github.com/DistrictDataLabs/yellowbrick/milestone/14>`_ to start tracking issues there.
+
+Broadly some roadmap items are:
+
+- *Make quick methods primetime*. Our primary API is the visualizer, which allows for the most configuration and customization of visualizations. The quick methods, however, are a simple workflow that is in demand. The quick methods will do all the work of the most basic visualizer functions in one line of code and return the visualizer for further customization.
+- *Add a neural package for ANN specific modeling*. We already have a text package for natural language processing, as deep learning is becoming more important, Yellowbrick should help with the interpretability of these models as well.
+
+Other roadmap ideas and planning discussed included:
+
+- A yb-altair prototype potentially leading to an Altair backend side-by-side with matplotlib.
+- Devops/engineering focused content for Yellowbrick (e.g. model management and maintenance).
+- Fundraising to pay for more ambitious YB development.
+- Having Yellowbrick attendees at more conferences.
+- Determining who is really using Yellowbrick to better understand the community we're supporting.
+
+Minutes
+-------
+
+Comments on the Inaugural Advisors Meeting
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+*Remarks delivered by Benjamin Bengfort*
+
+Welcome to the inaugural meeting of the Yellowbrick Board of Advisors. Due to the number of agenda items and limited time, this meeting will have a more formal tone than normal if simply to provide structure so that we can get to everything. Before we start, however, I wanted to say a few words to mark this occasion and to remark on the path that led us here.
+
+When Rebecca and I started Yellowbrick 3 years ago this month, I don’t think that we intended to create a top tier Python library, nor did we envision how fast the project would grow. At the time, we wanted to make a statement about the role of visual analytics - the iterative interaction between human and computer - in the machine learning workflow. Though Rebecca and I communicated to different audiences, we were lucky enough to say this at a time when our message resonated with both students and professionals. Because of this, Yellowbrick has enjoyed a lot of success across a variety of different metrics: downloads, stars, blog posts. But the most important metric to me personally is the number of contributors we have had.
+
+Yellowbrick has become more than a software package, it has also become a community. And it is in no small part due to the efforts of the people here tonight. I think it is not inappropriate and perhaps can serve as an introduction for me to individually recognize your contributions to the rest of the group.
+
+Starting at the beginning, *Tony Ojeda* has uniquely supported Yellowbrick in a way no one else could. He incubated the project personally through his company, District Data Labs, even though there was no direct market value to him. He put his money where his heart was and to me, that will always make him the model of the ideal entrepreneur.
+
+*Larry Gray* joined Yellowbrick by way of the research labs. In a way, he was exactly the type of person we hoped would join the labs - a professional data scientist who wanted to contribute to an open source data project. Since then he has become so much more, working hard to organize and coordinate the project and investing time and emotional energy which we have come to rely on.
+
+*Nathan Danielsen* represents a counterpoint to the data science contributor and instead brings a level of software engineering professionalism that is sorely needed in every open source project. Although we often mention his work on image similarity tests - what that effort really did was to open the door to many new contributors, allowing us to review and code with confidence know the tests had our backs.
+
+*Prema Roman* has brought a thoughtful, measured approach to the way she tackles issues and is personally responsible for the prototyping and development of several visualizers including JointPlot and CrossValidation. We have relied on her to deliver new, high-impact features to the library.
+
+*Kristen McIntyre* is the voice of our users, an essential role we could not do without. Without her, we would be envious of scikit-learn’s documentation. Instead, we are blessed to have clear, consistent, and extensive descriptions of the visualizers which unlock their use to new and veteran users of our software.
+
+*Adam Morris* has become the voice of our project, particularly on Twitter. I’m joyously surprised every time I read one of his tweets. It is not the voice I would have used and that’s what makes it so sweet. He has taken to heart our code of conduct’s admonishments to over the top positivity and encouragement, and I’m always delighted by it.
+
+*Edwin Schmierer* many of you may not have met yet - but without him, this project would never have happened. He is responsible for creating the Data Science program at Georgetown and he’s been a good friend and advisor ever since. During our lunches and breakfasts together, we have often discussed the context of Yellowbrick in the bigger picture. I’m very excited to have him be able to give us advice more directly.
+
+Every time I use Yellowbrick I can see or sense your individual impact and signature on the project. Thank you all so much for joining Rebecca and I in building Yellowbrick into what it is today. It is not an understatement that Yellowbrick has been successful beyond what we expected or hoped.
+
+With success comes responsibility. I know that we have all felt that responsibility keenly, particularly recently as the volume of direct contacts with the community has been increasing. We have reached a stage where that responsibility cannot be borne lightly by a few individuals, because the decisions we make reach and affect a much larger group of people then we may intend. To address this, we as a group, have ratified a new governance document whose primary purpose is to help us organize and act strategically as a cohesive group. I believe that the structures we have put into place will allow us to move Yellowbrick even further toward being a professional grade software library and will help us minimize risks to the project - particularly the risk of maintainer burnout.
+
+We are now making another statement at another pivotal moment because we are not alone in formalizing or changing our mode of governance. Perhaps the most public example of this is Python itself, but the message of maintainer-exhaustion and burnout has been discussed for the past couple of years in a variety of settings - OSCON, PyCON, video and podcast interviews, surveys and reports. It has caused growing concern and an essential question: “how do we support open source projects that are critical to research and infrastructure when they are not supported by traditional commercial and economic mechanisms”?
+
+Many of you have heard me say that “I believe in open source the way I believe in democracy”. But like democracy, open source is evolving as new contributors, new technology, and new cultures start to participate more. Yellowbrick is representative of what open source can achieve and what it does both for and to the people who maintain it. As we move forward from here, the choices we make may have an impact beyond our project and perhaps even beyond Python and I hope that you, like me, find that both exciting and terrifying.
+
+Today we are here to discuss how we will conduct the project toward a version 1.0 release, a significant milestone, while also mentoring a Google Summer of Code Student and managing the many open pull requests and issues currently outstanding. The details matter, but they must also be considered within a context. Therefore I would like to personally commission you all toward two goals that set that context:
+
+1. **To be a shining example of what an open source project should be.**
+2. **To think strategically of how we can support a community of both users and maintainers.**
+
+I’m very much looking forward to the future, and am so excited to be doing it together with you all.
+
+PyCon 2019 Debrief
+~~~~~~~~~~~~~~~~~~
+
+Yellowbrick had an open source booth at PyCon 2019 for the second time, manned by Larry, Nathan, Prema, and Kristen. There were lots of visitors to the booth who were genuinely excited about using Yellowbrick. Next year it would be great to have a large banner and vertical display of visualizers to help people learn more. Guido von Rossum even had lunch at the booth, which sparked a lot of attention! Special thank you to Tony for his financial support including shirts, stickers, transportation, and supplies.
+
+We also hosted two days of development sprints with 13 sprinters and 9 PRs. The majority of sprinters were there for both days. The sprints included a wide variety of people including a high schooler and even a second year sprinter. Guido von Rossum also stopped by during the sprints. Prema and Kristen announced the sprints on stage and there is a great picture of them that we tweeted. Special thank you to Daniel for creating the cheatsheets, which cut down a lot of explaining, and to Nathan for the appetizers. Beets are delicious!
+
+Hot takes from PyCon:
+
+- Cheatsheets were a huge success and very important
+- It would be good to have a "Contributing to Yellowbrick" cheatsheet for next year
+- Have to capitalize on attention before the conference starts
+- More visual stand out: e.g. metal grommets and banner with visualizers
+- NumFOCUS has an in-house designer who may be able to help
+
+Important request: we know that there will be a large number of PRs after PyCon or during Hacktoberfest, we need to *plan* for this and ensure we know who/how is triaging them and handling them ahead of the event. The maintainers who did not attend PyCon ended up slammed with work even though they couldn't enjoy participating in the event itself.
+
+Google Summer of Code
+~~~~~~~~~~~~~~~~~~~~~
+
+We applied to GSoC under the NumFOCUS umbrella and have been given a student, Naresh, to work with us over the summer. Adam has already had initial communication with him and he's eager to get started. So far we've already interacted with him on Github via some of his early PRs and he's going to be a great resource.
+
+In terms of the GSoC actions, the coding period starts May 27 and ends August 26 when deliverables are due. Every 4 weeks we do a 360 review where he evaluates us and we evaluate him (pass/fail). NumFOCUS requires a blog post and will work with Naresh directly on the posts.
+
+We need to determine what he should work on. His proposal was about extending PCA, but Visual Pipelines are also extremely important. Proposal, break his work into three phases. First, get the first introductory PR across the finish line, then scope the ideas in his proposal and involve him in the visualizer audit. After working on blog posts and using YB on his own dataset, then get started on actual deliverables.
+
+Action Items:
+
+- Take note that Naresh is in India and is 9.5 hours ahead (time zone).
+- Schedule introduction to team and maintainers.
+- Coding period begins May 27.
+- How do we want to manage communications (Slack)
+- 360 evaluations due every 4 weeks
+- Determine final deliverables due on Aug 19-26
+
+Other Topics
+~~~~~~~~~~~~
+
+Yellowbrick as a startup. Perhaps we can think big and pay for a full-time developer? There are many potential grant sources. The problem is that more money means more responsibility and we can't keep things together as it is now.
+
+It would be good to send updates to NumFOCUS and District Data Labs to keep them apprised of what we're doing. For example:
+
+- JOSS paper releases
+- Sprints and conference attendance
+- Version releases
+- Talks or presentations
+
+Hopefully this will allow them to also spread the word about what we're doing.
+
+Action Items
+------------
+
+- Send dues to Edwin Schmierer via Venmo/PayPal (all)
+- Prepare more budget options for December board meeting (Treasurer)
+- Create PR with Governance Amendment (Secretary)
+- Modify documentation to change language about "open a PR as early as possible" (Larry)
+- Add Naresh to Slack (Adam)
+- Let Adam know what talks are coming up so he can tweet them (all)
+- Send updates big and small to NumFOCUS (all)

@@ -15,7 +15,6 @@ Tests for the ClassBalance visualizer
 ##########################################################################
 
 import pytest
-import numpy as np
 
 from yellowbrick.target.class_balance import *
 from yellowbrick.exceptions import YellowbrickValueError

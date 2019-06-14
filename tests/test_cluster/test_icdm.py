@@ -22,7 +22,7 @@ from yellowbrick.cluster.icdm import *
 from yellowbrick.exceptions import YellowbrickValueError
 
 from tests.base import VisualTestCase
-from tests.dataset import DatasetMixin, Dataset
+from ..fixtures import TestDataset
 
 from sklearn.datasets import make_blobs
 from sklearn.cluster import Birch, AgglomerativeClustering
@@ -51,7 +51,7 @@ def blobs12(request):
     X, y = make_blobs(
         centers=12, n_samples=1000, n_features=16, shuffle=True, random_state=2121
     )
-    request.cls.blobs12 = Dataset(X, y)
+    request.cls.blobs12 = TestDataset(X, y)
 
 
 @pytest.fixture(scope='class')
@@ -62,7 +62,7 @@ def blobs4(request):
     X, y = make_blobs(
         centers=4, n_samples=400, n_features=16, shuffle=True, random_state=1212
     )
-    request.cls.blobs4 = Dataset(X, y)
+    request.cls.blobs4 = TestDataset(X, y)
 
 
 def assert_fitted(oz):
@@ -75,13 +75,12 @@ def assert_not_fitted(oz):
         assert not hasattr(oz, param)
 
 
-
 ##########################################################################
 ## InterclusterDistance Test Cases
 ##########################################################################
 
 @pytest.mark.usefixtures("blobs12", "blobs4")
-class TestInterclusterDistance(VisualTestCase, DatasetMixin):
+class TestInterclusterDistance(VisualTestCase):
     """
     Test the InterclusterDistance visualizer
     """
