@@ -208,3 +208,11 @@ Amendments
 Amendments or changes to this governance document can be made by a vote of the advisors. Proposed changes must be submitted to the advisors for review at least one week prior to the vote taking place. Prior to the vote, the advisors should allow for a period of discussion where the changes or amendments can be reviewed by the group. Amendments are ratified by the normal voting procedure described above.
 
 Amendments should update the version and date at the top of this document.
+
+Board of Advisors Minutes
+-------------------------
+
+.. toctree::
+    :maxdepth: 1
+
+    minutes/2019-05-15.rst

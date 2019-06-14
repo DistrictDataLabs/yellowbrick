@@ -158,7 +158,7 @@ Table of Contents
    faq
    code_of_conduct
    changelog
-   governance
+   governance/index
 
 Indices and tables
 ------------------
