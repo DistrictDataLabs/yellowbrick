@@ -104,9 +104,7 @@ def resolve_colors(n_colors=None, colormap=None, colors=None):
         else:
             _colors = list(map(colormap, np.linspace(0, 1, num=n_colors)))
 
-
         n_colors = n_colors or len(get_color_cycle())
-
 
     # Work with the color list
     elif colors is not None:
