@@ -262,7 +262,7 @@ class TestKElbowVisualizer(VisualTestCase):
     @pytest.mark.xfail(
         sys.platform == 'win32', reason="images not close on windows"
     )
-    def test_calinski-harabasz_metric(self):
+    def test_calinski_harabasz_metric(self):
         """
         Test the calinski-harabasz metric of the k-elbow visualizer
         """
