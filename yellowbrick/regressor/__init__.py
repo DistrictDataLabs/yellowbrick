@@ -22,3 +22,4 @@ visualizations related to evaluating Scikit-Learn regressor models.
 from .base import *
 from .residuals import *
 from .alphas import *
+from .influence import *
