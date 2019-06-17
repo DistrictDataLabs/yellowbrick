@@ -228,6 +228,8 @@ class DiscriminationThreshold(ModelVisualizer):
 
         # Compute maximum number of uniform thresholds across all trials
         n_thresholds = np.array([len(t['thresholds']) for t in trials]).min()
+        # Ensures accuracy upto two decimal places
+        n_thresholds = max(n_thresholds, 101)
         self.thresholds_ = np.linspace(0.0, 1.0, num=n_thresholds)
 
         # Filter metrics and collect values for uniform thresholds
