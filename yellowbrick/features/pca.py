@@ -133,6 +133,32 @@ class PCADecomposition(MultiFeatureVisualizer):
         self.heatmap = heatmap
         self.color = color
         self.colormap = colormap
+        self.uax, self.lax = None, None
+        if self.heatmap or self.colormap:
+            self.layout()
+
+    def layout(self):
+        """
+        Creates the layout for colorbar and heatmap, adding new axes for the heatmap
+        if necessary and modifying the aspect ratio. Does not modify the axes or the
+        layout if self.heatmap is False or None.
+        """
+        # Ensure the axes are created if not heatmap, then return.
+        if not self.heatmap:
+            self.uax
+            return
+
+        # Ensure matplotlib version compatibility
+        if make_axes_locatable is None:
+            raise YellowbrickValueError((
+                "heatmap requires matplotlib 2.0.2 or greater "
+                "please upgrade matplotlib or set heatmap=False on the visualizer"
+            ))
+
+        # Create the new axes for the colorbar and heatmap
+        divider = make_axes_locatable(self.ax)
+        self.uax = divider.append_axes("bottom", size="20%", pad=0.7)
+        self.lax = divider.append_axes("bottom", size="100%", pad=0.1)
 
     def fit(self, X, y=None, **kwargs):
         """
@@ -169,13 +195,10 @@ class PCADecomposition(MultiFeatureVisualizer):
             im = self.ax.scatter(X[:,0], X[:,1], c=self.color, cmap=self.colormap, edgecolors='black',
                                  alpha=self.alpha, vmin=self.pca_components_.min(), vmax=self.pca_components_.max())
             if self.colorbar:
-                divider = make_axes_locatable(self.ax)
-                cax = divider.append_axes("bottom", size="10%")
-                plt.colorbar(im, cax=cax, orientation='horizontal',
+                plt.colorbar(im, cax=self.uax, orientation='horizontal',
                              ticks=[self.pca_components_.min(), 0, self.pca_components_.max()])
             if self.heatmap:
-                ax1 = divider.append_axes("bottom", size="100%")
-                ax1.imshow(self.pca_components_, interpolation='none', cmap=self.colormap)
+                self.lax.imshow(self.pca_components_, interpolation='none', cmap=self.colormap)
             if self.proj_features:
                 x_vector = self.pca_components_[0]
                 y_vector = self.pca_components_[1]
@@ -234,18 +257,18 @@ class PCADecomposition(MultiFeatureVisualizer):
         # Set the title
         orig_X = self.orig_X
         self.ax.set_title('Principal Component Plot')
-        self.ax.set_xlabel('\nPrincipal Component 1',linespacing=1.2)
+        self.ax.set_xlabel('\nPrincipal Component 1',linespacing=1)
         self.ax.set_ylabel('\nPrincipal Component 2',linespacing=1.2)
         if self.heatmap == True:
             feature_names = list(orig_X.columns)
-            plt.gca().set_xticks(np.arange(-.5, len(feature_names)))
-            plt.gca().set_xticklabels(feature_names, rotation=90, ha='left', fontsize=12)
+            self.lax.set_xticks(np.arange(-.5, len(feature_names)))
+            self.lax.set_xticklabels(feature_names, rotation=90, ha='left', fontsize=12)
             if self.proj_dim == 2:
-                plt.gca().set_yticks(np.arange(0.5, 2))
-                plt.gca().set_yticklabels(['First PC', 'Second PC'], va='bottom', fontsize=12)
+                self.lax.set_yticks(np.arange(0.5, 2))
+                self.lax.set_yticklabels(['First PC', 'Second PC'], va='bottom', fontsize=12)
             if self.proj_dim == 3:
-                plt.gca().set_yticks(np.arange(0.5, 3))
-                plt.gca().set_yticklabels(['First PC', 'Second PC', 'Third PC'], va='bottom', fontsize=12)
+                self.lax.set_yticks(np.arange(0.5, 3))
+                self.lax.set_yticklabels(['First PC', 'Second PC', 'Third PC'], va='bottom', fontsize=12)
         if self.proj_dim == 3:
             self.ax.set_zlabel('Principal Component 3',linespacing=1.2)
 
