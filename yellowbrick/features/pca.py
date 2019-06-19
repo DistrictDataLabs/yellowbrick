@@ -144,9 +144,10 @@ class PCADecomposition(MultiFeatureVisualizer):
         layout if self.heatmap is False or None.
         """
         # Ensure the axes are created if not heatmap, then return.
+
         if not self.heatmap:
-            self.uax
-            return
+            return self.uax
+
 
         # Ensure matplotlib version compatibility
         if make_axes_locatable is None:
@@ -157,7 +158,8 @@ class PCADecomposition(MultiFeatureVisualizer):
 
         # Create the new axes for the colorbar and heatmap
         divider = make_axes_locatable(self.ax)
-        self.uax = divider.append_axes("bottom", size="20%", pad=0.7)
+        if self.colorbar:
+            self.uax = divider.append_axes("bottom", size="20%", pad=0.7)
         self.lax = divider.append_axes("bottom", size="100%", pad=0.1)
 
     def fit(self, X, y=None, **kwargs):
