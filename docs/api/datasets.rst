@@ -34,6 +34,7 @@ Unless otherwise specified, most of the examples currently use one or more of th
 - **hobbies**: suitable for text analysis/classification
 - **mushroom**: suitable for classification/clustering
 - **occupancy**: suitable for classification
+- **receivers**: suitable for clustering
 - **spam**: suitable for binary classification
 - **walking**: suitable for time series analysis/clustering
 
