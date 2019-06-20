@@ -265,6 +265,7 @@ class KElbowVisualizer(ClusteringScoreVisualizer):
 
         # Holds the values of the silhoutte scores
         self.k_scores_ = None
+        # Set Default Elbow Value
         self.elbow_value_ = None
 
     def fit(self, X, y=None, **kwargs):
