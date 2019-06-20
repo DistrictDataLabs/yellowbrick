@@ -272,6 +272,7 @@ class TestKElbowVisualizer(VisualTestCase):
         )
         visualizer.fit(self.clusters.X)
         assert len(visualizer.k_scores_) == 4
+        assert visualizer.elbow_value_ == None
 
         expected = np.array([
             81.662726256035683, 50.992378259195554,
@@ -286,16 +287,20 @@ class TestKElbowVisualizer(VisualTestCase):
         """
         Test the addition of locate_elbow to an image 
         """
+        X,y = make_blobs(
+            n_samples=1000, n_features=5, centers=3, shuffle=True, random_state=42
+        )
+
         visualizer = KElbowVisualizer(
-            KMeans(random_state=0), k=5,
+            KMeans(random_state=0), k=6,
             metric="calinski_harabaz", timings=False, locate_elbow=True
         )
-        visualizer.fit(self.clusters.X)
-        assert len(visualizer.k_scores_) == 4
+        visualizer.fit(X)
+        assert len(visualizer.k_scores_) == 5
+        assert visualizer.elbow_value_ == 3
 
         expected = np.array([
-            81.662726256035683, 50.992378259195554,
-            40.952179227847012, 35.939494
+            4286.479848, 12463.383743, 8766.999551, 6950.08391, 5865.79722
         ])
 
         visualizer.poof()
