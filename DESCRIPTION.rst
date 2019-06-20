@@ -52,6 +52,7 @@ Regression Visualization
 - **Prediction Error Plots**: find model breakdowns along the domain of the target
 - **Residuals Plot**: show the difference in residuals of training and test data
 - **Alpha Selection**: show how the choice of alpha influences regularization
+- **Cook's Distance**: show the influence of instances on linear regression
 
 Clustering Visualization
 ~~~~~~~~~~~~~~~~~~~~~~~~
