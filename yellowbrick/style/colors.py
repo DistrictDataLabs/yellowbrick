@@ -87,10 +87,10 @@ def resolve_colors(n_colors=None, colormap=None, colors=None):
 
     # Work with the colormap if specified and colors is not
     if colormap is not None and colors is None:
+        # Must import here to avoid recursive import
+        from .palettes import PALETTES, ColorPalette
         if isinstance(colormap, str):
             try:
-                # Must import here to avoid recursive import
-                from .palettes import PALETTES
 
                 _colormap = PALETTES.get(colormap, None)
                 if _colormap is None:
@@ -98,10 +98,13 @@ def resolve_colors(n_colors=None, colormap=None, colors=None):
                     n_colors = n_colors or len(get_color_cycle())
                     _colors = list(map(colormap, np.linspace(0, 1, num=n_colors)))
                 else:
-                    _colors = [mpl.colors.to_rgba(color) for color in _colormap]
+                    _colors = ColorPalette(_colormap).as_rgb()
             except ValueError as e:
                 raise YellowbrickValueError(e)
+        elif isinstance(colormap, ColorPalette):
+            _colors = colormap.as_rgb()
         else:
+            n_colors = n_colors or len(get_color_cycle())
             _colors = list(map(colormap, np.linspace(0, 1, num=n_colors)))
 
         n_colors = n_colors or len(get_color_cycle())
