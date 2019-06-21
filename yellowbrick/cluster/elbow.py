@@ -223,7 +223,7 @@ class KElbowVisualizer(ClusteringScoreVisualizer):
 
     .. seealso:: The scikit-learn documentation for the `silhouette_score
         <https://bit.ly/2LYWjYb>`_ and `calinski_harabasz_score
-        <https://bit.ly/2LW3Zu9>`_. The default, `distortion_score`, is
+        <https://bit.ly/2ItAgts>`_. The default, `distortion_score`, is
         implemented in`yellowbrick.cluster.elbow`.
 
     .. todo:: add parallelization option for performance
