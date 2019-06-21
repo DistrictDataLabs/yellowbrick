@@ -92,17 +92,28 @@ def resolve_colors(n_colors=None, colormap=None, colors=None):
         if isinstance(colormap, str):
             try:
 
+                # try to get colormap from PALETTES first
                 _colormap = PALETTES.get(colormap, None)
+
                 if _colormap is None:
+
                     colormap = cm.get_cmap(colormap)
                     n_colors = n_colors or len(get_color_cycle())
                     _colors = list(map(colormap, np.linspace(0, 1, num=n_colors)))
+
                 else:
+
                     _colors = ColorPalette(_colormap).as_rgb()
+                    n_colors = len(_colors)
+
             except ValueError as e:
+
                 raise YellowbrickValueError(e)
+
+        # if Yellowbrick color palette is provided as colormap
         elif isinstance(colormap, ColorPalette):
             _colors = colormap.as_rgb()
+            n_colors = len(_colors)
         else:
             n_colors = n_colors or len(get_color_cycle())
             _colors = list(map(colormap, np.linspace(0, 1, num=n_colors)))

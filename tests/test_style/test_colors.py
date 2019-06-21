@@ -207,11 +207,25 @@ class TestResolveColors(VisualTestCase):
 
     def test_colormap_palette_yb(self):
         """
-        Assert that supplying a yellowbrick. as colormap works
+        Assert that supplying a yellowbrick palette as colormap works
         """
         cmap = ColorPalette('neural_paint')
-        rgb = cmap.as_rgb()
-        print(rgb)
+        assert resolve_colors(colormap=cmap) == [
+            (0.08627450980392157, 0.44313725490196076, 0.5725490196078431),
+            (0.43137254901960786, 0.4588235294117647, 0.2823529411764706),
+            (0.7725490196078432, 0.6352941176470588, 0.6705882352941176),
+            (0.0, 0.8, 1.0),
+            (0.8705882352941177, 0.47058823529411764, 0.6823529411764706),
+            (1.0, 0.8, 0.6),
+            (0.23921568627450981, 0.24705882352941178, 0.25882352941176473),
+            (1.0, 1.0, 0.8)
+        ]
+
+    def test_colormap_palette_mpl(self):
+        """
+        Assert that supplying a matplotblib palette as colormap works
+        """
+        cmap = ColorPalette('neural_paint')
         colors = resolve_colors(colormap=cmap)
         assert colors == [
             (0.08627450980392157, 0.44313725490196076, 0.5725490196078431),
