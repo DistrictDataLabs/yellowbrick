@@ -68,7 +68,7 @@ def resolve_colors(n_colors=None, colormap=None, colors=None):
         truncate or multiple the colors available. If None the length of the
         colors will not be modified.
 
-    colormap : str, default: None
+    colormap : str, yellowbrick.style.palettes.ColorPalette, matplotlib.cm, default: None
         The name of the matplotlib color map with which to generate colors.
 
     colors : iterable, default: None
@@ -104,21 +104,28 @@ def resolve_colors(n_colors=None, colormap=None, colors=None):
                 else:
 
                     _colors = ColorPalette(_colormap).as_rgb()
-                    n_colors = len(_colors)
+                    n_colors = n_colors or len(_colors)
 
             except ValueError as e:
 
                 raise YellowbrickValueError(e)
 
-        # if Yellowbrick color palette is provided as colormap
+        # if yellowbrick color palette is provided as colormap
         elif isinstance(colormap, ColorPalette):
+
             _colors = colormap.as_rgb()
-            n_colors = len(_colors)
-        else:
+            n_colors = n_colors or len(_colors)
+
+        # if matplotlib color palette is provided as colormap
+        elif isinstance(colormap, mpl.colors.Colormap):
             n_colors = n_colors or len(get_color_cycle())
             _colors = list(map(colormap, np.linspace(0, 1, num=n_colors)))
-
-        n_colors = n_colors or len(get_color_cycle())
+        else:
+            raise TypeError(
+                "Colormap type %s is not recognized. Possible types are: %s"
+                % (type(colormap), ''.join(['yellowbrick.style.ColorPalette',
+                                            'matplotlib.cm',
+                                            'str'])))
 
     # Work with the color list
     elif colors is not None:
