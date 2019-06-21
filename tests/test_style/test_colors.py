@@ -247,8 +247,9 @@ class TestResolveColors(VisualTestCase):
             (0.7999666666666666, 0.9777666666666667, 0.0, 1.0),
             (0.8, 0.8, 0.8, 1.0)
         ]
-        colors = resolve_colors(colormap=cmap, colors=overriding_colors)
-        assert colors == overriding_colors
+        with pytest.warns(Warning, match="both colormap and colors specified"):
+            colors = resolve_colors(colormap=cmap, colors=overriding_colors)
+            assert colors == overriding_colors
 
     def test_colormap_palette_yb_colors(self):
         """
@@ -261,8 +262,9 @@ class TestResolveColors(VisualTestCase):
             (0.7999666666666666, 0.9777666666666667, 0.0, 1.0),
             (0.8, 0.8, 0.8, 1.0)
         ]
-        colors = resolve_colors(colormap=cmap, colors=overriding_colors)
-        assert colors == overriding_colors
+        with pytest.warns(Warning, match="both colormap and colors specified"):
+            colors = resolve_colors(colormap=cmap, colors=overriding_colors)
+            assert colors == overriding_colors
 
     def test_colormap_invalid_type(self):
         """
