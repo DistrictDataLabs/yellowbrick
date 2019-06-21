@@ -264,6 +264,14 @@ class TestResolveColors(VisualTestCase):
         colors = resolve_colors(colormap=cmap, colors=overriding_colors)
         assert colors == overriding_colors
 
+    def test_colormap_invalid_type(self):
+        """
+        Exception raised when invalid colormap type is supplied
+        """
+        with pytest.raises(YellowbrickValueError):
+            a = lambda x: x + 1
+            resolve_colors(colormap=a)
+
     def test_colors(self):
         """
         Test passing in a list of colors

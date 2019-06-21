@@ -121,11 +121,11 @@ def resolve_colors(n_colors=None, colormap=None, colors=None):
             n_colors = n_colors or len(get_color_cycle())
             _colors = list(map(colormap, np.linspace(0, 1, num=n_colors)))
         else:
-            raise TypeError(
-                "Colormap type %s is not recognized. Possible types are: %s"
-                % (type(colormap), ''.join(['yellowbrick.style.ColorPalette',
-                                            'matplotlib.cm',
-                                            'str'])))
+            raise YellowbrickValueError(
+                "Colormap type {} is not recognized. Possible types are: {}"
+                .format(type(colormap), ', '.join(['yellowbrick.style.ColorPalette,',
+                                                   'matplotlib.cm,',
+                                                   'str'])))
 
     # Work with the color list
     elif colors is not None:
