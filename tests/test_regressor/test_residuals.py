@@ -224,9 +224,7 @@ class TestResidualsPlot(VisualTestCase, DatasetMixin):
     Test ResidualPlot visualizer
     """
 
-    @pytest.mark.xfail(
-        sys.platform == 'win32', reason="images not close on windows (RMSE=32)"
-    )
+    @pytest.mark.xfail(reason="text differences described in #892")
     def test_residuals_plot(self):
         """
         Image similarity of residuals plot on random data with OLS
@@ -239,7 +237,7 @@ class TestResidualsPlot(VisualTestCase, DatasetMixin):
         visualizer.score(self.data.X.test, self.data.y.test)
         visualizer.finalize()
 
-        self.assert_images_similar(visualizer, tol=1, remove_legend=True)
+        self.assert_images_similar(visualizer)
 
     @pytest.mark.xfail(
         sys.platform == 'win32', reason="images not close on windows (RMSE=32)"
@@ -286,9 +284,7 @@ class TestResidualsPlot(VisualTestCase, DatasetMixin):
         except YellowbrickValueError as e:
             self.fail(e)
 
-    @pytest.mark.xfail(
-        sys.platform == 'win32', reason="images not close on windows (RMSE=32)"
-    )
+    @pytest.mark.xfail(reason="text differences described in #892")
     def test_residuals_quick_method(self):
         """
         Image similarity test using the residuals plot quick method
@@ -300,11 +296,9 @@ class TestResidualsPlot(VisualTestCase, DatasetMixin):
             model, self.data.X.train, self.data.y.train, ax=ax, random_state=23
         )
 
-        self.assert_images_similar(ax=ax, tol=1, remove_legend=True)
+        self.assert_images_similar(ax=ax)
 
-    @pytest.mark.xfail(
-        sys.platform == 'win32', reason="images not close on windows (RMSE=32)"
-    )
+    @pytest.mark.xfail(reason="text differences described in #892")
     @pytest.mark.skipif(pd is None, reason="pandas is required")
     def test_residuals_plot_pandas(self):
         """
@@ -334,7 +328,7 @@ class TestResidualsPlot(VisualTestCase, DatasetMixin):
         visualizer.score(X_test, y_test)
         visualizer.finalize()
 
-        self.assert_images_similar(visualizer, tol=1, remove_legend=True)
+        self.assert_images_similar(visualizer)
 
     def test_score(self):
         """

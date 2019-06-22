@@ -109,9 +109,7 @@ class TestRadViz(VisualTestCase):
         visualizer.poof()
         self.assert_images_similar(visualizer, tol=0.25)
 
-    @pytest.mark.xfail(
-        sys.platform == 'win32', reason="images not close on windows"
-    )
+    @pytest.mark.xfail(reason="text differences described in #892")
     @pytest.mark.skipif(pd is None, reason="test requires pandas")
     def test_integrated_radviz_with_pandas(self):
         """

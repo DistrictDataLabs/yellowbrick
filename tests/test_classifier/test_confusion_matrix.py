@@ -266,9 +266,7 @@ class ConfusionMatrixTests(VisualTestCase):
         ylabels.reverse()
         assert  ylabels == classes
 
-    @pytest.mark.xfail(
-        sys.platform == 'win32', reason="images not close on windows"
-    )
+    @pytest.mark.xfail(reason="text differences described in #892")
     @pytest.mark.skipif(pd is None, reason="test requires pandas")
     def test_pandas_integration(self):
         """
@@ -297,9 +295,7 @@ class ConfusionMatrixTests(VisualTestCase):
             [   1,  985]
         ]))
 
-    @pytest.mark.xfail(
-        sys.platform == 'win32', reason="images not close on windows"
-    )
+    @pytest.mark.xfail(reason="text differences described in #892")
     def test_quick_method(self):
         """
         Test the quick method with a random dataset

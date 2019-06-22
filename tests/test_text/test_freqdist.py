@@ -38,9 +38,7 @@ corpus = load_hobbies()
 
 class FreqDistTests(VisualTestCase):
 
-    @pytest.mark.xfail(
-        sys.platform == 'win32', reason="images not close on windows"
-    )
+    @pytest.mark.xfail(reason="text differences described in #892")
     def test_integrated_freqdist(self):
         """
         Assert no errors occur during freqdist integration
@@ -54,4 +52,4 @@ class FreqDistTests(VisualTestCase):
         visualizer.fit(docs)
 
         visualizer.finalize()
-        self.assert_images_similar(visualizer, tol=1)
+        self.assert_images_similar(visualizer)

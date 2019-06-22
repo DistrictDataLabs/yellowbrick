@@ -290,9 +290,7 @@ class TestKElbowVisualizer(VisualTestCase):
         with pytest.raises(YellowbrickValueError):
             KElbowVisualizer(KMeans(), k=5, metric="foo")
 
-    @pytest.mark.xfail(
-        sys.platform == 'win32', reason="images not close on windows"
-    )
+    @pytest.mark.xfail(reason="text differences described in #892")
     def test_timings(self):
         """
         Test the twinx double axes with k-elbow timings

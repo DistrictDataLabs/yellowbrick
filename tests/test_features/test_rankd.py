@@ -217,9 +217,7 @@ class TestRank2D(VisualTestCase):
     Test the Rank2D visualizer
     """
 
-    @pytest.mark.xfail(
-        sys.platform == 'win32', reason="images not close on windows"
-    )
+    @pytest.mark.xfail(reason="text differences described in #892")
     def test_rank2d_pearson(self):
         """
         Test Rank2D using pearson metric
@@ -247,9 +245,7 @@ class TestRank2D(VisualTestCase):
         oz.finalize()
         self.assert_images_similar(oz, tol=0.1)
 
-    @pytest.mark.xfail(
-        sys.platform == 'win32', reason="images not close on windows"
-    )
+    @pytest.mark.xfail(reason="text differences described in #892")
     def test_rank2d_covariance(self):
         """
         Test Rank2D using covariance metric
@@ -277,9 +273,7 @@ class TestRank2D(VisualTestCase):
         oz.finalize()
         self.assert_images_similar(oz, tol=0.1)
 
-    @pytest.mark.xfail(
-        sys.platform == 'win32', reason="images not close on windows"
-    )
+    @pytest.mark.xfail(reason="text differences described in #892")
     def test_rank2d_spearman(self):
         """
         Test Rank2D using spearman metric
@@ -307,9 +301,7 @@ class TestRank2D(VisualTestCase):
         oz.finalize()
         self.assert_images_similar(oz, tol=0.1)
 
-    @pytest.mark.xfail(
-        sys.platform == 'win32', reason="images not close on windows"
-    )
+    @pytest.mark.xfail(reason="text differences described in #892")
     def test_rank2d_kendalltau(self):
         """
         Test Rank2D using kendalltau metric
@@ -337,9 +329,7 @@ class TestRank2D(VisualTestCase):
         oz.finalize()
         self.assert_images_similar(oz, tol=0.1)
 
-    @pytest.mark.xfail(
-        sys.platform == 'win32', reason="images not close on windows"
-    )
+    @pytest.mark.xfail(reason="text differences described in #892")
     @pytest.mark.skipif(pd is None, reason="test requires pandas")
     def test_rank2d_integrated_pandas(self):
         """
@@ -361,9 +351,7 @@ class TestRank2D(VisualTestCase):
         # Image similarity testing
         self.assert_images_similar(oz, tol=0.1)
 
-    @pytest.mark.xfail(
-        sys.platform == 'win32', reason="images not close on windows"
-    )
+    @pytest.mark.xfail(reason="text differences described in #892")
     def test_rank2d_integrated_numpy(self):
         """
         Test Rank2D on occupancy dataset with numpy ndarray

@@ -113,6 +113,7 @@ class TestInterclusterDistance(VisualTestCase):
         with pytest.raises(YellowbrickValueError, match="unknown scoring method 'foo'"):
             icdm._score_clusters(None)
 
+    @pytest.mark.xfail(reason="text differences described in #892")
     def test_kmeans_mds(self):
         """
         Visual similarity with KMeans and MDS scaling
@@ -134,10 +135,10 @@ class TestInterclusterDistance(VisualTestCase):
 
         # Image similarity
         oz.finalize()
-        tol = 4.9 if sys.platform == 'win32' else 1.0 # fails with RMSE 4.740 on AppVeyor
-        self.assert_images_similar(oz, tol=tol)
+        self.assert_images_similar(oz)
 
     @pytest.mark.filterwarnings("ignore:the matrix subclass is not the recommended way")
+    @pytest.mark.xfail(reason="text differences described in #892")
     def test_affinity_tsne_no_legend(self):
         """
         Visual similarity with AffinityPropagation, TSNE scaling, and no legend
@@ -159,8 +160,7 @@ class TestInterclusterDistance(VisualTestCase):
 
         # Image similarity
         oz.finalize()
-        tol = 2.75 if sys.platform == 'win32' else 1.0 # fails with RMSE 2.687 on AppVeyor
-        self.assert_images_similar(oz, tol=tol)
+        self.assert_images_similar(oz)
 
 
     @pytest.mark.skip(reason="LDA not implemented yet")
@@ -238,6 +238,7 @@ class TestInterclusterDistance(VisualTestCase):
         oz.finalize()
         self.assert_images_similar(oz, tol=1.0)
 
+    @pytest.mark.xfail(reason="text differences described in #892")
     def test_quick_method(self):
         """
         Test the quick method producing a valid visualization
@@ -246,8 +247,7 @@ class TestInterclusterDistance(VisualTestCase):
         oz = intercluster_distance(model, self.blobs4.X, random_state=93, legend=False)
         assert isinstance(oz, InterclusterDistance)
 
-        tol = 2.75 if sys.platform == 'win32' else 1.0 # fails with RMSE 2.631 on AppVeyor
-        self.assert_images_similar(oz, tol=tol)
+        self.assert_images_similar(oz)
 
     @pytest.mark.skipif(MPL_VERS_MAJ >= 2, reason="test requires mpl earlier than 2.0.2")
     def test_legend_matplotlib_version(self, mock_toolkit):
