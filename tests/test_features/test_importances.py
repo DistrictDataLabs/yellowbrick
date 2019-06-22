@@ -91,7 +91,7 @@ class TestFeatureImportancesVisualizer(VisualTestCase):
         viz.finalize()
 
         # Appveyor and Linux conda non-text-based differences
-        self.assert_images_similar(viz, windows_tol=16.2)
+        self.assert_images_similar(viz, tol=16.2)
 
     def test_integration_quick_method(self):
         """
