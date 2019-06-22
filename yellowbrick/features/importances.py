@@ -26,10 +26,9 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 from yellowbrick.base import ModelVisualizer
-from yellowbrick.style.palettes import color_palette
 from yellowbrick.utils import is_dataframe, is_classifier
 from yellowbrick.exceptions import YellowbrickTypeError, NotFitted, YellowbrickWarning
-
+from ..draw import bar_stack
 
 ##########################################################################
 ## Feature Visualizer
@@ -209,30 +208,15 @@ class FeatureImportances(ModelVisualizer):
 
         # Plot the bar chart
         if self.stack:
-            colors = color_palette(kwargs.pop('colors', None),
-                                   len(self.classes_))
-            zeros = np.zeros(self.feature_importances_.shape[1])
-            left_arr = np.zeros((self.feature_importances_.shape[1], 2))
-
-            for idx in range(len(self.feature_importances_)):
-                left = [
-                    left_arr[j, int(self.feature_importances_[idx][j] > 0)]
-                    for j in range(len(self.feature_importances_[idx]))
-                ]
-
-                self.ax.barh(pos, self.feature_importances_[idx], left=left,
-                             color=colors[idx], label=self.classes_[idx])
-
-                left_arr[:, 0] += np.minimum(self.feature_importances_[idx],
-                                             zeros)
-                left_arr[:, 1] += np.maximum(self.feature_importances_[idx],
-                                             zeros)
+            legend_kws = {'bbox_to_anchor':(1.04, 0.5), 'loc':"center left"}
+            bar_stack(self.feature_importances_, ax=self.ax, labels=list(self.classes_), 
+                      ticks=self.features_, orientation='h', legend_kws=legend_kws)
         else:
             self.ax.barh(pos, self.feature_importances_, align='center')
 
-        # Set the labels for the bars
-        self.ax.set_yticks(pos)
-        self.ax.set_yticklabels(self.features_)
+            # Set the labels for the bars
+            self.ax.set_yticks(pos)
+            self.ax.set_yticklabels(self.features_)
 
         return self.ax
 
@@ -250,8 +234,6 @@ class FeatureImportances(ModelVisualizer):
         # Remove the ygrid
         self.ax.grid(False, axis='y')
 
-        if self.stack:
-            plt.legend(bbox_to_anchor=(1.04, 0.5), loc="center left")
         # Ensure we have a tight fit
         plt.tight_layout()
 

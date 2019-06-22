@@ -36,3 +36,4 @@ the final step in a ``Pipeline`` or ``VisualPipeline``.
    residuals
    peplot
    alphas
+   influence
