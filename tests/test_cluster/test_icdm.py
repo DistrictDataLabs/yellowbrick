@@ -14,7 +14,6 @@ Tests for the intercluster distance map visualizer.
 ## Imports
 ##########################################################################
 
-import sys
 import pytest
 import matplotlib as mpl
 

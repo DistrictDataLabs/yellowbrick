@@ -17,7 +17,6 @@ Tests for the frequency distribution text visualization
 ## Imports
 ##########################################################################
 
-import sys
 import pytest
 
 from yellowbrick.datasets import load_hobbies

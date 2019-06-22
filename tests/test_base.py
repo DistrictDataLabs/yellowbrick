@@ -16,7 +16,6 @@ Assertions for the base classes and abstract hierarchy.
 ## Imports
 ##########################################################################
 
-import sys
 import pytest
 import matplotlib.pyplot as plt
 

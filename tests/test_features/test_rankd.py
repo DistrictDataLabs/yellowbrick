@@ -17,7 +17,6 @@ Test the Rankd feature analysis visualizers
 ## Imports
 ##########################################################################
 
-import sys
 import pytest
 import numpy as np
 import numpy.testing as npt
