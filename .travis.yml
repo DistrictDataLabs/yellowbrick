@@ -20,7 +20,7 @@ before_install:
     MINICONDA_OS="Linux";  
     sudo apt-get build-dep python-scipy;
   else
-    MINICONDA_OS="MacOSX";
+    MINICONDA_OS="MacOSX"; # Allow for MacOS in future build matrix
   fi
 
 install:
@@ -28,12 +28,15 @@ install:
       pip install -r requirements.txt;
       pip install -r tests/requirements.txt;
       pip install coveralls;
-    else
+    else                  # Obtain OS-specific Miniconda installer based on MINICONDA_OS in before_install
       wget https://repo.anaconda.com/miniconda/Miniconda3-latest-$MINICONDA_OS-x86_64.sh -O miniconda.sh;
       bash miniconda.sh -b -p $HOME/miniconda;
       export PATH="$HOME/miniconda/bin:$PATH";
       hash -r;
       conda config --set always_yes yes --set changeps1 no;
+      export BASE_PYTHON=`python -c 'import sys; version=sys.version_info[:3]; print("{0}.{1}.{2}".format(*version))'`;
+      echo "Base Anaconda Python is $BASE_PYTHON";
+      echo "Creating Anaconda Python $ANACONDA conda environment";
       conda update -n base conda --yes;
       conda config --add channels conda-forge;
       conda env create -f tests/requirements.txt -n yellowbrick python=$ANACONDA;
