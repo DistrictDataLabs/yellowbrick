@@ -14,11 +14,12 @@ matrix:
     - name: "Miniconda 3.7 on Xenial Linux"
       env: ANACONDA="3.7"
 
+# MINICONDA_OS used in Miniconda jobs for OS-specific installer; allow for MacOS in future builds
 before_install:
 - sudo apt-get update;
 - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then
-    MINICONDA_OS="Linux";  
     sudo apt-get build-dep python-scipy;
+    MINICONDA_OS="Linux";
   else
     MINICONDA_OS="MacOSX";
   fi
