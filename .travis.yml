@@ -20,7 +20,7 @@ before_install:
     MINICONDA_OS="Linux";  
     sudo apt-get build-dep python-scipy;
   else
-    MINICONDA_OS="MacOSX"; # Allow for MacOS in future build matrix
+    MINICONDA_OS="MacOSX";
   fi
 
 install:
@@ -28,7 +28,7 @@ install:
       pip install -r requirements.txt;
       pip install -r tests/requirements.txt;
       pip install coveralls;
-    else                  # Obtain OS-specific Miniconda installer based on MINICONDA_OS in before_install
+    else
       wget https://repo.anaconda.com/miniconda/Miniconda3-latest-$MINICONDA_OS-x86_64.sh -O miniconda.sh;
       bash miniconda.sh -b -p $HOME/miniconda;
       export PATH="$HOME/miniconda/bin:$PATH";
