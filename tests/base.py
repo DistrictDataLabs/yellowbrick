@@ -16,7 +16,6 @@ Helper functions and cases for making assertions on visualizations.
 
 import os
 import inspect
-import sys
 
 import unittest
 import matplotlib as mpl
@@ -27,12 +26,6 @@ from matplotlib import rcParams
 
 from matplotlib.testing.compare import compare_images
 from yellowbrick.exceptions import ImageComparisonFailure
-
-
-def is_winconda_env():
-    return (os.name == 'nt' and
-            os.path.exists(os.path.join(sys.prefix, 'conda-meta')))
-
 
 ##########################################################################
 ## Module Constants
