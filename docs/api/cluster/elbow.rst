@@ -28,9 +28,9 @@ To demonstrate, in the following example the ``KElbowVisualizer`` fits the ``KMe
 
 By default, the scoring parameter ``metric`` is set to ``distortion``, which
 computes the sum of squared distances from each point to its assigned center.
-However, two other metrics can also be used with the ``KElbowVisualizer`` -- ``silhouette`` and ``calinski_harabaz``. The ``silhouette`` score calculates the mean Silhouette Coefficient of all samples, while the ``calinski_harabaz`` score computes the ratio of dispersion between and within clusters.
+However, two other metrics can also be used with the ``KElbowVisualizer`` -- ``silhouette`` and ``calinski_harabasz``. The ``silhouette`` score calculates the mean Silhouette Coefficient of all samples, while the ``calinski_harabasz`` score computes the ratio of dispersion between and within clusters.
 
-The ``KElbowVisualizer`` also displays the amount of time to train the clustering model per :math:`K` as a dashed green line, but is can be hidden by setting ``timings=False``. In the following example, we'll use the ``calinski_harabaz`` score and hide the time to fit the model.
+The ``KElbowVisualizer`` also displays the amount of time to train the clustering model per :math:`K` as a dashed green line, but is can be hidden by setting ``timings=False``. In the following example, we'll use the ``calinski_harabasz`` score and hide the time to fit the model.
 
 .. plot::
     :context: close-figs
@@ -47,7 +47,7 @@ The ``KElbowVisualizer`` also displays the amount of time to train the clusterin
     # Instantiate the clustering model and visualizer
     model = KMeans()
     visualizer = KElbowVisualizer(
-        model, k=(4,12), metric='calinski_harabaz', timings=False
+        model, k=(4,12), metric='calinski_harabasz', timings=False
     )
 
     visualizer.fit(X)        # Fit the data to the visualizer
@@ -55,7 +55,7 @@ The ``KElbowVisualizer`` also displays the amount of time to train the clusterin
 
 By default, the parameter ``locate_elbow`` is set to `True`, which automatically find the "elbow" which likely corresponds to the optimal value of k using the "knee point detection algorithm". However, users can turn off the feature by setting ``locate_elbow=False``.You can read about the implementation of this algorithm at `Knee point detection in Python <https://github.com/arvkevi/kneed>`_ by Kevin Arvai. 
 
-In the following example, we'll use the ``calinski_harabaz`` score and turn off ``locate_elbow`` feature.
+In the following example, we'll use the ``calinski_harabasz`` score and turn off ``locate_elbow`` feature.
 
 .. plot::
     :context: close-figs
@@ -72,7 +72,7 @@ In the following example, we'll use the ``calinski_harabaz`` score and turn off 
     # Instantiate the clustering model and visualizer
     model = KMeans()
     visualizer = KElbowVisualizer(
-        model, k=(4,12), metric='calinski_harabaz', timings=False, locate_elbow=False
+        model, k=(4,12), metric='calinski_harabasz', timings=False, locate_elbow=False
     )
 
     visualizer.fit(X)        # Fit the data to the visualizer
