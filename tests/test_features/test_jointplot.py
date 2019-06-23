@@ -30,7 +30,7 @@ import numpy as np
 import pytest
 from sklearn.datasets import make_classification, make_regression
 
-from tests.base import VisualTestCase
+from tests.base import linux_pypi, VisualTestCase
 from yellowbrick.exceptions import YellowbrickValueError
 from yellowbrick.features.jointplot import *
 from ..fixtures import TestDataset
@@ -45,6 +45,8 @@ try:
     import pandas as pd
 except ImportError:
     pd = None
+
+LINUX_PYPI = linux_pypi()
 
 ##########################################################################
 ## Fixtures
@@ -341,7 +343,9 @@ class TestJointPlotHistogram(VisualTestCase):
         assert oz.xhax is not None
         assert oz.yhax is not None
 
-    @pytest.mark.xfail(reason="text differences described in #892")
+    @pytest.mark.xfail(
+        not LINUX_PYPI, reason="text differences described in #892"
+    )
     def test_columns_none_x_y_hist(self):
         """
         When self.columns=None image similarity with valid X and y
@@ -353,7 +357,9 @@ class TestJointPlotHistogram(VisualTestCase):
         oz.finalize()
         self.assert_images_similar(oz)
 
-    @pytest.mark.xfail(reason="text differences described in #892")
+    @pytest.mark.xfail(
+        not LINUX_PYPI, reason="text differences described in #892"
+    )
     def test_columns_none_x_hist(self):
         """
         When self.columns=None image similarity with valid X, no y
@@ -365,7 +371,9 @@ class TestJointPlotHistogram(VisualTestCase):
         oz.finalize()
         self.assert_images_similar(oz)
 
-    @pytest.mark.xfail(reason="text differences described in #892")
+    @pytest.mark.xfail(
+        not LINUX_PYPI, reason="text differences described in #892"
+    )
     def test_columns_single_int_index_numpy_hist(self):
         """
         When self.columns=int image similarity on numpy dataset
@@ -378,7 +386,9 @@ class TestJointPlotHistogram(VisualTestCase):
         self.assert_images_similar(oz)
 
     @pytest.mark.skipif(pd is None, reason="test requires pandas")
-    @pytest.mark.xfail(reason="text differences described in #892")
+    @pytest.mark.xfail(
+        not LINUX_PYPI, reason="text differences described in #892"
+    )
     def test_columns_single_str_index_pandas_hist(self):
         """
         When self.columns=str image similarity on pandas dataset
@@ -392,7 +402,9 @@ class TestJointPlotHistogram(VisualTestCase):
         oz.finalize()
         self.assert_images_similar(oz, tol=tol)
 
-    @pytest.mark.xfail(reason="text differences described in #892")
+    @pytest.mark.xfail(
+        not LINUX_PYPI, reason="text differences described in #892"
+    )
     def test_columns_double_int_index_numpy_no_y_hist(self):
         """
         When self.columns=[int, int] image similarity on numpy dataset no y
@@ -405,7 +417,9 @@ class TestJointPlotHistogram(VisualTestCase):
         self.assert_images_similar(oz)
 
     @pytest.mark.skipif(pd is None, reason="test requires pandas")
-    @pytest.mark.xfail(reason="text differences described in #892")
+    @pytest.mark.xfail(
+        not LINUX_PYPI, reason="text differences described in #892"
+    )
     def test_columns_double_str_index_pandas_no_y_hist(self):
         """
         When self.columns=[str, str] image similarity on pandas dataset no y
@@ -419,7 +433,9 @@ class TestJointPlotHistogram(VisualTestCase):
         self.assert_images_similar(oz)
 
     @pytest.mark.skipif(pd is None, reason="test requires pandas")
-    @pytest.mark.xfail(reason="text differences described in #892")
+    @pytest.mark.xfail(
+        not LINUX_PYPI, reason="text differences described in #892"
+    )
     def test_columns_double_index_discrete_y_hist(self):
         """
         When self.columns=[str, str] on DataFrame with discrete y

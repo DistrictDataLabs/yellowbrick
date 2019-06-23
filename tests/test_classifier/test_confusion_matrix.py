@@ -24,7 +24,7 @@ import matplotlib.pyplot as plt
 from yellowbrick.classifier.confusion_matrix import *
 from yellowbrick.datasets import load_occupancy
 
-from tests.base import VisualTestCase
+from tests.base import linux_pypi, VisualTestCase
 from tests.dataset import Dataset, Split
 
 from sklearn.svm import SVC
@@ -42,6 +42,7 @@ try:
 except ImportError:
     pd = None
 
+LINUX_PYPI = linux_pypi()
 
 ##########################################################################
 ## Fixtures
@@ -266,7 +267,9 @@ class ConfusionMatrixTests(VisualTestCase):
         ylabels.reverse()
         assert  ylabels == classes
 
-    @pytest.mark.xfail(reason="text differences described in #892")
+    @pytest.mark.xfail(
+        not LINUX_PYPI, reason="text differences described in #892"
+    )
     @pytest.mark.skipif(pd is None, reason="test requires pandas")
     def test_pandas_integration(self):
         """
@@ -295,7 +298,9 @@ class ConfusionMatrixTests(VisualTestCase):
             [   1,  985]
         ]))
 
-    @pytest.mark.xfail(reason="text differences described in #892")
+    @pytest.mark.xfail(
+        not LINUX_PYPI, reason="text differences described in #892"
+    )
     def test_quick_method(self):
         """
         Test the quick method with a random dataset

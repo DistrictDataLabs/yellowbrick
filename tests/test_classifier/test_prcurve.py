@@ -21,7 +21,7 @@ import matplotlib
 from yellowbrick.exceptions import *
 from yellowbrick.classifier.prcurve import *
 
-from tests.base import VisualTestCase
+from tests.base import linux_pypi, VisualTestCase
 from .test_rocauc import FakeClassifier
 
 from sklearn.svm import LinearSVC
@@ -33,6 +33,7 @@ from sklearn.linear_model import RidgeClassifier
 from sklearn.model_selection import train_test_split as tts
 from sklearn.ensemble import RandomForestClassifier, AdaBoostClassifier
 
+LINUX_PYPI = linux_pypi()
 
 ##########################################################################
 ## Assertion Helpers
@@ -111,7 +112,9 @@ class TestPrecisionRecallCurve(VisualTestCase):
         tol = 1.5 if sys.platform == 'win32' else 1.0 # fails with RMSE 1.409 on AppVeyor
         self.assert_images_similar(oz, tol=tol)
 
-    @pytest.mark.xfail(reason="text differences described in #892")
+    @pytest.mark.xfail(
+        not LINUX_PYPI, reason="text differences described in #892"
+    )
     def test_binary_probability_decision(self):
         """
         Visual similarity of binary classifier with both predict_proba & decision
@@ -204,7 +207,9 @@ class TestPrecisionRecallCurve(VisualTestCase):
         tol = 1.25 if sys.platform == 'win32' else 1.0 # fails with RMSE 1.118 on AppVeyor
         self.assert_images_similar(oz, tol=tol)
 
-    @pytest.mark.xfail(reason="text differences described in #892")
+    @pytest.mark.xfail(
+        not LINUX_PYPI, reason="text differences described in #892"
+    )
     def test_multiclass_probability(self):
         """
         Visual similarity of multiclass classifier with predict_proba function
@@ -304,7 +309,9 @@ class TestPrecisionRecallCurve(VisualTestCase):
         self.assert_images_similar(oz, tol=tol)
 
     @pytest.mark.filterwarnings("ignore:From version 0.21")
-    @pytest.mark.xfail(reason="text differences described in #892")
+    @pytest.mark.xfail(
+        not LINUX_PYPI, reason="text differences described in #892"
+    )
     def test_quick_method(self):
         """
         Test the precision_recall_curve quick method.
@@ -328,7 +335,9 @@ class TestPrecisionRecallCurve(VisualTestCase):
         with pytest.raises(ModelError, match="requires .* predict_proba or decision_function"):
             oz._get_y_scores(self.binary.X.train)
 
-    @pytest.mark.xfail(reason="text differences described in #892")
+    @pytest.mark.xfail(
+        not LINUX_PYPI, reason="text differences described in #892"
+    )
     def test_custom_iso_f1_scores(self):
         """
         Test using custom ISO F1 Values

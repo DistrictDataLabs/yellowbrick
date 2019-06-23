@@ -21,9 +21,11 @@ import pytest
 
 from yellowbrick.datasets import load_hobbies
 from yellowbrick.text.freqdist import *
-from tests.base import VisualTestCase
+from tests.base import linux_pypi, VisualTestCase
 
 from sklearn.feature_extraction.text import CountVectorizer
+
+LINUX_PYPI = linux_pypi()
 
 ##########################################################################
 ## Data
@@ -37,7 +39,9 @@ corpus = load_hobbies()
 
 class FreqDistTests(VisualTestCase):
 
-    @pytest.mark.xfail(reason="text differences described in #892")
+    @pytest.mark.xfail(
+        not LINUX_PYPI, reason="text differences described in #892"
+    )
     def test_integrated_freqdist(self):
         """
         Assert no errors occur during freqdist integration

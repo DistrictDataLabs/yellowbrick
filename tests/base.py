@@ -16,6 +16,7 @@ Helper functions and cases for making assertions on visualizations.
 
 import os
 import inspect
+import sys
 
 import unittest
 import matplotlib as mpl
@@ -26,6 +27,12 @@ from matplotlib import rcParams
 
 from matplotlib.testing.compare import compare_images
 from yellowbrick.exceptions import ImageComparisonFailure
+
+
+def linux_pypi():
+    linux_os = sys.platform.startswith('linux')
+    pypi = not os.path.exists(os.path.join(sys.prefix, 'conda-meta'))
+    return linux_os and pypi
 
 ##########################################################################
 ## Module Constants

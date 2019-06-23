@@ -21,7 +21,7 @@ import sys
 import pytest
 import numpy.testing as npt
 
-from tests.base import VisualTestCase
+from tests.base import linux_pypi, VisualTestCase
 from ..fixtures import TestDataset
 from sklearn.datasets import make_classification
 
@@ -33,6 +33,7 @@ try:
 except ImportError:
     pd = None
 
+LINUX_PYPI = linux_pypi()
 
 ##########################################################################
 ## Fixtures
@@ -109,7 +110,9 @@ class TestRadViz(VisualTestCase):
         visualizer.poof()
         self.assert_images_similar(visualizer, tol=0.25)
 
-    @pytest.mark.xfail(reason="text differences described in #892")
+    @pytest.mark.xfail(
+        not LINUX_PYPI, reason="text differences described in #892"
+    )
     @pytest.mark.skipif(pd is None, reason="test requires pandas")
     def test_integrated_radviz_with_pandas(self):
         """

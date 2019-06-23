@@ -26,12 +26,12 @@ from yellowbrick.exceptions import YellowbrickValueError
 
 from unittest.mock import patch
 from unittest.mock import MagicMock
-from tests.base import VisualTestCase
+from tests.base import linux_pypi, VisualTestCase
 from tests.rand import RandomVisualizer
-
 
 from sklearn.datasets import make_classification
 
+LINUX_PYPI = linux_pypi()
 
 ##########################################################################
 ## Base Cases
@@ -153,7 +153,9 @@ class TestVisualizerGrid(VisualTestCase):
     Tests for the VisualizerGrid layout class
     """
 
-    @pytest.mark.xfail(reason="text differences described in #892")
+    @pytest.mark.xfail(
+        not LINUX_PYPI, reason="text differences described in #892"
+    )
     def test_draw_visualizer_grid(self):
         """
         Draw a 4 visualizers grid with default options
@@ -171,7 +173,9 @@ class TestVisualizerGrid(VisualTestCase):
 
         self.assert_images_similar(grid)
 
-    @pytest.mark.xfail(reason="text differences described in #892")
+    @pytest.mark.xfail(
+        not LINUX_PYPI, reason="text differences described in #892"
+    )
     def test_draw_with_rows(self):
         """
         Draw 2 visualizers in their own row
@@ -189,7 +193,9 @@ class TestVisualizerGrid(VisualTestCase):
 
         self.assert_images_similar(grid)
 
-    @pytest.mark.xfail(reason="text differences described in #892")
+    @pytest.mark.xfail(
+        not LINUX_PYPI, reason="text differences described in #892"
+    )
     def test_draw_with_cols(self):
         """
         Draw 2 visualizers in their own column

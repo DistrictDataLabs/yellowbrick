@@ -20,7 +20,7 @@ import matplotlib as mpl
 from yellowbrick.cluster.icdm import *
 from yellowbrick.exceptions import YellowbrickValueError
 
-from tests.base import VisualTestCase
+from tests.base import linux_pypi, VisualTestCase
 from ..fixtures import TestDataset
 
 from sklearn.datasets import make_blobs
@@ -33,10 +33,10 @@ try:
 except ImportError:
     pd = None
 
+LINUX_PYPI = linux_pypi()
 
 # Determine version of matplotlib
 MPL_VERS_MAJ = int(mpl.__version__.split(".")[0])
-
 
 ##########################################################################
 ## Fixtures
@@ -112,7 +112,9 @@ class TestInterclusterDistance(VisualTestCase):
         with pytest.raises(YellowbrickValueError, match="unknown scoring method 'foo'"):
             icdm._score_clusters(None)
 
-    @pytest.mark.xfail(reason="text differences described in #892")
+    @pytest.mark.xfail(
+        not LINUX_PYPI, reason="text differences described in #892"
+    )
     def test_kmeans_mds(self):
         """
         Visual similarity with KMeans and MDS scaling
@@ -137,7 +139,9 @@ class TestInterclusterDistance(VisualTestCase):
         self.assert_images_similar(oz)
 
     @pytest.mark.filterwarnings("ignore:the matrix subclass is not the recommended way")
-    @pytest.mark.xfail(reason="text differences described in #892")
+    @pytest.mark.xfail(
+        not LINUX_PYPI, reason="text differences described in #892"
+    )
     def test_affinity_tsne_no_legend(self):
         """
         Visual similarity with AffinityPropagation, TSNE scaling, and no legend
@@ -237,7 +241,9 @@ class TestInterclusterDistance(VisualTestCase):
         oz.finalize()
         self.assert_images_similar(oz, tol=1.0)
 
-    @pytest.mark.xfail(reason="text differences described in #892")
+    @pytest.mark.xfail(
+        not LINUX_PYPI, reason="text differences described in #892"
+    )
     def test_quick_method(self):
         """
         Test the quick method producing a valid visualization

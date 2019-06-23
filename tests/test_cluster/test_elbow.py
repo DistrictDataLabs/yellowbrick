@@ -32,6 +32,7 @@ from sklearn.datasets import make_blobs
 from sklearn.cluster import KMeans, MiniBatchKMeans
 from sklearn.feature_extraction.text import TfidfVectorizer
 
+from tests.base import linux_pypi
 from yellowbrick.cluster.elbow import distortion_score
 from yellowbrick.cluster.elbow import KElbowVisualizer
 from yellowbrick.datasets import load_hobbies
@@ -42,6 +43,7 @@ try:
 except ImportError:
     pd = None
 
+LINUX_PYPI = linux_pypi()
 
 ##########################################################################
 ## Data
@@ -290,7 +292,9 @@ class TestKElbowVisualizer(VisualTestCase):
         with pytest.raises(YellowbrickValueError):
             KElbowVisualizer(KMeans(), k=5, metric="foo")
 
-    @pytest.mark.xfail(reason="text differences described in #892")
+    @pytest.mark.xfail(
+        not LINUX_PYPI, reason="text differences described in #892"
+    )
     def test_timings(self):
         """
         Test the twinx double axes with k-elbow timings

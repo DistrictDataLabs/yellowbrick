@@ -21,7 +21,7 @@ import pytest
 import numpy as np
 import numpy.testing as npt
 
-from tests.base import VisualTestCase
+from tests.base import linux_pypi, VisualTestCase
 
 from yellowbrick.datasets import load_occupancy
 from yellowbrick.features.rankd import *
@@ -36,6 +36,7 @@ try:
 except ImportError:
     pd = None
 
+LINUX_PYPI = linux_pypi()
 
 @pytest.fixture(scope='class')
 def dataset(request):
@@ -216,7 +217,9 @@ class TestRank2D(VisualTestCase):
     Test the Rank2D visualizer
     """
 
-    @pytest.mark.xfail(reason="text differences described in #892")
+    @pytest.mark.xfail(
+        not LINUX_PYPI, reason="text differences described in #892"
+    )
     def test_rank2d_pearson(self):
         """
         Test Rank2D using pearson metric
@@ -244,7 +247,9 @@ class TestRank2D(VisualTestCase):
         oz.finalize()
         self.assert_images_similar(oz, tol=0.1)
 
-    @pytest.mark.xfail(reason="text differences described in #892")
+    @pytest.mark.xfail(
+        not LINUX_PYPI, reason="text differences described in #892"
+    )
     def test_rank2d_covariance(self):
         """
         Test Rank2D using covariance metric
@@ -272,7 +277,9 @@ class TestRank2D(VisualTestCase):
         oz.finalize()
         self.assert_images_similar(oz, tol=0.1)
 
-    @pytest.mark.xfail(reason="text differences described in #892")
+    @pytest.mark.xfail(
+        not LINUX_PYPI, reason="text differences described in #892"
+    )
     def test_rank2d_spearman(self):
         """
         Test Rank2D using spearman metric
@@ -300,7 +307,9 @@ class TestRank2D(VisualTestCase):
         oz.finalize()
         self.assert_images_similar(oz, tol=0.1)
 
-    @pytest.mark.xfail(reason="text differences described in #892")
+    @pytest.mark.xfail(
+        not LINUX_PYPI, reason="text differences described in #892"
+    )
     def test_rank2d_kendalltau(self):
         """
         Test Rank2D using kendalltau metric
@@ -328,7 +337,9 @@ class TestRank2D(VisualTestCase):
         oz.finalize()
         self.assert_images_similar(oz, tol=0.1)
 
-    @pytest.mark.xfail(reason="text differences described in #892")
+    @pytest.mark.xfail(
+        not LINUX_PYPI, reason="text differences described in #892"
+    )
     @pytest.mark.skipif(pd is None, reason="test requires pandas")
     def test_rank2d_integrated_pandas(self):
         """
@@ -350,7 +361,9 @@ class TestRank2D(VisualTestCase):
         # Image similarity testing
         self.assert_images_similar(oz, tol=0.1)
 
-    @pytest.mark.xfail(reason="text differences described in #892")
+    @pytest.mark.xfail(
+        not LINUX_PYPI, reason="text differences described in #892"
+    )
     def test_rank2d_integrated_numpy(self):
         """
         Test Rank2D on occupancy dataset with numpy ndarray
