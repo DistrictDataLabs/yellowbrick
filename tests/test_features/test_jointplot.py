@@ -400,7 +400,7 @@ class TestJointPlotHistogram(VisualTestCase):
         assert hasattr(oz, "corr_")
 
         oz.finalize()
-        self.assert_images_similar(oz, tol=tol)
+        self.assert_images_similar(oz)
 
     @pytest.mark.xfail(
         not LINUX_PYPI, reason="text differences described in #892"
