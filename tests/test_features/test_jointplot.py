@@ -30,7 +30,7 @@ import numpy as np
 import pytest
 from sklearn.datasets import make_classification, make_regression
 
-from tests.base import is_winconda_env, VisualTestCase
+from tests.base import VisualTestCase
 from yellowbrick.exceptions import YellowbrickValueError
 from yellowbrick.features.jointplot import *
 from ..fixtures import TestDataset
