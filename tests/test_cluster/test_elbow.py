@@ -264,13 +264,13 @@ class TestKElbowVisualizer(VisualTestCase):
     @pytest.mark.xfail(
         sys.platform == 'win32', reason="images not close on windows"
     )
-    def test_calinski_harabaz_metric(self):
+    def test_calinski_harabasz_metric(self):
         """
-        Test the calinski-harabaz metric of the k-elbow visualizer
+        Test the calinski-harabasz metric of the k-elbow visualizer
         """
         visualizer = KElbowVisualizer(
             KMeans(random_state=0), k=5,
-            metric="calinski_harabaz", timings=False, locate_elbow=False
+            metric="calinski_harabasz", timings=False, locate_elbow=False
         )
         visualizer.fit(self.clusters.X)
         assert len(visualizer.k_scores_) == 4
