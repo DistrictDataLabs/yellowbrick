@@ -134,8 +134,8 @@ class PCADecomposition(MultiFeatureVisualizer):
         self.color = color
         self.colormap = colormap
         self.uax, self.lax = None, None
-        if self.proj_dim == 3 and (self.heatmap or self.colormap):
-            raise YellowbrickValueError("heatmap and colormap are not compatible with 3d proejctions")
+        if self.proj_dim == 3 and (self.heatmap and self.colormap):
+            raise YellowbrickValueError("heatmap and colormap are not compatible with 3d projections")
         if self.heatmap or self.colormap:
             self.layout()
 
