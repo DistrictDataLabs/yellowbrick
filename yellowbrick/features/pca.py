@@ -134,6 +134,8 @@ class PCADecomposition(MultiFeatureVisualizer):
         self.color = color
         self.colormap = colormap
         self.uax, self.lax = None, None
+        if self.proj_dim == 3 and (self.heatmap or self.colormap):
+            raise YellowbrickValueError("heatmap and colormap are not compatible with 3d proejctions")
         if self.heatmap or self.colormap:
             self.layout()
 
@@ -221,18 +223,9 @@ class PCADecomposition(MultiFeatureVisualizer):
                     )
         if self.proj_dim == 3:
             self.fig = plt.figure()
-            if(self.heatmap):
-                self.ax = self.fig.add_subplot(211, projection='3d')
-            else:
-                self.ax = self.fig.add_subplot(111, projection='3d')
-            
-            im = self.ax.scatter(X[:,0], X[:,1], X[:, 2], c=self.color, cmap=self.colormap, alpha=self.alpha,
-                                 edgecolors='black', vmin= self.pca_components_.min(), vmax = self.pca_components_.max())
-            if self.colorbar:
-                plt.colorbar(im, orientation='horizontal', ticks=[self.pca_components_.min(), 0,self.pca_components_.max()])
-            if self.heatmap:
-                ax = self.fig.add_subplot(2,1,2)
-                ax.imshow(self.pca_components_, interpolation = 'none', cmap = self.colormap)
+            self.ax = self.fig.add_subplot(111, projection='3d')
+            self.ax.scatter(X[:, 0], X[:, 1], X[:, 2],
+                            c=self.color, cmap=self.colormap, alpha=self.alpha)
             if self.proj_features:
                 x_vector = self.pca_components_[0]
                 y_vector = self.pca_components_[1]
@@ -265,12 +258,8 @@ class PCADecomposition(MultiFeatureVisualizer):
             feature_names = list(orig_X.columns)
             self.lax.set_xticks(np.arange(-.5, len(feature_names)))
             self.lax.set_xticklabels(feature_names, rotation=90, ha='left', fontsize=12)
-            if self.proj_dim == 2:
-                self.lax.set_yticks(np.arange(0.5, 2))
-                self.lax.set_yticklabels(['First PC', 'Second PC'], va='bottom', fontsize=12)
-            if self.proj_dim == 3:
-                self.lax.set_yticks(np.arange(0.5, 3))
-                self.lax.set_yticklabels(['First PC', 'Second PC', 'Third PC'], va='bottom', fontsize=12)
+            self.lax.set_yticks(np.arange(0.5, 2))
+            self.lax.set_yticklabels(['First PC', 'Second PC'], va='bottom', fontsize=12)
         if self.proj_dim == 3:
             self.ax.set_zlabel('Principal Component 3',linespacing=1.2)
 
