@@ -22,7 +22,16 @@ import numpy as np
 
 from yellowbrick.base import Visualizer
 from yellowbrick.utils import is_dataframe
+from yellowbrick.style import resolve_colors
+from yellowbrick.exceptions import YellowbrickValueError
+
 from sklearn.base import TransformerMixin
+
+AUTO = "auto"
+SINGLE = "single"
+DISCRETE = "discrete"
+CONTINUOUS = "continuous"
+
 
 
 ##########################################################################
@@ -177,7 +186,7 @@ class DataVisualizer(MultiFeatureVisualizer):
     """
 
     def __init__(self, ax=None, features=None, classes=None, color=None,
-                 colormap=None, **kwargs):
+                 colormap=None, target=AUTO, **kwargs):
         """
         Initialize the data visualization with many of the options required
         in order to make most visualizations work.
@@ -190,6 +199,7 @@ class DataVisualizer(MultiFeatureVisualizer):
         # Visual Parameters
         self.color = color
         self.colormap = colormap
+        self.target=target
 
     def fit(self, X, y=None, **kwargs):
         """
@@ -215,13 +225,59 @@ class DataVisualizer(MultiFeatureVisualizer):
         """
         super(DataVisualizer, self).fit(X, y, **kwargs)
 
-        # Store the classes for the legend if they're None.
-        if self.classes_ is None:
-            # TODO: Is this the most efficient method?
-            self.classes_ = [str(label) for label in np.unique(y)]
+        self._determine_target_color_type(y)
 
-        # Draw the instances
-        self.draw(X, y, **kwargs)
+        # Determie color if target type is single
+        if self._target_color_type == SINGLE:
+            self._colors = resolve_colors(colors=self.colors, colormap=self.colormap, 
+                                          n_colors=1)
+
+        # Compute classes and colors if target type is discrete
+        elif self._target_color_type == DISCRETE:
+            # Store the classes for the legend if they're None.
+            if self.classes_ is None:
+                # TODO: Is this the most efficient method?
+                self.classes_ = [str(label) for label in np.unique(y)]
+            
+            # Ensures that classes passed by user is equal to that in target
+            if len(self.classes_)!=len(np.unique(y)):
+                raise YellowbrickValueError("Number of classes in target is not " 
+                                            "equal to classes")
+            
+            self._colors = resolve_colors(colors=self.colors, colormap=self.colormap,
+                                          n_colors=len(self.classes_))
+
+        # Compute target range if colors are continuous
+        elif self._target_color_type == CONTINUOUS:
+            y = np.asarray(y)
+            self.range_ = (y.min(), y.max())
 
         # Fit always returns self.
         return self
+    
+    def _determine_target_color_type(self, y):
+        """
+        Determines the target color type from the vector y as follows:
+
+            - if y is None: only a single color is used
+            - if target is auto: determine if y is continuous or discrete
+            - otherwise specify supplied target type
+
+        This property will be used to compute the colors for each point.
+        """
+        if y is None:
+            self._target_color_type = SINGLE
+        elif self.target == "auto":
+            # NOTE: See #73 for a generalization to use when implemented
+            if len(np.unique(y)) < 10:
+                self._target_color_type = DISCRETE
+            else:
+                self._target_color_type = CONTINUOUS
+        else:
+            self._target_color_type = self.target
+
+        if self._target_color_type not in {SINGLE, DISCRETE, CONTINUOUS}:
+            raise YellowbrickValueError((
+                "could not determine target color type "
+                "from target='{}' to '{}'"
+            ).format(self.target, self._target_color_type))    
