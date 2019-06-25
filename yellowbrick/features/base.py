@@ -227,30 +227,29 @@ class DataVisualizer(MultiFeatureVisualizer):
 
         self._determine_target_color_type(y)
 
-        # Determie color if target type is single
-        if self._target_color_type == SINGLE:
-            self._colors = resolve_colors(colors=self.colors, colormap=self.colormap, 
-                                          n_colors=1)
-
         # Compute classes and colors if target type is discrete
-        elif self._target_color_type == DISCRETE:
+        if self._target_color_type == DISCRETE:
             # Store the classes for the legend if they're None.
             if self.classes_ is None:
                 # TODO: Is this the most efficient method?
                 self.classes_ = [str(label) for label in np.unique(y)]
             
+# This fails in case of PCoords if subsampled target misses some values.
             # Ensures that classes passed by user is equal to that in target
-            if len(self.classes_)!=len(np.unique(y)):
-                raise YellowbrickValueError("Number of classes in target is not " 
-                                            "equal to classes")
+#            if len(self.classes_)!=len(np.unique(y)):
+#                raise YellowbrickValueError("Number of unique target is not " 
+#                                            "equal to classes")
+            color_values = resolve_colors(n_colors=len(self.classes_), 
+                                          colormap=self.colormap, colors=self.color)
+            self._colors = dict(zip(self.classes_, color_values))
             
-            self._colors = resolve_colors(colors=self.colors, colormap=self.colormap,
-                                          n_colors=len(self.classes_))
-
         # Compute target range if colors are continuous
         elif self._target_color_type == CONTINUOUS:
             y = np.asarray(y)
             self.range_ = (y.min(), y.max())
+
+        # Draw the instances
+        self.draw(X, y, **kwargs)
 
         # Fit always returns self.
         return self
