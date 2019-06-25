@@ -30,7 +30,7 @@ from ..exceptions import YellowbrickValueError, YellowbrickWarning
 from ..utils import KneeLocator
 
 from sklearn.metrics import silhouette_score
-from sklearn.metrics import calinski_harabaz_score
+from sklearn.metrics import calinski_harabasz_score
 from sklearn.metrics.pairwise import pairwise_distances
 from sklearn.preprocessing import LabelEncoder
 
@@ -114,7 +114,7 @@ def distortion_score(X, labels, metric='euclidean'):
 KELBOW_SCOREMAP = {
     "distortion": distortion_score,
     "silhouette": silhouette_score,
-    "calinski_harabaz": calinski_harabaz_score,
+    "calinski_harabasz": calinski_harabasz_score,
 }
 
 
@@ -133,7 +133,7 @@ class KElbowVisualizer(ClusteringScoreVisualizer):
     computed, the sum of square distances from each point to its assigned
     center. Other metrics can also be used such as the ``silhouette`` score,
     the mean silhouette  coefficient for all samples or the
-    ``calinski_harabaz`` score, which computes the ratio of dispersion between
+    ``calinski_harabasz`` score, which computes the ratio of dispersion between
     and within clusters.
 
     When these overall metrics for each model are plotted, it is possible to
@@ -167,7 +167,7 @@ class KElbowVisualizer(ClusteringScoreVisualizer):
 
         - **distortion**: mean sum of squared distances to centers
         - **silhouette**: mean ratio of intra-cluster and nearest-cluster distance
-        - **calinski_harabaz**: ratio of within to between cluster dispersion
+        - **calinski_harabasz**: ratio of within to between cluster dispersion
 
     timings : bool, default: True
         Display the fitting time per k to evaluate the amount of time required
@@ -222,8 +222,8 @@ class KElbowVisualizer(ClusteringScoreVisualizer):
     in a Haystack <https://raghavan.usc.edu//papers/kneedle-simplex11.pdf>`_.
 
     .. seealso:: The scikit-learn documentation for the `silhouette_score
-        <https://bit.ly/2LYWjYb>`_ and `calinski_harabaz_score
-        <https://bit.ly/2LW3Zu9>`_. The default, `distortion_score`, is
+        <https://bit.ly/2LYWjYb>`_ and `calinski_harabasz_score
+        <https://bit.ly/2ItAgts>`_. The default, `distortion_score`, is
         implemented in`yellowbrick.cluster.elbow`.
 
     .. todo:: add parallelization option for performance
@@ -239,7 +239,7 @@ class KElbowVisualizer(ClusteringScoreVisualizer):
         if metric not in KELBOW_SCOREMAP:
             raise YellowbrickValueError(
                 "'{}' is not a defined metric "
-                "use one of distortion, silhouette, or calinski_harabaz"
+                "use one of distortion, silhouette, or calinski_harabasz"
             )
 
         # Store the arguments
@@ -304,7 +304,7 @@ class KElbowVisualizer(ClusteringScoreVisualizer):
             locator_kwargs = {
                 'distortion': {'curve_nature': 'convex', 'curve_direction': 'decreasing'},
                 'silhouette': {'curve_nature': 'concave', 'curve_direction': 'increasing'},
-                'calinski_harabaz': {'curve_nature': 'concave', 'curve_direction': 'increasing'},
+                'calinski_harabasz': {'curve_nature': 'concave', 'curve_direction': 'increasing'},
                 }.get(self.metric, {})
             elbow_locator = KneeLocator(self.k_values_,self.k_scores_,**locator_kwargs)
             self.elbow_value_ = elbow_locator.knee
