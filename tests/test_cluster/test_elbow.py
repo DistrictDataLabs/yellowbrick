@@ -293,7 +293,7 @@ class TestKElbowVisualizer(VisualTestCase):
 
         visualizer = KElbowVisualizer(
             KMeans(random_state=0), k=6,
-            metric="calinski_harabaz", timings=False, locate_elbow=True
+            metric="calinski_harabasz", timings=False, locate_elbow=True
         )
         visualizer.fit(X)
         assert len(visualizer.k_scores_) == 5
