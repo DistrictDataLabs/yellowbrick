@@ -238,7 +238,7 @@ class TestResolveColors(VisualTestCase):
 
     def test_colormap_cmap_with_colors(self):
         """
-        Assert that supplying a maptlotlib.cm as colormap works
+        Assert that colors overrides a mpl colormap if both are provided
         """
         cmap = cm.get_cmap('nipy_spectral')
         overriding_colors = [
@@ -253,7 +253,7 @@ class TestResolveColors(VisualTestCase):
 
     def test_colormap_palette_yb_colors(self):
         """
-        Assert that supplying a yellowbrick palette as colormap works
+        Assert that colors overrides a yellowbrick colormap if both are provided
         """
         cmap = ColorPalette('neural_paint')
         overriding_colors = [
