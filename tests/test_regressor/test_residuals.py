@@ -27,7 +27,7 @@ from yellowbrick.regressor.residuals import *
 from yellowbrick.exceptions import YellowbrickValueError
 
 from unittest import mock
-from tests.base import is_windows_or_conda, VisualTestCase
+from tests.base import IS_WINDOWS_OR_CONDA, VisualTestCase
 from tests.dataset import DatasetMixin, Dataset, Split
 
 from sklearn.linear_model import Ridge, Lasso
@@ -42,8 +42,6 @@ try:
     import pandas as pd
 except ImportError:
     pd = None
-
-IS_WINDOWS_OR_CONDA = is_windows_or_conda()
 
 # Determine version of matplotlib
 MPL_VERS_MAJ = int(mpl.__version__.split(".")[0])

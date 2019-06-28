@@ -21,7 +21,7 @@ import sys
 import pytest
 import numpy.testing as npt
 
-from tests.base import is_windows_or_conda, VisualTestCase
+from tests.base import IS_WINDOWS_OR_CONDA, VisualTestCase
 from ..fixtures import TestDataset
 from sklearn.datasets import make_classification
 
@@ -32,8 +32,6 @@ try:
     import pandas as pd
 except ImportError:
     pd = None
-
-IS_WINDOWS_OR_CONDA = is_windows_or_conda()
 
 ##########################################################################
 ## Fixtures

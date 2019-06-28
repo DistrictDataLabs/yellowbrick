@@ -30,7 +30,7 @@ import numpy as np
 import pytest
 from sklearn.datasets import make_classification, make_regression
 
-from tests.base import is_windows_or_conda, VisualTestCase
+from tests.base import IS_WINDOWS_OR_CONDA, VisualTestCase
 from yellowbrick.exceptions import YellowbrickValueError
 from yellowbrick.features.jointplot import *
 from ..fixtures import TestDataset
@@ -45,8 +45,6 @@ try:
     import pandas as pd
 except ImportError:
     pd = None
-
-IS_WINDOWS_OR_CONDA = is_windows_or_conda()
 
 ##########################################################################
 ## Fixtures

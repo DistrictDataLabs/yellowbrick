@@ -32,7 +32,7 @@ from sklearn.datasets import make_blobs
 from sklearn.cluster import KMeans, MiniBatchKMeans
 from sklearn.feature_extraction.text import TfidfVectorizer
 
-from tests.base import is_windows_or_conda
+from tests.base import IS_WINDOWS_OR_CONDA
 from yellowbrick.cluster.elbow import distortion_score
 from yellowbrick.cluster.elbow import KElbowVisualizer
 from yellowbrick.datasets import load_hobbies
@@ -42,8 +42,6 @@ try:
     import pandas as pd
 except ImportError:
     pd = None
-
-IS_WINDOWS_OR_CONDA = is_windows_or_conda()
 
 ##########################################################################
 ## Data

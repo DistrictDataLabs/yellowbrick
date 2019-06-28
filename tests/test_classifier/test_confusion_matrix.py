@@ -24,7 +24,7 @@ import matplotlib.pyplot as plt
 from yellowbrick.classifier.confusion_matrix import *
 from yellowbrick.datasets import load_occupancy
 
-from tests.base import is_windows_or_conda, VisualTestCase
+from tests.base import IS_WINDOWS_OR_CONDA, VisualTestCase
 from tests.dataset import Dataset, Split
 
 from sklearn.svm import SVC
@@ -41,8 +41,6 @@ try:
     import pandas as pd
 except ImportError:
     pd = None
-
-IS_WINDOWS_OR_CONDA = is_windows_or_conda()
 
 ##########################################################################
 ## Fixtures

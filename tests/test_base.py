@@ -26,12 +26,10 @@ from yellowbrick.exceptions import YellowbrickValueError
 
 from unittest.mock import patch
 from unittest.mock import MagicMock
-from tests.base import is_windows_or_conda, VisualTestCase
+from tests.base import IS_WINDOWS_OR_CONDA, VisualTestCase
 from tests.rand import RandomVisualizer
 
 from sklearn.datasets import make_classification
-
-IS_WINDOWS_OR_CONDA = is_windows_or_conda()
 
 ##########################################################################
 ## Base Cases

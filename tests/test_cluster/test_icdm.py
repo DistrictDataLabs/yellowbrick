@@ -20,7 +20,7 @@ import matplotlib as mpl
 from yellowbrick.cluster.icdm import *
 from yellowbrick.exceptions import YellowbrickValueError
 
-from tests.base import is_windows_or_conda, VisualTestCase
+from tests.base import IS_WINDOWS_OR_CONDA, VisualTestCase
 from ..fixtures import TestDataset
 
 from sklearn.datasets import make_blobs
@@ -32,8 +32,6 @@ try:
     import pandas as pd
 except ImportError:
     pd = None
-
-IS_WINDOWS_OR_CONDA = is_windows_or_conda()
 
 # Determine version of matplotlib
 MPL_VERS_MAJ = int(mpl.__version__.split(".")[0])

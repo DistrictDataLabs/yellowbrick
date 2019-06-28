@@ -21,11 +21,9 @@ import pytest
 
 from yellowbrick.datasets import load_hobbies
 from yellowbrick.text.freqdist import *
-from tests.base import is_windows_or_conda, VisualTestCase
+from tests.base import IS_WINDOWS_OR_CONDA, VisualTestCase
 
 from sklearn.feature_extraction.text import CountVectorizer
-
-IS_WINDOWS_OR_CONDA = is_windows_or_conda()
 
 ##########################################################################
 ## Data

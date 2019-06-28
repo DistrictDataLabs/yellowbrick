@@ -21,7 +21,7 @@ import pytest
 import numpy as np
 import numpy.testing as npt
 
-from tests.base import is_windows_or_conda, VisualTestCase
+from tests.base import IS_WINDOWS_OR_CONDA, VisualTestCase
 
 from yellowbrick.datasets import load_occupancy
 from yellowbrick.features.rankd import *
@@ -35,8 +35,6 @@ try:
     import pandas as pd
 except ImportError:
     pd = None
-
-IS_WINDOWS_OR_CONDA = is_windows_or_conda()
 
 @pytest.fixture(scope='class')
 def dataset(request):

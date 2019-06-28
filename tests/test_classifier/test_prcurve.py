@@ -21,7 +21,7 @@ import matplotlib
 from yellowbrick.exceptions import *
 from yellowbrick.classifier.prcurve import *
 
-from tests.base import is_windows_or_conda, VisualTestCase
+from tests.base import IS_WINDOWS_OR_CONDA, VisualTestCase
 from .test_rocauc import FakeClassifier
 
 from sklearn.svm import LinearSVC
@@ -32,8 +32,6 @@ from sklearn.tree import DecisionTreeClassifier
 from sklearn.linear_model import RidgeClassifier
 from sklearn.model_selection import train_test_split as tts
 from sklearn.ensemble import RandomForestClassifier, AdaBoostClassifier
-
-IS_WINDOWS_OR_CONDA = is_windows_or_conda()
 
 ##########################################################################
 ## Assertion Helpers
