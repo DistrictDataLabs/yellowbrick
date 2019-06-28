@@ -21,7 +21,7 @@ import sys
 import pytest
 import numpy.testing as npt
 
-from tests.base import linux_pypi, VisualTestCase
+from tests.base import is_windows_or_conda, VisualTestCase
 from ..fixtures import TestDataset
 from sklearn.datasets import make_classification
 
@@ -33,7 +33,7 @@ try:
 except ImportError:
     pd = None
 
-LINUX_PYPI = linux_pypi()
+IS_WINDOWS_OR_CONDA = is_windows_or_conda()
 
 ##########################################################################
 ## Fixtures
@@ -111,7 +111,8 @@ class TestRadViz(VisualTestCase):
         self.assert_images_similar(visualizer, tol=0.25)
 
     @pytest.mark.xfail(
-        not LINUX_PYPI, reason="text differences described in #892"
+        IS_WINDOWS_OR_CONDA,
+        reason="font rendering different in OS and/or Python; see #892"
     )
     @pytest.mark.skipif(pd is None, reason="test requires pandas")
     def test_integrated_radviz_with_pandas(self):

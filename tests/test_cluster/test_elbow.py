@@ -32,7 +32,7 @@ from sklearn.datasets import make_blobs
 from sklearn.cluster import KMeans, MiniBatchKMeans
 from sklearn.feature_extraction.text import TfidfVectorizer
 
-from tests.base import linux_pypi
+from tests.base import is_windows_or_conda
 from yellowbrick.cluster.elbow import distortion_score
 from yellowbrick.cluster.elbow import KElbowVisualizer
 from yellowbrick.datasets import load_hobbies
@@ -43,7 +43,7 @@ try:
 except ImportError:
     pd = None
 
-LINUX_PYPI = linux_pypi()
+IS_WINDOWS_OR_CONDA = is_windows_or_conda()
 
 ##########################################################################
 ## Data
@@ -318,7 +318,8 @@ class TestKElbowVisualizer(VisualTestCase):
             KElbowVisualizer(KMeans(), k=5, metric="foo")
 
     @pytest.mark.xfail(
-        not LINUX_PYPI, reason="text differences described in #892"
+        IS_WINDOWS_OR_CONDA,
+        reason="font rendering different in OS and/or Python; see #892"
     )
     def test_timings(self):
         """

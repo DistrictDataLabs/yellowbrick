@@ -27,7 +27,7 @@ from yellowbrick.regressor.residuals import *
 from yellowbrick.exceptions import YellowbrickValueError
 
 from unittest import mock
-from tests.base import linux_pypi, VisualTestCase
+from tests.base import is_windows_or_conda, VisualTestCase
 from tests.dataset import DatasetMixin, Dataset, Split
 
 from sklearn.linear_model import Ridge, Lasso
@@ -43,7 +43,7 @@ try:
 except ImportError:
     pd = None
 
-LINUX_PYPI = linux_pypi()
+IS_WINDOWS_OR_CONDA = is_windows_or_conda()
 
 # Determine version of matplotlib
 MPL_VERS_MAJ = int(mpl.__version__.split(".")[0])
@@ -226,7 +226,8 @@ class TestResidualsPlot(VisualTestCase, DatasetMixin):
     """
 
     @pytest.mark.xfail(
-        not LINUX_PYPI, reason="text differences described in #892"
+        IS_WINDOWS_OR_CONDA,
+        reason="font rendering different in OS and/or Python; see #892"
     )
     def test_residuals_plot(self):
         """
@@ -288,7 +289,8 @@ class TestResidualsPlot(VisualTestCase, DatasetMixin):
             self.fail(e)
 
     @pytest.mark.xfail(
-        not LINUX_PYPI, reason="text differences described in #892"
+        IS_WINDOWS_OR_CONDA,
+        reason="font rendering different in OS and/or Python; see #892"
     )
     def test_residuals_quick_method(self):
         """
@@ -304,7 +306,8 @@ class TestResidualsPlot(VisualTestCase, DatasetMixin):
         self.assert_images_similar(ax=ax)
 
     @pytest.mark.xfail(
-        not LINUX_PYPI, reason="text differences described in #892"
+        IS_WINDOWS_OR_CONDA,
+        reason="font rendering different in OS and/or Python; see #892"
     )
     @pytest.mark.skipif(pd is None, reason="pandas is required")
     def test_residuals_plot_pandas(self):

@@ -21,7 +21,7 @@ import pytest
 import numpy as np
 import numpy.testing as npt
 
-from tests.base import linux_pypi, VisualTestCase
+from tests.base import is_windows_or_conda, VisualTestCase
 
 from yellowbrick.datasets import load_occupancy
 from yellowbrick.features.rankd import *
@@ -36,7 +36,7 @@ try:
 except ImportError:
     pd = None
 
-LINUX_PYPI = linux_pypi()
+IS_WINDOWS_OR_CONDA = is_windows_or_conda()
 
 @pytest.fixture(scope='class')
 def dataset(request):
@@ -218,7 +218,8 @@ class TestRank2D(VisualTestCase):
     """
 
     @pytest.mark.xfail(
-        not LINUX_PYPI, reason="text differences described in #892"
+        IS_WINDOWS_OR_CONDA,
+        reason="font rendering different in OS and/or Python; see #892"
     )
     def test_rank2d_pearson(self):
         """
@@ -248,7 +249,8 @@ class TestRank2D(VisualTestCase):
         self.assert_images_similar(oz, tol=0.1)
 
     @pytest.mark.xfail(
-        not LINUX_PYPI, reason="text differences described in #892"
+        IS_WINDOWS_OR_CONDA,
+        reason="font rendering different in OS and/or Python; see #892"
     )
     def test_rank2d_covariance(self):
         """
@@ -278,7 +280,8 @@ class TestRank2D(VisualTestCase):
         self.assert_images_similar(oz, tol=0.1)
 
     @pytest.mark.xfail(
-        not LINUX_PYPI, reason="text differences described in #892"
+        IS_WINDOWS_OR_CONDA,
+        reason="font rendering different in OS and/or Python; see #892"
     )
     def test_rank2d_spearman(self):
         """
@@ -308,7 +311,8 @@ class TestRank2D(VisualTestCase):
         self.assert_images_similar(oz, tol=0.1)
 
     @pytest.mark.xfail(
-        not LINUX_PYPI, reason="text differences described in #892"
+        IS_WINDOWS_OR_CONDA,
+        reason="font rendering different in OS and/or Python; see #892"
     )
     def test_rank2d_kendalltau(self):
         """
@@ -338,7 +342,8 @@ class TestRank2D(VisualTestCase):
         self.assert_images_similar(oz, tol=0.1)
 
     @pytest.mark.xfail(
-        not LINUX_PYPI, reason="text differences described in #892"
+        IS_WINDOWS_OR_CONDA,
+        reason="font rendering different in OS and/or Python; see #892"
     )
     @pytest.mark.skipif(pd is None, reason="test requires pandas")
     def test_rank2d_integrated_pandas(self):
@@ -362,7 +367,8 @@ class TestRank2D(VisualTestCase):
         self.assert_images_similar(oz, tol=0.1)
 
     @pytest.mark.xfail(
-        not LINUX_PYPI, reason="text differences described in #892"
+        IS_WINDOWS_OR_CONDA,
+        reason="font rendering different in OS and/or Python; see #892"
     )
     def test_rank2d_integrated_numpy(self):
         """

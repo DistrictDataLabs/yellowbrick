@@ -20,7 +20,7 @@ import matplotlib as mpl
 from yellowbrick.cluster.icdm import *
 from yellowbrick.exceptions import YellowbrickValueError
 
-from tests.base import linux_pypi, VisualTestCase
+from tests.base import is_windows_or_conda, VisualTestCase
 from ..fixtures import TestDataset
 
 from sklearn.datasets import make_blobs
@@ -33,7 +33,7 @@ try:
 except ImportError:
     pd = None
 
-LINUX_PYPI = linux_pypi()
+IS_WINDOWS_OR_CONDA = is_windows_or_conda()
 
 # Determine version of matplotlib
 MPL_VERS_MAJ = int(mpl.__version__.split(".")[0])
@@ -113,7 +113,8 @@ class TestInterclusterDistance(VisualTestCase):
             icdm._score_clusters(None)
 
     @pytest.mark.xfail(
-        not LINUX_PYPI, reason="text differences described in #892"
+        IS_WINDOWS_OR_CONDA,
+        reason="font rendering different in OS and/or Python; see #892"
     )
     def test_kmeans_mds(self):
         """
@@ -140,7 +141,8 @@ class TestInterclusterDistance(VisualTestCase):
 
     @pytest.mark.filterwarnings("ignore:the matrix subclass is not the recommended way")
     @pytest.mark.xfail(
-        not LINUX_PYPI, reason="text differences described in #892"
+        IS_WINDOWS_OR_CONDA,
+        reason="font rendering different in OS and/or Python; see #892"
     )
     def test_affinity_tsne_no_legend(self):
         """
@@ -242,7 +244,8 @@ class TestInterclusterDistance(VisualTestCase):
         self.assert_images_similar(oz, tol=1.0)
 
     @pytest.mark.xfail(
-        not LINUX_PYPI, reason="text differences described in #892"
+        IS_WINDOWS_OR_CONDA,
+        reason="font rendering different in OS and/or Python; see #892"
     )
     def test_quick_method(self):
         """

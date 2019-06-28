@@ -30,7 +30,7 @@ import numpy as np
 import pytest
 from sklearn.datasets import make_classification, make_regression
 
-from tests.base import linux_pypi, VisualTestCase
+from tests.base import is_windows_or_conda, VisualTestCase
 from yellowbrick.exceptions import YellowbrickValueError
 from yellowbrick.features.jointplot import *
 from ..fixtures import TestDataset
@@ -46,7 +46,7 @@ try:
 except ImportError:
     pd = None
 
-LINUX_PYPI = linux_pypi()
+IS_WINDOWS_OR_CONDA = is_windows_or_conda()
 
 ##########################################################################
 ## Fixtures
@@ -344,7 +344,8 @@ class TestJointPlotHistogram(VisualTestCase):
         assert oz.yhax is not None
 
     @pytest.mark.xfail(
-        not LINUX_PYPI, reason="text differences described in #892"
+        IS_WINDOWS_OR_CONDA,
+        reason="font rendering different in OS and/or Python; see #892"
     )
     def test_columns_none_x_y_hist(self):
         """
@@ -358,7 +359,8 @@ class TestJointPlotHistogram(VisualTestCase):
         self.assert_images_similar(oz)
 
     @pytest.mark.xfail(
-        not LINUX_PYPI, reason="text differences described in #892"
+        IS_WINDOWS_OR_CONDA,
+        reason="font rendering different in OS and/or Python; see #892"
     )
     def test_columns_none_x_hist(self):
         """
@@ -372,7 +374,8 @@ class TestJointPlotHistogram(VisualTestCase):
         self.assert_images_similar(oz)
 
     @pytest.mark.xfail(
-        not LINUX_PYPI, reason="text differences described in #892"
+        IS_WINDOWS_OR_CONDA,
+        reason="font rendering different in OS and/or Python; see #892"
     )
     def test_columns_single_int_index_numpy_hist(self):
         """
@@ -387,7 +390,8 @@ class TestJointPlotHistogram(VisualTestCase):
 
     @pytest.mark.skipif(pd is None, reason="test requires pandas")
     @pytest.mark.xfail(
-        not LINUX_PYPI, reason="text differences described in #892"
+        IS_WINDOWS_OR_CONDA,
+        reason="font rendering different in OS and/or Python; see #892"
     )
     def test_columns_single_str_index_pandas_hist(self):
         """
@@ -403,7 +407,8 @@ class TestJointPlotHistogram(VisualTestCase):
         self.assert_images_similar(oz)
 
     @pytest.mark.xfail(
-        not LINUX_PYPI, reason="text differences described in #892"
+        IS_WINDOWS_OR_CONDA,
+        reason="font rendering different in OS and/or Python; see #892"
     )
     def test_columns_double_int_index_numpy_no_y_hist(self):
         """
@@ -418,7 +423,8 @@ class TestJointPlotHistogram(VisualTestCase):
 
     @pytest.mark.skipif(pd is None, reason="test requires pandas")
     @pytest.mark.xfail(
-        not LINUX_PYPI, reason="text differences described in #892"
+        IS_WINDOWS_OR_CONDA,
+        reason="font rendering different in OS and/or Python; see #892"
     )
     def test_columns_double_str_index_pandas_no_y_hist(self):
         """
@@ -434,7 +440,8 @@ class TestJointPlotHistogram(VisualTestCase):
 
     @pytest.mark.skipif(pd is None, reason="test requires pandas")
     @pytest.mark.xfail(
-        not LINUX_PYPI, reason="text differences described in #892"
+        IS_WINDOWS_OR_CONDA,
+        reason="font rendering different in OS and/or Python; see #892"
     )
     def test_columns_double_index_discrete_y_hist(self):
         """

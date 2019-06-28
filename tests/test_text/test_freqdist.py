@@ -21,11 +21,11 @@ import pytest
 
 from yellowbrick.datasets import load_hobbies
 from yellowbrick.text.freqdist import *
-from tests.base import linux_pypi, VisualTestCase
+from tests.base import is_windows_or_conda, VisualTestCase
 
 from sklearn.feature_extraction.text import CountVectorizer
 
-LINUX_PYPI = linux_pypi()
+IS_WINDOWS_OR_CONDA = is_windows_or_conda()
 
 ##########################################################################
 ## Data
@@ -40,7 +40,8 @@ corpus = load_hobbies()
 class FreqDistTests(VisualTestCase):
 
     @pytest.mark.xfail(
-        not LINUX_PYPI, reason="text differences described in #892"
+        IS_WINDOWS_OR_CONDA,
+        reason="font rendering different in OS and/or Python; see #892"
     )
     def test_integrated_freqdist(self):
         """

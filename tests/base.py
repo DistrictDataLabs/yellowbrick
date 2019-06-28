@@ -29,10 +29,10 @@ from matplotlib.testing.compare import compare_images
 from yellowbrick.exceptions import ImageComparisonFailure
 
 
-def linux_pypi():
-    linux_os = sys.platform.startswith('linux')
-    pypi = not os.path.exists(os.path.join(sys.prefix, 'conda-meta'))
-    return linux_os and pypi
+def is_windows_or_conda():
+    is_windows = sys.platform == 'win32'
+    is_conda = os.path.exists(os.path.join(sys.prefix, 'conda-meta'))
+    return is_windows or is_conda
 
 ##########################################################################
 ## Module Constants

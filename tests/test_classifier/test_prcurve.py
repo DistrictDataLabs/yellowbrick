@@ -21,7 +21,7 @@ import matplotlib
 from yellowbrick.exceptions import *
 from yellowbrick.classifier.prcurve import *
 
-from tests.base import linux_pypi, VisualTestCase
+from tests.base import is_windows_or_conda, VisualTestCase
 from .test_rocauc import FakeClassifier
 
 from sklearn.svm import LinearSVC
@@ -33,7 +33,7 @@ from sklearn.linear_model import RidgeClassifier
 from sklearn.model_selection import train_test_split as tts
 from sklearn.ensemble import RandomForestClassifier, AdaBoostClassifier
 
-LINUX_PYPI = linux_pypi()
+IS_WINDOWS_OR_CONDA = is_windows_or_conda()
 
 ##########################################################################
 ## Assertion Helpers
@@ -113,7 +113,8 @@ class TestPrecisionRecallCurve(VisualTestCase):
         self.assert_images_similar(oz, tol=tol)
 
     @pytest.mark.xfail(
-        not LINUX_PYPI, reason="text differences described in #892"
+        IS_WINDOWS_OR_CONDA,
+        reason="font rendering different in OS and/or Python; see #892"
     )
     def test_binary_probability_decision(self):
         """
@@ -208,7 +209,8 @@ class TestPrecisionRecallCurve(VisualTestCase):
         self.assert_images_similar(oz, tol=tol)
 
     @pytest.mark.xfail(
-        not LINUX_PYPI, reason="text differences described in #892"
+        IS_WINDOWS_OR_CONDA,
+        reason="font rendering different in OS and/or Python; see #892"
     )
     def test_multiclass_probability(self):
         """
@@ -310,7 +312,8 @@ class TestPrecisionRecallCurve(VisualTestCase):
 
     @pytest.mark.filterwarnings("ignore:From version 0.21")
     @pytest.mark.xfail(
-        not LINUX_PYPI, reason="text differences described in #892"
+        IS_WINDOWS_OR_CONDA,
+        reason="font rendering different in OS and/or Python; see #892"
     )
     def test_quick_method(self):
         """
@@ -336,7 +339,8 @@ class TestPrecisionRecallCurve(VisualTestCase):
             oz._get_y_scores(self.binary.X.train)
 
     @pytest.mark.xfail(
-        not LINUX_PYPI, reason="text differences described in #892"
+        IS_WINDOWS_OR_CONDA,
+        reason="font rendering different in OS and/or Python; see #892"
     )
     def test_custom_iso_f1_scores(self):
         """

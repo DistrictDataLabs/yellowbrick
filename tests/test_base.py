@@ -26,12 +26,12 @@ from yellowbrick.exceptions import YellowbrickValueError
 
 from unittest.mock import patch
 from unittest.mock import MagicMock
-from tests.base import linux_pypi, VisualTestCase
+from tests.base import is_windows_or_conda, VisualTestCase
 from tests.rand import RandomVisualizer
 
 from sklearn.datasets import make_classification
 
-LINUX_PYPI = linux_pypi()
+IS_WINDOWS_OR_CONDA = is_windows_or_conda()
 
 ##########################################################################
 ## Base Cases
@@ -154,7 +154,8 @@ class TestVisualizerGrid(VisualTestCase):
     """
 
     @pytest.mark.xfail(
-        not LINUX_PYPI, reason="text differences described in #892"
+        IS_WINDOWS_OR_CONDA,
+        reason="font rendering different in OS and/or Python; see #892"
     )
     def test_draw_visualizer_grid(self):
         """
@@ -174,7 +175,8 @@ class TestVisualizerGrid(VisualTestCase):
         self.assert_images_similar(grid)
 
     @pytest.mark.xfail(
-        not LINUX_PYPI, reason="text differences described in #892"
+        IS_WINDOWS_OR_CONDA,
+        reason="font rendering different in OS and/or Python; see #892"
     )
     def test_draw_with_rows(self):
         """
@@ -194,7 +196,8 @@ class TestVisualizerGrid(VisualTestCase):
         self.assert_images_similar(grid)
 
     @pytest.mark.xfail(
-        not LINUX_PYPI, reason="text differences described in #892"
+        IS_WINDOWS_OR_CONDA,
+        reason="font rendering different in OS and/or Python; see #892"
     )
     def test_draw_with_cols(self):
         """

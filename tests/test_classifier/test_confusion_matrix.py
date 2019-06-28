@@ -24,7 +24,7 @@ import matplotlib.pyplot as plt
 from yellowbrick.classifier.confusion_matrix import *
 from yellowbrick.datasets import load_occupancy
 
-from tests.base import linux_pypi, VisualTestCase
+from tests.base import is_windows_or_conda, VisualTestCase
 from tests.dataset import Dataset, Split
 
 from sklearn.svm import SVC
@@ -42,7 +42,7 @@ try:
 except ImportError:
     pd = None
 
-LINUX_PYPI = linux_pypi()
+IS_WINDOWS_OR_CONDA = is_windows_or_conda()
 
 ##########################################################################
 ## Fixtures
@@ -268,7 +268,8 @@ class ConfusionMatrixTests(VisualTestCase):
         assert  ylabels == classes
 
     @pytest.mark.xfail(
-        not LINUX_PYPI, reason="text differences described in #892"
+        IS_WINDOWS_OR_CONDA,
+        reason="font rendering different in OS and/or Python; see #892"
     )
     @pytest.mark.skipif(pd is None, reason="test requires pandas")
     def test_pandas_integration(self):
@@ -299,7 +300,8 @@ class ConfusionMatrixTests(VisualTestCase):
         ]))
 
     @pytest.mark.xfail(
-        not LINUX_PYPI, reason="text differences described in #892"
+        IS_WINDOWS_OR_CONDA,
+        reason="font rendering different in OS and/or Python; see #892"
     )
     def test_quick_method(self):
         """
