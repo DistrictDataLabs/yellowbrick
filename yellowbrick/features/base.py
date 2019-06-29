@@ -19,6 +19,7 @@ Base classes for feature visualizers and feature selection tools.
 ##########################################################################
 
 import numpy as np
+import matplotlib
 
 from yellowbrick.base import Visualizer
 from yellowbrick.utils import is_dataframe
@@ -174,6 +175,16 @@ class DataVisualizer(MultiFeatureVisualizer):
         optional string or matplotlib cmap to colorize lines
         Use either color to colorize the lines on a per class basis or
         colormap to color them on a continuous scale.
+        
+    target : str, default: "auto"
+        Specify the type of target as either "discrete" (classes) or "continuous"
+        (real numbers, usually for regression). If "auto", the it will
+        attempt to determine the type by counting the number of unique values.
+
+        If the target is discrete, the colors are returned as a dict with classes
+        being the keys. If continuous the colors will be list having value of 
+        color for each point. In either case, if no target is specified, none 
+        will be returned. 
 
     kwargs : dict
         Keyword arguments that are passed to the base class and may influence
@@ -199,7 +210,7 @@ class DataVisualizer(MultiFeatureVisualizer):
         # Visual Parameters
         self.color = color
         self.colormap = colormap
-        self.target=target
+        self.target = target
 
     def fit(self, X, y=None, **kwargs):
         """
@@ -247,6 +258,15 @@ class DataVisualizer(MultiFeatureVisualizer):
         elif self._target_color_type == CONTINUOUS:
             y = np.asarray(y)
             self.range_ = (y.min(), y.max())
+            
+            # Calculates colors from colormap for a continuous target.
+            norm = matplotlib.colors.Normalize(self.range_[0], self.range_[1])
+            cmap = matplotlib.cm.get_cmap(self.colormap)
+            color_values = cmap([norm(yi) for yi in y])
+            self._colors = color_values
+        
+        else:
+            raise YellowbrickValueError("unknown target color type '{}'".format(self._target_color_type))
 
         # Draw the instances
         self.draw(X, y, **kwargs)
