@@ -178,13 +178,13 @@ class DataVisualizer(MultiFeatureVisualizer):
         
     target : str, default: "auto"
         Specify the type of target as either "discrete" (classes) or "continuous"
-        (real numbers, usually for regression). If "auto", the it will
+        (real numbers, usually for regression). If "auto", then it will
         attempt to determine the type by counting the number of unique values.
 
         If the target is discrete, the colors are returned as a dict with classes
         being the keys. If continuous the colors will be list having value of 
-        color for each point. In either case, if no target is specified, none 
-        will be returned. 
+        color for each point. In either case, if no target is specified, then 
+        color will be specified as blue. 
 
     kwargs : dict
         Keyword arguments that are passed to the base class and may influence
@@ -237,9 +237,12 @@ class DataVisualizer(MultiFeatureVisualizer):
         super(DataVisualizer, self).fit(X, y, **kwargs)
 
         self._determine_target_color_type(y)
+        
+        if self._target_color_type == SINGLE:
+            self._colors = 'b'
 
         # Compute classes and colors if target type is discrete
-        if self._target_color_type == DISCRETE:
+        elif self._target_color_type == DISCRETE:
             # Store the classes for the legend if they're None.
             if self.classes_ is None:
                 # TODO: Is this the most efficient method?
