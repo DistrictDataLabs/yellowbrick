@@ -16,7 +16,6 @@ Assertions for the base classes and abstract hierarchy.
 ## Imports
 ##########################################################################
 
-import sys
 import pytest
 import matplotlib.pyplot as plt
 
@@ -27,12 +26,10 @@ from yellowbrick.exceptions import YellowbrickValueError
 
 from unittest.mock import patch
 from unittest.mock import MagicMock
-from tests.base import VisualTestCase
+from tests.base import IS_WINDOWS_OR_CONDA, VisualTestCase
 from tests.rand import RandomVisualizer
 
-
 from sklearn.datasets import make_classification
-
 
 ##########################################################################
 ## Base Cases
@@ -155,7 +152,8 @@ class TestVisualizerGrid(VisualTestCase):
     """
 
     @pytest.mark.xfail(
-        sys.platform == 'win32', reason="images not close on windows"
+        IS_WINDOWS_OR_CONDA,
+        reason="font rendering different in OS and/or Python; see #892"
     )
     def test_draw_visualizer_grid(self):
         """
@@ -175,7 +173,8 @@ class TestVisualizerGrid(VisualTestCase):
         self.assert_images_similar(grid)
 
     @pytest.mark.xfail(
-        sys.platform == 'win32', reason="images not close on windows"
+        IS_WINDOWS_OR_CONDA,
+        reason="font rendering different in OS and/or Python; see #892"
     )
     def test_draw_with_rows(self):
         """
@@ -195,7 +194,8 @@ class TestVisualizerGrid(VisualTestCase):
         self.assert_images_similar(grid)
 
     @pytest.mark.xfail(
-        sys.platform == 'win32', reason="images not close on windows"
+        IS_WINDOWS_OR_CONDA,
+        reason="font rendering different in OS and/or Python; see #892"
     )
     def test_draw_with_cols(self):
         """
