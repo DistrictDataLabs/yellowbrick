@@ -19,20 +19,16 @@ Base classes for feature visualizers and feature selection tools.
 ##########################################################################
 
 import numpy as np
-import matplotlib
+import matplotlib as mpl
+import warnings
+from enum import Enum
 
 from yellowbrick.base import Visualizer
 from yellowbrick.utils import is_dataframe
 from yellowbrick.style import resolve_colors
-from yellowbrick.exceptions import YellowbrickValueError
+from yellowbrick.exceptions import YellowbrickValueError, YellowbrickWarning
 
 from sklearn.base import TransformerMixin
-
-AUTO = "auto"
-SINGLE = "single"
-DISCRETE = "discrete"
-CONTINUOUS = "continuous"
-
 
 
 ##########################################################################
@@ -134,6 +130,12 @@ class MultiFeatureVisualizer(FeatureVisualizer):
 ## Data Visualizers
 ##########################################################################
 
+class target_type(Enum):
+    AUTO = 'auto'
+    SINGLE = 'single'
+    DISCRETE = 'discrete'
+    CONTINUOUS = 'continuous'
+
 class DataVisualizer(MultiFeatureVisualizer):
     """
     Data Visualizers are a subclass of Feature Visualizers which plot the
@@ -197,7 +199,7 @@ class DataVisualizer(MultiFeatureVisualizer):
     """
 
     def __init__(self, ax=None, features=None, classes=None, color=None,
-                 colormap=None, target=AUTO, **kwargs):
+                 colormap=None, target="auto", **kwargs):
         """
         Initialize the data visualization with many of the options required
         in order to make most visualizations work.
@@ -210,8 +212,10 @@ class DataVisualizer(MultiFeatureVisualizer):
         # Visual Parameters
         self.color = color
         self.colormap = colormap
-        self.target = target
-
+        try:
+            self.target = target_type(target)
+        except:
+            raise YellowbrickValueError("unknown target color type '{}'".format(target))
     def fit(self, X, y=None, **kwargs):
         """
         The fit method is the primary drawing input for the
@@ -238,34 +242,35 @@ class DataVisualizer(MultiFeatureVisualizer):
 
         self._determine_target_color_type(y)
         
-        if self._target_color_type == SINGLE:
+        if self._target_color_type == target_type.SINGLE:
             self._colors = 'b'
 
         # Compute classes and colors if target type is discrete
-        elif self._target_color_type == DISCRETE:
+        elif self._target_color_type == target_type.DISCRETE:
             # Store the classes for the legend if they're None.
             if self.classes_ is None:
                 # TODO: Is this the most efficient method?
                 self.classes_ = [str(label) for label in np.unique(y)]
             
-# This fails in case of PCoords if subsampled target misses some values.
             # Ensures that classes passed by user is equal to that in target
-#            if len(self.classes_)!=len(np.unique(y)):
-#                raise YellowbrickValueError("Number of unique target is not " 
-#                                            "equal to classes")
+            if len(self.classes_)!=len(np.unique(y)):
+                warnings.warn(("Number of unique target is not " 
+                              "equal to classes"), YellowbrickWarning)
+
             color_values = resolve_colors(n_colors=len(self.classes_), 
                                           colormap=self.colormap, colors=self.color)
             self._colors = dict(zip(self.classes_, color_values))
             
         # Compute target range if colors are continuous
-        elif self._target_color_type == CONTINUOUS:
+        elif self._target_color_type == target_type.CONTINUOUS:
             y = np.asarray(y)
             self.range_ = (y.min(), y.max())
             
-            self._colors = matplotlib.cm.get_cmap(self.colormap)
+            self._colors = mpl.cm.get_cmap(self.colormap)
         
         else:
-            raise YellowbrickValueError("unknown target color type '{}'".format(self._target_color_type))
+            raise YellowbrickValueError(
+                    "unknown target color type '{}'".format(self._target_color_type))
 
         # Draw the instances
         self.draw(X, y, **kwargs)
@@ -284,17 +289,17 @@ class DataVisualizer(MultiFeatureVisualizer):
         This property will be used to compute the colors for each point.
         """
         if y is None:
-            self._target_color_type = SINGLE
-        elif self.target == "auto":
+            self._target_color_type = target_type.SINGLE
+        elif self.target == target_type.AUTO:
             # NOTE: See #73 for a generalization to use when implemented
             if len(np.unique(y)) < 10:
-                self._target_color_type = DISCRETE
+                self._target_color_type = target_type.DISCRETE
             else:
-                self._target_color_type = CONTINUOUS
+                self._target_color_type = target_type.CONTINUOUS
         else:
             self._target_color_type = self.target
 
-        if self._target_color_type not in {SINGLE, DISCRETE, CONTINUOUS}:
+        if self._target_color_type == target_type.AUTO:
             raise YellowbrickValueError((
                 "could not determine target color type "
                 "from target='{}' to '{}'"
