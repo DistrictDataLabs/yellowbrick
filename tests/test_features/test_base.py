@@ -149,6 +149,7 @@ class DataVisualizerBaseTests(unittest.TestCase):
     
     @patch.object(DataVisualizer, 'draw')        
     def test_classes(self, mock_draw):
+        # Checks that classes are assigned correctly
         X, y = self.discrete
         classes = ['a', 'b', 'c', 'd', 'e']
         dataviz = DataVisualizer(classes=classes, target='discrete')
