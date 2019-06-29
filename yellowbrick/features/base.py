@@ -262,11 +262,7 @@ class DataVisualizer(MultiFeatureVisualizer):
             y = np.asarray(y)
             self.range_ = (y.min(), y.max())
             
-            # Calculates colors from colormap for a continuous target.
-            norm = matplotlib.colors.Normalize(self.range_[0], self.range_[1])
-            cmap = matplotlib.cm.get_cmap(self.colormap)
-            color_values = cmap([norm(yi) for yi in y])
-            self._colors = color_values
+            self._colors = matplotlib.cm.get_cmap(self.colormap)
         
         else:
             raise YellowbrickValueError("unknown target color type '{}'".format(self._target_color_type))
