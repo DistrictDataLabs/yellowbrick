@@ -28,11 +28,10 @@ from matplotlib import rcParams
 from matplotlib.testing.compare import compare_images
 from yellowbrick.exceptions import ImageComparisonFailure
 
-
-def is_winconda_env():
-    return (os.name == 'nt' and
-            os.path.exists(os.path.join(sys.prefix, 'conda-meta')))
-
+def is_windows_or_conda():
+    is_windows = sys.platform == 'win32'
+    is_conda = os.path.exists(os.path.join(sys.prefix, 'conda-meta'))
+    return is_windows or is_conda
 
 ##########################################################################
 ## Module Constants
@@ -42,7 +41,7 @@ def is_winconda_env():
 TESTS = os.path.dirname(__file__)
 ACTUAL_IMAGES = os.path.join(TESTS, "actual_images")
 BASELINE_IMAGES = os.path.join(TESTS, "baseline_images")
-
+IS_WINDOWS_OR_CONDA = is_windows_or_conda()
 
 ##########################################################################
 ## Visual Test Case

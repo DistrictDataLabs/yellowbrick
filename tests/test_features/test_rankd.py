@@ -17,12 +17,11 @@ Test the Rankd feature analysis visualizers
 ## Imports
 ##########################################################################
 
-import sys
 import pytest
 import numpy as np
 import numpy.testing as npt
 
-from tests.base import VisualTestCase
+from tests.base import IS_WINDOWS_OR_CONDA, VisualTestCase
 
 from yellowbrick.datasets import load_occupancy, load_energy
 from yellowbrick.features.rankd import *
@@ -35,7 +34,6 @@ try:
     import pandas as pd
 except ImportError:
     pd = None
-
 
 ##########################################################################
 ## Kendall-Tau Tests
@@ -206,7 +204,8 @@ class TestRank2D(VisualTestCase):
     """
 
     @pytest.mark.xfail(
-        sys.platform == 'win32', reason="images not close on windows"
+        IS_WINDOWS_OR_CONDA,
+        reason="font rendering different in OS and/or Python; see #892"
     )
     def test_rank2d_pearson(self):
         """
@@ -259,7 +258,8 @@ class TestRank2D(VisualTestCase):
         self.assert_images_similar(oz, tol=0.1)
 
     @pytest.mark.xfail(
-        sys.platform == 'win32', reason="images not close on windows"
+        IS_WINDOWS_OR_CONDA,
+        reason="font rendering different in OS and/or Python; see #892"
     )
     def test_rank2d_covariance(self):
         """
@@ -312,7 +312,8 @@ class TestRank2D(VisualTestCase):
         self.assert_images_similar(oz, tol=0.1)
 
     @pytest.mark.xfail(
-        sys.platform == 'win32', reason="images not close on windows"
+        IS_WINDOWS_OR_CONDA,
+        reason="font rendering different in OS and/or Python; see #892"
     )
     def test_rank2d_spearman(self):
         """
@@ -365,7 +366,8 @@ class TestRank2D(VisualTestCase):
         self.assert_images_similar(oz, tol=0.1)
 
     @pytest.mark.xfail(
-        sys.platform == 'win32', reason="images not close on windows"
+        IS_WINDOWS_OR_CONDA,
+        reason="font rendering different in OS and/or Python; see #892"
     )
     def test_rank2d_kendalltau(self):
         """
@@ -418,7 +420,8 @@ class TestRank2D(VisualTestCase):
         self.assert_images_similar(oz, tol=0.1)
 
     @pytest.mark.xfail(
-        sys.platform == 'win32', reason="images not close on windows"
+        IS_WINDOWS_OR_CONDA,
+        reason="font rendering different in OS and/or Python; see #892"
     )
     @pytest.mark.skipif(pd is None, reason="test requires pandas")
     def test_rank2d_integrated_pandas(self):
@@ -442,7 +445,8 @@ class TestRank2D(VisualTestCase):
         self.assert_images_similar(oz, tol=0.1)
 
     @pytest.mark.xfail(
-        sys.platform == 'win32', reason="images not close on windows"
+        IS_WINDOWS_OR_CONDA,
+        reason="font rendering different in OS and/or Python; see #892"
     )
     def test_rank2d_integrated_numpy(self):
         """
@@ -487,3 +491,4 @@ class TestRank2DQuick(VisualTestCase):
         """
         X, y = load_energy()
         self.assert_images_similar(ax=rank2d(X, y))
+

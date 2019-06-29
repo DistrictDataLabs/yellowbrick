@@ -1,20 +1,50 @@
 dist: xenial
 language: python
-python:
-- '3.6'
-- '3.7'
+matrix:
+  include:
+    - name: "Python 3.6 on Xenial Linux"
+      python: '3.6'
+
+    - name: "Python 3.7 on Xenial Linux"
+      python: '3.7'
+
+    - name: "Miniconda 3.6 on Xenial Linux"
+      env: ANACONDA="3.6"
+
+    - name: "Miniconda 3.7 on Xenial Linux"
+      env: ANACONDA="3.7"
 
 before_install:
-- sudo apt-get update
-- sudo apt-get build-dep python-scipy
+- sudo apt-get update;
+- if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then
+    sudo apt-get build-dep python-scipy;
+    MINICONDA_OS="Linux";
+  fi
 
 install:
-- pip install -r requirements.txt
-- pip install -r tests/requirements.txt
-- pip install coveralls
-- python -m nltk.downloader popular
+- if [[ -z ${ANACONDA} ]]; then
+      pip install -r requirements.txt;
+      pip install -r tests/requirements.txt;
+      pip install coveralls;
+    else
+      wget https://repo.anaconda.com/miniconda/Miniconda3-latest-$MINICONDA_OS-x86_64.sh -O miniconda.sh;
+      bash miniconda.sh -b -p $HOME/miniconda;
+      export PATH="$HOME/miniconda/bin:$PATH";
+      hash -r;
+      conda config --set always_yes yes --set changeps1 no;
+      export BASE_PYTHON=`python -c 'import sys; version=sys.version_info[:3]; print("{0}.{1}.{2}".format(*version))'`;
+      echo "Base Anaconda Python is $BASE_PYTHON";
+      echo "Creating Anaconda Python $ANACONDA conda environment";
+      conda update -n base conda --yes;
+      conda config --add channels conda-forge;
+      conda env create -f tests/requirements.txt -n yellowbrick python=$ANACONDA;
+      source activate yellowbrick;
+      conda install coveralls;
+  fi
 
-script: make test
+script: 
+- python -m nltk.downloader popular
+- make test
 
 after_success: coveralls
 
