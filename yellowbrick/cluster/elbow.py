@@ -246,7 +246,7 @@ class KElbowVisualizer(ClusteringScoreVisualizer):
         self.scoring_metric = KELBOW_SCOREMAP[metric]
         self.metric = metric
         self.timings = timings
-        self.locate_elbow=locate_elbow
+        self.locate_elbow = locate_elbow
 
         # Convert K into a tuple argument if an integer
         if isinstance(k, int):
@@ -265,6 +265,8 @@ class KElbowVisualizer(ClusteringScoreVisualizer):
 
         # Holds the values of the silhoutte scores
         self.k_scores_ = None
+        # Set Default Elbow Value
+        self.elbow_value_ = None
 
     def fit(self, X, y=None, **kwargs):
         """

@@ -27,7 +27,7 @@ from yellowbrick.regressor.residuals import *
 from yellowbrick.exceptions import YellowbrickValueError
 
 from unittest import mock
-from tests.base import VisualTestCase
+from tests.base import IS_WINDOWS_OR_CONDA, VisualTestCase
 from tests.dataset import DatasetMixin, Dataset, Split
 
 from sklearn.linear_model import Ridge, Lasso
@@ -42,7 +42,6 @@ try:
     import pandas as pd
 except ImportError:
     pd = None
-
 
 # Determine version of matplotlib
 MPL_VERS_MAJ = int(mpl.__version__.split(".")[0])
@@ -225,7 +224,8 @@ class TestResidualsPlot(VisualTestCase, DatasetMixin):
     """
 
     @pytest.mark.xfail(
-        sys.platform == 'win32', reason="images not close on windows (RMSE=32)"
+        IS_WINDOWS_OR_CONDA,
+        reason="font rendering different in OS and/or Python; see #892"
     )
     def test_residuals_plot(self):
         """
@@ -239,7 +239,7 @@ class TestResidualsPlot(VisualTestCase, DatasetMixin):
         visualizer.score(self.data.X.test, self.data.y.test)
         visualizer.finalize()
 
-        self.assert_images_similar(visualizer, tol=1, remove_legend=True)
+        self.assert_images_similar(visualizer)
 
     @pytest.mark.xfail(
         sys.platform == 'win32', reason="images not close on windows (RMSE=32)"
@@ -287,7 +287,8 @@ class TestResidualsPlot(VisualTestCase, DatasetMixin):
             self.fail(e)
 
     @pytest.mark.xfail(
-        sys.platform == 'win32', reason="images not close on windows (RMSE=32)"
+        IS_WINDOWS_OR_CONDA,
+        reason="font rendering different in OS and/or Python; see #892"
     )
     def test_residuals_quick_method(self):
         """
@@ -300,10 +301,11 @@ class TestResidualsPlot(VisualTestCase, DatasetMixin):
             model, self.data.X.train, self.data.y.train, ax=ax, random_state=23
         )
 
-        self.assert_images_similar(ax=ax, tol=1, remove_legend=True)
+        self.assert_images_similar(ax=ax)
 
     @pytest.mark.xfail(
-        sys.platform == 'win32', reason="images not close on windows (RMSE=32)"
+        IS_WINDOWS_OR_CONDA,
+        reason="font rendering different in OS and/or Python; see #892"
     )
     @pytest.mark.skipif(pd is None, reason="pandas is required")
     def test_residuals_plot_pandas(self):
@@ -334,7 +336,7 @@ class TestResidualsPlot(VisualTestCase, DatasetMixin):
         visualizer.score(X_test, y_test)
         visualizer.finalize()
 
-        self.assert_images_similar(visualizer, tol=1, remove_legend=True)
+        self.assert_images_similar(visualizer)
 
     def test_score(self):
         """
