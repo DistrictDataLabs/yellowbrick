@@ -68,7 +68,7 @@ def resolve_colors(n_colors=None, colormap=None, colors=None):
         truncate or multiple the colors available. If None the length of the
         colors will not be modified.
 
-    colormap : str, default: None
+    colormap : str, yellowbrick.style.palettes.ColorPalette, matplotlib.cm, default: None
         The name of the matplotlib color map with which to generate colors.
 
     colors : iterable, default: None
@@ -87,15 +87,45 @@ def resolve_colors(n_colors=None, colormap=None, colors=None):
 
     # Work with the colormap if specified and colors is not
     if colormap is not None and colors is None:
+        # Must import here to avoid recursive import
+        from .palettes import PALETTES, ColorPalette
         if isinstance(colormap, str):
             try:
-                colormap = cm.get_cmap(colormap)
+
+                # try to get colormap from PALETTES first
+                _colormap = PALETTES.get(colormap, None)
+
+                if _colormap is None:
+
+                    colormap = cm.get_cmap(colormap)
+                    n_colors = n_colors or len(get_color_cycle())
+                    _colors = list(map(colormap, np.linspace(0, 1, num=n_colors)))
+
+                else:
+
+                    _colors = ColorPalette(_colormap).as_rgb()
+                    n_colors = n_colors or len(_colors)
+
             except ValueError as e:
+
                 raise YellowbrickValueError(e)
 
+        # if yellowbrick color palette is provided as colormap
+        elif isinstance(colormap, ColorPalette):
 
-        n_colors = n_colors or len(get_color_cycle())
-        _colors = list(map(colormap, np.linspace(0, 1, num=n_colors)))
+            _colors = colormap.as_rgb()
+            n_colors = n_colors or len(_colors)
+
+        # if matplotlib color palette is provided as colormap
+        elif isinstance(colormap, mpl.colors.Colormap):
+            n_colors = n_colors or len(get_color_cycle())
+            _colors = list(map(colormap, np.linspace(0, 1, num=n_colors)))
+        else:
+            raise YellowbrickValueError(
+                "Colormap type {} is not recognized. Possible types are: {}"
+                .format(type(colormap), ', '.join(['yellowbrick.style.ColorPalette,',
+                                                   'matplotlib.cm,',
+                                                   'str'])))
 
     # Work with the color list
     elif colors is not None:
