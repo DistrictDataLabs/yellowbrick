@@ -21,7 +21,7 @@ import matplotlib
 from yellowbrick.exceptions import *
 from yellowbrick.classifier.prcurve import *
 
-from tests.base import VisualTestCase
+from tests.base import IS_WINDOWS_OR_CONDA, VisualTestCase
 from .test_rocauc import FakeClassifier
 
 from sklearn.svm import LinearSVC
@@ -32,7 +32,6 @@ from sklearn.tree import DecisionTreeClassifier
 from sklearn.linear_model import RidgeClassifier
 from sklearn.model_selection import train_test_split as tts
 from sklearn.ensemble import RandomForestClassifier, AdaBoostClassifier
-
 
 ##########################################################################
 ## Assertion Helpers
@@ -111,6 +110,10 @@ class TestPrecisionRecallCurve(VisualTestCase):
         tol = 1.5 if sys.platform == 'win32' else 1.0 # fails with RMSE 1.409 on AppVeyor
         self.assert_images_similar(oz, tol=tol)
 
+    @pytest.mark.xfail(
+        IS_WINDOWS_OR_CONDA,
+        reason="font rendering different in OS and/or Python; see #892"
+    )
     def test_binary_probability_decision(self):
         """
         Visual similarity of binary classifier with both predict_proba & decision
@@ -138,8 +141,7 @@ class TestPrecisionRecallCurve(VisualTestCase):
 
         # Compare the images
         oz.finalize()
-        tol = 4.6 if sys.platform == 'win32' else 1.0 # fails with RMSE 4.522 on AppVeyor
-        self.assert_images_similar(oz, tol=tol)
+        self.assert_images_similar(oz)
 
     def test_binary_decision(self):
         """
@@ -204,6 +206,10 @@ class TestPrecisionRecallCurve(VisualTestCase):
         tol = 1.25 if sys.platform == 'win32' else 1.0 # fails with RMSE 1.118 on AppVeyor
         self.assert_images_similar(oz, tol=tol)
 
+    @pytest.mark.xfail(
+        IS_WINDOWS_OR_CONDA,
+        reason="font rendering different in OS and/or Python; see #892"
+    )
     def test_multiclass_probability(self):
         """
         Visual similarity of multiclass classifier with predict_proba function
@@ -237,8 +243,7 @@ class TestPrecisionRecallCurve(VisualTestCase):
 
         # Compare the images
         oz.finalize()
-        tol = 6.6 if sys.platform == 'win32' else 1.0 # fails with RMSE 6.583 on AppVeyor
-        self.assert_images_similar(oz, tol=tol)
+        self.assert_images_similar(oz)
 
     def test_multiclass_probability_with_class_labels(self):
         """Visual similarity of multiclass classifier with class labels."""
@@ -304,6 +309,10 @@ class TestPrecisionRecallCurve(VisualTestCase):
         self.assert_images_similar(oz, tol=tol)
 
     @pytest.mark.filterwarnings("ignore:From version 0.21")
+    @pytest.mark.xfail(
+        IS_WINDOWS_OR_CONDA,
+        reason="font rendering different in OS and/or Python; see #892"
+    )
     def test_quick_method(self):
         """
         Test the precision_recall_curve quick method.
@@ -317,8 +326,7 @@ class TestPrecisionRecallCurve(VisualTestCase):
             random_state=2)
         assert isinstance(oz, PrecisionRecallCurve)
 
-        tol = 5.8 if sys.platform == 'win32' else 1.0 # fails with RMSE 5.740 on AppVeyor
-        self.assert_images_similar(oz, tol=tol)
+        self.assert_images_similar(oz)
 
     def test_no_scoring_function(self):
         """
@@ -328,6 +336,10 @@ class TestPrecisionRecallCurve(VisualTestCase):
         with pytest.raises(ModelError, match="requires .* predict_proba or decision_function"):
             oz._get_y_scores(self.binary.X.train)
 
+    @pytest.mark.xfail(
+        IS_WINDOWS_OR_CONDA,
+        reason="font rendering different in OS and/or Python; see #892"
+    )
     def test_custom_iso_f1_scores(self):
         """
         Test using custom ISO F1 Values
@@ -351,8 +363,7 @@ class TestPrecisionRecallCurve(VisualTestCase):
         viz.score(X_test, y_test)
         viz.finalize()
 
-        tol = 4.5 if sys.platform == 'win32' else 1.0 # fails with RMSE 4.358 on AppVeyor
-        self.assert_images_similar(viz,tol=tol)
+        self.assert_images_similar(viz)
 
     def test_quick_method_with_test_set(self):
         """

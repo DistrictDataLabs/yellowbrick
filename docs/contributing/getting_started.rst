@@ -43,6 +43,10 @@ Once forked, use the following steps to get your development environment set up 
 
         $ virtualenv venv
 
+    To develop with a conda environment, the conda-forge channel is needed to install some testing dependencies. The following command adds the channel with the highest priority::
+
+        $ conda config --add channels conda-forge
+
 3. Install dependencies.
 
     Yellowbrick's dependencies are in the ``requirements.txt`` document at the root of the repository. Open this file and uncomment any dependencies marked as for development only. Then install the package in editable mode::

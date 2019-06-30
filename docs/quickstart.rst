@@ -37,7 +37,7 @@ If you're using Anaconda, you can take advantage of the `conda <https://conda.io
 
     conda install -c districtdatalabs yellowbrick
 
-.. WARNING:: There is a `known bug <https://github.com/DistrictDataLabs/yellowbrick/issues/205>`_ installing matplotlib on Linux with Anaconda. If you're having trouble please let us know on GitHub.
+If you're having trouble with installation, please let us know on GitHub.
 
 Once installed, you should be able to import Yellowbrick without an error, both in Python and inside of Jupyter notebooks. Note that because of matplotlib, Yellowbrick does not work inside of a virtual environment on macOS without jumping through some hoops.
 
