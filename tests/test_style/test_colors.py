@@ -17,13 +17,18 @@ Tests for the color utilities and helper functions
 ## Imports
 ##########################################################################
 
+import sys
 import pytest
 
 from matplotlib import cm
 from cycler import Cycler
 
+from sklearn.cluster import KMeans
+from sklearn.datasets import make_blobs
+
 from yellowbrick.style.colors import *
 from yellowbrick.style.palettes import ColorPalette, PALETTES
+from yellowbrick.cluster.silhouette import SilhouetteVisualizer
 
 from tests.base import VisualTestCase
 
@@ -204,6 +209,90 @@ class TestResolveColors(VisualTestCase):
             (0.7999666666666666, 0.9777666666666667, 0.0, 1.0),
             (0.8, 0.8, 0.8, 1.0)
         ]
+
+    def test_colormap_palette_mpl(self):
+        """
+        Assert that supplying a maptlotlib palette as colormap works
+        """
+        colormap = cm.get_cmap('nipy_spectral')
+        colors = resolve_colors(colormap=colormap)
+        assert colors == [
+            (0.0, 0.0, 0.0, 1.0),
+            (0.0, 0.0, 0.8667, 1.0),
+            (0.0, 0.6667, 0.5333, 1.0),
+            (0.0, 1.0, 0.0, 1.0),
+            (1.0, 0.6, 0.0, 1.0),
+            (0.8, 0.8, 0.8, 1.0)
+        ]
+
+    def test_integrated_yb_colormap(self):
+        """
+        Assert silhouette plot colormap can be set with a yellowbrick palette
+        """
+        # Generate a blobs data set
+        X, y = make_blobs(
+            n_samples=1000, n_features=12, centers=8, shuffle=False, random_state=0
+        )
+        visualizer = SilhouetteVisualizer(KMeans(random_state=0), colormap='neural_paint')
+        visualizer.fit(X)
+        visualizer.poof()
+
+        tol = 3.2 if sys.platform == "win32" else 0.01  # Fails on AppVeyor with RMS 3.143
+        self.assert_images_similar(visualizer, remove_legend=True, tol=tol)
+
+    def test_colormap_palette_yb(self):
+        """
+        Assert that supplying a yellowbrick palette as colormap works
+        """
+        colormap = ColorPalette('neural_paint')
+        assert resolve_colors(colormap=colormap) == [
+            (0.08627450980392157, 0.44313725490196076, 0.5725490196078431),
+            (0.43137254901960786, 0.4588235294117647, 0.2823529411764706),
+            (0.7725490196078432, 0.6352941176470588, 0.6705882352941176),
+            (0.0, 0.8, 1.0),
+            (0.8705882352941177, 0.47058823529411764, 0.6823529411764706),
+            (1.0, 0.8, 0.6),
+            (0.23921568627450981, 0.24705882352941178, 0.25882352941176473),
+            (1.0, 1.0, 0.8)
+        ]
+
+    def test_colormap_cmap_with_colors(self):
+        """
+        Assert that colors overrides a mpl colormap if both are provided
+        """
+        colormap = cm.get_cmap('nipy_spectral')
+        overriding_colors = [
+            (0.0, 0.0, 0.0, 1.0),
+            (0.0, 0.6444666666666666, 0.7333666666666667, 1.0),
+            (0.7999666666666666, 0.9777666666666667, 0.0, 1.0),
+            (0.8, 0.8, 0.8, 1.0)
+        ]
+        with pytest.warns(Warning, match="both colormap and colors specified"):
+            colors = resolve_colors(colormap=colormap, colors=overriding_colors)
+            assert colors == overriding_colors
+
+    def test_colormap_palette_yb_colors(self):
+        """
+        Assert that colors overrides a yellowbrick colormap if both are provided
+        """
+        colormap = ColorPalette('neural_paint')
+        overriding_colors = [
+            (0.0, 0.0, 0.0, 1.0),
+            (0.0, 0.6444666666666666, 0.7333666666666667, 1.0),
+            (0.7999666666666666, 0.9777666666666667, 0.0, 1.0),
+            (0.8, 0.8, 0.8, 1.0)
+        ]
+        with pytest.warns(Warning, match="both colormap and colors specified"):
+            colors = resolve_colors(colormap=colormap, colors=overriding_colors)
+            assert colors == overriding_colors
+
+    def test_colormap_invalid_type(self):
+        """
+        Exception raised when invalid colormap type is supplied
+        """
+        with pytest.raises(YellowbrickValueError):
+            a = lambda x: x + 1
+            resolve_colors(colormap=a)
 
     def test_colors(self):
         """

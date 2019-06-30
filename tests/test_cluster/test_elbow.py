@@ -32,6 +32,7 @@ from sklearn.datasets import make_blobs
 from sklearn.cluster import KMeans, MiniBatchKMeans
 from sklearn.feature_extraction.text import TfidfVectorizer
 
+from tests.base import IS_WINDOWS_OR_CONDA
 from yellowbrick.cluster.elbow import distortion_score
 from yellowbrick.cluster.elbow import KElbowVisualizer
 from yellowbrick.datasets import load_hobbies
@@ -41,7 +42,6 @@ try:
     import pandas as pd
 except ImportError:
     pd = None
-
 
 ##########################################################################
 ## Data
@@ -262,26 +262,51 @@ class TestKElbowVisualizer(VisualTestCase):
     @pytest.mark.xfail(
         sys.platform == 'win32', reason="images not close on windows"
     )
-    def test_calinski_harabaz_metric(self):
+    def test_calinski_harabasz_metric(self):
         """
-        Test the calinski-harabaz metric of the k-elbow visualizer
+        Test the calinski-harabasz metric of the k-elbow visualizer
         """
         visualizer = KElbowVisualizer(
             KMeans(random_state=0), k=5,
-            metric="calinski_harabaz", timings=False, locate_elbow=False
+            metric="calinski_harabasz", timings=False, locate_elbow=False
         )
         visualizer.fit(self.clusters.X)
         assert len(visualizer.k_scores_) == 4
+        assert visualizer.elbow_value_ == None
 
         expected = np.array([
             81.662726256035683, 50.992378259195554,
             40.952179227847012, 35.939494
         ])
 
-
         visualizer.poof()
         self.assert_images_similar(visualizer)
         assert_array_almost_equal(visualizer.k_scores_, expected)
+
+    def test_locate_elbow(self):
+        """
+        Test the addition of locate_elbow to an image 
+        """
+        X,y = make_blobs(
+            n_samples=1000, n_features=5, centers=3, shuffle=True, random_state=42
+        )
+
+        visualizer = KElbowVisualizer(
+            KMeans(random_state=0), k=6,
+            metric="calinski_harabasz", timings=False, locate_elbow=True
+        )
+        visualizer.fit(X)
+        assert len(visualizer.k_scores_) == 5
+        assert visualizer.elbow_value_ == 3
+
+        expected = np.array([
+            4286.479848, 12463.383743, 8766.999551, 6950.08391, 5865.79722
+        ])
+
+        visualizer.poof()
+        self.assert_images_similar(visualizer, windows_tol=2.2)
+        assert_array_almost_equal(visualizer.k_scores_, expected)
+
 
     def test_bad_metric(self):
         """
@@ -291,7 +316,8 @@ class TestKElbowVisualizer(VisualTestCase):
             KElbowVisualizer(KMeans(), k=5, metric="foo")
 
     @pytest.mark.xfail(
-        sys.platform == 'win32', reason="images not close on windows"
+        IS_WINDOWS_OR_CONDA,
+        reason="font rendering different in OS and/or Python; see #892"
     )
     def test_timings(self):
         """
