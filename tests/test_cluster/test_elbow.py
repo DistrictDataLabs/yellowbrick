@@ -32,6 +32,7 @@ from sklearn.datasets import make_blobs
 from sklearn.cluster import KMeans, MiniBatchKMeans
 from sklearn.feature_extraction.text import TfidfVectorizer
 
+from tests.base import IS_WINDOWS_OR_CONDA
 from yellowbrick.cluster.elbow import distortion_score
 from yellowbrick.cluster.elbow import KElbowVisualizer
 from yellowbrick.datasets import load_hobbies
@@ -41,7 +42,6 @@ try:
     import pandas as pd
 except ImportError:
     pd = None
-
 
 ##########################################################################
 ## Data
@@ -316,7 +316,8 @@ class TestKElbowVisualizer(VisualTestCase):
             KElbowVisualizer(KMeans(), k=5, metric="foo")
 
     @pytest.mark.xfail(
-        sys.platform == 'win32', reason="images not close on windows"
+        IS_WINDOWS_OR_CONDA,
+        reason="font rendering different in OS and/or Python; see #892"
     )
     def test_timings(self):
         """

@@ -57,8 +57,8 @@ class ClassPredictionErrorTests(VisualTestCase, DatasetMixin):
         visualizer.score(X, y)
         visualizer.finalize()
 
-        # AppVeyor fails with RMS 9.499
-        self.assert_images_similar(visualizer, windows_tol=9.5)
+        # AppVeyor and Linux conda fail due to non-text-based differences
+        self.assert_images_similar(visualizer, tol=9.5)
 
     def test_class_prediction_error_quickmethod(self):
         """
