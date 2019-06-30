@@ -17,13 +17,18 @@ Tests for the color utilities and helper functions
 ## Imports
 ##########################################################################
 
+import sys
 import pytest
 
 from matplotlib import cm
 from cycler import Cycler
 
+from sklearn.cluster import KMeans
+from sklearn.datasets import make_blobs
+
 from yellowbrick.style.colors import *
 from yellowbrick.style.palettes import ColorPalette, PALETTES
+from yellowbrick.cluster.silhouette import SilhouetteVisualizer
 
 from tests.base import VisualTestCase
 
@@ -219,6 +224,21 @@ class TestResolveColors(VisualTestCase):
             (1.0, 0.6, 0.0, 1.0),
             (0.8, 0.8, 0.8, 1.0)
         ]
+
+    def test_integrated_yb_colormap(self):
+        """
+        Assert silhouette plot colormap can be set with a yellowbrick palette
+        """
+        # Generate a blobs data set
+        X, y = make_blobs(
+            n_samples=1000, n_features=12, centers=8, shuffle=False, random_state=0
+        )
+        visualizer = SilhouetteVisualizer(KMeans(random_state=0), colormap='neural_paint')
+        visualizer.fit(X)
+        visualizer.poof()
+
+        tol = 3.2 if sys.platform == "win32" else 0.01  # Fails on AppVeyor with RMS 3.143
+        self.assert_images_similar(visualizer, remove_legend=True, tol=tol)
 
     def test_colormap_palette_yb(self):
         """
