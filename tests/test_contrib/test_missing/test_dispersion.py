@@ -16,7 +16,10 @@ Tests for the MissingValuesDispersion visualizations.
 ##########################################################################
 ## Imports
 ##########################################################################
+
 import os
+import pytest
+
 from sklearn.datasets import make_classification
 from tests.base import VisualTestCase
 
