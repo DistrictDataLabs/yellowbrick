@@ -178,7 +178,7 @@ class DataVisualizer(MultiFeatureVisualizer):
         Use either color to colorize the lines on a per class basis or
         colormap to color them on a continuous scale.
         
-    target : str, default: "auto"
+    target_type : str, default: "auto"
         Specify the type of target as either "discrete" (classes) or "continuous"
         (real numbers, usually for regression). If "auto", then it will
         attempt to determine the type by counting the number of unique values.
