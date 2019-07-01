@@ -15,23 +15,30 @@ Helper functions and cases for making assertions on visualizations.
 ##########################################################################
 
 import os
-import inspect
 import sys
+import inspect
 
-import unittest
 import matplotlib as mpl
 import matplotlib.pyplot as plt
 
 from matplotlib import ticker
-from matplotlib import rcParams
-
 from matplotlib.testing.compare import compare_images
 from yellowbrick.exceptions import ImageComparisonFailure
 
+
+##########################################################################
+## Environment
+##########################################################################
+
 def is_windows_or_conda():
+    """
+    Simple detection mechanism to determine if the tests are running in a
+    win32 or Anaconda/Miniconda environment.
+    """
     is_windows = sys.platform == 'win32'
     is_conda = os.path.exists(os.path.join(sys.prefix, 'conda-meta'))
     return is_windows or is_conda
+
 
 ##########################################################################
 ## Module Constants
@@ -43,45 +50,45 @@ ACTUAL_IMAGES = os.path.join(TESTS, "actual_images")
 BASELINE_IMAGES = os.path.join(TESTS, "baseline_images")
 IS_WINDOWS_OR_CONDA = is_windows_or_conda()
 
+
 ##########################################################################
 ## Visual Test Case
 ##########################################################################
 
-class VisualTestCase(unittest.TestCase):
+class VisualTestCase(object):
+    """
+    The visual test case class ensures that all tests inside of the class
+    can execute image similarity tests inside of a clean matplotlib global
+    figure.
+    """
 
-    @classmethod
-    def setUpClass(klass):
+    def setup_method(self):
         """
-        This setup function is available to ensure that all CI tests
-        that do visual work are set up correctly.
+        Berfore a visual test case method is run, ensure that the previous
+        figure is closed and the current axes are cleared.
 
-        Note:
-        """
-        super(VisualTestCase, klass).setUpClass()
-
-    def setUp(self):
-        """
-        Close all previous plots
+        See: https://docs.pytest.org/en/latest/xunit_setup.html
         """
         # Reset the matplotlib environment
-        plt.cla()        # clear current axis
-        plt.clf()        # clear current figure
-        plt.close("all") # close all existing plots
+        plt.cla()         # clear current axis
+        plt.clf()         # clear current figure
+        plt.close("all")  # close all existing plots
 
-        # Travis-CI does not have san-serif
-        rcParams['font.family'] = 'DejaVu Sans'
+        # Travis-CI does not have san-serif so ensure standard fonts are used.
+        # Note that this must be set before each test otherwise it will be reset by
+        # the Yellowbrick styles.
+        mpl.rcParams['font.family'] = 'DejaVu Sans'
 
-        super(VisualTestCase, self).setUp()
-
-    def assert_images_similar(self, visualizer=None, ax=None, tol=0.01, windows_tol=None,  **kwargs):
+    def assert_images_similar(self, visualizer=None, ax=None,
+                              tol=0.01, windows_tol=None, **kwargs):
         """Accessible testing method for testing generation of a Visualizer.
 
         Requires the placement of a baseline image for comparison in the
         tests/baseline_images folder that corresponds to the module path of the
         VisualTestCase being evaluated. The name of the image corresponds to
-        the unittest function where "self.assert_images_similar" is called.
+        the test function where "self.assert_images_similar" is called.
 
-        For example, calling "assert_images_similar" in the unittest
+        For example, calling "assert_images_similar" in the test function
         "test_class_report" in tests.test_classifier.test_class_balance would
         require placement a baseline image at:
 
@@ -93,20 +100,21 @@ class VisualTestCase(unittest.TestCase):
 
         actual_images/
 
-        visualizer : yellowbrick visualizer
+        visualizer : yellowbrick visualizer, default: None
             An instantiated yellowbrick visualizer that has been fitted,
             transformed and had all operations except for poof called on it.
 
         ax : matplotlib Axes, default: None
             The axis to plot the figure on.
 
-        tol : float
+        tol : float, default: 0.01
             The tolerance (a color value difference, where 255 is the
             maximal difference).  The test fails if the average pixel
             difference is greater than this value.
 
         windows_tol: float, default: None
-            Similar to the tol parameter, but targeted for testing on a windows environment. 
+            Similar to the tol parameter, but targeted for testing on a
+            windows environment.
 
         kwargs : dict
             Options to pass to the ImageComparison class.
@@ -116,7 +124,12 @@ class VisualTestCase(unittest.TestCase):
 
         # Build and execute the image comparison
         compare = ImageComparison(
-            inspect.stack(), visualizer=visualizer, ax=ax, tol=tol, windows_tol=windows_tol, **kwargs
+            inspect.stack(),
+            visualizer=visualizer,
+            ax=ax,
+            tol=tol,
+            windows_tol=windows_tol,
+            **kwargs
         )
         compare()
 
@@ -182,8 +195,8 @@ class ImageComparison(object):
     ValueError : at least one of visualizer or ax must be specified.
     """
 
-    def __init__(self, stack, visualizer=None, ax=None, tol=0.01, 
-                 windows_tol=0.01, ext=".png", remove_ticks=True, 
+    def __init__(self, stack, visualizer=None, ax=None, tol=0.01,
+                 windows_tol=0.01, ext=".png", remove_ticks=True,
                  remove_title=True, remove_labels=True, remove_legend=True):
 
         # Ensure we have something to draw on
@@ -216,9 +229,8 @@ class ImageComparison(object):
         # Set the error tolerance depending on the os
         if os.name == "nt" and windows_tol is not None:
             self.tol = windows_tol
-        else:        
+        else:
             self.tol = tol
-
 
         # Save other image comparison properties
         self.ext = ext

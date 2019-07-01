@@ -105,7 +105,7 @@ FIXTURES = os.path.join(os.path.dirname(__file__), "fixtures")
 
 class DatasetMixin(object):
     """
-    Mixin for unittest.TestCase class to download datasets from S3 for
+    Mixin for VisualTestCase class to download datasets from S3 for
     testing real world machine learning visual diagnostics.
     """
 

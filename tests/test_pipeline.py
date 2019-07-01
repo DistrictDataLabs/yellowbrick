@@ -18,7 +18,7 @@ Tests to ensure that the visual pipeline works as expected.
 ##########################################################################
 
 import os
-import unittest
+import pytest
 
 from unittest import mock
 from yellowbrick.base import Visualizer
@@ -39,6 +39,7 @@ class MockEstimator(BaseEstimator):
 
     def fit(self, X, y=None, **kwargs):
         return self
+
 
 class MockVisualEstimator(Visualizer):
 
@@ -76,7 +77,7 @@ class MockVisualTransformer(Visualizer, TransformerMixin):
 ## VisualPipeline Tests
 ##########################################################################
 
-class VisualPipelineTests(unittest.TestCase):
+class TestVisualPipeline(object):
 
     def test_validate_steps(self):
         """
@@ -87,7 +88,7 @@ class VisualPipelineTests(unittest.TestCase):
         # TypeError if the steps don't match transforms --> estimator.
 
         # validate a bad intermediate transformer on the Pipeline
-        with self.assertRaises(TypeError):
+        with pytest.raises(TypeError):
             Pipeline([
                 ('real', MockTransformer()),
                 ('bad', Thing()),
@@ -95,7 +96,7 @@ class VisualPipelineTests(unittest.TestCase):
             ])
 
         # validate a bad intermediate transformer on the VisualPipeline
-        with self.assertRaises(TypeError):
+        with pytest.raises(TypeError):
             VisualPipeline([
                 ('real', MockTransformer()),
                 ('bad', Thing()),
@@ -103,14 +104,14 @@ class VisualPipelineTests(unittest.TestCase):
             ])
 
         # validate a bad final estimator on the Pipeline
-        with self.assertRaises(TypeError):
+        with pytest.raises(TypeError):
             Pipeline([
                 ('real', MockTransformer()),
                 ('bad', Thing()),
             ])
 
         # validate a bad final estimator on the VisualPipeline
-        with self.assertRaises(TypeError):
+        with pytest.raises(TypeError):
             VisualPipeline([
                 ('real', MockTransformer()),
                 ('bad', Thing()),
@@ -149,11 +150,11 @@ class VisualPipelineTests(unittest.TestCase):
             ('e', MockEstimator()),
         ])
 
-        self.assertNotIn('a', pipeline.visual_steps)
-        self.assertIn('b', pipeline.visual_steps)
-        self.assertNotIn('c', pipeline.visual_steps)
-        self.assertIn('d', pipeline.visual_steps)
-        self.assertNotIn('e', pipeline.visual_steps)
+        assert 'a' not in pipeline.visual_steps
+        assert 'b' in pipeline.visual_steps
+        assert 'c' not in pipeline.visual_steps
+        assert 'd' in pipeline.visual_steps
+        assert 'e' not in pipeline.visual_steps
 
     def test_pipeline_poof(self):
         """
@@ -192,7 +193,7 @@ class VisualPipelineTests(unittest.TestCase):
         pipeline.steps[3][1].poof.assert_called_once_with(outpath=os.path.join(tmpdir, "d.pdf"))
         pipeline.steps[4][1].poof.assert_called_once_with(outpath=os.path.join(tmpdir, "e.pdf"))
 
-    @unittest.skip("need to find a way for fit to return self in mocks")
+    @pytest.mark.skip(reason="need to find a way for fit to return self in mocks")
     def test_fit_transform_poof_and_draw_calls(self):
         """
         Test calling fit, transform, and poof on the pipeline

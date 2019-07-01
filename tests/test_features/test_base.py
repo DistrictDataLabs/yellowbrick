@@ -28,22 +28,13 @@ from sklearn.base import BaseEstimator, TransformerMixin
 ## FeatureVisualizer Base Tests
 ##########################################################################
 
-class FeatureVisualizerBaseTests(VisualTestCase):
+class TestFeatureVisualizerBase(VisualTestCase):
 
     def test_subclass(self):
         """
         Assert the feature visualizer is in its rightful place
         """
         visualizer = FeatureVisualizer()
-        self.assertIsInstance(visualizer, TransformerMixin)
-        self.assertIsInstance(visualizer, BaseEstimator)
-        self.assertIsInstance(visualizer, Visualizer)
-
-    # def test_interface(self):
-    #     """
-    #     Test the feature visualizer interface
-    #     """
-    #
-    #     visualizer = FeatureVisualizer()
-    #     with self.assertRaises(NotImplementedError):
-    #         visualizer.poof()
+        assert isinstance(visualizer, TransformerMixin)
+        assert isinstance(visualizer, BaseEstimator)
+        assert isinstance(visualizer, Visualizer)
