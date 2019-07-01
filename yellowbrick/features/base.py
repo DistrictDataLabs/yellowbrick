@@ -130,7 +130,7 @@ class MultiFeatureVisualizer(FeatureVisualizer):
 ## Data Visualizers
 ##########################################################################
 
-class target_type(Enum):
+class Target_Type(Enum):
     AUTO = 'auto'
     SINGLE = 'single'
     DISCRETE = 'discrete'
@@ -214,8 +214,8 @@ class DataVisualizer(MultiFeatureVisualizer):
         self.colormap = colormap
         try:
             # Ensures that taregt is either Single, Discrete, Continuous or Auto
-            self.target = target_type(target)
-        except:
+            self.target = Target_Type(target)
+        except ValueError:
             raise YellowbrickValueError("unknown target color type '{}'".format(target))
     def fit(self, X, y=None, **kwargs):
         """
@@ -243,11 +243,11 @@ class DataVisualizer(MultiFeatureVisualizer):
 
         self._determine_target_color_type(y)
         
-        if self._target_color_type == target_type.SINGLE:
+        if self._target_color_type == Target_Type.SINGLE:
             self._colors = 'b'
 
         # Compute classes and colors if target type is discrete
-        elif self._target_color_type == target_type.DISCRETE:
+        elif self._target_color_type == Target_Type.DISCRETE:
             # Store the classes for the legend if they're None.
             if self.classes_ is None:
                 # TODO: Is this the most efficient method?
@@ -263,7 +263,7 @@ class DataVisualizer(MultiFeatureVisualizer):
             self._colors = dict(zip(self.classes_, color_values))
             
         # Compute target range if colors are continuous
-        elif self._target_color_type == target_type.CONTINUOUS:
+        elif self._target_color_type == Target_Type.CONTINUOUS:
             y = np.asarray(y)
             self.range_ = (y.min(), y.max())
             
@@ -290,18 +290,18 @@ class DataVisualizer(MultiFeatureVisualizer):
         This property will be used to compute the colors for each point.
         """
         if y is None:
-            self._target_color_type = target_type.SINGLE
-        elif self.target == target_type.AUTO:
+            self._target_color_type = Target_Type.SINGLE
+        elif self.target == Target_Type.AUTO:
             # NOTE: See #73 for a generalization to use when implemented
             if len(np.unique(y)) < 10:
-                self._target_color_type = target_type.DISCRETE
+                self._target_color_type = Target_Type.DISCRETE
             else:
-                self._target_color_type = target_type.CONTINUOUS
+                self._target_color_type = Target_Type.CONTINUOUS
         else:
             self._target_color_type = self.target
 
         # Ensures that target is either SINGLE, DISCRETE or CONTINUOS and not AUTO
-        if self._target_color_type == target_type.AUTO:
+        if self._target_color_type == Target_Type.AUTO:
             raise YellowbrickValueError((
                 "could not determine target color type "
                 "from target='{}' to '{}'"

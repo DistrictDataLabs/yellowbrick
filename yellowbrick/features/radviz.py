@@ -147,7 +147,9 @@ class RadialVisualizer(DataVisualizer):
     """
 
     def __init__(self, ax=None, features=None, classes=None, color=None,
-                 colormap=None, alpha=1.0, target="discrete", **kwargs):
+                 colormap=None, alpha=1.0, **kwargs):
+        if "target" not in kwargs:
+            kwargs["target"] = "discrete"
         super(RadialVisualizer, self).__init__(
             ax, features, classes, color, colormap, **kwargs
         )

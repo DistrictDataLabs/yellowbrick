@@ -248,9 +248,10 @@ class ParallelCoordinates(DataVisualizer):
                  vlines=True,
                  vlines_kwds=None,
                  **kwargs):
-
+        if "target" not in kwargs:
+            kwargs["target"] = "discrete"
         super(ParallelCoordinates, self).__init__(
-            ax, features, classes, color, colormap, target="discrete", **kwargs
+            ax, features, classes, color, colormap, **kwargs
         )
 
         # Validate 'normalize' argument
