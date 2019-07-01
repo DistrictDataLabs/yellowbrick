@@ -77,7 +77,8 @@ class MissingValuesBar(MissingDataVisualizer):
     >>> visualizer.poof()
     """
 
-    def __init__(self, width=0.5, color='black', colors=None, classes=None, **kwargs):
+    def __init__(self, width=0.5, color='black', colors=None, classes=None, 
+                 target="discrete", **kwargs):
         super(MissingValuesBar, self).__init__(**kwargs)
         self.width = width  # the width of the bars
         self.classes_ = classes

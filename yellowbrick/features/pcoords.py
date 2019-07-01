@@ -250,7 +250,7 @@ class ParallelCoordinates(DataVisualizer):
                  **kwargs):
 
         super(ParallelCoordinates, self).__init__(
-            ax, features, classes, color, colormap, **kwargs
+            ax, features, classes, color, colormap, target="discrete", **kwargs
         )
 
         # Validate 'normalize' argument

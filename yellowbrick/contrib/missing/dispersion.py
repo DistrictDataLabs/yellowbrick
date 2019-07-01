@@ -69,7 +69,8 @@ class MissingValuesDispersion(MissingDataVisualizer):
     >>> visualizer.poof()
     """
 
-    def __init__(self, alpha=0.5, marker="|", classes=None, **kwargs):
+    def __init__(self, alpha=0.5, marker="|", classes=None, target="discrete", 
+                 **kwargs):
 
         super(MissingValuesDispersion, self).__init__(**kwargs)
         self.alpha = alpha
