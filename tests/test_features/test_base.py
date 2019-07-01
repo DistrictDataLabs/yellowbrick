@@ -18,7 +18,6 @@ Tests for the feature selection and analysis base classes
 ##########################################################################
 
 import pytest
-import unittest
 from unittest.mock import patch
 
 from yellowbrick.base import Visualizer
@@ -85,7 +84,7 @@ class FeatureVisualizerBaseTests(VisualTestCase):
 
 
 @pytest.mark.usefixtures("discrete", "continuous")
-class DataVisualizerBaseTests(unittest.TestCase):
+class TestDataVisualizerBase(object):
     
     @patch.object(DataVisualizer, 'draw')
     def test_single(self, mock_draw):
@@ -156,5 +155,4 @@ class DataVisualizerBaseTests(unittest.TestCase):
         dataviz.fit(X, y)
         assert dataviz.classes_ == classes
         assert list(dataviz._colors.keys()) == classes
-        
         
