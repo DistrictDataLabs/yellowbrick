@@ -34,9 +34,9 @@ from yellowbrick.cluster.silhouette import SilhouetteVisualizer
 ## SilhouetteVisualizer Test Cases
 ##########################################################################
 
-class SilhouetteVisualizerTests(VisualTestCase):
+class TestSilhouetteVisualizer(VisualTestCase):
     """
-    Silhouette Visualizer
+    Silhouette Visualizer Tests
     """
 
     @pytest.mark.xfail(

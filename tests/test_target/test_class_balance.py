@@ -66,7 +66,7 @@ def make_fixture(binary=False, balanced=False, split=False):
 ##  Tests
 ##########################################################################
 
-class ClassBalanceTests(VisualTestCase, DatasetMixin):
+class TestClassBalance(VisualTestCase, DatasetMixin):
     """
     Test ClassBalance visualizer
     """

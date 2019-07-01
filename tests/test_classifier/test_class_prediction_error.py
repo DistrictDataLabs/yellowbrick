@@ -45,7 +45,7 @@ X, y = make_classification(
 ##########################################################################
 
 
-class ClassPredictionErrorTests(VisualTestCase, DatasetMixin):
+class TestClassPredictionError(VisualTestCase, DatasetMixin):
 
     def test_integration_class_prediction_error(self):
         """

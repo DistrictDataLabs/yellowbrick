@@ -21,9 +21,9 @@ Testing the matplotlib configuration modifications for aesthetic.
 import pytest
 import numpy as np
 import matplotlib as mpl
+import numpy.testing as npt
 import yellowbrick.style.rcmod as yb_rcmod
 
-import numpy.testing as npt
 from tests.base import VisualTestCase
 
 

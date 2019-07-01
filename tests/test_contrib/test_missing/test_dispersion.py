@@ -27,20 +27,21 @@ try:
 except ImportError:
     pd = None
 
+
+@pytest.fixture(scope="class")
+def missing_dispersion_tolerance(request):
+    request.cls.tol = 0.5 if os.name == 'nt' else 0.01
+
+
 ##########################################################################
 ## Feature Importances Tests
 ##########################################################################
 
-class MissingValuesDispersionTestCase(VisualTestCase):
+@pytest.mark.usefixtures("missing_dispersion_tolerance")
+class TestMissingValuesDispersion(VisualTestCase):
     """
     MissingValuesDispersion visualizer
     """
-    def setUp(self):
-        super(MissingValuesDispersionTestCase, self).setUp()
-        self.tol = 0.01
-        if os.name == 'nt': # Windows
-            self.tol = 5.0
-
 
     def test_missingvaluesdispersion_with_pandas(self):
         """
@@ -82,7 +83,6 @@ class MissingValuesDispersionTestCase(VisualTestCase):
         viz.poof()
 
         self.assert_images_similar(viz, tol=self.tol)
-
 
     def test_missingvaluesdispersion_with_numpy(self):
         """

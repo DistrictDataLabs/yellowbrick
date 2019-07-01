@@ -68,7 +68,7 @@ def digits(request):
 ##########################################################################
 
 @pytest.mark.usefixtures("digits")
-class ConfusionMatrixTests(VisualTestCase):
+class TestConfusionMatrix(VisualTestCase):
     """
     Test ConfusionMatrix visualizer
     """
