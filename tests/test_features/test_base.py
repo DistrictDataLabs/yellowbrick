@@ -91,11 +91,11 @@ class TestDataVisualizerBase(object):
 
         dataviz = DataVisualizer()
         # Check default is auto
-        assert dataviz.target == target_type.AUTO
+        assert dataviz.target == Target_Type.AUTO
 
         # Assert single when y is None
         dataviz._determine_target_color_type(None)
-        assert dataviz._target_color_type == target_type.SINGLE
+        assert dataviz._target_color_type == Target_Type.SINGLE
         
         # None overrides specified target
         dataviz = DataVisualizer(target="continuous")
@@ -103,12 +103,12 @@ class TestDataVisualizerBase(object):
         dataviz.fit(X)
         mock_draw.assert_called_once()
         assert dataviz._colors == 'b'
-        assert dataviz._target_color_type == target_type.SINGLE
+        assert dataviz._target_color_type == Target_Type.SINGLE
        
         # None overrides specified target
         dataviz = DataVisualizer(target="discrete")
         dataviz._determine_target_color_type(None)
-        assert dataviz._target_color_type == target_type.SINGLE
+        assert dataviz._target_color_type == Target_Type.SINGLE
 
     @patch.object(DataVisualizer, 'draw')
     def test_continuous(self, mock_draw):
@@ -118,26 +118,26 @@ class TestDataVisualizerBase(object):
         dataviz.fit(X, y)
         mock_draw.assert_called_once()
         assert hasattr(dataviz, "range_")
-        assert dataviz._target_color_type == target_type.CONTINUOUS
+        assert dataviz._target_color_type == Target_Type.CONTINUOUS
         
         # Check when default is set to continuous and discrete data passed in
         dataviz = DataVisualizer(target="continuous")
         X, y = self.discrete
         dataviz._determine_target_color_type(y)
-        assert dataviz._target_color_type == target_type.CONTINUOUS
+        assert dataviz._target_color_type == Target_Type.CONTINUOUS
         
     def test_discrete(self):
         # Check when y is discrete
         _, y = self.discrete
         dataviz = DataVisualizer()
         dataviz._determine_target_color_type(y)
-        assert dataviz._target_color_type == target_type.DISCRETE
+        assert dataviz._target_color_type == Target_Type.DISCRETE
         
         # Check when default is set to discrete and continuous data passed in
         _, y = self.continuous
         dataviz = DataVisualizer(target="discrete")
         dataviz._determine_target_color_type(y)
-        assert dataviz._target_color_type == target_type.DISCRETE
+        assert dataviz._target_color_type == Target_Type.DISCRETE
         
     def test_bad_target(self):
         # Bad target raises exception
