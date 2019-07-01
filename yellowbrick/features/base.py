@@ -213,7 +213,7 @@ class DataVisualizer(MultiFeatureVisualizer):
         self.color = color
         self.colormap = colormap
         try:
-            # Ensures that taregt is either Single, Discrete, Continuous or Auto
+            # Ensures that target is either Single, Discrete, Continuous or Auto
             self.target = Target_Type(target)
         except ValueError:
             raise YellowbrickValueError("unknown target color type '{}'".format(target))
