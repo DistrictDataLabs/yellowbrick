@@ -66,12 +66,10 @@ class SilhouetteVisualizer(ClusteringScoreVisualizer):
         The axes to plot the figure on. If None is passed in the current axes
         will be used (or generated if required).
 
-
     colors : iterable or string, default: None
         A collection of colors to use for each cluster group. If there are
         fewer colors than cluster groups, colors will repeat. May also be a
-        matplotlib colormap string.
-
+        Yellowbrick or matplotlib colormap string.
 
     kwargs : dict
         Keyword arguments that are passed to the base class and may influence
