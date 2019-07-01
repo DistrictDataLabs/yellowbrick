@@ -91,14 +91,14 @@ class TestDataVisualizerBase(object):
 
         dataviz = DataVisualizer()
         # Check default is auto
-        assert dataviz.target == Target_Type.AUTO
+        assert dataviz.target_type == Target_Type.AUTO
 
         # Assert single when y is None
         dataviz._determine_target_color_type(None)
         assert dataviz._target_color_type == Target_Type.SINGLE
         
         # None overrides specified target
-        dataviz = DataVisualizer(target="continuous")
+        dataviz = DataVisualizer(target_type="continuous")
         X, y = self.continuous
         dataviz.fit(X)
         mock_draw.assert_called_once()
@@ -106,7 +106,7 @@ class TestDataVisualizerBase(object):
         assert dataviz._target_color_type == Target_Type.SINGLE
        
         # None overrides specified target
-        dataviz = DataVisualizer(target="discrete")
+        dataviz = DataVisualizer(target_type="discrete")
         dataviz._determine_target_color_type(None)
         assert dataviz._target_color_type == Target_Type.SINGLE
 
@@ -121,7 +121,7 @@ class TestDataVisualizerBase(object):
         assert dataviz._target_color_type == Target_Type.CONTINUOUS
         
         # Check when default is set to continuous and discrete data passed in
-        dataviz = DataVisualizer(target="continuous")
+        dataviz = DataVisualizer(target_type="continuous")
         X, y = self.discrete
         dataviz._determine_target_color_type(y)
         assert dataviz._target_color_type == Target_Type.CONTINUOUS
@@ -135,7 +135,7 @@ class TestDataVisualizerBase(object):
         
         # Check when default is set to discrete and continuous data passed in
         _, y = self.continuous
-        dataviz = DataVisualizer(target="discrete")
+        dataviz = DataVisualizer(target_type="discrete")
         dataviz._determine_target_color_type(y)
         assert dataviz._target_color_type == Target_Type.DISCRETE
         
@@ -144,14 +144,14 @@ class TestDataVisualizerBase(object):
         # None overrides specified target
         msg = "unknown target color type 'foo'"
         with pytest.raises(YellowbrickValueError, match=msg):
-            DataVisualizer(target="foo")
+            DataVisualizer(target_type="foo")
     
     @patch.object(DataVisualizer, 'draw')        
     def test_classes(self, mock_draw):
         # Checks that classes are assigned correctly
         X, y = self.discrete
         classes = ['a', 'b', 'c', 'd', 'e']
-        dataviz = DataVisualizer(classes=classes, target='discrete')
+        dataviz = DataVisualizer(classes=classes, target_type='discrete')
         dataviz.fit(X, y)
         assert dataviz.classes_ == classes
         assert list(dataviz._colors.keys()) == classes

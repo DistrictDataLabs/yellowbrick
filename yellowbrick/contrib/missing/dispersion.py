@@ -71,8 +71,8 @@ class MissingValuesDispersion(MissingDataVisualizer):
 
     def __init__(self, alpha=0.5, marker="|", classes=None, **kwargs):
 
-        if "target" not in kwargs:
-            kwargs["target"] = "single"
+        if "target_type" not in kwargs:
+            kwargs["target_type"] = "single"
         super(MissingValuesDispersion, self).__init__(**kwargs)
         self.alpha = alpha
         self.marker = marker

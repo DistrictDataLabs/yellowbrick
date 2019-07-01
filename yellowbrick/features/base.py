@@ -199,7 +199,7 @@ class DataVisualizer(MultiFeatureVisualizer):
     """
 
     def __init__(self, ax=None, features=None, classes=None, color=None,
-                 colormap=None, target="auto", **kwargs):
+                 colormap=None, target_type="auto", **kwargs):
         """
         Initialize the data visualization with many of the options required
         in order to make most visualizations work.
@@ -214,9 +214,9 @@ class DataVisualizer(MultiFeatureVisualizer):
         self.colormap = colormap
         try:
             # Ensures that target is either Single, Discrete, Continuous or Auto
-            self.target = Target_Type(target)
+            self.target_type = Target_Type(target_type)
         except ValueError:
-            raise YellowbrickValueError("unknown target color type '{}'".format(target))
+            raise YellowbrickValueError("unknown target color type '{}'".format(target_type))
     def fit(self, X, y=None, **kwargs):
         """
         The fit method is the primary drawing input for the
@@ -291,18 +291,18 @@ class DataVisualizer(MultiFeatureVisualizer):
         """
         if y is None:
             self._target_color_type = Target_Type.SINGLE
-        elif self.target == Target_Type.AUTO:
+        elif self.target_type == Target_Type.AUTO:
             # NOTE: See #73 for a generalization to use when implemented
             if len(np.unique(y)) < 10:
                 self._target_color_type = Target_Type.DISCRETE
             else:
                 self._target_color_type = Target_Type.CONTINUOUS
         else:
-            self._target_color_type = self.target
+            self._target_color_type = self.target_type
 
         # Ensures that target is either SINGLE, DISCRETE or CONTINUOS and not AUTO
         if self._target_color_type == Target_Type.AUTO:
             raise YellowbrickValueError((
                 "could not determine target color type "
                 "from target='{}' to '{}'"
-            ).format(self.target, self._target_color_type))    
+            ).format(self.target_type, self._target_color_type))    
