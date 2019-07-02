@@ -74,7 +74,7 @@ Testing Conventions
 
 - Use pytest assertions rather than ``unittest.TestCase`` methods.
 
-    We prefer ``assert 2+2 == 4`` rather than ``self.assertEquals(2+2, 4)``. As a result, test classes should not extend ``unittest.Testcase`` but should extend the ``VisualTestCase`` in the tests package. Note that if youre writing tests that do not generate matplotlib figures you can simply extend ``object``.
+    We prefer ``assert 2+2 == 4`` rather than ``self.assertEquals(2+2, 4)``. As a result, test classes should not extend ``unittest.Testcase`` but should extend the ``VisualTestCase`` in the tests package. Note that if you're writing tests that do not generate matplotlib figures you can simply extend ``object``.
 
 - Use test fixtures and sklearn dataset generators.
 

@@ -64,7 +64,7 @@ class VisualTestCase(object):
 
     def setup_method(self):
         """
-        Berfore a visual test case method is run, ensure that the previous
+        Before a visual test case method is run, ensure that the previous
         figure is closed and the current axes are cleared.
 
         See: https://docs.pytest.org/en/latest/xunit_setup.html
