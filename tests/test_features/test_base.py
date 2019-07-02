@@ -61,10 +61,9 @@ def continuous(request):
 ## FeatureVisualizer Base Tests
 ##########################################################################
 
-
 class TestFeatureVisualizerBase(VisualTestCase):
 
-    def test_subclass(self):
+  def test_subclass(self):
         """
         Assert the feature visualizer is in its rightful place
         """
