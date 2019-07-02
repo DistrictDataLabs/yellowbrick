@@ -31,10 +31,6 @@
     "url": "https://s3.amazonaws.com/ddl-data-lake/yellowbrick/v1.0/occupancy.zip",
     "signature": "0b390387584586a05f45c7da610fdaaf8922c5954834f323ae349137394e6253"
   },
-  "receivers": {
-    "url": "receivers.zip",
-    "signature": "a5dbe22d267e9aa12bd84be325c417c27882d156d4410a718262aad6e235ab9b"
-  },
   "spam": {
     "url": "https://s3.amazonaws.com/ddl-data-lake/yellowbrick/v1.0/spam.zip",
     "signature": "000309ac2b61090a3001de3e262a5f5319708bb42791c62d15a08a2f9f7cb30a"
@@ -42,5 +38,9 @@
   "walking": {
     "url": "https://s3.amazonaws.com/ddl-data-lake/yellowbrick/v1.0/walking.zip",
     "signature": "7a36615978bc3bb74a2e9d5de216815621bd37f6a42c65d3fc28b242b4d6e040"
+  },
+  "nfl": {
+    "url": "https://s3.amazonaws.com/ddl-data-lake/yellowbrick/v1.0/nfl.zip",
+    "signature": "e2d0665ed4fd7bea866ba6d2f0035fce89e6143da3c12dcd870e67319451a382"
   }
 }
