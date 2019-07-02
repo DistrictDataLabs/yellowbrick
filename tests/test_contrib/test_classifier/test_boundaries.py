@@ -66,7 +66,7 @@ X_two_cols = X[:, :2]
 
 
 @pytest.mark.filterwarnings('ignore')
-class DecisionBoundariesVisualizerTest(VisualTestCase):
+class TestDecisionBoundariesVisualizer(VisualTestCase):
     """
     Test DecisionBoundariesVisualizer
     """
@@ -102,24 +102,23 @@ class DecisionBoundariesVisualizerTest(VisualTestCase):
         model = neighbors.KNeighborsClassifier(3)
         viz = DecisionBoundariesVisualizer(model)
 
-        self.assertEquals(viz.step_size, 0.0025)
-        self.assertEqual(viz.name, 'KNeighborsClassifier')
-        self.assertEqual(viz.estimator, model)
+        assert viz.step_size == 0.0025
+        assert viz.name == 'KNeighborsClassifier'
+        assert viz.estimator is model
 
-        self.assertIsNone(viz.classes_)
-        self.assertIsNone(viz.features_)
-        self.assertIsNotNone(viz.markers)
-        self.assertIsNotNone(viz.scatter_alpha)
-        self.assertTrue(viz.show_scatter)
+        assert viz.classes_ is None
+        assert viz.features_ is None
+        assert viz.markers is not None
+        assert viz.scatter_alpha is not None
+        assert viz.show_scatter is True
 
-        self.assertIsNone(viz.Z)
-        self.assertIsNone(viz.xx)
-        self.assertIsNone(viz.yy)
-        self.assertIsNone(viz.class_labels)
-        self.assertIsNone(viz.title)
-        self.assertIsNone(viz.x)
-        self.assertIsNone(viz.y)
-
+        assert viz.Z is None
+        assert viz.xx is None
+        assert viz.yy is None
+        assert viz.class_labels is None
+        assert viz.title is None
+        assert viz.x is None
+        assert viz.y is None
 
     def test_scatter_xy_and_features_raise_error(self):
         """
@@ -128,7 +127,7 @@ class DecisionBoundariesVisualizerTest(VisualTestCase):
         model = neighbors.KNeighborsClassifier(3)
         features = ["temperature", "relative_humidity", "light"]
 
-        with self.assertRaises(YellowbrickValueError):
+        with pytest.raises(YellowbrickValueError):
             DecisionBoundariesVisualizer(
                 model, features=features, x='one', y='two'
             )
@@ -139,8 +138,7 @@ class DecisionBoundariesVisualizerTest(VisualTestCase):
         """
         model = neighbors.KNeighborsClassifier(3)
         visualizer = DecisionBoundariesVisualizer(model, x='one', y='two')
-        self.assertEquals(visualizer.features_, ['one', 'two'])
-
+        assert visualizer.features_ == ['one', 'two']
 
     def test_fit(self):
         """
@@ -154,17 +152,17 @@ class DecisionBoundariesVisualizerTest(VisualTestCase):
         fitted_viz = viz.fit(X_two_cols, y=y)
 
         # assert that classes and labels are established
-        self.assertEqual(fitted_viz.classes_, {0: '0', 1: '1', 2: '2', 3: '3'})
-        self.assertEqual(fitted_viz.features_, ['Feature One', 'Feature Two'])
+        assert fitted_viz.classes_ == {0: '0', 1: '1', 2: '2', 3: '3'}
+        assert fitted_viz.features_ == ['Feature One', 'Feature Two']
 
         # assert that the fit method is called
         model.fit.assert_called_once_with(X_two_cols, y)
         # mock object is called twice in predict and reshape
-        self.assertEqual(len(model.predict.mock_calls), 2)
+        assert len(model.predict.mock_calls) == 2
 
         # test that attrs are set
-        self.assertIsNotNone(fitted_viz.ax)
-        self.assertIsNotNone(fitted_viz.Z_shape)
+        assert fitted_viz.ax is not None
+        assert fitted_viz.Z_shape is not None
 
     def test_fit_class_labels(self):
         """
@@ -174,11 +172,7 @@ class DecisionBoundariesVisualizerTest(VisualTestCase):
         viz = DecisionBoundariesVisualizer(
             model, classes=['one', 'two', 'three', 'four'])
         fitted_viz = viz.fit(X_two_cols, y=y)
-        self.assertEquals(fitted_viz.classes_,
-                          {'three': '2',
-                           'four': '3',
-                           'two': '1',
-                           'one': '0'})
+        assert fitted_viz.classes_ == {'three': '2', 'four': '3', 'two': '1', 'one': '0'}
 
     def test_fit_class_labels_class_names_edge_case(self):
         """
@@ -187,7 +181,9 @@ class DecisionBoundariesVisualizerTest(VisualTestCase):
         model = neighbors.KNeighborsClassifier(3)
         viz = DecisionBoundariesVisualizer(
             model, classes=['one', 'two', 'three', 'four', 'five'])
-        self.assertRaises(YellowbrickTypeError, viz.fit, X_two_cols, y=y)
+
+        with pytest.raises(YellowbrickTypeError):
+            viz.fit(X_two_cols, y=y)
 
     def test_fit_features_assignment_None(self):
         """
@@ -195,9 +191,9 @@ class DecisionBoundariesVisualizerTest(VisualTestCase):
         """
         model = neighbors.KNeighborsClassifier(3)
         viz = DecisionBoundariesVisualizer(model)
-        self.assertIsNone(viz.features_)
+        assert viz.features_ is None
         fitted_viz = viz.fit(X_two_cols, y=y)
-        self.assertEquals(fitted_viz.features_, ['Feature One', 'Feature Two'])
+        assert fitted_viz.features_ == ['Feature One', 'Feature Two']
 
     def test_fit_features_assignment(self):
         """
@@ -206,7 +202,7 @@ class DecisionBoundariesVisualizerTest(VisualTestCase):
         model = neighbors.KNeighborsClassifier(3)
         viz = DecisionBoundariesVisualizer(model, features=['one', 'two'])
         fitted_viz = viz.fit(X_two_cols, y=y)
-        self.assertEquals(fitted_viz.features_, ['one', 'two'])
+        assert fitted_viz.features_ == ['one', 'two']
 
     @mock.patch("yellowbrick.contrib.classifier.boundaries.OrderedDict")
     def test_draw_ordereddict_calls(self, mock_odict):
@@ -216,8 +212,11 @@ class DecisionBoundariesVisualizerTest(VisualTestCase):
         mock_odict.return_value = {}
         model = neighbors.KNeighborsClassifier(3)
         viz = DecisionBoundariesVisualizer(model, features=['one', 'two'])
-        self.assertRaises(KeyError, viz.fit_draw, X_two_cols, y=y)
-        self.assertEquals(len(mock_odict.mock_calls), 2)
+
+        with pytest.raises(KeyError):
+            viz.fit_draw(X_two_cols, y=y)
+
+        assert len(mock_odict.mock_calls) == 2
 
     @mock.patch("yellowbrick.contrib.classifier.boundaries.resolve_colors")
     def test_draw_ordereddict_calls_one(self, mock_resolve_colors):
@@ -227,8 +226,11 @@ class DecisionBoundariesVisualizerTest(VisualTestCase):
         mock_resolve_colors.return_value = []
         model = neighbors.KNeighborsClassifier(3)
         viz = DecisionBoundariesVisualizer(model, features=['one', 'two'])
-        self.assertRaises(StopIteration, viz.fit_draw, X_two_cols, y=y)
-        self.assertEquals(len(mock_resolve_colors.mock_calls), 1)
+
+        with pytest.raises(StopIteration):
+            viz.fit_draw(X_two_cols, y=y)
+
+        assert len(mock_resolve_colors.mock_calls) == 1
 
     def test_draw_ax_show_scatter_true(self):
         """
@@ -243,9 +245,9 @@ class DecisionBoundariesVisualizerTest(VisualTestCase):
         fitted_viz.ax.legend = mock.MagicMock()
 
         fitted_viz.draw(X_two_cols, y=y)
-        self.assertEquals(len(fitted_viz.ax.pcolormesh.mock_calls), 1)
-        self.assertEquals(len(fitted_viz.ax.scatter.mock_calls), 4)
-        self.assertEquals(len(fitted_viz.ax.legend.mock_calls), 0)
+        assert len(fitted_viz.ax.pcolormesh.mock_calls) == 1
+        assert len(fitted_viz.ax.scatter.mock_calls) == 4
+        assert len(fitted_viz.ax.legend.mock_calls) == 0
 
     def test_draw_ax_show_scatter_False(self):
         """
@@ -261,9 +263,9 @@ class DecisionBoundariesVisualizerTest(VisualTestCase):
         fitted_viz.ax.legend = mock.MagicMock()
 
         fitted_viz.draw(X_two_cols, y=y)
-        self.assertEquals(len(fitted_viz.ax.pcolormesh.mock_calls), 1)
-        self.assertEquals(len(fitted_viz.ax.scatter.mock_calls), 0)
-        self.assertEquals(len(fitted_viz.ax.legend.mock_calls), 1)
+        assert len(fitted_viz.ax.pcolormesh.mock_calls) == 1
+        assert len(fitted_viz.ax.scatter.mock_calls) == 0
+        assert len(fitted_viz.ax.legend.mock_calls) == 1
 
     def test_finalize(self):
         """
@@ -280,7 +282,7 @@ class DecisionBoundariesVisualizerTest(VisualTestCase):
         fitted_viz.ax.set_xlabel = mock.MagicMock()
         fitted_viz.ax.set_ylabel = mock.MagicMock()
 
-        fitted_viz.poof()
+        fitted_viz.finalize()
 
         fitted_viz.ax.legend.assert_called_once_with(loc='best', frameon=True)
         fitted_viz.ax.set_xlabel.assert_called_once_with('one')
@@ -345,7 +347,7 @@ class DecisionBoundariesVisualizerTest(VisualTestCase):
 
         visualizer = DecisionBoundariesVisualizer(model, features=['a', 'f'])
         visualizer.fit_draw_poof(X, y=y)
-        self.assertEquals(visualizer.features_, ['a', 'f'])
+        assert visualizer.features_ == ['a', 'f']
         self.assert_images_similar(visualizer)
 
     def test_integrated_scatter_numpy_arrays_no_names(self):
@@ -356,7 +358,7 @@ class DecisionBoundariesVisualizerTest(VisualTestCase):
 
         visualizer = DecisionBoundariesVisualizer(model, features=[1, 2])
         visualizer.fit_draw_poof(X, y)
-        self.assertEquals(visualizer.features_, [1, 2])
+        assert visualizer.features_ == [1, 2]
 
     @pytest.mark.xfail(
         sys.platform == 'win32', reason="images not close on windows"

@@ -235,7 +235,7 @@ class TestResolveColors(VisualTestCase):
         )
         visualizer = SilhouetteVisualizer(KMeans(random_state=0), colormap='neural_paint')
         visualizer.fit(X)
-        visualizer.poof()
+        visualizer.finalize()
 
         tol = 3.2 if sys.platform == "win32" else 0.01  # Fails on AppVeyor with RMS 3.143
         self.assert_images_similar(visualizer, remove_legend=True, tol=tol)

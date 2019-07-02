@@ -36,14 +36,14 @@ def test_manual_legend_uneven_colors():
 
 @pytest.fixture(scope="class")
 def data(request):
-    
+
     data = np.array(
             [[4, 8, 7, 6, 5, 2, 1],
              [6, 7, 9, 6, 9, 3, 6],
              [5, 1, 6, 8, 4, 7, 8],
              [6, 8, 1, 5, 6, 7, 4]]
             )
-    
+
     request.cls.data = data
 
 ##########################################################################
@@ -83,80 +83,79 @@ class TestDraw(VisualTestCase):
 
     def test_vertical_bar_stack(self):
         """
-        Test bar_stack for vertical orientation 
+        Test bar_stack for vertical orientation
         """
         _, ax = plt.subplots()
-        
+
         # Plots stacked bar charts
         bar_stack(self.data, ax=ax, orientation='v')
-        
+
          # Assert image similarity
         self.assert_images_similar(ax=ax, tol=0.1)
-        
+
     def test_horizontal_bar_stack(self):
         """
-        Test bar_stack for horizontal orientation 
+        Test bar_stack for horizontal orientation
         """
         _, ax = plt.subplots()
         # Plots stacked bar charts
         bar_stack(self.data, ax=ax, orientation='h')
-        
+
         # Assert image similarity
         self.assert_images_similar(ax=ax, tol=0.1)
-        
+
     def test_single_row_bar_stack(self):
         """
-        Test bar_stack for single row 
-        """        
+        Test bar_stack for single row
+        """
         data = np.array([[4, 8, 7, 6, 5, 2, 1]])
-        
+
         _, ax = plt.subplots()
-        
+
         # Plots stacked bar charts
         bar_stack(data, ax=ax)
-        
+
         # Assert image similarity
         self.assert_images_similar(ax=ax, tol=0.1)
-    
+
     def test_labels_vertical(self):
         """
         Test labels and ticks for vertical barcharts
-        """        
+        """
         labels =  ['books', 'cinema', 'cooking', 'gaming']
-        ticks = ['noun', 'verb', 'adverb', 'pronoun', 'preposition', 
+        ticks = ['noun', 'verb', 'adverb', 'pronoun', 'preposition',
                  'digit', 'other']
         _, ax = plt.subplots()
-        
+
         # Plots stacked bar charts
-        bar_stack(self.data, labels = labels, ticks=ticks, 
+        bar_stack(self.data, labels = labels, ticks=ticks,
                   colors=['r','b','g','y'])
-        
+
         # Extract tick labels from the plot
         ticks_ax = [tick.get_text() for tick in ax.xaxis.get_ticklabels()]
         #Assert that ticks are set properly
         assert ticks_ax==ticks
-        
+
         # Assert image similarity
         self.assert_images_similar(ax=ax, tol=0.05)
-    
+
     def test_labels_horizontal(self):
         """
         Test labels and ticks with horizontal barcharts
-        """        
+        """
         labels =  ['books', 'cinema', 'cooking', 'gaming']
-        ticks = ['noun', 'verb', 'adverb', 'pronoun', 'preposition', 
+        ticks = ['noun', 'verb', 'adverb', 'pronoun', 'preposition',
                  'digit', 'other']
         _, ax = plt.subplots()
-        
+
         # Plots stacked bar charts
-        bar_stack(self.data, labels = labels, ticks=ticks, orientation='h', 
+        bar_stack(self.data, labels = labels, ticks=ticks, orientation='h',
                   colormap='cool')
-        
+
         # Extract tick labels from the plot
         ticks_ax = [tick.get_text() for tick in ax.yaxis.get_ticklabels()]
         #Assert that ticks are set properly
         assert ticks_ax==ticks
-        
+
         # Assert image similarity
         self.assert_images_similar(ax=ax, tol=0.05)
-        

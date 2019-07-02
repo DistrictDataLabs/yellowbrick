@@ -81,7 +81,6 @@ class TestHelpers(object):
 ## Numeric Function Tests
 ##########################################################################
 
-
 class TestNumericFunctions(object):
     """
     Numeric helper functions

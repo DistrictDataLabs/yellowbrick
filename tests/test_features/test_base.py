@@ -61,17 +61,17 @@ def continuous(request):
 ## FeatureVisualizer Base Tests
 ##########################################################################
 
+class TestFeatureVisualizerBase(VisualTestCase):
 
-class FeatureVisualizerBaseTests(VisualTestCase):
-
-    def test_subclass(self):
+  def test_subclass(self):
         """
         Assert the feature visualizer is in its rightful place
         """
         visualizer = FeatureVisualizer()
-        self.assertIsInstance(visualizer, TransformerMixin)
-        self.assertIsInstance(visualizer, BaseEstimator)
-        self.assertIsInstance(visualizer, Visualizer)
+
+        assert isinstance(visualizer, TransformerMixin)
+        assert isinstance(visualizer, BaseEstimator)
+        assert isinstance(visualizer, Visualizer)
 
     # def test_interface(self):
     #     """
@@ -155,4 +155,3 @@ class TestDataVisualizerBase(object):
         dataviz.fit(X, y)
         assert dataviz.classes_ == classes
         assert list(dataviz._colors.keys()) == classes
-

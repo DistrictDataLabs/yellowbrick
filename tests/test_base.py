@@ -31,6 +31,7 @@ from tests.rand import RandomVisualizer
 
 from sklearn.datasets import make_classification
 
+
 ##########################################################################
 ## Base Cases
 ##########################################################################
