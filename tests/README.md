@@ -2,7 +2,7 @@
 
 *Welcome to the Yellowbrick tests!*
 
-If you're looking for information about how to use Yellowbrick, for our contributor's guide, for examples and teaching resources, for answers to frequently asked questions, and more, please visit the latest version of our documentation at [www.scikit-yb.org](https://www.scikit-yb.org/). 
+If you're looking for information about how to use Yellowbrick, for our contributor's guide, for examples and teaching resources, for answers to frequently asked questions, and more, please visit the latest version of our documentation at [www.scikit-yb.org](https://www.scikit-yb.org/).
 
 ## Running Yellowbrick Tests
 
@@ -20,7 +20,7 @@ Tests can then be run as follows from the project `root`:
 $ make test
 ```
 
-The Makefile uses the `pytest` runner and testing suite as well as the coverage library. 
+The Makefile uses the `pytest` runner and testing suite as well as the coverage library.
 
 ## Adding a Test for Your Visualizer
 
@@ -28,11 +28,11 @@ The `tests` package mirrors the yellowbrick package in structure and also contai
 
 ### Visual Tests
 
-The primary test you should create is simply to test your visualizer from end to end and make sure that no exceptions occur. 
+The primary test you should create is simply to test your visualizer from end to end and make sure that no exceptions occur.
 
-Visual tests are notoriously difficult to create --- how do you test a visualization or figure? Moreover, testing scikit-learn models with real data can consume a lot of memory. To assist with this, we have two primary helpers, `VisualTestCase` and the `yellowbrick.datasets` module. 
+Visual tests are notoriously difficult to create --- how do you test a visualization or figure? Moreover, testing scikit-learn models with real data can consume a lot of memory. To assist with this, we have two primary helpers, `VisualTestCase` and the `yellowbrick.datasets` module.
 
-Leverage these helpers to create your unittest as follows:
+Leverage these helpers to create your tests as follows:
 
 ```python
 import pytest
@@ -64,7 +64,7 @@ Writing an image-based comparison test is only a little more difficult than the 
 
 The main consideration is that you must specify the “baseline” (i.e. expected) image in the `tests/baseline_images/` folder structure.
 
-For example, let's say you create your unittest in `tests/test_regressor/test_myvisualizer.py` as follows:
+For example, let's say you create your tests in `tests/test_regressor/test_myvisualizer.py` as follows:
 
 ```python
 from tests.base import VisualTestCase

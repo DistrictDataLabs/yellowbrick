@@ -19,12 +19,13 @@ Tests for the dispersion plot text visualization
 ##########################################################################
 
 import pytest
+import matplotlib.pyplot as plt
 
 from yellowbrick.exceptions import YellowbrickValueError
 from yellowbrick.datasets import load_hobbies
 from yellowbrick.text.dispersion import *
 from tests.base import VisualTestCase
-import matplotlib.pyplot as plt
+
 
 ##########################################################################
 ## Data
@@ -36,7 +37,7 @@ corpus = load_hobbies()
 ## DispersionPlot Tests
 ##########################################################################
 
-class DispersionPlotTests(VisualTestCase):
+class TestDispersionPlot(VisualTestCase):
 
     def test_quick_method(self):
         """
@@ -106,7 +107,6 @@ class DispersionPlotTests(VisualTestCase):
         visualizer.ax.grid(False)
 
         self.assert_images_similar(visualizer, tol=25.5)
-
 
     def test_dispersion_plot_color_by_class(self):
         """

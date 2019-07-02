@@ -35,7 +35,7 @@ corpus = load_hobbies()
 ## FreqDist Tests
 ##########################################################################
 
-class FreqDistTests(VisualTestCase):
+class TestFreqDist(VisualTestCase):
 
     @pytest.mark.xfail(
         IS_WINDOWS_OR_CONDA,

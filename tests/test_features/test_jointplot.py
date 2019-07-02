@@ -23,11 +23,12 @@ be tested.
 ##########################################################################
 
 import sys
+import pytest
+import numpy as np
+
 from functools import partial
 from unittest.mock import patch, MagicMock
 
-import numpy as np
-import pytest
 from sklearn.datasets import make_classification, make_regression
 
 from tests.base import IS_WINDOWS_OR_CONDA, VisualTestCase
@@ -45,6 +46,7 @@ try:
     import pandas as pd
 except ImportError:
     pd = None
+
 
 ##########################################################################
 ## Fixtures

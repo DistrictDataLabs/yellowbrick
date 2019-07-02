@@ -62,29 +62,24 @@ def continuous(request):
 ##########################################################################
 
 
-class FeatureVisualizerBaseTests(VisualTestCase):
+class TestFeatureVisualizerBase(VisualTestCase):
 
     def test_subclass(self):
         """
         Assert the feature visualizer is in its rightful place
         """
         visualizer = FeatureVisualizer()
-        self.assertIsInstance(visualizer, TransformerMixin)
-        self.assertIsInstance(visualizer, BaseEstimator)
-        self.assertIsInstance(visualizer, Visualizer)
+        assert isinstance(visualizer, TransformerMixin)
+        assert isinstance(visualizer, BaseEstimator)
+        assert isinstance(visualizer, Visualizer)
 
-    # def test_interface(self):
-    #     """
-    #     Test the feature visualizer interface
-    #     """
-    #
-    #     visualizer = FeatureVisualizer()
-    #     with self.assertRaises(NotImplementedError):
-    #         visualizer.poof()
 
+##########################################################################
+## DataVisualizer Tests
+##########################################################################
 
 @pytest.mark.usefixtures("discrete", "continuous")
-class TestDataVisualizerBase(object):
+class TestDataVisualizerBase(VisualTestCase):
 
     @patch.object(DataVisualizer, 'draw')
     def test_single(self, mock_draw):
