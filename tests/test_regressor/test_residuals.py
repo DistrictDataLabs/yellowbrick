@@ -23,6 +23,7 @@ import pytest
 import matplotlib as mpl
 import matplotlib.pyplot as plt
 
+from yellowbrick.datasets import load_energy
 from yellowbrick.regressor.residuals import *
 from yellowbrick.exceptions import YellowbrickValueError
 
@@ -108,17 +109,29 @@ class TestPredictionError(VisualTestCase):
         _, ax = plt.subplots()
 
         # Load the occupancy dataset from fixtures
-        data = self.load_data('energy')
-        target = 'cooling_load'
-        features = [
-            "relative_compactness", "surface_area", "wall_area", "roof_area",
-            "overall_height", "orientation", "glazing_area",
-            "glazing_area_distribution"
-        ]
+        data = load_energy(return_dataset=True)
+        X, y = data.to_pandas()
 
-        # Create instances and target
-        X = pd.DataFrame(data[features])
-        y = pd.Series(data[target].astype(float))
+        # Create train/test splits
+        splits = tts(X, y, test_size=0.2, random_state=8873)
+        X_train, X_test, y_train, y_test = splits
+
+        visualizer = PredictionError(Ridge(random_state=22), ax=ax)
+        visualizer.fit(X_train, y_train)
+        visualizer.score(X_test, y_test)
+        visualizer.finalize()
+
+        self.assert_images_similar(visualizer, tol=1, remove_legend=True)
+
+    def test_prediction_error_numpy(self):
+        """
+        Test NumPy real world dataset with image similarity on Ridge
+        """
+        _, ax = plt.subplots()
+
+        # Load the occupancy dataset from fixtures
+        data = load_energy(return_dataset=True)
+        X, y = data.to_numpy()
 
         # Create train/test splits
         splits = tts(X, y, test_size=0.2, random_state=8873)
@@ -277,7 +290,7 @@ class TestResidualsPlot(VisualTestCase):
         """
         No error is raised when matplotlib version is incorrect and hist=False
         """
-        with pytst.raises(ImportError):
+        with pytest.raises(ImportError):
             from mpl_toolkits.axes_grid1 import make_axes_locatable
             assert not make_axes_locatable
 
@@ -315,17 +328,29 @@ class TestResidualsPlot(VisualTestCase):
         _, ax = plt.subplots()
 
         # Load the occupancy dataset from fixtures
-        data = self.load_data('energy')
-        target = 'heating_load'
-        features = [
-            "relative_compactness", "surface_area", "wall_area", "roof_area",
-            "overall_height", "orientation", "glazing_area",
-            "glazing_area_distribution"
-        ]
+        data = load_energy(return_dataset=True)
+        X, y = data.to_pandas()
 
-        # Create instances and target
-        X = pd.DataFrame(data[features])
-        y = pd.Series(data[target].astype(float))
+        # Create train/test splits
+        splits = tts(X, y, test_size=0.2, random_state=231)
+        X_train, X_test, y_train, y_test = splits
+
+        visualizer = ResidualsPlot(Lasso(random_state=44), ax=ax)
+        visualizer.fit(X_train, y_train)
+        visualizer.score(X_test, y_test)
+        visualizer.finalize()
+
+        self.assert_images_similar(visualizer)
+
+    def test_residuals_plot_numpy(self):
+        """
+        Test NumPy real world dataset with image similarity on Lasso
+        """
+        _, ax = plt.subplots()
+
+        # Load the occupancy dataset from fixtures
+        data = load_energy(return_dataset=True)
+        X, y = data.to_numpy()
 
         # Create train/test splits
         splits = tts(X, y, test_size=0.2, random_state=231)

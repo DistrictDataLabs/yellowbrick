@@ -20,6 +20,7 @@ import pytest
 import yellowbrick as yb
 import matplotlib.pyplot as plt
 
+from yellowbrick.datasets import load_occupancy
 from yellowbrick.classifier.classification_report import *
 
 from pytest import approx
@@ -105,15 +106,48 @@ class TestClassificationReport(VisualTestCase):
         _, ax = plt.subplots()
 
         # Load the occupancy dataset from fixtures
-        data = self.load_data('occupancy')
-        target = 'occupancy'
-        features = [
-            "temperature", "relative_humidity", "light", "C02", "humidity"
-        ]
+        data = load_occupancy(return_dataset=True)
+        X, y = data.to_pandas()
 
-        # Create instances and target
-        X = pd.DataFrame(data[features])
-        y = pd.Series(data[target].astype(int))
+        # Create train/test splits
+        splits = tts(X, y, test_size=0.2, random_state=4512)
+        X_train, X_test, y_train, y_test = splits
+
+        classes = ['unoccupied', 'occupied']
+
+        # Create classification report
+        model = GaussianNB()
+        viz = ClassificationReport(model, ax=ax, classes=classes)
+        viz.fit(X_train, y_train)
+        viz.score(X_test, y_test)
+
+        self.assert_images_similar(viz, tol=43.0)
+
+        # Ensure correct classification scores under the hood!
+        assert viz.scores_ == {
+            'precision': {
+                'unoccupied': 0.999347471451876,
+                'occupied': 0.8825214899713467
+            }, 'recall': {
+                'unoccupied': 0.9613935969868174,
+                'occupied': 0.9978401727861771
+            }, 'f1': {
+                'unoccupied': 0.9800031994880819,
+                'occupied': 0.9366447034972124
+            }}
+
+    @pytest.mark.xfail(
+        sys.platform == 'win32', reason="images not close on windows"
+    )
+    def test_numpy_integration(self):
+        """
+        Test with NumPy arrays
+        """
+        _, ax = plt.subplots()
+
+        # Load the occupancy dataset from fixtures
+        data = load_occupancy(return_dataset=True)
+        X, y = data.to_numpy()
 
         # Create train/test splits
         splits = tts(X, y, test_size=0.2, random_state=4512)

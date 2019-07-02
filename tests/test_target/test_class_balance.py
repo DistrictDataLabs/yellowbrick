@@ -17,6 +17,7 @@ Tests for the ClassBalance visualizer
 import pytest
 
 from yellowbrick.target.class_balance import *
+from yellowbrick.datasets import load_occupancy
 from yellowbrick.exceptions import YellowbrickValueError
 
 from tests.base import VisualTestCase
@@ -164,10 +165,22 @@ class TestClassBalance(VisualTestCase):
         """
         Test pandas data frame with string target in balance mode
         """
-        data = self.load_data("occupancy")
-        y = pd.Series([
-            "occupied" if yi else "unoccupied" for yi in data['occupancy']
-        ])
+        data = load_occupancy(return_dataset=True)
+        X, y = data.to_pandas()
+
+        # Create and fit the visualizer
+        oz = ClassBalance()
+        assert oz.fit(y) is oz
+
+        #oz.finalize()
+        self.assert_images_similar(oz)
+
+    def test_numpy_occupancy_balance(self):
+        """
+        Test NumPy arrays with string target in balance mode
+        """
+        data = load_occupancy(return_dataset=True)
+        X, y = data.to_numpy()
 
         # Create and fit the visualizer
         oz = ClassBalance()
@@ -181,15 +194,24 @@ class TestClassBalance(VisualTestCase):
         """
         Test pandas data frame with string target in compare mode
         """
-        data = self.load_data("occupancy")
-        features = [
-            "temperature", "relative_humidity", "light", "C02", "humidity"
-        ]
+        data = load_occupancy(return_dataset=True)
+        X, y = data.to_pandas()
 
-        X = pd.DataFrame(data[features])
-        y = pd.Series([
-            "occupied" if yi else "unoccupied" for yi in data['occupancy']
-        ])
+        _, _, y_train, y_test = tts(X, y, test_size=0.4, random_state=2242)
+
+        # Create and fit the visualizer
+        oz = ClassBalance()
+        assert oz.fit(y_train, y_test) is oz
+
+        #oz.finalize()
+        self.assert_images_similar(oz)
+
+    def test_numpy_occupancy_compare(self):
+        """
+        Test NumPy arrays with string target in compare mode
+        """
+        data = load_occupancy(return_dataset=True)
+        X, y = data.to_numpy()
 
         _, _, y_train, y_test = tts(X, y, test_size=0.4, random_state=2242)
 

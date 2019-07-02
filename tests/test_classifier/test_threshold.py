@@ -24,6 +24,7 @@ import yellowbrick as yb
 import matplotlib.pyplot as plt
 
 from yellowbrick.classifier.threshold import *
+from yellowbrick.datasets import load_occupancy
 from yellowbrick.utils import is_probabilistic, is_classifier
 
 from unittest.mock import patch
@@ -101,16 +102,33 @@ class TestDiscriminationThreshold(VisualTestCase):
         _, ax = plt.subplots()
 
         # Load the occupancy dataset from fixtures
-        data = self.load_data('occupancy')
-        target = 'occupancy'
-        features = [
-            "temperature", "relative_humidity", "light", "C02", "humidity"
-        ]
+        data = load_occupancy(return_dataset=True)
+        X, y = data.to_pandas()
 
-        # Create instances and target
-        X = pd.DataFrame(data[features])
-        y = pd.Series(data[target].astype(int))
+        classes = ['unoccupied', 'occupied']
 
+        # Create the visualizer
+        viz = DiscriminationThreshold(
+            LogisticRegression(), ax=ax, classes=classes, random_state=193
+        )
+        viz.fit(X, y)
+        viz.finalize()
+
+        self.assert_images_similar(viz, tol=0.1)
+
+    @pytest.mark.xfail(
+        sys.platform == 'win32', reason="images not close on windows"
+    )
+    def test_numpy_integration(self):
+        """
+        Test with NumPy arrays
+        """
+        _, ax = plt.subplots()
+
+        # Load the occupancy dataset from fixtures
+        data = load_occupancy(return_dataset=True)
+        X, y = data.to_numpy()
+        
         classes = ['unoccupied', 'occupied']
 
         # Create the visualizer
