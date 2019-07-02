@@ -38,7 +38,7 @@ def discrete(request):
     Creare a random classification fixture.
     """
     X, y = make_classification(
-        n_samples=400, n_features=12, n_informative=10, n_redundant=0, 
+        n_samples=400, n_features=12, n_informative=10, n_redundant=0,
         n_classes=5, random_state=2019)
 
     # Set a class attribute for digits
@@ -47,7 +47,7 @@ def discrete(request):
 @pytest.fixture(scope='class')
 def continuous(request):
     """
-    Creates a random regressor fixture. 
+    Creates a random regressor fixture.
     """
     X, y = make_regression(
         n_samples=500, n_features=22, n_informative=8, random_state=2019
@@ -72,7 +72,7 @@ class FeatureVisualizerBaseTests(VisualTestCase):
         self.assertIsInstance(visualizer, TransformerMixin)
         self.assertIsInstance(visualizer, BaseEstimator)
         self.assertIsInstance(visualizer, Visualizer)
-    
+
     # def test_interface(self):
     #     """
     #     Test the feature visualizer interface
@@ -85,30 +85,30 @@ class FeatureVisualizerBaseTests(VisualTestCase):
 
 @pytest.mark.usefixtures("discrete", "continuous")
 class TestDataVisualizerBase(object):
-    
+
     @patch.object(DataVisualizer, 'draw')
     def test_single(self, mock_draw):
 
         dataviz = DataVisualizer()
         # Check default is auto
-        assert dataviz.target_type == Target_Type.AUTO
+        assert dataviz.target_type == TargetType.AUTO
 
         # Assert single when y is None
         dataviz._determine_target_color_type(None)
-        assert dataviz._target_color_type == Target_Type.SINGLE
-        
+        assert dataviz._target_color_type == TargetType.SINGLE
+
         # None overrides specified target
         dataviz = DataVisualizer(target_type="continuous")
         X, y = self.continuous
         dataviz.fit(X)
         mock_draw.assert_called_once()
         assert dataviz._colors == 'b'
-        assert dataviz._target_color_type == Target_Type.SINGLE
-       
+        assert dataviz._target_color_type == TargetType.SINGLE
+
         # None overrides specified target
         dataviz = DataVisualizer(target_type="discrete")
         dataviz._determine_target_color_type(None)
-        assert dataviz._target_color_type == Target_Type.SINGLE
+        assert dataviz._target_color_type == TargetType.SINGLE
 
     @patch.object(DataVisualizer, 'draw')
     def test_continuous(self, mock_draw):
@@ -118,35 +118,35 @@ class TestDataVisualizerBase(object):
         dataviz.fit(X, y)
         mock_draw.assert_called_once()
         assert hasattr(dataviz, "range_")
-        assert dataviz._target_color_type == Target_Type.CONTINUOUS
-        
+        assert dataviz._target_color_type == TargetType.CONTINUOUS
+
         # Check when default is set to continuous and discrete data passed in
         dataviz = DataVisualizer(target_type="continuous")
         X, y = self.discrete
         dataviz._determine_target_color_type(y)
-        assert dataviz._target_color_type == Target_Type.CONTINUOUS
-        
+        assert dataviz._target_color_type == TargetType.CONTINUOUS
+
     def test_discrete(self):
         # Check when y is discrete
         _, y = self.discrete
         dataviz = DataVisualizer()
         dataviz._determine_target_color_type(y)
-        assert dataviz._target_color_type == Target_Type.DISCRETE
-        
+        assert dataviz._target_color_type == TargetType.DISCRETE
+
         # Check when default is set to discrete and continuous data passed in
         _, y = self.continuous
         dataviz = DataVisualizer(target_type="discrete")
         dataviz._determine_target_color_type(y)
-        assert dataviz._target_color_type == Target_Type.DISCRETE
-        
+        assert dataviz._target_color_type == TargetType.DISCRETE
+
     def test_bad_target(self):
         # Bad target raises exception
         # None overrides specified target
         msg = "unknown target color type 'foo'"
         with pytest.raises(YellowbrickValueError, match=msg):
             DataVisualizer(target_type="foo")
-    
-    @patch.object(DataVisualizer, 'draw')        
+
+    @patch.object(DataVisualizer, 'draw')
     def test_classes(self, mock_draw):
         # Checks that classes are assigned correctly
         X, y = self.discrete
@@ -155,4 +155,4 @@ class TestDataVisualizerBase(object):
         dataviz.fit(X, y)
         assert dataviz.classes_ == classes
         assert list(dataviz._colors.keys()) == classes
-        
+
