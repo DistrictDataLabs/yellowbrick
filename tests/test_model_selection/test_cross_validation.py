@@ -80,7 +80,7 @@ class TestCrossValidation(VisualTestCase, DatasetMixin):
         )
 
         oz.fit(X, y)
-        oz.poof()
+        oz.finalize()
 
         self.assert_images_similar(oz, tol=2.0)
 
@@ -120,7 +120,7 @@ class TestCrossValidation(VisualTestCase, DatasetMixin):
         )
 
         oz.fit(X, y)
-        oz.poof()
+        oz.finalize()
 
         self.assert_images_similar(oz, tol=36.0)
 
@@ -178,6 +178,6 @@ class TestCrossValidation(VisualTestCase, DatasetMixin):
         oz = CVScores(BernoulliNB(), cv=cv)
 
         oz.fit(X, y)
-        oz.poof()
+        oz.finalize()
 
         self.assert_images_similar(oz, tol=2.0)

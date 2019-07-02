@@ -96,7 +96,7 @@ class TestRadViz(VisualTestCase):
         """
         visualizer = RadViz()
         visualizer.fit_transform(self.dataset.X, self.dataset.y)
-        visualizer.poof()
+        visualizer.finalize()
         self.assert_images_similar(visualizer, tol=0.25)
 
     def test_radviz_alpha(self):
@@ -105,7 +105,7 @@ class TestRadViz(VisualTestCase):
         """
         visualizer = RadViz(alpha=0.5)
         visualizer.fit_transform(self.dataset.X, self.dataset.y)
-        visualizer.poof()
+        visualizer.finalize()
         self.assert_images_similar(visualizer, tol=0.25)
 
     @pytest.mark.xfail(

@@ -113,7 +113,7 @@ class TestMetaImageComparison(VisualTestCase):
         Test that a missing basline image raises an exception
         """
         viz = RandomVisualizer(random_state=14).fit()
-        viz.poof()
+        viz.finalize()
 
         # Assert the baseline image does not exist
         assert_path_not_exists(
@@ -133,7 +133,7 @@ class TestMetaImageComparison(VisualTestCase):
         Test that a random visualization is correctly compared to a baseline
         """
         viz = RandomVisualizer(random_state=111).fit()
-        viz.poof()
+        viz.finalize()
 
         assert mpl.get_backend() == 'agg'
 
@@ -147,7 +147,7 @@ class TestMetaImageComparison(VisualTestCase):
         """
         # Baseline image random_state=225
         viz = RandomVisualizer(random_state=224).fit()
-        viz.poof()
+        viz.finalize()
 
         with pytest.raises(ImageComparisonFailure, match="images not close"):
             self.assert_images_similar(viz)
@@ -162,6 +162,6 @@ class TestMetaImageComparison(VisualTestCase):
         Test that not close visualizers pass with increased tolerance
         """
         viz = RandomVisualizer(random_state=224).fit()
-        viz.poof()
+        viz.finalize()
 
         self.assert_images_similar(viz, tol=30)

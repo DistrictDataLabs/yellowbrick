@@ -57,7 +57,7 @@ class TestAlphaSelection(VisualTestCase):
 
         X, y = make_regression(random_state=0)
         visualizer.fit(X, y)
-        visualizer.poof()
+        visualizer.finalize()
 
         self.assert_images_similar(visualizer)
 

@@ -62,7 +62,7 @@ class TestMissingValuesDispersion(VisualTestCase):
         features = [str(n) for n in range(20)]
         viz = MissingValuesDispersion(features=features)
         viz.fit(X_)
-        viz.poof()
+        viz.finalize()
 
         self.assert_images_similar(viz, tol=self.tol)
 
@@ -83,7 +83,7 @@ class TestMissingValuesDispersion(VisualTestCase):
         classes = ['Class A', 'Class B']
         viz = MissingValuesDispersion(features=features, classes=classes)
         viz.fit(X_, y=y)
-        viz.poof()
+        viz.finalize()
 
         self.assert_images_similar(viz, tol=self.tol)
 
@@ -102,7 +102,7 @@ class TestMissingValuesDispersion(VisualTestCase):
         features = [str(n) for n in range(20)]
         viz = MissingValuesDispersion(features=features)
         viz.fit(X)
-        viz.poof()
+        viz.finalize()
 
         self.assert_images_similar(viz, tol=self.tol)
 
@@ -122,6 +122,6 @@ class TestMissingValuesDispersion(VisualTestCase):
         classes = ['Class A', 'Class B']
         viz = MissingValuesDispersion(features=features, classes=classes)
         viz.fit(X, y=y)
-        viz.poof()
+        viz.finalize()
 
         self.assert_images_similar(viz, tol=self.tol)

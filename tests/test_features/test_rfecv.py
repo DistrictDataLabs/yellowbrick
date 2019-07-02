@@ -107,7 +107,7 @@ class TestRFECV(VisualTestCase):
         cv = ShuffleSplit(3, random_state=21)
         oz = RFECV(SVC(kernel="linear", C=1), cv=cv)
         oz.fit(self.dataset.X, self.dataset.y)
-        oz.poof()
+        oz.finalize()
 
         self.assert_images_similar(oz, remove_legend=True)
 
@@ -144,7 +144,7 @@ class TestRFECV(VisualTestCase):
         cv = StratifiedKFold(n_splits=4, random_state=32)
         oz = RFECV(RandomForestClassifier(random_state=83), cv=cv)
         oz.fit(X, y)
-        oz.poof()
+        oz.finalize()
 
         self.assert_images_similar(oz, remove_legend=True)
 
@@ -164,7 +164,7 @@ class TestRFECV(VisualTestCase):
         cv = StratifiedKFold(n_splits=4, random_state=32)
         oz = RFECV(RandomForestClassifier(random_state=83), cv=cv)
         oz.fit(X, y)
-        oz.poof()
+        oz.finalize()
 
         self.assert_images_similar(oz, remove_legend=True)
 
