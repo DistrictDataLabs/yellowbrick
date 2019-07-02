@@ -24,7 +24,6 @@ from yellowbrick.classifier.classification_report import *
 
 from pytest import approx
 from tests.base import VisualTestCase
-from tests.dataset import DatasetMixin
 
 from sklearn.svm import LinearSVC
 from sklearn.naive_bayes import GaussianNB
@@ -44,7 +43,7 @@ except ImportError:
 ##########################################################################
 
 @pytest.mark.usefixtures("binary", "multiclass")
-class TestClassificationReport(VisualTestCase, DatasetMixin):
+class TestClassificationReport(VisualTestCase):
     """
     ClassificationReport visualizer tests
     """

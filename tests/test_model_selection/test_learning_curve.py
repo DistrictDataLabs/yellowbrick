@@ -20,7 +20,6 @@ import numpy as np
 
 from unittest.mock import patch
 from tests.base import VisualTestCase
-from tests.dataset import DatasetMixin
 
 from sklearn.svm import LinearSVC
 from sklearn.linear_model import Ridge
@@ -44,7 +43,7 @@ except ImportError:
 ##########################################################################
 
 @pytest.mark.usefixtures("classification", "regression", "clusters")
-class TestLearningCurve(VisualTestCase, DatasetMixin):
+class TestLearningCurve(VisualTestCase):
     """
     Test the LearningCurve visualizer
     """

@@ -24,7 +24,6 @@ import numpy as np
 import numpy.testing as npt
 
 from tests.base import VisualTestCase
-from tests.dataset import DatasetMixin
 from yellowbrick.classifier.rocauc import *
 from yellowbrick.exceptions import ModelError, YellowbrickValueError
 
@@ -74,7 +73,7 @@ def assert_valid_rocauc_scores(visualizer, nscores=4):
 ##########################################################################
 
 @pytest.mark.usefixtures("binary", "multiclass")
-class TestROCAUC(VisualTestCase, DatasetMixin):
+class TestROCAUC(VisualTestCase):
 
     def test_binary_probability(self):
         """

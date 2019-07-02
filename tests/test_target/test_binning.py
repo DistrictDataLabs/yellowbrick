@@ -8,7 +8,6 @@
 # ID: test_binning.py
 
 from tests.base import VisualTestCase
-from tests.dataset import DatasetMixin
 from yellowbrick.target.binning import *
 
 
@@ -16,7 +15,7 @@ from yellowbrick.target.binning import *
 ## BalancedBinningReference Tests
 ##########################################################################
 
-class TestBalancedBinningReference(VisualTestCase, DatasetMixin):
+class TestBalancedBinningReference(VisualTestCase):
     """
     Test the BalancedBinningReference visualizer
     """

@@ -20,7 +20,6 @@ import numpy as np
 
 from unittest.mock import patch
 from tests.base import VisualTestCase
-from tests.dataset import DatasetMixin
 
 from sklearn.svm import SVC
 from sklearn.naive_bayes import BernoulliNB
@@ -43,7 +42,7 @@ except ImportError:
 ##########################################################################
 
 @pytest.mark.usefixtures("classification", "regression", "clusters")
-class TestValidationCurve(VisualTestCase, DatasetMixin):
+class TestValidationCurve(VisualTestCase):
     """
     Test the ValidationCurve visualizer
     """

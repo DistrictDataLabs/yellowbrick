@@ -28,7 +28,6 @@ from yellowbrick.utils import is_probabilistic, is_classifier
 
 from unittest.mock import patch
 from tests.base import VisualTestCase
-from tests.dataset import DatasetMixin
 from numpy.testing.utils import assert_array_equal
 
 from sklearn.svm import LinearSVC, NuSVC
@@ -49,7 +48,7 @@ except ImportError:
 ## DiscriminationThreshold Test Cases
 ##########################################################################
 
-class TestDiscriminationThreshold(VisualTestCase, DatasetMixin):
+class TestDiscriminationThreshold(VisualTestCase):
     """
     DiscriminationThreshold visualizer tests
     """

@@ -22,7 +22,6 @@ Testing for the ClassPredictionError visualizer
 import pytest
 import matplotlib.pyplot as plt
 
-from tests.dataset import DatasetMixin
 from yellowbrick.classifier.class_prediction_error import *
 from yellowbrick.exceptions import ModelError
 
@@ -45,7 +44,7 @@ X, y = make_classification(
 ##########################################################################
 
 
-class TestClassPredictionError(VisualTestCase, DatasetMixin):
+class TestClassPredictionError(VisualTestCase):
 
     def test_integration_class_prediction_error(self):
         """

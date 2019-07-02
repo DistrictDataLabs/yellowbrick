@@ -20,7 +20,7 @@ from yellowbrick.target.class_balance import *
 from yellowbrick.exceptions import YellowbrickValueError
 
 from tests.base import VisualTestCase
-from tests.dataset import DatasetMixin, Dataset, Split
+from tests.fixtures import Dataset, Split
 
 from sklearn.datasets import make_classification
 from sklearn.model_selection import train_test_split as tts
@@ -66,7 +66,7 @@ def make_fixture(binary=False, balanced=False, split=False):
 ##  Tests
 ##########################################################################
 
-class TestClassBalance(VisualTestCase, DatasetMixin):
+class TestClassBalance(VisualTestCase):
     """
     Test ClassBalance visualizer
     """

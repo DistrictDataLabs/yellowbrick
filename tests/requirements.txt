@@ -11,7 +11,6 @@ pytest-cov>=2.6.1
 pytest-flakes>=4.0.0
 #pytest-spec>=1.1.0
 coverage>=4.5.2
-requests>=2.18.3
 
 # Optional Testing Dependencies
 nltk>=3.2

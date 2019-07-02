@@ -28,7 +28,7 @@ from yellowbrick.exceptions import YellowbrickValueError
 
 from unittest import mock
 from tests.base import IS_WINDOWS_OR_CONDA, VisualTestCase
-from tests.dataset import DatasetMixin, Dataset, Split
+from tests.fixtures import Dataset, Split
 
 from sklearn.linear_model import Ridge, Lasso
 from sklearn.linear_model import LinearRegression
@@ -78,7 +78,7 @@ def data(request):
 
 
 @pytest.mark.usefixtures("data")
-class TestPredictionError(VisualTestCase, DatasetMixin):
+class TestPredictionError(VisualTestCase):
     """
     Test the PredictionError visualizer
     """
@@ -218,7 +218,7 @@ class TestPredictionError(VisualTestCase, DatasetMixin):
 ##########################################################################
 
 @pytest.mark.usefixtures("data")
-class TestResidualsPlot(VisualTestCase, DatasetMixin):
+class TestResidualsPlot(VisualTestCase):
     """
     Test ResidualPlot visualizer
     """
