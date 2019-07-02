@@ -23,7 +23,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 from ..base import VisualTestCase
-from ..fixtures import TestDataset
+from ..fixtures import Dataset
 
 from scipy.sparse import csc_matrix, csr_matrix
 from numpy.testing.utils import assert_array_almost_equal
@@ -73,7 +73,7 @@ def clusters(request):
 
     y = np.array([0, 0, 1, 1, 0, 0, 1, 1, 0, 1, 0, 0, 1, 1, 1, 1, 0, 0])
 
-    request.cls.clusters = TestDataset(X, y)
+    request.cls.clusters = Dataset(X, y)
 
 
 ##########################################################################
