@@ -56,7 +56,7 @@ def binary(request):
 ##########################################################################
 
 @pytest.mark.usefixtures("binary")
-class PCADecompositionTests(VisualTestCase):
+class TestPCADecomposition(VisualTestCase):
     """
     Test the PCADecomposition visualizer
     """
@@ -191,7 +191,7 @@ class PCADecompositionTests(VisualTestCase):
         with pytest.raises(ValueError, match=e):
             pca = PCADecomposition(**params)
             pca.fit(X)
-    
+
     @mock.patch('yellowbrick.features.pca.plt.sca', autospec=True)
     def test_alpha_param(self, mock_sca):
         """
@@ -202,7 +202,7 @@ class PCADecompositionTests(VisualTestCase):
         visualizer = PCADecomposition(**params).fit(self.dataset.X)
         pca_array = visualizer.transform(self.dataset.X)
         assert visualizer.alpha == 0.3
-        
+
         visualizer.ax = mock.MagicMock()
         visualizer.fit(self.dataset.X)
         visualizer.transform(self.dataset.X)
@@ -212,4 +212,4 @@ class PCADecompositionTests(VisualTestCase):
         assert "alpha" in scatter_kwargs
         assert scatter_kwargs["alpha"] == 0.3
         assert pca_array.shape == (self.dataset.X.shape[0], 2)
-        
+

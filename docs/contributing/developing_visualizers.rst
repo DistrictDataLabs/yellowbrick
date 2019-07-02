@@ -86,26 +86,21 @@ Testing
 
 The test package mirrors the yellowbrick package in structure and also contains several helper methods and base functionality. To add a test to your visualizer, find the corresponding file to add the test case, or create a new test file in the same place you added your code.
 
-Visual tests are notoriously difficult to create --- how do you test a visualization or figure? Moreover, testing scikit-learn models with real data can consume a lot of memory. Therefore the primary test you should create is simply to test your visualizer from end to end and make sure that no exceptions occur. To assist with this, we have two primary helpers, ``VisualTestCase`` and ``DatasetMixin``. Create your unittest as follows::
+Visual tests are notoriously difficult to create --- how do you test a visualization or figure? Moreover, testing scikit-learn models with real data can consume a lot of memory. Therefore the primary test you should create is simply to test your visualizer from end to end and make sure that no exceptions occur. To assist with this, we have two primary helpers, ``VisualTestCase`` and ``DatasetMixin``. Create your tests as follows::
 
     import pytest
-    from tests.base import VisualTestCase
-    from tests.dataset import DatasetMixin
 
-    class MyVisualizerTests(VisualTestCase, DatasetMixin):
+    from tests.base import VisualTestCase
+    from yellowbrick.datasets import load_occupancy
+
+    class MyVisualizerTests(VisualTestCase):
 
         def test_my_visualizer(self):
             """
             Test MyVisualizer on a real dataset
             """
-            # Load the data from the fixture
-            dataset = self.load_data('occupancy')
-
-            # Get the data
-            X = dataset[[
-                "temperature", "relative_humidity", "light", "C02", "humidity"
-            ]]
-            y = dataset['occupancy'].astype(int)
+            # Load the occupancy dataset
+            X, y = load_occupancy()
 
             try:
                 visualizer = MyVisualizer()
@@ -113,6 +108,7 @@ Visual tests are notoriously difficult to create --- how do you test a visualiza
                 visualizer.poof()
             except Exception as e:
                 pytest.fail("my visualizer didn't work")
+
 
 Running the Test Suite
 ----------------------
@@ -136,7 +132,7 @@ Writing an image based comparison test is only a little more difficult than the 
 
 The main consideration is that you must specify the “baseline”, or expected, image in the ``tests/baseline_images/`` folder structure.
 
-For example, create your unittest located in ``tests/test_regressor/test_myvisualizer.py`` as follows::
+For example, create your test function located in ``tests/test_regressor/test_myvisualizer.py`` as follows::
 
     from tests.base import VisualTestCase
     ...
@@ -248,7 +244,7 @@ This is a pretty good structure for a documentation page; a brief introduction f
 
 At this point there are several places where you can list your visualizer, but to ensure it is included in the documentation it *must be listed in the TOC of the local index*. Find the ``index.rst`` file in your subdirectory and add your rst file (without the ``.rst`` extension) to the ``..toctree::`` directive. This will ensure the documentation is included when it is built.
 
-Building the Docs 
+Building the Docs
 ~~~~~~~~~~~~~~~~~
 
 Speaking of, you can build your documentation by changing into the ``docs`` directory and running ``make html``, the documentation will be built and rendered in the ``_build/html`` directory. You can view it by opening ``_build/html/index.html`` then navigating to your documentation in the browser.
