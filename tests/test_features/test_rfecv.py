@@ -168,13 +168,13 @@ class TestRFECV(VisualTestCase):
 
         self.assert_images_similar(oz, remove_legend=True)
 
-    def test_invalid_step(self):
+    @pytest.mark.parametrize("step", [0, -1, -5])
+    def test_invalid_step(self, step):
         """
         Test step hyperparam validation
         """
-        # TODO: parametrize when unittest is removed
         with pytest.raises(YellowbrickValueError, match="step must be >0"):
-            oz = RFECV(SVC(kernel="linear"), step=-1)
+            oz = RFECV(SVC(kernel="linear"), step=step)
             oz.fit(self.dataset.X, self.dataset.y)
 
     def test_rfecv_step(self):
