@@ -22,7 +22,7 @@ from .base import Dataset, Corpus
 __all__ = [
     "load_concrete", "load_energy", "load_credit", "load_occupancy",
     "load_mushroom", "load_hobbies", "load_game", "load_bikeshare",
-    "load_spam", "load_walking", "load_nfl"
+    "load_spam", "load_walking", "load_nfl",
 ]
 
 
