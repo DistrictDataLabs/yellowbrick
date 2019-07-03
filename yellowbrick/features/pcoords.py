@@ -248,7 +248,8 @@ class ParallelCoordinates(DataVisualizer):
                  vlines=True,
                  vlines_kwds=None,
                  **kwargs):
-
+        if "target_type" not in kwargs:
+            kwargs["target_type"] = "discrete"
         super(ParallelCoordinates, self).__init__(
             ax, features, classes, color, colormap, **kwargs
         )

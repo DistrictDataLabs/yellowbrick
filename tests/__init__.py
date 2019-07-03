@@ -17,7 +17,6 @@ Testing package for the yellowbrick visualization library.
 ## Imports
 ##########################################################################
 
-import unittest
 import matplotlib
 
 ## IMPORTANT! Set matplotlib to use the Agg backend before imported anywhere!
@@ -35,13 +34,13 @@ EXPECTED_VERSION = "0.9"
 ## Initialization Tests
 ##########################################################################
 
-class InitializationTests(unittest.TestCase):
+class TestInitialization(object):
 
     def test_sanity(self):
         """
         Test that tests work by confirming 7-3 = 4
         """
-        self.assertEqual(7-3, 4, "The world went wrong!!")
+        assert 7 - 3 == 4, "The world went wrong!!"
 
     def test_import(self):
         """
@@ -58,6 +57,6 @@ class InitializationTests(unittest.TestCase):
         """
         try:
             import yellowbrick as yb
-            self.assertEqual(yb.__version__, EXPECTED_VERSION)
+            assert yb.__version__ == EXPECTED_VERSION
         except ImportError:
             self.fail("Could not import the yellowbrick library!")

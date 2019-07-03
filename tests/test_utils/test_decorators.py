@@ -17,8 +17,6 @@ Tests for the decorators module in Yellowbrick utils.
 ## Imports
 ##########################################################################
 
-import unittest
-
 from yellowbrick.utils.decorators import *
 
 
@@ -26,7 +24,7 @@ from yellowbrick.utils.decorators import *
 ## Decorator Tests
 ##########################################################################
 
-class DecoratorTests(unittest.TestCase):
+class TestDecorators(object):
     """
     Tests for the decorator utilities.
     """
@@ -43,10 +41,9 @@ class DecoratorTests(unittest.TestCase):
                 return "bar"
 
         viz = Visualizer()
-        self.assertFalse(hasattr(viz, "_foo"))
-        self.assertEqual(viz.foo, "bar")
-        self.assertEqual(viz._foo, "bar")
-
+        assert not hasattr(viz, "_foo")
+        assert viz.foo == "bar"
+        assert viz._foo == "bar"
 
     def test_docutil(self):
         """
@@ -69,34 +66,18 @@ class DecoratorTests(unittest.TestCase):
             pass
 
         # Test the undecorated string to protect from magic
-        self.assertEqual(
-            undecorated.__doc__.strip(), "This is an undecorated function string."
-        )
+        assert undecorated.__doc__.strip() == "This is an undecorated function string."
 
         # Decorate manually and test the newly decorated return function.
         decorated = docutil(Visualizer.__init__)(undecorated)
-        self.assertEqual(
-            decorated.__doc__.strip(), "This is the correct docstring."
-        )
+        assert decorated.__doc__.strip() == "This is the correct docstring."
 
         # Assert that decoration modifies the original function.
-        self.assertEqual(
-            undecorated.__doc__.strip(), "This is the correct docstring."
-        )
+        assert undecorated.__doc__.strip() == "This is the correct docstring."
 
         @docutil(Visualizer.__init__)
         def sugar(*args, **kwargs):
             pass
 
         # Assert that syntactic sugar works as expected.
-        self.assertEqual(
-            sugar.__doc__.strip(), "This is the correct docstring."
-        )
-
-
-##########################################################################
-## Execute Tests
-##########################################################################
-
-if __name__ == "__main__":
-    unittest.main()
+        assert sugar.__doc__.strip() == "This is the correct docstring."

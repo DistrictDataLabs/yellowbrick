@@ -18,6 +18,9 @@ Tests for the MissingValuesBar visualizations.
 ##########################################################################
 
 import os
+import pytest
+import numpy as np
+
 from tests.base import VisualTestCase
 from sklearn.datasets import make_classification
 from yellowbrick.contrib.missing.bar import *
@@ -27,20 +30,21 @@ try:
 except ImportError:
     pd = None
 
+
+@pytest.fixture(scope="class")
+def missing_bar_tolerance(request):
+    request.cls.tol = 0.5 if os.name == 'nt' else 0.01
+
+
 ##########################################################################
 ## Feature Importances Tests
 ##########################################################################
 
+@pytest.mark.usefixtures("missing_bar_tolerance")
 class TestMissingBarVisualizer(VisualTestCase):
     """
     FeatureImportances visualizer
     """
-
-    def setUp(self):
-        super(TestMissingBarVisualizer, self).setUp()
-        self.tol = 0.01
-        if os.name == 'nt': # Windows
-            self.tol = 0.5
 
     def test_missingvaluesbar_pandas(self):
         """
@@ -58,10 +62,9 @@ class TestMissingBarVisualizer(VisualTestCase):
         features = [str(n) for n in range(20)]
         viz = MissingValuesBar(features=features)
         viz.fit(X_)
-        viz.poof()
+        viz.finalize()
 
         self.assert_images_similar(viz, tol=self.tol)
-
 
     def test_missingvaluesbar_numpy(self):
         """
@@ -78,7 +81,7 @@ class TestMissingBarVisualizer(VisualTestCase):
         features = [str(n) for n in range(20)]
         viz = MissingValuesBar(features=features)
         viz.fit(X)
-        viz.poof()
+        viz.finalize()
 
         self.assert_images_similar(viz, tol=self.tol)
 
@@ -98,7 +101,7 @@ class TestMissingBarVisualizer(VisualTestCase):
         features = [str(n) for n in range(20)]
         viz = MissingValuesBar(features=features)
         viz.fit(X, y)
-        viz.poof()
+        viz.finalize()
 
         self.assert_images_similar(viz, tol=self.tol)
 
@@ -118,6 +121,6 @@ class TestMissingBarVisualizer(VisualTestCase):
         features = [str(n) for n in range(20)]
         viz = MissingValuesBar(features=features, classes=['class A', 'class B'])
         viz.fit(X, y)
-        viz.poof()
+        viz.finalize()
 
         self.assert_images_similar(viz, tol=self.tol)

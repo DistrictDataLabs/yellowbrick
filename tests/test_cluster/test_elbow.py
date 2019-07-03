@@ -143,7 +143,7 @@ class TestKElbowVisualizer(VisualTestCase):
 
             visualizer = KElbowVisualizer(KMeans(random_state=42), k=4, ax=ax)
             visualizer.fit(X)
-            visualizer.poof()
+            visualizer.finalize()
 
             self.assert_images_similar(visualizer)
         except Exception as e:
@@ -157,7 +157,7 @@ class TestKElbowVisualizer(VisualTestCase):
         # NOTE #182: cannot use occupancy dataset because of memory usage
 
         # Generate a blobs data set
-        X,y = make_blobs(
+        X, y = make_blobs(
             n_samples=1000, n_features=12, centers=6, shuffle=True, random_state=42
         )
 
@@ -168,7 +168,7 @@ class TestKElbowVisualizer(VisualTestCase):
                 MiniBatchKMeans(random_state=42), k=4, ax=ax
             )
             visualizer.fit(X)
-            visualizer.poof()
+            visualizer.finalize()
 
             self.assert_images_similar(visualizer)
         except Exception as e:
@@ -186,7 +186,7 @@ class TestKElbowVisualizer(VisualTestCase):
         visualizer = KElbowVisualizer(KMeans(), k=(4, 8))
 
         visualizer.fit(docs)
-        visualizer.poof()
+        visualizer.finalize()
 
         self.assert_images_similar(visualizer)
 
@@ -236,8 +236,8 @@ class TestKElbowVisualizer(VisualTestCase):
         expected = np.array([ 69.100065, 54.081571, 43.146921, 34.978487])
         assert len(visualizer.k_scores_) == 4
 
-        visualizer.poof()
-        self.assert_images_similar(visualizer)
+        visualizer.finalize()
+        self.assert_images_similar(visualizer, tol=0.03)
         assert_array_almost_equal(visualizer.k_scores_, expected)
 
     @pytest.mark.xfail(
@@ -255,7 +255,7 @@ class TestKElbowVisualizer(VisualTestCase):
         expected = np.array([ 0.691636,  0.456646,  0.255174,  0.239842])
         assert len(visualizer.k_scores_) == 4
 
-        visualizer.poof()
+        visualizer.finalize()
         self.assert_images_similar(visualizer)
         assert_array_almost_equal(visualizer.k_scores_, expected)
 
@@ -279,13 +279,13 @@ class TestKElbowVisualizer(VisualTestCase):
             40.952179227847012, 35.939494
         ])
 
-        visualizer.poof()
+        visualizer.finalize()
         self.assert_images_similar(visualizer)
         assert_array_almost_equal(visualizer.k_scores_, expected)
 
     def test_locate_elbow(self):
         """
-        Test the addition of locate_elbow to an image 
+        Test the addition of locate_elbow to an image
         """
         X,y = make_blobs(
             n_samples=1000, n_features=5, centers=3, shuffle=True, random_state=42
@@ -303,7 +303,7 @@ class TestKElbowVisualizer(VisualTestCase):
             4286.479848, 12463.383743, 8766.999551, 6950.08391, 5865.79722
         ])
 
-        visualizer.poof()
+        visualizer.finalize()
         self.assert_images_similar(visualizer, windows_tol=2.2)
         assert_array_almost_equal(visualizer.k_scores_, expected)
 
@@ -347,6 +347,6 @@ class TestKElbowVisualizer(VisualTestCase):
 
         # call draw again which is normally called in fit
         visualizer.draw()
-        visualizer.poof()
+        visualizer.finalize()
 
         self.assert_images_similar(visualizer)
