@@ -50,7 +50,7 @@ def dataset(request):
     )
 
     rand = np.random.RandomState(seed=27)
-    request.cls.dataset = np.concatenate((X, rand.binomial(1, 0.6, (100,2))), axis=1)
+    request.cls.dataset = np.concatenate((X, rand.binomial(1, 0.6, (100, 2))), axis=1)
 
 
 ##########################################################################
