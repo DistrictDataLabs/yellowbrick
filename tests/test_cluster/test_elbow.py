@@ -33,9 +33,9 @@ from sklearn.cluster import KMeans, MiniBatchKMeans
 from sklearn.feature_extraction.text import TfidfVectorizer
 
 from tests.base import IS_WINDOWS_OR_CONDA
+from yellowbrick.datasets import load_hobbies
 from yellowbrick.cluster.elbow import distortion_score
 from yellowbrick.cluster.elbow import KElbowVisualizer
-from yellowbrick.datasets import load_hobbies
 from yellowbrick.exceptions import YellowbrickValueError
 
 try:
@@ -233,7 +233,7 @@ class TestKElbowVisualizer(VisualTestCase):
         )
         visualizer.fit(self.clusters.X)
 
-        expected = np.array([ 69.100065, 54.081571, 43.146921, 34.978487])
+        expected = np.array([69.100065, 54.081571, 43.146921, 34.978487])
         assert len(visualizer.k_scores_) == 4
 
         visualizer.finalize()
@@ -252,7 +252,7 @@ class TestKElbowVisualizer(VisualTestCase):
         )
         visualizer.fit(self.clusters.X)
 
-        expected = np.array([ 0.691636,  0.456646,  0.255174,  0.239842])
+        expected = np.array([0.691636, 0.456646, 0.255174, 0.239842])
         assert len(visualizer.k_scores_) == 4
 
         visualizer.finalize()
@@ -272,7 +272,7 @@ class TestKElbowVisualizer(VisualTestCase):
         )
         visualizer.fit(self.clusters.X)
         assert len(visualizer.k_scores_) == 4
-        assert visualizer.elbow_value_ == None
+        assert visualizer.elbow_value_ is None
 
         expected = np.array([
             81.662726256035683, 50.992378259195554,
@@ -306,7 +306,6 @@ class TestKElbowVisualizer(VisualTestCase):
         visualizer.finalize()
         self.assert_images_similar(visualizer, windows_tol=2.2)
         assert_array_almost_equal(visualizer.k_scores_, expected)
-
 
     def test_bad_metric(self):
         """

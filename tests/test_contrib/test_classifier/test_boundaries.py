@@ -24,7 +24,6 @@ from unittest import mock
 from tests.base import VisualTestCase
 
 from yellowbrick.contrib.classifier import *
-from yellowbrick.datasets import load_occupancy
 from yellowbrick.exceptions import YellowbrickTypeError
 from yellowbrick.exceptions import YellowbrickValueError
 
@@ -323,20 +322,32 @@ class TestDecisionBoundariesVisualizer(VisualTestCase):
         viz.draw.assert_called_once_with(X_two_cols, y)
         viz.poof.assert_called_once_with()
 
+    @pytest.mark.xfail(reason="numpy structured arrays have changed since v1.14")
     def test_integrated_plot_numpy_named_arrays(self):
         """
         Test integration of visualizer with numpy named arrays
         """
         model = naive_bayes.MultinomialNB()
 
-        # Load the occupancy dataset from fixtures
-        data = load_occupancy(return_dataset=True)
-        X, y = data.to_numpy()
-        X_two_cols = X[:, :2]
+        X = np.array([
+             (1.1, 9.52, 1.23, 0.86, 7.89, 0.13),
+             (3.4, 2.84, 8.65, 0.45, 7.43, 0.16),
+             (1.2, 3.22, 6.56, 0.24, 3.45, 0.17),
+             (3.8, 6.18, 2.45, 0.28, 2.53, 0.13),
+             (5.1, 9.12, 1.06, 0.19, 1.43, 0.13),
+             (4.4, 8.84, 4.97, 0.98, 1.35, 0.13),
+             (3.2, 3.22, 5.03, 0.68, 3.53, 0.32),
+             (7.8, 2.18, 6.87, 0.35, 3.25, 0.38),
+            ], dtype=[('a','<f8'), ('b','<f8'),
+                ('c','<f8'), ('d','<f8'),
+                ('e','<f8'), ('f','<f8')]
+        )
+
+        y = np.array([1, 1, 0, 1, 0, 0, 1, 0])
 
         visualizer = DecisionBoundariesVisualizer(model, features=['a', 'f'])
-        visualizer.fit_draw_poof(X_two_cols, y=y)
-        assert visualizer.features_ == ['a', 'f']
+        visualizer.fit_draw_poof(X, y=y)
+        self.assertEquals(visualizer.features_, ['a', 'f'])
         self.assert_images_similar(visualizer)
 
     def test_integrated_scatter_numpy_arrays_no_names(self):
@@ -360,7 +371,7 @@ class TestDecisionBoundariesVisualizer(VisualTestCase):
         model = naive_bayes.MultinomialNB()
 
         data = datasets.load_iris()
-        feature_names = [name.replace(' ', '_') for name in  data.feature_names ]
+        feature_names = [name.replace(' ', '_') for name in data.feature_names]
         df = pd.DataFrame(data.data, columns=feature_names)
         X = df[['sepal_length_(cm)', 'sepal_width_(cm)']].as_matrix()
         y = data.target
@@ -377,9 +388,10 @@ class TestDecisionBoundariesVisualizer(VisualTestCase):
         model = naive_bayes.MultinomialNB()
 
         data = datasets.load_iris()
-        feature_names = [name.replace(' ', '_') for name in  data.feature_names ]
+        feature_names = [name.replace(' ', '_') for name in data.feature_names]
         df = pd.DataFrame(data.data, columns=feature_names)
         X = df[['sepal_length_(cm)', 'sepal_width_(cm)']].as_matrix()
         y = data.target
 
         decisionviz(model, X, y)
+        
