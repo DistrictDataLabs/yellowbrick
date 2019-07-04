@@ -45,7 +45,7 @@ X, y = make_classification(
 ##########################################################################
 
 
-class ClassPredictionErrorTests(VisualTestCase, DatasetMixin):
+class TestClassPredictionError(VisualTestCase, DatasetMixin):
 
     def test_integration_class_prediction_error(self):
         """
@@ -79,7 +79,7 @@ class ClassPredictionErrorTests(VisualTestCase, DatasetMixin):
         """
         model = LinearSVC()
         model.fit(X, y)
-        with self.assertRaises(ModelError):
+        with pytest.raises(ModelError):
             visualizer = ClassPredictionError(
                 model, classes=["A", "B", "C", "D", "E"]
             )
@@ -91,7 +91,7 @@ class ClassPredictionErrorTests(VisualTestCase, DatasetMixin):
         """
         model = LinearSVC()
         model.fit(X, y)
-        with self.assertRaises(NotImplementedError):
+        with pytest.raises(NotImplementedError):
             visualizer = ClassPredictionError(model, classes=["A"])
             visualizer.score(X, y)
 
@@ -109,7 +109,7 @@ class ClassPredictionErrorTests(VisualTestCase, DatasetMixin):
         X, y = make_multilabel_classification()
         model = RandomForestClassifier()
         model.fit(X, y)
-        with self.assertRaises(YellowbrickValueError):
+        with pytest.raises(YellowbrickValueError):
             visualizer = ClassPredictionError(model)
             visualizer.score(X, y)
 

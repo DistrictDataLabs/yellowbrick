@@ -44,7 +44,7 @@ except ImportError:
 ##########################################################################
 
 @pytest.mark.usefixtures("binary", "multiclass")
-class ClassificationReportTests(VisualTestCase, DatasetMixin):
+class TestClassificationReport(VisualTestCase, DatasetMixin):
     """
     ClassificationReport visualizer tests
     """

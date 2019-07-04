@@ -37,6 +37,7 @@ try:
 except ImportError:
     spacy = None
 
+
 ##########################################################################
 ## Data
 ##########################################################################
@@ -201,11 +202,11 @@ class TestPosTag(VisualTestCase):
         viz = postag(tagged_docs, ax=ax, frequency=True)
         viz.finalize()
         ax.grid(False)
-        
+
         # Sorted tags i.e predetermined order
         sorted_tags = ['noun', 'adjective', 'punctuation', 'verb', 'preposition',
-                       'determiner', 'adverb', 'conjunction', 'pronoun', 'wh- word', 
-                       'modal', 'infinitive', 'possessive', 'other', 'symbol', 
+                       'determiner', 'adverb', 'conjunction', 'pronoun', 'wh- word',
+                       'modal', 'infinitive', 'possessive', 'other', 'symbol',
                        'existential', 'digit', 'non-English', 'interjection', 'list']
         # Extract tick labels from the plot
         ticks_ax = [tick.get_text() for tick in ax.xaxis.get_ticklabels()]
@@ -284,10 +285,10 @@ class TestPosTag(VisualTestCase):
         visualizer.ax.grid(False)
 
         self.assert_images_similar(ax=ax)
-        
+
     def test_stack_frequency_mode(self):
         """
-        Assert no errors occur when the visualizer is run on both stack and 
+        Assert no errors occur when the visualizer is run on both stack and
         frequency mode
         """
         check_nltk_data()
@@ -298,11 +299,11 @@ class TestPosTag(VisualTestCase):
         visualizer = PosTagVisualizer(stack=True, frequency=True, ax=ax)
         visualizer.fit(tagged_docs, y=['a','b','c'])
         visualizer.ax.grid(False)
-        
+
         # Sorted tags i.e predetermined order
         sorted_tags = ['noun', 'adjective', 'punctuation', 'verb', 'preposition',
-                       'determiner', 'adverb', 'conjunction', 'pronoun', 'wh- word', 
-                       'modal', 'infinitive', 'possessive', 'other', 'symbol', 
+                       'determiner', 'adverb', 'conjunction', 'pronoun', 'wh- word',
+                       'modal', 'infinitive', 'possessive', 'other', 'symbol',
                        'existential', 'digit', 'non-English', 'interjection', 'list']
         # Extract tick labels from the plot
         ticks_ax = [tick.get_text() for tick in ax.xaxis.get_ticklabels()]

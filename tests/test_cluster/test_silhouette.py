@@ -34,9 +34,9 @@ from yellowbrick.cluster.silhouette import SilhouetteVisualizer
 ## SilhouetteVisualizer Test Cases
 ##########################################################################
 
-class SilhouetteVisualizerTests(VisualTestCase):
+class TestSilhouetteVisualizer(VisualTestCase):
     """
-    Silhouette Visualizer
+    Silhouette Visualizer Tests
     """
 
     @pytest.mark.xfail(
@@ -59,7 +59,7 @@ class SilhouetteVisualizerTests(VisualTestCase):
 
             visualizer = SilhouetteVisualizer(KMeans(random_state=0), ax=ax)
             visualizer.fit(X)
-            visualizer.poof()
+            visualizer.finalize()
 
             self.assert_images_similar(visualizer, remove_legend=True)
         except Exception as e:
@@ -85,7 +85,7 @@ class SilhouetteVisualizerTests(VisualTestCase):
 
             visualizer = SilhouetteVisualizer(MiniBatchKMeans(random_state=0), ax=ax)
             visualizer.fit(X)
-            visualizer.poof()
+            visualizer.finalize()
 
             self.assert_images_similar(visualizer, remove_legend=True)
         except Exception as e:
@@ -118,7 +118,7 @@ class SilhouetteVisualizerTests(VisualTestCase):
 
             visualizer = SilhouetteVisualizer(MiniBatchKMeans(random_state=0), ax=ax, colormap='gnuplot')
             visualizer.fit(X)
-            visualizer.poof()
+            visualizer.finalize()
 
             self.assert_images_similar(visualizer, remove_legend=True)
         except Exception as e:
@@ -145,7 +145,7 @@ class SilhouetteVisualizerTests(VisualTestCase):
                 colors=['red', 'green', 'blue', 'indigo', 'cyan', 'lavender']
             )
             visualizer.fit(X)
-            visualizer.poof()
+            visualizer.finalize()
 
             self.assert_images_similar(visualizer, remove_legend=True)
         except Exception as e:
@@ -167,7 +167,7 @@ class SilhouetteVisualizerTests(VisualTestCase):
 
             visualizer = SilhouetteVisualizer(MiniBatchKMeans(random_state=0), ax=ax, colors='cool')
             visualizer.fit(X)
-            visualizer.poof()
+            visualizer.finalize()
 
             tol = 3.2 if sys.platform == "win32" else 0.01  # Fails on AppVeyor with RMS 3.143
             self.assert_images_similar(visualizer, remove_legend=True, tol=tol)

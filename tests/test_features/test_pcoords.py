@@ -70,7 +70,7 @@ class TestParallelCoordinates(VisualTestCase):
         """
         visualizer = ParallelCoordinates()
         visualizer.fit_transform(self.dataset.X, self.dataset.y)
-        visualizer.poof()
+        visualizer.finalize()
         self.assert_images_similar(visualizer, tol=0.25)
 
     def test_parallel_coords_fast(self):
@@ -79,7 +79,7 @@ class TestParallelCoordinates(VisualTestCase):
         """
         visualizer = ParallelCoordinates(fast=True)
         visualizer.fit_transform(self.dataset.X, self.dataset.y)
-        visualizer.poof()
+        visualizer.finalize()
         self.assert_images_similar(visualizer, tol=0.25)
 
     def test_alpha(self):
@@ -88,7 +88,7 @@ class TestParallelCoordinates(VisualTestCase):
         """
         visualizer = ParallelCoordinates(alpha=1.0)
         visualizer.fit_transform(self.dataset.X, self.dataset.y)
-        visualizer.poof()
+        visualizer.finalize()
         self.assert_images_similar(visualizer, tol=0.25)
 
     def test_alpha_fast(self):
@@ -97,7 +97,7 @@ class TestParallelCoordinates(VisualTestCase):
         """
         visualizer = ParallelCoordinates(alpha=1.0, fast=True)
         visualizer.fit_transform(self.dataset.X, self.dataset.y)
-        visualizer.poof()
+        visualizer.finalize()
         self.assert_images_similar(visualizer, tol=0.25)
 
     def test_labels(self):
@@ -108,7 +108,7 @@ class TestParallelCoordinates(VisualTestCase):
             classes=['a', 'b', 'c'], features=['f1', 'f2', 'f3', 'f4', 'f5']
         )
         visualizer.fit_transform(self.dataset.X, self.dataset.y)
-        visualizer.poof()
+        visualizer.finalize()
         self.assert_images_similar(visualizer)
 
     def test_labels_fast(self):
@@ -119,7 +119,7 @@ class TestParallelCoordinates(VisualTestCase):
             classes=['a', 'b', 'c'], features=['f1', 'f2', 'f3', 'f4', 'f5'], fast=True
         )
         visualizer.fit_transform(self.dataset.X, self.dataset.y)
-        visualizer.poof()
+        visualizer.finalize()
         self.assert_images_similar(visualizer)
 
     def test_normalized_l2(self):
@@ -128,7 +128,7 @@ class TestParallelCoordinates(VisualTestCase):
         """
         visualizer = ParallelCoordinates(normalize='l2')
         visualizer.fit_transform(self.dataset.X, self.dataset.y)
-        visualizer.poof()
+        visualizer.finalize()
         self.assert_images_similar(visualizer, tol=0.25)
 
     def test_normalized_l2_fast(self):
@@ -137,7 +137,7 @@ class TestParallelCoordinates(VisualTestCase):
         """
         visualizer = ParallelCoordinates(normalize='l2', fast=True)
         visualizer.fit_transform(self.dataset.X, self.dataset.y)
-        visualizer.poof()
+        visualizer.finalize()
         self.assert_images_similar(visualizer, tol=0.25)
 
     def test_normalized_minmax(self):
@@ -146,7 +146,7 @@ class TestParallelCoordinates(VisualTestCase):
         """
         visualizer = ParallelCoordinates(normalize='minmax')
         visualizer.fit_transform(self.dataset.X, self.dataset.y)
-        visualizer.poof()
+        visualizer.finalize()
         self.assert_images_similar(visualizer, tol=0.25)
 
     def test_normalized_minmax_fast(self):
@@ -155,7 +155,7 @@ class TestParallelCoordinates(VisualTestCase):
         """
         visualizer = ParallelCoordinates(normalize='minmax', fast=True)
         visualizer.fit_transform(self.dataset.X, self.dataset.y)
-        visualizer.poof()
+        visualizer.finalize()
         self.assert_images_similar(visualizer, tol=0.25)
 
     @pytest.mark.skipif(pd is None, reason="test requires pandas")
@@ -174,7 +174,7 @@ class TestParallelCoordinates(VisualTestCase):
             sample=0.05, shuffle=True, random_state=4291, classes=classes
         )
         oz.fit_transform(X, y)
-        oz.poof()
+        oz.finalize()
 
         self.assert_images_similar(oz, tol=0.1)
 
@@ -193,7 +193,7 @@ class TestParallelCoordinates(VisualTestCase):
             sample=0.05, shuffle=True, random_state=4291, classes=classes
         )
         oz.fit_transform(X, y)
-        oz.poof()
+        oz.finalize()
 
         self.assert_images_similar(oz, tol=0.1)
 
@@ -211,7 +211,7 @@ class TestParallelCoordinates(VisualTestCase):
 
         oz = ParallelCoordinates(fast=True, classes=classes)
         oz.fit_transform(X, y)
-        oz.poof()
+        oz.finalize()
 
         self.assert_images_similar(oz, tol=0.1)
 
@@ -228,7 +228,7 @@ class TestParallelCoordinates(VisualTestCase):
 
         oz = ParallelCoordinates(fast=True, classes=classes)
         oz.fit_transform(X, y)
-        oz.poof()
+        oz.finalize()
 
         self.assert_images_similar(oz, tol=0.1)
 
@@ -236,7 +236,7 @@ class TestParallelCoordinates(VisualTestCase):
         """
         Invalid argument to 'normalize' should raise
         """
-        with self.assertRaises(YellowbrickValueError):
+        with pytest.raises(YellowbrickValueError):
             ParallelCoordinates(normalize='foo')
 
     def test_sample_int(self):
@@ -276,7 +276,7 @@ class TestParallelCoordinates(VisualTestCase):
         """
         Negative int values should raise exception
         """
-        with self.assertRaises(YellowbrickValueError):
+        with pytest.raises(YellowbrickValueError):
             ParallelCoordinates(sample=-1)
 
     def test_sample_float(self):
@@ -316,16 +316,17 @@ class TestParallelCoordinates(VisualTestCase):
         """
         Float values for 'sample' argument outside [0,1] should raise.
         """
-        with self.assertRaises(YellowbrickValueError):
+        with pytest.raises(YellowbrickValueError):
             ParallelCoordinates(sample=-0.2)
-        with self.assertRaises(YellowbrickValueError):
+
+        with pytest.raises(YellowbrickValueError):
             ParallelCoordinates(sample=1.1)
 
     def test_sample_invalid_type(self):
         """
         Non-numeric values for 'sample' argument should raise.
         """
-        with self.assertRaises(YellowbrickTypeError):
+        with pytest.raises(YellowbrickTypeError):
             ParallelCoordinates(sample='foo')
 
     @staticmethod

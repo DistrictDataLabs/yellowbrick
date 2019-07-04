@@ -72,7 +72,7 @@ class TestDiscriminationThreshold(VisualTestCase, DatasetMixin):
         visualizer = DiscriminationThreshold(model, ax=ax, random_state=23)
 
         visualizer.fit(X, y)
-        visualizer.poof()
+        visualizer.finalize()
 
         self.assert_images_similar(visualizer)
 
@@ -119,7 +119,7 @@ class TestDiscriminationThreshold(VisualTestCase, DatasetMixin):
             LogisticRegression(), ax=ax, classes=classes, random_state=193
         )
         viz.fit(X, y)
-        viz.poof()
+        viz.finalize()
 
         self.assert_images_similar(viz, tol=0.1)
 
@@ -184,7 +184,7 @@ class TestDiscriminationThreshold(VisualTestCase, DatasetMixin):
         )
 
         visualizer.fit(X, y)
-        visualizer.poof()
+        visualizer.finalize()
 
         for metric in exclude:
             assert metric not in visualizer.cv_scores_
