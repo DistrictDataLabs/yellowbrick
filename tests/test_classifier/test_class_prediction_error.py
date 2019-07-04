@@ -22,22 +22,21 @@ Testing for the ClassPredictionError visualizer
 import pytest
 import matplotlib.pyplot as plt
 
-from yellowbrick.classifier.class_prediction_error import *
 from yellowbrick.exceptions import ModelError
+from yellowbrick.datasets import load_occupancy
+from yellowbrick.classifier.class_prediction_error import *
 
 from sklearn.svm import LinearSVC
 from sklearn.ensemble import RandomForestClassifier
-from sklearn.datasets import make_multilabel_classification, make_classification
+from sklearn.datasets import make_multilabel_classification
 
 from tests.base import VisualTestCase
 
-##########################################################################
-## Data
-##########################################################################
+try:
+    import pandas as pd
+except ImportError:
+    pd = None
 
-X, y = make_classification(
-    n_classes=4, n_informative=3, n_clusters_per_class=1, random_state=42
-)
 
 ##########################################################################
 ##  Tests
@@ -46,13 +45,34 @@ X, y = make_classification(
 
 class TestClassPredictionError(VisualTestCase):
 
-    def test_integration_class_prediction_error(self):
+    def test_numpy_integration(self):
         """
-        Assert no errors occur during class prediction error integration
+        Assert no errors during class prediction error integration with NumPy arrays
         """
-        model = LinearSVC()
+        X, y = load_occupancy(return_dataset=True).to_numpy()
+
+        classes = ['unoccupied', 'occupied']
+
+        model = LinearSVC(random_state=42)
         model.fit(X, y)
-        visualizer = ClassPredictionError(model, classes=["A", "B", "C", "D"])
+        visualizer = ClassPredictionError(model, classes=classes)
+        visualizer.score(X, y)
+        visualizer.finalize()
+
+        # AppVeyor and Linux conda fail due to non-text-based differences
+        self.assert_images_similar(visualizer, tol=9.5)
+
+    @pytest.mark.skipif(pd is None, reason="test requires pandas")
+    def test_pandas_integration(self):
+        """
+        Assert no errors during class prediction error integration with Pandas
+        """
+        X, y = load_occupancy(return_dataset=True).to_pandas()
+        classes = ['unoccupied', 'occupied']
+
+        model = LinearSVC(random_state=42)
+        model.fit(X, y)
+        visualizer = ClassPredictionError(model, classes=classes)
         visualizer.score(X, y)
         visualizer.finalize()
 
@@ -63,6 +83,8 @@ class TestClassPredictionError(VisualTestCase):
         """
         Test the ClassPreditionError quickmethod
         """
+        X, y = load_occupancy(return_dataset=True).to_numpy()
+
         fig = plt.figure()
         ax = fig.add_subplot()
 
@@ -76,11 +98,14 @@ class TestClassPredictionError(VisualTestCase):
         Assert error when y and y_pred contain zero values for
         one of the specified classess
         """
-        model = LinearSVC()
+        X, y = load_occupancy(return_dataset=True).to_numpy()
+        classes = ['unoccupied', 'occupied', 'partytime']
+
+        model = LinearSVC(random_state=42)
         model.fit(X, y)
         with pytest.raises(ModelError):
             visualizer = ClassPredictionError(
-                model, classes=["A", "B", "C", "D", "E"]
+                model, classes=classes
             )
             visualizer.score(X, y)
 
@@ -88,10 +113,13 @@ class TestClassPredictionError(VisualTestCase):
         """
         Assert error when there is an attempt to filter classes
         """
-        model = LinearSVC()
+        X, y = load_occupancy(return_dataset=True).to_numpy()
+        classes = ['unoccupied']
+
+        model = LinearSVC(random_state=42)
         model.fit(X, y)
         with pytest.raises(NotImplementedError):
-            visualizer = ClassPredictionError(model, classes=["A"])
+            visualizer = ClassPredictionError(model, classes=classes)
             visualizer.score(X, y)
 
     @pytest.mark.skip(reason="not implemented yet")
@@ -116,8 +144,10 @@ class TestClassPredictionError(VisualTestCase):
         """
         Test that ClassPredictionError score() returns a score between 0 and 1
         """
+        X, y = load_occupancy(return_dataset=True).to_numpy()
+
         # Create and fit the visualizer
-        visualizer = ClassPredictionError(LinearSVC())
+        visualizer = ClassPredictionError(LinearSVC(random_state=42))
         visualizer.fit(X, y)
 
         # Score the visualizer

@@ -20,18 +20,23 @@ import matplotlib
 
 from yellowbrick.exceptions import *
 from yellowbrick.classifier.prcurve import *
+from yellowbrick.datasets import load_occupancy
 
 from tests.base import IS_WINDOWS_OR_CONDA, VisualTestCase
 from .test_rocauc import FakeClassifier
 
 from sklearn.svm import LinearSVC
-from sklearn.datasets import load_iris
 from sklearn.naive_bayes import GaussianNB
 from sklearn.datasets import make_regression
 from sklearn.tree import DecisionTreeClassifier
 from sklearn.linear_model import RidgeClassifier
 from sklearn.model_selection import train_test_split as tts
 from sklearn.ensemble import RandomForestClassifier, AdaBoostClassifier
+
+try:
+    import pandas as pd
+except ImportError:
+    pd = None
 
 ##########################################################################
 ## Assertion Helpers
@@ -315,16 +320,42 @@ class TestPrecisionRecallCurve(VisualTestCase):
     )
     def test_quick_method(self):
         """
-        Test the precision_recall_curve quick method.
+        Test the precision_recall_curve quick method with numpy arrays.
         """
-        data = load_iris()
+        X, y = load_occupancy(return_dataset=True).to_numpy()
+
         model = DecisionTreeClassifier(random_state=14)
 
         oz = precision_recall_curve(
-            model, data.data, data.target, per_class=True, micro=True,
-            fill_area=False,  iso_f1_curves=True, ap_score=False,
+            model, X, y, per_class=True, micro=True,
+            fill_area=False, iso_f1_curves=True, ap_score=False,
             random_state=2)
         assert isinstance(oz, PrecisionRecallCurve)
+
+        self.assert_images_similar(oz)
+
+    @pytest.mark.skipif(pd is None, reason="test requires pandas")
+    def test_pandas_integration(self):
+        """
+        Test the precision_recall_curve with Pandas dataframes
+        """
+        X, y = load_occupancy(return_dataset=True).to_pandas()
+
+        model = DecisionTreeClassifier(random_state=14)
+
+        X_train, X_test, y_train, y_test = tts(
+            X, y, test_size=0.2, shuffle=True, random_state=555
+        )
+
+        oz = PrecisionRecallCurve(
+            model, per_class=True, micro=False, fill_area=False,
+            iso_f1_curves=True, ap_score=False,
+            classes=["unoccupied", "occupied"]
+        )
+        oz.fit(X_train, y_train)
+        oz.score(X_test, y_test)
+        
+        oz.finalize()
 
         self.assert_images_similar(oz)
 
@@ -344,10 +375,7 @@ class TestPrecisionRecallCurve(VisualTestCase):
         """
         Test using custom ISO F1 Values
         """
-
-        iris = load_iris()
-        X = iris.data
-        y = iris.target
+        X, y = load_occupancy(return_dataset=True).to_numpy()
 
         vals = (0.1,0.6,0.3,0.9,0.9)
         viz = PrecisionRecallCurve(
@@ -369,10 +397,7 @@ class TestPrecisionRecallCurve(VisualTestCase):
         """
         Test quick method when both train and test data is supplied
         """
-
-        iris = load_iris()
-        X = iris.data
-        y = iris.target
+        X, y = load_occupancy(return_dataset=True).to_numpy()
 
         X_train, X_test, y_train, y_test = tts(
             X, y, test_size=0.2, shuffle=True, random_state=555
@@ -383,18 +408,13 @@ class TestPrecisionRecallCurve(VisualTestCase):
             X_train, y_train, X_test, y_test,
             random_state=7,
         )
-
-        tol = 1.5 if sys.platform == 'win32' else 1.0 # fails with RMSE 1.231 on AppVeyor
-        self.assert_images_similar(viz, tol=tol)
+        self.assert_images_similar(viz)
 
     def test_missing_test_data_in_quick_method(self):
         """
         Test quick method when test data is missing.
         """
-
-        iris = load_iris()
-        X = iris.data
-        y = iris.target
+        X, y = load_occupancy(return_dataset=True).to_numpy()
 
         X_train, X_test, y_train, y_test = tts(
             X, y, test_size=0.2, shuffle=True, random_state=55555

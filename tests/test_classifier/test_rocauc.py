@@ -25,16 +25,21 @@ import numpy.testing as npt
 
 from tests.base import VisualTestCase
 from yellowbrick.classifier.rocauc import *
+from yellowbrick.datasets import load_occupancy
 from yellowbrick.exceptions import ModelError, YellowbrickValueError
 
 from sklearn.svm import LinearSVC
 from sklearn.naive_bayes import GaussianNB
 from sklearn.tree import DecisionTreeClassifier
-from sklearn.datasets import load_breast_cancer
 from sklearn.linear_model import LogisticRegression
 from sklearn.base import BaseEstimator, ClassifierMixin
+from sklearn.model_selection import train_test_split as tts
 from sklearn.ensemble import RandomForestClassifier, AdaBoostClassifier
 
+try:
+    import pandas as pd
+except ImportError:
+    pd = None
 
 ##########################################################################
 ## Fixtures
@@ -122,7 +127,9 @@ class TestROCAUC(VisualTestCase):
         Test ROCAUC with a binary classifier with a decision_function
         """
         # Create and fit the visualizer
-        visualizer = ROCAUC(LinearSVC(random_state=42), micro=False, macro=False, per_class=False)
+        visualizer = ROCAUC(
+            LinearSVC(random_state=42), micro=False, macro=False, per_class=False
+        )
         visualizer.fit(self.binary.X.train, self.binary.y.train)
 
         # Score the visualizer
@@ -202,11 +209,30 @@ class TestROCAUC(VisualTestCase):
         """
         Test the ROCAUC quick method
         """
-        data = load_breast_cancer()
+        X, y = load_occupancy(return_dataset=True).to_numpy()
         model = DecisionTreeClassifier()
 
         # TODO: image comparison of the quick method
-        roc_auc(model, data.data, data.target)
+        roc_auc(model, X, y)
+
+    @pytest.mark.skipif(pd is None, reason="test requires pandas")
+    def test_pandas_integration(self):
+        """
+        Test the ROCAUC with Pandas dataframe
+        """
+        X, y = load_occupancy(return_dataset=True).to_pandas()
+
+        # Create train/test splits
+        splits = tts(X, y, test_size=0.2, random_state=4512)
+        X_train, X_test, y_train, y_test = splits
+
+        visualizer = ROCAUC(GaussianNB())
+        visualizer.fit(X_train, y_train)
+        visualizer.score(X_test, y_test)
+
+        # Compare the images
+        visualizer.finalize()
+        self.assert_images_similar(visualizer)
 
     def test_rocauc_no_micro(self):
         """
