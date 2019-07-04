@@ -20,16 +20,17 @@ import numpy as np
 
 from unittest.mock import patch
 from tests.base import VisualTestCase
-from tests.dataset import DatasetMixin
 
 from sklearn.svm import LinearSVC
 from sklearn.linear_model import Ridge
 from sklearn.naive_bayes import GaussianNB
 from sklearn.cluster import MiniBatchKMeans
+from sklearn.preprocessing import OneHotEncoder
 from sklearn.model_selection import ShuffleSplit
 from sklearn.model_selection import StratifiedKFold
 from sklearn.ensemble import RandomForestClassifier
 
+from yellowbrick.datasets import load_mushroom
 from yellowbrick.exceptions import YellowbrickValueError
 from yellowbrick.model_selection.learning_curve import *
 
@@ -44,7 +45,7 @@ except ImportError:
 ##########################################################################
 
 @pytest.mark.usefixtures("classification", "regression", "clusters")
-class TestLearningCurve(VisualTestCase, DatasetMixin):
+class TestLearningCurve(VisualTestCase):
     """
     Test the LearningCurve visualizer
     """
@@ -139,16 +140,29 @@ class TestLearningCurve(VisualTestCase, DatasetMixin):
         """
         Test on a real dataset with pandas DataFrame and Series
         """
-        df = self.load_pandas("mushroom")
+        data = load_mushroom(return_dataset=True)
+        X, y = data.to_pandas()
 
-        target = "target"
-        features = [col for col in df.columns if col != target]
-
-        X = pd.get_dummies(df[features])
-        y = df[target]
+        X = pd.get_dummies(X)
 
         assert isinstance(X, pd.DataFrame)
         assert isinstance(y, pd.Series)
+
+        cv = StratifiedKFold(n_splits=4, random_state=32)
+        oz = LearningCurve(GaussianNB(), cv=cv, random_state=23)
+        oz.fit(X, y)
+        oz.finalize()
+
+        self.assert_images_similar(oz)
+
+    def test_numpy_integration(self):
+        """
+        Test on a real dataset with NumPy arrays
+        """
+        data = load_mushroom(return_dataset=True)
+        X, y = data.to_numpy()
+
+        X = OneHotEncoder().fit_transform(X).toarray()
 
         cv = StratifiedKFold(n_splits=4, random_state=32)
         oz = LearningCurve(GaussianNB(), cv=cv, random_state=23)
