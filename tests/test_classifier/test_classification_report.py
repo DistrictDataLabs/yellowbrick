@@ -121,7 +121,7 @@ class TestClassificationReport(VisualTestCase):
         viz.fit(X_train, y_train)
         viz.score(X_test, y_test)
 
-        self.assert_images_similar(viz, tol=43.0)
+        self.assert_images_similar(viz)
 
         # Ensure correct classification scores under the hood!
         assert viz.scores_ == {
@@ -161,7 +161,7 @@ class TestClassificationReport(VisualTestCase):
         viz.fit(X_train, y_train)
         viz.score(X_test, y_test)
 
-        self.assert_images_similar(viz, tol=43.0)
+        self.assert_images_similar(viz)
 
         # Ensure correct classification scores under the hood!
         assert viz.scores_ == {

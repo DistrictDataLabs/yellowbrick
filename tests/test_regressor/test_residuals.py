@@ -361,7 +361,7 @@ class TestResidualsPlot(VisualTestCase):
         visualizer.score(X_test, y_test)
         visualizer.finalize()
 
-        self.assert_images_similar(visualizer)
+        self.assert_images_similar(visualizer, tol=1.5)
 
     def test_score(self):
         """
