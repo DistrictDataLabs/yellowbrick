@@ -83,7 +83,7 @@ class TestLearningCurve(VisualTestCase, DatasetMixin):
         oz = LearningCurve(
             RandomForestClassifier(random_state=21), random_state=12
         ).fit(X, y)
-        oz.poof()
+        oz.finalize()
 
         self.assert_images_similar(oz)
 
@@ -98,7 +98,7 @@ class TestLearningCurve(VisualTestCase, DatasetMixin):
 
         oz = LearningCurve(Ridge(), random_state=18)
         oz.fit(X, y)
-        oz.poof()
+        oz.finalize()
 
         self.assert_images_similar(oz)
 
@@ -111,7 +111,7 @@ class TestLearningCurve(VisualTestCase, DatasetMixin):
         oz = LearningCurve(
             MiniBatchKMeans(random_state=281), random_state=182
         ).fit(X)
-        oz.poof()
+        oz.finalize()
 
         self.assert_images_similar(oz, tol=10)
 
@@ -153,7 +153,7 @@ class TestLearningCurve(VisualTestCase, DatasetMixin):
         cv = StratifiedKFold(n_splits=4, random_state=32)
         oz = LearningCurve(GaussianNB(), cv=cv, random_state=23)
         oz.fit(X, y)
-        oz.poof()
+        oz.finalize()
 
         self.assert_images_similar(oz)
 

@@ -41,6 +41,7 @@ except ImportError:
 
 corpus = load_hobbies()
 
+
 ##########################################################################
 ## TSNE Tests
 ##########################################################################
@@ -132,16 +133,16 @@ class TestTSNE(VisualTestCase):
         """
         ## produce random data
         X, y = make_classification(n_samples=200, n_features=100,
-                               n_informative=20, n_redundant=10, 
+                               n_informative=20, n_redundant=10,
                                n_classes=5, random_state=42)
-        
+
         ## specify a list of custom colors >= n_classes
         purple_blues = ["indigo", "orchid", "plum", "navy", "purple", "blue"]
-        
+
         ## instantiate the visualizer and check that self.colors is correct
         purple_tsne = TSNEVisualizer(colors=purple_blues, random_state=87)
         assert purple_tsne.colors == purple_blues
-        
+
         ## fit the visualizer and check that self.color_values is as long as
         ## n_classes and is the first n_classes items in self.colors
         purple_tsne.fit(X,y)

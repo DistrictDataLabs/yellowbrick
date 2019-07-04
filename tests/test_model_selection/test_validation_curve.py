@@ -90,7 +90,7 @@ class TestValidationCurve(VisualTestCase, DatasetMixin):
         )
 
         oz.fit(X, y)
-        oz.poof()
+        oz.finalize()
 
         self.assert_images_similar(oz)
 
@@ -109,7 +109,7 @@ class TestValidationCurve(VisualTestCase, DatasetMixin):
         )
 
         oz.fit(X, y)
-        oz.poof()
+        oz.finalize()
 
         self.assert_images_similar(oz, tol=12.0)
 
@@ -155,7 +155,7 @@ class TestValidationCurve(VisualTestCase, DatasetMixin):
             BernoulliNB(), cv=cv, param_range=pr, param_name='alpha'
         )
         oz.fit(X, y)
-        oz.poof()
+        oz.finalize()
 
         self.assert_images_similar(oz)
 

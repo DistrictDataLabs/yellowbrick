@@ -19,6 +19,7 @@ import pytest
 from unittest import mock
 from yellowbrick.utils.timer import *
 
+
 ##########################################################################
 ## Helper Function Tests
 ##########################################################################

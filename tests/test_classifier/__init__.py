@@ -1,6 +1,13 @@
-#Backend must be set before first use. 
-# Setting backend here allows us to run tests just in this folder, without running the whole yellowbrick.tests folder
-# This command will have no effect if backend has already been set previously. 
-import matplotlib
-matplotlib.use('Agg')
+# tests.test_classifier
+# Tests for the classifier visualizers
+#
+# ID: __init__.py [] benjamin@bengfort.com $
+
+"""
+Tests for the classifier visualizers
+"""
+
+##########################################################################
+## Imports
+##########################################################################
 
