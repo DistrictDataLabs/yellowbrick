@@ -66,7 +66,7 @@ To support multi-label classification, the estimator is wrapped in a `OneVsRestC
 
 .. image:: images/multiclass_precision_recall.png
 
-A more complex Precision-Recall curve can be computed, however, displaying the each curve individually, along with F1-score ISO curves (e.g. that show the relationship between precision and recall for various F1 scores).
+A more complex Precision-Recall curve can be computed, however, displaying each curve individually, along with F1-score ISO curves (e.g. that show the relationship between precision and recall for various F1 scores).
 
 .. code:: python
 
