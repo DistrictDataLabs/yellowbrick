@@ -357,7 +357,7 @@ class TestPrecisionRecallCurve(VisualTestCase):
         
         oz.finalize()
 
-        self.assert_images_similar(oz)
+        self.assert_images_similar(oz, tol=5.0)
 
     def test_no_scoring_function(self):
         """

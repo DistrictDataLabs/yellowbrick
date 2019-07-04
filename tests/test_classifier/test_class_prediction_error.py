@@ -60,7 +60,7 @@ class TestClassPredictionError(VisualTestCase):
         visualizer.finalize()
 
         # AppVeyor and Linux conda fail due to non-text-based differences
-        self.assert_images_similar(visualizer, tol=9.5)
+        self.assert_images_similar(visualizer, tol=12.5)
 
     @pytest.mark.skipif(pd is None, reason="test requires pandas")
     def test_pandas_integration(self):
@@ -77,7 +77,7 @@ class TestClassPredictionError(VisualTestCase):
         visualizer.finalize()
 
         # AppVeyor and Linux conda fail due to non-text-based differences
-        self.assert_images_similar(visualizer, tol=9.5)
+        self.assert_images_similar(visualizer, tol=12.5)
 
     def test_class_prediction_error_quickmethod(self):
         """
