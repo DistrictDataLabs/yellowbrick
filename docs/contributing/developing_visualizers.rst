@@ -86,7 +86,7 @@ Testing
 
 The test package mirrors the yellowbrick package in structure and also contains several helper methods and base functionality. To add a test to your visualizer, find the corresponding file to add the test case, or create a new test file in the same place you added your code.
 
-Visual tests are notoriously difficult to create --- how do you test a visualization or figure? Moreover, testing scikit-learn models with real data can consume a lot of memory. Therefore the primary test you should create is simply to test your visualizer from end to end and make sure that no exceptions occur. To assist with this, we have two primary helpers, ``VisualTestCase`` and ``DatasetMixin``. Create your tests as follows::
+Visual tests are notoriously difficult to create --- how do you test a visualization or figure? Moreover, testing scikit-learn models with real data can consume a lot of memory. Therefore the primary test you should create is simply to test your visualizer from end to end and make sure that no exceptions occur. To assist with this, we have a helper, ``VisualTestCase``. Create your tests as follows::
 
     import pytest
 
@@ -123,7 +123,7 @@ Tests can be run as follows from the project root::
 
     $ make test
 
-The Makefile uses the pytest runner and testing suite as well as the coverage library. The ``DatasetMixin`` also requires `requests.py <http://docs.python-requests.org/en/master/>`_ to fetch data from our Amazon S3 account.
+The Makefile uses the pytest runner and testing suite as well as the coverage library. 
 
 Image Comparison Tests
 ----------------------

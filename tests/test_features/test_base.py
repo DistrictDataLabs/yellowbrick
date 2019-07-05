@@ -23,7 +23,7 @@ from unittest.mock import patch
 from yellowbrick.base import Visualizer
 from yellowbrick.features.base import *
 from tests.base import VisualTestCase
-from ..fixtures import TestDataset
+from ..fixtures import Dataset
 
 from sklearn.base import BaseEstimator, TransformerMixin
 from sklearn.datasets import make_classification, make_regression
@@ -42,7 +42,7 @@ def discrete(request):
         n_classes=5, random_state=2019)
 
     # Set a class attribute for digits
-    request.cls.discrete = TestDataset(X, y)
+    request.cls.discrete = Dataset(X, y)
 
 @pytest.fixture(scope='class')
 def continuous(request):
@@ -54,7 +54,7 @@ def continuous(request):
     )
 
     # Set a class attribute for digits
-    request.cls.continuous = TestDataset(X, y)
+    request.cls.continuous = Dataset(X, y)
 
 
 ##########################################################################

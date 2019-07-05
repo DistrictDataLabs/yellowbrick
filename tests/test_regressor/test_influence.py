@@ -22,7 +22,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 from tests.base import VisualTestCase
-from tests.fixtures import TestDataset
+from tests.fixtures import Dataset
 from sklearn.datasets import make_regression
 
 from yellowbrick.regressor.influence import *
@@ -54,7 +54,7 @@ def data(request):
         random_state=637,
     )
 
-    request.cls.data = TestDataset(X, y)
+    request.cls.data = Dataset(X, y)
 
 
 ##########################################################################
