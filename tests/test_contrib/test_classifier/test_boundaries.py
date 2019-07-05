@@ -347,7 +347,7 @@ class TestDecisionBoundariesVisualizer(VisualTestCase):
 
         visualizer = DecisionBoundariesVisualizer(model, features=['a', 'f'])
         visualizer.fit_draw_poof(X, y=y)
-        assert visualizer.features_ == ['a', 'f']
+        self.assertEquals(visualizer.features_, ['a', 'f'])
         self.assert_images_similar(visualizer)
 
     def test_integrated_scatter_numpy_arrays_no_names(self):
@@ -371,7 +371,7 @@ class TestDecisionBoundariesVisualizer(VisualTestCase):
         model = naive_bayes.MultinomialNB()
 
         data = datasets.load_iris()
-        feature_names = [name.replace(' ', '_') for name in  data.feature_names ]
+        feature_names = [name.replace(' ', '_') for name in data.feature_names]
         df = pd.DataFrame(data.data, columns=feature_names)
         X = df[['sepal_length_(cm)', 'sepal_width_(cm)']].as_matrix()
         y = data.target
@@ -388,9 +388,10 @@ class TestDecisionBoundariesVisualizer(VisualTestCase):
         model = naive_bayes.MultinomialNB()
 
         data = datasets.load_iris()
-        feature_names = [name.replace(' ', '_') for name in  data.feature_names ]
+        feature_names = [name.replace(' ', '_') for name in data.feature_names]
         df = pd.DataFrame(data.data, columns=feature_names)
         X = df[['sepal_length_(cm)', 'sepal_width_(cm)']].as_matrix()
         y = data.target
 
         decisionviz(model, X, y)
+        

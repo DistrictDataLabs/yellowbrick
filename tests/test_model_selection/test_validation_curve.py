@@ -20,14 +20,15 @@ import numpy as np
 
 from unittest.mock import patch
 from tests.base import VisualTestCase
-from tests.dataset import DatasetMixin
 
 from sklearn.svm import SVC
 from sklearn.naive_bayes import BernoulliNB
 from sklearn.tree import DecisionTreeRegressor
+from sklearn.preprocessing import OneHotEncoder
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.model_selection import ShuffleSplit, StratifiedKFold
 
+from yellowbrick.datasets import load_mushroom
 from yellowbrick.exceptions import YellowbrickValueError
 from yellowbrick.model_selection.validation_curve import *
 
@@ -43,7 +44,7 @@ except ImportError:
 ##########################################################################
 
 @pytest.mark.usefixtures("classification", "regression", "clusters")
-class TestValidationCurve(VisualTestCase, DatasetMixin):
+class TestValidationCurve(VisualTestCase):
     """
     Test the ValidationCurve visualizer
     """
@@ -138,16 +139,35 @@ class TestValidationCurve(VisualTestCase, DatasetMixin):
         """
         Test on mushroom dataset with pandas DataFrame and Series and NB
         """
-        df = self.load_pandas("mushroom")
+        data = load_mushroom(return_dataset=True)
+        X, y = data.to_pandas()
 
-        target = "target"
-        features = [col for col in df.columns if col != target]
-
-        X = pd.get_dummies(df[features])
-        y = df[target]
+        X = pd.get_dummies(X)
 
         assert isinstance(X, pd.DataFrame)
         assert isinstance(y, pd.Series)
+
+        cv = StratifiedKFold(n_splits=2, random_state=11)
+        pr = np.linspace(0.1, 3.0, 6)
+        oz = ValidationCurve(
+            BernoulliNB(), cv=cv, param_range=pr, param_name='alpha'
+        )
+        oz.fit(X, y)
+        oz.finalize()
+
+        self.assert_images_similar(oz)
+
+    @pytest.mark.xfail(
+        sys.platform == 'win32', reason="images not close on windows"
+    )
+    def test_numpy_integration(self):
+        """
+        Test on mushroom dataset with NumPy arrays
+        """
+        data = load_mushroom(return_dataset=True)
+        X, y = data.to_numpy()
+
+        X = OneHotEncoder().fit_transform(X).toarray()
 
         cv = StratifiedKFold(n_splits=2, random_state=11)
         pr = np.linspace(0.1, 3.0, 6)

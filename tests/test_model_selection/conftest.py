@@ -16,7 +16,7 @@ Provides fixtures for the classification tests module.
 
 import pytest
 
-from tests.dataset import Dataset
+from tests.fixtures import Dataset
 from sklearn.datasets import make_classification, make_regression, make_blobs
 
 

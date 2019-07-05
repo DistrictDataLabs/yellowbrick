@@ -23,7 +23,7 @@ import numpy as np
 
 from unittest import mock
 from tests.base import VisualTestCase
-from ..fixtures import TestDataset
+from ..fixtures import Dataset
 
 from yellowbrick.features.pca import *
 from yellowbrick.exceptions import YellowbrickError
@@ -48,7 +48,7 @@ def binary(request):
     )
 
     # Set a class attribute for digits
-    request.cls.dataset = TestDataset(X, y)
+    request.cls.dataset = Dataset(X, y)
 
 
 ##########################################################################

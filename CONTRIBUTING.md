@@ -211,28 +211,23 @@ Score visualizers work on the same principle but accept an additional required `
 
 The test package mirrors the `yellowbrick` package in structure and also contains several helper methods and base functionality. To add a test to your visualizer, find the corresponding file to add the test case, or create a new test file in the same place you added your code.
 
-Visual tests are notoriously difficult to create --- how do you test a visualization or figure? Moreover, testing scikit-learn models with real data can consume a lot of memory. Therefore the primary test you should create is simply to test your visualizer from end to end and make sure that no exceptions occur. To assist with this, we have two primary helpers, `VisualTestCase` and `DatasetMixin`. Create your unit test as follows::
+Visual tests are notoriously difficult to create --- how do you test a visualization or figure? Moreover, testing scikit-learn models with real data can consume a lot of memory. Therefore the primary test you should create is simply to test your visualizer from end to end and make sure that no exceptions occur. To assist with this, we have a helper, `VisualTestCase`. Create your unit test as follows::
 
 ```python
 import pytest
 
-from tests.base import VisualTestCase
-from tests.dataset import DatasetMixin
+from yellowbrick.datasets import load_occupancy
 
-class MyVisualizerTests(VisualTestCase, DatasetMixin):
+from tests.base import VisualTestCase
+
+class MyVisualizerTests(VisualTestCase):
 
     def test_my_visualizer(self):
         """
         Test MyVisualizer on a real dataset
         """
-        # Load the data from the fixture
-        dataset = self.load_data('occupancy')
-
-        # Get the data
-        X = dataset[[
-            "temperature", "relative_humidity", "light", "C02", "humidity"
-        ]]
-        y = dataset['occupancy'].astype(int)
+        # Load the data
+        X,y = load_occupancy()
 
         try:
             visualizer = MyVisualizer()
@@ -254,7 +249,7 @@ You can also run your own test file as follows::
 $ pytest tests/test_your_visualizer.py
 ```
 
-The Makefile uses the pytest runner and testing suite as well as the coverage library, so make sure you have those dependencies installed! The `DatasetMixin` also requires [requests.py](http://docs.python-requests.org/en/master/) to fetch data from our Amazon S3 account.
+The Makefile uses the pytest runner and testing suite as well as the coverage library, so make sure you have those dependencies installed!
 
 **Note**: Advanced developers can use our _image comparison tests_ to assert that an image generated matches a baseline image. Read more about this in our [testing documentation](http://www.scikit-yb.org/en/latest/contributing.html#testing)
 
