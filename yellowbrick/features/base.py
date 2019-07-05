@@ -313,18 +313,24 @@ class DataVisualizer(MultiFeatureVisualizer):
                 "from target='{}' to '{}'"
             ).format(self.target_type, self._target_color_type))
 
+
+##########################################################################
+## Projection Visualizers
+##########################################################################
+
 class ProjectionVisualizer(DataVisualizer):
     
-    def __init__(self, ax=None, features=None, classes=None, color=None,
-             colormap=None, target_type="auto", proj_dim=2, **kwargs):
+    def __init__(self, transformer, ax=None, features=None, classes=None, color=None,
+             colormap=None, target_type="auto", proj_dim=2, alpha=0.75, **kwargs):
         super(ProjectionVisualizer, self).__init__(ax=ax, features=features, 
                                                      classes=classes, color=color,
                                                      colormap=colormap, 
                                                      target_type=target_type, **kwargs)
-        
+        self.transformer=transformer
         if proj_dim not in [2, 3]:
             raise YellowbrickValueError("Projection dimensions must be either 2 or 3")
-        self.proj_dim=proj_dim
+        self.proj_dim = proj_dim
+        self.alpha = alpha
         self._cax = None
 
     @property
@@ -373,7 +379,7 @@ class ProjectionVisualizer(DataVisualizer):
             raise AttributeError(str(e) + " try using fit_transform instead.")
 
     # Not sure about the function signature      
-    def draw(self, y=None):
+    def draw(self, X=None, y=None):
         X = self.transformed_features_
         scatter_kwargs = self._determine_scatter_kwargs(y);
         
