@@ -22,14 +22,19 @@ import pytest
 import numpy as np
 
 from unittest import mock
+from tests.dataset import Dataset
 from tests.base import VisualTestCase
-from ..fixtures import TestDataset
 
 from yellowbrick.features.pca import *
 from yellowbrick.exceptions import YellowbrickError
 
 from sklearn.datasets import make_classification
 
+try:
+    # Only available in Matplotlib >= 2.0.2
+    from mpl_toolkits.axes_grid1 import make_axes_locatable
+except ImportError:
+    make_axes_locatable = None
 
 ##########################################################################
 ## Fixtures
@@ -48,7 +53,7 @@ def binary(request):
     )
 
     # Set a class attribute for digits
-    request.cls.dataset = TestDataset(X, y)
+    request.cls.dataset = Dataset(X, y)
 
 
 ##########################################################################
@@ -212,4 +217,60 @@ class TestPCADecomposition(VisualTestCase):
         assert "alpha" in scatter_kwargs
         assert scatter_kwargs["alpha"] == 0.3
         assert pca_array.shape == (self.dataset.X.shape[0], 2)
+        
+    def test_colorbar(self):
+        """
+        Test the PCADecomposition visualizer's colorbar features.
+        """
+        params = {'scale': True, 'proj_dim': 2, 'random_state': 7382, 
+                   'color': self.dataset.y, 'colorbar': True}
+        visualizer = PCADecomposition(**params).fit(self.dataset.X)
+        visualizer.transform(self.dataset.X)
 
+        # Image comparison tests
+        self.assert_images_similar(visualizer)  
+
+    def test_heatmap(self):
+        """
+        Test the PCADecomposition visualizer's heatmap features.
+        """
+        params = {'scale': True, 'proj_dim': 2, 'random_state': 7382, 
+                   'color': self.dataset.y, 'heatmap': True}
+        visualizer = PCADecomposition(**params).fit(self.dataset.X)
+        visualizer.transform(self.dataset.X)
+        visualizer.finalize()
+
+        # Image comparison tests
+        self.assert_images_similar(visualizer)
+
+    def test_colorbar_heatmap(self):
+        """
+        Test the PCADecomposition visualizer's colorbar features.
+        """
+        params = {'scale': True, 'proj_dim': 2, 'random_state': 7382, 
+                   'color': self.dataset.y, 'colorbar': True, 'heatmap': True}
+        visualizer = PCADecomposition(**params).fit(self.dataset.X)
+        visualizer.transform(self.dataset.X)
+        visualizer.finalize()
+
+        # Image comparison tests
+        self.assert_images_similar(visualizer)
+
+    def test_3d_colorbar_heatmap_enabled_error(self):
+        """
+        Assert an exception if colorbar and heatmap is enabled with 3-dimensions
+        """
+        with pytest.raises(YellowbrickValueError):
+            PCADecomposition(proj_dim=3, colorbar=True)
+
+        with pytest.raises(YellowbrickValueError):
+            PCADecomposition(proj_dim=3, heatmap=True)
+        
+
+    @pytest.mark.skipif(make_axes_locatable is not None, reason="requires matplotlib <= 2.0.1")
+    def test_matplotlib_version_error():
+        """
+        Assert an exception is raised with incompatible matplotlib versions
+        """
+        with pytest.raises(YellowbrickValueError):
+            PCADecomposition(colorbar=True, heatmap=True)
