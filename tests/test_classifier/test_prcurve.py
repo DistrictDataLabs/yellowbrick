@@ -20,12 +20,12 @@ import matplotlib
 
 from yellowbrick.exceptions import *
 from yellowbrick.classifier.prcurve import *
+from yellowbrick.datasets import load_occupancy
 
-from tests.base import VisualTestCase
+from tests.base import IS_WINDOWS_OR_CONDA, VisualTestCase
 from .test_rocauc import FakeClassifier
 
 from sklearn.svm import LinearSVC
-from sklearn.datasets import load_iris
 from sklearn.naive_bayes import GaussianNB
 from sklearn.datasets import make_regression
 from sklearn.tree import DecisionTreeClassifier
@@ -33,6 +33,10 @@ from sklearn.linear_model import RidgeClassifier
 from sklearn.model_selection import train_test_split as tts
 from sklearn.ensemble import RandomForestClassifier, AdaBoostClassifier
 
+try:
+    import pandas as pd
+except ImportError:
+    pd = None
 
 ##########################################################################
 ## Assertion Helpers
@@ -111,6 +115,10 @@ class TestPrecisionRecallCurve(VisualTestCase):
         tol = 1.5 if sys.platform == 'win32' else 1.0 # fails with RMSE 1.409 on AppVeyor
         self.assert_images_similar(oz, tol=tol)
 
+    @pytest.mark.xfail(
+        IS_WINDOWS_OR_CONDA,
+        reason="font rendering different in OS and/or Python; see #892"
+    )
     def test_binary_probability_decision(self):
         """
         Visual similarity of binary classifier with both predict_proba & decision
@@ -138,8 +146,7 @@ class TestPrecisionRecallCurve(VisualTestCase):
 
         # Compare the images
         oz.finalize()
-        tol = 4.6 if sys.platform == 'win32' else 1.0 # fails with RMSE 4.522 on AppVeyor
-        self.assert_images_similar(oz, tol=tol)
+        self.assert_images_similar(oz)
 
     def test_binary_decision(self):
         """
@@ -204,6 +211,10 @@ class TestPrecisionRecallCurve(VisualTestCase):
         tol = 1.25 if sys.platform == 'win32' else 1.0 # fails with RMSE 1.118 on AppVeyor
         self.assert_images_similar(oz, tol=tol)
 
+    @pytest.mark.xfail(
+        IS_WINDOWS_OR_CONDA,
+        reason="font rendering different in OS and/or Python; see #892"
+    )
     def test_multiclass_probability(self):
         """
         Visual similarity of multiclass classifier with predict_proba function
@@ -237,8 +248,7 @@ class TestPrecisionRecallCurve(VisualTestCase):
 
         # Compare the images
         oz.finalize()
-        tol = 6.6 if sys.platform == 'win32' else 1.0 # fails with RMSE 6.583 on AppVeyor
-        self.assert_images_similar(oz, tol=tol)
+        self.assert_images_similar(oz)
 
     def test_multiclass_probability_with_class_labels(self):
         """Visual similarity of multiclass classifier with class labels."""
@@ -304,21 +314,50 @@ class TestPrecisionRecallCurve(VisualTestCase):
         self.assert_images_similar(oz, tol=tol)
 
     @pytest.mark.filterwarnings("ignore:From version 0.21")
+    @pytest.mark.xfail(
+        IS_WINDOWS_OR_CONDA,
+        reason="font rendering different in OS and/or Python; see #892"
+    )
     def test_quick_method(self):
         """
-        Test the precision_recall_curve quick method.
+        Test the precision_recall_curve quick method with numpy arrays.
         """
-        data = load_iris()
+        X, y = load_occupancy(return_dataset=True).to_numpy()
+
         model = DecisionTreeClassifier(random_state=14)
 
         oz = precision_recall_curve(
-            model, data.data, data.target, per_class=True, micro=True,
-            fill_area=False,  iso_f1_curves=True, ap_score=False,
+            model, X, y, per_class=True, micro=True,
+            fill_area=False, iso_f1_curves=True, ap_score=False,
             random_state=2)
         assert isinstance(oz, PrecisionRecallCurve)
 
-        tol = 5.8 if sys.platform == 'win32' else 1.0 # fails with RMSE 5.740 on AppVeyor
-        self.assert_images_similar(oz, tol=tol)
+        self.assert_images_similar(oz)
+
+    @pytest.mark.skipif(pd is None, reason="test requires pandas")
+    def test_pandas_integration(self):
+        """
+        Test the precision_recall_curve with Pandas dataframes
+        """
+        X, y = load_occupancy(return_dataset=True).to_pandas()
+
+        model = DecisionTreeClassifier(random_state=14)
+
+        X_train, X_test, y_train, y_test = tts(
+            X, y, test_size=0.2, shuffle=True, random_state=555
+        )
+
+        oz = PrecisionRecallCurve(
+            model, per_class=True, micro=False, fill_area=False,
+            iso_f1_curves=True, ap_score=False,
+            classes=["unoccupied", "occupied"]
+        )
+        oz.fit(X_train, y_train)
+        oz.score(X_test, y_test)
+        
+        oz.finalize()
+
+        self.assert_images_similar(oz, tol=5.0)
 
     def test_no_scoring_function(self):
         """
@@ -328,14 +367,15 @@ class TestPrecisionRecallCurve(VisualTestCase):
         with pytest.raises(ModelError, match="requires .* predict_proba or decision_function"):
             oz._get_y_scores(self.binary.X.train)
 
+    @pytest.mark.xfail(
+        IS_WINDOWS_OR_CONDA,
+        reason="font rendering different in OS and/or Python; see #892"
+    )
     def test_custom_iso_f1_scores(self):
         """
         Test using custom ISO F1 Values
         """
-
-        iris = load_iris()
-        X = iris.data
-        y = iris.target
+        X, y = load_occupancy(return_dataset=True).to_numpy()
 
         vals = (0.1,0.6,0.3,0.9,0.9)
         viz = PrecisionRecallCurve(
@@ -351,17 +391,13 @@ class TestPrecisionRecallCurve(VisualTestCase):
         viz.score(X_test, y_test)
         viz.finalize()
 
-        tol = 4.5 if sys.platform == 'win32' else 1.0 # fails with RMSE 4.358 on AppVeyor
-        self.assert_images_similar(viz,tol=tol)
+        self.assert_images_similar(viz)
 
     def test_quick_method_with_test_set(self):
         """
         Test quick method when both train and test data is supplied
         """
-
-        iris = load_iris()
-        X = iris.data
-        y = iris.target
+        X, y = load_occupancy(return_dataset=True).to_numpy()
 
         X_train, X_test, y_train, y_test = tts(
             X, y, test_size=0.2, shuffle=True, random_state=555
@@ -372,18 +408,13 @@ class TestPrecisionRecallCurve(VisualTestCase):
             X_train, y_train, X_test, y_test,
             random_state=7,
         )
-
-        tol = 1.5 if sys.platform == 'win32' else 1.0 # fails with RMSE 1.231 on AppVeyor
-        self.assert_images_similar(viz, tol=tol)
+        self.assert_images_similar(viz)
 
     def test_missing_test_data_in_quick_method(self):
         """
         Test quick method when test data is missing.
         """
-
-        iris = load_iris()
-        X = iris.data
-        y = iris.target
+        X, y = load_occupancy(return_dataset=True).to_numpy()
 
         X_train, X_test, y_train, y_test = tts(
             X, y, test_size=0.2, shuffle=True, random_state=55555

@@ -40,8 +40,6 @@ If you're using Anaconda (recommended for Windows users), you can take advantage
 
     conda install -c districtdatalabs yellowbrick
 
-Note, however, that there is a [known bug](https://github.com/DistrictDataLabs/yellowbrick/issues/205) installing Yellowbrick on Linux with Anaconda.
-
 ## Using Yellowbrick
 
 The Yellowbrick API is specifically designed to play nicely with scikit-learn. Here is an example of a typical workflow sequence with scikit-learn and Yellowbrick:

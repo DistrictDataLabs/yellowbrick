@@ -21,8 +21,8 @@ import sys
 import pytest
 import numpy.testing as npt
 
-from tests.base import VisualTestCase
-from ..fixtures import TestDataset
+from tests.base import IS_WINDOWS_OR_CONDA, VisualTestCase
+from ..fixtures import Dataset
 from sklearn.datasets import make_classification
 
 from yellowbrick.datasets import load_occupancy
@@ -32,7 +32,6 @@ try:
     import pandas as pd
 except ImportError:
     pd = None
-
 
 ##########################################################################
 ## Fixtures
@@ -49,7 +48,7 @@ def dataset(request):
         class_sep=3, scale=np.array([1.0, 2.0, 100.0, 20.0, 1.0])
     )
 
-    dataset = TestDataset(X, y)
+    dataset = Dataset(X, y)
     request.cls.dataset = dataset
 
 
@@ -97,7 +96,7 @@ class TestRadViz(VisualTestCase):
         """
         visualizer = RadViz()
         visualizer.fit_transform(self.dataset.X, self.dataset.y)
-        visualizer.poof()
+        visualizer.finalize()
         self.assert_images_similar(visualizer, tol=0.25)
 
     def test_radviz_alpha(self):
@@ -106,11 +105,12 @@ class TestRadViz(VisualTestCase):
         """
         visualizer = RadViz(alpha=0.5)
         visualizer.fit_transform(self.dataset.X, self.dataset.y)
-        visualizer.poof()
+        visualizer.finalize()
         self.assert_images_similar(visualizer, tol=0.25)
 
     @pytest.mark.xfail(
-        sys.platform == 'win32', reason="images not close on windows"
+        IS_WINDOWS_OR_CONDA,
+        reason="font rendering different in OS and/or Python; see #892"
     )
     @pytest.mark.skipif(pd is None, reason="test requires pandas")
     def test_integrated_radviz_with_pandas(self):

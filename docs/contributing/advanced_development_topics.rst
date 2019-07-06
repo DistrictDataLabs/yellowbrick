@@ -72,9 +72,9 @@ Testing Conventions
 
     Ensure there is at least one image comparison test per visualizer. This is the primary regression testing of Yellowbrick and these tests catch a lot when changes occur in our dependencies or environment.
 
-- Use pytest assertions rather than unittest.
+- Use pytest assertions rather than ``unittest.TestCase`` methods.
 
-    We prefer ``assert 2+2 == 4`` rather than ``self.assertEquals(2+2, 4)``. Though there is a lot of legacy unittest assertions, we've moved to pytest and one day believe we will have removed the unittest dependency.
+    We prefer ``assert 2+2 == 4`` rather than ``self.assertEquals(2+2, 4)``. As a result, test classes should not extend ``unittest.Testcase`` but should extend the ``VisualTestCase`` in the tests package. Note that if you're writing tests that do not generate matplotlib figures you can simply extend ``object``.
 
 - Use test fixtures and sklearn dataset generators.
 

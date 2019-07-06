@@ -17,8 +17,6 @@ Tests for the text visualization base classes
 ## Imports
 ##########################################################################
 
-import unittest
-
 from yellowbrick.base import *
 from yellowbrick.text.base import *
 from sklearn.base import BaseEstimator, TransformerMixin
@@ -28,22 +26,13 @@ from sklearn.base import BaseEstimator, TransformerMixin
 ## TextVisualizer Base Tests
 ##########################################################################
 
-class TextVisualizerBaseTests(unittest.TestCase):
+class TestTextVisualizerBase(object):
 
     def test_subclass(self):
         """
-        Assert the text visualizer is subclassed correctly 
+        Assert the text visualizer is subclassed correctly
         """
         visualizer = TextVisualizer()
-        self.assertIsInstance(visualizer, TransformerMixin)
-        self.assertIsInstance(visualizer, BaseEstimator)
-        self.assertIsInstance(visualizer, Visualizer)
-
-    # def test_interface(self):
-    #     """
-    #     Test the feature visualizer interface
-    #     """
-    #
-    #     visualizer = TextVisualizer()
-    #     with self.assertRaises(NotImplementedError):
-    #         visualizer.poof()
+        assert isinstance(visualizer, TransformerMixin)
+        assert isinstance(visualizer, BaseEstimator)
+        assert isinstance(visualizer, Visualizer)

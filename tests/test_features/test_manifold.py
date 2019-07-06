@@ -44,60 +44,50 @@ class TestManifold(VisualTestCase):
     Test Manifold visualizer
     """
 
-    def test_manifold_construction(self):
+    @pytest.mark.parametrize("algorithm", [
+        "lle", "ltsa", "hessian", "modified", "isomap", "mds", "spectral", "tsne",
+    ])
+    def test_manifold_construction(self, algorithm):
         """
         Should be able to construct a manifold estimator from a string
         """
-        # TODO: parametrize this once unittest.TestCase dependency removed.
-        algorithms = [
-            "lle", "ltsa", "hessian", "modified",
-            "isomap", "mds", "spectral", "tsne",
-        ]
+        message = "case failed for {}".format(algorithm)
+        params = {
+            "n_neighbors": 18,
+            "random_state": 53,
+        }
+        oz = Manifold(manifold=algorithm, **params)
+        assert is_estimator(oz.manifold), message
+        assert oz.manifold.get_params()["n_components"] == 2, message
 
-        for algorithm in algorithms:
-            message = "case failed for {}".format(algorithm)
-            params = {
-                "n_neighbors": 18,
-                "random_state": 53,
-            }
-            oz = Manifold(manifold=algorithm, **params)
-            assert is_estimator(oz.manifold), message
-            assert oz.manifold.get_params()["n_components"] == 2, message
+        manifold_params = oz.manifold.get_params()
+        for param, value in params.items():
+            if param in manifold_params:
+                assert value == manifold_params[param], message
 
-            manifold_params = oz.manifold.get_params()
-            for param, value in params.items():
-                if param in manifold_params:
-                    assert value == manifold_params[param], message
-
-    def test_manifold_warning(self):
+    @pytest.mark.parametrize("algorithm", [
+        "lle", "ltsa", "hessian", "modified", "isomap", "spectral",
+    ])
+    def test_manifold_warning(self, algorithm):
         """
         Should raise a warning if n_neighbors not specified
         """
-        # TODO: parametrize this once unittest.TestCase dependency removed.
-        algorithms = [
-            "lle", "ltsa", "hessian", "modified", "isomap", "spectral",
-        ]
+        message = "case failed for {}".format(algorithm)
+        n_neighbors = 6 if algorithm == "hessian" else 5
 
-        for algorithm in algorithms:
-            message = "case failed for {}".format(algorithm)
-            n_neighbors = 6 if algorithm == "hessian" else 5
+        with pytest.warns(YellowbrickWarning):
+            oz = Manifold(manifold=algorithm)
+            assert oz.n_neighbors == n_neighbors, message
 
-            with pytest.warns(YellowbrickWarning):
-                oz = Manifold(manifold=algorithm)
-                assert oz.n_neighbors == n_neighbors, message
-
-    def test_manifold_no_warning(self):
+    @pytest.mark.parametrize("algorithm", ["mds", "tsne"])
+    def test_manifold_no_warning(self, algorithm):
         """
         Should not raise a warning if n_neighbors not specified
         """
-        # TODO: parametrize this once unittest.TestCase dependency removed.
-        algorithms = ["mds", "tsne"]
+        message = "case failed for {}".format(algorithm)
 
-        for algorithm in algorithms:
-            message = "case failed for {}".format(algorithm)
-
-            with pytest.warns(None) as record:
-                assert not record.list, message
+        with pytest.warns(None) as record:
+            assert not record.list, message
 
     def test_bad_manifold_exception(self):
         """
@@ -216,21 +206,16 @@ class TestManifold(VisualTestCase):
         self.assert_images_similar(oz, tol=35)
 
     @pytest.mark.filterwarnings("ignore:Conversion of the second argument")
-    def test_manifold_algorithm_fit(self):
+    @pytest.mark.parametrize("algorithm", [
+        "lle", "ltsa", "hessian", "modified", "isomap", "mds", "spectral", "tsne",
+    ])
+    def test_manifold_algorithm_fit(self, algorithm):
         """
         Test that all algorithms can be fitted correctly
         """
-        # TODO: parametrize this once unittest.TestCase dependency removed.
-        algorithms = [
-            "lle", "ltsa", "hessian", "modified",
-            "isomap", "mds", "spectral", "tsne",
-        ]
-
         X, y = make_s_curve(200, random_state=888)
-
-        for algorithm in algorithms:
-            oz = Manifold(manifold=algorithm, n_neighbors=10, random_state=223)
-            oz.fit(X, y)
+        oz = Manifold(manifold=algorithm, n_neighbors=10, random_state=223)
+        oz.fit(X, y)
 
     def test_determine_target_color_type(self):
         """

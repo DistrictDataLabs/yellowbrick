@@ -23,12 +23,13 @@ import pytest
 import matplotlib as mpl
 import matplotlib.pyplot as plt
 
+from yellowbrick.datasets import load_energy
 from yellowbrick.regressor.residuals import *
 from yellowbrick.exceptions import YellowbrickValueError
 
 from unittest import mock
-from tests.base import VisualTestCase
-from tests.dataset import DatasetMixin, Dataset, Split
+from tests.base import IS_WINDOWS_OR_CONDA, VisualTestCase
+from tests.fixtures import Dataset, Split
 
 from sklearn.linear_model import Ridge, Lasso
 from sklearn.linear_model import LinearRegression
@@ -42,7 +43,6 @@ try:
     import pandas as pd
 except ImportError:
     pd = None
-
 
 # Determine version of matplotlib
 MPL_VERS_MAJ = int(mpl.__version__.split(".")[0])
@@ -79,7 +79,7 @@ def data(request):
 
 
 @pytest.mark.usefixtures("data")
-class TestPredictionError(VisualTestCase, DatasetMixin):
+class TestPredictionError(VisualTestCase):
     """
     Test the PredictionError visualizer
     """
@@ -109,17 +109,29 @@ class TestPredictionError(VisualTestCase, DatasetMixin):
         _, ax = plt.subplots()
 
         # Load the occupancy dataset from fixtures
-        data = self.load_data('energy')
-        target = 'cooling_load'
-        features = [
-            "relative_compactness", "surface_area", "wall_area", "roof_area",
-            "overall_height", "orientation", "glazing_area",
-            "glazing_area_distribution"
-        ]
+        data = load_energy(return_dataset=True)
+        X, y = data.to_pandas()
 
-        # Create instances and target
-        X = pd.DataFrame(data[features])
-        y = pd.Series(data[target].astype(float))
+        # Create train/test splits
+        splits = tts(X, y, test_size=0.2, random_state=8873)
+        X_train, X_test, y_train, y_test = splits
+
+        visualizer = PredictionError(Ridge(random_state=22), ax=ax)
+        visualizer.fit(X_train, y_train)
+        visualizer.score(X_test, y_test)
+        visualizer.finalize()
+
+        self.assert_images_similar(visualizer, tol=1, remove_legend=True)
+
+    def test_prediction_error_numpy(self):
+        """
+        Test NumPy real world dataset with image similarity on Ridge
+        """
+        _, ax = plt.subplots()
+
+        # Load the occupancy dataset from fixtures
+        data = load_energy(return_dataset=True)
+        X, y = data.to_numpy()
 
         # Create train/test splits
         splits = tts(X, y, test_size=0.2, random_state=8873)
@@ -219,13 +231,14 @@ class TestPredictionError(VisualTestCase, DatasetMixin):
 ##########################################################################
 
 @pytest.mark.usefixtures("data")
-class TestResidualsPlot(VisualTestCase, DatasetMixin):
+class TestResidualsPlot(VisualTestCase):
     """
     Test ResidualPlot visualizer
     """
 
     @pytest.mark.xfail(
-        sys.platform == 'win32', reason="images not close on windows (RMSE=32)"
+        IS_WINDOWS_OR_CONDA,
+        reason="font rendering different in OS and/or Python; see #892"
     )
     def test_residuals_plot(self):
         """
@@ -239,7 +252,7 @@ class TestResidualsPlot(VisualTestCase, DatasetMixin):
         visualizer.score(self.data.X.test, self.data.y.test)
         visualizer.finalize()
 
-        self.assert_images_similar(visualizer, tol=1, remove_legend=True)
+        self.assert_images_similar(visualizer)
 
     @pytest.mark.xfail(
         sys.platform == 'win32', reason="images not close on windows (RMSE=32)"
@@ -277,7 +290,7 @@ class TestResidualsPlot(VisualTestCase, DatasetMixin):
         """
         No error is raised when matplotlib version is incorrect and hist=False
         """
-        with pytst.raises(ImportError):
+        with pytest.raises(ImportError):
             from mpl_toolkits.axes_grid1 import make_axes_locatable
             assert not make_axes_locatable
 
@@ -287,7 +300,8 @@ class TestResidualsPlot(VisualTestCase, DatasetMixin):
             self.fail(e)
 
     @pytest.mark.xfail(
-        sys.platform == 'win32', reason="images not close on windows (RMSE=32)"
+        IS_WINDOWS_OR_CONDA,
+        reason="font rendering different in OS and/or Python; see #892"
     )
     def test_residuals_quick_method(self):
         """
@@ -300,10 +314,11 @@ class TestResidualsPlot(VisualTestCase, DatasetMixin):
             model, self.data.X.train, self.data.y.train, ax=ax, random_state=23
         )
 
-        self.assert_images_similar(ax=ax, tol=1, remove_legend=True)
+        self.assert_images_similar(ax=ax)
 
     @pytest.mark.xfail(
-        sys.platform == 'win32', reason="images not close on windows (RMSE=32)"
+        IS_WINDOWS_OR_CONDA,
+        reason="font rendering different in OS and/or Python; see #892"
     )
     @pytest.mark.skipif(pd is None, reason="pandas is required")
     def test_residuals_plot_pandas(self):
@@ -313,17 +328,8 @@ class TestResidualsPlot(VisualTestCase, DatasetMixin):
         _, ax = plt.subplots()
 
         # Load the occupancy dataset from fixtures
-        data = self.load_data('energy')
-        target = 'heating_load'
-        features = [
-            "relative_compactness", "surface_area", "wall_area", "roof_area",
-            "overall_height", "orientation", "glazing_area",
-            "glazing_area_distribution"
-        ]
-
-        # Create instances and target
-        X = pd.DataFrame(data[features])
-        y = pd.Series(data[target].astype(float))
+        data = load_energy(return_dataset=True)
+        X, y = data.to_pandas()
 
         # Create train/test splits
         splits = tts(X, y, test_size=0.2, random_state=231)
@@ -334,7 +340,28 @@ class TestResidualsPlot(VisualTestCase, DatasetMixin):
         visualizer.score(X_test, y_test)
         visualizer.finalize()
 
-        self.assert_images_similar(visualizer, tol=1, remove_legend=True)
+        self.assert_images_similar(visualizer)
+
+    def test_residuals_plot_numpy(self):
+        """
+        Test NumPy real world dataset with image similarity on Lasso
+        """
+        _, ax = plt.subplots()
+
+        # Load the occupancy dataset from fixtures
+        data = load_energy(return_dataset=True)
+        X, y = data.to_numpy()
+
+        # Create train/test splits
+        splits = tts(X, y, test_size=0.2, random_state=231)
+        X_train, X_test, y_train, y_test = splits
+
+        visualizer = ResidualsPlot(Lasso(random_state=44), ax=ax)
+        visualizer.fit(X_train, y_train)
+        visualizer.score(X_test, y_test)
+        visualizer.finalize()
+
+        self.assert_images_similar(visualizer, tol=1.5)
 
     def test_score(self):
         """

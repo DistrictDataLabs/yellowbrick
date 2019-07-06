@@ -17,12 +17,11 @@ Tests for the frequency distribution text visualization
 ## Imports
 ##########################################################################
 
-import sys
 import pytest
 
 from yellowbrick.datasets import load_hobbies
 from yellowbrick.text.freqdist import *
-from tests.base import VisualTestCase
+from tests.base import IS_WINDOWS_OR_CONDA, VisualTestCase
 
 from sklearn.feature_extraction.text import CountVectorizer
 
@@ -36,10 +35,11 @@ corpus = load_hobbies()
 ## FreqDist Tests
 ##########################################################################
 
-class FreqDistTests(VisualTestCase):
+class TestFreqDist(VisualTestCase):
 
     @pytest.mark.xfail(
-        sys.platform == 'win32', reason="images not close on windows"
+        IS_WINDOWS_OR_CONDA,
+        reason="font rendering different in OS and/or Python; see #892"
     )
     def test_integrated_freqdist(self):
         """
@@ -54,4 +54,4 @@ class FreqDistTests(VisualTestCase):
         visualizer.fit(docs)
 
         visualizer.finalize()
-        self.assert_images_similar(visualizer, tol=1)
+        self.assert_images_similar(visualizer)

@@ -23,7 +23,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 from ..base import VisualTestCase
-from ..fixtures import TestDataset
+from ..fixtures import Dataset
 
 from scipy.sparse import csc_matrix, csr_matrix
 from numpy.testing.utils import assert_array_almost_equal
@@ -32,16 +32,16 @@ from sklearn.datasets import make_blobs
 from sklearn.cluster import KMeans, MiniBatchKMeans
 from sklearn.feature_extraction.text import TfidfVectorizer
 
+from tests.base import IS_WINDOWS_OR_CONDA
+from yellowbrick.datasets import load_hobbies
 from yellowbrick.cluster.elbow import distortion_score
 from yellowbrick.cluster.elbow import KElbowVisualizer
-from yellowbrick.datasets import load_hobbies
 from yellowbrick.exceptions import YellowbrickValueError
 
 try:
     import pandas as pd
 except ImportError:
     pd = None
-
 
 ##########################################################################
 ## Data
@@ -73,7 +73,7 @@ def clusters(request):
 
     y = np.array([0, 0, 1, 1, 0, 0, 1, 1, 0, 1, 0, 0, 1, 1, 1, 1, 0, 0])
 
-    request.cls.clusters = TestDataset(X, y)
+    request.cls.clusters = Dataset(X, y)
 
 
 ##########################################################################
@@ -143,7 +143,7 @@ class TestKElbowVisualizer(VisualTestCase):
 
             visualizer = KElbowVisualizer(KMeans(random_state=42), k=4, ax=ax)
             visualizer.fit(X)
-            visualizer.poof()
+            visualizer.finalize()
 
             self.assert_images_similar(visualizer)
         except Exception as e:
@@ -157,7 +157,7 @@ class TestKElbowVisualizer(VisualTestCase):
         # NOTE #182: cannot use occupancy dataset because of memory usage
 
         # Generate a blobs data set
-        X,y = make_blobs(
+        X, y = make_blobs(
             n_samples=1000, n_features=12, centers=6, shuffle=True, random_state=42
         )
 
@@ -168,7 +168,7 @@ class TestKElbowVisualizer(VisualTestCase):
                 MiniBatchKMeans(random_state=42), k=4, ax=ax
             )
             visualizer.fit(X)
-            visualizer.poof()
+            visualizer.finalize()
 
             self.assert_images_similar(visualizer)
         except Exception as e:
@@ -186,7 +186,7 @@ class TestKElbowVisualizer(VisualTestCase):
         visualizer = KElbowVisualizer(KMeans(), k=(4, 8))
 
         visualizer.fit(docs)
-        visualizer.poof()
+        visualizer.finalize()
 
         self.assert_images_similar(visualizer)
 
@@ -233,11 +233,11 @@ class TestKElbowVisualizer(VisualTestCase):
         )
         visualizer.fit(self.clusters.X)
 
-        expected = np.array([ 69.100065, 54.081571, 43.146921, 34.978487])
+        expected = np.array([69.100065, 54.081571, 43.146921, 34.978487])
         assert len(visualizer.k_scores_) == 4
 
-        visualizer.poof()
-        self.assert_images_similar(visualizer)
+        visualizer.finalize()
+        self.assert_images_similar(visualizer, tol=0.03)
         assert_array_almost_equal(visualizer.k_scores_, expected)
 
     @pytest.mark.xfail(
@@ -252,35 +252,59 @@ class TestKElbowVisualizer(VisualTestCase):
         )
         visualizer.fit(self.clusters.X)
 
-        expected = np.array([ 0.691636,  0.456646,  0.255174,  0.239842])
+        expected = np.array([0.691636, 0.456646, 0.255174, 0.239842])
         assert len(visualizer.k_scores_) == 4
 
-        visualizer.poof()
+        visualizer.finalize()
         self.assert_images_similar(visualizer)
         assert_array_almost_equal(visualizer.k_scores_, expected)
 
     @pytest.mark.xfail(
         sys.platform == 'win32', reason="images not close on windows"
     )
-    def test_calinski_harabaz_metric(self):
+    def test_calinski_harabasz_metric(self):
         """
-        Test the calinski-harabaz metric of the k-elbow visualizer
+        Test the calinski-harabasz metric of the k-elbow visualizer
         """
         visualizer = KElbowVisualizer(
             KMeans(random_state=0), k=5,
-            metric="calinski_harabaz", timings=False, locate_elbow=False
+            metric="calinski_harabasz", timings=False, locate_elbow=False
         )
         visualizer.fit(self.clusters.X)
         assert len(visualizer.k_scores_) == 4
+        assert visualizer.elbow_value_ is None
 
         expected = np.array([
             81.662726256035683, 50.992378259195554,
             40.952179227847012, 35.939494
         ])
 
-
-        visualizer.poof()
+        visualizer.finalize()
         self.assert_images_similar(visualizer)
+        assert_array_almost_equal(visualizer.k_scores_, expected)
+
+    def test_locate_elbow(self):
+        """
+        Test the addition of locate_elbow to an image
+        """
+        X,y = make_blobs(
+            n_samples=1000, n_features=5, centers=3, shuffle=True, random_state=42
+        )
+
+        visualizer = KElbowVisualizer(
+            KMeans(random_state=0), k=6,
+            metric="calinski_harabasz", timings=False, locate_elbow=True
+        )
+        visualizer.fit(X)
+        assert len(visualizer.k_scores_) == 5
+        assert visualizer.elbow_value_ == 3
+
+        expected = np.array([
+            4286.479848, 12463.383743, 8766.999551, 6950.08391, 5865.79722
+        ])
+
+        visualizer.finalize()
+        self.assert_images_similar(visualizer, windows_tol=2.2)
         assert_array_almost_equal(visualizer.k_scores_, expected)
 
     def test_bad_metric(self):
@@ -291,7 +315,8 @@ class TestKElbowVisualizer(VisualTestCase):
             KElbowVisualizer(KMeans(), k=5, metric="foo")
 
     @pytest.mark.xfail(
-        sys.platform == 'win32', reason="images not close on windows"
+        IS_WINDOWS_OR_CONDA,
+        reason="font rendering different in OS and/or Python; see #892"
     )
     def test_timings(self):
         """
@@ -321,6 +346,6 @@ class TestKElbowVisualizer(VisualTestCase):
 
         # call draw again which is normally called in fit
         visualizer.draw()
-        visualizer.poof()
+        visualizer.finalize()
 
         self.assert_images_similar(visualizer)
