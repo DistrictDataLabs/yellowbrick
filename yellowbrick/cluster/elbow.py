@@ -30,9 +30,13 @@ from ..exceptions import YellowbrickValueError, YellowbrickWarning
 from ..utils import KneeLocator
 
 from sklearn.metrics import silhouette_score
-from sklearn.metrics import calinski_harabasz_score
 from sklearn.metrics.pairwise import pairwise_distances
 from sklearn.preprocessing import LabelEncoder
+
+try:
+    from sklearn.metrics import calinski_harabasz_score as chs
+except ImportError:
+    from sklearn.metrics import calinski_harabaz_score as chs
 
 
 ## Packages for export
@@ -114,7 +118,7 @@ def distortion_score(X, labels, metric='euclidean'):
 KELBOW_SCOREMAP = {
     "distortion": distortion_score,
     "silhouette": silhouette_score,
-    "calinski_harabasz": calinski_harabasz_score,
+    "calinski_harabasz": chs,
 }
 
 

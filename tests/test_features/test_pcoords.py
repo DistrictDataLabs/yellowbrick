@@ -25,7 +25,7 @@ from yellowbrick.datasets import load_occupancy
 from yellowbrick.features.pcoords import *
 
 from tests.base import VisualTestCase
-from ..fixtures import TestDataset
+from ..fixtures import Dataset
 from sklearn.datasets import make_classification
 
 
@@ -50,7 +50,7 @@ def dataset(request):
         class_sep=3, scale=np.array([1.0, 2.0, 100.0, 20.0, 1.0])
     )
 
-    dataset = TestDataset(X, y)
+    dataset = Dataset(X, y)
     request.cls.dataset = dataset
 
 

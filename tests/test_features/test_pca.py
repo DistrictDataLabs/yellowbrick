@@ -22,8 +22,9 @@ import pytest
 import numpy as np
 
 from unittest import mock
-from tests.dataset import Dataset
+from ..fixtures import Dataset
 from tests.base import VisualTestCase
+
 
 from yellowbrick.features.pca import *
 from yellowbrick.exceptions import YellowbrickError

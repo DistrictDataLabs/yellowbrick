@@ -29,10 +29,10 @@ from yellowbrick.exceptions import NotFitted
 from yellowbrick.features.importances import *
 
 from sklearn.datasets import load_iris
-from sklearn.base import BaseEstimator, ClassifierMixin
-from sklearn.linear_model import LogisticRegression, Lasso
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.ensemble import GradientBoostingClassifier
+from sklearn.base import BaseEstimator, ClassifierMixin
+from sklearn.linear_model import LogisticRegression, Lasso
 
 from unittest import mock
 from tests.base import VisualTestCase
@@ -236,7 +236,6 @@ class TestFeatureImportancesVisualizer(VisualTestCase):
         npt.assert_equal(viz.feature_importances_.shape, (3, 4))
         # Appveyor and Linux conda non-text-based differences
         self.assert_images_similar(viz, tol=17.5)
-
 
     @pytest.mark.skipif(pd is None, reason="pandas is required for this test")
     def test_fit_dataframe(self):
