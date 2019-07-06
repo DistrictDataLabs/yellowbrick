@@ -18,9 +18,9 @@ Decomposition based feature visualization with PCA.
 ##########################################################################
 
 # NOTE: must import mplot3d to load the 3D projection
-import mpl_toolkits.mplot3d # noqa
-import matplotlib.pyplot as plt
 import numpy as np
+import matplotlib.pyplot as plt
+import mpl_toolkits.mplot3d # noqa
 from mpl_toolkits.axes_grid1 import make_axes_locatable
 
 from yellowbrick.features.base import MultiFeatureVisualizer
@@ -128,18 +128,22 @@ class PCADecomposition(MultiFeatureVisualizer):
              ('pca', PCA(self.proj_dim, random_state=random_state))]
         )
         self.alpha = alpha
+        
         # Visual Parameters
-        self.colorbar = colorbar 
-        self.heatmap = heatmap
         self.color = color
         self.colormap = colormap
+        self.colorbar = colorbar 
+        self.heatmap = heatmap
+        
         self.uax, self.lax = None, None
+        
         if self.proj_dim == 3 and (self.heatmap or self.colorbar):
             raise YellowbrickValueError("heatmap and colorbar are not compatible with 3d projections")
-        if self.heatmap or self.colormap:
-            self.layout()
+        
+        if self.heatmap or self.colorbar:
+            self._layout()
 
-    def layout(self):
+    def _layout(self):
         """
         Creates the layout for colorbar and heatmap, adding new axes for the heatmap
         if necessary and modifying the aspect ratio. Does not modify the axes or the
@@ -147,9 +151,9 @@ class PCADecomposition(MultiFeatureVisualizer):
         """
         # Ensure the axes are created if not heatmap, then return.
 
-        if not self.heatmap:
-            return self.uax
-
+        if not (self.heatmap or self.colorbar):
+            self.ax
+            return
 
         # Ensure matplotlib version compatibility
         if make_axes_locatable is None:
@@ -162,7 +166,8 @@ class PCADecomposition(MultiFeatureVisualizer):
         divider = make_axes_locatable(self.ax)
         if self.colorbar:
             self.uax = divider.append_axes("bottom", size="20%", pad=0.7)
-        self.lax = divider.append_axes("bottom", size="100%", pad=0.1)
+        if self.heatmap:
+            self.lax = divider.append_axes("bottom", size="100%", pad=0.1)
 
     def fit(self, X, y=None, **kwargs):
         """
@@ -188,19 +193,20 @@ class PCADecomposition(MultiFeatureVisualizer):
         return self
 
     def transform(self, X, y=None, **kwargs):
-        self.orig_X = X
+        
         self.pca_features_ = self.pca_transformer.transform(X)
         self.draw()
         return self.pca_features_
 
     def draw(self, **kwargs):
+
         X = self.pca_features_
         if self.proj_dim == 2:
-            im = self.ax.scatter(X[:,0], X[:,1], c=self.color, cmap=self.colormap, edgecolors='black',
-                                 alpha=self.alpha, vmin=self.pca_components_.min(), vmax=self.pca_components_.max())
+            im = self.ax.scatter(X[:, 0], X[:, 1], c=self.color, cmap=self.colormap, alpha=self.alpha,
+                    vmin= self.pca_components_.min(), vmax = self.pca_components_.max(), **kwargs)
             if self.colorbar:
                 plt.colorbar(im, cax=self.uax, orientation='horizontal',
-                             ticks=[self.pca_components_.min(), 0, self.pca_components_.max()])
+                    ticks=[self.pca_components_.min(), 0, self.pca_components_.max()])
             if self.heatmap:
                 self.lax.imshow(self.pca_components_, interpolation='none', cmap=self.colormap)
             if self.proj_features:
@@ -250,18 +256,16 @@ class PCADecomposition(MultiFeatureVisualizer):
 
     def finalize(self, **kwargs):
         # Set the title
-        orig_X = self.orig_X
         self.ax.set_title('Principal Component Plot')
-        self.ax.set_xlabel('\nPrincipal Component 1',linespacing=1)
-        self.ax.set_ylabel('\nPrincipal Component 2',linespacing=1.2)
+        self.ax.set_xlabel('Principal Component 1', linespacing=1)
+        self.ax.set_ylabel('Principal Component 2', linespacing=1.2)
         if self.heatmap == True:
-            feature_names = list(orig_X.columns)
-            self.lax.set_xticks(np.arange(-.5, len(feature_names)))
-            self.lax.set_xticklabels(feature_names, rotation=90, ha='left', fontsize=12)
+            self.lax.set_xticks(np.arange(-.5, len(self.features_)))
+            self.lax.set_xticklabels(self.features_, rotation=90, ha='left', fontsize=12)
             self.lax.set_yticks(np.arange(0.5, 2))
             self.lax.set_yticklabels(['First PC', 'Second PC'], va='bottom', fontsize=12)
         if self.proj_dim == 3:
-            self.ax.set_zlabel('Principal Component 3',linespacing=1.2)
+            self.ax.set_zlabel('Principal Component 3', linespacing=1.2)
 
 ##########################################################################
 ## Quick Method
