@@ -229,7 +229,7 @@ class FrequencyVisualizer(TextVisualizer):
         if self.orient == 'h':
             # Add the barchart, stacking if necessary
             for label, freq in freqs.items():
-                self.ax.barh(bins, freq, label=label, align='center')
+                self.ax.barh(bins, freq, label=label, color=self.color, align='center')
 
             # Set the y ticks to the words
             self.ax.set_yticks(bins)
@@ -246,7 +246,7 @@ class FrequencyVisualizer(TextVisualizer):
         elif self.orient == 'v':
             # Add the barchart, stacking if necessary
             for label, freq in freqs.items():
-                self.ax.bar(bins, freq, label=label, align='edge')
+                self.ax.bar(bins, freq, label=label, color=self.color, align='edge')
 
             # Set the y ticks to the words
             self.ax.set_xticks(bins)
