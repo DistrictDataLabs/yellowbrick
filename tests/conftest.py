@@ -18,8 +18,33 @@ Global definitions for Yellowbrick PyTest
 ##########################################################################
 
 import os
+import matplotlib as mpl
 
 from pytest_flakes import FlakesItem
+
+
+##########################################################################
+## Configure tests
+##########################################################################
+
+def pytest_configure(config):
+    """
+    This function is called by pytest for every plugin and conftest file
+    after the command line arguments have been passed but before the
+    session object is created and all of the tests are created. It is used
+    to set a global configuration before all tests are run.
+
+    Yellowbrick uses this function primarily to ensure that the matplotlib
+    environment is setup correctly for all tests.
+    """
+    # This is redundant with the line in tests/__init__.py but ensures that
+    # the backend is correctly set across all tests and plugins.
+    mpl.use('Agg')
+
+    # Travis-CI does not have san-serif so ensure standard fonts are used.
+    # TODO: this is currently being reset before each test; needs fixing.
+    mpl.rcParams['font.family'] = 'DejaVu Sans'
+
 
 ##########################################################################
 ## PyTest Hooks

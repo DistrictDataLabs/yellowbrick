@@ -25,7 +25,7 @@ from yellowbrick.classifier.confusion_matrix import *
 from yellowbrick.datasets import load_occupancy
 
 from tests.base import IS_WINDOWS_OR_CONDA, VisualTestCase
-from tests.dataset import Dataset, Split
+from tests.fixtures import Dataset, Split
 
 from sklearn.svm import SVC
 from sklearn.datasets import load_digits
@@ -68,7 +68,7 @@ def digits(request):
 ##########################################################################
 
 @pytest.mark.usefixtures("digits")
-class ConfusionMatrixTests(VisualTestCase):
+class TestConfusionMatrix(VisualTestCase):
     """
     Test ConfusionMatrix visualizer
     """

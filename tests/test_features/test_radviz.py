@@ -22,7 +22,7 @@ import pytest
 import numpy.testing as npt
 
 from tests.base import IS_WINDOWS_OR_CONDA, VisualTestCase
-from ..fixtures import TestDataset
+from ..fixtures import Dataset
 from sklearn.datasets import make_classification
 
 from yellowbrick.datasets import load_occupancy
@@ -48,7 +48,7 @@ def dataset(request):
         class_sep=3, scale=np.array([1.0, 2.0, 100.0, 20.0, 1.0])
     )
 
-    dataset = TestDataset(X, y)
+    dataset = Dataset(X, y)
     request.cls.dataset = dataset
 
 
@@ -96,7 +96,7 @@ class TestRadViz(VisualTestCase):
         """
         visualizer = RadViz()
         visualizer.fit_transform(self.dataset.X, self.dataset.y)
-        visualizer.poof()
+        visualizer.finalize()
         self.assert_images_similar(visualizer, tol=0.25)
 
     def test_radviz_alpha(self):
@@ -105,7 +105,7 @@ class TestRadViz(VisualTestCase):
         """
         visualizer = RadViz(alpha=0.5)
         visualizer.fit_transform(self.dataset.X, self.dataset.y)
-        visualizer.poof()
+        visualizer.finalize()
         self.assert_images_similar(visualizer, tol=0.25)
 
     @pytest.mark.xfail(

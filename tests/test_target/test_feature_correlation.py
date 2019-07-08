@@ -20,10 +20,6 @@ Test the feature correlation to dependent variable visualizer.
 import sys
 import pytest
 import numpy as np
-try:
-    import pandas as pd
-except ImportError:
-    pd = None
 import numpy.testing as npt
 import matplotlib.pyplot as plt
 
@@ -31,8 +27,12 @@ from yellowbrick.target import FeatureCorrelation, feature_correlation
 from yellowbrick.exceptions import YellowbrickValueError, YellowbrickWarning
 
 from sklearn import datasets
-
 from tests.base import VisualTestCase
+
+try:
+    import pandas as pd
+except ImportError:
+    pd = None
 
 
 ##########################################################################

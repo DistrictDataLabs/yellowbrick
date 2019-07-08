@@ -24,11 +24,11 @@ import yellowbrick as yb
 import matplotlib.pyplot as plt
 
 from yellowbrick.classifier.threshold import *
+from yellowbrick.datasets import load_occupancy
 from yellowbrick.utils import is_probabilistic, is_classifier
 
 from unittest.mock import patch
 from tests.base import VisualTestCase
-from tests.dataset import DatasetMixin
 from numpy.testing.utils import assert_array_equal
 
 from sklearn.svm import LinearSVC, NuSVC
@@ -49,7 +49,7 @@ except ImportError:
 ## DiscriminationThreshold Test Cases
 ##########################################################################
 
-class TestDiscriminationThreshold(VisualTestCase, DatasetMixin):
+class TestDiscriminationThreshold(VisualTestCase):
     """
     DiscriminationThreshold visualizer tests
     """
@@ -72,7 +72,7 @@ class TestDiscriminationThreshold(VisualTestCase, DatasetMixin):
         visualizer = DiscriminationThreshold(model, ax=ax, random_state=23)
 
         visualizer.fit(X, y)
-        visualizer.poof()
+        visualizer.finalize()
 
         self.assert_images_similar(visualizer)
 
@@ -102,15 +102,8 @@ class TestDiscriminationThreshold(VisualTestCase, DatasetMixin):
         _, ax = plt.subplots()
 
         # Load the occupancy dataset from fixtures
-        data = self.load_data('occupancy')
-        target = 'occupancy'
-        features = [
-            "temperature", "relative_humidity", "light", "C02", "humidity"
-        ]
-
-        # Create instances and target
-        X = pd.DataFrame(data[features])
-        y = pd.Series(data[target].astype(int))
+        data = load_occupancy(return_dataset=True)
+        X, y = data.to_pandas()
 
         classes = ['unoccupied', 'occupied']
 
@@ -119,7 +112,31 @@ class TestDiscriminationThreshold(VisualTestCase, DatasetMixin):
             LogisticRegression(), ax=ax, classes=classes, random_state=193
         )
         viz.fit(X, y)
-        viz.poof()
+        viz.finalize()
+
+        self.assert_images_similar(viz, tol=0.1)
+
+    @pytest.mark.xfail(
+        sys.platform == 'win32', reason="images not close on windows"
+    )
+    def test_numpy_integration(self):
+        """
+        Test with NumPy arrays
+        """
+        _, ax = plt.subplots()
+
+        # Load the occupancy dataset from fixtures
+        data = load_occupancy(return_dataset=True)
+        X, y = data.to_numpy()
+        
+        classes = ['unoccupied', 'occupied']
+
+        # Create the visualizer
+        viz = DiscriminationThreshold(
+            LogisticRegression(), ax=ax, classes=classes, random_state=193
+        )
+        viz.fit(X, y)
+        viz.finalize()
 
         self.assert_images_similar(viz, tol=0.1)
 
@@ -184,7 +201,7 @@ class TestDiscriminationThreshold(VisualTestCase, DatasetMixin):
         )
 
         visualizer.fit(X, y)
-        visualizer.poof()
+        visualizer.finalize()
 
         for metric in exclude:
             assert metric not in visualizer.cv_scores_

@@ -171,7 +171,7 @@ class RFECV(ModelVisualizer):
         else:
             step = int(self.step)
 
-        if step < 0:
+        if step <= 0:
             raise YellowbrickValueError("step must be >0")
 
         # Create the RFE model
