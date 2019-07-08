@@ -164,6 +164,33 @@ class RadialVisualizer(DataVisualizer):
         b = X.max(axis=0)
         return (X - a[np.newaxis, :]) / ((b - a)[np.newaxis, :])
 
+    def fit(self, X, y=None, **kwargs):
+        """
+        The fit method is the primary drawing input for the
+        visualization since it has both the X and y data required for the
+        viz and the transform method does not.
+
+        Parameters
+        ----------
+        X : ndarray or DataFrame of shape n x m
+            A matrix of n instances with m features
+
+        y : ndarray or Series of length n
+            An array or series of target or class values
+
+        kwargs : dict
+            Pass generic arguments to the drawing method
+
+        Returns
+        -------
+        self : instance
+            Returns the instance of the transformer/visualizer
+        """
+        
+#        super(RadialVisualizer, self).fit(X, y, **kwargs)
+        self.draw(X, y, **kwargs)
+        return self
+
     def draw(self, X, y, **kwargs):
         """
         Called from the fit method, this method creates the radviz canvas and

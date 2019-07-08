@@ -60,8 +60,8 @@ class MissingDataVisualizer(DataVisualizer):
 
         self.y = y
 
-        super(MissingDataVisualizer, self).fit(X, y, **kwargs)
-
+        self.draw(X, y, **kwargs)
+        return self
 
     def get_feature_names(self):
         if self.features_ is None:
