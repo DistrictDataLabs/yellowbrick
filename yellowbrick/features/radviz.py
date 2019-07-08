@@ -187,7 +187,7 @@ class RadialVisualizer(DataVisualizer):
             Returns the instance of the transformer/visualizer
         """
         
-#        super(RadialVisualizer, self).fit(X, y, **kwargs)
+        super(RadialVisualizer, self).fit(X, y, **kwargs)
         self.draw(X, y, **kwargs)
         return self
 
