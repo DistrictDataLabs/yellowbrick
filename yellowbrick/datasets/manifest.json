@@ -41,6 +41,6 @@
   },
   "nfl": {
     "url": "https://s3.amazonaws.com/ddl-data-lake/yellowbrick/v1.0/nfl.zip",
-    "signature": "e2d0665ed4fd7bea866ba6d2f0035fce89e6143da3c12dcd870e67319451a382"
+    "signature": "4989c66818ea18217ee0fe3a59932b963bd65869928c14075a5c50366cb81e1f"
   }
 }
