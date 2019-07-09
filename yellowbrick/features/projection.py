@@ -8,7 +8,7 @@ import matplotlib as mpl
 from yellowbrick.draw import manual_legend
 from yellowbrick.features.base import *
 from yellowbrick.exceptions import YellowbrickValueError, NotFitted
-from yellowbrick.exceptions import Yel
+
 
 ##########################################################################
 ## Projection Visualizers
