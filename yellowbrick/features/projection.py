@@ -1,13 +1,11 @@
-import numpy as np
+import matplotlib as mpl
 import matplotlib.pyplot as plt
 from mpl_toolkits.axes_grid1 import make_axes_locatable
-
-
-import matplotlib as mpl
+import warnings
 
 from yellowbrick.draw import manual_legend
 from yellowbrick.features.base import DataVisualizer, TargetType
-from yellowbrick.exceptions import YellowbrickValueError, NotFitted
+from yellowbrick.exceptions import YellowbrickValueError, YellowbrickWarning, NotFitted
 
 
 ##########################################################################
@@ -64,6 +62,7 @@ class ProjectionVisualizer(DataVisualizer):
     
     def __init__(self, ax=None, features=None, classes=None, color=None,
              colormap=None, target_type="auto", projection=2, alpha=0.75, **kwargs):
+
         super(ProjectionVisualizer, self).__init__(ax=ax, features=features, 
                                                      classes=classes, color=color,
                                                      colormap=colormap, 
@@ -73,6 +72,11 @@ class ProjectionVisualizer(DataVisualizer):
             raise YellowbrickValueError("Projection dimensions must be either 2 or 3")
 
         self.projection = projection
+        if self.ax is not None:
+            if self.ax.name!='3d' and (self.projection==3 or self.projection=='3D'):
+                warnings.warn("Uses third feature space as size. Pass 3d axes.", 
+                              YellowbrickWarning)
+
         self.alpha = alpha
         self._cax = None
 
@@ -87,6 +91,24 @@ class ProjectionVisualizer(DataVisualizer):
             )
         return self._cax       
         
+    @property
+    def ax(self):
+        """
+        Overloads the axes property from base class. If no axes is specified then
+        creates an axes for users. A 3d axes is created for 3 dimensional plots.
+        """
+        if not hasattr(self, "_ax") or self._ax is None:
+            if self.projection==3:
+                fig = plt.gcf()
+                self._ax = fig.add_subplot(111, projection='3d')
+            else:
+                self._ax = plt.gca()
+        return self._ax
+
+    @ax.setter
+    def ax(self, ax):
+        self._ax = ax
+
     def _layout(self):
         """
         Creates the layout for colorbar when target type is continuous.
@@ -99,10 +121,16 @@ class ProjectionVisualizer(DataVisualizer):
                 "please upgrade matplotlib or set heatmap=False on the visualizer"
             ))
 
+        if self._cax is not None:
+            self.ax
+            return
+
         # Create the new axes for the colorbar
         divider = make_axes_locatable(self.ax)
         self._cax = divider.append_axes("right", size="5%", pad=0.3)
-        
+        self._cax.set_yticks([])
+        self._cax.set_xticks([])
+
     def fit(self, X, y=None, **kwargs):
         """
         Fits the transformer on X. Also identifies the classes, features and
@@ -175,7 +203,7 @@ class ProjectionVisualizer(DataVisualizer):
             Returns the 2-dimensional embedding of the instances.
 
         """
-        self.fit(X, y, **kwargs).transform(X, y, **kwargs)
+        return self.fit(X, y, **kwargs).transform(X, y, **kwargs)
     
     def draw(self, X, y=None):
         """
@@ -199,11 +227,11 @@ class ProjectionVisualizer(DataVisualizer):
         scatter_kwargs = self._determine_scatter_kwargs(y);
         
         if self.projection == 2 or self.projection == '2D':
+            if self._target_color_type == TargetType.CONTINUOUS:
+                self._layout()
             self._scatter = self.ax.scatter(X[:,0], X[:,1], **scatter_kwargs)
 
         if self.projection == 3 or self.projection == '3D':
-            self.fig = plt.gcf()
-            self.ax = self.fig.add_subplot(111, projection='3d')
             self._scatter = self.ax.scatter(X[:, 0], X[:, 1], X[:, 2], **scatter_kwargs)
         
         return self.ax
@@ -219,10 +247,9 @@ class ProjectionVisualizer(DataVisualizer):
 
         elif self._target_color_type == TargetType.CONTINUOUS:
             if self.projection==3 or self.projection == '3D':
-                self.fig.colorbar(self._scatter, ax=self.ax)
+                plt.colorbar(self._scatter, ax=self.ax)
             
             else:
-                self._layout()
                 # Manually draw the colorbar.
                 self.cbar = mpl.colorbar.ColorbarBase(self.cax, cmap=self._colors, 
                                                   norm=self._norm)
