@@ -71,8 +71,7 @@ class ProjectionVisualizer(DataVisualizer):
 
         if projection not in frozenset((2, 3, '2D', '3D')):
             raise YellowbrickValueError("Projection dimensions must be either 2 or 3")
-        if(isinstance(projection,str)):
-            projection=np.int(projection[0])
+
         self.projection = projection
         self.alpha = alpha
         self._cax = None
@@ -199,10 +198,10 @@ class ProjectionVisualizer(DataVisualizer):
         """
         scatter_kwargs = self._determine_scatter_kwargs(y);
         
-        if self.projection == 2:
+        if self.projection == 2 or self.projection == '2D':
             self._scatter = self.ax.scatter(X[:,0], X[:,1], **scatter_kwargs)
 
-        if self.projection == 3:
+        if self.projection == 3 or self.projection == '3D':
             self.fig = plt.gcf()
             self.ax = self.fig.add_subplot(111, projection='3d')
             self._scatter = self.ax.scatter(X[:, 0], X[:, 1], X[:, 2], **scatter_kwargs)
@@ -219,7 +218,7 @@ class ProjectionVisualizer(DataVisualizer):
                           frameon=True)
 
         elif self._target_color_type == TargetType.CONTINUOUS:
-            if(self.projection==3):
+            if self.projection==3 or self.projection == '3D':
                 self.fig.colorbar(self._scatter, ax=self.ax)
             
             else:
