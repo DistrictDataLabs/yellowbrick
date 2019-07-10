@@ -75,10 +75,9 @@ class ProjectionVisualizer(DataVisualizer):
                 projection = 3
         if projection not in {2, 3}:
             raise YellowbrickValueError("Projection dimensions must be either 2 or 3")
-
         self.projection = projection
-        if self.ax is not None:
-            if self.ax.name!='3d' and self.projection == 3:
+
+        if self.ax.name!='3d' and self.projection == 3:
                 warnings.warn("Uses third feature space as size. Pass 3d axes.", 
                               YellowbrickWarning)
 
@@ -123,8 +122,8 @@ class ProjectionVisualizer(DataVisualizer):
         # Ensure matplotlib version compatibility
         if make_axes_locatable is None:
             raise YellowbrickValueError((
-                "heatmap requires matplotlib 2.0.2 or greater "
-                "please upgrade matplotlib or set heatmap=False on the visualizer"
+                "Colorbar requires matplotlib 2.0.2 or greater "
+                "please upgrade matplotlib"
             ))
 
         if self._cax is not None or self._target_color_type != TargetType.CONTINUOUS:
@@ -234,10 +233,10 @@ class ProjectionVisualizer(DataVisualizer):
         if self.projection == 2:
             # Adds colorbar axis for continuous target type.
             self._layout()
-            self.ax.scatter(X[:,0], X[:,1], **scatter_kwargs)
+            self.ax.scatter(X[:, 0], X[:, 1], **scatter_kwargs)
 
         if self.projection == 3:
-            self._scatter = self.ax.scatter(X[:, 0], X[:, 1], X[:, 2], **scatter_kwargs)
+            self.ax.scatter(X[:, 0], X[:, 1], X[:, 2], **scatter_kwargs)
         
         return self.ax
 
@@ -251,8 +250,9 @@ class ProjectionVisualizer(DataVisualizer):
                           frameon=True)
 
         elif self._target_color_type == TargetType.CONTINUOUS:
-            if self.projection == 3:
-                plt.colorbar(self._scatter, ax=self.ax)
+            if self.projection == 2:
+                sm = plt.cm.ScalarMappable(cmap=self._colors, norm = self._norm)
+                plt.colorbar(sm, ax=self.ax)
             
             else:
                 # Manually draw the colorbar.
@@ -298,4 +298,4 @@ class ProjectionVisualizer(DataVisualizer):
         else:
             # Technically this should never be raised
             raise NotFitted("could not determine target color type")
-        return scatter_kwargs;
+        return scatter_kwargs
