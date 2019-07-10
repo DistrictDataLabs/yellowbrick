@@ -18,8 +18,8 @@ Class balance visualizer for showing per-class support.
 
 import numpy as np
 
-from yellowbrick.base import TargetVisualizer
 from yellowbrick.style.colors import resolve_colors
+from yellowbrick.target.base import TargetVisualizer
 from yellowbrick.exceptions import YellowbrickValueError
 
 from sklearn.utils.multiclass import unique_labels, type_of_target
