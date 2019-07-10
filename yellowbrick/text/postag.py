@@ -19,13 +19,12 @@ small subset of documents.
 # Imports
 ##########################################################################
 
+import numpy as np
+
+from yellowbrick.draw import bar_stack
 from yellowbrick.text.base import TextVisualizer
 from yellowbrick.style.colors import resolve_colors
-from yellowbrick.draw import bar_stack
 from yellowbrick.exceptions import YellowbrickValueError
-
-import  numpy as np
-
 
 ##########################################################################
 # Part-of-speech tag punctuation and labels
@@ -33,18 +32,24 @@ import  numpy as np
 
 # NOTE: Penn Treebank converts all sentence closers (!,?,;) to periods
 PUNCT_TAGS = [".", ":", ",", "``", "''", "(", ")", "#", "$"]
+
 TAGSET_NAMES = {
     "penn_treebank": "Penn Treebank",
     "universal": "Universal Dependencies"
 }
-PENN_TAGS = ["noun", "verb", "adjective", "adverb", "preposition", "determiner",
-                 "pronoun", "conjunction", "infinitive", "wh- word", "modal", 
-                 "possessive", "existential", "punctuation", "digit", "non-English",
-                 "interjection", "list", "symbol", "other"]
-    
-UNIVERSAL_TAGS = ["noun", "verb", "adjective", "adverb", "adposition", "determiner",
-                "pronoun", "conjunction", "infinitive", "punctuation", "number", 
-                "interjection", "symbol", "other"]
+
+PENN_TAGS = [
+    "noun", "verb", "adjective", "adverb", "preposition", "determiner",
+    "pronoun", "conjunction", "infinitive", "wh- word", "modal", 
+    "possessive", "existential", "punctuation", "digit", "non-English",
+    "interjection", "list", "symbol", "other"
+]
+
+UNIVERSAL_TAGS = [
+    "noun", "verb", "adjective", "adverb", "adposition", "determiner",
+    "pronoun", "conjunction", "infinitive", "punctuation", "number", 
+    "interjection", "symbol", "other"
+]
 
 
 ##########################################################################
@@ -78,7 +83,7 @@ class PosTagVisualizer(TextVisualizer):
         The tagset that was used to perform part-of-speech tagging.
         Either "penn_treebank" or "universal", defaults to "penn_treebank".
         Use "universal" if corpus has been tagged using SpaCy.
-    
+
     colors : list or tuple of strings
         Specify the colors for each individual part-of-speech. Will override
         colormap if both are provided.
@@ -93,7 +98,7 @@ class PosTagVisualizer(TextVisualizer):
     stack : bool {True, False}, default : False
         Plot the PosTag frequency chart as a per-class stacked bar chart. 
         Note that fit() requires y for this visualization.
-        
+
     kwargs : dict
         Pass any additional keyword arguments to the PosTagVisualizer.
     
@@ -126,17 +131,17 @@ class PosTagVisualizer(TextVisualizer):
         if tagset not in self.tagset_names:
             raise YellowbrickValueError((
                 "'{}' is an invalid tagset. Please choose one of {}."
-                ).format(
-                    tagset, ", ".join(self.tagset_names.keys())
+            ).format(
+                tagset, ", ".join(self.tagset_names.keys())
             ))
         else:
             self.tagset = tagset
 
         self.punct_tags = frozenset(PUNCT_TAGS)
+        self.frequency = frequency
         self.colormap = colormap
         self.colors = colors
-        self.frequency = frequency
-        self.stack=stack
+        self.stack = stack
 
     def fit(self, X, y=None, **kwargs):
         """
@@ -149,41 +154,44 @@ class PosTagVisualizer(TextVisualizer):
             Should be provided as a list of documents or a generator
             that yields a list of documents that contain a list of
             sentences that contain (token, tag) tuples.
-        
+
         y : ndarray or Series of length n
             An optional array of target values that are ignored by the
             visualizer.
-        
+
         kwargs : dict
             Pass generic arguments to the drawing method
-            
+ 
         Returns
         -------
         self : instance
             Returns the instance of the transformer/visualizer
         """
-        self.labels_=['documents']
+        self.labels_ = ['documents']
         if self.stack:
             if y is None:
                 raise YellowbrickValueError("Specify y for stack=True")
-            self.labels_=np.unique(y)
-        
+            self.labels_ = np.unique(y)
+
         if self.tagset == "penn_treebank":
             self.pos_tag_counts_ = self._penn_tag_map()
-            self._handle_treebank(X,y)
+            self._handle_treebank(X, y)
+
         elif self.tagset == "universal":
             self.pos_tag_counts_ = self._uni_tag_map()
-            self._handle_universal(X,y)
+            self._handle_universal(X, y)
+
         self.draw()
+
         return self
-    
+
     def _penn_tag_map(self):
         """
         Returns a Penn Treebank part-of-speech tag map.
         """
         self._pos_tags = PENN_TAGS
         return self._make_tag_map(PENN_TAGS)
-    
+
     def _uni_tag_map(self):
         """
         Returns a Universal Dependencies part-of-speech tag map.
@@ -196,58 +204,19 @@ class PosTagVisualizer(TextVisualizer):
         Returns a map of the tagset to a counter unless stack=True then returns
         a map of labels to a map of tagset to counters. 
         """
-        zeros = [0] * len(tagset) # ensures the dict contains a zero counter per tag
+        # ensures the dict contains a zero counter per tag
+        zeros = [0] * len(tagset)
         return {
-                label: dict(zip(tagset, zeros))
-                for label in self.labels_ 
-            }
+            label: dict(zip(tagset, zeros))
+            for label in self.labels_
+        }
         return dict(zip(tagset, zeros))
-   
-    def _handle_universal(self, X, y=None):
-            """
-            Scan through the corpus to compute counts of each Universal
-            Dependencies part-of-speech.
-    
-            Parameters
-            ----------
-            X : list or generator
-                Should be provided as a list of documents or a generator
-                that yields a list of documents that contain a list of
-                sentences that contain (token, tag) tuples.
-            """
-            jump = {
-                # combine proper and regular nouns
-                "NOUN": "noun", "PROPN": "noun",
-                "ADJ": "adjective",
-                "VERB": "verb",
-                # include particles with adverbs
-                "ADV": "adverb", "PART": "adverb",
-                "ADP": "adposition",
-                "PRON": "pronoun",
-                "CCONJ": "conjunction",
-                "PUNCT": "punctuation",
-                "DET": "determiner",
-                "NUM": "number",
-                "INTJ": "interjection",
-                "SYM": "symbol",
-            }
-            
-            for idx,tagged_doc in enumerate(X):
-                for tagged_sent in tagged_doc:
-                    for _, tag in tagged_sent:
-                        if tag == "SPACE":
-                            continue
-                        if self.stack:
-                            counter = self.pos_tag_counts_[y[idx]] 
-                        else: 
-                            counter = self.pos_tag_counts_['documents']
-                        
-                        counter[jump.get(tag, "other")] += 1
 
-    def _handle_treebank(self, X, y=None):
+    def _handle_universal(self, X, y=None):
         """
-        Create a part-of-speech tag mapping using the Penn Treebank tags
-        
+        Scan through the corpus to compute counts of each Universal
+        Dependencies part-of-speech.
+
         Parameters
         ----------
         X : list or generator
@@ -255,14 +224,54 @@ class PosTagVisualizer(TextVisualizer):
             that yields a list of documents that contain a list of
             sentences that contain (token, tag) tuples.
         """
-        for idx,tagged_doc in enumerate(X):
+        jump = {
+            # combine proper and regular nouns
+            "NOUN": "noun", "PROPN": "noun",
+            "ADJ": "adjective",
+            "VERB": "verb",
+            # include particles with adverbs
+            "ADV": "adverb", "PART": "adverb",
+            "ADP": "adposition",
+            "PRON": "pronoun",
+            "CCONJ": "conjunction",
+            "PUNCT": "punctuation",
+            "DET": "determiner",
+            "NUM": "number",
+            "INTJ": "interjection",
+            "SYM": "symbol",
+        }
+
+        for idx, tagged_doc in enumerate(X):
+            for tagged_sent in tagged_doc:
+                for _, tag in tagged_sent:
+                    if tag == "SPACE":
+                        continue
+                    if self.stack:
+                        counter = self.pos_tag_counts_[y[idx]] 
+                    else:
+                        counter = self.pos_tag_counts_['documents']
+
+                    counter[jump.get(tag, "other")] += 1
+
+    def _handle_treebank(self, X, y=None):
+        """
+        Create a part-of-speech tag mapping using the Penn Treebank tags
+
+        Parameters
+        ----------
+        X : list or generator
+            Should be provided as a list of documents or a generator
+            that yields a list of documents that contain a list of
+            sentences that contain (token, tag) tuples.
+        """
+        for idx, tagged_doc in enumerate(X):
             for tagged_sent in tagged_doc:
                 for _, tag in tagged_sent:
                     if self.stack:
                         counter = self.pos_tag_counts_[y[idx]] 
                     else:
                         counter = self.pos_tag_counts_['documents']
-                    
+
                     if tag.startswith("N"):
                         counter["noun"] += 1
                     elif tag.startswith("J"):
@@ -305,27 +314,29 @@ class PosTagVisualizer(TextVisualizer):
                         counter["symbol"] += 1
                     else:
                         counter["other"] += 1
-        
+
     def draw(self, **kwargs):
         """
         Called from the fit method, this method creates the canvas and
         draws the part-of-speech tag mapping as a bar chart.
-        
+
         Parameters
         ----------
         kwargs: dict
             generic keyword arguments.
-        
+
         Returns
         -------
         ax : matplotlib axes
             Axes on which the PosTagVisualizer was drawn.
         """
         # Converts nested dict to nested list
-        pos_tag_counts = np.array([list(i.values()) for i in self.pos_tag_counts_.values()])
+        pos_tag_counts = np.array([
+            list(i.values()) for i in self.pos_tag_counts_.values()
+        ])
         # stores sum of nested list column wise
         pos_tag_sum = np.sum(pos_tag_counts, axis=0)
-        
+
         if self.frequency:
             # sorts the count and tags by sum for frequency true
             idx = (pos_tag_sum).argsort()[::-1]
@@ -333,25 +344,26 @@ class PosTagVisualizer(TextVisualizer):
             pos_tag_counts = pos_tag_counts[:,idx]
 
         if self.stack:
-            bar_stack(pos_tag_counts, ax=self.ax, labels=list(self.labels_), 
-                      ticks=self._pos_tags, colors=self.colors, 
-                      colormap = self.colormap)
+            bar_stack(
+                pos_tag_counts, ax=self.ax, labels=list(self.labels_),
+                ticks=self._pos_tags, colors=self.colors, colormap=self.colormap
+            )
         else:
             xidx = np.arange(len(self._pos_tags))
-            colors = resolve_colors(n_colors=len(self._pos_tags), 
-                                    colormap=self.colormap, 
-                                    colors=self.colors)
-            self.ax.bar(xidx,
-                        pos_tag_counts[0],
-                        color=colors,
-                        )
-        
-        return self.ax        
+            colors = resolve_colors(
+                n_colors=len(self._pos_tags), colormap=self.colormap,
+                colors=self.colors
+            )
+            self.ax.bar(
+                xidx, pos_tag_counts[0], color=colors
+            )
+
+        return self.ax
 
     def finalize(self, **kwargs):
         """
         Finalize the plot with ticks, labels, and title
-        
+
         Parameters
         ----------
         kwargs: dict
@@ -359,22 +371,22 @@ class PosTagVisualizer(TextVisualizer):
         """
         # NOTE: not deduping here, so this is total, not unique
         self.ax.set_ylabel("Count")
-        
+
         if self.frequency:
             self.ax.set_xlabel(
                 "{} part-of-speech tags, sorted by frequency".format(
-                        self.tagset_names[self.tagset]
-                        ))
+                    self.tagset_names[self.tagset]
+                ))
         else:
             self.ax.set_xlabel(
                 "{} part-of-speech tags".format(self.tagset_names[self.tagset])
-                        )
+            )
 
-        #bar stack(helper) sets the ticks if stack is true
+        # bar stack(helper) sets the ticks if stack is true
         if not self.stack:
             self.ax.set_xticks(range(len(self._pos_tags)))
             self.ax.set_xticklabels(self._pos_tags, rotation=90)
-            
+
         self.set_title(
             "PosTag plot for {}-token corpus".format(
                 (sum([sum(i.values()) for i in self.pos_tag_counts_.values()]))
@@ -408,29 +420,35 @@ def postag(
     in X, which consists of a part-of-speech-tagged corpus, which the
     visualizer expects to be a list of lists of lists of (token, tag)
     tuples.
-    
+
     Parameters
     ----------
     X : list or generator
         Should be provided as a list of documents or a generator
         that yields a list of documents that contain a list of
         sentences that contain (token, tag) tuples.
+
     ax : matplotlib axes
         The axes to plot the figure on.
+
     tagset: string
         The tagset that was used to perform part-of-speech tagging.
         Either "penn_treebank" or "universal", defaults to "penn_treebank".
         Use "universal" if corpus has been tagged using SpaCy.
+
     colors : list or tuple of colors
         Specify the colors for each individual part-of-speech.
+
     colormap : string or matplotlib cmap
         Specify a colormap to color the parts-of-speech.
+
     frequency: bool {True, False}, default: False
         If set to True, part-of-speech tags will be plotted according to frequency,
         from most to least frequent.
+
     kwargs : dict
         Pass any additional keyword arguments to the PosTagVisualizer.
-    
+
     Returns
     -------
     ax : matplotlib axes
@@ -446,4 +464,6 @@ def postag(
     visualizer.fit(X, y=y, **kwargs)
 
     # Return the axes object on the visualizer
-    return visualizer
+    return visualizer.ax
+
+    
