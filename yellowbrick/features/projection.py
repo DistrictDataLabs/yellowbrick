@@ -48,7 +48,7 @@ class ProjectionVisualizer(DataVisualizer):
         (real numbers, usually for regression). If "auto", then it will
         attempt to determine the type by counting the number of unique values.
 
-    projection : int, default: 2
+    projection : int or string, default: 2
         Dimension of the Projection Visualizer.
 
     alpha : float, default: 0.75
@@ -67,13 +67,18 @@ class ProjectionVisualizer(DataVisualizer):
                                                      classes=classes, color=color,
                                                      colormap=colormap, 
                                                      target_type=target_type, **kwargs)
-
-        if projection not in frozenset((2, 3, '2D', '3D')):
+        # Convert string to integer
+        if isinstance(projection, str):
+            if projection in {'2D', '2d'}:
+                projection = 2
+            if projection in {'3D', '3d'}:
+                projection = 3
+        if projection not in {2, 3}:
             raise YellowbrickValueError("Projection dimensions must be either 2 or 3")
 
         self.projection = projection
         if self.ax is not None:
-            if self.ax.name!='3d' and (self.projection==3 or self.projection=='3D'):
+            if self.ax.name!='3d' and self.projection == 3:
                 warnings.warn("Uses third feature space as size. Pass 3d axes.", 
                               YellowbrickWarning)
 
@@ -89,6 +94,7 @@ class ProjectionVisualizer(DataVisualizer):
             raise AttributeError(
                 "This visualizer does not have an axes for colorbar"
             )
+        
         return self._cax       
         
     @property
@@ -121,10 +127,9 @@ class ProjectionVisualizer(DataVisualizer):
                 "please upgrade matplotlib or set heatmap=False on the visualizer"
             ))
 
-        if self._cax is not None:
+        if self._cax is not None or self._target_color_type != TargetType.CONTINUOUS:
             self.ax
             return
-
         # Create the new axes for the colorbar
         divider = make_axes_locatable(self.ax)
         self._cax = divider.append_axes("right", size="5%", pad=0.3)
@@ -226,12 +231,12 @@ class ProjectionVisualizer(DataVisualizer):
         """
         scatter_kwargs = self._determine_scatter_kwargs(y);
         
-        if self.projection == 2 or self.projection == '2D':
-            if self._target_color_type == TargetType.CONTINUOUS:
-                self._layout()
-            self._scatter = self.ax.scatter(X[:,0], X[:,1], **scatter_kwargs)
+        if self.projection == 2:
+            # Adds colorbar axis for continuous target type.
+            self._layout()
+            self.ax.scatter(X[:,0], X[:,1], **scatter_kwargs)
 
-        if self.projection == 3 or self.projection == '3D':
+        if self.projection == 3:
             self._scatter = self.ax.scatter(X[:, 0], X[:, 1], X[:, 2], **scatter_kwargs)
         
         return self.ax
@@ -246,7 +251,7 @@ class ProjectionVisualizer(DataVisualizer):
                           frameon=True)
 
         elif self._target_color_type == TargetType.CONTINUOUS:
-            if self.projection==3 or self.projection == '3D':
+            if self.projection == 3:
                 plt.colorbar(self._scatter, ax=self.ax)
             
             else:
