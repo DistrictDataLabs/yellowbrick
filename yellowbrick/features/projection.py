@@ -250,7 +250,7 @@ class ProjectionVisualizer(DataVisualizer):
                           frameon=True)
 
         elif self._target_color_type == TargetType.CONTINUOUS:
-            if self.projection == 2:
+            if self.projection == 3:
                 sm = plt.cm.ScalarMappable(cmap=self._colors, norm = self._norm)
                 plt.colorbar(sm, ax=self.ax)
             
