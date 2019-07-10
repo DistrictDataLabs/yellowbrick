@@ -48,7 +48,7 @@ class MissingValuesBar(MissingDataVisualizer):
         fit.
 
     colors : list, default: None
-        The color pallette for drawing a stack bar chart when the y targets
+        The color palette for drawing a stack bar chart when the y targets
         are passed to fit.
 
     classes : list, default: None

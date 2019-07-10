@@ -240,6 +240,9 @@ class Rank1D(RankDBase):
         If True, the feature names are used to label the x and y ticks in the
         plot.
 
+    color: string
+        Specify color for barchart
+
     kwargs : dict
         Keyword arguments that are passed to the base class and may influence
         the visualization as defined in other Visualizers.
@@ -263,7 +266,7 @@ class Rank1D(RankDBase):
     }
 
     def __init__(self, ax=None, algorithm='shapiro', features=None,
-                 orient='h', show_feature_names=True, **kwargs):
+                 orient='h', show_feature_names=True, color=None, **kwargs):
         """
         Initialize the class with the options required to rank and
         order features as well as visualize the result.
@@ -272,6 +275,7 @@ class Rank1D(RankDBase):
             ax=ax, algorithm=algorithm, features=features,
             show_feature_names=show_feature_names, **kwargs
         )
+        self.color = color
         self.orientation_ = orient
 
     def draw(self, **kwargs):
@@ -280,7 +284,7 @@ class Rank1D(RankDBase):
         """
         if self.orientation_ == 'h':
             # Make the plot
-            self.ax.barh(np.arange(len(self.ranks_)), self.ranks_, color='b')
+            self.ax.barh(np.arange(len(self.ranks_)), self.ranks_, color=self.color)
 
             # Add ticks and tick labels
             self.ax.set_yticks(np.arange(len(self.ranks_)))
@@ -297,7 +301,7 @@ class Rank1D(RankDBase):
 
         elif self.orientation_ == 'v':
             # Make the plot
-            self.ax.bar(np.arange(len(self.ranks_)), self.ranks_, color='b')
+            self.ax.bar(np.arange(len(self.ranks_)), self.ranks_, color=self.color)
 
             # Add ticks and tick labels
             self.ax.set_xticks(np.arange(len(self.ranks_)))
@@ -390,7 +394,7 @@ class Rank2D(RankDBase):
             ax=ax, algorithm=algorithm, features=features,
             show_feature_names=show_feature_names, **kwargs
         )
-        self.colormap=colormap
+        self.colormap = colormap
 
     def draw(self, **kwargs):
         """
@@ -436,7 +440,7 @@ class Rank2D(RankDBase):
 ##########################################################################
 
 def rank1d(X, y=None, ax=None, algorithm='shapiro', features=None,
-           orient='h', show_feature_names=True, **kwargs):
+           orient='h', show_feature_names=True, color=None, **kwargs):
     """Scores each feature with the algorithm and ranks them in a bar plot.
 
     This helper function is a quick wrapper to utilize the Rank1D Visualizer
@@ -468,6 +472,9 @@ def rank1d(X, y=None, ax=None, algorithm='shapiro', features=None,
         If True, the feature names are used to label the axis ticks in the
         plot.
 
+    color: string
+        Specify color for barchart
+
     Returns
     -------
     ax : matplotlib axes
@@ -475,8 +482,10 @@ def rank1d(X, y=None, ax=None, algorithm='shapiro', features=None,
 
     """
     # Instantiate the visualizer
-    visualizer = Rank1D(ax, algorithm, features, orient, show_feature_names,
-                        **kwargs)
+    visualizer = Rank1D(
+        ax=ax, algorithm=algorithm, features=features, orient=orient, 
+        show_feature_names=show_feature_names, color=color, **kwargs
+    )
 
     # Fit and transform the visualizer (calls draw)
     visualizer.fit(X, y, **kwargs)
@@ -484,6 +493,7 @@ def rank1d(X, y=None, ax=None, algorithm='shapiro', features=None,
 
     # Return the axes object on the visualizer
     return visualizer.ax
+
 
 def rank2d(X, y=None, ax=None, algorithm='pearson', features=None,
            show_feature_names=True, colormap='RdBu_r', **kwargs):
@@ -528,8 +538,9 @@ def rank2d(X, y=None, ax=None, algorithm='pearson', features=None,
 
     """
     # Instantiate the visualizer
-    visualizer = Rank2D(ax, algorithm, features, colormap, show_feature_names,
-                        **kwargs)
+    visualizer = Rank2D(
+        ax=ax, algorithm=algorithm, features=features, colormap=colormap, 
+        show_feature_names=show_feature_names, **kwargs)
 
     # Fit and transform the visualizer (calls draw)
     visualizer.fit(X, y, **kwargs)
@@ -537,3 +548,4 @@ def rank2d(X, y=None, ax=None, algorithm='pearson', features=None,
 
     # Return the axes object on the visualizer
     return visualizer.ax
+    

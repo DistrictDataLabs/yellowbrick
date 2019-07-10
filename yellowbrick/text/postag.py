@@ -72,21 +72,28 @@ class PosTagVisualizer(TextVisualizer):
     Parameters
     ----------
     ax : matplotlib axes
-        The axes to plot the figure on.
+        The axes to plot the figure on. 
+
     tagset: string
         The tagset that was used to perform part-of-speech tagging.
         Either "penn_treebank" or "universal", defaults to "penn_treebank".
         Use "universal" if corpus has been tagged using SpaCy.
-    colors : list or tuple of colors
-        Specify the colors for each individual part-of-speech.
+    
+    colors : list or tuple of strings
+        Specify the colors for each individual part-of-speech. Will override
+        colormap if both are provided.
+
     colormap : string or matplotlib cmap
         Specify a colormap to color the parts-of-speech.
+
     frequency: bool {True, False}, default: False
         If set to True, part-of-speech tags will be plotted according to frequency,
         from most to least frequent.
+
     stack : bool {True, False}, default : False
         Plot the PosTag frequency chart as a per-class stacked bar chart. 
         Note that fit() requires y for this visualization.
+        
     kwargs : dict
         Pass any additional keyword arguments to the PosTagVisualizer.
     

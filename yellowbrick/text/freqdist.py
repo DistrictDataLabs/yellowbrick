@@ -29,7 +29,7 @@ from yellowbrick.exceptions import YellowbrickValueError
 ## Quick Method
 ##########################################################################
 
-def freqdist(X, y=None, ax=None, color=None, N=50, **kwargs):
+def freqdist(X, y=None, ax=None, n=50, orient='h', color=None, **kwargs):
     """Displays frequency distribution plot for text.
 
     This helper function is a quick wrapper to utilize the FreqDist
@@ -45,14 +45,17 @@ def freqdist(X, y=None, ax=None, color=None, N=50, **kwargs):
     y: ndarray or Series of length n
         An array or series of target or class values
 
-    ax: matplotlib axes
+    ax : matplotlib axes, default: None
         The axes to plot the figure on.
 
-    color: string
-        Specify color for barchart
-
-    N: integer
+    n: integer, default: 50
         Top N tokens to be plotted.
+
+    orient : 'h' or 'v', default: 'h'
+        Specifies a horizontal or vertical bar chart.
+
+    color : string
+        Specify color for bars
 
     kwargs: dict
         Keyword arguments passed to the super class.
@@ -64,7 +67,7 @@ def freqdist(X, y=None, ax=None, color=None, N=50, **kwargs):
     """
     # Instantiate the visualizer
     visualizer = FreqDistVisualizer(
-        ax, X, color, **kwargs
+        ax=ax, n=n, orient=orient, color=color, **kwargs
     )
 
     # Fit and transform the visualizer (calls draw)
@@ -101,7 +104,7 @@ class FrequencyVisualizer(TextVisualizer):
     orient : 'h' or 'v', default: 'h'
         Specifies a horizontal or vertical bar chart.
 
-    color : list or tuple of colors
+    color : string
         Specify color for bars
 
     kwargs : dict
