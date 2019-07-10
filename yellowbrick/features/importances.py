@@ -29,7 +29,9 @@ from yellowbrick.draw import bar_stack
 from yellowbrick.base import ModelVisualizer
 from yellowbrick.style.colors import resolve_colors
 from yellowbrick.utils import is_dataframe, is_classifier
-from yellowbrick.exceptions import YellowbrickTypeError, NotFitted, YellowbrickWarning
+from yellowbrick.exceptions import NotFitted, YellowbrickWarning
+from yellowbrick.exceptions import YellowbrickTypeError, YellowbrickValueError
+
 
 ##########################################################################
 ## Feature Visualizer
@@ -80,11 +82,11 @@ class FeatureImportances(ModelVisualizer):
         then a stacked bar plot is plotted; otherwise the mean of the
         feature importance across classes are plotted.
 
-    colors: list of strings
-        Specify colors for the barchart (will override colormap if both are provided).
-    
+    color: string
+        Specify color for the barchart if ``stack==False``.
+
     colormap : string or matplotlib cmap
-        Specify a colormap to color the classes.
+        Specify a colormap to color the classes if ``stack==True``.
 
     kwargs : dict
         Keyword arguments that are passed to the base class and may influence
@@ -111,15 +113,24 @@ class FeatureImportances(ModelVisualizer):
     """
 
     def __init__(self, model, ax=None, labels=None, relative=True,
-                 absolute=False, xlabel=None, stack=False, colors=None, 
+                 absolute=False, xlabel=None, stack=False, color=None,
                  colormap=None, **kwargs):
         super(FeatureImportances, self).__init__(model, ax, **kwargs)
 
         # Data Parameters
         self.set_params(
             labels=labels, relative=relative, absolute=absolute,
-            xlabel=xlabel, stack=stack, color=colors, colormap=colormap
+            xlabel=xlabel, stack=stack
         )
+
+        if stack is True:
+            if color is not None:
+                raise YellowbrickValueError((
+                    "Need multiple colors to interpret multi-class feature "
+                    "importances; select colormap or set color to false"
+                ))
+        self.colormap = kwargs.pop(colormap, "yellowbrick")
+        self.color = kwargs.pop(color, "b")
 
     def fit(self, X, y=None, **kwargs):
         """
@@ -218,17 +229,17 @@ class FeatureImportances(ModelVisualizer):
         # Plot the bar chart
         if self.stack:
             colors = resolve_colors(
-                len(self.classes_), colormap=self.colormap, colors=self.colors
+                len(self.classes_), colormap=self.colormap
             )
-            legend_kws = {'bbox_to_anchor':(1.04, 0.5), 'loc':"center left"}
+            legend_kws = {'bbox_to_anchor': (1.04, 0.5), 'loc': "center left"}
             bar_stack(
-                self.feature_importances_, ax=self.ax, labels=list(self.classes_), 
-                ticks=self.features_, orientation='h', colors=colors, 
+                self.feature_importances_, ax=self.ax, labels=list(self.classes_),
+                ticks=self.features_, orientation='h', colors=colors,
                 legend_kws=legend_kws
             )
         else:
             colors = resolve_colors(
-                len(self.features_), colormap=self.colormap, colors=self.colors
+                len(self.features_), colormap=self.colormap, colors=self.color
             )
             self.ax.barh(
                 pos, self.feature_importances_, color=colors, align='center'
