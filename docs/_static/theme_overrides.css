@@ -11,3 +11,13 @@
       overflow: visible !important;
    }
 }
+
+/* Add padding to the parameters list on RTD theme */
+dl.simple dt {
+   padding-left: 4px;
+}
+
+dl.simple dt span.classifier {
+   padding-left: 6px;
+   font-weight: normal;
+}

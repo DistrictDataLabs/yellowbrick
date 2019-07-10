@@ -133,8 +133,9 @@ class PrecisionRecallCurve(ClassificationScoreVisualizer):
         In the multiclass case, a mapping of class/metric to recall array.
 
 
-    Example
-    -------
+    Examples
+    --------
+
     >>> from yellowbrick.classifier import PrecisionRecallCurve
     >>> from sklearn.model_selection import train_test_split
     >>> from sklearn.svm import LinearSVC
@@ -484,13 +485,13 @@ def precision_recall_curve(model, X, y, X_test=None, y_test=None, ax=None, train
     elif any([((X_test is not None) and (y_test is None)),((X_test is None) and (y_test is not None))]):
         # exception handling in case of missing X_test or y_test
         raise YellowbrickValueError("both X_test and y_test are required if one is specified")
-        
+
     else:
         X_train,y_train=X,y
 
     # Instantiate the visualizer
     viz = PRCurve(model, ax=ax, **kwargs)
-    
+
     # Fit and transform the visualizer
     viz.fit(X_train, y_train)
     viz.score(X_test, y_test)

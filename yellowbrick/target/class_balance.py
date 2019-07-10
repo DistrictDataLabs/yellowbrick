@@ -74,8 +74,8 @@ class ClassBalance(TargetVisualizer):
         A table representing the support of each class in the target. It is a
         vector when in balance mode, or a table with two rows in compare mode.
 
-    Example
-    -------
+    Examples
+    --------
     To simply observe the balance of classes in the target:
 
     >>> viz = ClassBalance().fit(y)

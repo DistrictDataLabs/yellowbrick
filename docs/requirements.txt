@@ -6,6 +6,6 @@ numpy>=1.13.0
 cycler>=0.10.0
 
 # Documentation Dependencies
-Sphinx>=1.8.3
-sphinx-rtd-theme>=0.4.2
-numpydoc>=0.8.0
+Sphinx>=2.1
+sphinx-rtd-theme>=0.4.3
+numpydoc>=0.9.0

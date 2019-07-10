@@ -35,3 +35,4 @@ API Reference
     :members: PredictionError
     :undoc-members:
     :show-inheritance:
+    :noindex:
