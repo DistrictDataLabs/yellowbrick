@@ -36,7 +36,7 @@ Without Targets Supplied
 
 
 With Targets (``y``) Supplied
--------------------------
+-----------------------------
 
 .. plot::
     :context: close-figs
