@@ -34,7 +34,7 @@ from sklearn.datasets import make_classification, make_regression
 from tests.base import IS_WINDOWS_OR_CONDA, VisualTestCase
 from yellowbrick.exceptions import YellowbrickValueError
 from yellowbrick.features.jointplot import *
-from ..fixtures import TestDataset
+from ..fixtures import Dataset
 
 try:
     # Only available in Matplotlib >= 2.0.2
@@ -68,7 +68,7 @@ def discrete(request):
         n_classes=3, n_clusters_per_class=1, random_state=2221,
     )
 
-    request.cls.discrete = TestDataset(X, y)
+    request.cls.discrete = Dataset(X, y)
 
 
 @pytest.fixture(scope='class')
@@ -80,7 +80,7 @@ def continuous(request):
         n_samples=120, n_features=2, random_state=1112,
     )
 
-    request.cls.continuous = TestDataset(X, y)
+    request.cls.continuous = Dataset(X, y)
 
 
 ##########################################################################

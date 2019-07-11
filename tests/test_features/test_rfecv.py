@@ -21,7 +21,7 @@ import numpy.testing as npt
 
 from unittest.mock import patch
 from tests.base import VisualTestCase
-from ..fixtures import TestDataset
+from ..fixtures import Dataset
 
 from yellowbrick.datasets import load_occupancy
 from yellowbrick.features.rfecv import *
@@ -54,7 +54,7 @@ def dataset(request):
         n_repeated=0, n_classes=8, n_clusters_per_class=1, random_state=0
     )
 
-    dataset = TestDataset(X, y)
+    dataset = Dataset(X, y)
     request.cls.dataset = dataset
 
 

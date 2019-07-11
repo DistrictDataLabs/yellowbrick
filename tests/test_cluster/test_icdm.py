@@ -21,7 +21,7 @@ from yellowbrick.cluster.icdm import *
 from yellowbrick.exceptions import YellowbrickValueError
 
 from tests.base import IS_WINDOWS_OR_CONDA, VisualTestCase
-from ..fixtures import TestDataset
+from ..fixtures import Dataset
 
 from sklearn.datasets import make_blobs
 from sklearn.cluster import Birch, AgglomerativeClustering
@@ -48,7 +48,7 @@ def blobs12(request):
     X, y = make_blobs(
         centers=12, n_samples=1000, n_features=16, shuffle=True, random_state=2121
     )
-    request.cls.blobs12 = TestDataset(X, y)
+    request.cls.blobs12 = Dataset(X, y)
 
 
 @pytest.fixture(scope='class')
@@ -59,7 +59,7 @@ def blobs4(request):
     X, y = make_blobs(
         centers=4, n_samples=400, n_features=16, shuffle=True, random_state=1212
     )
-    request.cls.blobs4 = TestDataset(X, y)
+    request.cls.blobs4 = Dataset(X, y)
 
 
 def assert_fitted(oz):
