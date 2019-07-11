@@ -26,7 +26,7 @@ The Yellowbrick library is a diagnostic visualization platform for machine learn
 About the Data
 --------------
 
-This tutorial uses the mushrooms data from the Yellowbrick :doc:`api/datasets` module. Our objective is to predict if a mushroom is poisonous or edible based on its characteristics.
+This tutorial uses the mushrooms data from the Yellowbrick :doc:`api/datasets/index` module. Our objective is to predict if a mushroom is poisonous or edible based on its characteristics.
 
 .. NOTE:: The YB version of the mushrooms data differs from the mushroom dataset from the `UCI Machine Learning Repository <http://archive.ics.uci.edu/ml/>`__. The Yellowbrick version has been deliberately modified to make modeling a bit more of a challenge.
 
@@ -56,7 +56,7 @@ Let's load the data:
 Feature Extraction
 ------------------
 
-Our data, including the target, is categorical. We will need to change these values to numeric ones for machine learning. In order to extract this from the dataset, we'll have to use scikit-learn transformers to transform our input dataset into something that can be fit to a model. Luckily, scikit-learn does provide transformers for converting categorical labels into numeric integers: 
+Our data, including the target, is categorical. We will need to change these values to numeric ones for machine learning. In order to extract this from the dataset, we'll have to use scikit-learn transformers to transform our input dataset into something that can be fit to a model. Luckily, scikit-learn does provide transformers for converting categorical labels into numeric integers:
 `sklearn.preprocessing.LabelEncoder <http://scikit-learn.org/stable/modules/generated/sklearn.preprocessing.LabelEncoder.html>`__ and `sklearn.preprocessing.OneHotEncoder <http://scikit-learn.org/stable/modules/generated/sklearn.preprocessing.OneHotEncoder.html>`__.
 
 We'll use a combination of scikit-learn's ``Pipeline`` object (`here's <http://zacstewart.com/2014/08/05/pipelines-of-featureunions-of-pipelines.html>`__ a great post on using pipelines by `Zac Stewart <https://twitter.com/zacstewart>`__), ``OneHotEncoder``, and ``LabelEncoder``:
@@ -67,14 +67,14 @@ We'll use a combination of scikit-learn's ``Pipeline`` object (`here's <http://z
     from sklearn.preprocessing import OneHotEncoder, LabelEncoder
 
     # Label-encode targets before modeling
-    y = LabelEncoder().fit_transform(y) 
+    y = LabelEncoder().fit_transform(y)
 
     # One-hot encode columns before modeling
     model = Pipeline([
-     ('one_hot_encoder', OneHotEncoder()), 
+     ('one_hot_encoder', OneHotEncoder()),
      ('estimator', estimator)
     ])
- 
+
 Modeling and Evaluation
 -----------------------
 
@@ -118,13 +118,13 @@ diagnostics from the Yellowbrick library).
     from sklearn.preprocessing import OneHotEncoder, LabelEncoder
     from sklearn.linear_model import LogisticRegressionCV, LogisticRegression, SGDClassifier
     from sklearn.ensemble import BaggingClassifier, ExtraTreesClassifier, RandomForestClassifier
-    
-        
+
+
     models = [
-        SVC(gamma='auto'), NuSVC(gamma='auto'), LinearSVC(), 
-        SGDClassifier(max_iter=100, tol=1e-3), KNeighborsClassifier(), 
-        LogisticRegression(solver='lbfgs'), LogisticRegressionCV(cv=3), 
-        BaggingClassifier(), ExtraTreesClassifier(n_estimators=300), 
+        SVC(gamma='auto'), NuSVC(gamma='auto'), LinearSVC(),
+        SGDClassifier(max_iter=100, tol=1e-3), KNeighborsClassifier(),
+        LogisticRegression(solver='lbfgs'), LogisticRegressionCV(cv=3),
+        BaggingClassifier(), ExtraTreesClassifier(n_estimators=300),
         RandomForestClassifier(n_estimators=300)
     ]
 
@@ -132,19 +132,19 @@ diagnostics from the Yellowbrick library).
     def score_model(X, y, estimator, **kwargs):
         """
         Test various estimators.
-        """ 
+        """
         y = LabelEncoder().fit_transform(y)
         model = Pipeline([
-            ('one_hot_encoder', OneHotEncoder()), 
+            ('one_hot_encoder', OneHotEncoder()),
             ('estimator', estimator)
         ])
 
         # Instantiate the classification model and visualizer
-        model.fit(X, y, **kwargs)  
-        
+        model.fit(X, y, **kwargs)
+
         expected  = y
         predicted = model.predict(X)
-        
+
         # Compute and return F1 (harmonic mean of precision and recall)
         print("{}: {}".format(estimator.__class__.__name__, f1_score(expected, predicted)))
 
@@ -189,21 +189,21 @@ Now let's refactor our model evaluation function to use Yellowbrick's ``Classifi
     def visualize_model(X, y, estimator, **kwargs):
         """
         Test various estimators.
-        """ 
+        """
         y = LabelEncoder().fit_transform(y)
         model = Pipeline([
-            ('one_hot_encoder', OneHotEncoder()), 
+            ('one_hot_encoder', OneHotEncoder()),
             ('estimator', estimator)
         ])
 
         # Instantiate the classification model and visualizer
         visualizer = ClassificationReport(
-            model, classes=['edible', 'poisonous'], 
+            model, classes=['edible', 'poisonous'],
             cmap="YlGn", size=(600, 360), **kwargs
         )
-        visualizer.fit(X, y)  
+        visualizer.fit(X, y)
         visualizer.score(X, y)
-        visualizer.poof()  
+        visualizer.poof()
 
     for model in models:
         visualize_model(X, y, model)

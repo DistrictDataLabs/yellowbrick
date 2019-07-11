@@ -11,7 +11,7 @@ As in the previous sections, Yellowbrick has provided a sample dataset to run th
 
 Note that this will create a directory called ``data`` in your current working directory that contains subdirectories with the provided datasets.
 
-.. note:: If you've already followed the instructions from :doc:`downloading example datasets <../datasets>`, you don't have to repeat these steps here. Simply check to ensure there is a directory called ``hobbies`` in your data directory.
+.. note:: If you've already followed the instructions from :doc:`downloading example datasets <../datasets/index>`, you don't have to repeat these steps here. Simply check to ensure there is a directory called ``hobbies`` in your data directory.
 
 The following code snippet creates a utility that will load the corpus from disk into a scikit-learn Bunch object. This method creates a corpus that is exactly the same as the one found in the `"working with text data" <http://scikit-learn.org/stable/tutorial/text_analytics/working_with_text_data.html>`_ example on the scikit-learn website, hopefully making the examples easier to use.
 

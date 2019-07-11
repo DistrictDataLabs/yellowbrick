@@ -11,7 +11,7 @@ The data downloader script can be run as follows:
 
     $ python -m yellowbrick.download
 
-This will download all of the data to the ``fixtures`` directory inside of the Yellowbrick site packages. You can specify the location of the download either as an argument to the downloader script (use `--help` for more details) or by setting the `$YELLOWBRICK_DATA` environment variable. This is the preferred mechanism because this will also influence how data is loaded in Yellowbrick.
+This will download all of the data to the ``fixtures`` directory inside of the Yellowbrick site packages. You can specify the location of the download either as an argument to the downloader script (use ``--help`` for more details) or by setting the ``$YELLOWBRICK_DATA`` environment variable. This is the preferred mechanism because this will also influence how data is loaded in Yellowbrick.
 
 .. NOTE:: Developers who have downloaded data from Yellowbrick versions earlier than v1.0 may experience some problems with the older data format. If this occurs, you can clear out your data cache by running ``python -m yellowbrick.download --cleanup``. This will remove old datasets and download the new ones. You can also use the ``--no-download`` flag to simply clear the cache without re-downloading data. Users who are having difficulty with datasets can also use this or they can uninstall and reinstall Yellowbrick using ``pip``.
 
@@ -26,22 +26,41 @@ Once you have downloaded the example datasets, you can load and use them as foll
 
 Unless otherwise specified, most of the examples currently use one or more of the listed datasets. Each dataset has a ``README.md`` with detailed information about the data source, attributes, and target. Here is a complete listing of all datasets in Yellowbrick and the analytical tasks with which they are most commonly associated:
 
-- **bikeshare**: suitable for regression
-- **concrete**: suitable for regression
-- **credit**: suitable for classification/clustering
-- **energy**: suitable for regression
-- **game**: suitable for classification
-- **hobbies**: suitable for text analysis/classification
-- **mushroom**: suitable for classification/clustering
-- **occupancy**: suitable for classification
-- **spam**: suitable for binary classification
-- **walking**: suitable for time series analysis/clustering
+.. Below is a custom ToC, please add new datasets both to the list with a link and
+   the file containing the dataset information to the toctree directive below.
+
+- :doc:`bikeshare`: suitable for regression
+- :doc:`concrete`: suitable for regression
+- :doc:`credit`: suitable for classification/clustering
+- :doc:`energy`: suitable for regression
+- :doc:`game`: suitable for classification
+- :doc:`hobbies`: suitable for text analysis/classification
+- :doc:`mushroom`: suitable for classification/clustering
+- :doc:`occupancy`: suitable for classification
+- :doc:`spam`: suitable for binary classification
+- :doc:`walking`: suitable for time series analysis/clustering
+
+.. toctree::
+   :hidden:
+
+   bikeshare
+   concrete
+   credit
+   energy
+   game
+   hobbies
+   mushroom
+   occupancy
+   spam
+   walking
 
 
 API Reference
 -------------
 
-.. automodule:: yellowbrick.datasets.path
-    :members:
+.. automodule:: yellowbrick.datasets.base
+    :members: BaseDataset, Dataset, Corpus
     :undoc-members:
     :show-inheritance:
+
+.. autofunction:: yellowbrick.datasets.path.get_data_home
