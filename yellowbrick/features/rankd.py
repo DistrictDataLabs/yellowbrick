@@ -17,14 +17,17 @@ Implements 1D (histograms) and 2D (joint plot) feature rankings.
 ## Imports
 ##########################################################################
 
+import warnings
 import numpy as np
+import matplotlib as mpl
+
 from scipy.stats import shapiro
 from scipy.stats import spearmanr
 from scipy.stats import kendalltau as sp_kendalltau
 
 from yellowbrick.utils import is_dataframe
 from yellowbrick.features.base import MultiFeatureVisualizer
-from yellowbrick.exceptions import YellowbrickValueError
+from yellowbrick.exceptions import YellowbrickValueError, YellowbrickWarning
 
 
 __all__ = ["rank1d", "rank2d", "Rank1D", "Rank2D"]
@@ -189,7 +192,16 @@ class RankDBase(MultiFeatureVisualizer):
             generic keyword arguments
 
         """
-        # Set the title
+        # There is a known bug in matplotlib 3.1.1 that affects RankD plots
+        # See #912 and #914 for details.
+        if mpl.__version__ == "3.1.1":
+            msg = (
+                "RankD plots may be clipped when using matplotlib v3.1.1, "
+                "upgrade to matplotlib v3.1.2 or later to fix the plots."
+            )
+            warnings.warn(msg, YellowbrickWarning)
+
+        # Set the title for all RankD visualizations.
         self.set_title(
             "{} Ranking of {} Features".format(
                 self.ranking_.title(), len(self.features_)
