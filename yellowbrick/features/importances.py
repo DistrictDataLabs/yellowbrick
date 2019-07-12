@@ -71,7 +71,7 @@ class FeatureImportances(ModelVisualizer):
 
     absolute : bool, default: False
         Make all coeficients absolute to more easily compare negative
-        coeficients with positive ones.
+        coefficients with positive ones.
 
     xlabel : str, default: None
         The label for the X-axis. If None is automatically determined by the
@@ -82,8 +82,8 @@ class FeatureImportances(ModelVisualizer):
         then a stacked bar plot is plotted; otherwise the mean of the
         feature importance across classes are plotted.
 
-    color: string
-        Specify color for the barchart if ``stack==False``.
+    colors: list of strings
+        Specify colors for each bar in the chart if ``stack==False``.
 
     colormap : string or matplotlib cmap
         Specify a colormap to color the classes if ``stack==True``.
@@ -101,7 +101,7 @@ class FeatureImportances(ModelVisualizer):
         The numeric value of the feature importance computed by the model
 
     classes_ : np.array
-        The classees labeled. Is not None only for classifier.
+        The classes labeled. Is not None only for classifier.
 
     Examples
     --------
@@ -113,24 +113,15 @@ class FeatureImportances(ModelVisualizer):
     """
 
     def __init__(self, model, ax=None, labels=None, relative=True,
-                 absolute=False, xlabel=None, stack=False, color=None,
+                 absolute=False, xlabel=None, stack=False, colors=None,
                  colormap=None, **kwargs):
         super(FeatureImportances, self).__init__(model, ax, **kwargs)
 
         # Data Parameters
         self.set_params(
             labels=labels, relative=relative, absolute=absolute,
-            xlabel=xlabel, stack=stack
+            xlabel=xlabel, stack=stack, colors=colors, colormap=colormap
         )
-
-        if stack is True:
-            if color is not None:
-                raise YellowbrickValueError((
-                    "Need multiple colors to interpret multi-class feature "
-                    "importances; select colormap or set color to false"
-                ))
-        self.colormap = kwargs.pop(colormap, "yellowbrick")
-        self.color = kwargs.pop(color, "b")
 
     def fit(self, X, y=None, **kwargs):
         """
@@ -239,7 +230,7 @@ class FeatureImportances(ModelVisualizer):
             )
         else:
             colors = resolve_colors(
-                len(self.features_), colormap=self.colormap, colors=self.color
+                len(self.features_), colormap=self.colormap, colors=self.colors
             )
             self.ax.barh(
                 pos, self.feature_importances_, color=colors, align='center'
@@ -333,7 +324,7 @@ class FeatureImportances(ModelVisualizer):
 
 def feature_importances(model, X, y=None, ax=None, labels=None,
                         relative=True, absolute=False, xlabel=None,
-                        stack=False, color=None, colormap=None, **kwargs):
+                        stack=False, colors=None, colormap=None, **kwargs):
     """
     Displays the most informative features in a model by showing a bar chart
     of features ranked by their importances. Although primarily a feature
@@ -378,8 +369,8 @@ def feature_importances(model, X, y=None, ax=None, labels=None,
         then a stacked bar plot is plotted; otherwise the mean of the
         feature importance across classes are plotted.
 
-    color: string
-        Specify color for the barchart if ``stack==False``.
+    colors: list of strings
+        Specify colors for each bar in the chart if ``stack==False``.
 
     colormap : string or matplotlib cmap
         Specify a colormap to color the classes if ``stack==True``.
@@ -396,7 +387,7 @@ def feature_importances(model, X, y=None, ax=None, labels=None,
     # Instantiate the visualizer
     visualizer = FeatureImportances(
         model=model, ax=ax, labels=labels, relative=relative, absolute=absolute, 
-        xlabel=xlabel, stack=stack, color=color, colormap=colormap, **kwargs)
+        xlabel=xlabel, stack=stack, colors=colors, colormap=colormap, **kwargs)
 
     # Fit and transform the visualizer (calls draw)
     visualizer.fit(X, y)
