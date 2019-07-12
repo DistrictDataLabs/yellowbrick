@@ -82,6 +82,12 @@ class PCADecomposition(MultiFeatureVisualizer):
         the more efficient `randomized` solver is enabled, this parameter sets
         the random state on this solver.
 
+    colorbar : bool, default: False
+        Boolean to enable the colorbar in the scatter plot.
+
+    heatmap : bool, default: False
+        Boolean to enable the heatmap in the scatter plot.
+
     kwargs : dict
         Keyword arguments that are passed to the base class and may influence
         the visualization as defined in other Visualizers.
@@ -325,6 +331,12 @@ def pca_decomposition(X, y=None, ax=None, features=None, scale=True,
         extract is lower than 80% of the smallest dimension of the data, then
         the more efficient `randomized` solver is enabled, this parameter sets
         the random state on this solver.
+    
+    colorbar : bool, default: False
+        Boolean to enable or disable the colorbar feature in the scatter plot.
+
+    heatmap : bool, default: False
+        Boolean to enable or disable the heatmap feature in the scatter plot.
 
     kwargs : dict
         Keyword arguments that are passed to the base class and may influence

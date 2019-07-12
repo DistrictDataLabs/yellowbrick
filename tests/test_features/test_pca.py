@@ -22,9 +22,8 @@ import pytest
 import numpy as np
 
 from unittest import mock
-from ..fixtures import Dataset
+from tests.dataset import Dataset
 from tests.base import VisualTestCase
-
 
 from yellowbrick.features.pca import *
 from yellowbrick.exceptions import YellowbrickError
@@ -240,6 +239,9 @@ class TestPCADecomposition(VisualTestCase):
         visualizer = PCADecomposition(**params).fit(self.dataset.X)
         visualizer.transform(self.dataset.X)
         visualizer.finalize()
+        # TODO: manually modifying ticks should be removed after #916 is fixed
+        visualizer.lax.set_xticks([])
+        visualizer.lax.set_yticks([])
 
         # Image comparison tests
         self.assert_images_similar(visualizer)
@@ -253,6 +255,9 @@ class TestPCADecomposition(VisualTestCase):
         visualizer = PCADecomposition(**params).fit(self.dataset.X)
         visualizer.transform(self.dataset.X)
         visualizer.finalize()
+        # TODO: manually modifying ticks should be removed after #916 is fixed
+        visualizer.lax.set_xticks([])
+        visualizer.lax.set_yticks([])
 
         # Image comparison tests
         self.assert_images_similar(visualizer)
