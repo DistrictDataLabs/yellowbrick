@@ -6,6 +6,7 @@ import warnings
 from yellowbrick.draw import manual_legend
 from yellowbrick.features.base import DataVisualizer, TargetType
 from yellowbrick.exceptions import YellowbrickValueError, YellowbrickWarning, NotFitted
+from yellowbrick.style import palettes
 
 
 ##########################################################################
@@ -61,7 +62,8 @@ class ProjectionVisualizer(DataVisualizer):
     """
     
     def __init__(self, ax=None, features=None, classes=None, color=None,
-             colormap=None, target_type="auto", projection=2, alpha=0.75, **kwargs):
+             colormap=palettes.DEFAULT_SEQUENCE, target_type="auto", projection=2,
+             alpha=0.75, **kwargs):
 
         super(ProjectionVisualizer, self).__init__(ax=ax, features=features, 
                                                      classes=classes, color=color,
@@ -252,7 +254,7 @@ class ProjectionVisualizer(DataVisualizer):
         elif self._target_color_type == TargetType.CONTINUOUS:
             if self.projection == 3:
                 sm = plt.cm.ScalarMappable(cmap=self._colors, norm = self._norm)
-                plt.colorbar(sm, ax=self.ax)
+                self.cbar = plt.colorbar(sm, ax=self.ax)
             
             else:
                 # Manually draw the colorbar.
