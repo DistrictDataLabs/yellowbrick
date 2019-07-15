@@ -111,14 +111,19 @@ diagnostics from the Yellowbrick library).
 
 .. code:: python
 
-    from sklearn.metrics import f1_score
     from sklearn.pipeline import Pipeline
+    from sklearn.preprocessing import OneHotEncoder, LabelEncoder
+    from sklearn.metrics import f1_score
     from sklearn.svm import LinearSVC, NuSVC, SVC
     from sklearn.neighbors import KNeighborsClassifier
-    from sklearn.preprocessing import OneHotEncoder, LabelEncoder
-    from sklearn.linear_model import LogisticRegressionCV, LogisticRegression, SGDClassifier
-    from sklearn.ensemble import BaggingClassifier, ExtraTreesClassifier, RandomForestClassifier
+    from sklearn.linear_model import (LogisticRegressionCV, LogisticRegression,
+                                      SGDClassifier)
+    from sklearn.ensemble import (BaggingClassifier, ExtraTreesClassifier,
+                                  RandomForestClassifier)
     
+    from yellowbrick.datasets import load_mushroom
+
+    X, y = load_mushroom()
         
     models = [
         SVC(gamma='auto'), NuSVC(gamma='auto'), LinearSVC(), 
@@ -131,7 +136,7 @@ diagnostics from the Yellowbrick library).
 
     def score_model(X, y, estimator, **kwargs):
         """
-        Test various estimators.
+        Obtain the F1 score for an estimator.
         """ 
         y = LabelEncoder().fit_transform(y)
         model = Pipeline([
@@ -146,7 +151,9 @@ diagnostics from the Yellowbrick library).
         predicted = model.predict(X)
         
         # Compute and return F1 (harmonic mean of precision and recall)
-        print("{}: {}".format(estimator.__class__.__name__, f1_score(expected, predicted)))
+        f1 = f1_score(expected, predicted)
+        print("{}: {}".format(estimator.__class__.__name__, f1))
+        return f1
 
     for model in models:
         score_model(X, y, model)
@@ -180,15 +187,36 @@ Now let's refactor our model evaluation function to use Yellowbrick's ``Classifi
 
 **Type II error** (or a **"false negative"**) is failing to detect an effect that is present (e.g. believing a mushroom is edible when it is in fact poisonous).
 
-.. code:: python
+.. plot::
+    :context: close-figs
+    :alt: Classification model visualizers with scores and heatmaps
 
+    import matplotlib.pyplot as plt
     from sklearn.pipeline import Pipeline
-    from yellowbrick.classifier import ClassificationReport
+    from sklearn.preprocessing import OneHotEncoder, LabelEncoder
+    from sklearn.svm import LinearSVC, NuSVC, SVC
+    from sklearn.neighbors import KNeighborsClassifier
+    from sklearn.linear_model import (LogisticRegressionCV, LogisticRegression,
+                                      SGDClassifier)
+    from sklearn.ensemble import (BaggingClassifier, ExtraTreesClassifier,
+                                  RandomForestClassifier)
 
+    from yellowbrick.classifier import ClassificationReport
+    from yellowbrick.datasets import load_mushroom
+
+    models = [
+        SVC(gamma='auto'), NuSVC(gamma='auto'), LinearSVC(),
+        SGDClassifier(max_iter=100, tol=1e-3), KNeighborsClassifier(),
+        LogisticRegression(solver='lbfgs'), LogisticRegressionCV(cv=3),
+        BaggingClassifier(), ExtraTreesClassifier(n_estimators=300),
+        RandomForestClassifier(n_estimators=300)
+    ]
+
+    X, y = load_mushroom()
 
     def visualize_model(X, y, estimator, **kwargs):
         """
-        Test various estimators.
+        Visualize the precision, recall and F1 score of a classification model.
         """ 
         y = LabelEncoder().fit_transform(y)
         model = Pipeline([
@@ -196,39 +224,21 @@ Now let's refactor our model evaluation function to use Yellowbrick's ``Classifi
             ('estimator', estimator)
         ])
 
+        # Create a new figure to draw the classification report on
+        _, ax = plt.subplots()
+
         # Instantiate the classification model and visualizer
         visualizer = ClassificationReport(
             model, classes=['edible', 'poisonous'], 
             cmap="YlGn", size=(600, 360), **kwargs
         )
+
         visualizer.fit(X, y)  
         visualizer.score(X, y)
-        visualizer.poof()  
+        visualizer.poof()
 
     for model in models:
         visualize_model(X, y, model)
-
-
-
-.. image:: images/tutorial/modelselect_svc.png
-
-.. image:: images/tutorial/modelselect_nu_svc.png
-
-.. image:: images/tutorial/modelselect_linear_svc.png
-
-.. image:: images/tutorial/modelselect_sgd_classifier.png
-
-.. image:: images/tutorial/modelselect_kneighbors_classifier.png
-
-.. image:: images/tutorial/modelselect_logistic_regression.png
-
-.. image:: images/tutorial/modelselect_logistic_regression_cv.png
-
-.. image:: images/tutorial/modelselect_bagging_classifier.png
-
-.. image:: images/tutorial/modelselect_extra_trees_classifier.png
-
-.. image:: images/tutorial/modelselect_random_forest_classifier.png
 
 
 Reflection
