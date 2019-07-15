@@ -1,7 +1,6 @@
 import pytest
 import matplotlib.pyplot as plt
 
-#from yellowbrick.base import Visualizer
 from yellowbrick.features.projection import ProjectionVisualizer
 from yellowbrick.exceptions import YellowbrickValueError
 
@@ -9,15 +8,17 @@ from tests.base import VisualTestCase
 from ..fixtures import Dataset
 from unittest import mock
 
-#from sklearn.base import BaseEstimator, TransformerMixin
 from sklearn.datasets import make_classification, make_regression
-
+from sklearn.pipeline import Pipeline
+from sklearn.preprocessing import  StandardScaler
+from sklearn.decomposition import PCA
+from sklearn.manifold import LocallyLinearEmbedding
 
 ##########################################################################
 ## Fixtures
 ##########################################################################
 
-@pytest.fixture(scope='class')
+@pytest.fixture(scope="class")
 def discrete(request):
     """
     Creare a random classification fixture.
@@ -26,10 +27,10 @@ def discrete(request):
         n_samples=400, n_features=12, n_informative=10, n_redundant=0,
         n_classes=5, random_state=2019)
 
-    # Set a class attribute for digits
+    # Set a class attribute for discrete data
     request.cls.discrete = Dataset(X, y)
 
-@pytest.fixture(scope='class')
+@pytest.fixture(scope="class")
 def continuous(request):
     """
     Creates a random regressor fixture.
@@ -38,36 +39,33 @@ def continuous(request):
         n_samples=500, n_features=22, n_informative=8, random_state=2019
     )
 
-    # Set a class attribute for digits
+    # Set a class attribute for continuous data
     request.cls.continuous = Dataset(X, y)
 
-
-from sklearn.pipeline import Pipeline
-from sklearn.preprocessing import  StandardScaler
-from sklearn.decomposition import PCA
-from sklearn.manifold import LocallyLinearEmbedding
-
-@pytest.fixture(scope='function')
+@pytest.fixture(scope="function")
 def transformer(request):
     """
-    Creates a random regressor fixture.
+    Creates a PCA transformer. Acccepts the projection dimnesion as param and
+    returns transformer accordingly. If parame is not specified then None is returned.
     """
-    if (not hasattr(request, 'param')):
+    if (not hasattr(request, "param")):
         return
-    pca_transformer = Pipeline([('scale', StandardScaler()),
-                                    ('pca', PCA(request.param, random_state=2019))])
-    # Set a class attribute for digits
+    pca_transformer = Pipeline([("scale", StandardScaler()),
+                                    ("pca", PCA(request.param, random_state=2019))])
+    # Set a class attribute for transformer
     request.cls.transformer = pca_transformer
-    
+
+
 @pytest.mark.usefixtures("discrete", "continuous", "transformer")
 class TestProjectionVisualizerBase(VisualTestCase):
     
-    @pytest.mark.parametrize('transformer', [2], indirect=True)
+    @pytest.mark.parametrize("transformer", [2], indirect=True)
     def test_discrete_plot(self):
+
         X, y = self.discrete
-        classes = ['a', 'b', 'c', 'd', 'e']
+        classes = ["a", "b", "c", "d", "e"]
         visualizer = ProjectionVisualizer(projection=2,
-                                          colormap='plasma', classes=classes)
+                                          colormap="plasma", classes=classes)
         visualizer.transformer=self.transformer
         transform_array = visualizer.fit_transform(X, y)
         assert(visualizer.classes_ == classes)
@@ -79,22 +77,25 @@ class TestProjectionVisualizerBase(VisualTestCase):
 
         X, y = self.continuous
         manifold = Pipeline([
-            ('pca', PCA(n_components=15, random_state=1998)),
-            ('lle', LocallyLinearEmbedding(n_components=2, random_state=2019)),
+            ("pca", PCA(n_components=15, random_state=1998)),
+            ("lle", LocallyLinearEmbedding(n_components=2, random_state=2019)),
         ])
 
-        visualizer = ProjectionVisualizer(projection='2d')
+        visualizer = ProjectionVisualizer(projection="2d")
         visualizer.transformer = manifold
         visualizer.fit_transform(X, y)
         visualizer.finalize()
         visualizer.cax.set_yticklabels([])
         self.assert_images_similar(visualizer)
         
-    @pytest.mark.parametrize('transformer', [2], indirect=True)
+    @pytest.mark.parametrize("transformer", [2], indirect=True)
     def test_continuous_when_target_discrete(self):
+        """
+        Test if data is dicrete but we override the target type to be continuous.
+        """
         _, ax = plt.subplots()
         X, y = self.discrete
-        visualizer = ProjectionVisualizer(ax=ax, projection='2D', 
+        visualizer = ProjectionVisualizer(ax=ax, projection="2D", 
                                           target_type="continuous", colormap="cool")
         visualizer.transformer = self.transformer
         visualizer.fit(X, y)
@@ -103,23 +104,23 @@ class TestProjectionVisualizerBase(VisualTestCase):
         visualizer.cax.set_yticklabels([])
         self.assert_images_similar(visualizer)
         
-    @pytest.mark.parametrize('transformer', [2], indirect=True)
+    @pytest.mark.parametrize("transformer", [2], indirect=True)
     def test_single_plot(self):
         X, y = self.discrete
         visualizer = ProjectionVisualizer(projection=2,
-                                          colormap='plasma')
+                                          colormap="plasma")
         visualizer.transformer=self.transformer
         visualizer.fit_transform(X)
         visualizer.finalize()
         self.assert_images_similar(visualizer)
 
     
-    @pytest.mark.parametrize('transformer', [3], indirect=True)
+    @pytest.mark.parametrize("transformer", [3], indirect=True)
     def test_discrete_3d(self):
         X, y = self.discrete
 
-        classes = ['a', 'b', 'c', 'd', 'e']
-        color = ['r', 'b', 'g', 'm','c']
+        classes = ["a", "b", "c", "d", "e"]
+        color = ["r", "b", "g", "m","c"]
         visualizer = ProjectionVisualizer(projection=3,
                                           color=color, classes=classes)
         visualizer.transformer=self.transformer
@@ -131,26 +132,26 @@ class TestProjectionVisualizerBase(VisualTestCase):
     def test_3d_continuous_plot(self):
         X, y = self.continuous
         manifold = Pipeline([
-            ('pca', PCA(n_components=15, random_state=1998)),
-            ('lle', LocallyLinearEmbedding(n_components=3, random_state=2019)),
+            ("pca", PCA(n_components=15, random_state=1998)),
+            ("lle", LocallyLinearEmbedding(n_components=3, random_state=2019)),
         ])
 
-        visualizer = ProjectionVisualizer(projection='3D')
+        visualizer = ProjectionVisualizer(projection="3D")
         visualizer.transformer = manifold
         visualizer.fit_transform(X, y)
         visualizer.finalize()
         visualizer.cbar.set_ticks([])
         self.assert_images_similar(visualizer)
 
-    @pytest.mark.parametrize('transformer', [2], indirect=True)
-    @mock.patch('yellowbrick.features.pca.plt.sca', autospec=True)
+    @pytest.mark.parametrize("transformer", [2], indirect=True)
+    @mock.patch("yellowbrick.features.pca.plt.sca", autospec=True)
     def test_alpha_param(self, mock_sca):
         """
         Test that the user can supply an alpha param on instantiation
         """
         # Instantiate a prediction error plot, provide custom alpha
         X, y = self.discrete
-        params = {'alpha': 0.3, 'projection': 2}
+        params = {"alpha": 0.3, "projection": 2}
         visualizer = ProjectionVisualizer(**params)
         visualizer.transformer=self.transformer
         visualizer.fit(X, y)
@@ -167,14 +168,16 @@ class TestProjectionVisualizerBase(VisualTestCase):
         assert scatter_kwargs["alpha"] == 0.3
 
     # Check Errors
-    def test_wrong_projection_dimensions(self):
+    @pytest.mark.parametrize("projection", ["4D", 1, "100d"])
+    def test_wrong_projection_dimensions(self, projection):
         msg = "Projection dimensions must be either 2 or 3"
         with pytest.raises(YellowbrickValueError, match=msg):
-            ProjectionVisualizer(projection='4D')
+            ProjectionVisualizer(projection=projection)
+
     
     def test_transform_without_fit(self):
         X, y = self.discrete
-        visualizer = ProjectionVisualizer(projection='3D')
+        visualizer = ProjectionVisualizer(projection="3D")
         msg = "try using fit_transform instead."
         with pytest.raises(AttributeError, match = msg):
             visualizer.transform(X, y)
