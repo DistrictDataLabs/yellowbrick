@@ -226,7 +226,7 @@ class TestPCADecomposition(VisualTestCase):
                    'color': self.dataset.y, 'colorbar': True}
         visualizer = PCADecomposition(**params).fit(self.dataset.X)
         visualizer.transform(self.dataset.X)
-
+        visualizer.uax.set_xticklabels([])
         # Image comparison tests
         self.assert_images_similar(visualizer)  
 
@@ -257,6 +257,7 @@ class TestPCADecomposition(VisualTestCase):
         visualizer.finalize()
         # TODO: manually modifying ticks should be removed after #916 is fixed
         visualizer.lax.set_xticks([])
+        visualizer.uax.set_xticklabels([])
         visualizer.lax.set_yticks([])
 
         # Image comparison tests
