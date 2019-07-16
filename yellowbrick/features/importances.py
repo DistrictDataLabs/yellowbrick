@@ -25,14 +25,15 @@ import warnings
 import numpy as np
 import matplotlib.pyplot as plt
 
+from yellowbrick.draw import bar_stack
 from yellowbrick.base import ModelVisualizer
-from yellowbrick.utils import is_dataframe, is_classifier
+from yellowbrick.utils import is_dataframe, is_classifier, is_fitted
 from yellowbrick.exceptions import YellowbrickTypeError, NotFitted, YellowbrickWarning
-from ..draw import bar_stack
 
 ##########################################################################
 ## Feature Visualizer
 ##########################################################################
+
 
 class FeatureImportances(ModelVisualizer):
     """
@@ -133,7 +134,8 @@ class FeatureImportances(ModelVisualizer):
         self : visualizer
             The fit method must always return self to support pipelines.
         """
-        super(FeatureImportances, self).fit(X, y, **kwargs)
+        if not is_fitted(self.estimator):
+            super(FeatureImportances, self).fit(X, y, **kwargs)
 
         # Get the feature importances from the model
         self.feature_importances_ = self._find_importances_param()
