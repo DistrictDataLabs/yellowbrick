@@ -6,7 +6,7 @@
 # Author:   Neal Humphrey
 # Created:  Wed May 18 12:39:40 2016 -0400
 #
-# Copyright (C) 2016 District Data Labs
+# Copyright (C) 2019 The scikit-yb developers
 # For license information, see LICENSE.txt
 #
 # ID: base.py [5388065] neal@nhumphrey.com $
@@ -21,10 +21,10 @@ API for classification visualizer hierarchy.
 
 import numpy as np
 
-from ..utils import isclassifier
-from ..base import ScoreVisualizer
-from ..style.palettes import color_palette
-from ..exceptions import YellowbrickTypeError
+from yellowbrick.base import ScoreVisualizer
+from yellowbrick.style.palettes import color_palette
+from yellowbrick.utils import is_fitted, isclassifier
+from yellowbrick.exceptions import YellowbrickTypeError
 
 
 ##########################################################################
@@ -100,16 +100,17 @@ class ClassificationScoreVisualizer(ScoreVisualizer):
             Returns the instance of the classification score visualizer
 
         """
-        # Fit the inner estimator
-        self.estimator.fit(X, y)
+        if not is_fitted(self.estimator):
 
-        # Extract the classes from the estimator
-        if self.classes_ is None:
-            self.classes_ = self.estimator.classes_
+            # Fit the inner estimator
+            self.estimator.fit(X, y)
+
+            # Extract the classes from the estimator
+            if self.classes_ is None:
+                self.classes_ = self.estimator.classes_
 
         # Always return self from fit
         return self
-
 
     def score(self, X, y, **kwargs):
         """

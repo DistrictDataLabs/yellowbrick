@@ -21,9 +21,10 @@ import numpy as np
 
 from functools import partial
 
-from .base import RegressionScoreVisualizer
-from ..exceptions import YellowbrickTypeError
-from ..exceptions import YellowbrickValueError
+from yellowbrick.utils.helpers import is_fitted
+from yellowbrick.exceptions import YellowbrickTypeError
+from yellowbrick.exceptions import YellowbrickValueError
+from yellowbrick.regressor.base import RegressionScoreVisualizer
 
 from sklearn.model_selection import cross_val_score
 
@@ -130,7 +131,9 @@ class AlphaSelection(RegressionScoreVisualizer):
         A simple pass-through method; calls fit on the estimator and then
         draws the alpha-error plot.
         """
-        self.estimator.fit(X, y, **kwargs)
+        if not is_fitted(self.estimator):
+            self.estimator.fit(X, y, **kwargs)
+
         self.draw()
         return self
 

@@ -2,9 +2,10 @@
 # Helper functions and generic utilities for use in Yellowbrick code.
 #
 # Author:   Benjamin Bengfort <bbengfort@districtdatalabs.com>
+# Author:   Rebecca Bilbro <rbilbro@districtdatalabs.com>
 # Created:  Fri May 19 10:39:30 2017 -0700
 #
-# Copyright (C) 2017 District Data Labs
+# Copyright (C) 2019 The scikit-yb developers
 # For license information, see LICENSE.txt
 #
 # ID: helpers.py [79cd8cf] benjamin@bengfort.com $
@@ -18,17 +19,38 @@ Helper functions and generic utilities for use in Yellowbrick code.
 ##########################################################################
 
 import re
+import sklearn
 import numpy as np
 
 from sklearn.pipeline import Pipeline
 
-from .types import is_estimator
+from yellowbrick.utils.types import is_estimator
 from yellowbrick.exceptions import YellowbrickTypeError
-
 
 ##########################################################################
 ## Model and Feature Information
 ##########################################################################
+
+
+def is_fitted(estimator):
+    """
+    In order to ensure that we don't call ``fit`` on an already-fitted model,
+    this utility function calls ``predict`` on the estimator, returning False
+    if it raises a ``sklearn.exceptions.NotFittedError``.
+
+    NOTE: This is the solution proposed to scikit-yb: https://bit.ly/2LWQxZO (see
+    also: https://stackoverflow.com/a/39900933/6552250), though it remains unclear
+    how it will perform with sklearn-style Estimators and Transformers from other
+    3rd party libraries like Keras, XGBoost, etc.
+    """
+    X = [[2, 4, 3, 2, 1], [3, 4, 3, 3, 1], [2, 3, 3, 3, 3]]
+
+    try:
+        estimator.predict(X)
+        return True
+    except sklearn.exceptions.NotFittedError:
+        return False
+
 
 def get_model_name(model):
     """
@@ -48,9 +70,7 @@ def get_model_name(model):
     """
     if not is_estimator(model):
         raise YellowbrickTypeError(
-            "Cannot detect the model name for non estimator: '{}'".format(
-                type(model)
-            )
+            "Cannot detect the model name for non estimator: '{}'".format(type(model))
         )
 
     else:
@@ -63,11 +83,14 @@ def get_model_name(model):
 def has_ndarray_int_columns(features, X):
     """ Checks if numeric feature columns exist in ndarray """
     _, ncols = X.shape
-    if not all(d.isdigit() for d in features if isinstance(d, str)) or not isinstance(X, np.ndarray):
+    if not all(d.isdigit() for d in features if isinstance(d, str)) or not isinstance(
+        X, np.ndarray
+    ):
         return False
     ndarray_columns = np.arange(0, ncols)
     feature_cols = np.unique([int(d) for d in features])
     return all(np.in1d(feature_cols, ndarray_columns))
+
 
 # Alias for closer name to isinstance and issubclass
 hasndarrayintcolumns = has_ndarray_int_columns
@@ -86,7 +109,7 @@ def is_monotonic(a, increasing=True):
         Test if the array is montonically increasing, otherwise test if the
         array is montonically decreasing.
     """
-    a = np.asarray(a) # ensure a is array-like
+    a = np.asarray(a)  # ensure a is array-like
 
     if a.ndim > 1:
         raise ValueError("not supported for multi-dimensonal arrays")
@@ -103,8 +126,8 @@ def is_monotonic(a, increasing=True):
 ## Numeric Computations
 ##########################################################################
 
-#From here: http://stackoverflow.com/questions/26248654/numpy-return-0-with-divide-by-zero
-def div_safe( numerator, denominator ):
+# From here: https://bit.ly/2xR64lI
+def div_safe(numerator, denominator):
     """
     Ufunc-extension that returns 0 instead of nan when dividing numpy arrays
 
@@ -118,15 +141,15 @@ def div_safe( numerator, denominator ):
 
     example: div_safe( [-1, 0, 1], 0 ) == [0, 0, 0]
     """
-    #First handle scalars
+    # First handle scalars
     if np.isscalar(numerator):
         raise ValueError("div_safe should only be used with an array-like numerator")
 
-    #Then numpy arrays
+    # Then numpy arrays
     try:
-        with np.errstate(divide='ignore', invalid='ignore'):
-            result = np.true_divide( numerator, denominator )
-            result[ ~ np.isfinite( result )] = 0  # -inf inf NaN
+        with np.errstate(divide="ignore", invalid="ignore"):
+            result = np.true_divide(numerator, denominator)
+            result[~np.isfinite(result)] = 0  # -inf inf NaN
         return result
     except ValueError as e:
         raise e
@@ -176,13 +199,13 @@ def prop_to_size(vals, mi=0.0, ma=5.0, power=0.5, log=False):
     if delta == 0.0:
         delta = 1.0
 
-    return mi + (ma-mi) * ((vals -vals.min()) / delta) ** power
-
+    return mi + (ma - mi) * ((vals - vals.min()) / delta) ** power
 
 
 ##########################################################################
-## String Computations
+# String Computations
 ##########################################################################
+
 
 def slugify(text):
     """
@@ -199,8 +222,8 @@ def slugify(text):
     slug : string
         A normalized slug representation of the text
 
-    .. seealso:: http://yashchandra.com/2014/05/08/how-to-generate-clean-url-or-a-slug-in-python/
+    .. seealso:: https://bit.ly/2NW7s1j
     """
-    slug = re.sub(r'[^\w]+', ' ', text)
+    slug = re.sub(r"[^\w]+", " ", text)
     slug = "-".join(slug.lower().strip().split())
     return slug
