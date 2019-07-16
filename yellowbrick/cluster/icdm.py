@@ -20,12 +20,12 @@ import matplotlib.pyplot as plt
 from matplotlib.patches import Circle
 from sklearn.manifold import MDS, TSNE
 
-from .base import ClusteringScoreVisualizer
+from yellowbrick.cluster.base import ClusteringScoreVisualizer
 
-from ..utils.timer import Timer
-from ..utils.decorators import memoized
-from ..utils.helpers import prop_to_size
-from ..exceptions import YellowbrickValueError
+from yellowbrick.utils.timer import Timer
+from yellowbrick.utils.decorators import memoized
+from yellowbrick.exceptions import YellowbrickValueError
+from yellowbrick.utils.helpers import prop_to_size, is_fitted
 
 try:
     # Only available in Matplotlib >= 2.0.2
@@ -251,17 +251,18 @@ class InterclusterDistance(ClusteringScoreVisualizer):
         Fit the clustering model, computing the centers then embeds the centers
         into 2D space using the embedding method specified.
         """
-        with Timer() as self.fit_time_:
-            # Fit the underlying estimator
-            self.estimator.fit(X, y)
+        if not is_fitted(self.estimator):
+            with Timer() as self.fit_time_:
+                # Fit the underlying estimator
+                self.estimator.fit(X, y)
 
-            # Get the centers
-            # TODO: is this how sklearn stores all centers in the model?
-            C = self.cluster_centers_
+        # Get the centers
+        # TODO: is this how sklearn stores all centers in the model?
+        C = self.cluster_centers_
 
-            # Embed the centers in 2D space and get the cluster scores
-            self.embedded_centers_ = self.transformer.fit_transform(C)
-            self.scores_ = self._score_clusters(X, y)
+        # Embed the centers in 2D space and get the cluster scores
+        self.embedded_centers_ = self.transformer.fit_transform(C)
+        self.scores_ = self._score_clusters(X, y)
 
         # Draw the clusters and fit returns self
         self.draw()
@@ -276,7 +277,7 @@ class InterclusterDistance(ClusteringScoreVisualizer):
 
         # Draw the scatter plots with associated sizes on the graph
         self.ax.scatter(
-            self.embedded_centers_[:,0], self.embedded_centers_[:,1],
+            self.embedded_centers_[:, 0], self.embedded_centers_[:, 1],
             s=sizes, c=self.facecolor, edgecolor=self.edgecolor, linewidth=1,
         )
 
@@ -322,7 +323,7 @@ class InterclusterDistance(ClusteringScoreVisualizer):
         Determines the "scores" of the cluster, the metric that determines the
         size of the cluster visualized on the visualization.
         """
-        stype = self.scoring.lower() # scoring method name
+        stype = self.scoring.lower()  # scoring method name
 
         if stype == "membership":
             return np.bincount(self.estimator.labels_)
@@ -389,7 +390,7 @@ def percentile_index(a, q):
     Returns the index of the value at the Qth percentile in array a.
     """
     return np.where(
-        a==np.percentile(a, q, interpolation='nearest')
+        a == np.percentile(a, q, interpolation='nearest')
     )[0][0]
 
 

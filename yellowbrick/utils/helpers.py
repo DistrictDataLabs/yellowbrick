@@ -35,21 +35,23 @@ from yellowbrick.exceptions import YellowbrickTypeError
 def is_fitted(estimator):
     """
     In order to ensure that we don't call ``fit`` on an already-fitted model,
-    this utility function calls ``predict`` on the estimator, returning False
-    if it raises a ``sklearn.exceptions.NotFittedError``.
+    this utility function calls ``predict`` on the estimator, returning ``False``
+    if it raises a ``sklearn.exceptions.NotFittedError`` and ``True`` otherwise.
 
     NOTE: This is the solution proposed to scikit-yb: https://bit.ly/2LWQxZO (see
     also: https://stackoverflow.com/a/39900933/6552250), though it remains unclear
     how it will perform with sklearn-style Estimators and Transformers from other
     3rd party libraries like Keras, XGBoost, etc.
     """
-    X = [[2, 4, 3, 2, 1], [3, 4, 3, 3, 1], [2, 3, 3, 3, 3]]
-
     try:
-        estimator.predict(X)
-        return True
+        estimator.predict(np.zeros((7, 3)))
     except sklearn.exceptions.NotFittedError:
         return False
+    except Exception:
+        # Assume fitted as NotFittedError was not raised
+        return True
+
+    return True
 
 
 def get_model_name(model):

@@ -105,9 +105,9 @@ class ClassificationScoreVisualizer(ScoreVisualizer):
             # Fit the inner estimator
             self.estimator.fit(X, y)
 
-            # Extract the classes from the estimator
-            if self.classes_ is None:
-                self.classes_ = self.estimator.classes_
+        # Extract the classes from the estimator
+        if self.classes_ is None:
+            self.classes_ = self.estimator.classes_
 
         # Always return self from fit
         return self

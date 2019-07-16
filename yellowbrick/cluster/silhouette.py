@@ -20,8 +20,9 @@ Implements visualizers that use the silhouette metric for cluster evaluation.
 import numpy as np
 import matplotlib.ticker as ticker
 
-from ..style import resolve_colors
-from .base import ClusteringScoreVisualizer
+from yellowbrick.utils import is_fitted
+from yellowbrick.style import resolve_colors
+from yellowbrick.cluster.base import ClusteringScoreVisualizer
 
 from sklearn.metrics import silhouette_score, silhouette_samples
 
@@ -124,8 +125,9 @@ class SilhouetteVisualizer(ClusteringScoreVisualizer):
         # NOTE: Probably this would be better in score, but the standard score
         # is a little different and I'm not sure how it's used.
 
-        # Fit the wrapped estimator
-        self.estimator.fit(X, y, **kwargs)
+        if not is_fitted(self.estimator):
+            # Fit the wrapped estimator
+            self.estimator.fit(X, y, **kwargs)
 
         # Get the properties of the dataset
         self.n_samples_ = X.shape[0]
