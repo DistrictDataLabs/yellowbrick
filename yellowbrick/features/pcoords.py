@@ -35,7 +35,7 @@ from yellowbrick.exceptions import YellowbrickTypeError, YellowbrickValueError
 ##########################################################################
 
 def parallel_coordinates(X, y, ax=None, features=None, classes=None,
-                         normalize=None, sample=1.0, color=None, colormap=None,
+                         normalize=None, sample=1.0, colors=None, colormap=None,
                          alpha=None, fast=False, vlines=True, vlines_kwds=None,
                          **kwargs):
     """Displays each feature as a vertical axis and each instance as a line.
@@ -76,7 +76,7 @@ def parallel_coordinates(X, y, ax=None, features=None, classes=None,
         If int, specifies the maximum number of samples to display.
         If float, specifies a fraction between 0 and 1 to display.
 
-    color : list or tuple, default: None
+    colors : list or tuple, default: None
         optional list or tuple of colors to colorize lines
         Use either color to colorize the lines on a per class basis or
         colormap to color them on a continuous scale.
@@ -114,7 +114,7 @@ def parallel_coordinates(X, y, ax=None, features=None, classes=None,
     """
     # Instantiate the visualizer
     visualizer = ParallelCoordinates(
-        ax, features, classes, normalize, sample, color, colormap, alpha,
+        ax, features, classes, normalize, sample, colors, colormap, alpha,
         fast, vlines, vlines_kwds, **kwargs
     )
 
@@ -254,7 +254,7 @@ class ParallelCoordinates(DataVisualizer):
                  sample=1.0,
                  random_state=None,
                  shuffle=False,
-                 color=None,
+                 colors=None,
                  colormap=None,
                  alpha=None,
                  fast=False,
@@ -264,7 +264,7 @@ class ParallelCoordinates(DataVisualizer):
         if "target_type" not in kwargs:
             kwargs["target_type"] = "discrete"
         super(ParallelCoordinates, self).__init__(
-            ax, features, classes, color, colormap, **kwargs
+            ax, features, classes, colors, colormap, **kwargs
         )
 
         # Validate 'normalize' argument

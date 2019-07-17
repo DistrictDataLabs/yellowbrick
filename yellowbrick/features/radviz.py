@@ -32,7 +32,7 @@ from yellowbrick.style.colors import resolve_colors
 ##########################################################################
 
 def radviz(X, y=None, ax=None, features=None, classes=None,
-           color=None, colormap=None, alpha=1.0, **kwargs):
+           colors=None, colormap=None, alpha=1.0, **kwargs):
     """
     Displays each feature as an axis around a circle surrounding a scatter
     plot whose points are each individual instance.
@@ -58,7 +58,7 @@ def radviz(X, y=None, ax=None, features=None, classes=None,
     classes : list of strings, default: None
         The names of the classes in the target
 
-    color : list or tuple of colors, default: None
+    colors : list or tuple of colors, default: None
         Specify the colors for each individual class
 
     colormap : string or matplotlib cmap, default: None
@@ -75,7 +75,7 @@ def radviz(X, y=None, ax=None, features=None, classes=None,
     """
     # Instantiate the visualizer
     visualizer = RadialVisualizer(
-        ax, features, classes, color, colormap, alpha, **kwargs
+        ax, features, classes, colors, colormap, alpha, **kwargs
     )
 
     # Fit and transform the visualizer (calls draw)
@@ -166,7 +166,8 @@ class RadialVisualizer(DataVisualizer):
         if "target_type" not in kwargs:
             kwargs["target_type"] = "discrete"
         super(RadialVisualizer, self).__init__(
-            ax, features, classes, colors, colormap, **kwargs
+            ax=ax, features=features, classes=classes,
+            colors=colors, colormap=colormap, **kwargs
         )
         self.alpha = alpha
 
@@ -226,18 +227,10 @@ class RadialVisualizer(DataVisualizer):
         self.ax.set_xlim([-1,1])
         self.ax.set_ylim([-1,1])
 
-        # Create the colors
-        # TODO: Allow both colormap, listed colors, and palette definition
-        # TODO: Make this an independent function or property for override!
-        color_values = resolve_colors(
-            n_colors=len(self.classes_), colormap=self.colormap, colors=self.color
-        )
-        self._colors = dict(zip(self.classes_, color_values))
-
         # Create a data structure to hold scatter plot representations
-        to_plot = {}
-        for kls in self.classes_:
-            to_plot[kls] = [[], []]
+        to_plot = {
+            label: [[], []] for label in self.classes_
+        }
 
         # Compute the arcs around the circumference for each feature axis
         # TODO: make this an independent function for override
@@ -254,18 +247,23 @@ class RadialVisualizer(DataVisualizer):
         for i, row in enumerate(self.normalize(X)):
             row_ = np.repeat(np.expand_dims(row, axis=1), 2, axis=1)
             xy   = (s * row_).sum(axis=0) / row.sum()
-            kls = self.classes_[y[i]]
+            label = self._label_encoder[y[i]]
 
-            to_plot[kls][0].append(xy[0])
-            to_plot[kls][1].append(xy[1])
+            to_plot[label][0].append(xy[0])
+            to_plot[label][1].append(xy[1])
 
         # Add the scatter plots from the to_plot function
         # TODO: store these plots to add more instances to later
         # TODO: make this a separate function
-        for i, kls in enumerate(self.classes_):
+        for label in self.classes_:
+            color = self.get_colors([label])[0]
             self.ax.scatter(
-                to_plot[kls][0], to_plot[kls][1], color=self._colors[kls],
-                label=str(kls), alpha=self.alpha, **kwargs
+                to_plot[label][0],
+                to_plot[label][1],
+                color=color,
+                label=label,
+                alpha=self.alpha,
+                **kwargs
             )
 
         # Add the circular axis path
@@ -311,7 +309,7 @@ class RadialVisualizer(DataVisualizer):
         self.ax.set_xticks([])
 
         # Add the legend
-        colors = [self._colors[c] for c in self.classes_]
+        colors = self.get_colors(self.classes_)
         manual_legend(self, self.classes_, colors, loc='best')
 
 
