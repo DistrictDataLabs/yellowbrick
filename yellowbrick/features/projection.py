@@ -61,7 +61,7 @@ class ProjectionVisualizer(DataVisualizer):
         If classes is None and a y value is passed to fit then the classes
         are selected from the target vector.
 
-    color : list or tuple of colors, default: None
+    colors : list or tuple of colors, default: None
         Specify the colors for each individual class.
 
     colormap : string or cmap, default: None
@@ -92,7 +92,7 @@ class ProjectionVisualizer(DataVisualizer):
         the visualization as defined in other Visualizers.
     """
 
-    def __init__(self, ax=None, features=None, classes=None, color=None,
+    def __init__(self, ax=None, features=None, classes=None, colors=None,
              colormap=None, target_type="auto", projection=2, alpha=0.75,
              colorbar=True, **kwargs):
 
@@ -101,7 +101,7 @@ class ProjectionVisualizer(DataVisualizer):
             colormap=palettes.DEFAULT_SEQUENCE
 
         super(ProjectionVisualizer, self).__init__(ax=ax, features=features,
-                                                     classes=classes, color=color,
+                                                     classes=classes, colors=colors,
                                                      colormap=colormap,
                                                      target_type=target_type, **kwargs)
         # Convert string to integer

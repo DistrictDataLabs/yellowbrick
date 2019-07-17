@@ -99,30 +99,37 @@ class RadialVisualizer(DataVisualizer):
 
     Parameters
     ----------
-
     ax : matplotlib Axes, default: None
         The axis to plot the figure on. If None is passed in the current axes
         will be used (or generated if required).
 
     features : list, default: None
         a list of feature names to use
-        If a DataFrame is passed to fit and features is None, feature
-        names are selected as the columns of the DataFrame.
+        The names of the features specified by the columns of the input dataset.
+        This length of this list must match the number of columns in X, otherwise
+        an exception will be raised on ``fit()``.
 
     classes : list, default: None
         a list of class names for the legend
-        If classes is None and a y value is passed to fit then the classes
-        are selected from the target vector.
+        The class labels for each class in y, ordered by sorted class index. These
+        names act as a label encoder for the legend, identifying integer classes
+        or renaming string labels. If omitted, the class labels will be taken from
+        the unique values in y.
 
-    color : list or tuple, default: None
+        Note that the length of this list must match the number of unique values in
+        y, otherwise an exception is raised. This parameter is only used in the
+        discrete target type case and is ignored otherwise.
+
+    colors : list or tuple, default: None
         optional list or tuple of colors to colorize lines
-        Use either color to colorize the lines on a per class basis or
-        colormap to color them on a continuous scale.
+        A single color to plot all instances as or a list of colors to color each
+        instance according to its class. If not enough colors per class are
+        specified then the colors are treated as a cycle.
 
     colormap : string or cmap, default: None
         optional string or matplotlib cmap to colorize lines
-        Use either color to colorize the lines on a per class basis or
-        colormap to color them on a continuous scale.
+        The colormap used to create the individual colors. If classes are
+        specified the colormap is used to evenly space colors across each class.
 
     alpha : float, default: 1.0
         Specify a transparency where 1 is completely opaque and 0 is completely
@@ -140,18 +147,26 @@ class RadialVisualizer(DataVisualizer):
     >>> visualizer.transform(X)
     >>> visualizer.poof()
 
-    Notes
-    -----
-    These parameters can be influenced later on in the visualization
-    process, but can and should be set as early as possible.
+    Attributes
+    ----------
+    features_ : ndarray, shape (n_features,)
+        The names of the features discovered or used in the visualizer that
+        can be used as an index to access or modify data in X. If a user passes
+        feature names in, those features are used. Otherwise the columns of a
+        DataFrame are used or just simply the indices of the data array.
+
+    classes_ : ndarray, shape (n_classes,)
+        The class labels that define the discrete values in the target. Only
+        available if the target type is discrete. This is guaranteed to be
+        strings even if the classes are a different type.
     """
 
-    def __init__(self, ax=None, features=None, classes=None, color=None,
+    def __init__(self, ax=None, features=None, classes=None, colors=None,
                  colormap=None, alpha=1.0, **kwargs):
         if "target_type" not in kwargs:
             kwargs["target_type"] = "discrete"
         super(RadialVisualizer, self).__init__(
-            ax, features, classes, color, colormap, **kwargs
+            ax, features, classes, colors, colormap, **kwargs
         )
         self.alpha = alpha
 
@@ -186,8 +201,7 @@ class RadialVisualizer(DataVisualizer):
         self : instance
             Returns the instance of the transformer/visualizer
         """
-        
-        super(RadialVisualizer, self).fit(X, y, **kwargs)
+        super(RadialVisualizer, self).fit(X, y)
         self.draw(X, y, **kwargs)
         return self
 
