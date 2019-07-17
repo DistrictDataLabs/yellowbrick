@@ -18,7 +18,6 @@ Base classes for feature visualizers and feature selection tools.
 ## Imports
 ##########################################################################
 
-import warnings
 import numpy as np
 import matplotlib as mpl
 
