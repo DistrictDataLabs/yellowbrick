@@ -62,8 +62,11 @@ class ProjectionVisualizer(DataVisualizer):
     """
     
     def __init__(self, ax=None, features=None, classes=None, color=None,
-             colormap=palettes.DEFAULT_SEQUENCE, target_type="auto", projection=2,
+             colormap=None, target_type="auto", projection=2,
              alpha=0.75, **kwargs):
+
+        if color==None and colormap==None:
+            colormap=palettes.DEFAULT_SEQUENCE
 
         super(ProjectionVisualizer, self).__init__(ax=ax, features=features, 
                                                      classes=classes, color=color,
@@ -80,7 +83,7 @@ class ProjectionVisualizer(DataVisualizer):
         self.projection = projection
 
         if self.ax.name!='3d' and self.projection == 3:
-                warnings.warn("Uses third feature space as size. Pass 3d axes.", 
+                warnings.warn("data projection to 3 dimensions requires a 3d axes to draw on.", 
                               YellowbrickWarning)
 
         self.alpha = alpha
@@ -116,7 +119,7 @@ class ProjectionVisualizer(DataVisualizer):
     def ax(self, ax):
         self._ax = ax
 
-    def _layout(self):
+    def layout(self):
         """
         Creates the layout for colorbar when target type is continuous.
         The colorbar is added to the right of the scatterplot.
@@ -137,56 +140,6 @@ class ProjectionVisualizer(DataVisualizer):
         self._cax.set_yticks([])
         self._cax.set_xticks([])
 
-    def fit(self, X, y=None, **kwargs):
-        """
-        Fits the transformer on X. Also identifies the classes, features and
-        colors by calling the super class.
-        
-        Parameters
-        ----------
-        X : ndarray or DataFrame of shape n x m
-            A matrix or data frame of n instances with m features where m>2.
-
-        y : array-like of shape (n,), optional
-            A vector or series with target values for each instance in X. This
-            vector is used to determine the color of the points in X.
-
-        Returns
-        -------
-        self : instance
-            Returns the instance of the transformer/visualizer.
-        """
-        super(ProjectionVisualizer, self).fit(X, y, **kwargs)
-        self.transformer.fit(X)
-        return self
-
-    def transform(self, X, y=None, **kwargs):
-        """
-        Returns the transformed data points from the transformers. It also calls
-        draw which draws a scatter plot with transformed data.
-        
-        Parameters
-        ----------
-        X : ndarray or DataFrame of shape n x m
-            A matrix or data frame of n instances with m features. m must be
-            same as that used in ``fit()`` method.
-
-        y : array-like of shape (n,), optional
-            A vector or series with target values for each instance in X. This
-            vector is used to determine scatter arguments.
-
-        Returns
-        -------
-        Xprime : array-like of shape (n, 2)
-            Returns the 2-dimensional embedding of the instances.
-        """
-        try:
-            Xp = self.transformer.transform(X)
-        except AttributeError as e:
-            raise AttributeError(str(e) + " try using fit_transform instead.")
-        self.draw(Xp, y, **kwargs)
-        return Xp
-    
     def fit_transform(self, X, y=None, **kwargs):
         """
         Fit to data, then transform it.
@@ -211,7 +164,7 @@ class ProjectionVisualizer(DataVisualizer):
         """
         return self.fit(X, y, **kwargs).transform(X, y, **kwargs)
     
-    def draw(self, X, y=None):
+    def draw(self, Xp, y=None):
         """
         Draws the points described by X and colored by the points in y. Can be
         called multiple times before finalize to add more scatter plots to the
@@ -234,11 +187,11 @@ class ProjectionVisualizer(DataVisualizer):
         
         if self.projection == 2:
             # Adds colorbar axis for continuous target type.
-            self._layout()
-            self.ax.scatter(X[:, 0], X[:, 1], **scatter_kwargs)
+            self.layout()
+            self.ax.scatter(Xp[:, 0], Xp[:, 1], **scatter_kwargs)
 
         if self.projection == 3:
-            self.ax.scatter(X[:, 0], X[:, 1], X[:, 2], **scatter_kwargs)
+            self.ax.scatter(Xp[:, 0], Xp[:, 1], Xp[:, 2], **scatter_kwargs)
         
         return self.ax
 
