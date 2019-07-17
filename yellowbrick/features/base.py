@@ -276,10 +276,8 @@ class DataVisualizer(MultiFeatureVisualizer):
             raise YellowbrickValueError(
                     "unknown target color type '{}'".format(self._target_color_type))
 
-        # Draw the instances
-        self.draw(X, y, **kwargs)
-
         # Fit always returns self.
+        # NOTE: cannot call draw in fit to support data transformers
         return self
 
     def _determine_target_color_type(self, y):
