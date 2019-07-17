@@ -1,12 +1,31 @@
+# yellowbrick.features.projection
+# Base class for all projection (decomposition) high dimensional data visualizers.
+#
+# Author:   Naresh Bachwani
+# Created:  Wed Jul 17 08:59:33 2019 -0400
+#
+# Copyright (C) 2019, the scikit-yb developers
+# For license information, see LICENSE.txt
+#
+# ID: projection.py [] naresh-bachwani@noreply.github.com $
+
+"""
+Base class for all projection (decomposition) high dimensional data visualizers.
+"""
+
+##########################################################################
+## Imports
+##########################################################################
+
+import warnings
 import matplotlib as mpl
 import matplotlib.pyplot as plt
 from mpl_toolkits.axes_grid1 import make_axes_locatable
-import warnings
 
+from yellowbrick.style import palettes
 from yellowbrick.draw import manual_legend
 from yellowbrick.features.base import DataVisualizer, TargetType
 from yellowbrick.exceptions import YellowbrickValueError, YellowbrickWarning, NotFitted
-from yellowbrick.style import palettes
 
 
 ##########################################################################
@@ -14,11 +33,17 @@ from yellowbrick.style import palettes
 ##########################################################################
 
 class ProjectionVisualizer(DataVisualizer):
-
     """
-    Projection Visualizers are the subclass of DataVisualizer which projects
-    multi dimensional data to either two or three dimensional space. The transformer
-    which converts multi-dimensional data must  be specified in the subclasses.
+    The ProjectionVisualizer provides functionality for projecting a multi-dimensional
+    dataset into either 2 or 3 components so they can be plotted as a scatter plot on
+    2d or 3d axes. The visualizer acts as a transformer, and draws the transformed data
+    on behalf of the user. Because it is a DataVisualizer, the ProjectionVisualizer
+    can plot continuous scatter plots with a colormap or discrete scatter plots with
+    a legend.
+
+    This visualizer is a base class and is not intended to be uses directly.
+    Subclasses should implement a ``transform()`` method that calls ``draw()`` using
+    the transformed data and the optional target as input.
 
     Parameters
     ----------
@@ -26,12 +51,12 @@ class ProjectionVisualizer(DataVisualizer):
         The axes to plot the figure on. If None is passed in the current axes.
         will be used (or generated if required).
 
-    features: list, default: None
+    features : list, default: None
         a list of feature names to use
         If a DataFrame is passed to fit and features is None, feature
         names are selected as the columns of the DataFrame.
 
-    classes: list, default: None
+    classes : list, default: None
         a list of class names for the legend
         If classes is None and a y value is passed to fit then the classes
         are selected from the target vector.
@@ -50,27 +75,34 @@ class ProjectionVisualizer(DataVisualizer):
         attempt to determine the type by counting the number of unique values.
 
     projection : int or string, default: 2
-        Dimension of the Projection Visualizer.
+        The number of axes to project into, either 2d or 3d. To plot 3d plots
+        with matplotlib, please ensure a 3d axes is passed to the visualizer,
+        otherwise one will be created using the current figure.
 
     alpha : float, default: 0.75
         Specify a transparency where 1 is completely opaque and 0 is completely
         transparent. This property makes densely clustered points more visible.
 
+    colorbar : bool, default: True
+        If the target_type is "continous" draw a colorbar to the right of the
+        scatter plot. The colobar axes is accessible using the cax property.
+
     kwargs : dict
         Keyword arguments that are passed to the base class and may influence
         the visualization as defined in other Visualizers.
     """
-    
-    def __init__(self, ax=None, features=None, classes=None, color=None,
-             colormap=None, target_type="auto", projection=2,
-             alpha=0.75, **kwargs):
 
+    def __init__(self, ax=None, features=None, classes=None, color=None,
+             colormap=None, target_type="auto", projection=2, alpha=0.75,
+             colorbar=True, **kwargs):
+
+        # TODO: add this to resolve_colors
         if color==None and colormap==None:
             colormap=palettes.DEFAULT_SEQUENCE
 
-        super(ProjectionVisualizer, self).__init__(ax=ax, features=features, 
+        super(ProjectionVisualizer, self).__init__(ax=ax, features=features,
                                                      classes=classes, color=color,
-                                                     colormap=colormap, 
+                                                     colormap=colormap,
                                                      target_type=target_type, **kwargs)
         # Convert string to integer
         if isinstance(projection, str):
@@ -83,10 +115,11 @@ class ProjectionVisualizer(DataVisualizer):
         self.projection = projection
 
         if self.ax.name!='3d' and self.projection == 3:
-                warnings.warn("data projection to 3 dimensions requires a 3d axes to draw on.", 
+                warnings.warn("data projection to 3 dimensions requires a 3d axes to draw on.",
                               YellowbrickWarning)
 
         self.alpha = alpha
+        self.colorbar = colorbar
         self._cax = None
 
     @property
@@ -98,9 +131,9 @@ class ProjectionVisualizer(DataVisualizer):
             raise AttributeError(
                 "This visualizer does not have an axes for colorbar"
             )
-        
-        return self._cax       
-        
+
+        return self._cax
+
     @property
     def ax(self):
         """
@@ -123,29 +156,26 @@ class ProjectionVisualizer(DataVisualizer):
         """
         Creates the layout for colorbar when target type is continuous.
         The colorbar is added to the right of the scatterplot.
+
+        Subclasses can override this method to add other axes or layouts.
         """
-        # Ensure matplotlib version compatibility
-        if make_axes_locatable is None:
-            raise YellowbrickValueError((
-                "Colorbar requires matplotlib 2.0.2 or greater "
-                "please upgrade matplotlib"
-            ))
+        if self._cax is None and self._target_color_type == TargetType.CONTINUOUS:
+            # Ensure matplotlib version compatibility
+            if make_axes_locatable is None:
+                raise YellowbrickValueError((
+                    "Colorbar requires matplotlib 2.0.2 or greater "
+                    "please upgrade matplotlib"
+                ))
 
-        if self._cax is not None or self._target_color_type != TargetType.CONTINUOUS:
-            self.ax
-            return
-        # Create the new axes for the colorbar
-        divider = make_axes_locatable(self.ax)
-        self._cax = divider.append_axes("right", size="5%", pad=0.3)
-        self._cax.set_yticks([])
-        self._cax.set_xticks([])
+            # Create the new axes for the colorbar
+            divider = make_axes_locatable(self.ax)
+            self._cax = divider.append_axes("right", size="5%", pad=0.3)
+            self._cax.set_yticks([])
+            self._cax.set_xticks([])
 
-    def fit_transform(self, X, y=None, **kwargs):
+    def fit_transform(self, X, y=None):
         """
-        Fit to data, then transform it.
-
-        Fits transformer to X and y with optional parameters fit_params
-        and returns a transformed version of X.
+        Fits the visualizer on the input data, and returns transformed X.
 
         Parameters
         ----------
@@ -160,19 +190,18 @@ class ProjectionVisualizer(DataVisualizer):
         -------
         Xprime : array-like of shape (n, 2)
             Returns the 2-dimensional embedding of the instances.
-
         """
-        return self.fit(X, y, **kwargs).transform(X, y, **kwargs)
-    
+        return self.fit(X, y).transform(X, y)
+
     def draw(self, Xp, y=None):
         """
-        Draws the points described by X and colored by the points in y. Can be
+        Draws the points described by Xp and colored by the points in y. Can be
         called multiple times before finalize to add more scatter plots to the
         axes, however ``fit()`` must be called before use.
 
         Parameters
         ----------
-        X : array-like of shape (n, 2) or (n, 3)
+        Xp : array-like of shape (n, 2) or (n, 3)
             The matrix produced by the ``transform()`` method.
 
         y : array-like of shape (n,), optional
@@ -183,8 +212,8 @@ class ProjectionVisualizer(DataVisualizer):
         self.ax : matplotlib Axes object
             Returns the axes that the scatter plot was drawn on.
         """
-        scatter_kwargs = self._determine_scatter_kwargs(y);
-        
+        scatter_kwargs = self._determine_scatter_kwargs(y)
+
         if self.projection == 2:
             # Adds colorbar axis for continuous target type.
             self.layout()
@@ -192,7 +221,7 @@ class ProjectionVisualizer(DataVisualizer):
 
         if self.projection == 3:
             self.ax.scatter(Xp[:, 0], Xp[:, 1], Xp[:, 2], **scatter_kwargs)
-        
+
         return self.ax
 
     def finalize(self):
@@ -208,10 +237,10 @@ class ProjectionVisualizer(DataVisualizer):
             if self.projection == 3:
                 sm = plt.cm.ScalarMappable(cmap=self._colors, norm = self._norm)
                 self.cbar = plt.colorbar(sm, ax=self.ax)
-            
+
             else:
                 # Manually draw the colorbar.
-                self.cbar = mpl.colorbar.ColorbarBase(self.cax, cmap=self._colors, 
+                self.cbar = mpl.colorbar.ColorbarBase(self.cax, cmap=self._colors,
                                                   norm=self._norm)
 
     def _determine_scatter_kwargs(self, y=None):
