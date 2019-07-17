@@ -24,10 +24,9 @@ import matplotlib as mpl
 from yellowbrick.base import Visualizer
 from yellowbrick.utils import is_dataframe
 from yellowbrick.style import resolve_colors
-from yellowbrick.exceptions import YellowbrickKeyError
-from yellowbrick.exceptions import YellowbrickValueError, NotFitted
+from yellowbrick.utils.target import target_color_type, TargetType, valid_target_type
+from yellowbrick.exceptions import YellowbrickKeyError, YellowbrickValueError, NotFitted
 
-from enum import Enum
 from matplotlib.colors import Normalize
 from sklearn.base import TransformerMixin
 
@@ -205,15 +204,6 @@ class MultiFeatureVisualizer(FeatureVisualizer):
 ## Data Visualizers
 ##########################################################################
 
-class TargetType(Enum):
-    """Constants for defining target colors by input type"""
-
-    AUTO = 'auto'
-    SINGLE = 'single'
-    DISCRETE = 'discrete'
-    CONTINUOUS = 'continuous'
-
-
 class DataVisualizer(MultiFeatureVisualizer):
     """Visualizations of instances in feature space.
 
@@ -304,16 +294,15 @@ class DataVisualizer(MultiFeatureVisualizer):
                  colormap=None, target_type="auto", **kwargs):
         super(DataVisualizer, self).__init__(ax=ax, features=features, **kwargs)
 
-        try:
-            # Ensures that target is either Single, Discrete, Continuous or Auto
-            self.target_type = TargetType(target_type)
-        except ValueError:
+        # Validate Target Type
+        if not valid_target_type(target_type):
             raise YellowbrickValueError(
                 "unknown target color type '{}'".format(target_type)
             )
 
         # Data Parameters
         self.classes = classes
+        self.target_type = target_type
 
         # Visual Parameters
         self.colors = colors
@@ -414,16 +403,12 @@ class DataVisualizer(MultiFeatureVisualizer):
         if y is None:
             self._target_color_type = TargetType.SINGLE
         elif self.target_type == TargetType.AUTO:
-            # NOTE: See #73 for a generalization to use when implemented
-            if len(np.unique(y)) < 10:
-                self._target_color_type = TargetType.DISCRETE
-            else:
-                self._target_color_type = TargetType.CONTINUOUS
+            self._target_color_type = target_color_type(y)
         else:
-            self._target_color_type = self.target_type
+            self._target_color_type = TargetType(self.target_type)
 
-        # Ensures that target is either SINGLE, DISCRETE or CONTINUOS and not AUTO
-        if self._target_color_type == TargetType.AUTO:
+        # Ensures that target is either SINGLE, DISCRETE or CONTINUOUS before continuing
+        if self._target_color_type == TargetType.AUTO or self._target_color_type == TargetType.UNKNOWN:
             raise YellowbrickValueError((
                 "could not determine target color type "
                 "from target='{}' to '{}'"

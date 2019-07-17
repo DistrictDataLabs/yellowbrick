@@ -23,5 +23,5 @@ from .class_balance import ClassBalance, class_balance
 from .binning import BalancedBinningReference, balanced_binning_reference
 from .feature_correlation import FeatureCorrelation
 
-# Alias the TargetType defined in yellowbrick.features
-from yellowbrick.features import TargetType
+# Alias the TargetType defined in yellowbrick.utils.target
+from yellowbrick.utils.target import TargetType
