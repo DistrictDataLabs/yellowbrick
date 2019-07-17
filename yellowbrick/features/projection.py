@@ -97,13 +97,19 @@ class ProjectionVisualizer(DataVisualizer):
              colorbar=True, **kwargs):
 
         # TODO: add this to resolve_colors
-        if color==None and colormap==None:
-            colormap=palettes.DEFAULT_SEQUENCE
+        if colors is None and colormap is None:
+            colormap = palettes.DEFAULT_SEQUENCE
 
-        super(ProjectionVisualizer, self).__init__(ax=ax, features=features,
-                                                     classes=classes, colors=colors,
-                                                     colormap=colormap,
-                                                     target_type=target_type, **kwargs)
+        super(ProjectionVisualizer, self).__init__(
+            ax=ax,
+            features=features,
+            classes=classes,
+            colors=colors,
+            colormap=colormap,
+            target_type=target_type,
+            **kwargs
+        )
+
         # Convert string to integer
         if isinstance(projection, str):
             if projection in {'2D', '2d'}:

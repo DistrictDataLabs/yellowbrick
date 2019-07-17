@@ -24,7 +24,6 @@ from yellowbrick.draw import manual_legend
 from yellowbrick.utils import is_dataframe
 from yellowbrick.utils import nan_warnings
 from yellowbrick.features.base import DataVisualizer
-from yellowbrick.style.colors import resolve_colors
 
 
 ##########################################################################
