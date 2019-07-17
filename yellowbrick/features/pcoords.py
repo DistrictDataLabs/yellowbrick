@@ -371,8 +371,9 @@ class ParallelCoordinates(DataVisualizer):
         if self.normalize is not None:
             X = self.NORMALIZERS[self.normalize].fit_transform(X)
 
-        # the super method calls draw and returns self
-        return super(ParallelCoordinates, self).fit(X, y, **kwargs)
+        self.draw(X, y, **kwargs)
+
+        return self
 
     def draw(self, X, y, **kwargs):
         """
