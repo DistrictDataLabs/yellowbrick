@@ -20,6 +20,7 @@ import pytest
 import numpy as np
 
 from yellowbrick.utils.target import *
+from yellowbrick.exceptions import YellowbrickValueError
 from sklearn.datasets import make_regression, make_classification
 
 
@@ -67,14 +68,24 @@ def test_regression_target_color_type():
     assert target_color_type(y) == TargetType.CONTINUOUS
 
 
-@pytest.mark.parametrize("val,expected", [
-    ("discrete", True), ("continuous", True), ("single", True), ("auto", True),
-    ("foo", False), (1, False), (3.14, False), ("s", False),
-    (TargetType.DISCRETE, True), (TargetType.CONTINUOUS, True),
-    (TargetType.SINGLE, True), (TargetType.AUTO, True),
+@pytest.mark.parametrize("val", [
+    "auto", "single", "discrete", "continuous", "unknown",
+    TargetType.AUTO, TargetType.SINGLE, TargetType.DISCRETE,
+    TargetType.CONTINUOUS, TargetType.UNKNOWN
 ])
-def test_valid_target_type(val, expected):
-    assert valid_target_type(val) is expected
+def test_target_type_validate_valid(val):
+    try:
+        TargetType.validate(val)
+    except YellowbrickValueError:
+        pyetst.fail("valid target type raised validation error")
+
+
+@pytest.mark.parametrize("val", [
+    "foo", 1, 3.14, "s", "DISCRETE", "CONTINUOUS", ['a', 'b', 'c'],
+])
+def test_target_type_validate_invalid(val):
+    with pytest.raises(YellowbrickValueError, match="unknown target color type"):
+        TargetType.validate(val)
 
 
 @pytest.mark.parametrize("val,expected", [

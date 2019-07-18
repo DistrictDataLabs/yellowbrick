@@ -24,8 +24,9 @@ import matplotlib as mpl
 from yellowbrick.base import Visualizer
 from yellowbrick.utils import is_dataframe
 from yellowbrick.style import resolve_colors
-from yellowbrick.utils.target import target_color_type, TargetType, valid_target_type
-from yellowbrick.exceptions import YellowbrickKeyError, YellowbrickValueError, NotFitted
+from yellowbrick.exceptions import NotFitted
+from yellowbrick.utils.target import target_color_type, TargetType
+from yellowbrick.exceptions import YellowbrickKeyError, YellowbrickValueError
 
 from matplotlib.colors import Normalize
 from sklearn.base import TransformerMixin
@@ -294,11 +295,8 @@ class DataVisualizer(MultiFeatureVisualizer):
                  colormap=None, target_type="auto", **kwargs):
         super(DataVisualizer, self).__init__(ax=ax, features=features, **kwargs)
 
-        # Validate Target Type
-        if not valid_target_type(target_type):
-            raise YellowbrickValueError(
-                "unknown target color type '{}'".format(target_type)
-            )
+        # Validate raises YellowbrickValueError if invalid
+        TargetType.validate(target_type)
 
         # Data Parameters
         self.classes = classes

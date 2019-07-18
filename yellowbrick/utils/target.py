@@ -20,10 +20,11 @@ import numpy as np
 
 from enum import Enum
 from sklearn.utils.multiclass import type_of_target
+from yellowbrick.exceptions import YellowbrickValueError
 
 
 __all__ = [
-    'MAX_DISCRETE_CLASSES', 'TargetType', 'target_color_type', "valid_target_type"
+    'MAX_DISCRETE_CLASSES', 'TargetType', 'target_color_type'
 ]
 
 MAX_DISCRETE_CLASSES = 12
@@ -38,6 +39,18 @@ class TargetType(Enum):
     CONTINUOUS = 'continuous'
     UNKNOWN = "unknown"
 
+    @classmethod
+    def validate(klass, val):
+        if isinstance(val, klass):
+            return
+
+        try:
+            klass(val)
+        except ValueError:
+            raise YellowbrickValueError(
+                "unknown target color type '{}'".format(val)
+            )
+
     def __eq__(self, other):
         if isinstance(other, str):
             try:
@@ -45,17 +58,6 @@ class TargetType(Enum):
             except ValueError:
                 return False
         return super(TargetType, self).__eq__(other)
-
-
-def valid_target_type(val):
-    if isinstance(val, TargetType):
-        return True
-
-    try:
-        TargetType(val)
-        return True
-    except ValueError:
-        return False
 
 
 ##########################################################################
@@ -92,7 +94,7 @@ def target_color_type(y):
 
     ttype = type_of_target(y)
 
-    if ttype.startswith(TargetType.CONTINUOUS.value):
+    if ttype.startswith("continuous"):
         return TargetType.CONTINUOUS
 
     if ttype.startswith("binary"):
