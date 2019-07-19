@@ -18,9 +18,9 @@ Class balance visualizer for showing per-class support.
 
 import numpy as np
 
-from .base import TargetVisualizer
-from ..style.colors import resolve_colors
-from ..exceptions import YellowbrickValueError
+from yellowbrick.style.colors import resolve_colors
+from yellowbrick.target.base import TargetVisualizer
+from yellowbrick.exceptions import YellowbrickValueError
 
 from sklearn.utils.multiclass import unique_labels, type_of_target
 
@@ -61,6 +61,12 @@ class ClassBalance(TargetVisualizer):
         LabelEncoder.classes\_ as this parameter. If not specified, the labels
         in the data will be used.
 
+    colors: list of strings
+        Specify colors for the barchart (will override colormap if both are provided).
+    
+    colormap : string or matplotlib cmap
+        Specify a colormap to color the classes.
+
     kwargs: dict, optional
         Keyword arguments passed to the super class. Here, used
         to colorize the bars in the histogram.
@@ -89,8 +95,11 @@ class ClassBalance(TargetVisualizer):
     >>> viz.poof()
     """
 
-    def __init__(self, ax=None, labels=None, **kwargs):
+    def __init__(self, ax=None, labels=None, colors=None, colormap=None, **kwargs):
         self.labels = labels
+        self.colors = colors
+        self.colormap = colormap
+
         super(ClassBalance, self).__init__(ax, **kwargs)
 
     def fit(self, y_train, y_test=None):
@@ -166,7 +175,9 @@ class ClassBalance(TargetVisualizer):
         Renders the class balance chart on the specified axes from support.
         """
         # Number of colors is either number of classes or 2
-        colors = resolve_colors(len(self.support_))
+        colors = resolve_colors(
+            len(self.support_), colormap=self.colormap, colors=self.colors
+        )
 
         if self._mode == BALANCE:
             self.ax.bar(
@@ -246,7 +257,9 @@ class ClassBalance(TargetVisualizer):
 ## Quick Method
 ##########################################################################
 
-def class_balance(y_train, y_test=None, ax=None, labels=None, **kwargs):
+def class_balance(
+    y_train, y_test=None, ax=None, labels=None, color=None, colormap=None, **kwargs
+):
     """Quick method:
 
     One of the biggest challenges for classification models is an imbalance of
@@ -282,6 +295,12 @@ def class_balance(y_train, y_test=None, ax=None, labels=None, **kwargs):
         LabelEncoder.classes\_ as this parameter. If not specified, the labels
         in the data will be used.
 
+    colors: list of strings
+        Specify colors for the barchart (will override colormap if both are provided).
+
+    colormap : string or matplotlib cmap
+        Specify a colormap to color the classes.
+
     kwargs: dict, optional
         Keyword arguments passed to the super class. Here, used
         to colorize the bars in the histogram.
@@ -292,7 +311,9 @@ def class_balance(y_train, y_test=None, ax=None, labels=None, **kwargs):
         Returns the axes that the class balance plot was drawn on.
     """
     # Instantiate the visualizer
-    visualizer = ClassBalance(ax=ax, labels=labels, **kwargs)
+    visualizer = ClassBalance(
+        ax=ax, labels=labels, color=None, colormap=None, **kwargs
+    )
 
     # Fit and transform the visualizer (calls draw)
     visualizer.fit(y_train, y_test)
