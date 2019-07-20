@@ -16,8 +16,8 @@ Feature Correlation to Dependent Variable Visualizer.
 
 import numpy as np
 
-from yellowbrick.target.base import TargetVisualizer
 from yellowbrick.utils import is_dataframe
+from yellowbrick.target.base import TargetVisualizer
 from yellowbrick.exceptions import YellowbrickValueError, YellowbrickWarning
 
 from sklearn.feature_selection import mutual_info_classif
@@ -85,6 +85,9 @@ class FeatureCorrelation(TargetVisualizer):
         Must have labels or the fitted data is a DataFrame with column names.
         If feature_index is provided, feature_names will be ignored.
 
+    color: string
+        Specify color for barchart
+
     kwargs : dict
         Keyword arguments that are passed to the base class and may influence
         the visualization as defined in other Visualizers.
@@ -107,7 +110,7 @@ class FeatureCorrelation(TargetVisualizer):
 
     def __init__(self, ax=None, method='pearson',
                  labels=None, sort=False, feature_index=None,
-                 feature_names=None, **kwargs):
+                 feature_names=None, color=None, **kwargs):
         super(FeatureCorrelation, self).__init__(ax=None, **kwargs)
 
         self.correlation_labels = CORRELATION_LABELS
@@ -122,9 +125,10 @@ class FeatureCorrelation(TargetVisualizer):
 
         # Parameters
         self.set_params(
+            sort=sort,
+            color=color,
             method=method,
             labels=labels,
-            sort=sort,
             feature_index=feature_index,
             feature_names=feature_names
         )
@@ -184,7 +188,7 @@ class FeatureCorrelation(TargetVisualizer):
         """
         pos = np.arange(self.scores_.shape[0]) + 0.5
 
-        self.ax.barh(pos, self.scores_)
+        self.ax.barh(pos, self.scores_, color=self.color)
 
         # Set the labels for the bars
         self.ax.set_yticks(pos)
@@ -256,7 +260,7 @@ class FeatureCorrelation(TargetVisualizer):
 
 def feature_correlation(X, y, ax=None, method='pearson',
                         labels=None, sort=False, feature_index=None,
-                        feature_names=None, **kwargs):
+                        feature_names=None, color=None, **kwargs):
     """
     Displays the correlation between features and dependent variables.
 
@@ -304,6 +308,9 @@ def feature_correlation(X, y, ax=None, method='pearson',
         Must have labels or the fitted data is a DataFrame with column names.
         If feature_index is provided, feature_names will be ignored.
 
+    color: string
+        Specify color for barchart
+
     kwargs : dict
         Keyword arguments that are passed to the base class and may influence
         the visualization as defined in other Visualizers.
@@ -315,8 +322,10 @@ def feature_correlation(X, y, ax=None, method='pearson',
     """
 
     # Instantiate the visualizer
-    viz = FeatureCorrelation(ax, method, labels, sort,
-                             feature_index, feature_names, **kwargs)
+    viz = FeatureCorrelation(
+        ax=ax, method=method, labels=labels, sort=sort, color=color,
+        feature_index=feature_index, feature_names=feature_names, **kwargs
+    )
 
     # Fit and transform the visualizer (calls draw)
     viz.fit(X, y, **kwargs)
