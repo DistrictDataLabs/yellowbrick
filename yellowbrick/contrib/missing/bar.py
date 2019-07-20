@@ -48,7 +48,7 @@ class MissingValuesBar(MissingDataVisualizer):
         fit.
 
     colors : list, default: None
-        The color pallette for drawing a stack bar chart when the y targets
+        The color palette for drawing a stack bar chart when the y targets
         are passed to fit.
 
     classes : list, default: None
@@ -77,7 +77,7 @@ class MissingValuesBar(MissingDataVisualizer):
     >>> visualizer.poof()
     """
 
-    def __init__(self, width=0.5, color='black', colors=None, classes=None, **kwargs):
+    def __init__(self, width=0.5, color=None, colors=None, classes=None, **kwargs):
 
         if "target_type" not in kwargs:
             kwargs["target_type"] = "single"
@@ -91,6 +91,7 @@ class MissingValuesBar(MissingDataVisualizer):
             self.classes_ = np.array(classes)
 
         # Set up classifier score visualization properties
+        self.color = color
         if self.classes_ is not None:
             n_colors = len(self.classes_)
         else:
@@ -101,7 +102,7 @@ class MissingValuesBar(MissingDataVisualizer):
     def get_nan_col_counts(self, **kwargs):
         # where matrix contains strings, handle them
         if np.issubdtype(self.X.dtype, np.string_) or np.issubdtype(self.X.dtype, np.unicode_):
-            mask = np.where( self.X == '' )
+            mask = np.where(self.X == '')
             nan_matrix = np.zeros(self.X.shape)
             nan_matrix[mask] = np.nan
 
@@ -119,7 +120,9 @@ class MissingValuesBar(MissingDataVisualizer):
 
                 indices = np.argwhere(self.y == target_value)
                 target_matrix = nan_matrix[indices.flatten()]
-                nan_col_counts = np.array([np.count_nonzero(np.isnan(col)) for col in target_matrix.T])
+                nan_col_counts = np.array([
+                    np.count_nonzero(np.isnan(col)) for col in target_matrix.T
+                ])
                 nan_counts.append((target_value, nan_col_counts))
 
             return nan_counts
@@ -137,8 +140,10 @@ class MissingValuesBar(MissingDataVisualizer):
         self.ind = np.arange(len(self.features_))
 
         if y is None:
-            self.ax.barh(self.ind - self.width / 2, nan_col_counts, self.width,
-                            color=self.color, label=None)
+            self.ax.barh(
+                self.ind - self.width / 2, nan_col_counts, self.width,
+                color=self.color, label=None
+            )
         else:
             self.draw_stacked_bar(nan_col_counts)
 
