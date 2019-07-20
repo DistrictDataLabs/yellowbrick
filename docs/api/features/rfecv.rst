@@ -22,10 +22,11 @@ To show how this works in practice, we'll start with a contrived example using a
         n_repeated=0, n_classes=8, n_clusters_per_class=1, random_state=0
     )
 
-    # Create RFECV visualizer with linear SVM classifier
-    viz = RFECV(SVC(kernel='linear', C=1))
-    viz.fit(X, y)
-    viz.poof()
+    # Instantiate RFECV visualizer with a linear SVM classifier
+    visualizer = RFECV(SVC(kernel='linear', C=1))
+
+    visualizer.fit(X, y)        # Fit the data to the visualizer
+    visualizer.poof()           # Draw/show/poof the data
 
 .. image:: images/rfecv_sklearn_example.png
 
@@ -38,19 +39,17 @@ Exploring a real dataset, we can see the impact of RFECV on a credit default bin
     from sklearn.ensemble import RandomForestClassifier
     from sklearn.model_selection import StratifiedKFold
 
-    df = load_data('credit')
+    from yellowbrick.features import RFECV
+    from yellowbrick.datasets import load_credit
 
-    target = 'default'
-    features = [col for col in data.columns if col != target]
-
-    X = data[features]
-    y = data[target]
+    # Load classification dataset
+    X, y = load_credit()
 
     cv = StratifiedKFold(5)
-    oz = RFECV(RandomForestClassifier(), cv=cv, scoring='f1_weighted')
+    visualizer = RFECV(RandomForestClassifier(), cv=cv, scoring='f1_weighted')
 
-    oz.fit(X, y)
-    oz.poof()
+    visualizer.fit(X, y)        # Fit the data to the visualizer
+    visualizer.poof()           # Draw/show/poof the data
 
 .. image:: images/rfecv_credit.png
 

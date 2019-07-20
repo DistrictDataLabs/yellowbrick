@@ -12,23 +12,21 @@ A joint plot visualizer plots a feature against the target and shows the distrib
 
 .. code:: python
 
-    # Load the data
-    df = load_data("concrete")
-    feature = "cement"
-    target = "strength"
-
-    # Get the X and y data from the DataFrame
-    X = df[feature]
-    y = df[target]
-
-.. code:: python
-
+    from yellowbrick.datasets import load_concrete
     from yellowbrick.features import JointPlotVisualizer
 
-    visualizer = JointPlotVisualizer(feature=feature, target=target)
+    # Load the dataset
+    X, y = load_concrete()
 
-    visualizer.fit(X, y)
-    visualizer.poof()
+    # Select the feature and target from the dataset
+    X = X["cement"]
+    y = y.values
+
+    # Instantiate the visualizer
+    visualizer = JointPlotVisualizer(feature="cement", target="strength")
+
+    visualizer.fit(X, y)        # Fit the data to the visualizer
+    visualizer.poof()           # Draw/show/poof the data
 
 
 .. image:: images/jointplot.png
@@ -37,12 +35,23 @@ The joint plot visualizer can also be plotted with hexbins in the case of many, 
 
 .. code:: python
 
+    from yellowbrick.datasets import load_concrete
+    from yellowbrick.features import JointPlotVisualizer
+
+    # Load the dataset
+    X, y = load_concrete()
+
+    # Select the feature and target from the dataset
+    X = X["cement"]
+    y = y.values
+
+    # Instantiate the visualizer
     visualizer = JointPlotVisualizer(
-        feature=feature, target=target, joint_plot='hex'
+        feature="cement", target="strength", joint_plot='hex'
     )
 
-    visualizer.fit(X, y)
-    visualizer.poof()
+    visualizer.fit(X, y)        # Fit the data to the visualizer
+    visualizer.poof()           # Draw/show/poof the data
 
 .. image:: images/jointplot_hex.png
 

@@ -61,25 +61,17 @@ this by assigning a color to each label and showing the labels in a legend.
 
 .. code:: python
 
-    # Load the classification data set
-    data = load_data('occupancy')
+    from yellowbrick.features import Manifold
+    from yellowbrick.datasets import load_occupancy
 
-    # Specify the features of interest
-    features = [
-        "temperature", "relative humidity", "light", "C02", "humidity"
-    ]
+    # Load the classification dataset
+    X, y = load_occupancy()
 
-    # Extract the instances and target
-    X = data[features]
-    y = data.occupancy
-
-.. code:: python
-
-    from yellowbrick.features.manifold import Manifold
-
+    # Instantiate the visualizer
     visualizer = Manifold(manifold='tsne', target='discrete')
-    visualizer.fit_transform(X,y)
-    visualizer.poof()
+
+    visualizer.fit_transform(X, y)        # Fit and transform the data
+    visualizer.poof()                     # Draw/show/poof the data
 
 
 .. image:: images/occupancy_tsne_manifold.png
@@ -98,28 +90,22 @@ the ``f_classif`` score to find the 3 best features in our occupancy dataset.
 .. code:: python
 
     from sklearn.pipeline import Pipeline
-    from sklearn.feature_selection import SelectKBest
-    from sklearn.feature_selection import f_classif
+    from sklearn.feature_selection import f_classif, SelectKBest
 
+    from yellowbrick.features import Manifold
+    from yellowbrick.datasets import load_occupancy
+
+    # Load the classification dataset
+    X, y = load_occupancy()
+
+    # Create a pipeline
     model = Pipeline([
         ("selectk", SelectKBest(k=3, score_func=f_classif)),
         ("viz", Manifold(manifold='isomap', target='discrete')),
     ])
 
-    # Load the classification dataset
-    data = load_data("occupancy")
-
-    # Specify the features of interest
-    features = [
-        "temperature", "relative humidity", "light", "CO2", "humidity"
-    ]
-
-    # Extract the instances and target
-    X = data[features]
-    y = data.occupancy
-
-    model.fit(X, y)
-    model.named_steps['viz'].poof()
+    model.fit(X, y)                    # Fit the data to the model
+    model.named_steps['viz'].poof()    # Draw/show/poof the data
 
 .. image:: images/occupancy_select_k_best_isomap_manifold.png
 
@@ -133,21 +119,17 @@ continuous by counting the number of unique values in ``y``.
 
 .. code:: python
 
-    # Specify the features of interest
-    feature_names = [
-        'cement', 'slag', 'ash', 'water', 'splast', 'coarse', 'fine', 'age'
-    ]
-    target_name = 'strength'
+    from yellowbrick.features import Manifold
+    from yellowbrick.datasets import load_concrete
 
-    # Get the X and y data from the DataFrame
-    X = data[feature_names]
-    y = data[target_name]
+    # Load the regression dataset
+    X, y = load_concrete()
 
-.. code:: python
-
+    # Instantiate the visualizer
     visualizer = Manifold(manifold='isomap', target='continuous')
-    visualizer.fit_transform(X,y)
-    visualizer.poof()
+
+    visualizer.fit_transform(X, y)        # Fit and transform the data
+    visualizer.poof()                     # Draw/show/poof the data
 
 .. image:: images/concrete_isomap_manifold.png
 
