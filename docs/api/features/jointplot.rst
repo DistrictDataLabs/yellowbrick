@@ -8,32 +8,11 @@ Sometimes for feature analysis you simply need a scatter plot to determine the d
 Joint Plot Visualization
 ------------------------
 
-A joint plot visualizer plots a feature against the target and shows the distribution of each via a histogram on each axis.
+The ``JointPlotVisualizer`` plots a feature against the target and shows the distribution of each via a histogram on each axis.
 
-.. code:: python
-
-    from yellowbrick.datasets import load_concrete
-    from yellowbrick.features import JointPlotVisualizer
-
-    # Load the dataset
-    X, y = load_concrete()
-
-    # Select the feature and target from the dataset
-    X = X["cement"]
-    y = y.values
-
-    # Instantiate the visualizer
-    visualizer = JointPlotVisualizer(feature="cement", target="strength")
-
-    visualizer.fit(X, y)        # Fit the data to the visualizer
-    visualizer.poof()           # Draw/show/poof the data
-
-
-.. image:: images/jointplot.png
-
-The joint plot visualizer can also be plotted with hexbins in the case of many, many points.
-
-.. code:: python
+.. plot::
+    :context: close-figs
+    :alt: JointPlot
 
     from yellowbrick.datasets import load_concrete
     from yellowbrick.features import JointPlotVisualizer
@@ -41,19 +20,30 @@ The joint plot visualizer can also be plotted with hexbins in the case of many, 
     # Load the dataset
     X, y = load_concrete()
 
-    # Select the feature and target from the dataset
-    X = X["cement"]
-    y = y.values
+    # Instantiate the visualizer
+    visualizer = JointPlotVisualizer(columns="cement")
+
+    visualizer.fit_transform(X, y)        # Fit and transform the data
+    visualizer.poof()                     # Draw/show/poof the data
+
+
+The ``JointPlotVisualizer`` can also be used to compare two features.
+
+.. plot::
+    :context: close-figs
+    :alt: JointPlot comparing two features
+
+    from yellowbrick.datasets import load_concrete
+    from yellowbrick.features import JointPlotVisualizer
+
+    # Load the dataset
+    X, y = load_concrete()
 
     # Instantiate the visualizer
-    visualizer = JointPlotVisualizer(
-        feature="cement", target="strength", joint_plot='hex'
-    )
+    visualizer = JointPlotVisualizer(columns=["cement", "ash"])
 
-    visualizer.fit(X, y)        # Fit the data to the visualizer
-    visualizer.poof()           # Draw/show/poof the data
-
-.. image:: images/jointplot_hex.png
+    visualizer.fit_transform(X, y)        # Fit and transform the data
+    visualizer.poof()                     # Draw/show/poof the data
 
 
 API Reference
