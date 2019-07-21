@@ -10,6 +10,7 @@ Joint Plot Visualization
 
 The ``JointPlotVisualizer`` plots a feature against the target and shows the distribution of each via a histogram on each axis.
 
+
 .. plot::
     :context: close-figs
     :alt: JointPlot
@@ -41,6 +42,26 @@ The ``JointPlotVisualizer`` can also be used to compare two features.
 
     # Instantiate the visualizer
     visualizer = JointPlotVisualizer(columns=["cement", "ash"])
+
+    visualizer.fit_transform(X, y)        # Fit and transform the data
+    visualizer.poof()                     # Draw/show/poof the data
+
+
+In addition, the ``JointPlotVisualizer`` can be plotted with hexbins in the case
+of many, many points.
+
+.. plot::
+    :context: close-figs
+    :alt: JointPlot
+
+    from yellowbrick.datasets import load_concrete
+    from yellowbrick.features import JointPlotVisualizer
+
+    # Load the dataset
+    X, y = load_concrete()
+
+    # Instantiate the visualizer
+    visualizer = JointPlotVisualizer(columns="cement", kind="hexbin")
 
     visualizer.fit_transform(X, y)        # Fit and transform the data
     visualizer.poof()                     # Draw/show/poof the data
