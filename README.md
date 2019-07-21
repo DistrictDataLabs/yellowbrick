@@ -115,3 +115,9 @@ _This will remove old datasets and download the new ones. You can also use the `
 ## Citing Yellowbrick
 
 We would be glad if you used Yellowbrick in your scientific publications! If you do, please cite us using the [citation guidelines](https://www.scikit-yb.org/en/latest/about.html#citing-yellowbrick).
+
+## Affiliations
+
+[![District Data Labs](docs/images/readme/ddl-logo.png)](https://districtdatalabs.com/)
+ 
+[![NumFOCUS Affiliated Project](docs/images/readme/numfocus.png)](https://numfocus.org)

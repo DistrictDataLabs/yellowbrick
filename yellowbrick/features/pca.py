@@ -36,24 +36,22 @@ from sklearn.preprocessing import StandardScaler
 # 2D and 3D PCA Visualizer
 ##########################################################################
 
-
 class PCADecomposition(MultiFeatureVisualizer):
     """
     Produce a two or three dimensional principal component plot of a data array
-    projected onto it's largest sequential principal components. It is common
+    projected onto its largest sequential principal components. It is common
     practice to scale the data array ``X`` before applying a PC decomposition.
     Variable scaling can be controlled using the ``scale`` argument.
 
     Parameters
     ----------
     ax : matplotlib Axes, default: None
-        The axes to plot the figure on. If None is passed in the current axes.
+        The axes to plot the figure on. If None is passed in, the current axes 
         will be used (or generated if required).
 
-    features: list, default: None
-        a list of feature names to use
-        If a DataFrame is passed to fit and features is None, feature
-        names are selected as the columns of the DataFrame.
+    features : list, default: None
+        A list of feature names to use. If a DataFrame is passed to fit and features 
+        is None, feature names are selected as the columns of the DataFrame.
 
     scale : bool, default: True
         Boolean that indicates if user wants to scale data.
@@ -78,10 +76,10 @@ class PCADecomposition(MultiFeatureVisualizer):
         transparent. This property makes densely clustered points more visible.
 
     random_state : int, RandomState instance or None, optional (default None)
-        If input data is larger than 500x500 and the number of components to
-        extract is lower than 80% of the smallest dimension of the data, then
-        the more efficient `randomized` solver is enabled, this parameter sets
-        the random state on this solver.
+        This parameter sets the random state on this solver. If the input X is 
+        larger than 500x500 and the number of components to extract is lower 
+        than 80% of the smallest dimension of the data, then the more efficient 
+        `randomized` solver is enabled.
 
     colorbar : bool, default: False
         Add a colorbar to shows the range in magnitude of feature values to the
@@ -101,7 +99,7 @@ class PCADecomposition(MultiFeatureVisualizer):
     >>> X = iris.data
     >>> y = iris.target
     >>> visualizer = PCADecomposition()
-    >>> visualizer.fit_transform(X)
+    >>> visualizer.fit_transform(X, y)
     >>> visualizer.poof()
 
     """
@@ -369,7 +367,7 @@ def pca_decomposition(
 ):
     """
     Produce a two or three dimensional principal component plot of the data array ``X``
-    projected onto it's largest sequential principal components. It is common practice
+    projected onto its largest sequential principal components. It is common practice
     to scale the data array ``X`` before applying a PC decomposition. Variable scaling
     can be controlled using the ``scale`` argument.
 
@@ -382,13 +380,12 @@ def pca_decomposition(
         An array or series of target or class values.
 
     ax : matplotlib Axes, default: None
-        The axes to plot the figure on. If None is passed in the current axes.
+        The axes to plot the figure on. If None is passed in, the current axes 
         will be used (or generated if required).
 
-    features: list, default: None
-        a list of feature names to use
-        If a DataFrame is passed to fit and features is None, feature
-        names are selected as the columns of the DataFrame.
+    features : list, default: None
+        A list of feature names to use. If a DataFrame is passed to fit and 
+        features is None, feature names are selected as the columns of the DataFrame.
 
     scale : bool, default: True
         Boolean that indicates if user wants to scale data.
@@ -413,7 +410,7 @@ def pca_decomposition(
         transparent. This property makes densely clustered points more visible.
 
     random_state : int, RandomState instance or None, optional (default None)
-        If input data is larger than 500x500 and the number of components to
+        If input X is larger than 500x500 and the number of components to
         extract is lower than 80% of the smallest dimension of the data, then
         the more efficient `randomized` solver is enabled, this parameter sets
         the random state on this solver.
