@@ -36,6 +36,7 @@ Unless otherwise specified, most of the examples currently use one or more of th
 - **occupancy**: suitable for classification
 - **spam**: suitable for binary classification
 - **walking**: suitable for time series analysis/clustering
+- **nfl**: suitable for clustering
 
 
 API Reference
