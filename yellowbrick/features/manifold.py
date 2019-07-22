@@ -15,15 +15,11 @@ Use manifold algorithms for high dimensional visualization.
 ##########################################################################
 
 import warnings
-import numpy as np
-import matplotlib.pyplot as plt
 
 from yellowbrick.utils.timer import Timer
-from yellowbrick.draw import manual_legend
 from yellowbrick.utils.types import is_estimator
-from yellowbrick.style import palettes, resolve_colors
-from yellowbrick.features.base import FeatureVisualizer
-from yellowbrick.exceptions import YellowbrickValueError, YellowbrickWarning, NotFitted
+from yellowbrick.features.projection import ProjectionVisualizer
+from yellowbrick.exceptions import YellowbrickValueError, YellowbrickWarning
 
 from sklearn.base import clone
 from sklearn.manifold import LocallyLinearEmbedding
@@ -35,14 +31,14 @@ from sklearn.manifold import Isomap, MDS, TSNE, SpectralEmbedding
 ##########################################################################
 
 MANIFOLD_ALGORITHMS = {
-    "lle": LocallyLinearEmbedding(method="standard", eigen_solver='auto'),
-    "ltsa":LocallyLinearEmbedding(method="ltsa", eigen_solver='auto'),
-    "hessian": LocallyLinearEmbedding(method="hessian", eigen_solver='auto'),
-    "modified": LocallyLinearEmbedding(method="modified", eigen_solver='auto'),
+    "lle": LocallyLinearEmbedding(method="standard", eigen_solver="auto"),
+    "ltsa": LocallyLinearEmbedding(method="ltsa", eigen_solver="auto"),
+    "hessian": LocallyLinearEmbedding(method="hessian", eigen_solver="auto"),
+    "modified": LocallyLinearEmbedding(method="modified", eigen_solver="auto"),
     "isomap": Isomap(),
     "mds": MDS(),
     "spectral": SpectralEmbedding(),
-    "tsne": TSNE(init='pca'),
+    "tsne": TSNE(init="pca"),
 }
 
 MANIFOLD_NAMES = {
@@ -56,18 +52,13 @@ MANIFOLD_NAMES = {
     "tsne": "t-SNE",
 }
 
-# Target type constants
-AUTO = "auto"
-SINGLE = "single"
-DISCRETE = "discrete"
-CONTINUOUS = "continuous"
-
 
 ##########################################################################
 ## Manifold Embeddings
 ##########################################################################
 
-class Manifold(FeatureVisualizer):
+
+class Manifold(ProjectionVisualizer):
     """
     The Manifold visualizer provides high dimensional visualization for feature
     analysis by embedding data into 2 dimensions using the sklearn.manifold
@@ -203,24 +194,36 @@ class Manifold(FeatureVisualizer):
         ax=None,
         manifold="mds",
         n_neighbors=None,
+        features=None,
+        classes=None,
         colors=None,
-        target=AUTO,
-        alpha=0.7,
+        colormap=None,
+        target_type="auto",
+        projection=2,
+        alpha=0.75,
         random_state=None,
+        colorbar=True,
         **kwargs
     ):
-        super(Manifold, self).__init__(ax, **kwargs)
+
+        super(Manifold, self).__init__(
+            ax,
+            features,
+            classes,
+            colors,
+            colormap,
+            target_type,
+            projection,
+            alpha,
+            colorbar,
+            **kwargs
+        )
         self._name = None
         self._manifold = None
-        self._target_color_type = None
 
         self.n_neighbors = n_neighbors
-        self.colors = colors
-        self.target = target
-        self.alpha = alpha
         self.random_state = random_state
-        self.manifold = manifold # must be set last
-
+        self.manifold = manifold  # must be set last
 
     @property
     def manifold(self):
@@ -239,21 +242,27 @@ class Manifold(FeatureVisualizer):
         """
         if not is_estimator(transformer):
             if transformer not in self.ALGORITHMS:
-                    raise YellowbrickValueError(
-                        "could not create manifold for '{}'".format(str(transformer))
-                    )
+                raise YellowbrickValueError(
+                    "could not create manifold for '{}'".format(str(transformer))
+                )
 
             # 2 components is required for 2D plots
-            # TODO: allow 3 components for 3D plots in future
-            n_components = 2
+            n_components = self.projection
             requires_default_neighbors = {
-                'lle', 'ltsa', 'isomap', 'hessian', 'spectral', 'modified'
+                "lle",
+                "ltsa",
+                "isomap",
+                "hessian",
+                "spectral",
+                "modified",
             }
 
             # Check if the n_neighbors attribute needs to be set.
             if self.n_neighbors is None and transformer in requires_default_neighbors:
-                if transformer == 'hessian':
-                    self.n_neighbors = int(1 + (n_components * (1 + (n_components + 1) / 2)))
+                if transformer == "hessian":
+                    self.n_neighbors = int(
+                        1 + (n_components * (1 + (n_components + 1) / 2))
+                    )
                 else:
                     self.n_neighbors = 5
 
@@ -282,66 +291,19 @@ class Manifold(FeatureVisualizer):
         if self._name is None:
             self._name = self._manifold.__class__.__name__
 
-    def fit(self, X, y=None):
+    def fit(self, X, y=None, **kwargs):
         """
         Fits the manifold on X and transforms the data to plot it on the axes.
         See fit_transform() for more details.
         """
-        self.fit_transform(X, y)
-        return self
-
-    def fit_transform(self, X, y=None):
-        """
-        Fits the manifold on X and transforms the data to plot it on the axes.
-        The optional y specified can be used to declare discrete colors. If
-        the target is set to 'auto', this method also determines the target
-        type, and therefore what colors will be used.
-
-        Note also that fit records the amount of time it takes to fit the
-        manifold and reports that information in the visualization.
-
-        Parameters
-        ----------
-        X : array-like of shape (n, m)
-            A matrix or data frame with n instances and m features where m > 2.
-
-        y : array-like of shape (n,), optional
-            A vector or series with target values for each instance in X. This
-            vector is used to determine the color of the points in X.
-
-        Returns
-        -------
-        self : Manifold
-            Returns the visualizer object.
-        """
-        # Determine target type
-        self._determine_target_color_type(y)
-
-        # Compute classes and colors if target type is discrete
-        if self._target_color_type == DISCRETE:
-            self.classes_ = np.unique(y)
-
-            color_kwargs = {'n_colors': len(self.classes_)}
-
-            if isinstance(self.colors, str):
-                color_kwargs['colormap'] = self.colors
-            else:
-                color_kwargs['colors'] = self.colors
-
-            self._colors = resolve_colors(**color_kwargs)
-
-        # Compute target range if colors are continuous
-        elif self._target_color_type == CONTINUOUS:
-            y = np.asarray(y)
-            self.range_ = (y.min(), y.max())
+        # Call to fit determines color target type and features.
+        super(Manifold, self).fit(X, y, **kwargs)
 
         with Timer() as self.fit_time_:
-            Xp = self.manifold.fit_transform(X)
+            self.manifold.fit(X)
+        return self
 
-        self.draw(Xp, y)
-        return Xp
-
-    def transform(self, X):
+    def transform(self, X, y=None, **kwargs):
         """
         Returns the transformed data points from the manifold embedding.
 
@@ -356,122 +318,56 @@ class Manifold(FeatureVisualizer):
             Returns the 2-dimensional embedding of the instances.
         """
         try:
-            return self.manifold.transform(X)
+            Xp = self.manifold.transform(X)
         except AttributeError as e:
             raise AttributeError(str(e) + " try using fit_transform instead.")
 
-    def draw(self, X, y=None):
-        """
-        Draws the points described by X and colored by the points in y. Can be
-        called multiple times before finalize to add more scatter plots to the
-        axes, however ``fit()`` must be called before use.
+        self.draw(Xp, y, **kwargs)
+        return Xp
 
-        Parameters
-        ----------
-        X : array-like of shape (n, 2)
-            The matrix produced by the ``transform()`` method.
-
-        y : array-like of shape (n,), optional
-            The target, used to specify the colors of the points.
-
-        Returns
-        -------
-        self.ax : matplotlib Axes object
-            Returns the axes that the scatter plot was drawn on.
-        """
-        scatter_kwargs = {"alpha": self.alpha}
-
-        # Determine the colors
-        if self._target_color_type == SINGLE:
-            scatter_kwargs["c"] = "b"
-
-        elif self._target_color_type == DISCRETE:
-            if y is None:
-                raise YellowbrickValueError("y is required for discrete target")
-
-            scatter_kwargs["c"] = [
-                self._colors[np.searchsorted(self.classes_, (yi))] for yi in y
-            ]
-
-        elif self._target_color_type == CONTINUOUS:
-            if y is None:
-                raise YellowbrickValueError("y is required for continuous target")
-
-            # TODO manually make colorbar so we can draw it in finalize
-            scatter_kwargs["c"] = y
-            scatter_kwargs["cmap"] = self.colors or palettes.DEFAULT_SEQUENCE
-
-        else:
-            # Technically this should never be raised
-            raise NotFitted("could not determine target color type")
-
-        # Draw the scatter plot with the associated colors and alpha
-        self._scatter = self.ax.scatter(X[:,0], X[:,1], **scatter_kwargs)
-        return self.ax
+    def draw(self, Xp, y=None):
+        # Calls draw method from super class which draws scatter plot.
+        super(Manifold, self).draw(Xp, y)
 
     def finalize(self):
         """
         Add title and modify axes to make the image ready for display.
         """
         self.set_title(
-            '{} Manifold (fit in {:0.2f} seconds)'.format(
+            "{} Manifold (fit in {:0.2f} seconds)".format(
                 self._name, self.fit_time_.interval
             )
         )
         self.ax.set_xticklabels([])
         self.ax.set_yticklabels([])
-
-        if self._target_color_type == DISCRETE:
-            # Add the legend
-            manual_legend(self, self.classes_, self._colors, frameon=True)
-
-        elif self._target_color_type == CONTINUOUS:
-            # Add the color bar
-            plt.colorbar(self._scatter, ax=self.ax)
-
-    def _determine_target_color_type(self, y):
-        """
-        Determines the target color type from the vector y as follows:
-
-            - if y is None: only a single color is used
-            - if target is auto: determine if y is continuous or discrete
-            - otherwise specify supplied target type
-
-        This property will be used to compute the colors for each point.
-        """
-        if y is None:
-            self._target_color_type = SINGLE
-        elif self.target == "auto":
-            # NOTE: See #73 for a generalization to use when implemented
-            if len(np.unique(y)) < 10:
-                self._target_color_type = DISCRETE
-            else:
-                self._target_color_type = CONTINUOUS
-        else:
-            self._target_color_type = self.target
-
-        if self._target_color_type not in {SINGLE, DISCRETE, CONTINUOUS}:
-            raise YellowbrickValueError((
-                "could not determine target color type "
-                "from target='{}' to '{}'"
-            ).format(self.target, self._target_color_type))
+        if self.proj_dim == 3:
+            self.ax.set_zticklabels([])
+        # Draws legend for discrete target and colorbar for continuous.
+        super(Manifold, self).finalize()
 
 
 ##########################################################################
 ## Quick Method
 ##########################################################################
 
+
 def manifold_embedding(
     X,
     y=None,
     ax=None,
-    manifold="lle",
-    n_neighbors=10,
+    manifold="mds",
+    n_neighbors=None,
+    features=None,
+    classes=None,
     colors=None,
-    target=AUTO,
-    alpha=0.7,
+    colormap=None,
+    target_type="auto",
+    projection=2,
+    alpha=0.75,
     random_state=None,
-    **kwargs):
+    colorbar=True,
+    **kwargs
+):
     """Quick method for Manifold visualizer.
 
     The Manifold visualizer provides high dimensional visualization for feature
@@ -555,8 +451,19 @@ def manifold_embedding(
     """
     # Instantiate the visualizer
     viz = Manifold(
-        ax=ax, manifold=manifold, n_neighbors=n_neighbors, colors=colors,
-        target=target, alpha = alpha, random_state=random_state, **kwargs
+        ax=ax,
+        manifold=manifold,
+        n_neighbors=n_neighbors,
+        features=features,
+        classes=classes,
+        colors=colors,
+        colormap=colormap,
+        target_type=target_type,
+        projection=projection,
+        alpha=alpha,
+        random_state=random_state,
+        colorbar=colorbar,
+        **kwargs
     )
 
     # Fit and poof (calls draw)
