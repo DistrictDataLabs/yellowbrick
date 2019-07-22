@@ -18,7 +18,6 @@ Tests for the feature selection and analysis base classes
 ##########################################################################
 
 import pytest
-from unittest.mock import patch
 
 from yellowbrick.base import Visualizer
 from yellowbrick.features.base import *
@@ -80,8 +79,7 @@ class TestFeatureVisualizerBase(VisualTestCase):
 @pytest.mark.usefixtures("discrete", "continuous")
 class TestDataVisualizerBase(VisualTestCase):
 
-    @patch.object(DataVisualizer, 'draw')
-    def test_single(self, mock_draw):
+    def test_single(self):
 
         dataviz = DataVisualizer()
         # Check default is auto
@@ -95,7 +93,6 @@ class TestDataVisualizerBase(VisualTestCase):
         dataviz = DataVisualizer(target_type="continuous")
         X, y = self.continuous
         dataviz.fit(X)
-        mock_draw.assert_called_once()
         assert dataviz._colors == 'b'
         assert dataviz._target_color_type == TargetType.SINGLE
 
@@ -104,13 +101,11 @@ class TestDataVisualizerBase(VisualTestCase):
         dataviz._determine_target_color_type(None)
         assert dataviz._target_color_type == TargetType.SINGLE
 
-    @patch.object(DataVisualizer, 'draw')
-    def test_continuous(self, mock_draw):
+    def test_continuous(self):
         # Check when y is continuous
         X, y = self.continuous
         dataviz = DataVisualizer()
         dataviz.fit(X, y)
-        mock_draw.assert_called_once()
         assert hasattr(dataviz, "range_")
         assert dataviz._target_color_type == TargetType.CONTINUOUS
 
@@ -140,8 +135,7 @@ class TestDataVisualizerBase(VisualTestCase):
         with pytest.raises(YellowbrickValueError, match=msg):
             DataVisualizer(target_type="foo")
 
-    @patch.object(DataVisualizer, 'draw')
-    def test_classes(self, mock_draw):
+    def test_classes(self):
         # Checks that classes are assigned correctly
         X, y = self.discrete
         classes = ['a', 'b', 'c', 'd', 'e']

@@ -199,7 +199,8 @@ class TestPosTag(VisualTestCase):
         _, ax = plt.subplots()
         tagged_docs = list(get_tagged_docs(sonnets))
 
-        viz = postag(tagged_docs, ax=ax, frequency=True)
+        viz = PosTagVisualizer(ax=ax, frequency=True)
+        viz.fit(tagged_docs)
         viz.finalize()
         ax.grid(False)
 
@@ -208,10 +209,12 @@ class TestPosTag(VisualTestCase):
                        'determiner', 'adverb', 'conjunction', 'pronoun', 'wh- word',
                        'modal', 'infinitive', 'possessive', 'other', 'symbol',
                        'existential', 'digit', 'non-English', 'interjection', 'list']
+
         # Extract tick labels from the plot
         ticks_ax = [tick.get_text() for tick in ax.xaxis.get_ticklabels()]
-        #Assert that ticks are set properly
-        assert ticks_ax==sorted_tags
+
+        # Assert that ticks are set properly
+        assert ticks_ax == sorted_tags
 
         self.assert_images_similar(ax=ax, tol=0.5)
 
@@ -281,7 +284,7 @@ class TestPosTag(VisualTestCase):
         tagged_docs = list(get_tagged_docs(sonnets))
 
         visualizer = PosTagVisualizer(stack=True, ax=ax)
-        visualizer.fit(tagged_docs, y=['a','b','c'])
+        visualizer.fit(tagged_docs, y=['a', 'b', 'c'])
         visualizer.ax.grid(False)
 
         self.assert_images_similar(ax=ax)
@@ -297,7 +300,7 @@ class TestPosTag(VisualTestCase):
         tagged_docs = list(get_tagged_docs(sonnets))
 
         visualizer = PosTagVisualizer(stack=True, frequency=True, ax=ax)
-        visualizer.fit(tagged_docs, y=['a','b','c'])
+        visualizer.fit(tagged_docs, y=['a', 'b', 'c'])
         visualizer.ax.grid(False)
 
         # Sorted tags i.e predetermined order
@@ -305,10 +308,12 @@ class TestPosTag(VisualTestCase):
                        'determiner', 'adverb', 'conjunction', 'pronoun', 'wh- word',
                        'modal', 'infinitive', 'possessive', 'other', 'symbol',
                        'existential', 'digit', 'non-English', 'interjection', 'list']
+
         # Extract tick labels from the plot
         ticks_ax = [tick.get_text() for tick in ax.xaxis.get_ticklabels()]
-        #Assert that ticks are set properly
-        assert ticks_ax==sorted_tags
+
+        # Assert that ticks are set properly
+        assert ticks_ax == sorted_tags
 
         self.assert_images_similar(ax=ax)
 
