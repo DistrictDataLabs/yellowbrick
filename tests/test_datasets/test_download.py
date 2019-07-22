@@ -26,6 +26,7 @@ from yellowbrick.datasets.path import dataset_exists, dataset_archive
 @pytest.mark.parametrize("loader", [
         load_bikeshare, load_concrete, load_credit, load_energy, load_game,
         load_mushroom, load_occupancy, load_spam, load_walking, load_hobbies,
+        load_nfl,
     ], ids=lambda l: l.__name__)
 def test_loader_download(tmpdir, loader):
     """
