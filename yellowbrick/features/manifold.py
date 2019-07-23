@@ -111,30 +111,45 @@ class Manifold(ProjectionVisualizer):
         embedding. If n_neighbors is not specified for those embeddings, it is
         set to 5 and a warning is issued. If the manifold algorithm doesn't use
         nearest neighbors, then this parameter is ignored.
+        
+    features : list, default: None
+        a list of feature names to use
+        If a DataFrame is passed to fit and features is None, feature
+        names are selected as the columns of the DataFrame.
 
-    colors : str or list of colors, default: None
-        Specify the colors used, though note that the specification depends
-        very much on whether the target is continuous or discrete. If
-        continuous, colors must be the name of a colormap. If discrete, then
-        colors can be the name of a palette or a list of colors to use for each
-        class in the target.
+    classes : list, default: None
+        a list of class names for the legend
+        If classes is None and a y value is passed to fit then the classes
+        are selected from the target vector.
 
-    target : str, default: "auto"
+    colors : list or tuple of colors, default: None
+        Specify the colors for each individual class.
+
+    colormap : string or cmap, default: None
+        Optional string or matplotlib cmap to colorize points.
+        Use either color to colorize the points on a per class basis or
+        colormap to color them on a continuous scale.
+        
+    target_type : str, default: "auto"
         Specify the type of target as either "discrete" (classes) or "continuous"
-        (real numbers, usually for regression). If "auto", the Manifold will
+        (real numbers, usually for regression). If "auto", then it will
         attempt to determine the type by counting the number of unique values.
 
-        If the target is discrete, points will be colored by the target class
-        and a legend will be displayed. If continuous, points will be displayed
-        with a colormap and a color bar will be displayed. In either case, if
-        no target is specified, only a single color will be drawn.
+    projection : int or string, default: 2
+        The number of axes to project into, either 2d or 3d. To plot 3d plots
+        with matplotlib, please ensure a 3d axes is passed to the visualizer,
+        otherwise one will be created using the current figure.
 
-    alpha : float, default: 0.7
+    alpha : float, default: 0.75
         Specify a transparency where 1 is completely opaque and 0 is completely
         transparent. This property makes densely clustered points more visible.
 
     random_state : int or RandomState, default: None
         Fixes the random state for stochastic manifold algorithms.
+    
+    colorbar : bool, default: True
+        If the target_type is "continous" draw a colorbar to the right of the
+        scatter plot. The colobar axes is accessible using the cax property.
 
     kwargs : dict
         Keyword arguments passed to the base class and may influence the
@@ -295,19 +310,51 @@ class Manifold(ProjectionVisualizer):
         """
         Fits the manifold on X and transforms the data to plot it on the axes.
         See fit_transform() for more details.
+        
+        Parameters
+        ----------
+        X : array-like of shape (n, m)
+            A matrix or data frame with n instances and m features
+
+        y : array-like of shape (n,), optional
+            A vector or series with target values for each instance in X. This
+            vector is used to determine the color of the points in X.
         """
         self.fit_transform(X, y)
         return self
 
     def fit_transform(self, X, y=None, **kwargs):
+        """
+        Fits the manifold on X and transforms the data to plot it on the axes.
+        The optional y specified can be used to declare discrete colors. If
+        the target is set to 'auto', this method also determines the target
+        type, and therefore what colors will be used.
 
+        Note also that fit records the amount of time it takes to fit the
+        manifold and reports that information in the visualization.
+        
+        Parameters
+        ----------
+        X : array-like of shape (n, m)
+            A matrix or data frame with n instances and m features
+
+        y : array-like of shape (n,), optional
+            A vector or series with target values for each instance in X. This
+            vector is used to determine the color of the points in X.
+
+        Returns
+        -------
+        Xprime : array-like of shape (n, 2)
+            Returns the 2-dimensional embedding of the instances.
+        
+        """
         # Call to fit determines color target type and features.
         super(Manifold, self).fit(X, y, **kwargs)
         with Timer() as self.fit_time_:
             Xp = self.manifold.fit_transform(X)
         self.draw(Xp, y)
         return Xp
-    
+
     def transform(self, X, y=None, **kwargs):
         """
         Returns the transformed data points from the manifold embedding.
@@ -316,7 +363,10 @@ class Manifold(ProjectionVisualizer):
         ----------
         X : array-like of shape (n, m)
             A matrix or data frame with n instances and m features
-
+            
+        y : array-like of shape (n,), optional
+            The target, used to specify the colors of the points.
+            
         Returns
         -------
         Xprime : array-like of shape (n, 2)
@@ -421,40 +471,55 @@ def manifold_embedding(
         ``"tsne"``     `t-SNE <http://scikit-learn.org/stable/modules/manifold.html#t-distributed-stochastic-neighbor-embedding-t-sne>`_
         ============== ==========================
 
-    n_neighbors : int, default: 10
+    n_neighbors : int, default: None
         Many manifold algorithms are nearest neighbors based, for those that
         are, this parameter specfies the number of neighbors to use in the
-        embedding. If the manifold algorithm doesn't use nearest neighbors,
-        then this parameter is ignored.
+        embedding. If n_neighbors is not specified for those embeddings, it is
+        set to 5 and a warning is issued. If the manifold algorithm doesn't use
+        nearest neighbors, then this parameter is ignored.
+        
+    features : list, default: None
+        a list of feature names to use
+        If a DataFrame is passed to fit and features is None, feature
+        names are selected as the columns of the DataFrame.
 
-    colors : str or list of colors, default: None
-        Specify the colors used, though note that the specification depends
-        very much on whether the target is continuous or discrete. If
-        continuous, colors must be the name of a colormap. If discrete, then
-        colors can be the name of a palette or a list of colors to use for each
-        class in the target.
+    classes : list, default: None
+        a list of class names for the legend
+        If classes is None and a y value is passed to fit then the classes
+        are selected from the target vector.
 
-    target : str, default: "auto"
+    colors : list or tuple of colors, default: None
+        Specify the colors for each individual class.
+
+    colormap : string or cmap, default: None
+        Optional string or matplotlib cmap to colorize points.
+        Use either color to colorize the points on a per class basis or
+        colormap to color them on a continuous scale.
+        
+    target_type : str, default: "auto"
         Specify the type of target as either "discrete" (classes) or "continuous"
-        (real numbers, usually for regression). If "auto", the Manifold will
+        (real numbers, usually for regression). If "auto", then it will
         attempt to determine the type by counting the number of unique values.
 
-        If the target is discrete, points will be colored by the target class
-        and a legend will be displayed. If continuous, points will be displayed
-        with a colormap and a color bar will be displayed. In either case, if
-        no target is specified, only a single color will be drawn.
+    projection : int or string, default: 2
+        The number of axes to project into, either 2d or 3d. To plot 3d plots
+        with matplotlib, please ensure a 3d axes is passed to the visualizer,
+        otherwise one will be created using the current figure.
 
-    alpha : float, default: 0.7
+    alpha : float, default: 0.75
         Specify a transparency where 1 is completely opaque and 0 is completely
         transparent. This property makes densely clustered points more visible.
 
     random_state : int or RandomState, default: None
         Fixes the random state for stochastic manifold algorithms.
+    
+    colorbar : bool, default: True
+        If the target_type is "continous" draw a colorbar to the right of the
+        scatter plot. The colobar axes is accessible using the cax property.
 
     kwargs : dict
         Keyword arguments passed to the base class and may influence the
         feature visualization properties.
-
     Returns
     -------
     ax : matplotlib axes
