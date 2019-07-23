@@ -149,9 +149,7 @@ class TestManifold(VisualTestCase):
         oz = Manifold(
             manifold="spectral", target="discrete", n_neighbors=5, random_state=108
         )
-         
-        # TODO: Add this after #927
-        # assert not hasattr(oz, 'classes_')
+        assert not hasattr(oz, 'classes_')
 
         oz.fit_transform(X, y)
                 
@@ -173,8 +171,7 @@ class TestManifold(VisualTestCase):
             projection=3
         )
          
-        # TODO: Add this after #927
-        # assert not hasattr(oz, 'classes_')
+        assert not hasattr(oz, 'classes_')
 
         oz.fit_transform(X, y)
                 
@@ -196,7 +193,7 @@ class TestManifold(VisualTestCase):
 
         oz.fit_transform(X, y)
         oz.finalize()
-         assert not hasattr(oz, 'classes_')
+        assert not hasattr(oz, 'classes_')
         assert hasattr(oz, 'range_')
         self.assert_images_similar(oz, tol=1.5)
         
