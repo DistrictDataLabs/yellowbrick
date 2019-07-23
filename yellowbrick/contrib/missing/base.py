@@ -16,10 +16,12 @@ Base classes for missing values visualizers.
 ##########################################################################
 ## Imports
 ##########################################################################
+
 import numpy as np
 
 from yellowbrick.features.base import DataVisualizer
 from yellowbrick.utils import is_dataframe
+
 
 ##########################################################################
 ## Feature Visualizers
@@ -51,6 +53,12 @@ class MissingDataVisualizer(DataVisualizer):
         self : instance
             Returns the instance of the transformer/visualizer
         """
+        # Do not call super here - the data visualizer has been refactored
+        # to provide increased functionality that is not yet compatible with
+        # the current implementation. This mimicks the previous functionality.
+        # TODO: Refactor MissingDataVisualizer to make use of new features.
+        self.features_ = self.features
+
         if is_dataframe(X):
             self.X = X.values
             if self.features_ is None:
