@@ -18,6 +18,7 @@ import pytest
 
 from yellowbrick.features.manifold import *
 from yellowbrick.utils.types import is_estimator
+from yellowbrick.features.base import TargetType
 from yellowbrick.exceptions import YellowbrickValueError
 
 from sklearn.pipeline import Pipeline
@@ -117,8 +118,7 @@ class TestManifold(VisualTestCase):
         manifold = Manifold(target="auto")
 
         assert manifold.fit(X, y) is manifold, "fit did not return self"
-        mock_fit_transform.assert_called_once()
-
+        
     @patch('yellowbrick.features.manifold.Manifold.draw', spec=True)
     def test_manifold_fit_transform(self, mock_draw):
         """
@@ -134,7 +134,7 @@ class TestManifold(VisualTestCase):
 
         mock_draw.assert_called_once()
         assert hasattr(manifold, 'fit_time_')
-        assert manifold._target_color_type == CONTINUOUS
+        assert manifold._target_color_type == TargetType.CONTINUOUS
 
     @pytest.mark.filterwarnings("ignore:Conversion of the second argument")
     def test_manifold_classification(self):
@@ -149,13 +149,39 @@ class TestManifold(VisualTestCase):
         oz = Manifold(
             manifold="spectral", target="discrete", n_neighbors=5, random_state=108
         )
-        assert not hasattr(oz, 'classes_')
+         
+        # TODO: Add this after #927
+        # assert not hasattr(oz, 'classes_')
 
-        oz.fit(X, y)
-
+        oz.fit_transform(X, y)
+                
         assert hasattr(oz, 'classes_')
         assert not hasattr(oz, 'range_')
         self.assert_images_similar(oz, tol=0.5)
+        
+    def test_manifold_classification_3d(self):
+        """
+        Image similarity test for classification dataset (discrete y)
+        """
+        X, y = make_classification(
+            n_samples=300, n_features=7, n_informative=4, n_redundant=2,
+            n_classes=4, n_clusters_per_class=2, random_state=78
+        )
+
+        oz = Manifold(
+            manifold="spectral", target="discrete", n_neighbors=5, random_state=108,
+            projection=3
+        )
+         
+        # TODO: Add this after #927
+        # assert not hasattr(oz, 'classes_')
+
+        oz.fit_transform(X, y)
+                
+        assert hasattr(oz, 'classes_')
+        assert not hasattr(oz, 'range_')
+        self.assert_images_similar(oz)
+
 
     def test_manifold_regression(self):
         """
@@ -168,11 +194,31 @@ class TestManifold(VisualTestCase):
         oz = Manifold(manifold="tsne", target="continuous", random_state=1)
         assert not hasattr(oz, 'range_')
 
-        oz.fit(X, y)
-
-        assert not hasattr(oz, 'classes_')
+        oz.fit_transform(X, y)
+        oz.finalize()
+        # TODO: Add this after #927 
+        # assert not hasattr(oz, 'classes_')
         assert hasattr(oz, 'range_')
         self.assert_images_similar(oz, tol=1.5)
+        
+    def test_manifold_regression_3d(self):
+        """
+        Image similarity test for regression dataset (continuous y)
+        """
+        X, y = make_regression(
+            n_samples=300, n_features=7, n_informative=4, random_state=87
+        )
+
+        oz = Manifold(manifold="tsne", target="continuous", random_state=1,
+                      projection=3)
+        assert not hasattr(oz, 'range_')
+
+        oz.fit_transform(X, y)
+        oz.finalize()
+        # TODO: Add this after #927 
+        # assert not hasattr(oz, 'classes_')
+        assert hasattr(oz, 'range_')
+        self.assert_images_similar(oz)
 
     def test_manifold_single(self):
         """
@@ -183,9 +229,9 @@ class TestManifold(VisualTestCase):
         )
 
         oz = Manifold(manifold="mds", random_state=139973)
-        oz.fit(X)
-
-        self.assert_images_similar(oz, tol=5.0)
+        oz.fit_transform(X)
+        
+        self.assert_images_similar(oz)
 
     @pytest.mark.skipif(pd is None, reason="requires pandas")
     def test_manifold_pandas(self):
@@ -198,12 +244,13 @@ class TestManifold(VisualTestCase):
         y = pd.Series(y)
 
         oz = Manifold(
-            manifold='ltsa', colors='nipy_spectral', n_neighbors=10,
+            manifold='ltsa', colormap='nipy_spectral', n_neighbors=10,
             target='continuous', random_state=223
-        ).fit(X, y)
+        )
+        oz.fit_transform(X, y)
 
         # TODO: find a way to decrease this tolerance
-        self.assert_images_similar(oz, tol=35)
+        self.assert_images_similar(oz)
 
     @pytest.mark.filterwarnings("ignore:Conversion of the second argument")
     @pytest.mark.parametrize("algorithm", [
@@ -217,58 +264,6 @@ class TestManifold(VisualTestCase):
         oz = Manifold(manifold=algorithm, n_neighbors=10, random_state=223)
         oz.fit(X, y)
 
-    def test_determine_target_color_type(self):
-        """
-        Check that the target type is determined by a value y
-        """
-        manifold = Manifold()
-
-        # Check default is auto
-        assert manifold.target == AUTO
-
-        # Assert single when y is None
-        manifold._determine_target_color_type(None)
-        assert manifold._target_color_type == SINGLE
-
-        # Check when y is continuous
-        y = np.random.rand(100)
-        manifold._determine_target_color_type(y)
-        assert manifold._target_color_type == CONTINUOUS
-
-        # Check when y is discrete
-        y = np.random.choice(['a', 'b', 'c', 'd'], 100)
-        manifold._determine_target_color_type(y)
-        assert manifold._target_color_type == DISCRETE
-
-        # Check when default is set to continuous and discrete data passed in
-        manifold = Manifold(target=CONTINUOUS)
-        y = np.random.choice(['a', 'b', 'c', 'd'], 100)
-        manifold._determine_target_color_type(y)
-        assert manifold._target_color_type == CONTINUOUS
-
-        # Check when default is set to discrete and continuous data passed in
-        manifold = Manifold(target=DISCRETE)
-        y = np.random.rand(100)
-        manifold._determine_target_color_type(y)
-        assert manifold._target_color_type == DISCRETE
-
-        # None overrides specified target
-        manifold = Manifold(target=CONTINUOUS)
-        manifold._determine_target_color_type(None)
-        assert manifold._target_color_type == SINGLE
-
-        # None overrides specified target
-        manifold = Manifold(target=DISCRETE)
-        manifold._determine_target_color_type(None)
-        assert manifold._target_color_type == SINGLE
-
-        # Bad target raises exception
-        # None overrides specified target
-        manifold = Manifold(target="foo")
-        msg = "could not determine target color type"
-        with pytest.raises(YellowbrickValueError, match=msg):
-            manifold._determine_target_color_type([])
-
     def test_manifold_no_transform(self):
         """
         Test the exception when manifold doesn't implement transform.
@@ -278,5 +273,16 @@ class TestManifold(VisualTestCase):
 
         assert not hasattr(manifold._manifold, 'transform')
 
+        with pytest.raises(AttributeError, match="try using fit_transform instead"):
+            manifold.transform(X)
+
+    @pytest.mark.parametrize("manifolds", ["mds", "spectral", "tsne"])
+    def test_manifold_assert_no_transform(self, manifolds):
+        """
+        Assert that transform raises error when MDS, TSNE or Spectral Embedding.
+        """
+        X, _ = make_s_curve(1000, random_state=888)
+        manifold = Manifold(manifold=manifolds, target="auto")
+        manifold.fit(X)
         with pytest.raises(AttributeError, match="try using fit_transform instead"):
             manifold.transform(X)

@@ -296,13 +296,18 @@ class Manifold(ProjectionVisualizer):
         Fits the manifold on X and transforms the data to plot it on the axes.
         See fit_transform() for more details.
         """
-        # Call to fit determines color target type and features.
-        super(Manifold, self).fit(X, y, **kwargs)
-
-        with Timer() as self.fit_time_:
-            self.manifold.fit(X)
+        self.fit_transform(X, y)
         return self
 
+    def fit_transform(self, X, y=None, **kwargs):
+
+        # Call to fit determines color target type and features.
+        super(Manifold, self).fit(X, y, **kwargs)
+        with Timer() as self.fit_time_:
+            Xp = self.manifold.fit_transform(X)
+        self.draw(Xp, y)
+        return Xp
+    
     def transform(self, X, y=None, **kwargs):
         """
         Returns the transformed data points from the manifold embedding.
@@ -316,6 +321,11 @@ class Manifold(ProjectionVisualizer):
         -------
         Xprime : array-like of shape (n, 2)
             Returns the 2-dimensional embedding of the instances.
+            
+        Note
+        ----
+        This method does not work with MDS, TSNE and SpectralEmbedding because 
+        it is yet to be implemented in sklearn.
         """
         try:
             Xp = self.manifold.transform(X)
@@ -338,9 +348,10 @@ class Manifold(ProjectionVisualizer):
                 self._name, self.fit_time_.interval
             )
         )
+        self.ax.set_xlabel("Using {} features".format(len(self.features_)))
         self.ax.set_xticklabels([])
         self.ax.set_yticklabels([])
-        if self.proj_dim == 3:
+        if self.projection == 3:
             self.ax.set_zticklabels([])
         # Draws legend for discrete target and colorbar for continuous.
         super(Manifold, self).finalize()
