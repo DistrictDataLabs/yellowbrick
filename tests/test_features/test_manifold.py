@@ -196,8 +196,7 @@ class TestManifold(VisualTestCase):
 
         oz.fit_transform(X, y)
         oz.finalize()
-        # TODO: Add this after #927 
-        # assert not hasattr(oz, 'classes_')
+         assert not hasattr(oz, 'classes_')
         assert hasattr(oz, 'range_')
         self.assert_images_similar(oz, tol=1.5)
         
@@ -215,8 +214,7 @@ class TestManifold(VisualTestCase):
 
         oz.fit_transform(X, y)
         oz.finalize()
-        # TODO: Add this after #927 
-        # assert not hasattr(oz, 'classes_')
+        assert not hasattr(oz, 'classes_')
         assert hasattr(oz, 'range_')
         self.assert_images_similar(oz)
 
