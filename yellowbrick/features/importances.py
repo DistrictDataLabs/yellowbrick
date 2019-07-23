@@ -27,6 +27,7 @@ import matplotlib.pyplot as plt
 
 from yellowbrick.draw import bar_stack
 from yellowbrick.base import ModelVisualizer
+from yellowbrick.style.colors import resolve_colors
 from yellowbrick.utils import is_dataframe, is_classifier, is_fitted
 from yellowbrick.exceptions import YellowbrickTypeError, NotFitted, YellowbrickWarning
 
@@ -68,7 +69,7 @@ class FeatureImportances(ModelVisualizer):
 
     absolute : bool, default: False
         Make all coeficients absolute to more easily compare negative
-        coeficients with positive ones.
+        coefficients with positive ones.
 
     xlabel : str, default: None
         The label for the X-axis. If None is automatically determined by the
@@ -78,6 +79,12 @@ class FeatureImportances(ModelVisualizer):
         If true and the classifier returns multi-class feature importance,
         then a stacked bar plot is plotted; otherwise the mean of the
         feature importance across classes are plotted.
+
+    colors: list of strings
+        Specify colors for each bar in the chart if ``stack==False``.
+
+    colormap : string or matplotlib cmap
+        Specify a colormap to color the classes if ``stack==True``.
 
     kwargs : dict
         Keyword arguments that are passed to the base class and may influence
@@ -92,7 +99,7 @@ class FeatureImportances(ModelVisualizer):
         The numeric value of the feature importance computed by the model
 
     classes_ : np.array
-        The classees labeled. Is not None only for classifier.
+        The classes labeled. Is not None only for classifier.
 
     Examples
     --------
@@ -104,13 +111,14 @@ class FeatureImportances(ModelVisualizer):
     """
 
     def __init__(self, model, ax=None, labels=None, relative=True,
-                 absolute=False, xlabel=None, stack=False, **kwargs):
+                 absolute=False, xlabel=None, stack=False, colors=None,
+                 colormap=None, **kwargs):
         super(FeatureImportances, self).__init__(model, ax, **kwargs)
 
         # Data Parameters
         self.set_params(
             labels=labels, relative=relative, absolute=absolute,
-            xlabel=xlabel, stack=stack
+            xlabel=xlabel, stack=stack, colors=colors, colormap=colormap
         )
 
     def fit(self, X, y=None, **kwargs):
@@ -210,11 +218,22 @@ class FeatureImportances(ModelVisualizer):
 
         # Plot the bar chart
         if self.stack:
-            legend_kws = {'bbox_to_anchor':(1.04, 0.5), 'loc':"center left"}
-            bar_stack(self.feature_importances_, ax=self.ax, labels=list(self.classes_), 
-                      ticks=self.features_, orientation='h', legend_kws=legend_kws)
+            colors = resolve_colors(
+                len(self.classes_), colormap=self.colormap
+            )
+            legend_kws = {'bbox_to_anchor': (1.04, 0.5), 'loc': "center left"}
+            bar_stack(
+                self.feature_importances_, ax=self.ax, labels=list(self.classes_),
+                ticks=self.features_, orientation='h', colors=colors,
+                legend_kws=legend_kws
+            )
         else:
-            self.ax.barh(pos, self.feature_importances_, align='center')
+            colors = resolve_colors(
+                len(self.features_), colormap=self.colormap, colors=self.colors
+            )
+            self.ax.barh(
+                pos, self.feature_importances_, color=colors, align='center'
+            )
 
             # Set the labels for the bars
             self.ax.set_yticks(pos)
@@ -228,7 +247,8 @@ class FeatureImportances(ModelVisualizer):
         """
         # Set the title
         self.set_title('Feature Importances of {} Features using {}'.format(
-                len(self.features_), self.name))
+            len(self.features_), self.name)
+        )
 
         # Set the xlabel
         self.ax.set_xlabel(self._get_xlabel())
@@ -303,7 +323,7 @@ class FeatureImportances(ModelVisualizer):
 
 def feature_importances(model, X, y=None, ax=None, labels=None,
                         relative=True, absolute=False, xlabel=None,
-                        stack=False, **kwargs):
+                        stack=False, colors=None, colormap=None, **kwargs):
     """
     Displays the most informative features in a model by showing a bar chart
     of features ranked by their importances. Although primarily a feature
@@ -348,6 +368,12 @@ def feature_importances(model, X, y=None, ax=None, labels=None,
         then a stacked bar plot is plotted; otherwise the mean of the
         feature importance across classes are plotted.
 
+    colors: list of strings
+        Specify colors for each bar in the chart if ``stack==False``.
+
+    colormap : string or matplotlib cmap
+        Specify a colormap to color the classes if ``stack==True``.
+
     kwargs : dict
         Keyword arguments that are passed to the base class and may influence
         the visualization as defined in other Visualizers.
@@ -359,7 +385,8 @@ def feature_importances(model, X, y=None, ax=None, labels=None,
     """
     # Instantiate the visualizer
     visualizer = FeatureImportances(
-        model, ax, labels, relative, absolute, xlabel, stack, **kwargs)
+        model=model, ax=ax, labels=labels, relative=relative, absolute=absolute, 
+        xlabel=xlabel, stack=stack, colors=colors, colormap=colormap, **kwargs)
 
     # Fit and transform the visualizer (calls draw)
     visualizer.fit(X, y)
