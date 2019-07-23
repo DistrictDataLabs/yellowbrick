@@ -19,6 +19,7 @@ Test the base ProjectionVisualizer drawing functionality
 
 
 import pytest
+import numpy.testing as npt
 import matplotlib.pyplot as plt
 
 from yellowbrick.features.projection import *
@@ -75,13 +76,13 @@ class MockVisualizer(ProjectionVisualizer):
     how subclasses interact with the ProjectionVisualizer base class.
     """
 
-    def __init__(self, ax=None, features=None, classes=None, color=None,
+    def __init__(self, ax=None, features=None, classes=None, colors=None,
              colormap=None, target_type="auto", projection=2,
              alpha=0.75,**kwargs):
 
         super(MockVisualizer, self).__init__(ax=ax,
                                              features=features, classes=classes,
-                                             color=color, colormap=colormap,
+                                             colors=colors, colormap=colormap,
                                              target_type=target_type,
                                              projection=projection, alpha=alpha,
                                              **kwargs)
@@ -121,7 +122,7 @@ class TestProjectionVisualizer(VisualTestCase):
         classes = ["a", "b", "c", "d", "e"]
         visualizer = MockVisualizer(projection=2, colormap="plasma", classes=classes)
         X_prime = visualizer.fit_transform(X, y)
-        assert(visualizer.classes_ == classes)
+        npt.assert_array_equal(visualizer.classes_, classes)
         visualizer.finalize()
         self.assert_images_similar(visualizer)
         assert X_prime.shape == (self.discrete.X.shape[0], 2)
@@ -156,8 +157,7 @@ class TestProjectionVisualizer(VisualTestCase):
         Assert single color plot when y is not specified
         """
         X, y = self.discrete
-        visualizer = MockVisualizer(projection=2,
-                                          colormap="plasma")
+        visualizer = MockVisualizer(projection=2, colormap="plasma")
         visualizer.fit_transform(X)
         visualizer.finalize()
         self.assert_images_similar(visualizer)
@@ -169,11 +169,10 @@ class TestProjectionVisualizer(VisualTestCase):
         X, y = self.discrete
 
         classes = ["a", "b", "c", "d", "e"]
-        color = ["r", "b", "g", "m","c"]
-        visualizer = MockVisualizer(projection=3,
-                                          color=color, classes=classes)
+        colors = ["r", "b", "g", "m","c"]
+        visualizer = MockVisualizer(projection=3, colors=colors, classes=classes)
         visualizer.fit_transform(X, y)
-        assert visualizer.classes_ == classes
+        npt.assert_array_equal(visualizer.classes_, classes)
         visualizer.finalize()
         self.assert_images_similar(visualizer)
 

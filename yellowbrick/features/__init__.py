@@ -26,3 +26,6 @@ from .pca import PCADecomposition, pca_decomposition
 from .importances import FeatureImportances, feature_importances
 from .rfecv import RFECV, rfecv
 from .manifold import Manifold, manifold_embedding
+
+# Alias the TargetType defined in yellowbrick.utils.target
+from yellowbrick.utils.target import TargetType
