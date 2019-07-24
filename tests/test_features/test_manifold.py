@@ -258,7 +258,7 @@ class TestManifold(VisualTestCase):
             random_state=223,
         )
         oz.fit_transform(X, y)
-
+        oz.finalize()
         # TODO: find a way to decrease this tolerance
         self.assert_images_similar(oz)
 
