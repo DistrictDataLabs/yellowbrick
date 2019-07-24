@@ -20,6 +20,7 @@ from yellowbrick.features.manifold import *
 from yellowbrick.utils.types import is_estimator
 from yellowbrick.features.base import TargetType
 from yellowbrick.exceptions import YellowbrickValueError
+from yellowbrick.datasets import load_credit
 
 from sklearn.pipeline import Pipeline
 from sklearn.decomposition import PCA
@@ -245,19 +246,18 @@ class TestManifold(VisualTestCase):
         """
         Test manifold on a dataset made up of a pandas DataFrame and Series
         """
-        X, y = make_s_curve(200, random_state=888)
-
-        X = pd.DataFrame(X)
-        y = pd.Series(y)
+#        X, y = make_s_curve(200, random_state=888)
+        X, y = load_credit()
 
         oz = Manifold(
-            manifold="ltsa",
-            colormap="nipy_spectral",
+            manifold="lle",
+            color=['r', 'b'],
+#            colormap="nipy_spectral",
             n_neighbors=10,
-            target="continuous",
+#            target="continuous",
             random_state=223,
         )
-        oz.fit_transform(X, y)
+        oz.fit_transform(X, y)  
         oz.finalize()
         # TODO: find a way to decrease this tolerance
         self.assert_images_similar(oz)
