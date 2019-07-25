@@ -228,7 +228,7 @@ class TestManifold(VisualTestCase):
         oz.cbar.set_ticks([])
         assert not hasattr(oz, "classes_")
         assert hasattr(oz, "range_")
-        self.assert_images_similar(oz)
+        self.assert_images_similar(oz, tol=15)
 
     def test_manifold_single(self):
         """
@@ -259,7 +259,7 @@ class TestManifold(VisualTestCase):
         oz.finalize()
         oz.cbar.set_ticks([])
         # TODO: find a way to decrease this tolerance
-        self.assert_images_similar(oz)
+        self.assert_images_similar(oz, tol=40)
 
     @pytest.mark.filterwarnings("ignore:Conversion of the second argument")
     @pytest.mark.parametrize(
