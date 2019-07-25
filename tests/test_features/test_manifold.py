@@ -110,8 +110,7 @@ class TestManifold(VisualTestCase):
         oz = Manifold(manifold=manifold)
         assert oz.manifold is manifold
 
-    @patch("yellowbrick.features.manifold.Manifold.fit_transform", spec=True)
-    def test_manifold_fit(self, mock_fit_transform):
+    def test_manifold_fit(self):
         """
         Test manifold fit method
         """
@@ -237,6 +236,17 @@ class TestManifold(VisualTestCase):
         X, _ = make_blobs(n_samples=300, n_features=7, centers=3, random_state=1112)
 
         oz = Manifold(manifold="mds", random_state=139973)
+        oz.fit_transform(X)
+
+        self.assert_images_similar(oz)
+
+    def test_manifold_single_3d(self):
+        """
+        Image similarity test for simple dataset (no y)
+        """
+        X, _ = make_blobs(n_samples=300, n_features=7, centers=3, random_state=1112)
+
+        oz = Manifold(manifold="mds", random_state=139973, projection=3)
         oz.fit_transform(X)
 
         self.assert_images_similar(oz)

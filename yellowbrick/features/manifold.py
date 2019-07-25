@@ -113,27 +113,41 @@ class Manifold(ProjectionVisualizer):
         nearest neighbors, then this parameter is ignored.
         
     features : list, default: None
-        a list of feature names to use
-        If a DataFrame is passed to fit and features is None, feature
-        names are selected as the columns of the DataFrame.
+        The names of the features specified by the columns of the input dataset.
+        This length of this list must match the number of columns in X, otherwise
+        an exception will be raised on ``fit()``.
 
     classes : list, default: None
-        a list of class names for the legend
-        If classes is None and a y value is passed to fit then the classes
-        are selected from the target vector.
+        The class labels for each class in y, ordered by sorted class index. These
+        names act as a label encoder for the legend, identifying integer classes
+        or renaming string labels. If omitted, the class labels will be taken from
+        the unique values in y.
 
-    colors : list or tuple of colors, default: None
-        Specify the colors for each individual class.
+        Note that the length of this list must match the number of unique values in
+        y, otherwise an exception is raised. This parameter is only used in the
+        discrete target type case and is ignored otherwise.
+
+    colors : list or tuple, default: None
+        A single color to plot all instances as or a list of colors to color each
+        instance according to its class in the discrete case or as an ordered
+        colormap in the sequential case. If not enough colors per class are
+        specified then the colors are treated as a cycle.
 
     colormap : string or cmap, default: None
-        Optional string or matplotlib cmap to colorize points.
-        Use either color to colorize the points on a per class basis or
-        colormap to color them on a continuous scale.
+        The colormap used to create the individual colors. In the discrete case
+        it is used to compute the number of colors needed for each class and
+        in the continuous case it is used to create a sequential color map based
+        on the range of the target.
         
     target_type : str, default: "auto"
         Specify the type of target as either "discrete" (classes) or "continuous"
         (real numbers, usually for regression). If "auto", then it will
         attempt to determine the type by counting the number of unique values.
+
+        If the target is discrete, the colors are returned as a dict with classes
+        being the keys. If continuous the colors will be list having value of
+        color for each point. In either case, if no target is specified, then
+        color will be specified as the first color in the color cycle.
 
     projection : int or string, default: 2
         The number of axes to project into, either 2d or 3d. To plot 3d plots
@@ -160,11 +174,20 @@ class Manifold(ProjectionVisualizer):
     fit_time_ : yellowbrick.utils.timer.Timer
         The amount of time in seconds it took to fit the Manifold.
 
-    classes_ : np.ndarray, optional
-        If discrete, the classes identified in the target y.
+    classes_ : ndarray, shape (n_classes,)
+        The class labels that define the discrete values in the target. Only
+        available if the target type is discrete. This is guaranteed to be
+        strings even if the classes are a different type.
+    
+    features_ : ndarray, shape (n_features,)
+        The names of the features discovered or used in the visualizer that
+        can be used as an index to access or modify data in X. If a user passes
+        feature names in, those features are used. Otherwise the columns of a
+        DataFrame are used or just simply the indices of the data array.
 
-    range_ : tuple of floats, optional
-        If continuous, the maximum and minimum values in the target y.
+    range_ : (min y, max y)
+        A tuple that describes the minimum and maximum values in the target.
+        Only available if the target type is continuous.
 
     Examples
     --------
@@ -319,6 +342,12 @@ class Manifold(ProjectionVisualizer):
         y : array-like of shape (n,), optional
             A vector or series with target values for each instance in X. This
             vector is used to determine the color of the points in X.
+            
+        Returns
+        -------
+        self : Manifold
+            Returns the visualizer object.
+            
         """
         self.fit_transform(X, y)
         return self
@@ -448,10 +477,10 @@ def manifold_embedding(
         A vector or series with target values for each instance in X. This
         vector is used to determine the color of the points in X.
 
-    ax : matplotlib Axes, default: None
-        The axes to plot the figure on. If None, the current axes will be used
-        or generated if required.
-
+    ax : matplotlib.Axes, default: None
+        The axis to plot the figure on. If None is passed in the current axes
+        will be used (or generated if required).
+        
     manifold : str or Transformer, default: "lle"
         Specify the manifold algorithm to perform the embedding. Either one of
         the strings listed in the table below, or an actual scikit-learn
@@ -479,27 +508,41 @@ def manifold_embedding(
         nearest neighbors, then this parameter is ignored.
         
     features : list, default: None
-        a list of feature names to use
-        If a DataFrame is passed to fit and features is None, feature
-        names are selected as the columns of the DataFrame.
+        The names of the features specified by the columns of the input dataset.
+        This length of this list must match the number of columns in X, otherwise
+        an exception will be raised on ``fit()``.
 
     classes : list, default: None
-        a list of class names for the legend
-        If classes is None and a y value is passed to fit then the classes
-        are selected from the target vector.
+        The class labels for each class in y, ordered by sorted class index. These
+        names act as a label encoder for the legend, identifying integer classes
+        or renaming string labels. If omitted, the class labels will be taken from
+        the unique values in y.
 
-    colors : list or tuple of colors, default: None
-        Specify the colors for each individual class.
+        Note that the length of this list must match the number of unique values in
+        y, otherwise an exception is raised. This parameter is only used in the
+        discrete target type case and is ignored otherwise.
+
+    colors : list or tuple, default: None
+        A single color to plot all instances as or a list of colors to color each
+        instance according to its class in the discrete case or as an ordered
+        colormap in the sequential case. If not enough colors per class are
+        specified then the colors are treated as a cycle.
 
     colormap : string or cmap, default: None
-        Optional string or matplotlib cmap to colorize points.
-        Use either color to colorize the points on a per class basis or
-        colormap to color them on a continuous scale.
+        The colormap used to create the individual colors. In the discrete case
+        it is used to compute the number of colors needed for each class and
+        in the continuous case it is used to create a sequential color map based
+        on the range of the target.
         
     target_type : str, default: "auto"
         Specify the type of target as either "discrete" (classes) or "continuous"
         (real numbers, usually for regression). If "auto", then it will
         attempt to determine the type by counting the number of unique values.
+
+        If the target is discrete, the colors are returned as a dict with classes
+        being the keys. If continuous the colors will be list having value of
+        color for each point. In either case, if no target is specified, then
+        color will be specified as the first color in the color cycle.
 
     projection : int or string, default: 2
         The number of axes to project into, either 2d or 3d. To plot 3d plots
@@ -520,6 +563,7 @@ def manifold_embedding(
     kwargs : dict
         Keyword arguments passed to the base class and may influence the
         feature visualization properties.
+        
     Returns
     -------
     ax : matplotlib axes
