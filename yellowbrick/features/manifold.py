@@ -468,7 +468,7 @@ def manifold_embedding(
     y=None,
     ax=None,
     manifold="mds",
-    n_neighbors=10,
+    n_neighbors=None,
     features=None,
     classes=None,
     colors=None,
