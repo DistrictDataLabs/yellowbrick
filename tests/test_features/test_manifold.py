@@ -120,22 +120,40 @@ class TestManifold(VisualTestCase):
         assert manifold.fit(X, y) is manifold, "fit did not return self"
 
     @patch("yellowbrick.features.manifold.Manifold.draw", spec=True)
-    def test_manifold_fit_transform(self, mock_draw):
+    @pytest.mark.parametrize("projection", [2, 3])
+    def test_manifold_fit_transform(self, mock_draw, projection):
         """
         Test manifold fit_transform method
         """
         X, y = make_s_curve(1000, random_state=888)
-        manifold = Manifold(target="auto")
+        manifold = Manifold(target="auto", projection=projection)
 
         assert not hasattr(manifold, "fit_time_")
 
         Xp = manifold.fit_transform(X, y)
-        assert Xp.shape == (X.shape[0], 2)
+        assert Xp.shape == (X.shape[0], projection)
 
         mock_draw.assert_called_once()
         assert hasattr(manifold, "fit_time_")
         assert manifold._target_color_type == TargetType.CONTINUOUS
+    
+    @patch("yellowbrick.features.manifold.Manifold.fit_transform", spec=True)
+    @patch("yellowbrick.features.manifold.Manifold.draw", spec=True)
+    @pytest.mark.parametrize("projection", [2, 3])
+    def test_manifold_transform(self, mock_draw, mock_fit_transform, projection):
+        """
+        Test manifold transform method
+        """
+        X, y = make_s_curve(1000, random_state=888)
+        manifold = Manifold(manifold="lle", target="auto", projection=projection)
 
+        manifold.fit(X, y)
+        mock_fit_transform.assert_not_called()
+        Xp = manifold.transform(X, y)
+        assert Xp.shape == (X.shape[0], projection)
+
+        mock_draw.assert_called_once()
+        
     @pytest.mark.filterwarnings("ignore:Conversion of the second argument")
     def test_manifold_classification(self):
         """

@@ -349,7 +349,10 @@ class Manifold(ProjectionVisualizer):
             Returns the visualizer object.
             
         """
-        self.fit_transform(X, y)
+        if(not hasattr(self.manifold, 'transform')):
+            self.fit_transform(X, y)
+        else:
+            self.manifold.fit(X)
         return self
 
     def fit_transform(self, X, y=None, **kwargs):
