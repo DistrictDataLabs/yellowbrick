@@ -19,7 +19,7 @@ import pytest
 from yellowbrick.features.manifold import *
 from yellowbrick.utils.types import is_estimator
 from yellowbrick.features.base import TargetType
-from yellowbrick.exceptions import YellowbrickValueError
+from yellowbrick.exceptions import YellowbrickValueError, ModelError, NotFitted
 
 from sklearn.pipeline import Pipeline
 from sklearn.decomposition import PCA
@@ -110,14 +110,35 @@ class TestManifold(VisualTestCase):
         oz = Manifold(manifold=manifold)
         assert oz.manifold is manifold
 
-    def test_manifold_fit(self):
+    @pytest.mark.filterwarnings("ignore:Conversion of the second argument")
+    @pytest.mark.parametrize(
+        "algorithm",
+        ["lle", "ltsa", "hessian", "modified", "isomap"],
+    )
+    def test_manifold_algorithm_transform_fit(self, algorithm):
         """
-        Test manifold fit method
+        Test manifold fit with algorithms having transform implemented
         """
         X, y = make_s_curve(1000, random_state=888)
-        manifold = Manifold(target="auto")
+        manifold = Manifold(manifold=algorithm, target="auto")
 
         assert manifold.fit(X, y) is manifold, "fit did not return self"
+
+    @pytest.mark.filterwarnings("ignore:Conversion of the second argument")
+    @pytest.mark.parametrize(
+        "algorithm",
+        ["mds", "spectral", "tsne"],
+    )
+    def test_manifold_algorithm_no_transform_fit(self, algorithm):
+        """
+        Test manifold fit with algorithms not having transform implemented
+        """
+        X, y = make_s_curve(200, random_state=888)
+        msg = "requires data to be simultaneously fit and transformed"
+        oz = Manifold(manifold=algorithm, n_neighbors=10, random_state=223)
+        with pytest.raises(ModelError, match=msg):
+            oz.fit(X)
+        
 
     @patch("yellowbrick.features.manifold.Manifold.draw", spec=True)
     @pytest.mark.parametrize("projection", [2, 3])
@@ -148,12 +169,35 @@ class TestManifold(VisualTestCase):
         manifold = Manifold(manifold="lle", target="auto", projection=projection)
 
         manifold.fit(X, y)
-        mock_fit_transform.assert_not_called()
         Xp = manifold.transform(X, y)
         assert Xp.shape == (X.shape[0], projection)
 
         mock_draw.assert_called_once()
-        
+    
+    def test_manifold_no_transform(self):
+        """
+        Test the exception when manifold doesn't implement transform.
+        """
+        X, _ = make_s_curve(1000, random_state=888)
+        manifold = Manifold(manifold="lle", target="auto")
+
+        msg = "instance is not fitted yet, please call fit"
+        with pytest.raises(NotFitted, match=msg):
+            manifold.transform(X)
+
+    @patch("yellowbrick.features.manifold.Manifold.fit", spec=True)
+    @pytest.mark.parametrize("manifolds", ["mds", "spectral", "tsne"])
+    def test_manifold_assert_no_transform(self, mock_fit, manifolds):
+        """
+        Assert that transform raises error when MDS, TSNE or Spectral Embedding algorithms are used.
+        """
+        X, _ = make_s_curve(1000, random_state=888)
+        manifold = Manifold(manifold=manifolds, target="auto", n_neighbors=10)
+        mock_fit(X)
+        msg = "requires data to be simultaneously fit and transformed"
+        with pytest.raises(ModelError, match=msg):
+            manifold.transform(X)    
+    
     @pytest.mark.filterwarnings("ignore:Conversion of the second argument")
     def test_manifold_classification(self):
         """
@@ -289,38 +333,3 @@ class TestManifold(VisualTestCase):
         # TODO: find a way to decrease this tolerance
         self.assert_images_similar(oz, tol=40)
 
-    @pytest.mark.filterwarnings("ignore:Conversion of the second argument")
-    @pytest.mark.parametrize(
-        "algorithm",
-        ["lle", "ltsa", "hessian", "modified", "isomap", "mds", "spectral", "tsne"],
-    )
-    def test_manifold_algorithm_fit(self, algorithm):
-        """
-        Test that all algorithms can be fitted correctly
-        """
-        X, y = make_s_curve(200, random_state=888)
-        oz = Manifold(manifold=algorithm, n_neighbors=10, random_state=223)
-        oz.fit(X, y)
-
-    def test_manifold_no_transform(self):
-        """
-        Test the exception when manifold doesn't implement transform.
-        """
-        X, _ = make_s_curve(1000, random_state=888)
-        manifold = Manifold(manifold="mds", target="auto")
-
-        assert not hasattr(manifold._manifold, "transform")
-
-        with pytest.raises(AttributeError, match="try using fit_transform instead"):
-            manifold.transform(X)
-
-    @pytest.mark.parametrize("manifolds", ["mds", "spectral", "tsne"])
-    def test_manifold_assert_no_transform(self, manifolds):
-        """
-        Assert that transform raises error when MDS, TSNE or Spectral Embedding algorithms are used.
-        """
-        X, _ = make_s_curve(1000, random_state=888)
-        manifold = Manifold(manifold=manifolds, target="auto", n_neighbors=10)
-        manifold.fit(X)
-        with pytest.raises(AttributeError, match="try using fit_transform instead"):
-            manifold.transform(X)

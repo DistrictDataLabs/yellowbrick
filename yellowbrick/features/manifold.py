@@ -20,10 +20,12 @@ from yellowbrick.utils.timer import Timer
 from yellowbrick.utils.types import is_estimator
 from yellowbrick.features.projection import ProjectionVisualizer
 from yellowbrick.exceptions import YellowbrickValueError, YellowbrickWarning
+from yellowbrick.exceptions import ModelError, NotFitted
 
 from sklearn.base import clone
 from sklearn.manifold import LocallyLinearEmbedding
 from sklearn.manifold import Isomap, MDS, TSNE, SpectralEmbedding
+from sklearn.exceptions import NotFittedError
 
 
 ##########################################################################
@@ -349,10 +351,16 @@ class Manifold(ProjectionVisualizer):
             Returns the visualizer object.
             
         """
-        if(not hasattr(self.manifold, 'transform')):
-            self.fit_transform(X, y)
-        else:
-            self.manifold.fit(X)
+        if not hasattr(self.manifold, 'transform'):
+            name = self.manifold.__class__.__name__
+            raise ModelError((
+                "{} requires data to be simultaneously fit and transformed, "
+                "use fit_transform instead").format(name)
+            )
+
+        # Call super to compute features, classes, colors, etc.
+        super(Manifold, self).fit(X, y)
+        self.manifold.fit(X)
         return self
 
     def fit_transform(self, X, y=None, **kwargs):
@@ -380,8 +388,11 @@ class Manifold(ProjectionVisualizer):
             Returns the 2-dimensional embedding of the instances.
         
         """
-        # Call to fit determines color target type and features.
-        super(Manifold, self).fit(X, y, **kwargs)
+        # Because some manifolds do not have transform, we cannot call individual
+        # fit and transform methods, but must do it manually here.
+
+        # Call super fit to compute features, classes, colors, etc.
+        super(Manifold, self).fit(X, y)
         with Timer() as self.fit_time_:
             Xp = self.manifold.fit_transform(X)
         self.draw(Xp, y)
@@ -409,12 +420,20 @@ class Manifold(ProjectionVisualizer):
         This method does not work with MDS, TSNE and SpectralEmbedding because 
         it is yet to be implemented in sklearn.
         """
+        # Because some manifolds do not have transform we cannot call super
         try:
             Xp = self.manifold.transform(X)
-        except AttributeError as e:
-            raise AttributeError(str(e) + " try using fit_transform instead.")
-
-        self.draw(Xp, y, **kwargs)
+            self.draw(Xp, y)
+            return Xp
+        except NotFittedError:
+             raise NotFitted.from_estimator(self, 'transform')
+        except AttributeError:
+            name = self.manifold.__class__.__name__
+            raise ModelError((
+                "{} requires data to be simultaneously fit and transformed, "
+                "use fit_transform instead").format(name)
+            )
+                    
         return Xp
 
     def draw(self, Xp, y=None):
@@ -449,7 +468,7 @@ def manifold_embedding(
     y=None,
     ax=None,
     manifold="mds",
-    n_neighbors=None,
+    n_neighbors=10,
     features=None,
     classes=None,
     colors=None,
