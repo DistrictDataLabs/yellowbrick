@@ -119,7 +119,7 @@ class TestManifold(VisualTestCase):
         """
         Test manifold fit with algorithms having transform implemented
         """
-        X, y = make_s_curve(1000, random_state=92)
+        X, y = make_s_curve(1000, random_state=94)
         manifold = Manifold(manifold=algorithm, target="auto")
 
         assert manifold.fit(X, y) is manifold, "fit did not return self"
