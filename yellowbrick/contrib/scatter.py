@@ -178,12 +178,12 @@ class ScatterVisualizer(DataVisualizer):
         self.color = color
         self.colormap = colormap
 
-        if self.x is not None and self.y is not None and self.features_ is not None:
+        if self.x is not None and self.y is not None and self.features is not None:
             raise YellowbrickValueError(
                 'Please specify x,y or features, not both.')
 
-        if self.x is not None and self.y is not None and self.features_ is None:
-            self.features_ = [self.x, self.y]
+        if self.x is not None and self.y is not None and self.features is None:
+            self.features = [self.x, self.y]
 
         # Ensure with init that features doesn't have more than two features
         if features is not None:
@@ -214,6 +214,12 @@ class ScatterVisualizer(DataVisualizer):
             Returns the instance of the transformer/visualizer
         """
         _, ncols = X.shape
+
+        # NOTE: Do not call super for this class, it conflicts with the fit.
+        # Setting these variables is similar to the old behavior of DataVisualizer.
+        # TODO: refactor to make use of the new DataVisualizer functionality
+        self.features_ = self.features
+        self.classes_ = self.classes
 
         if ncols == 2:
             X_two_cols = X

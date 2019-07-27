@@ -25,10 +25,9 @@ from sklearn.preprocessing import MinMaxScaler, MaxAbsScaler
 from sklearn.preprocessing import Normalizer, StandardScaler
 
 from yellowbrick.draw import manual_legend
-from yellowbrick.utils import is_dataframe, is_series
 from yellowbrick.features.base import DataVisualizer
+from yellowbrick.utils import is_dataframe, is_series
 from yellowbrick.exceptions import YellowbrickTypeError, YellowbrickValueError
-from yellowbrick.style.colors import resolve_colors
 
 
 ##########################################################################
@@ -36,7 +35,7 @@ from yellowbrick.style.colors import resolve_colors
 ##########################################################################
 
 def parallel_coordinates(X, y, ax=None, features=None, classes=None,
-                         normalize=None, sample=1.0, color=None, colormap=None,
+                         normalize=None, sample=1.0, colors=None, colormap=None,
                          alpha=None, fast=False, vlines=True, vlines_kwds=None,
                          **kwargs):
     """Displays each feature as a vertical axis and each instance as a line.
@@ -77,7 +76,7 @@ def parallel_coordinates(X, y, ax=None, features=None, classes=None,
         If int, specifies the maximum number of samples to display.
         If float, specifies a fraction between 0 and 1 to display.
 
-    color : list or tuple, default: None
+    colors : list or tuple, default: None
         optional list or tuple of colors to colorize lines
         Use either color to colorize the lines on a per class basis or
         colormap to color them on a continuous scale.
@@ -115,7 +114,7 @@ def parallel_coordinates(X, y, ax=None, features=None, classes=None,
     """
     # Instantiate the visualizer
     visualizer = ParallelCoordinates(
-        ax, features, classes, normalize, sample, color, colormap, alpha,
+        ax, features, classes, normalize, sample, colors, colormap, alpha,
         fast, vlines, vlines_kwds, **kwargs
     )
 
@@ -140,7 +139,6 @@ class ParallelCoordinates(DataVisualizer):
 
     Parameters
     ----------
-
     ax : matplotlib Axes, default: None
         The axis to plot the figure on. If None is passed in the current axes
         will be used (or generated if required).
@@ -152,8 +150,13 @@ class ParallelCoordinates(DataVisualizer):
 
     classes : list, default: None
         a list of class names for the legend
-        If classes is None and a y value is passed to fit then the classes
-        are selected from the target vector.
+        The class labels for each class in y, ordered by sorted class index. These
+        names act as a label encoder for the legend, identifying integer classes
+        or renaming string labels. If omitted, the class labels will be taken from
+        the unique values in y.
+
+        Note that the length of this list must match the number of unique values in
+        y, otherwise an exception is raised.
 
     normalize : string or None, default: None
         specifies which normalization method to use, if any
@@ -174,15 +177,14 @@ class ParallelCoordinates(DataVisualizer):
     shuffle : boolean, default: True
         specifies whether sample is drawn randomly
 
-    color : list or tuple, default: None
-        optional list or tuple of colors to colorize lines
-        Use either color to colorize the lines on a per class basis or
-        colormap to color them on a continuous scale.
+    colors : list or tuple, default: None
+        A single color to plot all instances as or a list of colors to color each
+        instance according to its class. If not enough colors per class are
+        specified then the colors are treated as a cycle.
 
     colormap : string or cmap, default: None
-        optional string or matplotlib cmap to colorize lines
-        Use either color to colorize the lines on a per class basis or
-        colormap to color them on a continuous scale.
+        The colormap used to create the individual colors. If classes are
+        specified the colormap is used to evenly space colors across each class.
 
     alpha : float, default: None
         Specify a transparency where 1 is completely opaque and 0 is completely
@@ -209,6 +211,17 @@ class ParallelCoordinates(DataVisualizer):
     --------
     n_samples_ : int
         number of samples included in the visualization object
+
+    features_ : ndarray, shape (n_features,)
+        The names of the features discovered or used in the visualizer that
+        can be used as an index to access or modify data in X. If a user passes
+        feature names in, those features are used. Otherwise the columns of a
+        DataFrame are used or just simply the indices of the data array.
+
+    classes_ : ndarray, shape (n_classes,)
+        The class labels that define the discrete values in the target. Only
+        available if the target type is discrete. This is guaranteed to be
+        strings even if the classes are a different type.
 
     Examples
     --------
@@ -241,7 +254,7 @@ class ParallelCoordinates(DataVisualizer):
                  sample=1.0,
                  random_state=None,
                  shuffle=False,
-                 color=None,
+                 colors=None,
                  colormap=None,
                  alpha=None,
                  fast=False,
@@ -251,7 +264,7 @@ class ParallelCoordinates(DataVisualizer):
         if "target_type" not in kwargs:
             kwargs["target_type"] = "discrete"
         super(ParallelCoordinates, self).__init__(
-            ax, features, classes, color, colormap, **kwargs
+            ax, features, classes, colors, colormap, **kwargs
         )
 
         # Validate 'normalize' argument
@@ -333,33 +346,14 @@ class ParallelCoordinates(DataVisualizer):
         self : instance
             Returns the instance of the transformer/visualizer
         """
+        # Determine the features, classes, and colors
+        super(ParallelCoordinates, self).fit(X, y)
 
         # Convert from pandas data types
         if is_dataframe(X):
-            # Get column names before reverting to an np.ndarray
-            if self.features_ is None:
-                self.features_ = np.array(X.columns)
-
             X = X.values
         if is_series(y):
             y = y.values
-
-        # Assign integer labels to the feature columns from the input
-        if self.features_ is None:
-            self.features_ = np.arange(0, X.shape[1])
-
-        # Ensure that all classes are represented in the color mapping (before sample)
-        # NOTE: np.unique also specifies the ordering of the classes
-        if self.classes_ is None:
-            self.classes_ = [str(label) for label in np.unique(y)]
-
-        # Create the color mapping for each class
-        # TODO: Allow both colormap, listed colors, and palette definition
-        # TODO: Make this an independent function or property for override!
-        color_values = resolve_colors(
-            n_colors=len(self.classes_), colormap=self.colormap, colors=self.color
-        )
-        self._colors = dict(zip(self.classes_, color_values))
 
         # Ticks for each feature specified
         self._increments = np.arange(len(self.features_))
@@ -372,7 +366,6 @@ class ParallelCoordinates(DataVisualizer):
             X = self.NORMALIZERS[self.normalize].fit_transform(X)
 
         self.draw(X, y, **kwargs)
-
         return self
 
     def draw(self, X, y, **kwargs):
@@ -425,17 +418,10 @@ class ParallelCoordinates(DataVisualizer):
         for idx in range(len(X)):
             Xi = X[idx]
             yi = y[idx]
-
-            # TODO: generalize this duplicated code into a single function
-            if isinstance(yi, str):
-                label = yi
-            else:
-                # TODO: what happens if yi is not in classes?!
-                label = self.classes_[yi]
+            color = self.get_colors([yi])[0]
 
             self.ax.plot(
-                self._increments, Xi,
-                color=self._colors[label], alpha=alpha, **kwargs
+                self._increments, Xi, color=color, alpha=alpha, **kwargs
             )
 
         return self.ax
@@ -471,18 +457,18 @@ class ParallelCoordinates(DataVisualizer):
 
         # Plot each class as a single line plot
         for yi in y_values:
-            if isinstance(yi, str):
-                label = yi
-            else:
-                # TODO: what happens if yi is not in classes?!
-                label = self.classes_[yi]
+            color = self.get_colors([yi])[0]
 
             X_in_class = X_separated[y == yi, :]
             increments_in_class = increments_separated * len(X_in_class)
             if len(X_in_class) > 0:
                 self.ax.plot(
-                    increments_in_class, X_in_class.flatten(), linewidth=1,
-                    color=self._colors[label], alpha=alpha, **kwargs
+                    increments_in_class,
+                    X_in_class.flatten(),
+                    linewidth=1,
+                    color=color,
+                    alpha=alpha,
+                    **kwargs
                 )
 
         return self.ax
