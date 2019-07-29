@@ -1,11 +1,11 @@
 # yellowbrick.regressor.residuals
 # Regressor visualizers that score residuals: prediction vs. actual data.
 #
-# Author:   Rebecca Bilbro <rbilbro@districtdatalabs.com>
-# Author:   Benjamin Bengfort <bbengfort@districtdatalabs.com>
+# Author:   Rebecca Bilbro
+# Author:   Benjamin Bengfort
 # Created:  Fri Jun 03 10:30:36 2016 -0700
 #
-# Copyright (C) 2016 2016 District Data Labs
+# Copyright (C) 2016 The scikit-yb developers
 # For license information, see LICENSE.txt
 #
 # ID: residuals.py [7d3f5e6] benjamin@bengfort.com $
@@ -30,24 +30,22 @@ except ImportError:
 from sklearn.model_selection import train_test_split
 
 from yellowbrick.draw import manual_legend
-from yellowbrick.utils.helpers import is_fitted
 from yellowbrick.utils.decorators import memoized
 from yellowbrick.style.palettes import LINE_COLOR
+from yellowbrick.utils.helpers import check_fitted
 from yellowbrick.exceptions import YellowbrickValueError
 from yellowbrick.regressor.base import RegressionScoreVisualizer
 from yellowbrick.bestfit import draw_best_fit, draw_identity_line
 
 
 ## Packages for export
-__all__ = [
-    "PredictionError", "prediction_error",
-    "ResidualsPlot", "residuals_plot"
-]
+__all__ = ["PredictionError", "prediction_error", "ResidualsPlot", "residuals_plot"]
 
 
 ##########################################################################
 ## Prediction Error Plots
 ##########################################################################
+
 
 class PredictionError(RegressionScoreVisualizer):
     """
@@ -62,6 +60,8 @@ class PredictionError(RegressionScoreVisualizer):
     model : a Scikit-Learn regressor
         Should be an instance of a regressor, otherwise will raise a
         YellowbrickTypeError exception on instantiation.
+        If the estimator is not fitted, it is fit when the visualizer is fitted,
+        unless otherwise specified by ``is_fitted``.
 
     ax : matplotlib Axes, default: None
         The axes to plot the figure on. If None is passed in the current axes
@@ -96,6 +96,12 @@ class PredictionError(RegressionScoreVisualizer):
         Specify a transparency where 1 is completely opaque and 0 is completely
         transparent. This property makes densely clustered points more visible.
 
+    is_fitted : bool or str, default='auto'
+        Specify if the wrapped estimator is already fitted. If False, the estimator
+        will be fit when the visualizer is fit, otherwise, the estimator will not be
+        modified. If 'auto' (default), a helper method will check if the estimator
+        is fitted before fitting it again.
+
     kwargs : dict
         Keyword arguments that are passed to the base class and may influence
         the visualization as defined in other Visualizers.
@@ -117,15 +123,26 @@ class PredictionError(RegressionScoreVisualizer):
     its primary entry point is the `score()` method.
     """
 
-    def __init__(self, model, ax=None, shared_limits=True,
-                 bestfit=True, identity=True, alpha=0.75, **kwargs):
+    def __init__(
+        self,
+        model,
+        ax=None,
+        shared_limits=True,
+        bestfit=True,
+        identity=True,
+        alpha=0.75,
+        is_fitted="auto",
+        **kwargs
+    ):
         # Initialize the visualizer
-        super(PredictionError, self).__init__(model, ax=ax, **kwargs)
+        super(PredictionError, self).__init__(
+            model, ax=ax, is_fitted=is_fitted, **kwargs
+        )
 
         # Visual arguments
         self.colors = {
-            'point': kwargs.pop('point_color', None),
-            'line': kwargs.pop('line_color', LINE_COLOR),
+            "point": kwargs.pop("point_color", None),
+            "line": kwargs.pop("line_color", LINE_COLOR),
         }
 
         # Drawing arguments
@@ -161,6 +178,27 @@ class PredictionError(RegressionScoreVisualizer):
 
         return self.score_
 
+    def fit(self, X, y, **kwargs):
+        """
+        Parameters
+        ----------
+        X : ndarray or DataFrame of shape n x m
+            A matrix of n instances with m features
+
+        y : ndarray or Series of length n
+            An array or series of target values
+
+        kwargs: keyword arguments passed to Scikit-Learn API.
+
+        Returns
+        -------
+        self : visualizer instance
+        """
+        if not check_fitted(self.estimator, is_fitted_by=self.is_fitted):
+            super(PredictionError, self).fit(X, y, **kwargs)
+
+        return self
+
     def draw(self, y, y_pred):
         """
         Parameters
@@ -177,18 +215,21 @@ class PredictionError(RegressionScoreVisualizer):
         """
         label = "$R^2 = {:0.3f}$".format(self.score_)
         self.ax.scatter(
-            y,
-            y_pred,
-            c=self.colors['point'],
-            alpha=self.alpha,
-            label=label)
+            y, y_pred, c=self.colors["point"], alpha=self.alpha, label=label
+        )
 
         # TODO If score happens inside a loop, draw gets called multiple times.
         # Ideally we'd want the best fit line to be drawn only once
         if self.bestfit:
             draw_best_fit(
-                y, y_pred, self.ax, 'linear', ls='--', lw=2,
-                c=self.colors['line'], label='best fit'
+                y,
+                y_pred,
+                self.ax,
+                "linear",
+                ls="--",
+                lw=2,
+                c=self.colors["line"],
+                label="best fit",
             )
 
         # Set the axes limits based on the range of X and Y data
@@ -209,9 +250,7 @@ class PredictionError(RegressionScoreVisualizer):
         kwargs: generic keyword arguments.
         """
         # Set the title on the plot
-        self.set_title(
-            'Prediction Error for {}'.format(self.name)
-        )
+        self.set_title("Prediction Error for {}".format(self.name))
 
         # Square the axes to ensure a 45 degree line
         if self.shared_limits:
@@ -220,28 +259,29 @@ class PredictionError(RegressionScoreVisualizer):
             xlim = self.ax.get_xlim()
 
             # Find the range that captures all data
-            bounds = (
-                min(ylim[0], xlim[0]),
-                max(ylim[1], xlim[1]),
-            )
+            bounds = (min(ylim[0], xlim[0]), max(ylim[1], xlim[1]))
 
             # Reset the limits
             self.ax.set_xlim(bounds)
             self.ax.set_ylim(bounds)
 
             # Ensure the aspect ratio is square
-            self.ax.set_aspect('equal', adjustable='box')
+            self.ax.set_aspect("equal", adjustable="box")
 
         # Draw the 45 degree line
         if self.identity:
             draw_identity_line(
-                ax=self.ax, ls='--', lw=2, c=self.colors['line'],
-                alpha=0.5, label="identity"
+                ax=self.ax,
+                ls="--",
+                lw=2,
+                c=self.colors["line"],
+                alpha=0.5,
+                label="identity",
             )
 
         # Set the axes labels
-        self.ax.set_ylabel(r'$\hat{y}$')
-        self.ax.set_xlabel(r'$y$')
+        self.ax.set_ylabel(r"$\hat{y}$")
+        self.ax.set_xlabel(r"$y$")
 
         # Set the legend
         # Note: it would be nice to be able to use the manual_legend utility
@@ -250,10 +290,10 @@ class PredictionError(RegressionScoreVisualizer):
         # bit tricky because adding a manual legend here would override the
         # best fit and 45 degree line legend components. In particular, the
         # best fit is plotted in draw because it depends on y and y_pred.
-        self.ax.legend(loc='best', frameon=True)
+        self.ax.legend(loc="best", frameon=True)
 
 
-def prediction_error(model, X, y=None, ax=None, alpha=0.75, **kwargs):
+def prediction_error(model, X, y=None, ax=None, alpha=0.75, is_fitted="auto", **kwargs):
     """
     Quick method:
 
@@ -266,6 +306,10 @@ def prediction_error(model, X, y=None, ax=None, alpha=0.75, **kwargs):
     Parameters
     ----------
     model : the Scikit-Learn estimator (should be a regressor)
+        Should be an instance of a regressor, otherwise will raise a
+        YellowbrickTypeError exception on instantiation.
+        If the estimator is not fitted, it is fit when the visualizer is fitted,
+        unless otherwise specified by ``is_fitted``.
 
     X  : ndarray or DataFrame of shape n x m
         A matrix of n instances with m features.
@@ -284,7 +328,7 @@ def prediction_error(model, X, y=None, ax=None, alpha=0.75, **kwargs):
         shared_limits to False, but note that this will distort the figure
         and should be accounted for during analysis.
 
-    besfit : bool, default: True
+    bestfit : bool, default: True
         Draw a linear best fit line to estimate the correlation between the
         predicted and measured value of the target variable. The color of
         the bestfit line is determined by the ``line_color`` argument.
@@ -305,6 +349,12 @@ def prediction_error(model, X, y=None, ax=None, alpha=0.75, **kwargs):
         Specify a transparency where 1 is completely opaque and 0 is completely
         transparent. This property makes densely clustered points more visible.
 
+    is_fitted : bool or str, default='auto'
+        Specify if the wrapped estimator is already fitted. If False, the estimator
+        will be fit when the visualizer is fit, otherwise, the estimator will not be
+        modified. If 'auto' (default), a helper method will check if the estimator
+        is fitted before fitting it again.
+
     kwargs : dict
         Keyword arguments that are passed to the base class and may influence
         the visualization as defined in other Visualizers.
@@ -315,14 +365,13 @@ def prediction_error(model, X, y=None, ax=None, alpha=0.75, **kwargs):
         Returns the axes that the prediction error plot was drawn on.
     """
     # Instantiate the visualizer
-    visualizer = PredictionError(model, ax, alpha=alpha, **kwargs)
+    visualizer = PredictionError(model, ax, alpha=alpha, is_fitted=is_fitted, **kwargs)
 
     # Create the train and test splits
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2)
 
     # Fit and transform the visualizer (calls draw)
-    if not is_fitted(model):
-        visualizer.fit(X_train, y_train, **kwargs)
+    visualizer.fit(X_train, y_train, **kwargs)
     visualizer.score(X_test, y_test)
     visualizer.finalize()
 
@@ -333,6 +382,7 @@ def prediction_error(model, X, y=None, ax=None, alpha=0.75, **kwargs):
 ##########################################################################
 ## Residuals Plots
 ##########################################################################
+
 
 class ResidualsPlot(RegressionScoreVisualizer):
     """
@@ -348,6 +398,8 @@ class ResidualsPlot(RegressionScoreVisualizer):
     model : a Scikit-Learn regressor
         Should be an instance of a regressor, otherwise will raise a
         YellowbrickTypeError exception on instantiation.
+        If the estimator is not fitted, it is fit when the visualizer is fitted,
+        unless otherwise specified by ``is_fitted``.
 
     ax : matplotlib Axes, default: None
         The axes to plot the figure on. If None is passed in the current axes
@@ -383,6 +435,12 @@ class ResidualsPlot(RegressionScoreVisualizer):
         and 0 is completely transparent. This property makes densely clustered
         points more visible.
 
+    is_fitted : bool or str, default='auto'
+        Specify if the wrapped estimator is already fitted. If False, the estimator
+        will be fit when the visualizer is fit, otherwise, the estimator will not be
+        modified. If 'auto' (default), a helper method will check if the estimator
+        is fitted before fitting it again.
+
     kwargs : dict
         Keyword arguments that are passed to the base class and may influence
         the visualization as defined in other Visualizers.
@@ -404,37 +462,45 @@ class ResidualsPlot(RegressionScoreVisualizer):
 
     The residuals histogram feature requires matplotlib 2.0.2 or greater.
     """
-    def __init__(self, model, ax=None, hist=True, train_color='b',
-                 test_color='g', line_color=LINE_COLOR, train_alpha=0.75,
-                 test_alpha=0.75, **kwargs):
 
-        super(ResidualsPlot, self).__init__(model, ax=ax, **kwargs)
+    def __init__(
+        self,
+        model,
+        ax=None,
+        hist=True,
+        train_color="b",
+        test_color="g",
+        line_color=LINE_COLOR,
+        train_alpha=0.75,
+        test_alpha=0.75,
+        is_fitted="auto",
+        **kwargs
+    ):
+
+        super(ResidualsPlot, self).__init__(model, ax=ax, is_fitted=is_fitted, **kwargs)
 
         # TODO: allow more scatter plot arguments for train and test points
         # See #475 (RE: ScatterPlotMixin)
         self.colors = {
-            'train_point': train_color,
-            'test_point': test_color,
-            'line': line_color,
+            "train_point": train_color,
+            "test_point": test_color,
+            "line": line_color,
         }
 
         self.hist = hist
-        if self.hist not in {True, 'density', 'frequency', None, False}:
+        if self.hist not in {True, "density", "frequency", None, False}:
             raise YellowbrickValueError(
                 "'{}' is an invalid argument for hist, use None, True, "
                 "False, 'density', or 'frequency'".format(hist)
             )
 
-        if self.hist in {True, 'density', 'frequency'}:
+        if self.hist in {True, "density", "frequency"}:
             self.hax  # If hist is True, test the version availability
 
         # Store labels and colors for the legend ordered by call
         self._labels, self._colors = [], []
 
-        self.alphas = {
-            'train_point': train_alpha,
-            'test_point': test_alpha
-        }
+        self.alphas = {"train_point": train_alpha, "test_point": test_alpha}
 
     @memoized
     def hax(self):
@@ -442,16 +508,18 @@ class ResidualsPlot(RegressionScoreVisualizer):
         Returns the histogram axes, creating it only on demand.
         """
         if make_axes_locatable is None:
-            raise YellowbrickValueError((
-                "residuals histogram requires matplotlib 2.0.2 or greater "
-                "please upgrade matplotlib or set hist=False on the visualizer"
-            ))
+            raise YellowbrickValueError(
+                (
+                    "residuals histogram requires matplotlib 2.0.2 or greater "
+                    "please upgrade matplotlib or set hist=False on the visualizer"
+                )
+            )
 
         divider = make_axes_locatable(self.ax)
 
         hax = divider.append_axes("right", size=1, pad=0.1, sharey=self.ax)
         hax.yaxis.tick_right()
-        hax.grid(False, axis='x')
+        hax.grid(False, axis="x")
 
         return hax
 
@@ -471,7 +539,7 @@ class ResidualsPlot(RegressionScoreVisualizer):
         -------
         self : visualizer instance
         """
-        if not is_fitted(self.estimator):
+        if not check_fitted(self.estimator, is_fitted_by=self.is_fitted):
             super(ResidualsPlot, self).fit(X, y, **kwargs)
 
         self.score(X, y, train=True)
@@ -540,27 +608,25 @@ class ResidualsPlot(RegressionScoreVisualizer):
         """
 
         if train:
-            color = self.colors['train_point']
+            color = self.colors["train_point"]
             label = "Train $R^2 = {:0.3f}$".format(self.train_score_)
-            alpha = self.alphas['train_point']
+            alpha = self.alphas["train_point"]
         else:
-            color = self.colors['test_point']
+            color = self.colors["test_point"]
             label = "Test $R^2 = {:0.3f}$".format(self.test_score_)
-            alpha = self.alphas['test_point']
+            alpha = self.alphas["test_point"]
 
         # Update the legend information
         self._labels.append(label)
         self._colors.append(color)
 
         # Draw the residuals scatter plot
-        self.ax.scatter(
-            y_pred, residuals, c=color, alpha=alpha, label=label
-        )
+        self.ax.scatter(y_pred, residuals, c=color, alpha=alpha, label=label)
 
         # Add residuals histogram
-        if self.hist in {True, 'frequency'}:
+        if self.hist in {True, "frequency"}:
             self.hax.hist(residuals, bins=50, orientation="horizontal", color=color)
-        elif self.hist == 'density':
+        elif self.hist == "density":
             self.hax.hist(
                 residuals, bins=50, orientation="horizontal", density=True, color=color
             )
@@ -579,39 +645,45 @@ class ResidualsPlot(RegressionScoreVisualizer):
         kwargs: generic keyword arguments.
         """
         # Add the title to the plot
-        self.set_title('Residuals for {} Model'.format(self.name))
+        self.set_title("Residuals for {} Model".format(self.name))
 
         # Set the legend with full opacity patches using manual legend
-        manual_legend(
-            self, self._labels, self._colors, loc='best', frameon=True
-        )
+        manual_legend(self, self._labels, self._colors, loc="best", frameon=True)
 
         # Create a full line across the figure at zero error.
-        self.ax.axhline(y=0, c=self.colors['line'])
+        self.ax.axhline(y=0, c=self.colors["line"])
 
         # Set the axes labels
-        self.ax.set_ylabel('Residuals')
+        self.ax.set_ylabel("Residuals")
         self.ax.set_xlabel("Predicted Value")
 
         # Finalize the histogram axes
         if self.hist:
-            self.hax.axhline(y=0, c=self.colors['line'])
+            self.hax.axhline(y=0, c=self.colors["line"])
             self.hax.set_xlabel("Distribution")
 
 
-def residuals_plot(model,
-                   X,
-                   y,
-                   ax=None,
-                   hist=True,
-                   test_size=0.25,
-                   train_color='b',
-                   test_color='g',
-                   line_color=LINE_COLOR,
-                   random_state=None,
-                   train_alpha=0.75,
-                   test_alpha=0.75,
-                   **kwargs):
+##########################################################################
+## Quick Method
+##########################################################################
+
+
+def residuals_plot(
+    model,
+    X,
+    y,
+    ax=None,
+    hist=True,
+    test_size=0.25,
+    train_color="b",
+    test_color="g",
+    line_color=LINE_COLOR,
+    random_state=None,
+    train_alpha=0.75,
+    test_alpha=0.75,
+    is_fitted="auto",
+    **kwargs
+):
     """Quick method:
 
     Divides the dataset X, y into a train and test split (the size of the
@@ -626,6 +698,8 @@ def residuals_plot(model,
     model : a Scikit-Learn regressor
         Should be an instance of a regressor, otherwise will raise a
         YellowbrickTypeError exception on instantiation.
+        If the estimator is not fitted, it is fit when the visualizer is fitted,
+        unless otherwise specified by ``is_fitted``.
 
     X  : ndarray or DataFrame of shape n x m
         A matrix of n instances with m features.
@@ -675,20 +749,32 @@ def residuals_plot(model,
         0 is completely transparent. This property makes densely clustered
         points more visible.
 
+    is_fitted : bool or str, default='auto'
+        Specify if the wrapped estimator is already fitted. If False, the estimator
+        will be fit when the visualizer is fit, otherwise, the estimator will not be
+        modified. If 'auto' (default), a helper method will check if the estimator
+        is fitted before fitting it again.
+
     kwargs : dict
         Keyword arguments that are passed to the base class and may influence
         the visualization as defined in other Visualizers.
 
     Returns
     -------
-    ax : matplotlib axes
-        Returns the axes that the residuals plot was drawn on.
+    visualizer : ResidualsPlot
+        Returns the residuals plot visualizer
     """
     # Instantiate the visualizer
     visualizer = ResidualsPlot(
-        model=model, ax=ax, hist=hist, train_color=train_color,
-        test_color=test_color, line_color=line_color,
-        train_alpha=train_alpha, test_alpha=test_alpha,
+        model=model,
+        ax=ax,
+        hist=hist,
+        train_color=train_color,
+        test_color=test_color,
+        line_color=line_color,
+        train_alpha=train_alpha,
+        test_alpha=test_alpha,
+        is_fitted=is_fitted,
         **kwargs
     )
 
@@ -702,5 +788,5 @@ def residuals_plot(model,
     visualizer.score(X_test, y_test)
     visualizer.finalize()
 
-    # Return the axes object on the visualizer
-    return visualizer.ax
+    # Return the visualizer
+    return visualizer

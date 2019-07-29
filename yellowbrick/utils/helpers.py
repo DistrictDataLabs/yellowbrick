@@ -54,6 +54,42 @@ def is_fitted(estimator):
     return True
 
 
+def check_fitted(estimator, is_fitted_by='auto', **kwargs):
+    """
+    Determines whether or not to check if the model has been fitted, and will return
+    ``True`` if so. The ``is_fitted_by`` argument is set to ``'auto'`` by default,
+    such that the check leaves it to the ``is_fitted`` helper method to determine if
+    a ``NotFitted`` error is raised. However, if the user prefers to override this
+    automatic functionality (e.g. if a 3rd party sklearn-like estimator has been used
+    that doesn't precisely implement the sklearn API), and ``is_fitted_by`` has been
+    set to either ``True`` or ``False``, we assume the user has supplied the necessary
+    information about whether or not the model is fit using the Visualizer's
+    ``is_fitted`` parameter.
+
+    .. todo:: add other measures for checking if an estimator is fitted e.g. by coefs
+
+    Parameters
+    -----------
+    estimator : sklearn.Estimator
+        The model to check fittedness
+
+    is_fitted_by : bool or str, default: 'auto'
+        If bool, that value is returned, otherwise ``is_fitted`` is used to check
+        for an exception
+
+    kwargs : dict
+        Other optional parameters specific to the ``is_fitted_by`` mechanism.
+
+    Returns
+    --------
+    is_fitted : bool
+        Whether or not the model is already fitted
+    """
+    if isinstance(is_fitted_by, str) and is_fitted_by.lower() == 'auto':
+        return is_fitted(estimator)
+    return bool(is_fitted_by)
+
+
 def get_model_name(model):
     """
     Detects the model name for a Scikit-Learn model or pipeline.

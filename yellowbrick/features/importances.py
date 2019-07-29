@@ -1,12 +1,11 @@
 # yellowbrick.features.importances
 # Feature importance visualizer
 #
-# Author:  Benjamin Bengfort <benjamin@bengfort.com>
+# Author:  Benjamin Bengfort
+# Author:  Rebecca Bilbro
 # Created: Fri Mar 02 15:21:36 2018 -0500
-# Author:  Rebecca Bilbro <rbilbro@districtdatalabs.com>
-# Updated: Sun Jun 24 10:53:36 2018 -0500
 #
-# Copyright (C) 2018 District Data Labs
+# Copyright (C) 2018 The scikit-yb developers
 # For license information, see LICENSE.txt
 #
 # ID: importances.py [] benjamin@bengfort.com $
@@ -28,7 +27,7 @@ import matplotlib.pyplot as plt
 from yellowbrick.draw import bar_stack
 from yellowbrick.base import ModelVisualizer
 from yellowbrick.style.colors import resolve_colors
-from yellowbrick.utils import is_dataframe, is_classifier, is_fitted
+from yellowbrick.utils import is_dataframe, is_classifier, check_fitted
 from yellowbrick.exceptions import YellowbrickTypeError, NotFitted, YellowbrickWarning
 
 ##########################################################################
@@ -52,7 +51,9 @@ class FeatureImportances(ModelVisualizer):
     ----------
     model : Estimator
         A Scikit-Learn estimator that learns feature importances. Must support
-        either ``coef_`` or ``feature_importances_`` parameters.
+        either ``coef_`` or ``feature_importances_`` parameters. If the estimator
+        is not fitted, it is fit when the visualizer is fitted, unless otherwise
+        specified by ``is_fitted``.
 
     ax : matplotlib Axes, default: None
         The axis to plot the figure on. If None is passed in the current axes
@@ -86,6 +87,12 @@ class FeatureImportances(ModelVisualizer):
     colormap : string or matplotlib cmap
         Specify a colormap to color the classes if ``stack==True``.
 
+    is_fitted : bool or str, default='auto'
+        Specify if the wrapped estimator is already fitted. If False, the estimator
+        will be fit when the visualizer is fit, otherwise, the estimator will not be
+        modified. If 'auto' (default), a helper method will check if the estimator
+        is fitted before fitting it again.
+
     kwargs : dict
         Keyword arguments that are passed to the base class and may influence
         the visualization as defined in other Visualizers.
@@ -110,15 +117,33 @@ class FeatureImportances(ModelVisualizer):
     >>> visualizer.poof()
     """
 
-    def __init__(self, model, ax=None, labels=None, relative=True,
-                 absolute=False, xlabel=None, stack=False, colors=None,
-                 colormap=None, **kwargs):
-        super(FeatureImportances, self).__init__(model, ax, **kwargs)
+    def __init__(
+        self,
+        model,
+        ax=None,
+        labels=None,
+        relative=True,
+        absolute=False,
+        xlabel=None,
+        stack=False,
+        colors=None,
+        colormap=None,
+        is_fitted="auto",
+        **kwargs
+    ):
+        super(FeatureImportances, self).__init__(
+            model, ax=ax, is_fitted=is_fitted, **kwargs
+        )
 
         # Data Parameters
         self.set_params(
-            labels=labels, relative=relative, absolute=absolute,
-            xlabel=xlabel, stack=stack, colors=colors, colormap=colormap
+            labels=labels,
+            relative=relative,
+            absolute=absolute,
+            xlabel=xlabel,
+            stack=stack,
+            colors=colors,
+            colormap=colormap,
         )
 
     def fit(self, X, y=None, **kwargs):
@@ -142,7 +167,7 @@ class FeatureImportances(ModelVisualizer):
         self : visualizer
             The fit method must always return self to support pipelines.
         """
-        if not is_fitted(self.estimator):
+        if not check_fitted(self.estimator, is_fitted_by=self.is_fitted):
             super(FeatureImportances, self).fit(X, y, **kwargs)
 
         # Get the feature importances from the model
@@ -161,10 +186,13 @@ class FeatureImportances(ModelVisualizer):
         # column to get shape (n_features,)  (see LogisticRegression)
         if not self.stack and self.feature_importances_.ndim > 1:
             self.feature_importances_ = np.mean(self.feature_importances_, axis=0)
-            warnings.warn((
-                "detected multi-dimensional feature importances but stack=False, "
-                "using mean to aggregate them."
-            ), YellowbrickWarning)
+            warnings.warn(
+                (
+                    "detected multi-dimensional feature importances but stack=False, "
+                    "using mean to aggregate them."
+                ),
+                YellowbrickWarning,
+            )
 
         # Apply absolute value filter before normalization
         if self.absolute:
@@ -209,7 +237,7 @@ class FeatureImportances(ModelVisualizer):
         Draws the feature importances as a bar chart; called from fit.
         """
         # Quick validation
-        for param in ('feature_importances_', 'features_'):
+        for param in ("feature_importances_", "features_"):
             if not hasattr(self, param):
                 raise NotFitted("missing required param '{}'".format(param))
 
@@ -218,22 +246,22 @@ class FeatureImportances(ModelVisualizer):
 
         # Plot the bar chart
         if self.stack:
-            colors = resolve_colors(
-                len(self.classes_), colormap=self.colormap
-            )
-            legend_kws = {'bbox_to_anchor': (1.04, 0.5), 'loc': "center left"}
+            colors = resolve_colors(len(self.classes_), colormap=self.colormap)
+            legend_kws = {"bbox_to_anchor": (1.04, 0.5), "loc": "center left"}
             bar_stack(
-                self.feature_importances_, ax=self.ax, labels=list(self.classes_),
-                ticks=self.features_, orientation='h', colors=colors,
-                legend_kws=legend_kws
+                self.feature_importances_,
+                ax=self.ax,
+                labels=list(self.classes_),
+                ticks=self.features_,
+                orientation="h",
+                colors=colors,
+                legend_kws=legend_kws,
             )
         else:
             colors = resolve_colors(
                 len(self.features_), colormap=self.colormap, colors=self.colors
             )
-            self.ax.barh(
-                pos, self.feature_importances_, color=colors, align='center'
-            )
+            self.ax.barh(pos, self.feature_importances_, color=colors, align="center")
 
             # Set the labels for the bars
             self.ax.set_yticks(pos)
@@ -246,15 +274,17 @@ class FeatureImportances(ModelVisualizer):
         Finalize the drawing setting labels and title.
         """
         # Set the title
-        self.set_title('Feature Importances of {} Features using {}'.format(
-            len(self.features_), self.name)
+        self.set_title(
+            "Feature Importances of {} Features using {}".format(
+                len(self.features_), self.name
+            )
         )
 
         # Set the xlabel
         self.ax.set_xlabel(self._get_xlabel())
 
         # Remove the ygrid
-        self.ax.grid(False, axis='y')
+        self.ax.grid(False, axis="y")
 
         # Ensure we have a tight fit
         plt.tight_layout()
@@ -314,17 +344,30 @@ class FeatureImportances(ModelVisualizer):
         """
         Returns true if the visualizer has been fit.
         """
-        return hasattr(self, 'feature_importances_') and hasattr(self, 'features_')
+        return hasattr(self, "feature_importances_") and hasattr(self, "features_")
 
 
 ##########################################################################
 ## Quick Method
 ##########################################################################
 
-def feature_importances(model, X, y=None, ax=None, labels=None,
-                        relative=True, absolute=False, xlabel=None,
-                        stack=False, colors=None, colormap=None, **kwargs):
-    """
+
+def feature_importances(
+    model,
+    X,
+    y=None,
+    ax=None,
+    labels=None,
+    relative=True,
+    absolute=False,
+    xlabel=None,
+    stack=False,
+    colors=None,
+    colormap=None,
+    is_fitted="auto",
+    **kwargs
+):
+    """Quick Method:
     Displays the most informative features in a model by showing a bar chart
     of features ranked by their importances. Although primarily a feature
     engineering mechanism, this visualizer requires a model that has either a
@@ -334,7 +377,9 @@ def feature_importances(model, X, y=None, ax=None, labels=None,
     ----------
     model : Estimator
         A Scikit-Learn estimator that learns feature importances. Must support
-        either ``coef_`` or ``feature_importances_`` parameters.
+        either ``coef_`` or ``feature_importances_`` parameters. If the estimator
+        is not fitted, it is fit when the visualizer is fitted, unless otherwise
+        specified by ``is_fitted``.
 
     X : ndarray or DataFrame of shape n x m
         A matrix of n instances with m features
@@ -374,23 +419,39 @@ def feature_importances(model, X, y=None, ax=None, labels=None,
     colormap : string or matplotlib cmap
         Specify a colormap to color the classes if ``stack==True``.
 
+    is_fitted : bool or str, default='auto'
+        Specify if the wrapped estimator is already fitted. If False, the estimator
+        will be fit when the visualizer is fit, otherwise, the estimator will not be
+        modified. If 'auto' (default), a helper method will check if the estimator
+        is fitted before fitting it again.
+
     kwargs : dict
         Keyword arguments that are passed to the base class and may influence
         the visualization as defined in other Visualizers.
 
     Returns
     -------
-    ax : matplotlib axes
-        Returns the axes that the parallel coordinates were drawn on.
+    viz : FeatureImportances
+        The feature importances visualizer, fitted and finalized.
     """
     # Instantiate the visualizer
     visualizer = FeatureImportances(
-        model=model, ax=ax, labels=labels, relative=relative, absolute=absolute, 
-        xlabel=xlabel, stack=stack, colors=colors, colormap=colormap, **kwargs)
+        model=model,
+        ax=ax,
+        labels=labels,
+        relative=relative,
+        absolute=absolute,
+        xlabel=xlabel,
+        stack=stack,
+        colors=colors,
+        colormap=colormap,
+        is_fitted=is_fitted,
+        **kwargs
+    )
 
     # Fit and transform the visualizer (calls draw)
     visualizer.fit(X, y)
     visualizer.finalize()
 
-    # Return the axes object on the visualizer
-    return visualizer.ax
+    # Return the visualizer
+    return visualizer
