@@ -74,6 +74,10 @@ class ClassPredictionError(ClassificationScoreVisualizer):
     These parameters can be influenced later on in the visualization
     process, but can and should be set as early as possible.
     """
+    def __init__(self, model, ax=None, classes=None, **kwargs):
+        super(ClassPredictionError, self).__init__(
+            model, ax=ax, classes=classes, **kwargs
+        )
 
     def score(self, X, y, **kwargs):
         """

@@ -132,9 +132,11 @@ class AlphaSelection(RegressionScoreVisualizer):
         if "store_cv_values" in model.get_params().keys():
             model.set_params(store_cv_values=True)
 
+        self.is_fitted = is_fitted
+
         # Call super to initialize the class
         super(AlphaSelection, self).__init__(
-            model, ax=ax, is_fitted=is_fitted, **kwargs
+            model, ax=ax, **kwargs
         )
 
     def fit(self, X, y, **kwargs):

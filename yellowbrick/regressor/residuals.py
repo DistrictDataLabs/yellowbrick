@@ -134,9 +134,12 @@ class PredictionError(RegressionScoreVisualizer):
         is_fitted="auto",
         **kwargs
     ):
+        # Whether or not to check if the model is already fitted
+        self.is_fitted = is_fitted
+
         # Initialize the visualizer
         super(PredictionError, self).__init__(
-            model, ax=ax, is_fitted=is_fitted, **kwargs
+            model, ax=ax, **kwargs
         )
 
         # Visual arguments
@@ -476,8 +479,11 @@ class ResidualsPlot(RegressionScoreVisualizer):
         is_fitted="auto",
         **kwargs
     ):
+        # Whether or not to check if the model is already fitted
+        self.is_fitted = is_fitted
 
-        super(ResidualsPlot, self).__init__(model, ax=ax, is_fitted=is_fitted, **kwargs)
+        # Initialize the visualizer base
+        super(ResidualsPlot, self).__init__(model, ax=ax, **kwargs)
 
         # TODO: allow more scatter plot arguments for train and test points
         # See #475 (RE: ScatterPlotMixin)

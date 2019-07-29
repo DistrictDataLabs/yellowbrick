@@ -131,8 +131,12 @@ class FeatureImportances(ModelVisualizer):
         is_fitted="auto",
         **kwargs
     ):
+        # Whether or not to check if the internal model is fitted
+        self.is_fitted = is_fitted
+
+        # Initialize the visualizer bases
         super(FeatureImportances, self).__init__(
-            model, ax=ax, is_fitted=is_fitted, **kwargs
+            model, ax=ax, **kwargs
         )
 
         # Data Parameters
@@ -436,7 +440,7 @@ def feature_importances(
     """
     # Instantiate the visualizer
     visualizer = FeatureImportances(
-        model=model,
+        model,
         ax=ax,
         labels=labels,
         relative=relative,

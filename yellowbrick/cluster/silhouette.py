@@ -114,8 +114,12 @@ class SilhouetteVisualizer(ClusteringScoreVisualizer):
     """
 
     def __init__(self, model, ax=None, colors=None, is_fitted="auto", **kwargs):
+        # Whether or not to check if the internal model is fitted
+        self.is_fitted = is_fitted
+
+        # Initialize the visualizer bases
         super(SilhouetteVisualizer, self).__init__(
-            model, ax=ax, is_fitted=is_fitted, **kwargs
+            model, ax=ax, **kwargs
         )
 
         # Visual Properties

@@ -176,9 +176,12 @@ class InterclusterDistance(ClusteringScoreVisualizer):
         is_fitted="auto",
         **kwargs
     ):
+        # Whether or not to check if the internal model is fitted
+        self.is_fitted = is_fitted
+
         # Initialize the visualizer bases
         super(InterclusterDistance, self).__init__(
-            model, ax=ax, is_fitted=is_fitted, **kwargs
+            model, ax=ax, **kwargs
         )
 
         # Ensure that a valid embedding and scoring is passed in

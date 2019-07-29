@@ -310,11 +310,11 @@ class TestResidualsPlot(VisualTestCase):
         _, ax = plt.subplots()
 
         model = Lasso(random_state=19)
-        ax = residuals_plot(
+        viz = residuals_plot(
             model, self.data.X.train, self.data.y.train, ax=ax, random_state=23
         )
 
-        self.assert_images_similar(ax=ax)
+        self.assert_images_similar(ax=viz.ax)
 
     @pytest.mark.xfail(
         IS_WINDOWS_OR_CONDA,

@@ -81,11 +81,6 @@ class ClassificationScoreVisualizer(ScoreVisualizer):
                 "try a regression or clustering score visualizer instead!"
             )
 
-        # Initialize the super method.
-        super(ClassificationScoreVisualizer, self).__init__(
-            model, ax=ax, fig=fig, is_fitted=is_fitted, **kwargs
-        )
-
         # Convert to array if necessary to match estimator.classes_
         if classes is not None:
             classes = np.array(classes)
@@ -97,7 +92,13 @@ class ClassificationScoreVisualizer(ScoreVisualizer):
             n_colors = None
 
         self.colors = color_palette(kwargs.pop("colors", None), n_colors)
+        self.is_fitted = is_fitted
         self.classes_ = classes
+
+        # Initialize the super method.
+        super(ClassificationScoreVisualizer, self).__init__(
+            model, ax=ax, fig=fig, **kwargs
+        )
 
     @property
     def classes_(self):

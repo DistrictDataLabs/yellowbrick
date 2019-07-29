@@ -105,10 +105,10 @@ class TestFeatureImportancesVisualizer(VisualTestCase):
         ax = fig.add_subplot()
 
         clf = RandomForestClassifier(random_state=42)
-        g = feature_importances(clf, X, y, ax)
+        g = feature_importances(clf, X, y, ax=ax)
 
         # Appveyor and Linux conda non-text-based differences
-        self.assert_images_similar(ax=g, tol=15.0)
+        self.assert_images_similar(ax=g.ax, tol=15.0)
 
     def test_fit_no_importances_model(self):
         """
