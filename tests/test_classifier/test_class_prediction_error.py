@@ -1,12 +1,12 @@
 # tests.test_classifier.test_class_prediction_error
 # Testing for the ClassPredictionError visualizer
 #
-# Author:   Benjamin Bengfort <bbengfort@districtdatalabs.com>
-# Author:   Rebecca Bilbro <rbilbro@districtdatalabs.com>
+# Author:   Benjamin Bengfort
+# Author:   Rebecca Bilbro
 # Author:   Larry Gray
 # Created:  Tue May 23 13:41:55 2017 -0700
 #
-# Copyright (C) 2017 District Data Labs
+# Copyright (C) 2017 The scikit-yb developers
 # For license information, see LICENSE.txt
 #
 # ID: test_rocauc.py [] benjamin@bengfort.com $
@@ -44,14 +44,13 @@ except ImportError:
 
 
 class TestClassPredictionError(VisualTestCase):
-
     def test_numpy_integration(self):
         """
         Assert no errors during class prediction error integration with NumPy arrays
         """
         X, y = load_occupancy(return_dataset=True).to_numpy()
 
-        classes = ['unoccupied', 'occupied']
+        classes = ["unoccupied", "occupied"]
 
         model = LinearSVC(random_state=42)
         model.fit(X, y)
@@ -68,7 +67,7 @@ class TestClassPredictionError(VisualTestCase):
         Assert no errors during class prediction error integration with Pandas
         """
         X, y = load_occupancy(return_dataset=True).to_pandas()
-        classes = ['unoccupied', 'occupied']
+        classes = ["unoccupied", "occupied"]
 
         model = LinearSVC(random_state=42)
         model.fit(X, y)
@@ -99,14 +98,12 @@ class TestClassPredictionError(VisualTestCase):
         one of the specified classess
         """
         X, y = load_occupancy(return_dataset=True).to_numpy()
-        classes = ['unoccupied', 'occupied', 'partytime']
+        classes = ["unoccupied", "occupied", "partytime"]
 
         model = LinearSVC(random_state=42)
         model.fit(X, y)
         with pytest.raises(ModelError):
-            visualizer = ClassPredictionError(
-                model, classes=classes
-            )
+            visualizer = ClassPredictionError(model, classes=classes)
             visualizer.score(X, y)
 
     def test_classes_less_than_indices(self):
@@ -114,7 +111,7 @@ class TestClassPredictionError(VisualTestCase):
         Assert error when there is an attempt to filter classes
         """
         X, y = load_occupancy(return_dataset=True).to_numpy()
-        classes = ['unoccupied']
+        classes = ["unoccupied"]
 
         model = LinearSVC(random_state=42)
         model.fit(X, y)

@@ -113,7 +113,7 @@ class TestScatterViz(VisualTestCase):
         Assert that x,y with no features will not raise scatterviz error
         """
         visualizer = ScatterViz(x='one', y='two')
-        assert visualizer.features_ == ['one', 'two']
+        assert visualizer.features == ['one', 'two']
 
     def test_scatter_requires_two_features_in_numpy_matrix(self):
         """
