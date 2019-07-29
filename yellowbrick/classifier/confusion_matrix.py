@@ -4,7 +4,7 @@
 # Author:   Neal Humphrey
 # Created:  Tue May 03 11:05:11 2017 -0700
 #
-# Copyright (C) 2017 District Data Labs
+# Copyright (C) 2017 The scikit-yb developers
 # For license information, see LICENSE.txt
 #
 # ID: confusion_matrix.py [5388065] neal@nhumphrey.com $
@@ -32,9 +32,9 @@ from sklearn.metrics import confusion_matrix as confusion_matrix_metric
 ## ConfusionMatrix
 ##########################################################################
 
-CMAP_UNDERCOLOR = 'w'
-CMAP_OVERCOLOR = '#2a7d4f'
-CMAP_MUTEDCOLOR = '0.75'
+CMAP_UNDERCOLOR = "w"
+CMAP_MUTEDCOLOR = "0.75"
+CMAP_OVERCOLOR = "#2a7d4f"
 
 
 class ConfusionMatrix(ClassificationScoreVisualizer):
@@ -114,24 +114,30 @@ class ConfusionMatrix(ClassificationScoreVisualizer):
     >>> viz.poof()
     """
 
-
-    def __init__(self, model, ax=None, classes=None, sample_weight=None,
-                 percent=False, label_encoder=None, cmap='YlOrRd',
-                 fontsize=None, **kwargs):
-        super(ConfusionMatrix, self).__init__(
-            model, ax=ax, classes=classes, **kwargs
-        )
+    def __init__(
+        self,
+        model,
+        ax=None,
+        classes=None,
+        sample_weight=None,
+        percent=False,
+        label_encoder=None,
+        cmap="YlOrRd",
+        fontsize=None,
+        **kwargs
+    ):
+        super(ConfusionMatrix, self).__init__(model, ax=ax, classes=classes, **kwargs)
 
         # Visual parameters
+        self.fontsize = fontsize
         self.cmap = color_sequence(cmap)
         self.cmap.set_under(color=CMAP_UNDERCOLOR)
         self.cmap.set_over(color=CMAP_OVERCOLOR)
-        self.fontsize = fontsize
 
         # Estimator parameters
+        self.percent = percent
         self.label_encoder = label_encoder
         self.sample_weight = sample_weight
-        self.percent = percent
 
         # Used to draw diagonal line for predicted class = true class
         self._edgecolors = []
@@ -161,7 +167,7 @@ class ConfusionMatrix(ClassificationScoreVisualizer):
 
         # Encode the target with the supplied label encoder
         if self.label_encoder:
-            try :
+            try:
                 y = self.label_encoder.inverse_transform(y)
                 y_pred = self.label_encoder.inverse_transform(y_pred)
             except AttributeError:
@@ -203,17 +209,19 @@ class ConfusionMatrix(ClassificationScoreVisualizer):
 
         # Convert confusion matrix to percent of each row, i.e. the
         # predicted as a percent of true in each class.
-        if self.percent == True:
+        if self.percent is True:
             # Note: div_safe function returns 0 instead of NAN.
-            cm_display = div_safe(self.confusion_matrix_, self.class_counts_.reshape(-1,1))
-            cm_display = np.round(cm_display* 100, decimals=0)
+            cm_display = div_safe(
+                self.confusion_matrix_, self.class_counts_.reshape(-1, 1)
+            )
+            cm_display = np.round(cm_display * 100, decimals=0)
 
         # Y axis should be sorted top to bottom in pcolormesh
-        cm_display = cm_display[::-1,::]
+        cm_display = cm_display[::-1, ::]
 
         # Set up the dimensions of the pcolormesh
         n_classes = len(self.classes_)
-        X, Y = np.arange(n_classes+1), np.arange(n_classes+1)
+        X, Y = np.arange(n_classes + 1), np.arange(n_classes + 1)
         self.ax.set_ylim(bottom=0, top=cm_display.shape[0])
         self.ax.set_xlim(left=0, right=cm_display.shape[1])
 
@@ -223,7 +231,9 @@ class ConfusionMatrix(ClassificationScoreVisualizer):
         ticks = np.arange(n_classes) + 0.5
 
         self.ax.set(xticks=ticks, yticks=ticks)
-        self.ax.set_xticklabels(xticklabels, rotation="vertical", fontsize=self.fontsize)
+        self.ax.set_xticklabels(
+            xticklabels, rotation="vertical", fontsize=self.fontsize
+        )
         self.ax.set_yticklabels(yticklabels, fontsize=self.fontsize)
 
         # Set data labels in the grid enumerating over all x,y class pairs.
@@ -233,7 +243,7 @@ class ConfusionMatrix(ClassificationScoreVisualizer):
             for y in Y[:-1]:
 
                 # Extract the value and the text label
-                value = cm_display[x,y]
+                value = cm_display[x, y]
                 svalue = "{:0.0f}".format(value)
                 if self.percent:
                     svalue += "%"
@@ -243,28 +253,38 @@ class ConfusionMatrix(ClassificationScoreVisualizer):
                 text_color = find_text_color(base_color)
 
                 # Make zero values more subtle
-                if cm_display[x,y] == 0:
+                if cm_display[x, y] == 0:
                     text_color = CMAP_MUTEDCOLOR
 
                 # Add the label to the middle of the grid
-                cx, cy = x+0.5, y+0.5
+                cx, cy = x + 0.5, y + 0.5
                 self.ax.text(
-                    cy, cx, svalue, va='center', ha='center',
-                    color=text_color, fontsize=self.fontsize,
+                    cy,
+                    cx,
+                    svalue,
+                    va="center",
+                    ha="center",
+                    color=text_color,
+                    fontsize=self.fontsize,
                 )
 
                 # Add a dark line on the grid with the diagonal. Note that the
                 # tick labels have already been reversed.
-                lc = 'k' if xticklabels[x] == yticklabels[y] else 'w'
+                lc = "k" if xticklabels[x] == yticklabels[y] else "w"
                 self._edgecolors.append(lc)
-
 
         # Draw the heatmap with colors bounded by vmin,vmax
         vmin = 0.00001
-        vmax = 99.999 if self.percent == True else cm_display.max()
+        vmax = 99.999 if self.percent is True else cm_display.max()
         self.ax.pcolormesh(
-            X, Y, cm_display, vmin=vmin, vmax=vmax,
-            edgecolor=self._edgecolors, cmap=self.cmap, linewidth='0.01'
+            X,
+            Y,
+            cm_display,
+            vmin=vmin,
+            vmax=vmax,
+            edgecolor=self._edgecolors,
+            cmap=self.cmap,
+            linewidth="0.01",
         )
 
         # Return the axes being drawn on
@@ -276,9 +296,9 @@ class ConfusionMatrix(ClassificationScoreVisualizer):
         return super(ConfusionMatrix, self).poof(outpath, **kwargs)
 
     def finalize(self, **kwargs):
-        self.set_title('{} Confusion Matrix'.format(self.name))
-        self.ax.set_ylabel('True Class')
-        self.ax.set_xlabel('Predicted Class')
+        self.set_title("{} Confusion Matrix".format(self.name))
+        self.ax.set_ylabel("True Class")
+        self.ax.set_xlabel("Predicted Class")
 
 
 ##########################################################################
@@ -286,9 +306,20 @@ class ConfusionMatrix(ClassificationScoreVisualizer):
 ##########################################################################
 
 
-def confusion_matrix(model, X, y, ax=None, classes=None, sample_weight=None,
-                     percent=False, label_encoder=None, cmap='YlOrRd',
-                     fontsize=None, random_state=None, **kwargs):
+def confusion_matrix(
+    model,
+    X,
+    y,
+    ax=None,
+    classes=None,
+    sample_weight=None,
+    percent=False,
+    label_encoder=None,
+    cmap="YlOrRd",
+    fontsize=None,
+    random_state=None,
+    **kwargs
+):
     """Quick method:
 
     Creates a heatmap visualization of the sklearn.metrics.confusion_matrix().
@@ -361,8 +392,15 @@ def confusion_matrix(model, X, y, ax=None, classes=None, sample_weight=None,
     """
     # Instantiate the visualizer
     visualizer = ConfusionMatrix(
-        model, ax, classes, sample_weight, percent,
-        label_encoder, cmap, fontsize, **kwargs
+        model,
+        ax,
+        classes,
+        sample_weight,
+        percent,
+        label_encoder,
+        cmap,
+        fontsize,
+        **kwargs
     )
 
     # Create the train and test splits
@@ -375,5 +413,5 @@ def confusion_matrix(model, X, y, ax=None, classes=None, sample_weight=None,
     visualizer.fit(X_train, y_train, **kwargs)
     visualizer.score(X_test, y_test)
 
-    # Return the axes object on the visualizer
-    return visualizer.ax
+    # Return the visualizer
+    return visualizer

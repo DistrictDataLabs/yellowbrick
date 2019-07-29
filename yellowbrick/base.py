@@ -1,11 +1,11 @@
 # yellowbrick.base
 # Abstract base classes and interface for Yellowbrick.
 #
-# Author:   Rebecca Bilbro <rbilbro@districtdatalabs.com>
-# Author:   Benjamin Bengfort <bbengfort@districtdatalabs.com>
+# Author:   Rebecca Bilbro
+# Author:   Benjamin Bengfort
 # Created:  Fri Jun 03 10:20:59 2016 -0700
 #
-# Copyright (C) 2016 District Data Labs
+# Copyright (C) 2019 The scikit-yb developers
 # For license information, see LICENSE.txt
 #
 # ID: base.py [4a59c49] benjamin@bengfort.com $
@@ -18,17 +18,17 @@ import math
 import warnings
 import matplotlib.pyplot as plt
 
+from .utils import get_model_name
 from .utils.wrapper import Wrapper
 from sklearn.base import BaseEstimator
 from .exceptions import YellowbrickWarning
-from .utils import get_model_name, isestimator
-from sklearn.model_selection import cross_val_predict as cvp
 from .exceptions import YellowbrickValueError, YellowbrickTypeError
 
 
 ##########################################################################
 ## Base class hierarchy
 ##########################################################################
+
 
 class Visualizer(BaseEstimator):
     """
@@ -45,6 +45,10 @@ class Visualizer(BaseEstimator):
     ax : matplotlib Axes, default: None
         The axis to plot the figure on. If None is passed in the current axes
         will be used (or generated if required).
+
+    fig : matplotlib Figure, default: None
+        The figure to plot the Visualizer on. If None is passed in the current
+        plot will be used (or generated if required).
 
     kwargs : dict
         Keyword arguments that are passed to the base class and may influence
@@ -63,26 +67,28 @@ class Visualizer(BaseEstimator):
     -----
     Visualizers are objects that learn from data (e.g. estimators), therefore
     they must be ``fit()`` before they can be drawn or used. Visualizers also
-    maintain a reference to an ``ax`` object, a matplotlib Axes where the
-    figures are drawn and rendered.
+    maintain a reference to an ``ax`` object, a Matplotlib Axes where the
+    figures are drawn and rendered, as well as to a ``fig`` object, a Matplotlib
+    Figure on which the Visualizer will be plotted.
     """
 
-    def __init__(self, ax=None, **kwargs):
+    def __init__(self, ax=None, fig=None, **kwargs):
         self.ax = ax
-        self.size  = kwargs.pop('size', None)
-        self.color = kwargs.pop('color', None)
-        self.title = kwargs.pop('title', None)
+        self.fig = fig
+        self.size = kwargs.pop("size", None)
+        self.color = kwargs.pop("color", None)
+        self.title = kwargs.pop("title", None)
 
-    ##////////////////////////////////////////////////////////////////////
+    ## ////////////////////////////////////////////////////////////////////
     ## Primary Visualizer Properties
-    ##////////////////////////////////////////////////////////////////////
+    ## ////////////////////////////////////////////////////////////////////
 
     @property
     def ax(self):
         """
         The matplotlib axes that the visualizer draws upon (can also be a grid
-        of multiple axes objects). The visualizer automatically creates an
-        axes for the user if one has not been specified.
+        of multiple axes objects). The visualizer uses :func:`matplotlib.pyplot.gca`
+        to create an axes for the user if one has not been specified.
         """
         if not hasattr(self, "_ax") or self._ax is None:
             self._ax = plt.gca()
@@ -93,29 +99,42 @@ class Visualizer(BaseEstimator):
         self._ax = ax
 
     @property
+    def fig(self):
+        """
+        The matplotlib fig that the visualizer draws upon. The visualizer uses
+        the matplotlib method :func:`matplotlib.pyplot.gcf` to create a figure for
+        the user if one has not been specified.
+        """
+        if not hasattr(self, "_fig") or self._fig is None:
+            self._fig = plt.gcf()
+        return self._fig
+
+    @fig.setter
+    def fig(self, fig):
+        self._fig = fig
+
+    @property
     def size(self):
         """
         Returns the actual size in pixels as set by matplotlib, or
         the user provided size if available.
         """
         if not hasattr(self, "_size") or self._size is None:
-            fig = plt.gcf()
-            self._size = fig.get_size_inches()*fig.dpi
+            self._size = self.fig.get_size_inches() * self.fig.dpi
         return self._size
 
     @size.setter
     def size(self, size):
         self._size = size
         if self._size is not None:
-            fig = plt.gcf()
             width, height = size
-            width_in_inches = width / fig.get_dpi()
-            height_in_inches = height / fig.get_dpi()
-            fig.set_size_inches(width_in_inches, height_in_inches)
+            width_in_inches = width / self.fig.get_dpi()
+            height_in_inches = height / self.fig.get_dpi()
+            self.fig.set_size_inches(width_in_inches, height_in_inches)
 
-    ##////////////////////////////////////////////////////////////////////
+    ## ////////////////////////////////////////////////////////////////////
     ## Estimator interface
-    ##////////////////////////////////////////////////////////////////////
+    ## ////////////////////////////////////////////////////////////////////
 
     def fit(self, X, y=None, **kwargs):
         """
@@ -145,9 +164,9 @@ class Visualizer(BaseEstimator):
         """
         return self
 
-    ##////////////////////////////////////////////////////////////////////
+    ## ////////////////////////////////////////////////////////////////////
     ## Visualizer interface
-    ##////////////////////////////////////////////////////////////////////
+    ## ////////////////////////////////////////////////////////////////////
 
     def draw(self, **kwargs):
         """
@@ -163,9 +182,7 @@ class Visualizer(BaseEstimator):
             generic keyword arguments.
 
         """
-        raise NotImplementedError(
-            "Visualizers must implement a drawing interface."
-        )
+        raise NotImplementedError("Visualizers must implement a drawing interface.")
 
     def finalize(self, **kwargs):
         """
@@ -227,11 +244,11 @@ class Visualizer(BaseEstimator):
             plt.show()
 
         if clear_figure:
-            plt.gcf().clear()
+            self.fig.clear()
 
-    ##////////////////////////////////////////////////////////////////////
+    ## ////////////////////////////////////////////////////////////////////
     ## Helper Functions
-    ##////////////////////////////////////////////////////////////////////
+    ## ////////////////////////////////////////////////////////////////////
 
     def set_title(self, title=None):
         """
@@ -251,6 +268,7 @@ class Visualizer(BaseEstimator):
 ## Model Visualizers
 ##########################################################################
 
+
 class ModelVisualizer(Visualizer, Wrapper):
     """
     The ModelVisualizer class wraps a Scikit-Learn estimator (usually a
@@ -269,6 +287,10 @@ class ModelVisualizer(Visualizer, Wrapper):
         The axis to plot the figure on. If None is passed in the current axes
         will be used (or generated if required).
 
+    fig : matplotlib Figure, default: None
+        The figure to plot the Visualizer on. If None is passed in the current
+        plot will be used (or generated if required).
+
     kwargs : dict
         Keyword arguments that are passed to the base class and may influence
         the visualization as defined by other Visualizers.
@@ -278,21 +300,13 @@ class ModelVisualizer(Visualizer, Wrapper):
     Model visualizers can wrap either fitted or unfitted models.
     """
 
-    def __init__(self, model, ax=None, **kwargs):
-        """
-        Parameters
-        ----------
-        ax: matplotlib axes
-            the axis to plot the figure on.
-
-        kwargs: dict
-            keyword arguments for Scikit-Learn model
-        """
+    def __init__(self, model, ax=None, fig=None, **kwargs):
         self.estimator = model
         self.name = get_model_name(self.estimator)
 
+        # Initialize base classes independently
         Wrapper.__init__(self, self.estimator)
-        Visualizer.__init__(self, ax=ax, **kwargs)
+        Visualizer.__init__(self, ax=ax, fig=fig, **kwargs)
 
     def fit(self, X, y=None, **kwargs):
         """
@@ -310,7 +324,7 @@ class ModelVisualizer(Visualizer, Wrapper):
 
         kwargs: dict
             Keyword arguments passed to the drawing functionality or to the
-            Scikit-Learn API. See visualizer specific details for how to use
+            scikit-learn API. See visualizer specific details for how to use
             the kwargs to modify the visualization or fitting process.
 
         Returns
@@ -325,6 +339,7 @@ class ModelVisualizer(Visualizer, Wrapper):
 ##########################################################################
 ## Score Visualizers
 ##########################################################################
+
 
 class ScoreVisualizer(ModelVisualizer):
     """
@@ -344,15 +359,13 @@ class ScoreVisualizer(ModelVisualizer):
         The axis to plot the figure on. If None is passed in the current axes
         will be used (or generated if required).
 
+    fig : matplotlib Figure, default: None
+        The figure to plot the Visualizer on. If None is passed in the current
+        plot will be used (or generated if required).
+
     kwargs : dict
         Keyword arguments that are passed to the base class and may influence
         the visualization as defined in other Visualizersself.
-
-    Returns
-    -------
-    score : float or array-like
-        Returns the score of the underlying model, which is model-speciifc,
-        e.g. accuracy for classifiers, R2 for regressors, etc.
 
     Notes
     -----
@@ -363,75 +376,19 @@ class ScoreVisualizer(ModelVisualizer):
         """
         The primary entry point for score visualizers is the score method,
         which makes predictions based on X and scores them relative to y.
-        """
-        raise NotImplementedError(
-            "ScoreVisualizer subclasses should implement score"
-        )
 
+        Returns
+        -------
+        score : float or array-like
+            Returns the score of the underlying model, which is model-specific,
+            e.g. accuracy for classifiers, R2 for regressors, etc.
+        """
+        raise NotImplementedError("ScoreVisualizer subclasses should implement score")
 
 
 ##########################################################################
-## Multiple Models and Mixins
+## Multiple Models
 ##########################################################################
-
-class MultiModelMixin(object):
-    """
-    Does predict for each of the models and generates subplots.
-    """
-
-    def __init__(self, models, ax=None, **kwargs):
-        # Ensure models is a collection, if it's a single estimator then we
-        # wrap it in a list so that the API doesn't break during render.
-        """
-        These parameters can be influenced later on in the visualization
-        process, but can and should be set as early as possible.
-
-        Parameters
-        ----------
-        models: Scikit-Learn estimator
-            the Scikit-Learn models being compared with each other.
-
-        kwargs: dict
-            keyword arguments.
-        """
-        # TODO: How to handle the axes in this mixin?
-        self.ax = ax
-
-        if all(isestimator, models):
-            models = [models]
-
-        # Keep track of the models
-        self.models = models
-        self.names  = kwargs.pop('names', list(map(get_model_name, models)))
-
-    def generate_subplots(self):
-        """
-        Generates the subplots for the number of given models.
-        """
-        _, axes = plt.subplots(len(self.models), sharex=True, sharey=True)
-        return axes
-
-    def predict(self, X, y):
-        """
-        Returns a generator containing the predictions for each of the
-        internal models (using cross_val_predict and a CV=12).
-
-        Parameters
-        ----------
-
-        X : ndarray or DataFrame of shape n x m
-            A matrix of n instances with m features
-
-        y : ndarray or Series of length n
-            An array or series of target or class values
-
-        kwargs: dict
-            keyword arguments passed to Scikit-Learn API.
-
-        """
-        for model in self.models:
-            yield cvp(model, X, y, cv=12)
-
 
 
 class VisualizerGrid(Visualizer):
@@ -455,12 +412,13 @@ class VisualizerGrid(Visualizer):
         visualizers specified in the visualizers list.
 
     axarr: matplotlib.axarr, default: None.
-        If you want to put the plot onto an existing axarr, specify it here. Otherwise a new
-        one will be created.
+        If you want to put the plot onto an existing axarr, specify it here. Otherwise
+        a new one will be created.
 
     kwargs : additional keyword arguments, default: None
-        Any additional keyword arguments will be passed on to the fit() method and therefore
-        passed on to the fit() method of the wrapped estimators, if applicable. Otherwise ignored.
+        Any additional keyword arguments will be passed on to the fit() method and
+        therefore passed on to the fit() method of the wrapped estimators, if
+        applicable. Otherwise ignored.
 
     Examples
     --------
@@ -475,30 +433,34 @@ class VisualizerGrid(Visualizer):
     >>> mv.score(X_test, y_test)
     >>> mv.poof()
     """
-    def __init__(self, visualizers = [], nrows = None, ncols = None, axarr = None, **kwargs):
-        #Class static params
+
+    def __init__(self, visualizers=[], nrows=None, ncols=None, axarr=None, **kwargs):
+        # Class static params
         self.SUBPLOT_DEFAULT_PIXELS = 400
 
-        #Allocate passed parameters
+        # Allocate passed parameters
         self._visualizers = visualizers
         plotcount = len(visualizers)
-        if nrows == None and ncols == None:
-            #TODO: enhancement would be to also allow a 2-d array  of visualizers instead of just a 1-d left-to-right + top-to-bottom list
+        if nrows is None and ncols is None:
+            # TODO: enhancement would be to also allow a 2-d array  of visualizers
+            # instead of just a 1-d left-to-right + top-to-bottom list
             self.ncols = 1
             self.nrows = plotcount
-        elif ncols == None:
+        elif ncols is None:
             self.nrows = nrows
             self.ncols = int(math.ceil(plotcount / self.nrows))
-        elif nrows == None:
+        elif nrows is None:
             self.ncols = ncols
             self.nrows = int(math.ceil(plotcount / self.ncols))
         else:
-            raise YellowbrickValueError("You can only specify either nrows or ncols, \
-                the other will be calculated based on the length of the list of visualizers.")
+            raise YellowbrickValueError(
+                "You can only specify either nrows or ncols, \
+                the other will be calculated based on the length of the list of \
+                visualizers."
+            )
 
-
-        if axarr == None:
-            fig, axarr = plt.subplots(self.nrows, self.ncols, squeeze = False)
+        if axarr is None:
+            fig, axarr = plt.subplots(self.nrows, self.ncols, squeeze=False)
 
         self.axarr = axarr
 
@@ -507,10 +469,10 @@ class VisualizerGrid(Visualizer):
             for col in range(self.ncols):
                 try:
                     self.visualizers[idx].ax = self.axarr[row, col]
-                #If len(visualizers) isn't evenly divisibly by rows/columns,
-                #we want to create the illusion of empty space by hiding the axis
+                # If len(visualizers) isn't evenly divisibly by rows/columns,
+                # we want to create the illusion of empty space by hiding the axis
                 except IndexError:
-                    self.axarr[row,col].axis('off')
+                    self.axarr[row, col].axis("off")
 
                 idx += 1
 
@@ -521,49 +483,53 @@ class VisualizerGrid(Visualizer):
         return self._visualizers
 
     @visualizers.setter
-    def visualizers(self,value):
-        raise AttributeError("Visualizers list can only be set during class instantiation.")
+    def visualizers(self, value):
+        raise AttributeError(
+            "Visualizers list can only be set during class instantiation."
+        )
 
     @property
     def ax(self):
-         """
+        """
          Override Visualizer.ax to return the current axis
          """
-         return plt.gca()
+        return plt.gca()
 
     @ax.setter
     def ax(self, ax):
-         raise YellowbrickTypeError("cannot set new axes objects on multiple visualizers")
+        raise YellowbrickTypeError(
+            "cannot set new axes objects on multiple visualizers"
+        )
 
-
-    def fit(self,X,y,**kwargs):
+    def fit(self, X, y, **kwargs):
 
         for vz in self.visualizers:
-            vz.fit(X,y,**kwargs)
+            vz.fit(X, y, **kwargs)
 
         return self
 
-    def score(self,X,y):
+    def score(self, X, y):
 
         for idx in range(len(self.visualizers)):
-            self.visualizers[idx].score(X,y)
+            self.visualizers[idx].score(X, y)
 
         return self
 
     def poof(self, outpath=None, clear_figure=False, **kwargs):
 
-        if self.axarr is None: return
+        if self.axarr is None:
+            return
 
-        #Finalize all visualizers
+        # Finalize all visualizers
         for idx in range(len(self.visualizers)):
             self.visualizers[idx].finalize()
 
-        #Choose a reasonable default size if the user has not manually specified one
+        # Choose a reasonable default size if the user has not manually specified one
         # self.size() uses pixels rather than matplotlib's default of inches
         if not hasattr(self, "_size") or self._size is None:
             self._width = self.SUBPLOT_DEFAULT_PIXELS * self.ncols
             self._height = self.SUBPLOT_DEFAULT_PIXELS * self.nrows
-            self.size = (self._width,self._height);
+            self.size = (self._width, self._height)
 
         if outpath is not None:
             plt.savefig(outpath, **kwargs)
