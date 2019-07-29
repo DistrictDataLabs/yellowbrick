@@ -21,6 +21,7 @@ import warnings
 import matplotlib as mpl
 import matplotlib.pyplot as plt
 from mpl_toolkits.axes_grid1 import make_axes_locatable
+from mpl_toolkits.mplot3d import Axes3D
 
 from yellowbrick.style import palettes
 from yellowbrick.draw import manual_legend
@@ -172,26 +173,30 @@ class ProjectionVisualizer(DataVisualizer):
     def ax(self, ax):
         self._ax = ax
 
-    def layout(self):
+    def layout(self, divider=None):
         """
         Creates the layout for colorbar when target type is continuous.
         The colorbar is added to the right of the scatterplot.
 
         Subclasses can override this method to add other axes or layouts.
         """
-        if self._cax is None and self._target_color_type == TargetType.CONTINUOUS:
-            # Ensure matplotlib version compatibility
-            if make_axes_locatable is None:
-                raise YellowbrickValueError((
-                    "Colorbar requires matplotlib 2.0.2 or greater "
-                    "please upgrade matplotlib"
-                ))
+        if self._cax is None and self._target_color_type == TargetType.CONTINUOUS and self.colorbar:
+            if self.projection == 2:
 
-            # Create the new axes for the colorbar
-            divider = make_axes_locatable(self.ax)
-            self._cax = divider.append_axes("right", size="5%", pad=0.3)
-            self._cax.set_yticks([])
-            self._cax.set_xticks([])
+                # Ensure matplotlib version compatibility
+                if make_axes_locatable is None:
+                    raise YellowbrickValueError((
+                        "Colorbar requires matplotlib 2.0.2 or greater "
+                        "please upgrade matplotlib"
+                    ))
+    
+                # Create the new axes for the colorbar
+                if divider is None:
+                    divider = make_axes_locatable(self.ax)
+                
+                self._cax = divider.append_axes("right", size="5%", pad=0.3)
+                self._cax.set_yticks([])
+                self._cax.set_xticks([])
 
     def fit_transform(self, X, y=None):
         """
@@ -233,10 +238,12 @@ class ProjectionVisualizer(DataVisualizer):
             Returns the axes that the scatter plot was drawn on.
         """
         scatter_kwargs = self._determine_scatter_kwargs(y)
+ 
+        self.layout()
 
         if self.projection == 2:
             # Adds colorbar axis for continuous target type.
-            self.layout()
+#            self.layout()
             self.ax.scatter(Xp[:, 0], Xp[:, 1], **scatter_kwargs)
 
         if self.projection == 3:

@@ -28,7 +28,7 @@ from tests.base import VisualTestCase
 from yellowbrick.features.pca import *
 from yellowbrick.exceptions import YellowbrickError
 
-from sklearn.datasets import make_classification
+from sklearn.datasets import make_classification, make_regression
 
 # Note: this can be removed when we deprecate mpl in #826
 try:
@@ -63,13 +63,24 @@ def binary(request):
     # Set a class attribute for digits
     request.cls.dataset = Dataset(X, y)
 
+@pytest.fixture(scope="class")
+def continuous(request):
+    """
+    Creates a random regressor fixture.
+    """
+    X, y = make_regression(
+        n_samples=500, n_features=22, n_informative=8, random_state=2019
+    )
+
+    # Set a class attribute for continuous data
+    request.cls.continuous = Dataset(X, y)
 
 ##########################################################################
 ##PCA Tests
 ##########################################################################
 
 
-@pytest.mark.usefixtures("binary")
+@pytest.mark.usefixtures("binary", "continuous")
 class TestPCADecomposition(VisualTestCase):
     """
     Test the PCADecomposition visualizer
@@ -83,7 +94,7 @@ class TestPCADecomposition(VisualTestCase):
         Test the quick method PCADecomposition visualizer 2 dimensions scaled.
         """
         ax = pca_decomposition(
-            X=self.dataset.X, proj_dim=2, scale=True, random_state=28
+            X=self.dataset.X, projection=2, scale=True, random_state=28
         )
         self.assert_images_similar(ax=ax, tol=5)
 
@@ -94,7 +105,7 @@ class TestPCADecomposition(VisualTestCase):
         """
         Test the PCADecomposition visualizer 2 dimensions scaled.
         """
-        params = {"scale": True, "proj_dim": 2, "random_state": 9932}
+        params = {"scale": True, "projection": 2, "random_state": 9932}
         visualizer = PCADecomposition(**params).fit(self.dataset.X)
         pca_array = visualizer.transform(self.dataset.X)
 
@@ -108,7 +119,7 @@ class TestPCADecomposition(VisualTestCase):
         """
         Test the PCADecomposition visualizer 2 dimensions non-scaled.
         """
-        params = {"scale": False, "proj_dim": 2, "random_state": 1229}
+        params = {"scale": False, "projection": 2, "random_state": 1229}
         visualizer = PCADecomposition(**params).fit(self.dataset.X)
         pca_array = visualizer.transform(self.dataset.X)
 
@@ -129,7 +140,7 @@ class TestPCADecomposition(VisualTestCase):
             "features": list("ABCDEFGHIKLM"),
             "random_state": 67,
             "proj_features": True,
-            "proj_dim": 2,
+            "projection": 2,
         }
         visualizer = PCADecomposition(**params).fit(self.dataset.X)
         pca_array = visualizer.transform(self.dataset.X)
@@ -144,7 +155,7 @@ class TestPCADecomposition(VisualTestCase):
         """
         Test the PCADecomposition visualizer 3 dimensions scaled.
         """
-        params = {"scale": True, "proj_dim": 3, "random_state": 7382}
+        params = {"scale": True, "projection": 3, "random_state": 7382}
         visualizer = PCADecomposition(**params).fit(self.dataset.X)
         pca_array = visualizer.transform(self.dataset.X)
 
@@ -158,7 +169,7 @@ class TestPCADecomposition(VisualTestCase):
         """
         Test the PCADecomposition visualizer 3 dimensions non-scaled.
         """
-        params = {"scale": False, "proj_dim": 3, "random_state": 98}
+        params = {"scale": False, "projection": 3, "random_state": 98}
         visualizer = PCADecomposition(**params).fit(self.dataset.X)
         pca_array = visualizer.transform(self.dataset.X)
 
@@ -179,7 +190,7 @@ class TestPCADecomposition(VisualTestCase):
             "features": list("ABCDEFGHIKLM"),
             "random_state": 800,
             "proj_features": True,
-            "proj_dim": 3,
+            "projection": 3,
         }
         visualizer = PCADecomposition(**params).fit(self.dataset.X)
         pca_array = visualizer.transform(self.dataset.X)
@@ -194,8 +205,9 @@ class TestPCADecomposition(VisualTestCase):
         """
         Test PCADecomposition visualizer 4 dimensions scaled (catch YellowbrickError).
         """
-        params = {"scale": True, "proj_dim": 4}
-        with pytest.raises(YellowbrickError, match="proj_dim object is not 2 or 3"):
+        params = {"scale": True, "projection": 4}
+        msg = "Projection dimensions must be either 2 or 3"
+        with pytest.raises(YellowbrickError, match=msg):
             PCADecomposition(**params)
 
     def test_scale_true_3d_execption(self):
@@ -203,7 +215,7 @@ class TestPCADecomposition(VisualTestCase):
         Test PCADecomposition visualizer 3 dims scaled on 2 dim data set (catch ValueError).
         """
         X = np.random.normal(loc=2, size=(100, 2))
-        params = {"scale": True, "proj_dim": 3}
+        params = {"scale": True, "projection": 3}
 
         e = r"n_components=3 must be between 0 and min\(n_samples, n_features\)=2"
         with pytest.raises(ValueError, match=e):
@@ -216,7 +228,7 @@ class TestPCADecomposition(VisualTestCase):
         Test that the user can supply an alpha param on instantiation
         """
         # Instantiate a prediction error plot, provide custom alpha
-        params = {"alpha": 0.3, "proj_dim": 2, "random_state": 9932}
+        params = {"alpha": 0.3, "projection": 2, "random_state": 9932}
         visualizer = PCADecomposition(**params).fit(self.dataset.X)
         pca_array = visualizer.transform(self.dataset.X)
         assert visualizer.alpha == 0.3
@@ -237,14 +249,15 @@ class TestPCADecomposition(VisualTestCase):
         """
         params = {
             "scale": True,
-            "proj_dim": 2,
+            "projection": 2,
             "random_state": 7382,
             "color": self.dataset.y,
             "colorbar": True,
         }
-        visualizer = PCADecomposition(**params).fit(self.dataset.X)
-        visualizer.transform(self.dataset.X)
-        visualizer.uax.set_xticklabels([])
+        visualizer = PCADecomposition(**params).fit(self.continuous.X, self.continuous.y)
+        visualizer.transform(self.continuous.X, self.continuous.y)
+        visualizer.finalize()
+        visualizer.cax.set_yticklabels([])
         # Image comparison tests
         self.assert_images_similar(visualizer)
 
@@ -254,18 +267,18 @@ class TestPCADecomposition(VisualTestCase):
         """
         params = {
             "scale": True,
-            "proj_dim": 2,
+            "projection": 2,
             "random_state": 7382,
             "color": self.dataset.y,
             "heatmap": True,
         }
-        visualizer = PCADecomposition(**params).fit(self.dataset.X)
-        visualizer.transform(self.dataset.X)
+        visualizer = PCADecomposition(**params).fit(self.dataset.X, self.dataset.y)
+        visualizer.transform(self.dataset.X, self.dataset.y)
         visualizer.finalize()
         # TODO: manually modifying ticks should be removed after #916 is fixed
         visualizer.lax.set_xticks([])
         visualizer.lax.set_yticks([])
-
+        visualizer.uax.set_xticklabels([])
         # Image comparison tests
         self.assert_images_similar(visualizer)
 
@@ -275,20 +288,21 @@ class TestPCADecomposition(VisualTestCase):
         """
         params = {
             "scale": True,
-            "proj_dim": 2,
+            "projection": 2,
             "random_state": 7382,
             "color": self.dataset.y,
             "colorbar": True,
             "heatmap": True,
         }
-        visualizer = PCADecomposition(**params).fit(self.dataset.X)
-        visualizer.transform(self.dataset.X)
+        visualizer = PCADecomposition(**params).fit(self.continuous.X, self.continuous.y)
+        visualizer.transform(self.continuous.X, self.continuous.y)
         visualizer.finalize()
         # TODO: manually modifying ticks should be removed after #916 is fixed
         visualizer.lax.set_xticks([])
-        visualizer.uax.set_xticklabels([])
         visualizer.lax.set_yticks([])
-
+        visualizer.uax.set_xticklabels([])
+        visualizer.cax.set_yticklabels([])
+        
         # Image comparison tests
         self.assert_images_similar(visualizer)
 
@@ -297,10 +311,10 @@ class TestPCADecomposition(VisualTestCase):
         Assert an exception if colorbar and heatmap is enabled with 3-dimensions
         """
         with pytest.raises(YellowbrickValueError):
-            PCADecomposition(proj_dim=3, colorbar=True)
+            PCADecomposition(projection=3, colorbar=True)
 
         with pytest.raises(YellowbrickValueError):
-            PCADecomposition(proj_dim=3, heatmap=True)
+            PCADecomposition(projection=3, heatmap=True)
 
     @pytest.mark.skipif(
         make_axes_locatable is not None, reason="requires matplotlib <= 2.0.1"
