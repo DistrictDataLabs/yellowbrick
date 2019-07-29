@@ -52,28 +52,42 @@ class ProjectionVisualizer(DataVisualizer):
         will be used (or generated if required).
 
     features : list, default: None
-        a list of feature names to use
-        If a DataFrame is passed to fit and features is None, feature
-        names are selected as the columns of the DataFrame.
-
+        The names of the features specified by the columns of the input dataset.
+        This length of this list must match the number of columns in X, otherwise
+        an exception will be raised on ``fit()``.
+        
     classes : list, default: None
-        a list of class names for the legend
-        If classes is None and a y value is passed to fit then the classes
-        are selected from the target vector.
+        The class labels for each class in y, ordered by sorted class index. These
+        names act as a label encoder for the legend, identifying integer classes
+        or renaming string labels. If omitted, the class labels will be taken from
+        the unique values in y.
 
-    colors : list or tuple of colors, default: None
-        Specify the colors for each individual class.
+        Note that the length of this list must match the number of unique values in
+        y, otherwise an exception is raised. This parameter is only used in the
+        discrete target type case and is ignored otherwise.
+
+    colors : list or tuple, default: None
+        A single color to plot all instances as or a list of colors to color each
+        instance according to its class in the discrete case or as an ordered
+        colormap in the sequential case. If not enough colors per class are
+        specified then the colors are treated as a cycle.
 
     colormap : string or cmap, default: None
-        Optional string or matplotlib cmap to colorize points.
-        Use either color to colorize the points on a per class basis or
-        colormap to color them on a continuous scale.
-
+        The colormap used to create the individual colors. In the discrete case
+        it is used to compute the number of colors needed for each class and
+        in the continuous case it is used to create a sequential color map based
+        on the range of the target.
+        
     target_type : str, default: "auto"
         Specify the type of target as either "discrete" (classes) or "continuous"
         (real numbers, usually for regression). If "auto", then it will
         attempt to determine the type by counting the number of unique values.
 
+        If the target is discrete, the colors are returned as a dict with classes
+        being the keys. If continuous the colors will be list having value of
+        color for each point. In either case, if no target is specified, then
+        color will be specified as the first color in the color cycle.
+        
     projection : int or string, default: 2
         The number of axes to project into, either 2d or 3d. To plot 3d plots
         with matplotlib, please ensure a 3d axes is passed to the visualizer,
