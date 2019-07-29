@@ -116,7 +116,7 @@ class PCADecomposition(ProjectionVisualizer):
         colormap=palettes.DEFAULT_SEQUENCE,
         alpha=0.75,
         random_state=None,
-        colorbar=False,
+        colorbar=True,
         heatmap=False,
         **kwargs
     ):
@@ -144,7 +144,7 @@ class PCADecomposition(ProjectionVisualizer):
 
         self._uax, self._lax = None, None
 
-        if self.projection == 3 and (self.heatmap or self.colorbar):
+        if self.projection == 3 and self.heatmap:
             raise YellowbrickValueError(
                 "heatmap and colorbar are not compatible with 3d projections"
             )
@@ -467,7 +467,7 @@ def pca_decomposition(
 
     # Fit and transform the visualizer (calls draw)
     visualizer.fit(X, y)
-    visualizer.transform(X)
+    visualizer.transform(X, y)
     visualizer.poof()
 
     # Return the axes object on the visualizer

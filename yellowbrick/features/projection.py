@@ -21,7 +21,7 @@ import warnings
 import matplotlib as mpl
 import matplotlib.pyplot as plt
 from mpl_toolkits.axes_grid1 import make_axes_locatable
-from mpl_toolkits.mplot3d import Axes3D
+import mpl_toolkits.mplot3d  # noqa
 
 from yellowbrick.style import palettes
 from yellowbrick.draw import manual_legend
@@ -261,14 +261,15 @@ class ProjectionVisualizer(DataVisualizer):
                           frameon=True)
 
         elif self._target_color_type == TargetType.CONTINUOUS:
-            if self.projection == 3:
-                sm = plt.cm.ScalarMappable(cmap=self._colors, norm = self._norm)
-                self.cbar = plt.colorbar(sm, ax=self.ax)
-
-            else:
-                # Manually draw the colorbar.
-                self.cbar = mpl.colorbar.ColorbarBase(self.cax, cmap=self._colors,
-                                                  norm=self._norm)
+            if self.colorbar:
+                if self.projection == 3:
+                    sm = plt.cm.ScalarMappable(cmap=self._colors, norm = self._norm)
+                    self.cbar = plt.colorbar(sm, ax=self.ax)
+    
+                else:
+                    # Manually draw the colorbar.
+                    self.cbar = mpl.colorbar.ColorbarBase(self.cax, cmap=self._colors,
+                                                      norm=self._norm)
 
     def _determine_scatter_kwargs(self, y=None):
         """
