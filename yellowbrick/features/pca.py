@@ -142,7 +142,7 @@ class PCADecomposition(ProjectionVisualizer):
     ):
         super(PCADecomposition, self).__init__(ax=ax, features=features, 
              classes=classes, colors=colors, colormap=colormap, projection=projection, 
-             alpha=alpha, **kwargs)
+             alpha=alpha, colorbar=colorbar, **kwargs)
 
         # Data Parameters
         self.scale = scale
@@ -158,7 +158,6 @@ class PCADecomposition(ProjectionVisualizer):
         self.alpha = alpha
 
         # Visual Parameters
-        self.colorbar = colorbar
         self.heatmap = heatmap
 
         self._uax, self._lax = None, None

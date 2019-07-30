@@ -78,14 +78,14 @@ class MockVisualizer(ProjectionVisualizer):
 
     def __init__(self, ax=None, features=None, classes=None, colors=None,
              colormap=None, target_type="auto", projection=2,
-             alpha=0.75,**kwargs):
+             alpha=0.75, colorbar=True, **kwargs):
 
         super(MockVisualizer, self).__init__(ax=ax,
                                              features=features, classes=classes,
                                              colors=colors, colormap=colormap,
                                              target_type=target_type,
                                              projection=projection, alpha=alpha,
-                                             **kwargs)
+                                             colorbar=colorbar, **kwargs)
 
         self.pca_transformer = Pipeline([("scale", StandardScaler()),
                                     ("pca", PCA(self.projection, random_state=2019))])
@@ -240,3 +240,13 @@ class TestProjectionVisualizer(VisualTestCase):
         msg = "y is required for {} target".format(dataset)
         with pytest.raises(YellowbrickValueError, match = msg):
             visualizer.transform(X)
+        
+    def test_colorbar_false(self):
+        """
+        Test that colorbar equals false works correctly 
+        """
+        visualizer = MockVisualizer(colorbar=False, colormap="YlOrRd")
+        visualizer.fit_transform(*self.continuous)
+        visualizer.finalize()
+        
+        self.assert_images_similar(visualizer)
