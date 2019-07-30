@@ -50,27 +50,45 @@ class PCADecomposition(ProjectionVisualizer):
         will be used (or generated if required).
 
     features : list, default: None
-        A list of feature names to use. If a DataFrame is passed to fit and features 
-        is None, feature names are selected as the columns of the DataFrame.
+        The names of the features specified by the columns of the input dataset.
+        This length of this list must match the number of columns in X, otherwise
+        an exception will be raised on ``fit()``.
+        
+    classes : list, default: None
+        The class labels for each class in y, ordered by sorted class index. These
+        names act as a label encoder for the legend, identifying integer classes
+        or renaming string labels. If omitted, the class labels will be taken from
+        the unique values in y.
+
+        Note that the length of this list must match the number of unique values in
+        y, otherwise an exception is raised. This parameter is only used in the
+        discrete target type case and is ignored otherwise.
 
     scale : bool, default: True
         Boolean that indicates if user wants to scale data.
 
-    proj_dim : int, default: 2
-        Dimension of the PCA visualizer.
+    projection : int or string, default: 2
+        The number of axes to project into, either 2d or 3d. To plot 3d plots
+        with matplotlib, please ensure a 3d axes is passed to the visualizer,
+        otherwise one will be created using the current figure.
+
 
     proj_features : bool, default: False
         Boolean that indicates if the user wants to project the features
         in the projected space. If True the plot will be similar to a biplot.
 
-    color : list or tuple of colors, default: None
-        Specify the colors for each individual class.
+    colors : list or tuple, default: None
+        A single color to plot all instances as or a list of colors to color each
+        instance according to its class in the discrete case or as an ordered
+        colormap in the sequential case. If not enough colors per class are
+        specified then the colors are treated as a cycle.
 
     colormap : string or cmap, default: None
-        Optional string or matplotlib cmap to colorize lines.
-        Use either color to colorize the lines on a per class basis or
-        colormap to color them on a continuous scale.
-
+        The colormap used to create the individual colors. In the discrete case
+        it is used to compute the number of colors needed for each class and
+        in the continuous case it is used to create a sequential color map based
+        on the range of the target.
+        
     alpha : float, default: 0.75
         Specify a transparency where 1 is completely opaque and 0 is completely
         transparent. This property makes densely clustered points more visible.
@@ -81,12 +99,14 @@ class PCADecomposition(ProjectionVisualizer):
         than 80% of the smallest dimension of the data, then the more efficient 
         `randomized` solver is enabled.
 
-    colorbar : bool, default: False
-        Add a colorbar to shows the range in magnitude of feature values to the
-        component.
-
+    colorbar : bool, default: True
+        If the target_type is "continous" draw a colorbar to the right of the
+        scatter plot. The colobar axes is accessible using the cax property.
+        
     heatmap : bool, default: False
-        Add a heatmap to explain which features contribute most to which component.
+        Add a heatmap showing contribution of each feature in the principal components.
+        Also draws a colorbar for readability purpose. The heatmap is accessible 
+        using lax property and colorbar using uax property.
 
     kwargs : dict
         Keyword arguments that are passed to the base class and may influence
@@ -113,7 +133,7 @@ class PCADecomposition(ProjectionVisualizer):
         projection=2,
         proj_features=False,
         colors=None,
-        colormap=palettes.DEFAULT_SEQUENCE,
+        colormap=None,
         alpha=0.75,
         random_state=None,
         colorbar=True,
@@ -138,12 +158,13 @@ class PCADecomposition(ProjectionVisualizer):
         self.alpha = alpha
 
         # Visual Parameters
-        
         self.colorbar = colorbar
         self.heatmap = heatmap
 
         self._uax, self._lax = None, None
 
+        # No heatmap can be drawn with 3d plots as they do not have permit axes 
+        # division.
         if self.projection == 3 and self.heatmap:
             raise YellowbrickValueError(
                 "heatmap and colorbar are not compatible with 3d projections"
@@ -152,7 +173,8 @@ class PCADecomposition(ProjectionVisualizer):
     @property
     def uax(self):
         """
-        The axes of the colorbar, right of the scatterplot.
+        The axes of the colorbar, bottom of scatter plot. This is the colorbar 
+        for heatmap and not for the scatter plot.
         """
         if self._uax is None:
             raise AttributeError(
@@ -164,7 +186,7 @@ class PCADecomposition(ProjectionVisualizer):
     @property
     def lax(self):
         """
-        The axes of the colorbar, right of the scatterplot.
+        The axes of the heatmap below scatter plot.
         """
         if self._lax is None:
             raise AttributeError(
@@ -178,6 +200,11 @@ class PCADecomposition(ProjectionVisualizer):
         Creates the layout for colorbar and heatmap, adding new axes for the heatmap
         if necessary and modifying the aspect ratio. Does not modify the axes or the
         layout if ``self.heatmap`` is ``False`` or ``None``.
+
+        Parameters
+        ----------
+        divider: AxesDivider
+            An AxesDivider to be passed among all layout calls.
         """
 
         # Ensure matplotlib version compatibility
@@ -193,14 +220,16 @@ class PCADecomposition(ProjectionVisualizer):
         if divider is None:
             divider = make_axes_locatable(self.ax)
         
+        # Call to super class ensures that a colorbar is drawn when target is 
+        # continuous.
         super(PCADecomposition, self).layout(divider)
 
-        
-
         if self.heatmap:
+            # Axes for heatmap
             if self._uax is None:
                 self._uax = divider.append_axes("bottom", size="20%", pad=0.7)
-
+                
+            # Axes for colorbar(for heatmap).
             if self._lax is None:
                 self._lax = divider.append_axes("bottom", size="100%", pad=0.5)
 
@@ -222,6 +251,7 @@ class PCADecomposition(ProjectionVisualizer):
         self : visualizer
             Returns self for use in Pipelines
         """
+         # Call super fit to compute features, classes, colors, etc.
         super(PCADecomposition, self).fit(X=X, y=y, **kwargs)
         self.pca_transformer.fit(X)
         self.pca_components_ = self.pca_transformer.named_steps["pca"].components_
@@ -256,7 +286,7 @@ class PCADecomposition(ProjectionVisualizer):
             raise NotFitted.from_estimator(self, 'transform')
             
         
-    def draw(self, X, y):
+    def draw(self, Xp, y):
         """
         Plots a scatterplot of points that represented the decomposition,
         `pca_features_`, of the original features, `X`, projected into either 2 or
@@ -264,15 +294,26 @@ class PCADecomposition(ProjectionVisualizer):
 
         If 2 dimensions are selected, a colorbar and heatmap can also be optionally
         included to show the magnitude of each feature value to the component.
+        
+        Parameters
+        ----------
+        Xp : array-like of shape (n, 2) or (n, 3)
+            The matrix produced by the ``transform()`` method.
+
+        y : array-like of shape (n,), optional
+            The target, used to specify the colors of the points.
+
 
         Returns
         -------
-        self : visualizer.ax
-            Returns the axes of the visualizer for use in Pipelines
+        self.ax : matplotlib Axes object
+            Returns the axes that the scatter plot was drawn on.
         """
-        super(PCADecomposition, self).draw(X, y)
+        # Call to super draw which draws the scatter plot.
+        super(PCADecomposition, self).draw(Xp, y)
         if self.proj_features:
-            self.draw_projection_features(X, y)
+            # Draws projection features in transformed space.
+            self.draw_projection_features(Xp, y)
         if self.projection == 2:
             if self.heatmap:
                 # TODO: change to pcolormesh instead of imshow per #615 spec
@@ -287,12 +328,28 @@ class PCADecomposition(ProjectionVisualizer):
                 )
         return self.ax
 
-    def draw_projection_features(self, X, y):
+    def draw_projection_features(self, Xp, y):
+        """
+        Draw the projection of features in the transformed space.
+        Parameters
+        ----------
+        Xp : array-like of shape (n, 2) or (n, 3)
+            The matrix produced by the ``transform()`` method.
+
+        y : array-like of shape (n,), optional
+            The target, used to specify the colors of the points.
+
+        Returns
+        -------
+        self.ax : matplotlib Axes object
+            Returns the axes that the scatter plot was drawn on.
+
+        """
         
         x_vector = self.pca_components_[0]
         y_vector = self.pca_components_[1]
-        max_x = max(X[:, 0])
-        max_y = max(X[:, 1])
+        max_x = max(Xp[:, 0])
+        max_y = max(Xp[:, 1])
         if self.projection == 2:
             for i in range(self.pca_components_.shape[1]):
                 self.ax.arrow(
@@ -312,7 +369,7 @@ class PCADecomposition(ProjectionVisualizer):
                 )
         elif self.projection == 3:
             z_vector = self.pca_components_[2]
-            max_z = max(X[:, 1])
+            max_z = max(Xp[:, 1])
             for i in range(self.pca_components_.shape[1]):
                 self.ax.plot(
                     [0, x_vector[i] * max_x],
@@ -354,10 +411,6 @@ class PCADecomposition(ProjectionVisualizer):
                 ["First PC", "Second PC"], va="bottom", fontsize=12
             )
 
-        
-
-
-
 ##########################################################################
 ## Quick Method
 ##########################################################################
@@ -368,17 +421,19 @@ def pca_decomposition(
     y=None,
     ax=None,
     features=None,
+    classes=None,
     scale=True,
-    proj_dim=2,
+    projection=2,
     proj_features=False,
-    color=None,
-    colormap=palettes.DEFAULT_SEQUENCE,
+    colors=None,
+    colormap=None,
     alpha=0.75,
     random_state=None,
-    colorbar=False,
+    colorbar=True,
     heatmap=False,
     **kwargs
 ):
+        
     """
     Produce a two or three dimensional principal component plot of the data array ``X``
     projected onto its largest sequential principal components. It is common practice
@@ -398,43 +453,63 @@ def pca_decomposition(
         will be used (or generated if required).
 
     features : list, default: None
-        A list of feature names to use. If a DataFrame is passed to fit and 
-        features is None, feature names are selected as the columns of the DataFrame.
+        The names of the features specified by the columns of the input dataset.
+        This length of this list must match the number of columns in X, otherwise
+        an exception will be raised on ``fit()``.
+        
+    classes : list, default: None
+        The class labels for each class in y, ordered by sorted class index. These
+        names act as a label encoder for the legend, identifying integer classes
+        or renaming string labels. If omitted, the class labels will be taken from
+        the unique values in y.
+
+        Note that the length of this list must match the number of unique values in
+        y, otherwise an exception is raised. This parameter is only used in the
+        discrete target type case and is ignored otherwise.
 
     scale : bool, default: True
         Boolean that indicates if user wants to scale data.
 
-    proj_dim : int, default: 2
-        Dimension of the PCA visualizer.
+    projection : int or string, default: 2
+        The number of axes to project into, either 2d or 3d. To plot 3d plots
+        with matplotlib, please ensure a 3d axes is passed to the visualizer,
+        otherwise one will be created using the current figure.
+
 
     proj_features : bool, default: False
         Boolean that indicates if the user wants to project the features
         in the projected space. If True the plot will be similar to a biplot.
 
-    color : list or tuple of colors, default: None
-        Specify the colors for each individual class.
+    colors : list or tuple, default: None
+        A single color to plot all instances as or a list of colors to color each
+        instance according to its class in the discrete case or as an ordered
+        colormap in the sequential case. If not enough colors per class are
+        specified then the colors are treated as a cycle.
 
     colormap : string or cmap, default: None
-        Optional string or matplotlib cmap to colorize lines.
-        Use either color to colorize the lines on a per class basis or
-        colormap to color them on a continuous scale.
-
+        The colormap used to create the individual colors. In the discrete case
+        it is used to compute the number of colors needed for each class and
+        in the continuous case it is used to create a sequential color map based
+        on the range of the target.
+        
     alpha : float, default: 0.75
         Specify a transparency where 1 is completely opaque and 0 is completely
         transparent. This property makes densely clustered points more visible.
 
     random_state : int, RandomState instance or None, optional (default None)
-        If input X is larger than 500x500 and the number of components to
-        extract is lower than 80% of the smallest dimension of the data, then
-        the more efficient `randomized` solver is enabled, this parameter sets
-        the random state on this solver.
+        This parameter sets the random state on this solver. If the input X is 
+        larger than 500x500 and the number of components to extract is lower 
+        than 80% of the smallest dimension of the data, then the more efficient 
+        `randomized` solver is enabled.
 
-    colorbar : bool, default: False
-        Add a colorbar to shows the range in magnitude of feature values to the
-        component.
-
+    colorbar : bool, default: True
+        If the target_type is "continous" draw a colorbar to the right of the
+        scatter plot. The colobar axes is accessible using the cax property.
+        
     heatmap : bool, default: False
-        Add a heatmap to explain which features contribute most to which component.
+        Add a heatmap showing contribution of each feature in the principal components.
+        Also draws a colorbar for readability purpose. The heatmap is accessible 
+        using lax property and colorbar using uax property.
 
     kwargs : dict
         Keyword arguments that are passed to the base class and may influence
@@ -446,7 +521,7 @@ def pca_decomposition(
     >>> iris = datasets.load_iris()
     >>> X = iris.data
     >>> y = iris.target
-    >>> pca_decomposition(X, color=y, proj_dim=3, colormap='RdBu_r')
+    >>> pca_decomposition(X, y, colors=['r', 'g', 'b'], projection=3)
 
     """
     # Instantiate the visualizer
@@ -454,9 +529,9 @@ def pca_decomposition(
         ax=ax,
         features=features,
         scale=scale,
-        proj_dim=proj_dim,
+        projection=projection,
         proj_features=proj_features,
-        color=color,
+        colors=colors,
         colormap=colormap,
         alpha=alpha,
         random_state=random_state,

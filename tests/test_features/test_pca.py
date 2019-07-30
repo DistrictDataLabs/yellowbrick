@@ -17,8 +17,9 @@ Tests for the PCA based feature visualizer.
 ## Imports
 ##########################################################################
 
-#import sys
+import sys
 import pytest
+import numpy.testing as npt
 import numpy as np
 
 from unittest import mock
@@ -26,7 +27,7 @@ from ..fixtures import Dataset
 from tests.base import VisualTestCase
 
 from yellowbrick.features.pca import *
-from yellowbrick.exceptions import YellowbrickError
+from yellowbrick.exceptions import YellowbrickError, NotFitted
 
 from sklearn.datasets import make_classification, make_regression
 
@@ -88,15 +89,23 @@ class TestPCADecomposition(VisualTestCase):
 
 
     def test_single(self):
-        visualizer = PCADecomposition()
+        """
+        Test single target.
+        """
+        visualizer = PCADecomposition(random_state=1998)
         visualizer.fit(self.continuous.X)
         visualizer.transform(self.continuous.X)
         self.assert_images_similar(visualizer)
         
     def test_continuous(self):
-        visualizer = PCADecomposition(colormap="YlOrRd")
+        """
+        Test continuous target
+        """
+        visualizer = PCADecomposition(colormap="YlOrRd", random_state=2019)
+        assert not hasattr(visualizer, "range_")
         visualizer.fit(*self.continuous)
         visualizer.transform(*self.continuous)
+        assert hasattr(visualizer, "range_")
         visualizer.finalize()
         
         visualizer.cax.set_yticklabels([])
@@ -104,16 +113,38 @@ class TestPCADecomposition(VisualTestCase):
         self.assert_images_similar(visualizer)
         
     def test_discrete(self):
-        
+        """
+        Test discrete target.
+        """
         colors = ['Y', 'C0']
-        visualizer = PCADecomposition(colors=colors)
+        classes = ["cats", "dogs"]
+        visualizer = PCADecomposition(colors=colors, classes=classes, random_state=83)
+        assert not hasattr(visualizer, "classes_")
         visualizer.fit(*self.dataset)
+        assert hasattr(visualizer, "classes_")
         visualizer.transform(*self.dataset)
         
+        # Make sure that classes are set correctly.
+        npt.assert_array_equal(visualizer.classes_, classes)
+
         self.assert_images_similar(visualizer)
-#    @pytest.mark.xfail(
-#        sys.platform == "win32", reason="images not close on windows (RMSE=4)"
-#    )
+
+    def test_fit(self):
+        """
+        Test that fit returns self.
+        """
+        pca = PCADecomposition()
+        assert pca.fit(*self.dataset) is pca 
+        
+    def test_transform_without_fit(self):
+        """
+        Test that appropriate error is raised when transform called without fit.
+        """
+        oz = PCADecomposition(projection=3)
+        msg = "instance is not fitted yet, please call fit"
+        with pytest.raises(NotFitted, match=msg):
+            oz.transform(*self.continuous)
+    
     def test_pca_decomposition_quick_method(self):
         """
         Test the quick method PCADecomposition visualizer 2 dimensions scaled.
@@ -121,11 +152,8 @@ class TestPCADecomposition(VisualTestCase):
         ax = pca_decomposition(
             *self.dataset, projection=2, scale=True, random_state=28
         )
-        self.assert_images_similar(ax=ax)#, tol=5)
+        self.assert_images_similar(ax=ax)
 
-#    @pytest.mark.xfail(
-#        sys.platform == "win32", reason="images not close on windows (RMSE=?)"
-#    )
     def test_scale_true_2d(self):
         """
         Test the PCADecomposition visualizer 2 dimensions scaled.
@@ -155,9 +183,7 @@ class TestPCADecomposition(VisualTestCase):
         # Assert PCA transformation occurred successfully
         assert pca_array.shape == (self.continuous.X.shape[0], 2)
 
-#    @pytest.mark.xfail(
-#        sys.platform == "win32", reason="images not close on windows (RMSE=3)"
-#    )
+
     def test_biplot_2d(self):
         """
         Test the PCADecomposition 2D biplot (proj_features).
@@ -205,9 +231,9 @@ class TestPCADecomposition(VisualTestCase):
         # Assert PCA transformation occurred successfully
         assert pca_array.shape == (self.dataset.X.shape[0], 3)
 
-#    @pytest.mark.xfail(
-#        sys.platform == "win32", reason="images not close on windows (RMSE=3)"
-#    )
+    @pytest.mark.xfail(
+        sys.platform == "win32", reason="images not close on windows (RMSE=3)"
+    )
     def test_biplot_3d(self):
         """
         Test the PCADecomposition 3D biplot (proj_features).
