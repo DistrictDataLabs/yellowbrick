@@ -23,7 +23,6 @@ import matplotlib.pyplot as plt
 from mpl_toolkits.axes_grid1 import make_axes_locatable
 
 from yellowbrick.features.projection import ProjectionVisualizer
-from yellowbrick.style import palettes
 from yellowbrick.exceptions import YellowbrickValueError, NotFitted
 
 from sklearn.pipeline import Pipeline
