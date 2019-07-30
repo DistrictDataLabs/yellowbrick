@@ -33,6 +33,7 @@ from yellowbrick.exceptions import YellowbrickValueError, YellowbrickWarning, No
 ## Projection Visualizers
 ##########################################################################
 
+
 class ProjectionVisualizer(DataVisualizer):
     """
     The ProjectionVisualizer provides functionality for projecting a multi-dimensional
@@ -107,9 +108,19 @@ class ProjectionVisualizer(DataVisualizer):
         the visualization as defined in other Visualizers.
     """
 
-    def __init__(self, ax=None, features=None, classes=None, colors=None,
-             colormap=None, target_type="auto", projection=2, alpha=0.75,
-             colorbar=True, **kwargs):
+    def __init__(
+        self,
+        ax=None,
+        features=None,
+        classes=None,
+        colors=None,
+        colormap=None,
+        target_type="auto",
+        projection=2,
+        alpha=0.75,
+        colorbar=True,
+        **kwargs
+    ):
 
         # TODO: add this to resolve_colors
         if colors is None and colormap is None:
@@ -127,17 +138,19 @@ class ProjectionVisualizer(DataVisualizer):
 
         # Convert string to integer
         if isinstance(projection, str):
-            if projection in {'2D', '2d'}:
+            if projection in {"2D", "2d"}:
                 projection = 2
-            if projection in {'3D', '3d'}:
+            if projection in {"3D", "3d"}:
                 projection = 3
         if projection not in {2, 3}:
             raise YellowbrickValueError("Projection dimensions must be either 2 or 3")
         self.projection = projection
 
-        if self.ax.name!='3d' and self.projection == 3:
-                warnings.warn("data projection to 3 dimensions requires a 3d axes to draw on.",
-                              YellowbrickWarning)
+        if self.ax.name != "3d" and self.projection == 3:
+            warnings.warn(
+                "data projection to 3 dimensions requires a 3d axes to draw on.",
+                YellowbrickWarning,
+            )
 
         self.alpha = alpha
         self.colorbar = colorbar
@@ -149,9 +162,7 @@ class ProjectionVisualizer(DataVisualizer):
         The axes of the colorbar, right of the scatterplot.
         """
         if self._cax is None:
-            raise AttributeError(
-                "This visualizer does not have an axes for colorbar"
-            )
+            raise AttributeError("This visualizer does not have an axes for colorbar")
 
         return self._cax
 
@@ -162,9 +173,9 @@ class ProjectionVisualizer(DataVisualizer):
         creates an axes for users. A 3d axes is created for 3 dimensional plots.
         """
         if not hasattr(self, "_ax") or self._ax is None:
-            if self.projection==3:
+            if self.projection == 3:
                 fig = plt.gcf()
-                self._ax = fig.add_subplot(111, projection='3d')
+                self._ax = fig.add_subplot(111, projection="3d")
             else:
                 self._ax = plt.gca()
         return self._ax
@@ -180,20 +191,26 @@ class ProjectionVisualizer(DataVisualizer):
 
         Subclasses can override this method to add other axes or layouts.
         """
-        if self._cax is None and self._target_color_type == TargetType.CONTINUOUS and self.colorbar:
+        if (
+            self._cax is None
+            and self._target_color_type == TargetType.CONTINUOUS
+            and self.colorbar
+        ):
             if self.projection == 2:
 
                 # Ensure matplotlib version compatibility
                 if make_axes_locatable is None:
-                    raise YellowbrickValueError((
-                        "Colorbar requires matplotlib 2.0.2 or greater "
-                        "please upgrade matplotlib"
-                    ))
-    
+                    raise YellowbrickValueError(
+                        (
+                            "Colorbar requires matplotlib 2.0.2 or greater "
+                            "please upgrade matplotlib"
+                        )
+                    )
+
                 # Create the new axes for the colorbar
                 if divider is None:
                     divider = make_axes_locatable(self.ax)
-                
+
                 self._cax = divider.append_axes("right", size="5%", pad=0.3)
                 self._cax.set_yticks([])
                 self._cax.set_xticks([])
@@ -238,12 +255,12 @@ class ProjectionVisualizer(DataVisualizer):
             Returns the axes that the scatter plot was drawn on.
         """
         scatter_kwargs = self._determine_scatter_kwargs(y)
- 
+
         self.layout()
 
         if self.projection == 2:
             # Adds colorbar axis for continuous target type.
-#            self.layout()
+            #            self.layout()
             self.ax.scatter(Xp[:, 0], Xp[:, 1], **scatter_kwargs)
 
         if self.projection == 3:
@@ -257,19 +274,21 @@ class ProjectionVisualizer(DataVisualizer):
         """
         if self._target_color_type == TargetType.DISCRETE:
             # Add the legend
-            manual_legend(self, self.classes_, list(self._colors.values()),
-                          frameon=True)
+            manual_legend(
+                self, self.classes_, list(self._colors.values()), frameon=True
+            )
 
         elif self._target_color_type == TargetType.CONTINUOUS:
             if self.colorbar:
                 if self.projection == 3:
-                    sm = plt.cm.ScalarMappable(cmap=self._colors, norm = self._norm)
+                    sm = plt.cm.ScalarMappable(cmap=self._colors, norm=self._norm)
                     self.cbar = plt.colorbar(sm, ax=self.ax)
-    
+
                 else:
                     # Manually draw the colorbar.
-                    self.cbar = mpl.colorbar.ColorbarBase(self.cax, cmap=self._colors,
-                                                      norm=self._norm)
+                    self.cbar = mpl.colorbar.ColorbarBase(
+                        self.cax, cmap=self._colors, norm=self._norm
+                    )
 
     def _determine_scatter_kwargs(self, y=None):
         """
@@ -297,7 +316,6 @@ class ProjectionVisualizer(DataVisualizer):
                 scatter_kwargs["c"] = [self._colors[self.classes_[yi]] for yi in y]
             except IndexError:
                 raise YellowbrickValueError("Target needs to be label encoded.")
-
 
         elif self._target_color_type == TargetType.CONTINUOUS:
             if y is None:

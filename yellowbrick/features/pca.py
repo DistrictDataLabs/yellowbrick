@@ -35,6 +35,7 @@ from sklearn.exceptions import NotFittedError
 # 2D and 3D PCA Visualizer
 ##########################################################################
 
+
 class PCADecomposition(ProjectionVisualizer):
     """
     Produce a two or three dimensional principal component plot of a data array
@@ -139,9 +140,17 @@ class PCADecomposition(ProjectionVisualizer):
         heatmap=False,
         **kwargs
     ):
-        super(PCADecomposition, self).__init__(ax=ax, features=features, 
-             classes=classes, colors=colors, colormap=colormap, projection=projection, 
-             alpha=alpha, colorbar=colorbar, **kwargs)
+        super(PCADecomposition, self).__init__(
+            ax=ax,
+            features=features,
+            classes=classes,
+            colors=colors,
+            colormap=colormap,
+            projection=projection,
+            alpha=alpha,
+            colorbar=colorbar,
+            **kwargs
+        )
 
         # Data Parameters
         self.scale = scale
@@ -161,7 +170,7 @@ class PCADecomposition(ProjectionVisualizer):
 
         self._uax, self._lax = None, None
 
-        # No heatmap can be drawn with 3d plots as they do not have permit axes 
+        # No heatmap can be drawn with 3d plots as they do not have permit axes
         # division.
         if self.projection == 3 and self.heatmap:
             raise YellowbrickValueError(
@@ -175,21 +184,17 @@ class PCADecomposition(ProjectionVisualizer):
         for heatmap and not for the scatter plot.
         """
         if self._uax is None:
-            raise AttributeError(
-                "This visualizer does not have an axes for colorbar"
-            )
+            raise AttributeError("This visualizer does not have an axes for colorbar")
 
         return self._uax
-    
+
     @property
     def lax(self):
         """
         The axes of the heatmap below scatter plot.
         """
         if self._lax is None:
-            raise AttributeError(
-                "This visualizer does not have an axes for heatmap"
-            )
+            raise AttributeError("This visualizer does not have an axes for heatmap")
 
         return self._lax
 
@@ -217,8 +222,8 @@ class PCADecomposition(ProjectionVisualizer):
         # Create the new axes for the colorbar and heatmap
         if divider is None:
             divider = make_axes_locatable(self.ax)
-        
-        # Call to super class ensures that a colorbar is drawn when target is 
+
+        # Call to super class ensures that a colorbar is drawn when target is
         # continuous.
         super(PCADecomposition, self).layout(divider)
 
@@ -226,7 +231,7 @@ class PCADecomposition(ProjectionVisualizer):
             # Axes for heatmap
             if self._uax is None:
                 self._uax = divider.append_axes("bottom", size="20%", pad=0.7)
-                
+
             # Axes for colorbar(for heatmap).
             if self._lax is None:
                 self._lax = divider.append_axes("bottom", size="100%", pad=0.5)
@@ -249,7 +254,7 @@ class PCADecomposition(ProjectionVisualizer):
         self : visualizer
             Returns self for use in Pipelines
         """
-         # Call super fit to compute features, classes, colors, etc.
+        # Call super fit to compute features, classes, colors, etc.
         super(PCADecomposition, self).fit(X=X, y=y, **kwargs)
         self.pca_transformer.fit(X)
         self.pca_components_ = self.pca_transformer.named_steps["pca"].components_
@@ -281,9 +286,8 @@ class PCADecomposition(ProjectionVisualizer):
             self.draw(Xp, y)
             return Xp
         except NotFittedError:
-            raise NotFitted.from_estimator(self, 'transform')
-            
-        
+            raise NotFitted.from_estimator(self, "transform")
+
     def draw(self, Xp, y):
         """
         Plots a scatterplot of points that represented the decomposition,
@@ -343,7 +347,7 @@ class PCADecomposition(ProjectionVisualizer):
             Returns the axes that the scatter plot was drawn on.
 
         """
-        
+
         x_vector = self.pca_components_[0]
         y_vector = self.pca_components_[1]
         max_x = max(Xp[:, 0])
@@ -384,7 +388,7 @@ class PCADecomposition(ProjectionVisualizer):
                 )
         else:
             raise YellowbrickValueError("Projection dimensions must be either 2 or 3")
-        
+
         return self.ax
 
     def finalize(self, **kwargs):
@@ -393,7 +397,7 @@ class PCADecomposition(ProjectionVisualizer):
         keyword arguments.
         """
         super(PCADecomposition, self).finalize()
-        
+
         self.ax.set_title("Principal Component Plot")
         self.ax.set_xlabel("Principal Component 1", linespacing=1)
         self.ax.set_ylabel("Principal Component 2", linespacing=1.2)
@@ -408,6 +412,7 @@ class PCADecomposition(ProjectionVisualizer):
             self.lax.set_yticklabels(
                 ["First PC", "Second PC"], va="bottom", fontsize=12
             )
+
 
 ##########################################################################
 ## Quick Method
@@ -431,7 +436,7 @@ def pca_decomposition(
     heatmap=False,
     **kwargs
 ):
-        
+
     """
     Produce a two or three dimensional principal component plot of the data array ``X``
     projected onto its largest sequential principal components. It is common practice

@@ -64,6 +64,7 @@ def binary(request):
     # Set a class attribute for digits
     request.cls.dataset = Dataset(X, y)
 
+
 @pytest.fixture(scope="class")
 def continuous(request):
     """
@@ -76,6 +77,7 @@ def continuous(request):
     # Set a class attribute for continuous data
     request.cls.continuous = Dataset(X, y)
 
+
 ##########################################################################
 ##PCA Tests
 ##########################################################################
@@ -87,7 +89,6 @@ class TestPCADecomposition(VisualTestCase):
     Test the PCADecomposition visualizer
     """
 
-
     def test_single(self):
         """
         Test single target.
@@ -96,7 +97,7 @@ class TestPCADecomposition(VisualTestCase):
         visualizer.fit(self.continuous.X)
         visualizer.transform(self.continuous.X)
         self.assert_images_similar(visualizer)
-        
+
     def test_continuous(self):
         """
         Test continuous target
@@ -107,23 +108,23 @@ class TestPCADecomposition(VisualTestCase):
         visualizer.transform(*self.continuous)
         assert hasattr(visualizer, "range_")
         visualizer.finalize()
-        
+
         visualizer.cax.set_yticklabels([])
-        
+
         self.assert_images_similar(visualizer)
-        
+
     def test_discrete(self):
         """
         Test discrete target.
         """
-        colors = ['Y', 'C0']
+        colors = ["Y", "C0"]
         classes = ["cats", "dogs"]
         visualizer = PCADecomposition(colors=colors, classes=classes, random_state=83)
         assert not hasattr(visualizer, "classes_")
         visualizer.fit(*self.dataset)
         assert hasattr(visualizer, "classes_")
         visualizer.transform(*self.dataset)
-        
+
         # Make sure that classes are set correctly.
         npt.assert_array_equal(visualizer.classes_, classes)
 
@@ -134,8 +135,8 @@ class TestPCADecomposition(VisualTestCase):
         Test that fit returns self.
         """
         pca = PCADecomposition()
-        assert pca.fit(*self.dataset) is pca 
-        
+        assert pca.fit(*self.dataset) is pca
+
     def test_transform_without_fit(self):
         """
         Test that appropriate error is raised when transform called without fit.
@@ -144,14 +145,12 @@ class TestPCADecomposition(VisualTestCase):
         msg = "instance is not fitted yet, please call fit"
         with pytest.raises(NotFitted, match=msg):
             oz.transform(*self.continuous)
-    
+
     def test_pca_decomposition_quick_method(self):
         """
         Test the quick method PCADecomposition visualizer 2 dimensions scaled.
         """
-        ax = pca_decomposition(
-            *self.dataset, projection=2, scale=True, random_state=28
-        )
+        ax = pca_decomposition(*self.dataset, projection=2, scale=True, random_state=28)
         self.assert_images_similar(ax=ax)
 
     def test_scale_true_2d(self):
@@ -179,10 +178,9 @@ class TestPCADecomposition(VisualTestCase):
         visualizer.cax.set_yticklabels([])
         # Image comparison tests
         self.assert_images_similar(visualizer, tol=0.03)
-        
+
         # Assert PCA transformation occurred successfully
         assert pca_array.shape == (self.continuous.X.shape[0], 2)
-
 
     def test_biplot_2d(self):
         """
@@ -346,7 +344,9 @@ class TestPCADecomposition(VisualTestCase):
             "colorbar": True,
             "heatmap": True,
         }
-        visualizer = PCADecomposition(**params).fit(self.continuous.X, self.continuous.y)
+        visualizer = PCADecomposition(**params).fit(
+            self.continuous.X, self.continuous.y
+        )
         visualizer.transform(self.continuous.X, self.continuous.y)
         visualizer.finalize()
         # TODO: manually modifying ticks should be removed after #916 is fixed
@@ -354,7 +354,7 @@ class TestPCADecomposition(VisualTestCase):
         visualizer.lax.set_yticks([])
         visualizer.uax.set_xticklabels([])
         visualizer.cax.set_yticklabels([])
-        
+
         # Image comparison tests
         self.assert_images_similar(visualizer)
 
