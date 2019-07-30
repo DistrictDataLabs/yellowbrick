@@ -3,7 +3,7 @@
 UMAP Corpus Visualization
 ==========================
 
-`UMAP <https://github.com/lmcinnes/umap>`__ is a nonlinear
+`Uniform Manifold Approximation and Projection (UMAP) <https://github.com/lmcinnes/umap>`__ is a nonlinear
 dimensionality reduction method that is well suited to embedding in two
 or three dimensions for visualization as a scatter plot. UMAP is a
 relatively new technique but is very effective for visualizing clusters or
@@ -21,8 +21,8 @@ the paper can be found `here <https://arxiv.org/abs/1802.03426>`__.
 In this example, we represent documents via a `term frequency inverse
 document
 frequency <https://scikit-learn.org/stable/modules/feature_extraction.html#text-feature-extraction>`__ (TF-IDF)
-vector. Then use UMAP to find a low dimensional representation of these
-documents. The Yellowbrick visualizer then plots the scatter plot,
+vector and then use UMAP to find a low dimensional representation of these
+documents. Next, the Yellowbrick visualizer plots the scatter plot,
 coloring by cluster or by class, or neither if a structural analysis is
 required.
 
@@ -110,10 +110,10 @@ us to look for clusters of related text by their contents:
 .. image:: images/umap_kmeans.png
 
 On one hand, these clusters aren’t particularly well concentrated by the
-two dimensional embedding of UMAP; while on the other hand, the true labels
+two-dimensional embedding of UMAP; while on the other hand, the true labels
 for this data are. That is a good indication that your data does indeed
 live on a manifold in your TF-IDF space and that structure is being
-ignored by the KMeans algorithm. Clustering can be quite tricky in high
+ignored by the K-Means algorithm. Clustering can be quite tricky in high
 dimensional spaces and it is often a good idea to reduce your dimension
 before running clustering algorithms on your data.
 
