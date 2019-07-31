@@ -1,10 +1,13 @@
 # tests.test_base.py
 # Assertions for the base classes and abstract hierarchy.
 #
-# Author:   Rebecca Bilbro <rbilbro@districtdatalabs.com>
-# Author:   Benjamin Bengfort <bbengfort@districtdatalabs.com>
+# Author:   Rebecca Bilbro
+# Author:   Benjamin Bengfort
 # Author:   Neal Humphrey
 # Created:  Sat Oct 08 18:34:30 2016 -0400
+#
+# Copyright (C) 2016 The scikit-yb developers
+# For license information, see LICENSE.txt
 #
 # ID: test_base.py [83131ef] benjamin@bengfort.com $
 
@@ -36,6 +39,7 @@ from sklearn.datasets import make_classification
 ## Base Cases
 ##########################################################################
 
+
 class TestBaseClasses(VisualTestCase):
     """
     Tests for the high-level API of Yellowbrick and base classes
@@ -53,11 +57,23 @@ class TestBaseClasses(VisualTestCase):
         assert viz._ax == "foo"
         assert viz.ax == "foo"
 
+    def test_visualizer_fig_property(self):
+        """
+        Test the fig property on the Visualizer
+        """
+        viz = Visualizer()
+        assert viz._fig is None
+        assert viz.fig is not None
+
+        viz.fig = "foo"
+        assert viz._fig == "foo"
+        assert viz.fig == "foo"
+
     def test_size_property(self):
         """
         Test the size property on the base Visualizer
         """
-        fig = plt.figure(figsize =(1,2))
+        fig = plt.figure(figsize=(1, 2))
         viz = Visualizer()
 
         assert viz._size is None
@@ -100,6 +116,7 @@ class TestBaseClasses(VisualTestCase):
         """
         Test poof calls plt.show and other figure finalization correctly
         """
+
         class CustomVisualizer(Visualizer):
             pass
 
@@ -117,6 +134,7 @@ class TestBaseClasses(VisualTestCase):
         """
         Test poof calls plt.savefig and other figure finalization correctly
         """
+
         class CustomVisualizer(Visualizer):
             pass
 
@@ -134,6 +152,7 @@ class TestBaseClasses(VisualTestCase):
         """
         Test poof issues a warning when no axes has been modified
         """
+
         class CustomVisualizer(Visualizer):
             pass
 
@@ -146,6 +165,7 @@ class TestBaseClasses(VisualTestCase):
 ## Visual Grid Cases
 ##########################################################################
 
+
 @pytest.mark.filterwarnings("ignore:Matplotlib is currently using agg")
 class TestVisualizerGrid(VisualTestCase):
     """
@@ -154,28 +174,25 @@ class TestVisualizerGrid(VisualTestCase):
 
     @pytest.mark.xfail(
         IS_WINDOWS_OR_CONDA,
-        reason="font rendering different in OS and/or Python; see #892"
+        reason="font rendering different in OS and/or Python; see #892",
     )
     def test_draw_visualizer_grid(self):
         """
         Draw a 4 visualizers grid with default options
         """
-        visualizers = [
-            RandomVisualizer(random_state=(1+x)**2)
-            for x in range(4)
-        ]
+        visualizers = [RandomVisualizer(random_state=(1 + x) ** 2) for x in range(4)]
 
         X, y = make_classification(random_state=78)
         grid = VisualizerGrid(visualizers)
 
         grid.fit(X, y)
-        grid.poof() # poof is required here (do not replace with finalize)!
+        grid.poof()  # poof is required here (do not replace with finalize)!
 
         self.assert_images_similar(grid)
 
     @pytest.mark.xfail(
         IS_WINDOWS_OR_CONDA,
-        reason="font rendering different in OS and/or Python; see #892"
+        reason="font rendering different in OS and/or Python; see #892",
     )
     def test_draw_with_rows(self):
         """
@@ -190,13 +207,13 @@ class TestVisualizerGrid(VisualTestCase):
         grid = VisualizerGrid(visualizers, nrows=2)
 
         grid.fit(X, y)
-        grid.poof() # poof is required here (do not replace with finalize)!
+        grid.poof()  # poof is required here (do not replace with finalize)!
 
         self.assert_images_similar(grid)
 
     @pytest.mark.xfail(
         IS_WINDOWS_OR_CONDA,
-        reason="font rendering different in OS and/or Python; see #892"
+        reason="font rendering different in OS and/or Python; see #892",
     )
     def test_draw_with_cols(self):
         """
@@ -211,7 +228,7 @@ class TestVisualizerGrid(VisualTestCase):
         grid = VisualizerGrid(visualizers, ncols=2)
 
         grid.fit(X, y)
-        grid.poof() # poof is required here (do not replace with finalize)!
+        grid.poof()  # poof is required here (do not replace with finalize)!
 
         self.assert_images_similar(grid)
 

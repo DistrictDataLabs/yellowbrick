@@ -1,12 +1,12 @@
 # yellowbrick.classifier.base
 # API for classification visualizer hierarchy.
 #
-# Author:   Rebecca Bilbro <rbilbro@districtdatalabs.com>
-# Author:   Benjamin Bengfort <bbengfort@districtdatalabs.com>
+# Author:   Rebecca Bilbro
+# Author:   Benjamin Bengfort
 # Author:   Neal Humphrey
 # Created:  Wed May 18 12:39:40 2016 -0400
 #
-# Copyright (C) 2016 District Data Labs
+# Copyright (C) 2016 The scikit-yb developers
 # For license information, see LICENSE.txt
 #
 # ID: base.py [5388065] neal@nhumphrey.com $
@@ -31,25 +31,27 @@ from ..exceptions import YellowbrickTypeError
 ## Base Classification Visualizer
 ##########################################################################
 
-class ClassificationScoreVisualizer(ScoreVisualizer):
 
-    def __init__(self, model, ax=None, classes=None, **kwargs):
+class ClassificationScoreVisualizer(ScoreVisualizer):
+    def __init__(self, model, ax=None, fig=None, classes=None, **kwargs):
         """
         Check to see if model is an instance of a classifer.
         Should return an error if it isn't.
 
         .. todo:: document this class.
-        .. tood:: accept as input classes as all visualizers need this.
+        .. todo:: accept as input ``classes``, as all visualizers need this.
         """
         # A bit of type checking
         if not isclassifier(model):
             raise YellowbrickTypeError(
                 "This estimator is not a classifier; "
                 "try a regression or clustering score visualizer instead!"
-        )
+            )
 
         # Initialize the super method.
-        super(ClassificationScoreVisualizer, self).__init__(model, ax=ax, **kwargs)
+        super(ClassificationScoreVisualizer, self).__init__(
+            model, ax=ax, fig=fig, **kwargs
+        )
 
         # Convert to array if necessary to match estimator.classes_
         if classes is not None:
@@ -61,8 +63,8 @@ class ClassificationScoreVisualizer(ScoreVisualizer):
         else:
             n_colors = None
 
-        self.colors    = color_palette(kwargs.pop('colors', None), n_colors)
-        self.classes_  = classes
+        self.colors = color_palette(kwargs.pop("colors", None), n_colors)
+        self.classes_ = classes
 
     @property
     def classes_(self):
@@ -74,7 +76,7 @@ class ClassificationScoreVisualizer(ScoreVisualizer):
             try:
                 return self.estimator.classes_
             except AttributeError:
-                return None
+                return None  # TODO: raise NotFittedError instead of returning None
         return self.__classes
 
     @classes_.setter
@@ -92,7 +94,8 @@ class ClassificationScoreVisualizer(ScoreVisualizer):
         y : ndarray or Series of length n
             An array or series of target or class values
 
-        kwargs: keyword arguments passed to Scikit-Learn API.
+        kwargs: dict
+            Keyword arguments passed to Scikit-Learn API.
 
         Returns
         -------
@@ -110,7 +113,6 @@ class ClassificationScoreVisualizer(ScoreVisualizer):
         # Always return self from fit
         return self
 
-
     def score(self, X, y, **kwargs):
         """
         The score function is the hook for visual interaction. Pass in test
@@ -118,21 +120,23 @@ class ClassificationScoreVisualizer(ScoreVisualizer):
         evaluate them with respect to the test values. The evaluation will
         then be passed to draw() and the result of the estimator score will
         be returned.
+
         Parameters
         ----------
         X : array-like
             X (also X_test) are the dependent variables of test set to predict
         y : array-like
             y (also y_test) is the independent actual variables to score against
+
         Returns
         -------
         score : float
         """
-        self.score_ =  self.estimator.score(X, y, **kwargs)
+        self.score_ = self.estimator.score(X, y, **kwargs)
 
         return self.score_
 
-    #TODO during refactoring this can be used to generalize ClassBalance
+    # TODO during refactoring this can be used to generalize ClassBalance
     def class_counts(self, y):
         unique, counts = np.unique(y, return_counts=True)
         return dict(zip(unique, counts))
