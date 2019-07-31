@@ -1,14 +1,14 @@
 # yellowbrick.classifier.classification_report
 # Visual classification report for classifier scoring.
 #
-# Author:   Rebecca Bilbro <rbilbro@districtdatalabs.com>
-# Author:   Benjamin Bengfort <bbengfort@districtdatalabs.com>
+# Author:   Rebecca Bilbro
+# Author:   Benjamin Bengfort
 # Author:   Neal Humphrey
 # Author:   Allyssa Riley
 # Author:   Larry Gray
-# Created:  Wed May 18 12:39:40 2016 -0400
+# Created:  Wed May 3 18:15:42 2017 -0400
 #
-# Copyright (C) 2017 District Data Labs
+# Copyright (C) 2017 The scikit-yb developers
 # For license information, see LICENSE.txt
 #
 # ID: classification_report.py [5388065] neal@nhumphrey.com $
@@ -29,17 +29,17 @@ from sklearn.metrics import precision_recall_fscore_support
 
 from ..style import find_text_color
 from ..style.palettes import color_sequence
-from .base import ClassificationScoreVisualizer
 from ..exceptions import YellowbrickValueError
+from .base import ClassificationScoreVisualizer
 
 ##########################################################################
 ## Classification Report
 ##########################################################################
 
-CMAP_UNDERCOLOR = 'w'
-CMAP_OVERCOLOR = '#2a7d4f'
-SCORES_KEYS = ('precision', 'recall', 'f1', 'support')
-PERCENT = 'percent'
+PERCENT = "percent"
+CMAP_UNDERCOLOR = "w"
+CMAP_OVERCOLOR = "#2a7d4f"
+SCORES_KEYS = ("precision", "recall", "f1", "support")
 
 
 class ClassificationReport(ClassificationScoreVisualizer):
@@ -49,7 +49,8 @@ class ClassificationReport(ClassificationScoreVisualizer):
 
     Parameters
     ----------
-    ax : The axis to plot the figure on.
+    ax : Matplotlib Axes object
+        The axis to plot the figure on.
 
     model : the Scikit-Learn estimator
         Should be an instance of a classifier, else the __init__ will
@@ -67,7 +68,8 @@ class ClassificationReport(ClassificationScoreVisualizer):
         Specify if support will be displayed. It can be further defined by
         whether support should be reported as a raw count or percentage.
 
-    kwargs : keyword arguments passed to the super class.
+    kwargs : dict
+        Keyword arguments passed to the super class.
 
     Examples
     --------
@@ -87,21 +89,23 @@ class ClassificationReport(ClassificationScoreVisualizer):
         Outer dictionary composed of precision, recall, f1, and support scores with
         inner dictionaries specifiying the values for each class listed.
     """
-    def __init__(self, model, ax=None,  classes=None, cmap='YlOrRd',
-                 support=None, **kwargs):
+
+    def __init__(
+        self, model, ax=None, classes=None, cmap="YlOrRd", support=None, **kwargs
+    ):
         super(ClassificationReport, self).__init__(
             model, ax=ax, classes=classes, **kwargs
         )
 
-        self.cmap = color_sequence(cmap)
-        self.cmap.set_under(color=CMAP_UNDERCOLOR)
-        self.cmap.set_over(color=CMAP_OVERCOLOR)
-        self._displayed_scores = [key for key in SCORES_KEYS]
         self.support = support
+        self.cmap = color_sequence(cmap)
+        self.cmap.set_over(color=CMAP_OVERCOLOR)
+        self.cmap.set_under(color=CMAP_UNDERCOLOR)
+        self._displayed_scores = [key for key in SCORES_KEYS]
 
         if support not in {None, True, False, "percent", "count"}:
             raise YellowbrickValueError(
-                "'{}' is an invalid argument for support, use None, True, " \
+                "'{}' is an invalid argument for support, use None, True, "
                 "False, 'percent', or 'count'".format(support)
             )
 
@@ -144,7 +148,7 @@ class ClassificationReport(ClassificationScoreVisualizer):
 
         # Remove support scores if not required
         if not self.support:
-            self.scores_.pop('support')
+            self.scores_.pop("support")
 
         self.draw()
 
@@ -160,7 +164,6 @@ class ClassificationReport(ClassificationScoreVisualizer):
         # Create display grid
         cr_display = np.zeros((len(self.classes_), len(self._displayed_scores)))
 
-
         # For each class row, append columns for precision, recall, f1, and support
         for idx, cls in enumerate(self.classes_):
             for jdx, metric in enumerate(self._displayed_scores):
@@ -168,7 +171,10 @@ class ClassificationReport(ClassificationScoreVisualizer):
 
         # Set up the dimensions of the pcolormesh
         # NOTE: pcolormesh accepts grids that are (N+1,M+1)
-        X, Y = np.arange(len(self.classes_)+1), np.arange(len(self._displayed_scores)+1)
+        X, Y = (
+            np.arange(len(self.classes_) + 1),
+            np.arange(len(self._displayed_scores) + 1),
+        )
         self.ax.set_ylim(bottom=0, top=cr_display.shape[0])
         self.ax.set_xlim(left=0, right=cr_display.shape[1])
 
@@ -193,21 +199,18 @@ class ClassificationReport(ClassificationScoreVisualizer):
                 text_color = find_text_color(base_color)
 
                 # Add the label to the middle of the grid
-                cx, cy = x+0.5, y+0.5
-                self.ax.text(
-                    cy, cx, svalue, va='center', ha='center', color=text_color
-                )
-
+                cx, cy = x + 0.5, y + 0.5
+                self.ax.text(cy, cx, svalue, va="center", ha="center", color=text_color)
 
         # Draw the heatmap with colors bounded by the min and max of the grid
         # NOTE: I do not understand why this is Y, X instead of X, Y it works
         # in this order but raises an exception with the other order.
         g = self.ax.pcolormesh(
-            Y, X, cr_display, vmin=0, vmax=1, cmap=self.cmap, edgecolor='w',
+            Y, X, cr_display, vmin=0, vmax=1, cmap=self.cmap, edgecolor="w"
         )
 
         # Add the color bar
-        plt.colorbar(g, ax=self.ax)
+        plt.colorbar(g, ax=self.ax)  # TODO: Could use self.fig now
 
         # Return the axes being drawn on
         return self.ax
@@ -223,27 +226,28 @@ class ClassificationReport(ClassificationScoreVisualizer):
 
         """
         # Set the title of the classifiation report
-        self.set_title('{} Classification Report'.format(self.name))
+        self.set_title("{} Classification Report".format(self.name))
 
         # Set the tick marks appropriately
-        self.ax.set_xticks(np.arange(len(self._displayed_scores))+0.5)
-        self.ax.set_yticks(np.arange(len(self.classes_))+0.5)
+        self.ax.set_xticks(np.arange(len(self._displayed_scores)) + 0.5)
+        self.ax.set_yticks(np.arange(len(self.classes_)) + 0.5)
 
         self.ax.set_xticklabels(self._displayed_scores, rotation=45)
         self.ax.set_yticklabels(self.classes_)
 
-        plt.tight_layout()
+        plt.tight_layout()  # TODO: Could use self.fig now
 
 
-def classification_report(model, X, y=None, ax=None, classes=None,
-                          random_state=None,**kwargs):
+def classification_report(
+    model, X, y=None, ax=None, classes=None, random_state=None, **kwargs
+):
     """Quick method:
 
     Displays precision, recall, F1, and support scores for the model.
     Integrates numerical scores as well as color-coded heatmap.
 
     This helper function is a quick wrapper to utilize the ClassificationReport
-    ScoreVisualizer for one-off analysis.
+    for one-off analysis.
 
     Parameters
     ----------
@@ -281,5 +285,5 @@ def classification_report(model, X, y=None, ax=None, classes=None,
     visualizer.fit(X_train, y_train, **kwargs)
     visualizer.score(X_test, y_test)
 
-    # Return the axes object on the visualizer
-    return visualizer.ax
+    # Return the visualizer
+    return visualizer

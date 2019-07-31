@@ -126,7 +126,7 @@ class TestPCADecomposition(VisualTestCase):
         Test the PCADecomposition 2D biplot (proj_features).
         """
         params = {
-            "features": "ABCDEFGHIKLM",
+            "features": list("ABCDEFGHIKLM"),
             "random_state": 67,
             "proj_features": True,
             "proj_dim": 2,
@@ -176,7 +176,7 @@ class TestPCADecomposition(VisualTestCase):
         Test the PCADecomposition 3D biplot (proj_features).
         """
         params = {
-            "features": "ABCDEFGHIKLM",
+            "features": list("ABCDEFGHIKLM"),
             "random_state": 800,
             "proj_features": True,
             "proj_dim": 3,

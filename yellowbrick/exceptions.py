@@ -43,7 +43,15 @@ class NotFitted(ModelError):
     """
     An action was called that requires a fitted model.
     """
-    pass
+
+    @classmethod
+    def from_estimator(klass, estimator, method=None):
+        method = method or "this method"
+        message = (
+            "this {} instance is not fitted yet, please call fit "
+            "with the appropriate arguments before using {}"
+        ).format(estimator.__class__.__name__, method)
+        return klass(message)
 
 
 class DatasetsError(YellowbrickError):
