@@ -1,7 +1,7 @@
 # tests.test_regressor.test_influence
 # Test the regressor influence visualizers.
 #
-# Author:   Benjamin Bengfort <benjamin@bengfort.com>
+# Author:   Benjamin Bengfort
 # Created:  Sun Jun 09 16:03:31 2019 -0400
 #
 # Copyright (C) 2019 The scikit-yb developers
@@ -38,7 +38,8 @@ except ImportError:
 ## Fixtures
 ##########################################################################
 
-@pytest.fixture(scope='class')
+
+@pytest.fixture(scope="class")
 def data(request):
     """
     Creates a random regression fixture that has a R2 score below 0.85 and several
@@ -62,7 +63,10 @@ def data(request):
 ##########################################################################
 
 LEARNED_FIELDS = (
-    'distance_', 'p_values_', 'influence_threshold_', 'outlier_percentage_'
+    "distance_",
+    "p_values_",
+    "influence_threshold_",
+    "outlier_percentage_",
 )
 
 
