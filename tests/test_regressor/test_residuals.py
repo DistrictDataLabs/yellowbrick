@@ -1,11 +1,11 @@
 # tests.test_regressor.test_residuals
 # Ensure that the regressor residuals visualizations work.
 #
-# Author:   Rebecca Bilbro <rbilbro@districtdatalabs.com>
-# Author:   Benjamin Bengfort <bbengfort@districtdatalabs.com>
+# Author:   Rebecca Bilbro
+# Author:   Benjamin Bengfort
 # Created:  Sat Oct 8 16:30:39 2016 -0400
 #
-# Copyright (C) 2016 District Data Labs
+# Copyright (C) 2016 The scikit-yb developers
 # For license information, see LICENSE.txt
 #
 # ID: test_residuals.py [7d3f5e6] benjamin@bengfort.com $
@@ -52,25 +52,26 @@ MPL_VERS_MAJ = int(mpl.__version__.split(".")[0])
 ## Data
 ##########################################################################
 
-@pytest.fixture(scope='class')
+
+@pytest.fixture(scope="class")
 def data(request):
     """
     Creates a fixture of train and test splits for the sklearn digits dataset
     For ease of use returns a Dataset named tuple composed of two Split tuples.
     """
     X, y = make_regression(
-        n_samples=500, n_features=22, n_informative=8, random_state=42,
-        noise=0.2, bias=0.2,
+        n_samples=500,
+        n_features=22,
+        n_informative=8,
+        random_state=42,
+        noise=0.2,
+        bias=0.2,
     )
 
-    X_train, X_test, y_train, y_test = tts(
-        X, y, test_size=0.2, random_state=11
-    )
+    X_train, X_test, y_train, y_test = tts(X, y, test_size=0.2, random_state=11)
 
     # Set a class attribute for digits
-    request.cls.data = Dataset(
-        Split(X_train, X_test), Split(y_train, y_test)
-    )
+    request.cls.data = Dataset(Split(X_train, X_test), Split(y_train, y_test))
 
 
 ##########################################################################
@@ -208,9 +209,7 @@ class TestPredictionError(VisualTestCase):
         # Instantiate a sklearn regressor
         model = Lasso(random_state=23, alpha=10)
         # Instantiate a prediction error plot, provide custom alpha
-        visualizer = PredictionError(
-            model, bestfit=False, identity=False, alpha=0.7
-        )
+        visualizer = PredictionError(model, bestfit=False, identity=False, alpha=0.7)
 
         # Test param gets set correctly
         assert visualizer.alpha == 0.7
@@ -230,6 +229,7 @@ class TestPredictionError(VisualTestCase):
 ## Residuals Plot Test Cases
 ##########################################################################
 
+
 @pytest.mark.usefixtures("data")
 class TestResidualsPlot(VisualTestCase):
     """
@@ -238,7 +238,7 @@ class TestResidualsPlot(VisualTestCase):
 
     @pytest.mark.xfail(
         IS_WINDOWS_OR_CONDA,
-        reason="font rendering different in OS and/or Python; see #892"
+        reason="font rendering different in OS and/or Python; see #892",
     )
     def test_residuals_plot(self):
         """
@@ -255,7 +255,7 @@ class TestResidualsPlot(VisualTestCase):
         self.assert_images_similar(visualizer)
 
     @pytest.mark.xfail(
-        sys.platform == 'win32', reason="images not close on windows (RMSE=32)"
+        sys.platform == "win32", reason="images not close on windows (RMSE=32)"
     )
     @pytest.mark.filterwarnings("ignore:Stochastic Optimizer")
     def test_residuals_plot_no_histogram(self):
@@ -273,25 +273,31 @@ class TestResidualsPlot(VisualTestCase):
 
         self.assert_images_similar(visualizer, tol=1, remove_legend=True)
 
-    @pytest.mark.skipif(MPL_VERS_MAJ >= 2, reason="test requires mpl earlier than 2.0.2")
+    @pytest.mark.skipif(
+        MPL_VERS_MAJ >= 2, reason="test requires mpl earlier than 2.0.2"
+    )
     def test_hist_matplotlib_version(self, mock_toolkit):
         """
         ValueError is raised when matplotlib version is incorrect and hist=True
         """
         with pytst.raises(ImportError):
             from mpl_toolkits.axes_grid1 import make_axes_locatable
+
             assert not make_axes_locatable
 
         with pytest.raises(YellowbrickValueError, match="requires matplotlib 2.0.2"):
             ResidualsPlot(LinearRegression(), hist=True)
 
-    @pytest.mark.skipif(MPL_VERS_MAJ >= 2, reason="test requires mpl earlier than 2.0.2")
+    @pytest.mark.skipif(
+        MPL_VERS_MAJ >= 2, reason="test requires mpl earlier than 2.0.2"
+    )
     def test_no_hist_matplotlib_version(self, mock_toolkit):
         """
         No error is raised when matplotlib version is incorrect and hist=False
         """
         with pytest.raises(ImportError):
             from mpl_toolkits.axes_grid1 import make_axes_locatable
+
             assert not make_axes_locatable
 
         try:
@@ -301,7 +307,7 @@ class TestResidualsPlot(VisualTestCase):
 
     @pytest.mark.xfail(
         IS_WINDOWS_OR_CONDA,
-        reason="font rendering different in OS and/or Python; see #892"
+        reason="font rendering different in OS and/or Python; see #892",
     )
     def test_residuals_quick_method(self):
         """
@@ -310,15 +316,15 @@ class TestResidualsPlot(VisualTestCase):
         _, ax = plt.subplots()
 
         model = Lasso(random_state=19)
-        ax = residuals_plot(
+        oz = residuals_plot(
             model, self.data.X.train, self.data.y.train, ax=ax, random_state=23
         )
 
-        self.assert_images_similar(ax=ax)
+        self.assert_images_similar(oz)
 
     @pytest.mark.xfail(
         IS_WINDOWS_OR_CONDA,
-        reason="font rendering different in OS and/or Python; see #892"
+        reason="font rendering different in OS and/or Python; see #892",
     )
     @pytest.mark.skipif(pd is None, reason="pandas is required")
     def test_residuals_plot_pandas(self):
@@ -376,19 +382,16 @@ class TestResidualsPlot(VisualTestCase):
         assert visualizer.train_score_ == pytest.approx(0.9999906, rel=1e-4)
         assert visualizer.test_score_ == score
 
-    @mock.patch('yellowbrick.regressor.residuals.plt.sca', autospec=True)
+    @mock.patch("yellowbrick.regressor.residuals.plt.sca", autospec=True)
     def test_alpha_param(self, mock_sca):
         """
         Test that the user can supply an alpha param on instantiation
         """
         # Instantiate a prediction error plot, provide custom alpha
         visualizer = ResidualsPlot(
-            Ridge(random_state=8893), train_alpha=0.3,test_alpha=0.75, hist=False
+            Ridge(random_state=8893), train_alpha=0.3, test_alpha=0.75, hist=False
         )
-        alphas = {
-                'train_point': 0.3,
-                'test_point': 0.75
-        }
+        alphas = {"train_point": 0.3, "test_point": 0.75}
         # Test param gets set correctly
         assert visualizer.alphas == alphas
 
