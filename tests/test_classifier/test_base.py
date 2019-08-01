@@ -19,6 +19,7 @@ Tests for the base classification visualizers
 
 import pytest
 
+from sklearn.naive_bayes import MultinomialNB
 from yellowbrick.classifier.base import *
 
 
@@ -34,7 +35,7 @@ class TestClassificationScoreVisualizer(object):
         Ensure that classes and class counts are computed on fit
         """
 
-        oz = ClassificationScoreVisualizer()
+        oz = ClassificationScoreVisualizer(MultinomialNB())
         assert not hasattr(oz, 'classes_')
         assert not hasattr(oz, 'class_count_')
         assert not hasattr(oz, 'score_')

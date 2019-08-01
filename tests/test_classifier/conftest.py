@@ -26,9 +26,17 @@ from sklearn.model_selection import train_test_split as tts
 
 
 ##########################################################################
-## Fixtures
+## Assertion Helpers
 ##########################################################################
 
+def assert_not_fitted(model, attrs=("classes_", "class_count_", "score_")):
+    __traceback_hide__ = True
+
+
+
+##########################################################################
+## Fixtures
+##########################################################################
 
 @pytest.fixture(scope="class")
 def binary(request):
