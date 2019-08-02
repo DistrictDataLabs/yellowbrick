@@ -31,7 +31,7 @@ from unittest import mock
 
 from sklearn.decomposition import PCA
 from sklearn.pipeline import Pipeline
-from sklearn.preprocessing import  StandardScaler
+from sklearn.preprocessing import StandardScaler
 from sklearn.datasets import make_classification, make_regression
 
 
@@ -39,14 +39,20 @@ from sklearn.datasets import make_classification, make_regression
 ## Fixtures
 ##########################################################################
 
+
 @pytest.fixture(scope="class")
 def discrete(request):
     """
     Creare a random classification fixture.
     """
     X, y = make_classification(
-        n_samples=400, n_features=12, n_informative=10, n_redundant=0,
-        n_classes=5, random_state=2019)
+        n_samples=400,
+        n_features=12,
+        n_informative=10,
+        n_redundant=0,
+        n_classes=5,
+        random_state=2019,
+    )
 
     # Set a class attribute for discrete data
     request.cls.discrete = Dataset(X, y)
@@ -69,6 +75,7 @@ def continuous(request):
 ## MockVisualizer
 ##########################################################################
 
+
 class MockVisualizer(ProjectionVisualizer):
     """
     The MockVisualizer implements the ProjectionVisualizer interface using
@@ -76,19 +83,39 @@ class MockVisualizer(ProjectionVisualizer):
     how subclasses interact with the ProjectionVisualizer base class.
     """
 
-    def __init__(self, ax=None, features=None, classes=None, colors=None,
-             colormap=None, target_type="auto", projection=2,
-             alpha=0.75,**kwargs):
+    def __init__(
+        self,
+        ax=None,
+        features=None,
+        classes=None,
+        colors=None,
+        colormap=None,
+        target_type="auto",
+        projection=2,
+        alpha=0.75,
+        colorbar=True,
+        **kwargs
+    ):
 
-        super(MockVisualizer, self).__init__(ax=ax,
-                                             features=features, classes=classes,
-                                             colors=colors, colormap=colormap,
-                                             target_type=target_type,
-                                             projection=projection, alpha=alpha,
-                                             **kwargs)
+        super(MockVisualizer, self).__init__(
+            ax=ax,
+            features=features,
+            classes=classes,
+            colors=colors,
+            colormap=colormap,
+            target_type=target_type,
+            projection=projection,
+            alpha=alpha,
+            colorbar=colorbar,
+            **kwargs
+        )
 
-        self.pca_transformer = Pipeline([("scale", StandardScaler()),
-                                    ("pca", PCA(self.projection, random_state=2019))])
+        self.pca_transformer = Pipeline(
+            [
+                ("scale", StandardScaler()),
+                ("pca", PCA(self.projection, random_state=2019)),
+            ]
+        )
 
     def fit(self, X, y=None):
         super(MockVisualizer, self).fit(X, y)
@@ -107,6 +134,7 @@ class MockVisualizer(ProjectionVisualizer):
 ##########################################################################
 ## ProjectionVisualizer Tests
 ##########################################################################
+
 
 @pytest.mark.usefixtures("discrete", "continuous")
 class TestProjectionVisualizer(VisualTestCase):
@@ -144,8 +172,9 @@ class TestProjectionVisualizer(VisualTestCase):
         """
         _, ax = plt.subplots()
         X, y = self.discrete
-        visualizer = MockVisualizer(ax=ax, projection="2D",
-                                          target_type="continuous", colormap="cool")
+        visualizer = MockVisualizer(
+            ax=ax, projection="2D", target_type="continuous", colormap="cool"
+        )
         visualizer.fit(X, y)
         visualizer.transform(X, y)
         visualizer.finalize()
@@ -169,7 +198,7 @@ class TestProjectionVisualizer(VisualTestCase):
         X, y = self.discrete
 
         classes = ["a", "b", "c", "d", "e"]
-        colors = ["r", "b", "g", "m","c"]
+        colors = ["r", "b", "g", "m", "c"]
         visualizer = MockVisualizer(projection=3, colors=colors, classes=classes)
         visualizer.fit_transform(X, y)
         npt.assert_array_equal(visualizer.classes_, classes)
@@ -222,10 +251,10 @@ class TestProjectionVisualizer(VisualTestCase):
         """
         X, y = self.discrete
         # Multiply every element by 10 to make non-label encoded
-        y = y*10
+        y = y * 10
         visualizer = MockVisualizer()
         msg = "Target needs to be label encoded."
-        with pytest.raises(YellowbrickValueError, match = msg):
+        with pytest.raises(YellowbrickValueError, match=msg):
             visualizer.fit_transform(X, y)
 
     @pytest.mark.parametrize("dataset", ("discrete", "continuous"))
@@ -238,5 +267,15 @@ class TestProjectionVisualizer(VisualTestCase):
         visualizer.fit(X, y)
 
         msg = "y is required for {} target".format(dataset)
-        with pytest.raises(YellowbrickValueError, match = msg):
+        with pytest.raises(YellowbrickValueError, match=msg):
             visualizer.transform(X)
+
+    def test_colorbar_false(self):
+        """
+        Test that colorbar equals false works correctly 
+        """
+        visualizer = MockVisualizer(colorbar=False, colormap="YlOrRd")
+        visualizer.fit_transform(*self.continuous)
+        visualizer.finalize()
+
+        self.assert_images_similar(visualizer)
