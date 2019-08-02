@@ -238,10 +238,21 @@ class TestDatasetLoaders(object):
         assert X.shape == (149332, 4)
         assert y.shape == (149332,)
 
+    def test_load_nfl(self):
+        """
+        Test loading the nfl clustering dataset
+        """
+        data = load_nfl(return_dataset=True)
+        assert_valid_dataset(data, "nfl")
+
+        X, y = load_nfl()
+        assert X.shape == (494, 23)
+        assert y.shape == (494,)
+
     @pytest.mark.skipif(pd is None, reason="pandas is required for this test")
     @pytest.mark.parametrize("loader", [
         load_bikeshare, load_concrete, load_credit, load_energy, load_game,
-        load_mushroom, load_occupancy, load_spam, load_walking,
+        load_mushroom, load_occupancy, load_spam, load_walking, load_nfl,
     ], ids=lambda l: l.__name__)
     def test_load_pandas(self, loader):
         """
@@ -253,7 +264,7 @@ class TestDatasetLoaders(object):
     @patch("yellowbrick.datasets.base.pd", None)
     @pytest.mark.parametrize("loader", [
         load_bikeshare, load_concrete, load_credit, load_energy, load_game,
-        load_mushroom, load_occupancy, load_spam, load_walking,
+        load_mushroom, load_occupancy, load_spam, load_walking, load_nfl,
     ], ids=lambda l: l.__name__)
     def test_load_numpy(self, loader):
         """

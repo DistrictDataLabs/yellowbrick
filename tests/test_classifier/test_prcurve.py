@@ -1,8 +1,11 @@
 # tests.test_classifier.test_prcurve
 # Tests for the Precision-Recall curves visualizer
 #
-# Author:  Benjamin Bengfort <benjamin@bengfort.com>
+# Author:  Benjamin Bengfort
 # Created: Tue Sep 04 16:48:09 2018 -0400
+#
+# Copyright (C) 2018 The scikit-yb developers
+# For license information, see LICENSE.txt
 #
 # ID: test_prcurve.py [] benjamin@bengfort.com $
 
@@ -42,9 +45,7 @@ except ImportError:
 ## Assertion Helpers
 ##########################################################################
 
-LEARNED_FIELDS = (
-    'target_type_', 'score_', 'precision_', 'recall_'
-)
+LEARNED_FIELDS = ("target_type_", "score_", "precision_", "recall_")
 
 
 def assert_not_fitted(oz):
@@ -57,10 +58,10 @@ def assert_fitted(oz):
         assert hasattr(oz, field)
 
 
-
 ##########################################################################
 ## PrecisionRecallCurve Tests
 ##########################################################################
+
 
 @pytest.mark.usefixtures("binary", "multiclass")
 class TestPrecisionRecallCurve(VisualTestCase):
@@ -112,12 +113,14 @@ class TestPrecisionRecallCurve(VisualTestCase):
 
         # Compare the images
         oz.finalize()
-        tol = 1.5 if sys.platform == 'win32' else 1.0 # fails with RMSE 1.409 on AppVeyor
+        tol = (
+            1.5 if sys.platform == "win32" else 1.0
+        )  # fails with RMSE 1.409 on AppVeyor
         self.assert_images_similar(oz, tol=tol)
 
     @pytest.mark.xfail(
         IS_WINDOWS_OR_CONDA,
-        reason="font rendering different in OS and/or Python; see #892"
+        reason="font rendering different in OS and/or Python; see #892",
     )
     def test_binary_probability_decision(self):
         """
@@ -208,12 +211,14 @@ class TestPrecisionRecallCurve(VisualTestCase):
 
         # Compare the images
         oz.finalize()
-        tol = 1.25 if sys.platform == 'win32' else 1.0 # fails with RMSE 1.118 on AppVeyor
+        tol = (
+            1.25 if sys.platform == "win32" else 1.0
+        )  # fails with RMSE 1.118 on AppVeyor
         self.assert_images_similar(oz, tol=tol)
 
     @pytest.mark.xfail(
         IS_WINDOWS_OR_CONDA,
-        reason="font rendering different in OS and/or Python; see #892"
+        reason="font rendering different in OS and/or Python; see #892",
     )
     def test_multiclass_probability(self):
         """
@@ -221,8 +226,12 @@ class TestPrecisionRecallCurve(VisualTestCase):
         """
         # Create and fit the visualizer
         oz = PrecisionRecallCurve(
-            GaussianNB(), per_class=True, micro=False, fill_area=False,
-            iso_f1_curves=True, ap_score=False
+            GaussianNB(),
+            per_class=True,
+            micro=False,
+            fill_area=False,
+            iso_f1_curves=True,
+            ap_score=False,
         )
         assert_not_fitted(oz)
 
@@ -254,9 +263,13 @@ class TestPrecisionRecallCurve(VisualTestCase):
         """Visual similarity of multiclass classifier with class labels."""
         # Create and fit the visualizer
         oz = PrecisionRecallCurve(
-            GaussianNB(), per_class=True, micro=False, fill_area=False,
-            iso_f1_curves=True, ap_score=False,
-            classes=["a", "b", "c", "d", "e", "f"]
+            GaussianNB(),
+            per_class=True,
+            micro=False,
+            fill_area=False,
+            iso_f1_curves=True,
+            ap_score=False,
+            classes=["a", "b", "c", "d", "e", "f"],
         )
         assert_not_fitted(oz)
 
@@ -310,13 +323,15 @@ class TestPrecisionRecallCurve(VisualTestCase):
                 oz.ax.texts.remove(child)
 
         # Compare the images
-        tol = 6.6 if sys.platform == 'win32' else 1.0 # fails with RMSE 6.583 on AppVeyor
+        tol = (
+            6.6 if sys.platform == "win32" else 1.0
+        )  # fails with RMSE 6.583 on AppVeyor
         self.assert_images_similar(oz, tol=tol)
 
     @pytest.mark.filterwarnings("ignore:From version 0.21")
     @pytest.mark.xfail(
         IS_WINDOWS_OR_CONDA,
-        reason="font rendering different in OS and/or Python; see #892"
+        reason="font rendering different in OS and/or Python; see #892",
     )
     def test_quick_method(self):
         """
@@ -327,9 +342,16 @@ class TestPrecisionRecallCurve(VisualTestCase):
         model = DecisionTreeClassifier(random_state=14)
 
         oz = precision_recall_curve(
-            model, X, y, per_class=True, micro=True,
-            fill_area=False, iso_f1_curves=True, ap_score=False,
-            random_state=2)
+            model,
+            X,
+            y,
+            per_class=True,
+            micro=True,
+            fill_area=False,
+            iso_f1_curves=True,
+            ap_score=False,
+            random_state=2,
+        )
         assert isinstance(oz, PrecisionRecallCurve)
 
         self.assert_images_similar(oz)
@@ -348,13 +370,17 @@ class TestPrecisionRecallCurve(VisualTestCase):
         )
 
         oz = PrecisionRecallCurve(
-            model, per_class=True, micro=False, fill_area=False,
-            iso_f1_curves=True, ap_score=False,
-            classes=["unoccupied", "occupied"]
+            model,
+            per_class=True,
+            micro=False,
+            fill_area=False,
+            iso_f1_curves=True,
+            ap_score=False,
+            classes=["unoccupied", "occupied"],
         )
         oz.fit(X_train, y_train)
         oz.score(X_test, y_test)
-        
+
         oz.finalize()
 
         self.assert_images_similar(oz, tol=5.0)
@@ -364,12 +390,14 @@ class TestPrecisionRecallCurve(VisualTestCase):
         Test get y scores with classifiers that have no scoring method
         """
         oz = PrecisionRecallCurve(FakeClassifier())
-        with pytest.raises(ModelError, match="requires .* predict_proba or decision_function"):
+        with pytest.raises(
+            ModelError, match="requires .* predict_proba or decision_function"
+        ):
             oz._get_y_scores(self.binary.X.train)
 
     @pytest.mark.xfail(
         IS_WINDOWS_OR_CONDA,
-        reason="font rendering different in OS and/or Python; see #892"
+        reason="font rendering different in OS and/or Python; see #892",
     )
     def test_custom_iso_f1_scores(self):
         """
@@ -377,10 +405,11 @@ class TestPrecisionRecallCurve(VisualTestCase):
         """
         X, y = load_occupancy(return_dataset=True).to_numpy()
 
-        vals = (0.1,0.6,0.3,0.9,0.9)
+        vals = (0.1, 0.6, 0.3, 0.9, 0.9)
         viz = PrecisionRecallCurve(
             RandomForestClassifier(random_state=27),
-            iso_f1_curves=True, iso_f1_values=vals
+            iso_f1_curves=True,
+            iso_f1_values=vals,
         )
 
         X_train, X_test, y_train, y_test = tts(
@@ -405,7 +434,10 @@ class TestPrecisionRecallCurve(VisualTestCase):
 
         viz = precision_recall_curve(
             RandomForestClassifier(random_state=72),
-            X_train, y_train, X_test, y_test,
+            X_train,
+            y_train,
+            X_test,
+            y_test,
             random_state=7,
         )
         self.assert_images_similar(viz)
@@ -428,6 +460,4 @@ class TestPrecisionRecallCurve(VisualTestCase):
             )
 
         with pytest.raises(YellowbrickValueError, match=emsg):
-            precision_recall_curve(
-                RandomForestClassifier(), X_train, y_train, X_test
-            )
+            precision_recall_curve(RandomForestClassifier(), X_train, y_train, X_test)

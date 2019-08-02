@@ -2,8 +2,11 @@
 # Shows the balance of classes and their associated predictions.
 #
 # Author:   Larry Gray
-# Author:   Benjamin Bengfort <bbengfort@districtdatalabs.com>
-# Created:  Wed May 18 12:39:40 2016 -0400
+# Author:   Benjamin Bengfort
+# Created:  Fri Jul 20 10:26:25 2018 -0400
+#
+# Copyright (C) 2018 The scikit-yb developers
+# For license information, see LICENSE.txt
 #
 # ID: class_prediction_error.py [] lwgray@gmail.com $
 
@@ -24,21 +27,21 @@ from sklearn.utils.multiclass import unique_labels
 from sklearn.metrics.classification import _check_targets
 from sklearn.model_selection import train_test_split as tts
 
-from ..exceptions import ModelError, YellowbrickValueError
 from ..draw import bar_stack
+from ..exceptions import ModelError, YellowbrickValueError
 
 
 ##########################################################################
 ## Class Prediction Error Chart
 ##########################################################################
 
+
 class ClassPredictionError(ClassificationScoreVisualizer):
     """
     Class Prediction Error chart that shows the support for each class in the
-    fitted classification model displayed as a stacked bar.  Each bar is
-    segmented to show the distribution of predicted classes for each
-    class. It is initialized with a fitted model and generates a
-    class prediction error chart on draw.
+    fitted classification model displayed as a stacked bar. Each bar is segmented
+    to show the distribution of predicted classes for each class. It is initialized
+    with a fitted model and generates a class prediction error chart on draw.
 
     Parameters
     ----------
@@ -46,10 +49,10 @@ class ClassPredictionError(ClassificationScoreVisualizer):
         Scikit-Learn estimator object. Should be an instance of a classifier,
         else ``__init__()`` will raise an exception.
 
-    ax: axes, default=None
+    ax: axes, default: None
         the axis to plot the figure on.
 
-    classes: list, default=None
+    classes: list, default: None
         A list of class names for the legend. If classes is None and a y value
         is passed to fit then the classes are selected from the target vector.
 
@@ -97,28 +100,27 @@ class ClassPredictionError(ClassificationScoreVisualizer):
         y_type, y_true, y_pred = _check_targets(y, y_pred)
 
         if y_type not in ("binary", "multiclass"):
-            raise YellowbrickValueError("%s is not supported" % y_type)
+            raise YellowbrickValueError("{} is not supported".format(y_type))
 
         indices = unique_labels(y_true, y_pred)
 
         if len(self.classes_) > len(indices):
-            raise ModelError("y and y_pred contain zero values "
-                             "for one of the specified classes")
+            raise ModelError(
+                "y and y_pred contain zero values for one of the specified classes"
+            )
         elif len(self.classes_) < len(indices):
-            raise NotImplementedError("filtering classes is "
-                                        "currently not supported")
+            raise NotImplementedError("filtering classes is currently not supported")
 
         # Create a table of predictions whose rows are the true classes
         # and whose columns are the predicted classes; each element
         # is the count of predictions for that class that match the true
         # value of that class.
-        self.predictions_ = np.array([
+        self.predictions_ = np.array(
             [
-                (y_pred[y == label_t] == label_p).sum()
-                for label_p in indices
+                [(y_pred[y == label_t] == label_p).sum() for label_p in indices]
+                for label_t in indices
             ]
-            for label_t in indices
-        ])
+        )
 
         self.draw()
         self.score_ = self.estimator.score(X, y)
@@ -128,11 +130,22 @@ class ClassPredictionError(ClassificationScoreVisualizer):
     def draw(self):
         """
         Renders the class prediction error across the axis.
+
+        Returns
+        -------
+        ax : Matplotlib Axes
+            The axes on which the figure is plotted
         """
 
-        legend_kws = {'bbox_to_anchor':(1.04, 0.5), 'loc':"center left"}
-        bar_stack(self.predictions_, self.ax, labels=list(self.classes_),
-                  ticks=self.classes_, colors=self.colors, legend_kws=legend_kws)
+        legend_kws = {"bbox_to_anchor": (1.04, 0.5), "loc": "center left"}
+        bar_stack(
+            self.predictions_,  # TODO: if not fitted, should raise a NotFitted error
+            self.ax,
+            labels=list(self.classes_),
+            ticks=self.classes_,
+            colors=self.colors,
+            legend_kws=legend_kws,
+        )
         return self.ax
 
     def finalize(self, **kwargs):
@@ -153,31 +166,25 @@ class ClassPredictionError(ClassificationScoreVisualizer):
         self.ax.set_ylim(0, cmax + cmax * 0.1)
 
         # Ensure the legend fits on the figure
-        plt.tight_layout(rect=[0, 0, 0.90, 1])
+        plt.tight_layout(rect=[0, 0, 0.90, 1])  # TODO: Could use self.fig now
 
 
 ##########################################################################
 ## Quick Method
 ##########################################################################
 
-def class_prediction_error(
-    model,
-    X,
-    y=None,
-    ax=None,
-    classes=None,
-    test_size=0.2,
-    random_state=None,
-    **kwargs):
-    """Quick method:
-    Divides the dataset X and y into train and test splits, fits the model on
-    the train split, then scores the model on the test split. The visualizer
-    displays the support for each class in the fitted classification model
-    displayed as a stacked bar plot Each bar is segmented to show the
-    distribution of predicted classes for each class.
 
-    This helper function is a quick wrapper to utilize the ClassPredictionError
-    ScoreVisualizer for one-off analysis.
+def class_prediction_error(
+    model, X, y=None, ax=None, classes=None, test_size=0.2, random_state=None, **kwargs
+):
+    """Quick method:
+    Divides the dataset X and y into train and test splits, fits the model on the train
+    split, then scores the model on the test split. The visualizer displays the support
+    for each class in the fitted classification model displayed as a stacked bar plot.
+    Each bar is segmented to show the distribution of predicted classes for each class.
+
+    This helper function is a quick wrapper to utilize the ClassPredictionError for
+    one-off analysis.
 
     Parameters
     ----------

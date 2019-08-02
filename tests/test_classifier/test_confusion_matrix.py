@@ -2,8 +2,11 @@
 # Tests for the confusion matrix visualizer
 #
 # Aithor:  Neal Humphrey
-# Author:  Benjamin Bengfort <bbengfort@districtdatalabs.com>
+# Author:  Benjamin Bengfort
 # Created: Tue May 03 11:05:11 2017 -0700
+#
+# Copyright (C) 2017 The scikit-yb developers
+# For license information, see LICENSE.txt
 #
 # ID: test_confusion_matrix.py [] benjamin@bengfort.com $
 
@@ -46,7 +49,8 @@ except ImportError:
 ## Fixtures
 ##########################################################################
 
-@pytest.fixture(scope='class')
+
+@pytest.fixture(scope="class")
 def digits(request):
     """
     Creates a fixture of train and test splits for the sklearn digits dataset
@@ -58,14 +62,13 @@ def digits(request):
     )
 
     # Set a class attribute for digits
-    request.cls.digits = Dataset(
-        Split(X_train, X_test), Split(y_train, y_test)
-    )
+    request.cls.digits = Dataset(Split(X_train, X_test), Split(y_train, y_test))
 
 
 ##########################################################################
 ## Test Cases
 ##########################################################################
+
 
 @pytest.mark.usefixtures("digits")
 class TestConfusionMatrix(VisualTestCase):
@@ -73,9 +76,7 @@ class TestConfusionMatrix(VisualTestCase):
     Test ConfusionMatrix visualizer
     """
 
-    @pytest.mark.xfail(
-        sys.platform == 'win32', reason="images not close on windows"
-    )
+    @pytest.mark.xfail(sys.platform == "win32", reason="images not close on windows")
     def test_confusion_matrix(self):
         """
         Integration test on digits dataset with LogisticRegression
@@ -83,28 +84,32 @@ class TestConfusionMatrix(VisualTestCase):
         _, ax = plt.subplots()
 
         model = LogisticRegression(random_state=93)
-        cm = ConfusionMatrix(model, ax=ax, classes=[0,1,2,3,4,5,6,7,8,9])
+        cm = ConfusionMatrix(model, ax=ax, classes=[0, 1, 2, 3, 4, 5, 6, 7, 8, 9])
         cm.fit(self.digits.X.train, self.digits.y.train)
         cm.score(self.digits.X.test, self.digits.y.test)
 
         self.assert_images_similar(cm, tol=10)
 
         # Ensure correct confusion matrix under the hood
-        npt.assert_array_equal(cm.confusion_matrix_, np.array([
-           [38,  0,  0,  0,  0,  0,  0,  0,  0,  0],
-           [ 0, 35,  0,  0,  0,  0,  0,  0,  2,  0],
-           [ 0,  0, 39,  0,  0,  0,  0,  0,  0,  0],
-           [ 0,  0,  0, 38,  0,  1,  0,  0,  2,  0],
-           [ 0,  0,  0,  0, 40,  0,  0,  1,  0,  0],
-           [ 0,  0,  0,  0,  0, 27,  0,  0,  0,  0],
-           [ 0,  0,  0,  0,  0,  1, 29,  0,  0,  0],
-           [ 0,  0,  0,  0,  0,  0,  0, 35,  0,  1],
-           [ 0,  2,  0,  0,  0,  0,  0,  0, 32,  0],
-           [ 0,  0,  0,  0,  0,  0,  0,  1,  1, 35]]))
+        npt.assert_array_equal(
+            cm.confusion_matrix_,
+            np.array(
+                [
+                    [38, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                    [0, 35, 0, 0, 0, 0, 0, 0, 2, 0],
+                    [0, 0, 39, 0, 0, 0, 0, 0, 0, 0],
+                    [0, 0, 0, 38, 0, 1, 0, 0, 2, 0],
+                    [0, 0, 0, 0, 40, 0, 0, 1, 0, 0],
+                    [0, 0, 0, 0, 0, 27, 0, 0, 0, 0],
+                    [0, 0, 0, 0, 0, 1, 29, 0, 0, 0],
+                    [0, 0, 0, 0, 0, 0, 0, 35, 0, 1],
+                    [0, 2, 0, 0, 0, 0, 0, 0, 32, 0],
+                    [0, 0, 0, 0, 0, 0, 0, 1, 1, 35],
+                ]
+            ),
+        )
 
-    @pytest.mark.xfail(
-        sys.platform == 'win32', reason="images not close on windows"
-    )
+    @pytest.mark.xfail(sys.platform == "win32", reason="images not close on windows")
     def test_no_classes_provided(self):
         """
         Integration test on digits dataset with GaussianNB, no classes
@@ -119,17 +124,23 @@ class TestConfusionMatrix(VisualTestCase):
         self.assert_images_similar(cm, tol=10)
 
         # Ensure correct confusion matrix under the hood
-        npt.assert_array_equal(cm.confusion_matrix_, np.array([
-           [36,  0,  0,  0,  1,  0,  0,  1,  0,  0],
-           [ 0, 31,  0,  0,  0,  0,  0,  1,  3,  2],
-           [ 0,  1, 34,  0,  0,  0,  0,  0,  4,  0],
-           [ 0,  1,  0, 33,  0,  2,  0,  2,  3,  0],
-           [ 0,  0,  0,  0, 36,  0,  0,  5,  0,  0],
-           [ 0,  0,  0,  0,  0, 27,  0,  0,  0,  0],
-           [ 0,  0,  1,  0,  1,  0, 28,  0,  0,  0],
-           [ 0,  0,  0,  0,  0,  0,  0, 36,  0,  0],
-           [ 0,  3,  0,  1,  0,  1,  0,  4, 25,  0],
-           [ 1,  2,  0,  0,  1,  0,  0,  8,  3, 22]]))
+        npt.assert_array_equal(
+            cm.confusion_matrix_,
+            np.array(
+                [
+                    [36, 0, 0, 0, 1, 0, 0, 1, 0, 0],
+                    [0, 31, 0, 0, 0, 0, 0, 1, 3, 2],
+                    [0, 1, 34, 0, 0, 0, 0, 0, 4, 0],
+                    [0, 1, 0, 33, 0, 2, 0, 2, 3, 0],
+                    [0, 0, 0, 0, 36, 0, 0, 5, 0, 0],
+                    [0, 0, 0, 0, 0, 27, 0, 0, 0, 0],
+                    [0, 0, 1, 0, 1, 0, 28, 0, 0, 0],
+                    [0, 0, 0, 0, 0, 0, 0, 36, 0, 0],
+                    [0, 3, 0, 1, 0, 1, 0, 4, 25, 0],
+                    [1, 2, 0, 0, 1, 0, 0, 8, 3, 22],
+                ]
+            ),
+        )
 
     def test_fontsize(self):
         """
@@ -160,17 +171,23 @@ class TestConfusionMatrix(VisualTestCase):
         self.assert_images_similar(cm, tol=10)
 
         # Ensure correct confusion matrix under the hood
-        npt.assert_array_equal(cm.confusion_matrix_, np.array([
-           [16,  0,  0,  0,  0, 22,  0,  0,  0,  0],
-           [ 0, 11,  0,  0,  0, 26,  0,  0,  0,  0],
-           [ 0,  0, 10,  0,  0, 29,  0,  0,  0,  0],
-           [ 0,  0,  0,  6,  0, 35,  0,  0,  0,  0],
-           [ 0,  0,  0,  0, 11, 30,  0,  0,  0,  0],
-           [ 0,  0,  0,  0,  0, 27,  0,  0,  0,  0],
-           [ 0,  0,  0,  0,  0,  9, 21,  0,  0,  0],
-           [ 0,  0,  0,  0,  0, 29,  0,  7,  0,  0],
-           [ 0,  0,  0,  0,  0, 32,  0,  0,  2,  0],
-           [ 0,  0,  0,  0,  0, 34,  0,  0,  0,  3]]))
+        npt.assert_array_equal(
+            cm.confusion_matrix_,
+            np.array(
+                [
+                    [16, 0, 0, 0, 0, 22, 0, 0, 0, 0],
+                    [0, 11, 0, 0, 0, 26, 0, 0, 0, 0],
+                    [0, 0, 10, 0, 0, 29, 0, 0, 0, 0],
+                    [0, 0, 0, 6, 0, 35, 0, 0, 0, 0],
+                    [0, 0, 0, 0, 11, 30, 0, 0, 0, 0],
+                    [0, 0, 0, 0, 0, 27, 0, 0, 0, 0],
+                    [0, 0, 0, 0, 0, 9, 21, 0, 0, 0],
+                    [0, 0, 0, 0, 0, 29, 0, 7, 0, 0],
+                    [0, 0, 0, 0, 0, 32, 0, 0, 2, 0],
+                    [0, 0, 0, 0, 0, 34, 0, 0, 0, 3],
+                ]
+            ),
+        )
 
     def test_class_filter_eg_zoom_in(self):
         """
@@ -179,17 +196,16 @@ class TestConfusionMatrix(VisualTestCase):
         _, ax = plt.subplots()
 
         model = LogisticRegression(random_state=93)
-        cm = ConfusionMatrix(model, ax=ax, classes=[0,1,2])
+        cm = ConfusionMatrix(model, ax=ax, classes=[0, 1, 2])
         cm.fit(self.digits.X.train, self.digits.y.train)
         cm.score(self.digits.X.test, self.digits.y.test)
 
         self.assert_images_similar(cm, tol=10)
 
         # Ensure correct confusion matrix under the hood
-        npt.assert_array_equal(cm.confusion_matrix_, np.array([
-           [38,  0,  0],
-           [ 0, 35,  0],
-           [ 0,  0, 39]]))
+        npt.assert_array_equal(
+            cm.confusion_matrix_, np.array([[38, 0, 0], [0, 35, 0], [0, 0, 39]])
+        )
 
     def test_extra_classes(self):
         """
@@ -199,18 +215,17 @@ class TestConfusionMatrix(VisualTestCase):
         _, ax = plt.subplots()
 
         model = LogisticRegression(random_state=93)
-        cm = ConfusionMatrix(model, ax=ax, classes=[0,1,2,11])
+        cm = ConfusionMatrix(model, ax=ax, classes=[0, 1, 2, 11])
         cm.fit(self.digits.X.train, self.digits.y.train)
         cm.score(self.digits.X.test, self.digits.y.test)
 
-        npt.assert_array_equal(cm.class_counts_, [38, 37, 39,  0])
+        npt.assert_array_equal(cm.class_counts_, [38, 37, 39, 0])
 
         # Ensure correct confusion matrix under the hood
-        npt.assert_array_equal(cm.confusion_matrix_, np.array([
-           [38,  0,  0, 0],
-           [ 0, 35,  0, 0],
-           [ 0,  0, 39, 0],
-           [ 0,  0,  0, 0]]))
+        npt.assert_array_equal(
+            cm.confusion_matrix_,
+            np.array([[38, 0, 0, 0], [0, 35, 0, 0], [0, 0, 39, 0], [0, 0, 0, 0]]),
+        )
 
         self.assert_images_similar(cm, tol=10)
 
@@ -234,9 +249,29 @@ class TestConfusionMatrix(VisualTestCase):
         _, ax = plt.subplots()
 
         model = LogisticRegression(random_state=93)
-        classes = ['one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine']
-        mapping = {0: 'zero', 1: 'one', 2: 'two', 3: 'three', 4: 'four', 5: 'five',
-                   6: 'six', 7: 'seven', 8: 'eight', 9: 'nine'}
+        classes = [
+            "one",
+            "two",
+            "three",
+            "four",
+            "five",
+            "six",
+            "seven",
+            "eight",
+            "nine",
+        ]
+        mapping = {
+            0: "zero",
+            1: "one",
+            2: "two",
+            3: "three",
+            4: "four",
+            5: "five",
+            6: "six",
+            7: "seven",
+            8: "eight",
+            9: "nine",
+        }
         cm = ConfusionMatrix(model, ax=ax, classes=classes, label_encoder=mapping)
         cm.fit(self.digits.X.train, self.digits.y.train)
         cm.score(self.digits.X.test, self.digits.y.test)
@@ -253,8 +288,32 @@ class TestConfusionMatrix(VisualTestCase):
 
         model = LogisticRegression(random_state=93)
         le = LabelEncoder()
-        classes = ['zero', 'one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine']
-        le.fit(['zero', 'one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine'])
+        classes = [
+            "zero",
+            "one",
+            "two",
+            "three",
+            "four",
+            "five",
+            "six",
+            "seven",
+            "eight",
+            "nine",
+        ]
+        le.fit(
+            [
+                "zero",
+                "one",
+                "two",
+                "three",
+                "four",
+                "five",
+                "six",
+                "seven",
+                "eight",
+                "nine",
+            ]
+        )
 
         cm = ConfusionMatrix(model, ax=ax, classes=classes, label_encoder=le)
         cm.fit(self.digits.X.train, self.digits.y.train)
@@ -263,11 +322,11 @@ class TestConfusionMatrix(VisualTestCase):
         assert [l.get_text() for l in ax.get_xticklabels()] == classes
         ylabels = [l.get_text() for l in ax.get_yticklabels()]
         ylabels.reverse()
-        assert  ylabels == classes
+        assert ylabels == classes
 
     @pytest.mark.xfail(
         IS_WINDOWS_OR_CONDA,
-        reason="font rendering different in OS and/or Python; see #892"
+        reason="font rendering different in OS and/or Python; see #892",
     )
     @pytest.mark.skipif(pd is None, reason="test requires pandas")
     def test_pandas_integration(self):
@@ -292,22 +351,24 @@ class TestConfusionMatrix(VisualTestCase):
         self.assert_images_similar(cm, tol=0.1)
 
         # Ensure correct confusion matrix under the hood
-        npt.assert_array_equal(cm.confusion_matrix_, np.array([
-            [3012,  114],
-            [   1,  985]
-        ]))
+        npt.assert_array_equal(cm.confusion_matrix_, np.array([[3012, 114], [1, 985]]))
 
     @pytest.mark.xfail(
         IS_WINDOWS_OR_CONDA,
-        reason="font rendering different in OS and/or Python; see #892"
+        reason="font rendering different in OS and/or Python; see #892",
     )
     def test_quick_method(self):
         """
         Test the quick method with a random dataset
         """
         X, y = make_classification(
-            n_samples=400, n_features=20, n_informative=8, n_redundant=8,
-            n_classes=2, n_clusters_per_class=4, random_state=27
+            n_samples=400,
+            n_features=20,
+            n_informative=8,
+            n_redundant=8,
+            n_classes=2,
+            n_clusters_per_class=4,
+            random_state=27,
         )
 
         _, ax = plt.subplots()
@@ -322,8 +383,8 @@ class TestConfusionMatrix(VisualTestCase):
         """
         model = PassiveAggressiveRegressor()
         message = (
-            'This estimator is not a classifier; '
-            'try a regression or clustering score visualizer instead!'
+            "This estimator is not a classifier; "
+            "try a regression or clustering score visualizer instead!"
         )
 
         with pytest.raises(yb.exceptions.YellowbrickError, match=message):
