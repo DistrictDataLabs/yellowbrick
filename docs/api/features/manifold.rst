@@ -59,6 +59,9 @@ discrete labels - the classes or categories in the supervised problem, or the
 clusters they belong to in the unsupervised version. The manifold visualizes
 this by assigning a color to each label and showing the labels in a legend.
 
+.. note to contributors: the below code takes a long time to run so has not been
+   modified with a plot directive. See manifold.py to regenerate images.
+
 .. code:: python
 
     from yellowbrick.features import Manifold
@@ -68,10 +71,10 @@ this by assigning a color to each label and showing the labels in a legend.
     X, y = load_occupancy()
 
     # Instantiate the visualizer
-    visualizer = Manifold(manifold='tsne', target='discrete')
+    visualizer = Manifold(manifold="tsne")
 
-    visualizer.fit_transform(X, y)        # Fit and transform the data
-    visualizer.poof()                     # Draw/show/poof the data
+    visualizer.fit(X, y)        # Fit the data
+    visualizer.poof()           # Draw/show/poof the data
 
 
 .. image:: images/occupancy_tsne_manifold.png
@@ -83,9 +86,12 @@ another is to sample your instances (e.g. using ``train_test_split`` to
 preserve class stratification) or to filter features to decrease sparsity in
 the dataset.
 
-One common mechanism is to use `SelectKBest` to select the features that have
+One common mechanism is to use ``SelectKBest`` to select the features that have
 a statistical correlation with the target dataset. For example, we can use
 the ``f_classif`` score to find the 3 best features in our occupancy dataset.
+
+.. note to contributors: the below code takes a long time to run so has not been
+   modified with a plot directive. See manifold.py to regenerate images.
 
 .. code:: python
 
@@ -101,7 +107,7 @@ the ``f_classif`` score to find the 3 best features in our occupancy dataset.
     # Create a pipeline
     model = Pipeline([
         ("selectk", SelectKBest(k=3, score_func=f_classif)),
-        ("viz", Manifold(manifold='isomap', target='discrete')),
+        ("viz", Manifold(manifold="isomap", n_neighbors=10)),
     ])
 
     model.fit(X, y)                    # Fit the data to the model
@@ -113,9 +119,12 @@ Continuous Target
 -----------------
 
 For a regression target or to specify color as a heat-map of continuous
-values, specify ``target='continuous'``. Note that by default the param
-``target='auto'`` is set, which determines if the target is discrete or
+values, specify ``target_type="continuous"``. Note that by default the param
+``target_type="auto"`` is set, which determines if the target is discrete or
 continuous by counting the number of unique values in ``y``.
+
+.. note to contributors: the below code takes a long time to run so has not been
+   modified with a plot directive. See manifold.py to regenerate images.
 
 .. code:: python
 
@@ -126,10 +135,10 @@ continuous by counting the number of unique values in ``y``.
     X, y = load_concrete()
 
     # Instantiate the visualizer
-    visualizer = Manifold(manifold='isomap', target='continuous')
+    visualizer = Manifold(manifold="isomap", n_neighbors=10)
 
-    visualizer.fit_transform(X, y)        # Fit and transform the data
-    visualizer.poof()                     # Draw/show/poof the data
+    visualizer.fit(X, y)        # Fit the data
+    visualizer.poof()           # Draw/show/poof the data
 
 .. image:: images/concrete_isomap_manifold.png
 
