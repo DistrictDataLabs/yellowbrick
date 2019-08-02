@@ -59,27 +59,22 @@ discrete labels - the classes or categories in the supervised problem, or the
 clusters they belong to in the unsupervised version. The manifold visualizes
 this by assigning a color to each label and showing the labels in a legend.
 
-.. code:: python
-
-    # Load the classification data set
-    data = load_data('occupancy')
-
-    # Specify the features of interest
-    features = [
-        "temperature", "relative humidity", "light", "C02", "humidity"
-    ]
-
-    # Extract the instances and target
-    X = data[features]
-    y = data.occupancy
+.. note to contributors: the below code takes a long time to run so has not been
+   modified with a plot directive. See manifold.py to regenerate images.
 
 .. code:: python
 
-    from yellowbrick.features.manifold import Manifold
+    from yellowbrick.features import Manifold
+    from yellowbrick.datasets import load_occupancy
 
-    visualizer = Manifold(manifold='tsne', target='discrete')
-    visualizer.fit_transform(X,y)
-    visualizer.poof()
+    # Load the classification dataset
+    X, y = load_occupancy()
+
+    # Instantiate the visualizer
+    visualizer = Manifold(manifold="tsne")
+
+    visualizer.fit(X, y)        # Fit the data
+    visualizer.poof()           # Draw/show/poof the data
 
 
 .. image:: images/occupancy_tsne_manifold.png
@@ -91,35 +86,32 @@ another is to sample your instances (e.g. using ``train_test_split`` to
 preserve class stratification) or to filter features to decrease sparsity in
 the dataset.
 
-One common mechanism is to use `SelectKBest` to select the features that have
+One common mechanism is to use ``SelectKBest`` to select the features that have
 a statistical correlation with the target dataset. For example, we can use
 the ``f_classif`` score to find the 3 best features in our occupancy dataset.
+
+.. note to contributors: the below code takes a long time to run so has not been
+   modified with a plot directive. See manifold.py to regenerate images.
 
 .. code:: python
 
     from sklearn.pipeline import Pipeline
-    from sklearn.feature_selection import SelectKBest
-    from sklearn.feature_selection import f_classif
+    from sklearn.feature_selection import f_classif, SelectKBest
 
-    model = Pipeline([
-        ("selectk", SelectKBest(k=3, score_func=f_classif)),
-        ("viz", Manifold(manifold='isomap', target='discrete')),
-    ])
+    from yellowbrick.features import Manifold
+    from yellowbrick.datasets import load_occupancy
 
     # Load the classification dataset
-    data = load_data("occupancy")
+    X, y = load_occupancy()
 
-    # Specify the features of interest
-    features = [
-        "temperature", "relative humidity", "light", "CO2", "humidity"
-    ]
+    # Create a pipeline
+    model = Pipeline([
+        ("selectk", SelectKBest(k=3, score_func=f_classif)),
+        ("viz", Manifold(manifold="isomap", n_neighbors=10)),
+    ])
 
-    # Extract the instances and target
-    X = data[features]
-    y = data.occupancy
-
-    model.fit(X, y)
-    model.named_steps['viz'].poof()
+    model.fit(X, y)                    # Fit the data to the model
+    model.named_steps['viz'].poof()    # Draw/show/poof the data
 
 .. image:: images/occupancy_select_k_best_isomap_manifold.png
 
@@ -127,27 +119,26 @@ Continuous Target
 -----------------
 
 For a regression target or to specify color as a heat-map of continuous
-values, specify ``target='continuous'``. Note that by default the param
-``target='auto'`` is set, which determines if the target is discrete or
+values, specify ``target_type="continuous"``. Note that by default the param
+``target_type="auto"`` is set, which determines if the target is discrete or
 continuous by counting the number of unique values in ``y``.
 
-.. code:: python
-
-    # Specify the features of interest
-    feature_names = [
-        'cement', 'slag', 'ash', 'water', 'splast', 'coarse', 'fine', 'age'
-    ]
-    target_name = 'strength'
-
-    # Get the X and y data from the DataFrame
-    X = data[feature_names]
-    y = data[target_name]
+.. note to contributors: the below code takes a long time to run so has not been
+   modified with a plot directive. See manifold.py to regenerate images.
 
 .. code:: python
 
-    visualizer = Manifold(manifold='isomap', target='continuous')
-    visualizer.fit_transform(X,y)
-    visualizer.poof()
+    from yellowbrick.features import Manifold
+    from yellowbrick.datasets import load_concrete
+
+    # Load the regression dataset
+    X, y = load_concrete()
+
+    # Instantiate the visualizer
+    visualizer = Manifold(manifold="isomap", n_neighbors=10)
+
+    visualizer.fit(X, y)        # Fit the data
+    visualizer.poof()           # Draw/show/poof the data
 
 .. image:: images/concrete_isomap_manifold.png
 
