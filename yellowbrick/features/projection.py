@@ -190,14 +190,18 @@ class ProjectionVisualizer(DataVisualizer):
         The colorbar is added to the right of the scatterplot.
 
         Subclasses can override this method to add other axes or layouts.
+        
+        Parameters
+        ----------
+        divider: AxesDivider
+            An AxesDivider to be passed among all layout calls.
         """
         if (
-            self._cax is None
-            and self._target_color_type == TargetType.CONTINUOUS
+            self._target_color_type == TargetType.CONTINUOUS
+            and self.projection == 2
             and self.colorbar
+            and self._cax is None
         ):
-            if self.projection == 2:
-
                 # Ensure matplotlib version compatibility
                 if make_axes_locatable is None:
                     raise YellowbrickValueError(
@@ -255,12 +259,13 @@ class ProjectionVisualizer(DataVisualizer):
             Returns the axes that the scatter plot was drawn on.
         """
         scatter_kwargs = self._determine_scatter_kwargs(y)
-
+        
+        # Draws the layout of the visualizer. It draws the axes for colorbars, 
+        # heatmap, etc.
         self.layout()
 
         if self.projection == 2:
             # Adds colorbar axis for continuous target type.
-            #            self.layout()
             self.ax.scatter(Xp[:, 0], Xp[:, 1], **scatter_kwargs)
 
         if self.projection == 3:

@@ -26,7 +26,7 @@ from yellowbrick.features.projection import ProjectionVisualizer
 from yellowbrick.exceptions import YellowbrickValueError, NotFitted
 
 from sklearn.pipeline import Pipeline
-from sklearn.decomposition import PCA
+from sklearn.decomposition import PCA as PCATransformer
 from sklearn.preprocessing import StandardScaler
 from sklearn.exceptions import NotFittedError
 
@@ -35,8 +35,7 @@ from sklearn.exceptions import NotFittedError
 # 2D and 3D PCA Visualizer
 ##########################################################################
 
-
-class PCADecomposition(ProjectionVisualizer):
+class PCA(ProjectionVisualizer):
     """
     Produce a two or three dimensional principal component plot of a data array
     projected onto its largest sequential principal components. It is common
@@ -112,13 +111,34 @@ class PCADecomposition(ProjectionVisualizer):
         Keyword arguments that are passed to the base class and may influence
         the visualization as defined in other Visualizers.
 
+    Attributes
+    ----------
+    pca_components_ : ndarray, shape (n_features, n_components)
+        This tells about the magnitude of each feature in the pricipal components. 
+        This is primarily used to draw the biplots.
+
+    classes_ : ndarray, shape (n_classes,)
+        The class labels that define the discrete values in the target. Only
+        available if the target type is discrete. This is guaranteed to be
+        strings even if the classes are a different type.
+    
+    features_ : ndarray, shape (n_features,)
+        The names of the features discovered or used in the visualizer that
+        can be used as an index to access or modify data in X. If a user passes
+        feature names in, those features are used. Otherwise the columns of a
+        DataFrame are used or just simply the indices of the data array.
+
+    range_ : (min y, max y)
+        A tuple that describes the minimum and maximum values in the target.
+        Only available if the target type is continuous.
+
     Examples
     --------
     >>> from sklearn import datasets
     >>> iris = datasets.load_iris()
     >>> X = iris.data
     >>> y = iris.target
-    >>> visualizer = PCADecomposition()
+    >>> visualizer = PCA()
     >>> visualizer.fit_transform(X, y)
     >>> visualizer.poof()
 
@@ -140,7 +160,7 @@ class PCADecomposition(ProjectionVisualizer):
         heatmap=False,
         **kwargs
     ):
-        super(PCADecomposition, self).__init__(
+        super(PCA, self).__init__(
             ax=ax,
             features=features,
             classes=classes,
@@ -160,7 +180,7 @@ class PCADecomposition(ProjectionVisualizer):
         self.pca_transformer = Pipeline(
             [
                 ("scale", StandardScaler(with_std=self.scale)),
-                ("pca", PCA(self.projection, random_state=random_state)),
+                ("pca", PCATransformer(self.projection, random_state=random_state)),
             ]
         )
         self.alpha = alpha
@@ -225,7 +245,7 @@ class PCADecomposition(ProjectionVisualizer):
 
         # Call to super class ensures that a colorbar is drawn when target is
         # continuous.
-        super(PCADecomposition, self).layout(divider)
+        super(PCA, self).layout(divider)
 
         if self.heatmap:
             # Axes for heatmap
@@ -252,10 +272,12 @@ class PCADecomposition(ProjectionVisualizer):
         Returns
         -------
         self : visualizer
-            Returns self for use in Pipelines
+            Returns self for use in Pipelines.
+            
+        
         """
         # Call super fit to compute features, classes, colors, etc.
-        super(PCADecomposition, self).fit(X=X, y=y, **kwargs)
+        super(PCA, self).fit(X=X, y=y, **kwargs)
         self.pca_transformer.fit(X)
         self.pca_components_ = self.pca_transformer.named_steps["pca"].components_
         return self
@@ -277,7 +299,7 @@ class PCADecomposition(ProjectionVisualizer):
 
         Returns
         -------
-        pca_features_ : ndarray or DataFrame of shape n x m
+        Xp : ndarray or DataFrame of shape n x m
             Returns a new array-like object of transformed features of shape
             ``(len(X), proj_dim)``.
         """
@@ -312,10 +334,10 @@ class PCADecomposition(ProjectionVisualizer):
             Returns the axes that the scatter plot was drawn on.
         """
         # Call to super draw which draws the scatter plot.
-        super(PCADecomposition, self).draw(Xp, y)
+        super(PCA, self).draw(Xp, y)
         if self.proj_features:
             # Draws projection features in transformed space.
-            self.draw_projection_features(Xp, y)
+            self._draw_projection_features(Xp, y)
         if self.projection == 2:
             if self.heatmap:
                 # TODO: change to pcolormesh instead of imshow per #615 spec
@@ -330,7 +352,7 @@ class PCADecomposition(ProjectionVisualizer):
                 )
         return self.ax
 
-    def draw_projection_features(self, Xp, y):
+    def _draw_projection_features(self, Xp, y):
         """
         Draw the projection of features in the transformed space.
         Parameters
@@ -396,7 +418,7 @@ class PCADecomposition(ProjectionVisualizer):
         Draws the title, labels, legends, heatmap, and colorbar as specified by the
         keyword arguments.
         """
-        super(PCADecomposition, self).finalize()
+        super(PCA, self).finalize()
 
         self.ax.set_title("Principal Component Plot")
         self.ax.set_xlabel("Principal Component 1", linespacing=1)
@@ -518,6 +540,27 @@ def pca_decomposition(
         Keyword arguments that are passed to the base class and may influence
         the visualization as defined in other Visualizers.
 
+    Attributes
+    ----------
+    pca_components_ : ndarray, shape (n_features, n_components)
+        This tells about the magnitude of each feature in the pricipal components. 
+        This is primarily used to draw the biplots.
+
+    classes_ : ndarray, shape (n_classes,)
+        The class labels that define the discrete values in the target. Only
+        available if the target type is discrete. This is guaranteed to be
+        strings even if the classes are a different type.
+    
+    features_ : ndarray, shape (n_features,)
+        The names of the features discovered or used in the visualizer that
+        can be used as an index to access or modify data in X. If a user passes
+        feature names in, those features are used. Otherwise the columns of a
+        DataFrame are used or just simply the indices of the data array.
+
+    range_ : (min y, max y)
+        A tuple that describes the minimum and maximum values in the target.
+        Only available if the target type is continuous.
+
     Examples
     --------
     >>> from sklearn import datasets
@@ -528,7 +571,7 @@ def pca_decomposition(
 
     """
     # Instantiate the visualizer
-    visualizer = PCADecomposition(
+    visualizer = PCA(
         ax=ax,
         features=features,
         scale=scale,
@@ -548,5 +591,8 @@ def pca_decomposition(
     visualizer.transform(X, y)
     visualizer.poof()
 
-    # Return the axes object on the visualizer
-    return visualizer.ax
+    # Returns the visualizer object.
+    return visualizer
+
+# Alias for PCA
+PCADecomposition=PCA
