@@ -19,16 +19,16 @@ Implements Precision-Recall curves for classification models.
 
 import numpy as np
 
-from ..exceptions import ModelError, NotFitted
-from ..exceptions import YellowbrickValueError
-from .base import ClassificationScoreVisualizer
-
 from sklearn.preprocessing import label_binarize
 from sklearn.multiclass import OneVsRestClassifier
 from sklearn.utils.multiclass import type_of_target
 from sklearn.metrics import average_precision_score
 from sklearn.model_selection import train_test_split as tts
 from sklearn.metrics import precision_recall_curve as sk_precision_recall_curve
+
+from yellowbrick.exceptions import ModelError, NotFitted
+from yellowbrick.exceptions import YellowbrickValueError
+from yellowbrick.classifier.base import ClassificationScoreVisualizer
 
 
 # Target Type Constants
@@ -63,7 +63,7 @@ class PrecisionRecallCurve(ClassificationScoreVisualizer):
     Parameters
     ----------
     model : the Scikit-Learn estimator
-        A classification model to score the precision-recall curve on.
+        An unfitted classification model to score the precision-recall curve on.
 
     ax : matplotlib Axes, default: None
         The axes to plot the figure on. If None is passed in the current axes
@@ -152,7 +152,7 @@ class PrecisionRecallCurve(ClassificationScoreVisualizer):
     Notes
     -----
 
-    .. seealso:: http://scikit-learn.org/stable/auto_examples/model_selection/plot_precision_recall.html
+    .. seealso:: https://bit.ly/2kOIeCC
     """
 
     def __init__(
@@ -231,11 +231,7 @@ class PrecisionRecallCurve(ClassificationScoreVisualizer):
         # If we don't do this check, then it is possible that OneVsRestClassifier
         # has not correctly been fitted for multi-class targets.
         if not hasattr(self, "target_type_"):
-            raise NotFitted(
-                ("{} cannot wrap an already fitted estimator").format(
-                    self.__class__.__name__
-                )
-            )
+            raise NotFitted.from_estimator(self, "score")
 
         # Compute the prediction/threshold scores
         y_scores = self._get_y_scores(X)
@@ -411,7 +407,7 @@ def precision_recall_curve(
     Parameters
     ----------
     model : the Scikit-Learn estimator
-        A classification model to score the precision-recall curve on.
+        An unfitted classification model to score the precision-recall curve on.
 
     X : ndarray or DataFrame of shape n x m
         A feature array of n instances with m features the model is trained on.

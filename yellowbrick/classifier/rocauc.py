@@ -21,15 +21,15 @@ Implements visual ROC/AUC curves for classification evaluation.
 
 import numpy as np
 
-from ..exceptions import ModelError
-from ..style.palettes import LINE_COLOR
-from ..exceptions import YellowbrickValueError
-from .base import ClassificationScoreVisualizer
-
 from scipy import interp
 from sklearn.metrics import auc, roc_curve
 from sklearn.preprocessing import label_binarize
 from sklearn.model_selection import train_test_split
+
+from yellowbrick.exceptions import ModelError
+from yellowbrick.style.palettes import LINE_COLOR
+from yellowbrick.exceptions import YellowbrickValueError
+from yellowbrick.classifier.base import ClassificationScoreVisualizer
 
 
 # Dictionary keys for ROCAUC
@@ -63,7 +63,9 @@ class ROCAUC(ClassificationScoreVisualizer):
     Parameters
     ----------
     model : estimator
-        Must be a classifier, otherwise raises YellowbrickTypeError
+        Must be a classifier, otherwise raises ``YellowbrickTypeError``. If
+        the internal model is not fitted, it is fit when the visualizer is
+        fitted, unless otherwise specified by ``is_fitted``.
 
     ax : matplotlib Axes, default: None
         The axes to plot the figure on. If None is passed in the current axes
@@ -93,6 +95,12 @@ class ROCAUC(ClassificationScoreVisualizer):
         to false if only the macro or micro average curves are required. Per-
         class classification is not defined for binary classification problems
         with estimators with only a decision_function method.
+
+    is_fitted : bool or str, default="auto"
+        Specify if the wrapped estimator is already fitted. If False, the estimator
+        will be fit when the visualizer is fit, otherwise, the estimator will not be
+        modified. If "auto" (default), a helper method will check if the estimator
+        is fitted before fitting it again.
 
     kwargs : keyword arguments passed to the super class.
         Currently passing in hard-coded colors for the Receiver Operating
@@ -145,9 +153,12 @@ class ROCAUC(ClassificationScoreVisualizer):
         micro=True,
         macro=True,
         per_class=True,
+        is_fitted="auto",
         **kwargs
     ):
-        super(ROCAUC, self).__init__(model, ax=ax, classes=classes, **kwargs)
+        super(ROCAUC, self).__init__(
+            model, ax=ax, classes=classes, is_fitted=is_fitted, **kwargs
+        )
 
         # Set the visual parameters for ROCAUC
         self.micro = micro
@@ -256,7 +267,7 @@ class ROCAUC(ClassificationScoreVisualizer):
         -------
         ax : the axis with the plotted figure
         """
-        colors = self.colors[0: len(self.classes_)]
+        colors = self.colors[0 : len(self.classes_)]
         n_classes = len(colors)
 
         # If it's a binary decision, plot the single ROC curve
@@ -408,7 +419,7 @@ class ROCAUC(ClassificationScoreVisualizer):
 ##########################################################################
 
 
-def roc_auc(model, X, y=None, ax=None, **kwargs):
+def roc_auc(model, X, y=None, ax=None, is_fitted="auto", **kwargs):
     """ROCAUC Quick method:
 
     Receiver Operating Characteristic (ROC) curves are a measure of a
@@ -430,8 +441,9 @@ def roc_auc(model, X, y=None, ax=None, **kwargs):
     Parameters
     ----------
     model : the Scikit-Learn estimator
-        Should be an instance of a classifier, else the __init__ will
-        return an error.
+        Should be an instance of a classifier, else the __init__ will return an error.
+        If the internal model is not fitted, it is fit when the visualizer is fitted,
+        unless otherwise specified by ``is_fitted``.
 
     X : ndarray or DataFrame of shape n x m
         A matrix of n instances with m features
@@ -466,6 +478,15 @@ def roc_auc(model, X, y=None, ax=None, **kwargs):
         class classification is not defined for binary classification problems
         with estimators with only a decision_function method.
 
+    is_fitted : bool or str, default="auto"
+        Specify if the wrapped estimator is already fitted. If False, the estimator
+        will be fit when the visualizer is fit, otherwise, the estimator will not be
+        modified. If "auto" (default), a helper method will check if the estimator
+        is fitted before fitting it again.
+
+    kwargs : dict
+        Keyword arguments passed to the visualization base class.
+
     Notes
     -----
     ROC curves are typically used in binary classification, and in fact the
@@ -482,7 +503,7 @@ def roc_auc(model, X, y=None, ax=None, **kwargs):
     ensure the best quality visualization, do not use a LabelEncoder for this
     and do not pass in class labels.
 
-    .. seealso:: http://scikit-learn.org/stable/auto_examples/model_selection/plot_roc.html
+    .. seealso:: https://bit.ly/2IORWO2
     .. todo:: Allow the class list to filter the curves on the visualization.
 
     Examples
@@ -501,7 +522,7 @@ def roc_auc(model, X, y=None, ax=None, **kwargs):
         Returns the visualizer object
     """
     # Instantiate the visualizer
-    visualizer = ROCAUC(model, ax, **kwargs)
+    visualizer = ROCAUC(model=model, ax=ax, is_fitted=is_fitted, **kwargs)
 
     # Create the train and test splits
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2)

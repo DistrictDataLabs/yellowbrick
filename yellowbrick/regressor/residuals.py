@@ -32,7 +32,6 @@ from sklearn.model_selection import train_test_split
 from yellowbrick.draw import manual_legend
 from yellowbrick.utils.decorators import memoized
 from yellowbrick.style.palettes import LINE_COLOR
-from yellowbrick.utils.helpers import check_fitted
 from yellowbrick.exceptions import YellowbrickValueError
 from yellowbrick.regressor.base import RegressionScoreVisualizer
 from yellowbrick.bestfit import draw_best_fit, draw_identity_line
@@ -144,9 +143,7 @@ class PredictionError(RegressionScoreVisualizer):
         self.is_fitted = is_fitted
 
         # Initialize the visualizer
-        super(PredictionError, self).__init__(
-            model, ax=ax, **kwargs
-        )
+        super(PredictionError, self).__init__(model, ax=ax, **kwargs)
 
         # Visual arguments
         self.colors = {
@@ -204,9 +201,7 @@ class PredictionError(RegressionScoreVisualizer):
         -------
         self : visualizer instance
         """
-        if not check_fitted(self.estimator, is_fitted_by=self.is_fitted):
-            super(PredictionError, self).fit(X, y, **kwargs)
-
+        super(PredictionError, self).fit(X, y, **kwargs)
         return self
 
     def draw(self, y, y_pred):
@@ -483,6 +478,7 @@ class ResidualsPlot(RegressionScoreVisualizer):
 
     The residuals histogram feature requires matplotlib 2.0.2 or greater.
     """
+
     def __init__(
         self,
         model,
@@ -772,10 +768,10 @@ def residuals_plot(
         0 is completely transparent. This property makes densely clustered
         points more visible.
 
-    is_fitted : bool or str, default='auto'
+    is_fitted : bool or str, default="auto"
         Specify if the wrapped estimator is already fitted. If False, the estimator
         will be fit when the visualizer is fit, otherwise, the estimator will not be
-        modified. If 'auto' (default), a helper method will check if the estimator
+        modified. If "auto" (default), a helper method will check if the estimator
         is fitted before fitting it again.
 
     kwargs : dict
