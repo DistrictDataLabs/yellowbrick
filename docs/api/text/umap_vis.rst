@@ -3,7 +3,7 @@
 UMAP Corpus Visualization
 ==========================
 
-`UMAP <https://github.com/lmcinnes/umap>`__ is a nonlinear
+`Uniform Manifold Approximation and Projection (UMAP) <https://github.com/lmcinnes/umap>`__ is a nonlinear
 dimensionality reduction method that is well suited to embedding in two
 or three dimensions for visualization as a scatter plot. UMAP is a
 relatively new technique but is very effective for visualizing clusters or
@@ -21,16 +21,18 @@ the paper can be found `here <https://arxiv.org/abs/1802.03426>`__.
 In this example, we represent documents via a `term frequency inverse
 document
 frequency <https://scikit-learn.org/stable/modules/feature_extraction.html#text-feature-extraction>`__ (TF-IDF)
-vector. Then use UMAP to find a low dimensional representation of these
-documents. The Yellowbrick visualizer then plots the scatter plot,
+vector and then use UMAP to find a low dimensional representation of these
+documents. Next, the Yellowbrick visualizer plots the scatter plot,
 coloring by cluster or by class, or neither if a structural analysis is
 required.
 
 After importing the required tools, we can :doc:`load the corpus <corpus>` and vectorize the text using TF-IDF. Once the corpus is vectorized we can visualize it, showing the distribution of classes.
 
-.. plot::
-    :context: close-figs
-    :alt: UMAP Plot
+.. note to contributors: the below code requires an additional dependency on umap-learn 
+    that is not part of the core requirements, so has not been modified with a plot 
+    directive. See umap_vis.py to regenerate images.
+
+.. code:: python
 
     from sklearn.feature_extraction.text import TfidfVectorizer
 
@@ -49,9 +51,12 @@ After importing the required tools, we can :doc:`load the corpus <corpus>` and v
     umap.fit(docs, labels)
     umap.poof()
 
+
+.. image:: images/umap.png
+
 Alternatively, if we believed that cosine distance was a more
 appropriate metric on our feature space we could specify that via a
-``metric`` paramater passed through to the underlying UMAP function by
+``metric`` parameter passed through to the underlying UMAP function by
 the ``UMAPVisualizer``.
 
 .. code:: python
@@ -60,38 +65,27 @@ the ``UMAPVisualizer``.
     umap.fit(docs, labels)
     umap.poof()
 
+
+.. image:: images/umap_cosine.png
+
 If we omit the target during fit, we can visualize the whole dataset to
 see if any meaningful patterns are observed.
 
-.. plot::
-    :context: close-figs
-    :include-source: False 
-    :alt: UMAP Plot without Target
-
-    from sklearn.feature_extraction.text import TfidfVectorizer
-
-    from yellowbrick.datasets import load_hobbies
-    from yellowbrick.text import UMAPVisualizer
-
-    # Load the text data
-    corpus = load_hobbies()
-
-    tfidf = TfidfVectorizer()
-    docs = tfidf.fit_transform(corpus.data)
+.. code:: python
 
     # Don't color points with their classes
     umap = UMAPVisualizer(labels=["documents"], metric='cosine')
     umap.fit(docs)
     umap.poof()
 
+
+.. image:: images/umap_no_labels.png
+
 This means we don’t have to use class labels at all. Instead, we can use
 cluster membership from K-Means to label each document. This will allow
 us to look for clusters of related text by their contents:
 
-.. plot::
-    :context: close-figs
-    :include-source: False 
-    :alt: UMAP Plot with Clustering
+.. code:: python
 
     from sklearn.cluster import KMeans
     from sklearn.feature_extraction.text import TfidfVectorizer
@@ -113,11 +107,13 @@ us to look for clusters of related text by their contents:
     umap.fit(docs, ["c{}".format(c) for c in clusters.labels_])
     umap.poof()
 
+.. image:: images/umap_kmeans.png
+
 On one hand, these clusters aren’t particularly well concentrated by the
-two dimensional embedding of UMAP; while on the other hand, the true labels
+two-dimensional embedding of UMAP; while on the other hand, the true labels
 for this data are. That is a good indication that your data does indeed
 live on a manifold in your TF-IDF space and that structure is being
-ignored by the KMeans algorithm. Clustering can be quite tricky in high
+ignored by the K-Means algorithm. Clustering can be quite tricky in high
 dimensional spaces and it is often a good idea to reduce your dimension
 before running clustering algorithms on your data.
 

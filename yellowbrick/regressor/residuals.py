@@ -37,7 +37,6 @@ from yellowbrick.exceptions import YellowbrickValueError
 from yellowbrick.regressor.base import RegressionScoreVisualizer
 from yellowbrick.bestfit import draw_best_fit, draw_identity_line
 
-
 ## Packages for export
 __all__ = ["PredictionError", "prediction_error", "ResidualsPlot", "residuals_plot"]
 
@@ -105,6 +104,13 @@ class PredictionError(RegressionScoreVisualizer):
     kwargs : dict
         Keyword arguments that are passed to the base class and may influence
         the visualization as defined in other Visualizers.
+
+    Attributes
+    ----------
+
+    score_ : float
+        The R^2 score that specifies the goodness of fit of the underlying
+        regression model to the test data.
 
     Examples
     --------
@@ -174,7 +180,8 @@ class PredictionError(RegressionScoreVisualizer):
         -------
         score : float
         """
-        self.score_ = self.estimator.score(X, y, **kwargs)
+        # super will set score_ on the visualizer
+        super(PredictionError, self).score(X, y, **kwargs)
 
         y_pred = self.predict(X)
         self.draw(y, y_pred)
@@ -379,7 +386,7 @@ def prediction_error(model, X, y=None, ax=None, alpha=0.75, is_fitted="auto", **
     visualizer.finalize()
 
     # Return the axes object on the visualizer
-    return visualizer.ax
+    return visualizer
 
 
 ##########################################################################
@@ -448,6 +455,17 @@ class ResidualsPlot(RegressionScoreVisualizer):
         Keyword arguments that are passed to the base class and may influence
         the visualization as defined in other Visualizers.
 
+    Attributes
+    ----------
+
+    train_score_ : float
+        The R^2 score that specifies the goodness of fit of the underlying
+        regression model to the training data.
+
+    test_score_ : float
+        The R^2 score that specifies the goodness of fit of the underlying
+        regression model to the test data.
+
     Examples
     --------
 
@@ -465,7 +483,6 @@ class ResidualsPlot(RegressionScoreVisualizer):
 
     The residuals histogram feature requires matplotlib 2.0.2 or greater.
     """
-
     def __init__(
         self,
         model,
@@ -545,9 +562,8 @@ class ResidualsPlot(RegressionScoreVisualizer):
         -------
         self : visualizer instance
         """
-        if not check_fitted(self.estimator, is_fitted_by=self.is_fitted):
-            super(ResidualsPlot, self).fit(X, y, **kwargs)
-
+        # fit the underlying model to the data
+        super(ResidualsPlot, self).fit(X, y, **kwargs)
         self.score(X, y, train=True)
         return self
 
@@ -575,6 +591,7 @@ class ResidualsPlot(RegressionScoreVisualizer):
             The score of the underlying estimator, usually the R-squared score
             for regression estimators.
         """
+        # Do not call super in order to differentiate train and test scores.
         score = self.estimator.score(X, y, **kwargs)
         if train:
             self.train_score_ = score
@@ -582,8 +599,8 @@ class ResidualsPlot(RegressionScoreVisualizer):
             self.test_score_ = score
 
         y_pred = self.predict(X)
-        scores = y_pred - y
-        self.draw(y_pred, scores, train=train)
+        residuals = y_pred - y
+        self.draw(y_pred, residuals, train=train)
 
         return score
 
@@ -771,6 +788,7 @@ def residuals_plot(
         Returns the residuals plot visualizer
     """
     # Instantiate the visualizer
+
     visualizer = ResidualsPlot(
         model=model,
         ax=ax,

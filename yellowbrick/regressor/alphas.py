@@ -144,17 +144,12 @@ class AlphaSelection(RegressionScoreVisualizer):
         A simple pass-through method; calls fit on the estimator and then
         draws the alpha-error plot.
         """
-        if not check_fitted(self.estimator, is_fitted_by=self.is_fitted):
-            self.estimator.fit(X, y, **kwargs)
+        # Fit the underlying model
+        super(AlphaSelection, self).fit(X, y, **kwargs)
 
+        # Draw the alpha to error curve
         self.draw()
         return self
-
-    def score(self, X, y, **kwargs):
-        """
-        Simply returns the score of the underlying CV model
-        """
-        return self.estimator.score(X, y, **kwargs)
 
     def draw(self):
         """
@@ -348,12 +343,6 @@ class ManualAlphaSelection(AlphaSelection):
 
         # Always make sure to return self from fit
         return self
-
-    def score(self, X, y, **kwargs):
-        """
-        Simply returns the score of the underlying CV model
-        """
-        return self.estimator.score(X, y, **kwargs)
 
     def draw(self):
         """
