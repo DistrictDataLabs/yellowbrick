@@ -1,10 +1,10 @@
 # tests.test_regressor.test_alphas
 # Tests for the alpha selection visualizations.
 #
-# Author:   Benjamin Bengfort <bbengfort@districtdatalabs.com>
+# Author:   Benjamin Bengfort
 # Created:  Tue Mar 07 12:13:04 2017 -0500
 #
-# Copyright (C) 2016 District Data Labs
+# Copyright (C) 2016 The scikit-yb developers
 # For license information, see LICENSE.txt
 #
 # ID: test_alphas.py [7d3f5e6] benjamin@bengfort.com $
@@ -42,14 +42,13 @@ from sklearn.linear_model import ElasticNet, ElasticNetCV
 ## Alpha Selection Tests
 ##########################################################################
 
+
 class TestAlphaSelection(VisualTestCase):
     """
     Test the AlphaSelection visualizer
     """
 
-    @pytest.mark.xfail(
-        sys.platform == 'win32', reason="images not close on windows"
-    )
+    @pytest.mark.xfail(sys.platform == "win32", reason="images not close on windows")
     def test_similar_image(self):
         """
         Integration test with image simiarlity comparison
