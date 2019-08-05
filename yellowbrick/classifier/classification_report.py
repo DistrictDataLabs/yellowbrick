@@ -56,9 +56,12 @@ class ClassificationReport(ClassificationScoreVisualizer):
         Should be an instance of a classifier, else the __init__ will
         return an error.
 
-    classes : a list of class names for the legend
-        If classes is None and a y value is passed to fit then the classes
-        are selected from the target vector.
+    classes : list of str, defult: None
+        The class labels to use for the legend ordered by the index of the
+        classes discovered in the ``fit()`` method. Specifying classes in this
+        manner is used to change the class names to a more specific format or
+        to label encoded integer classes. For more advanced usage specify an
+        encoder rather than class labels.
 
     cmap : string, default: ``'YlOrRd'``
         Specify a colormap to define the heatmap of the predicted class
@@ -68,7 +71,18 @@ class ClassificationReport(ClassificationScoreVisualizer):
         Specify if support will be displayed. It can be further defined by
         whether support should be reported as a raw count or percentage.
 
-    kwargs : dict
+    encoder : dict or LabelEncoder, default: None
+        A mapping of classes to human readable labels. Often there is a mismatch
+        between desired class labels and those contained in the target variable
+        passed to ``fit()`` or ``score()``. The encoder disambiguates this mismatch
+        ensuring that classes are labeled correctly in the visualization.
+
+    force_model : bool, default: False
+        Do not check to ensure that the underlying estimator is a classifier. This
+        will prevent an exception when the visualizer is initialized but may result
+        in unexpected or unintended behavior.
+
+    kwargs: dict
         Keyword arguments passed to the super class.
 
     Examples
@@ -82,8 +96,17 @@ class ClassificationReport(ClassificationScoreVisualizer):
 
     Attributes
     ----------
+    classes_ : ndarray of shape (n_classes,)
+        The class labels observed while fitting.
+
+    class_count_ : ndarray of shape (n_classes,)
+        Number of samples encountered for each class during fitting.
+
     score_ : float
-        Global accuracy score
+        An evaluation metric of the classifier on test data produced when
+        ``score()`` is called. This metric is between 0 and 1 -- higher scores are
+        generally better. For classifiers, this score is usually accuracy, but
+        ensure you check the underlying model for more details about the score.
 
     scores_ : dict of dicts
         Outer dictionary composed of precision, recall, f1, and support scores with
@@ -91,10 +114,23 @@ class ClassificationReport(ClassificationScoreVisualizer):
     """
 
     def __init__(
-        self, model, ax=None, classes=None, cmap="YlOrRd", support=None, **kwargs
+        self,
+        model,
+        ax=None,
+        classes=None,
+        cmap="YlOrRd",
+        support=None,
+        encoder=None,
+        force_model=False,
+        **kwargs
     ):
         super(ClassificationReport, self).__init__(
-            model, ax=ax, classes=classes, **kwargs
+            model,
+            ax=ax,
+            classes=classes,
+            encoder=encoder,
+            force_model=force_model,
+            **kwargs
         )
 
         self.support = support
@@ -112,7 +148,7 @@ class ClassificationReport(ClassificationScoreVisualizer):
         if not support:
             self._displayed_scores.remove("support")
 
-    def score(self, X, y=None, **kwargs):
+    def score(self, X, y):
         """
         Generates the Scikit-Learn classification report.
 
@@ -152,10 +188,8 @@ class ClassificationReport(ClassificationScoreVisualizer):
 
         self.draw()
 
-        # Retrieve and store the score attribute from the sklearn classifier
-        self.score_ = self.estimator.score(X, y)
-
-        return self.score_
+        # super stores the score attribute from the sklearn classifier and returns it
+        return super(ClassificationReport, self).score(X, y)
 
     def draw(self):
         """

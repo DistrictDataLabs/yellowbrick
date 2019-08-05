@@ -28,7 +28,7 @@ from sklearn.metrics.classification import _check_targets
 from sklearn.model_selection import train_test_split as tts
 
 from ..draw import bar_stack
-from ..exceptions import ModelError, YellowbrickValueError
+from ..exceptions import ModelError, YellowbrickValueError, NotFitted
 
 
 ##########################################################################
@@ -46,33 +46,50 @@ class ClassPredictionError(ClassificationScoreVisualizer):
     Parameters
     ----------
     model: estimator
-        Scikit-Learn estimator object. Should be an instance of a classifier,
-        else ``__init__()`` will raise an exception.
+        A scikit-learn estimator that should be a classifier. If the model is
+        not a classifier, an exception is raised.
 
     ax: axes, default: None
         the axis to plot the figure on.
 
-    classes: list, default: None
-        A list of class names for the legend. If classes is None and a y value
-        is passed to fit then the classes are selected from the target vector.
+    classes : list of str, defult: None
+        The class labels to use for the legend ordered by the index of the
+        classes discovered in the ``fit()`` method. Specifying classes in this
+        manner is used to change the class names to a more specific format or
+        to label encoded integer classes. For more advanced usage specify an
+        encoder rather than class labels.
+
+    encoder : dict or LabelEncoder, default: None
+        A mapping of classes to human readable labels. Often there is a mismatch
+        between desired class labels and those contained in the target variable
+        passed to ``fit()`` or ``score()``. The encoder disambiguates this mismatch
+        ensuring that classes are labeled correctly in the visualization.
+
+    force_model : bool, default: False
+        Do not check to ensure that the underlying estimator is a classifier. This
+        will prevent an exception when the visualizer is initialized but may result
+        in unexpected or unintended behavior.
 
     kwargs: dict
-        Keyword arguments passed to the super class. Here, used
-        to colorize the bars in the histogram.
+        Keyword arguments passed to the super class.
 
     Attributes
     ----------
+    classes_ : ndarray of shape (n_classes,)
+        The class labels observed while fitting.
+
+    class_count_ : ndarray of shape (n_classes,)
+        Number of samples encountered for each class during fitting.
+
     score_ : float
-        Global accuracy score
+        An evaluation metric of the classifier on test data produced when
+        ``score()`` is called. This metric is between 0 and 1 -- higher scores are
+        generally better. For classifiers, this score is usually accuracy, but
+        ensure you check the underlying model for more details about the score.
 
     predictions_ : ndarray
         An ndarray of predictions whose rows are the true classes and
         whose columns are the predicted classes
-
-    Notes
-    -----
-    These parameters can be influenced later on in the visualization
-    process, but can and should be set as early as possible.
     """
 
     def score(self, X, y, **kwargs):
@@ -102,7 +119,7 @@ class ClassPredictionError(ClassificationScoreVisualizer):
         if y_type not in ("binary", "multiclass"):
             raise YellowbrickValueError("{} is not supported".format(y_type))
 
-        indices = unique_labels(y_true, y_pred)
+        indices = unique_labels(self._decode_labels(y_true), self._decode_labels(y_pred))
 
         if len(self.classes_) > len(indices):
             raise ModelError(
@@ -137,9 +154,12 @@ class ClassPredictionError(ClassificationScoreVisualizer):
             The axes on which the figure is plotted
         """
 
+        if not hasattr(self, "predictions_") or not hasattr(self, "classes_"):
+            raise NotFitted.from_estimator(self, "draw")
+
         legend_kws = {"bbox_to_anchor": (1.04, 0.5), "loc": "center left"}
         bar_stack(
-            self.predictions_,  # TODO: if not fitted, should raise a NotFitted error
+            self.predictions_,
             self.ax,
             labels=list(self.classes_),
             ticks=self.classes_,

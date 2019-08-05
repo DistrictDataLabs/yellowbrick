@@ -69,12 +69,12 @@ class PrecisionRecallCurve(ClassificationScoreVisualizer):
         The axes to plot the figure on. If None is passed in the current axes
         will be used (or generated if required).
 
-    classes : list
-        A list of class names for the legend. If classes is None and a y value
-        is passed to fit then the classes are selected from the target vector.
-        Note that the curves must be computed based on what is in the target
-        vector passed to the ``score()`` method. Class names are used for
-        labeling only and must be in the correct order to prevent confusion.
+    classes : list of str, defult: None
+        The class labels to use for the legend ordered by the index of the
+        classes discovered in the ``fit()`` method. Specifying classes in this
+        manner is used to change the class names to a more specific format or
+        to label encoded integer classes. For more advanced usage specify an
+        encoder rather than class labels.
 
     fill_area : bool, default: True
         Fill the area under the curve (or curves) with the curve color.
@@ -111,8 +111,19 @@ class PrecisionRecallCurve(ClassificationScoreVisualizer):
         Specify the alpha or opacity of the lines (0 being transparent, and
         1.0 being completly opaque).
 
-    kwargs : dict
-        Keyword arguments passed to the visualization base class.
+    encoder : dict or LabelEncoder, default: None
+        A mapping of classes to human readable labels. Often there is a mismatch
+        between desired class labels and those contained in the target variable
+        passed to ``fit()`` or ``score()``. The encoder disambiguates this mismatch
+        ensuring that classes are labeled correctly in the visualization.
+
+    force_model : bool, default: False
+        Do not check to ensure that the underlying estimator is a classifier. This
+        will prevent an exception when the visualizer is initialized but may result
+        in unexpected or unintended behavior.
+
+    kwargs: dict
+        Keyword arguments passed to the super class.
 
     Attributes
     ----------
@@ -137,6 +148,12 @@ class PrecisionRecallCurve(ClassificationScoreVisualizer):
         predictions with score >= thresholds[i] and the last element is 0.
         In the multiclass case, a mapping of class/metric to recall array.
 
+    classes_ : ndarray of shape (n_classes,)
+        The class labels observed while fitting.
+
+    class_count_ : ndarray of shape (n_classes,)
+        Number of samples encountered for each class during fitting.
+
 
     Example
     -------
@@ -152,7 +169,8 @@ class PrecisionRecallCurve(ClassificationScoreVisualizer):
     Notes
     -----
 
-    .. seealso:: http://scikit-learn.org/stable/auto_examples/model_selection/plot_precision_recall.html
+    .. seealso::
+        http://scikit-learn.org/stable/auto_examples/model_selection/plot_precision_recall.html
     """
 
     def __init__(
@@ -168,10 +186,17 @@ class PrecisionRecallCurve(ClassificationScoreVisualizer):
         per_class=False,
         fill_opacity=0.2,
         line_opacity=0.8,
+        encoder=None,
+        force_model=False,
         **kwargs
     ):
         super(PrecisionRecallCurve, self).__init__(
-            model, ax=ax, classes=classes, **kwargs
+            model,
+            ax=ax,
+            classes=classes,
+            encoder=encoder,
+            force_model=force_model,
+            **kwargs
         )
 
         # Set visual params
@@ -380,7 +405,7 @@ class PrecisionRecallCurve(ClassificationScoreVisualizer):
         # If we've gotten this far, we can't do anything
         raise ModelError(
             (
-                "{} requires estimators with predict_proba or decision_function methods."
+                "{} requires an estimator with predict_proba or decision_function."
             ).format(self.__class__.__name__)
         )
 

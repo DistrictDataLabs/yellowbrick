@@ -69,12 +69,12 @@ class ROCAUC(ClassificationScoreVisualizer):
         The axes to plot the figure on. If None is passed in the current axes
         will be used (or generated if required).
 
-    classes : list
-        A list of class names for the legend. If classes is None and a y value
-        is passed to fit then the classes are selected from the target vector.
-        Note that the curves must be computed based on what is in the target
-        vector passed to the ``score()`` method. Class names are used for
-        labeling only and must be in the correct order to prevent confusion.
+    classes : list of str, defult: None
+        The class labels to use for the legend ordered by the index of the
+        classes discovered in the ``fit()`` method. Specifying classes in this
+        manner is used to change the class names to a more specific format or
+        to label encoded integer classes. For more advanced usage specify an
+        encoder rather than class labels.
 
     micro : bool, default: True
         Plot the micro-averages ROC curve, computed from the sum of all true
@@ -94,15 +94,33 @@ class ROCAUC(ClassificationScoreVisualizer):
         class classification is not defined for binary classification problems
         with estimators with only a decision_function method.
 
-    kwargs : keyword arguments passed to the super class.
-        Currently passing in hard-coded colors for the Receiver Operating
-        Characteristic curve and the diagonal.
-        These will be refactored to a default Yellowbrick style.
+    encoder : dict or LabelEncoder, default: None
+        A mapping of classes to human readable labels. Often there is a mismatch
+        between desired class labels and those contained in the target variable
+        passed to ``fit()`` or ``score()``. The encoder disambiguates this mismatch
+        ensuring that classes are labeled correctly in the visualization.
+
+    force_model : bool, default: False
+        Do not check to ensure that the underlying estimator is a classifier. This
+        will prevent an exception when the visualizer is initialized but may result
+        in unexpected or unintended behavior.
+
+    kwargs: dict
+        Keyword arguments passed to the super class.
 
     Attributes
     ----------
+    classes_ : ndarray of shape (n_classes,)
+        The class labels observed while fitting.
+
+    class_count_ : ndarray of shape (n_classes,)
+        Number of samples encountered for each class during fitting.
+
     score_ : float
-        Global accuracy score, unless micro or macro scores are requested
+        An evaluation metric of the classifier on test data produced when
+        ``score()`` is called. This metric is between 0 and 1 -- higher scores are
+        generally better. For classifiers, this score is usually accuracy, but
+        if micro or macro is specified this returns an F1 score.
 
     Notes
     -----
@@ -120,7 +138,9 @@ class ROCAUC(ClassificationScoreVisualizer):
     ensure the best quality visualization, do not use a LabelEncoder for this
     and do not pass in class labels.
 
-    .. seealso:: http://scikit-learn.org/stable/auto_examples/model_selection/plot_roc.html
+    .. seealso::
+        http://scikit-learn.org/stable/auto_examples/model_selection/plot_roc.html
+
     .. todo:: Allow the class list to filter the curves on the visualization.
 
     Examples
@@ -145,9 +165,18 @@ class ROCAUC(ClassificationScoreVisualizer):
         micro=True,
         macro=True,
         per_class=True,
+        encoder=None,
+        force_model=False,
         **kwargs
     ):
-        super(ROCAUC, self).__init__(model, ax=ax, classes=classes, **kwargs)
+        super(ROCAUC, self).__init__(
+            model,
+            ax=ax,
+            classes=classes,
+            encoder=encoder,
+            force_model=force_model,
+            **kwargs
+        )
 
         # Set the visual parameters for ROCAUC
         self.micro = micro
@@ -256,7 +285,7 @@ class ROCAUC(ClassificationScoreVisualizer):
         -------
         ax : the axis with the plotted figure
         """
-        colors = self.colors[0: len(self.classes_)]
+        colors = self.colors[0:len(self.classes_)]
         n_classes = len(colors)
 
         # If it's a binary decision, plot the single ROC curve
@@ -482,7 +511,9 @@ def roc_auc(model, X, y=None, ax=None, **kwargs):
     ensure the best quality visualization, do not use a LabelEncoder for this
     and do not pass in class labels.
 
-    .. seealso:: http://scikit-learn.org/stable/auto_examples/model_selection/plot_roc.html
+    .. seealso::
+        http://scikit-learn.org/stable/auto_examples/model_selection/plot_roc.html
+
     .. todo:: Allow the class list to filter the curves on the visualization.
 
     Examples

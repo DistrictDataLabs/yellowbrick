@@ -76,14 +76,11 @@ class ConfusionMatrix(ClassificationScoreVisualizer):
         subset of labels. If None, classes that appear at least once in
         ``y_true`` or ``y_pred`` are used in sorted order.
 
-    label_encoder : dict or LabelEncoder, default: None
-        When specifying the ``classes`` argument, the input to ``fit()``
-        and ``score()`` must match the expected labels. If the ``X`` and ``y``
-        datasets have been encoded prior to training and the labels must be
-        preserved for the visualization, use this argument to provide a
-        mapping from the encoded class to the correct label. Because typically
-        a Scikit-Learn ``LabelEncoder`` is used to perform this operation, you
-        may provide it directly to the class to utilize its fitted encoding.
+    encoder : dict or LabelEncoder, default: None
+        A mapping of classes to human readable labels. Often there is a mismatch
+        between desired class labels and those contained in the target variable
+        passed to ``fit()`` or ``score()``. The encoder disambiguates this mismatch
+        ensuring that classes are labeled correctly in the visualization.
 
     cmap : string, default: ``'YlOrRd'``
         Specify a colormap to define the heatmap of the predicted class
@@ -92,6 +89,14 @@ class ConfusionMatrix(ClassificationScoreVisualizer):
     fontsize : int, default: None
         Specify the fontsize of the text in the grid and labels to make the
         matrix a bit easier to read. Uses rcParams font size by default.
+
+    force_model : bool, default: False
+        Do not check to ensure that the underlying estimator is a classifier. This
+        will prevent an exception when the visualizer is initialized but may result
+        in unexpected or unintended behavior.
+
+    kwargs: dict
+        Keyword arguments passed to the super class.
 
     Attributes
     ----------
@@ -121,9 +126,10 @@ class ConfusionMatrix(ClassificationScoreVisualizer):
         classes=None,
         sample_weight=None,
         percent=False,
-        label_encoder=None,
+        encoder=None,
         cmap="YlOrRd",
         fontsize=None,
+        force_model=False,
         **kwargs
     ):
         super(ConfusionMatrix, self).__init__(model, ax=ax, classes=classes, **kwargs)
@@ -136,7 +142,7 @@ class ConfusionMatrix(ClassificationScoreVisualizer):
 
         # Estimator parameters
         self.percent = percent
-        self.label_encoder = label_encoder
+        self.label_encoder = encoder
         self.sample_weight = sample_weight
 
         # Used to draw diagonal line for predicted class = true class
@@ -179,7 +185,7 @@ class ConfusionMatrix(ClassificationScoreVisualizer):
         self.confusion_matrix_ = confusion_matrix_metric(
             y, y_pred, labels=self.classes_, sample_weight=self.sample_weight
         )
-        self.class_counts_ = self.class_counts(y)
+        self.class_counts_ = dict(zip(*np.unique(y, return_counts=True)))
 
         # Make array of only the classes actually being used.
         # Needed because sklearn confusion_matrix only returns counts for

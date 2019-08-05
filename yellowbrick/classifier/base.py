@@ -19,10 +19,13 @@ API for classification visualizer hierarchy.
 ## Imports
 ##########################################################################
 
+import warnings
 import numpy as np
 
 from ..utils import isclassifier
 from ..base import ScoreVisualizer
+from ..style.palettes import color_palette
+from ..exceptions import NotFitted, YellowbrickWarning
 from ..exceptions import YellowbrickTypeError, YellowbrickValueError
 
 
@@ -57,7 +60,7 @@ class ClassificationScoreVisualizer(ScoreVisualizer):
         plot will be used (or generated if required).
 
     classes : list of str, defult: None
-        The class labels to use for the legend ordered by the index of the
+        The class labels to use for the legend ordered by the index of the sorted
         classes discovered in the ``fit()`` method. Specifying classes in this
         manner is used to change the class names to a more specific format or
         to label encoded integer classes. Some visualizers may also use this
@@ -75,6 +78,9 @@ class ClassificationScoreVisualizer(ScoreVisualizer):
         will prevent an exception when the visualizer is initialized but may result
         in unexpected or unintended behavior.
 
+    kwargs: dict
+        Keyword arguments passed to the super class.
+
     Attributes
     ----------
     classes_ : ndarray of shape (n_classes,)
@@ -87,12 +93,7 @@ class ClassificationScoreVisualizer(ScoreVisualizer):
         An evaluation metric of the classifier on test data produced when
         ``score()`` is called. This metric is between 0 and 1 -- higher scores are
         generally better. For classifiers, this score is usually accuracy, but
-        ensure you check the underlying model for more details about the score.
-
-    Notes
-    -----
-    Classification score visualizers should implement the ``score()``
-    and ``draw()`` visualier methods.
+        ensure you check the underlying model for more details about the metric.
     """
 
     def __init__(
@@ -117,11 +118,29 @@ class ClassificationScoreVisualizer(ScoreVisualizer):
             model, ax=ax, fig=fig, **kwargs
         )
 
-        self.set_params(
-            classes=classes,
-            encoder=encoder,
-            force_model=force_model,
-        )
+        self.set_params(classes=classes, encoder=encoder, force_model=force_model)
+
+    @property
+    def colors(self):
+        """
+        Returns ``_colors`` if it exists, otherwise computes a categorical color
+        per class based on the matplotlib color cycle. If the visualizer is not
+        fitted, raises a NotFitted exception.
+
+        If subclasses require users to choose colors or have specialized color
+        handling, they should set ``_colors`` on init or during fit.
+
+        Notes
+        -----
+        Because this is a property, this docstring is for developers only.
+        """
+        if not hasattr(self, "_colors"):
+            if not hasattr(self, "classes_"):
+                raise NotFitted("cannot determine colors before fit")
+
+            # TODO: replace with resolve_colors
+            self._colors = color_palette(None, len(self.classes_))
+        return self._colors
 
     def fit(self, X, y=None, **kwargs):
         """
@@ -139,7 +158,6 @@ class ClassificationScoreVisualizer(ScoreVisualizer):
         -------
         self : instance
             Returns the instance of the classification score visualizer
-
         """
         # Super fits the wrapped estimator
         super(ClassificationScoreVisualizer, self).fit(X, y)
@@ -149,11 +167,14 @@ class ClassificationScoreVisualizer(ScoreVisualizer):
 
         # Ensure the classes are aligned with the estimator
         # TODO: should we simply warn here, why would this be the case?
-        if hasattr(self.estimator, 'classes_'):
+        if hasattr(self.estimator, "classes_"):
             if not np.all(self.classes_ == self.estimator.classes_, axis=0):
                 raise YellowbrickValueError(
                     "unique classes in y do not match estimator.classes_"
                 )
+
+        # Decode classes to human readable labels specified by the user
+        self.classes_ = self._decode_labels(self.classes_)
 
         # Always return self from fit
         return self
@@ -183,3 +204,47 @@ class ClassificationScoreVisualizer(ScoreVisualizer):
         # This method implements ScoreVisualizer (do not call super).
         self.score_ = self.estimator.score(X, y, **kwargs)
         return self.score_
+
+    def _decode_labels(self, y):
+        """
+        An internal helper function that uses either the classes or encoder
+        properties to correctly decode y as user-readable string labels.
+
+        If both classes and encoder are set, a warning is issued and encoder is
+        used instead of classes. If neither encoder nor classes is set then the
+        original array is returned unmodified.
+
+        If classes is specified then y must be an array of integers.
+        """
+        if self.classes is not None and self.encoder is not None:
+            warnings.warn(
+                "both classes and encoder specified, using encoder", YellowbrickWarning
+            )
+
+        if self.encoder is not None:
+            # Use the label encoder or other transformer
+            if hasattr(self.encoder, 'inverse_transform'):
+                return self.encoder.inverse_transform(y)
+
+            # Otherwise, treat as a dictionary
+            return np.array([self.encoder[yi] for yi in y])
+
+        if self.classes is not None:
+            # Determine indices to perform class mappings on
+            yp = np.asarray(y)
+            if yp.dtype.kind in {'i', 'u'}:
+                idx = yp
+            else:
+                # Sort values to get indices
+                labels = np.unique(yp)
+
+
+
+            # Use index mapping for classes
+            try:
+                return np.asarray(self.classes)[idx]
+            except IndexError:
+                raise YellowbrickValueError("BAD!")
+
+        # could not encode y, return it as it is, unmodified
+        return y
