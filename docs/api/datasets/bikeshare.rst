@@ -10,6 +10,7 @@ Samples total                 17379
 Dimensionality                   12
 Features             real, positive
 Targets                 ints, 1-977
+Task(s)                  regression
 =================   ===============
 
 Description

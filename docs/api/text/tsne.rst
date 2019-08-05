@@ -7,7 +7,7 @@ One very popular method for visualizing document similarity is to use t-distribu
 
 Unfortunately, ``TSNE`` is very expensive, so typically a simpler decomposition method such as SVD or PCA is applied ahead of time. The ``TSNEVisualizer`` creates an inner transformer pipeline that applies such a decomposition first (SVD with 50 components by default), then performs the t-SNE embedding. The visualizer then plots the scatter plot, coloring by cluster or by class, or neither if a structural analysis is required.
 
-After importing the required tools, we can :doc:`load the corpus <corpus>` and vectorize the text using TF-IDF. Once the corpus is vectorized we can visualize it, showing the distribution of classes.
+After importing the required tools, we can use the :doc:`hobbies corpus <../datasets/hobbies>` and vectorize the text using TF-IDF. Once the corpus is vectorized we can visualize it, showing the distribution of classes.
 
 
 .. plot::
