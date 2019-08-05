@@ -1,8 +1,8 @@
 # yellowbrick.utils.helpers
 # Helper functions and generic utilities for use in Yellowbrick code.
 #
-# Author:   Benjamin Bengfort <bbengfort@districtdatalabs.com>
-# Author:   Rebecca Bilbro <rbilbro@districtdatalabs.com>
+# Author:   Benjamin Bengfort
+# Author:   Rebecca Bilbro
 # Created:  Fri May 19 10:39:30 2017 -0700
 #
 # Copyright (C) 2019 The scikit-yb developers
@@ -23,6 +23,7 @@ import sklearn
 import numpy as np
 
 from sklearn.pipeline import Pipeline
+from sklearn.utils.validation import check_is_fitted
 
 from yellowbrick.utils.types import is_estimator
 from yellowbrick.exceptions import YellowbrickTypeError
@@ -47,8 +48,19 @@ def is_fitted(estimator):
         estimator.predict(np.zeros((7, 3)))
     except sklearn.exceptions.NotFittedError:
         return False
+    except AttributeError:
+        # Some clustering models (LDA, PCA, Agglomerative) don't implement ``predict``
+        try:
+            check_is_fitted(estimator, [
+                "coef_", "estimator_", "labels_", "n_clusters_", "children_",
+                "components_", "n_components_", "n_iter_", "n_batch_iter_",
+                "explained_variance_", "singular_values_", "mean_"
+            ], all_or_any=any)
+            return True
+        except sklearn.exceptions.NotFittedError:
+            return False
     except Exception:
-        # Assume fitted as NotFittedError was not raised
+        # Assume it's fitted, since ``NotFittedError`` wasn't raised
         return True
 
     return True
