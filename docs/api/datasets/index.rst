@@ -39,6 +39,7 @@ Unless otherwise specified, most of the examples currently use one or more of th
 - :doc:`occupancy`: suitable for classification
 - :doc:`spam`: suitable for binary classification
 - :doc:`walking`: suitable for time series analysis/clustering
+- :doc:`nfl`: suitable for clustering
 
 .. toctree::
    :hidden:
@@ -53,6 +54,7 @@ Unless otherwise specified, most of the examples currently use one or more of th
    occupancy
    spam
    walking
+   nfl
 
 
 API Reference

@@ -1,8 +1,11 @@
 # yellowbrick.classifier.prcurve
 # Implements Precision-Recall curves for classification models.
 #
-# Author:  Benjamin Bengfort <benjamin@bengfort.com>
+# Author:  Benjamin Bengfort
 # Created: Tue Sep 04 16:47:19 2018 -0400
+#
+# Copyright (C) 2018 The scikit-yb developers
+# For license information, see LICENSE.txt
 #
 # ID: prcurve.py [] benjamin@bengfort.com $
 
@@ -29,6 +32,7 @@ from sklearn.metrics import precision_recall_curve as sk_precision_recall_curve
 
 
 # Target Type Constants
+# TODO: These can now be imported from utils.target
 BINARY = "binary"
 MULTICLASS = "multiclass"
 
@@ -36,12 +40,13 @@ MULTICLASS = "multiclass"
 MICRO = "micro"
 
 # Default Values
-DEFAULT_ISO_F1_VALUES = (0.2,0.4,0.6,0.8)
+DEFAULT_ISO_F1_VALUES = (0.2, 0.4, 0.6, 0.8)
 
 
 ##########################################################################
 ## PrecisionRecallCurve Visualizer
 ##########################################################################
+
 
 class PrecisionRecallCurve(ClassificationScoreVisualizer):
     """
@@ -71,38 +76,38 @@ class PrecisionRecallCurve(ClassificationScoreVisualizer):
         vector passed to the ``score()`` method. Class names are used for
         labeling only and must be in the correct order to prevent confusion.
 
-    fill_area : bool, default=True
+    fill_area : bool, default: True
         Fill the area under the curve (or curves) with the curve color.
 
-    ap_score : bool, default=True
+    ap_score : bool, default: True
         Annotate the graph with the average precision score, a summary of the
         plot that is computed as the weighted mean of precisions at each
         threshold, with the increase in recall from the previous threshold used
         as the weight.
 
-    micro : bool, default=True
+    micro : bool, default: True
         If multi-class classification, draw the precision-recall curve for the
         micro-average of all classes. In the multi-class case, either micro or
         per-class must be set to True. Ignored in the binary case.
 
-    iso_f1_curves : bool, default=False
+    iso_f1_curves : bool, default: False
         Draw ISO F1-Curves on the plot to show how close the precision-recall
         curves are to different F1 scores.
 
-    iso_f1_values : tuple , default=(0.2,0.4,0.6,0.8)
+    iso_f1_values : tuple , default: (0.2, 0.4, 0.6, 0.8)
         Values of f1 score for which to draw ISO F1-Curves
 
-    per_class : bool, default=False
+    per_class : bool, default: False
         If multi-class classification, draw the precision-recall curve for
         each class using a OneVsRestClassifier to compute the recall on a
         per-class basis. In the multi-class case, either micro or per-class
         must be set to True. Ignored in the binary case.
 
-    fill_opacity : float, default=0.2
+    fill_opacity : float, default: 0.2
         Specify the alpha or opacity of the fill area (0 being transparent,
         and 1.0 being completly opaque).
 
-    line_opacity : float, default=0.8
+    line_opacity : float, default: 0.8
         Specify the alpha or opacity of the lines (0 being transparent, and
         1.0 being completly opaque).
 
@@ -151,10 +156,24 @@ class PrecisionRecallCurve(ClassificationScoreVisualizer):
     .. seealso:: http://scikit-learn.org/stable/auto_examples/model_selection/plot_precision_recall.html
     """
 
-    def __init__(self, model, ax=None, classes=None, fill_area=True, ap_score=True,
-                 micro=True, iso_f1_curves=False,iso_f1_values=DEFAULT_ISO_F1_VALUES,
-                 per_class=False, fill_opacity=0.2, line_opacity=0.8, **kwargs):
-        super(PrecisionRecallCurve, self).__init__(model, ax=ax, classes=classes, **kwargs)
+    def __init__(
+        self,
+        model,
+        ax=None,
+        classes=None,
+        fill_area=True,
+        ap_score=True,
+        micro=True,
+        iso_f1_curves=False,
+        iso_f1_values=DEFAULT_ISO_F1_VALUES,
+        per_class=False,
+        fill_opacity=0.2,
+        line_opacity=0.8,
+        **kwargs
+    ):
+        super(PrecisionRecallCurve, self).__init__(
+            model, ax=ax, classes=classes, **kwargs
+        )
 
         # Set visual params
         self.set_params(
@@ -162,7 +181,7 @@ class PrecisionRecallCurve(ClassificationScoreVisualizer):
             ap_score=ap_score,
             micro=micro,
             iso_f1_curves=iso_f1_curves,
-            iso_f1_values = set(iso_f1_values),
+            iso_f1_values=set(iso_f1_values),
             per_class=per_class,
             fill_opacity=fill_opacity,
             line_opacity=line_opacity,
@@ -189,12 +208,12 @@ class PrecisionRecallCurve(ClassificationScoreVisualizer):
             # Different variable is used here to prevent transformation
             Y = y
         else:
-            raise YellowbrickValueError((
-                "{} does not support target type '{}', "
-                "please provide a binary or multiclass single-output target"
-            ).format(
-                self.__class__.__name__, ttype
-            ))
+            raise YellowbrickValueError(
+                (
+                    "{} does not support target type '{}', "
+                    "please provide a binary or multiclass single-output target"
+                ).format(self.__class__.__name__, ttype)
+            )
 
         # Fit the model and return self
         return super(PrecisionRecallCurve, self).fit(X, Y)
@@ -213,11 +232,11 @@ class PrecisionRecallCurve(ClassificationScoreVisualizer):
         # If we don't do this check, then it is possible that OneVsRestClassifier
         # has not correctly been fitted for multi-class targets.
         if not hasattr(self, "target_type_"):
-            raise NotFitted((
-                "{} cannot wrap an already fitted estimator"
-            ).format(
-                self.__class__.__name__
-            ))
+            raise NotFitted(
+                ("{} cannot wrap an already fitted estimator").format(
+                    self.__class__.__name__
+                )
+            )
 
         # Compute the prediction/threshold scores
         y_scores = self._get_y_scores(X)
@@ -227,15 +246,17 @@ class PrecisionRecallCurve(ClassificationScoreVisualizer):
             self.precision_, self.recall_, _ = sk_precision_recall_curve(y, y_scores)
             self.score_ = average_precision_score(y, y_scores)
         else:
-            # Use label_binarize to create multi-label ouptut for OneVsRestClassifier
+            # Use label_binarize to create multi-label output for OneVsRestClassifier
             Y = label_binarize(y, classes=self._target_labels)
 
             self.precision_, self.recall_, self.score_ = {}, {}, {}
 
             # Compute PRCurve for all classes
             for i, class_i in enumerate(self.classes_):
-                self.precision_[class_i], self.recall_[class_i], _ = sk_precision_recall_curve(Y[:,i], y_scores[:,i])
-                self.score_[class_i] = average_precision_score(Y[:,i], y_scores[:,i])
+                self.precision_[class_i], self.recall_[
+                    class_i
+                ], _ = sk_precision_recall_curve(Y[:, i], y_scores[:, i])
+                self.score_[class_i] = average_precision_score(Y[:, i], y_scores[:, i])
 
             # Compute micro average PR curve
             self.precision_[MICRO], self.recall_[MICRO], _ = sk_precision_recall_curve(
@@ -259,8 +280,8 @@ class PrecisionRecallCurve(ClassificationScoreVisualizer):
             for f1 in self.iso_f1_values:
                 x = np.linspace(0.01, 1)
                 y = f1 * x / (2 * x - f1)
-                self.ax.plot(x[y>=0], y[y>=0], color='#333333', alpha=0.2)
-                self.ax.annotate('$f_1={:0.1f}$'.format(f1), xy=(0.9, y[45]+0.02))
+                self.ax.plot(x[y >= 0], y[y >= 0], color="#333333", alpha=0.2)
+                self.ax.annotate("$f_1={:0.1f}$".format(f1), xy=(0.9, y[45] + 0.02))
 
         if self.target_type_ == BINARY:
             return self._draw_binary()
@@ -272,7 +293,6 @@ class PrecisionRecallCurve(ClassificationScoreVisualizer):
         """
         self._draw_pr_curve(self.recall_, self.precision_, label="binary PR curve")
         self._draw_ap_score(self.score_)
-
 
     def _draw_multiclass(self):
         """
@@ -299,10 +319,12 @@ class PrecisionRecallCurve(ClassificationScoreVisualizer):
         Helper function to draw a precision-recall curve with specified settings
         """
         self.ax.step(
-            recall, precision, alpha=self.line_opacity, where='post', label=label
+            recall, precision, alpha=self.line_opacity, where="post", label=label
         )
         if self.fill_area:
-            self.ax.fill_between(recall, precision, step='post', alpha=self.fill_opacity)
+            self.ax.fill_between(
+                recall, precision, step="post", alpha=self.fill_opacity
+            )
 
     def _draw_ap_score(self, score, label=None):
         """
@@ -310,16 +332,14 @@ class PrecisionRecallCurve(ClassificationScoreVisualizer):
         """
         label = label or "Avg Precision={:0.2f}".format(score)
         if self.ap_score:
-            self.ax.axhline(
-                y=score, color="r", ls="--", label=label
-            )
+            self.ax.axhline(y=score, color="r", ls="--", label=label)
 
     def finalize(self):
         """
         Finalize the figure by adding titles, labels, and limits.
         """
         self.set_title("Precision-Recall Curve for {}".format(self.name))
-        self.ax.legend(loc='lower left', frameon=True)
+        self.ax.legend(loc="lower left", frameon=True)
 
         self.ax.set_xlim([0.0, 1.0])
         self.ax.set_ylim([0.0, 1.0])
@@ -337,10 +357,7 @@ class PrecisionRecallCurve(ClassificationScoreVisualizer):
         # TODO refactor shared method with ROCAUC
 
         # Resolution order of scoring functions
-        attrs = (
-            'decision_function',
-            'predict_proba',
-        )
+        attrs = ("decision_function", "predict_proba")
 
         # Return the first resolved function
         for attr in attrs:
@@ -352,7 +369,7 @@ class PrecisionRecallCurve(ClassificationScoreVisualizer):
 
                     # Return only the positive class for binary predict_proba
                     if self.target_type_ == BINARY and y_scores.ndim == 2:
-                        return y_scores[:,1]
+                        return y_scores[:, 1]
                     return y_scores
 
             except AttributeError:
@@ -362,9 +379,11 @@ class PrecisionRecallCurve(ClassificationScoreVisualizer):
                 continue
 
         # If we've gotten this far, we can't do anything
-        raise ModelError((
-            "{} requires estimators with predict_proba or decision_function methods."
-        ).format(self.__class__.__name__))
+        raise ModelError(
+            (
+                "{} requires estimators with predict_proba or decision_function methods."
+            ).format(self.__class__.__name__)
+        )
 
 
 # Alias for PrecisionRecallCurve
@@ -375,8 +394,19 @@ PRCurve = PrecisionRecallCurve
 ## Quick Method
 ##########################################################################
 
-def precision_recall_curve(model, X, y, X_test=None, y_test=None, ax=None, train_size=0.8,
-                           random_state=None, shuffle=True, **kwargs):
+
+def precision_recall_curve(
+    model,
+    X,
+    y,
+    X_test=None,
+    y_test=None,
+    ax=None,
+    train_size=0.8,
+    random_state=None,
+    shuffle=True,
+    **kwargs
+):
     """Precision-Recall Curve quick method:
 
     Parameters
@@ -474,20 +504,24 @@ def precision_recall_curve(model, X, y, X_test=None, y_test=None, ax=None, train
     if required, it is recommended to use the base class.
     """
 
-
-
-
     if (X_test is None) and (y_test is None):
         # Create train and test splits to validate the model
         X_train, X_test, y_train, y_test = tts(
             X, y, train_size=train_size, random_state=random_state, shuffle=shuffle
         )
-    elif any([((X_test is not None) and (y_test is None)),((X_test is None) and (y_test is not None))]):
+    elif any(
+        [
+            ((X_test is not None) and (y_test is None)),
+            ((X_test is None) and (y_test is not None)),
+        ]
+    ):
         # exception handling in case of missing X_test or y_test
-        raise YellowbrickValueError("both X_test and y_test are required if one is specified")
+        raise YellowbrickValueError(
+            "both X_test and y_test are required if one is specified"
+        )
 
     else:
-        X_train,y_train=X,y
+        X_train, y_train = X, y
 
     # Instantiate the visualizer
     viz = PRCurve(model, ax=ax, **kwargs)

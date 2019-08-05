@@ -1,8 +1,11 @@
 # tests.test_classifier.conftest
 # Provides fixtures for the classification tests module.
 #
-# Author:  Benjamin Bengfort <benjamin@bengfort.com>
+# Author:  Benjamin Bengfort
 # Created: Fri Mar 23 18:07:00 2018 -0400
+#
+# Copyright (C) 2018 The scikit-yb developers
+# For license information, see LICENSE.txt
 #
 # ID: conftest.py [] benjamin@bengfort.com $
 
@@ -26,37 +29,44 @@ from sklearn.model_selection import train_test_split as tts
 ## Fixtures
 ##########################################################################
 
-@pytest.fixture(scope='class')
+
+@pytest.fixture(scope="class")
 def binary(request):
     """
     Creates a random binary classification dataset fixture
     """
     X, y = make_classification(
-        n_samples=500, n_features=20, n_informative=8, n_redundant=2,
-        n_classes=2, n_clusters_per_class=3, random_state=87
+        n_samples=500,
+        n_features=20,
+        n_informative=8,
+        n_redundant=2,
+        n_classes=2,
+        n_clusters_per_class=3,
+        random_state=87,
     )
 
-    X_train, X_test, y_train, y_test = tts(
-        X, y, test_size=0.2, random_state=93
-    )
+    X_train, X_test, y_train, y_test = tts(X, y, test_size=0.2, random_state=93)
 
     dataset = Dataset(Split(X_train, X_test), Split(y_train, y_test))
     request.cls.binary = dataset
 
 
-@pytest.fixture(scope='class')
+@pytest.fixture(scope="class")
 def multiclass(request):
     """
     Creates a random multiclass classification dataset fixture
     """
     X, y = make_classification(
-        n_samples=500, n_features=20, n_informative=8, n_redundant=2,
-        n_classes=6, n_clusters_per_class=3, random_state=87
+        n_samples=500,
+        n_features=20,
+        n_informative=8,
+        n_redundant=2,
+        n_classes=6,
+        n_clusters_per_class=3,
+        random_state=87,
     )
 
-    X_train, X_test, y_train, y_test = tts(
-        X, y, test_size=0.2, random_state=93
-    )
+    X_train, X_test, y_train, y_test = tts(X, y, test_size=0.2, random_state=93)
 
     dataset = Dataset(Split(X_train, X_test), Split(y_train, y_test))
     request.cls.multiclass = dataset

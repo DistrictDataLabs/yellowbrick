@@ -22,7 +22,7 @@ from .base import Dataset, Corpus
 __all__ = [
     "load_concrete", "load_energy", "load_credit", "load_occupancy",
     "load_mushroom", "load_hobbies", "load_game", "load_bikeshare",
-    "load_spam", "load_walking",
+    "load_spam", "load_walking", "load_nfl",
 ]
 
 
@@ -457,3 +457,44 @@ def load_walking(data_home=None, return_dataset=False):
         data in a variety of formats as well as associated metadata and content.
     """
     return _load_dataset('walking', data_home, return_dataset)
+
+
+def load_nfl(data_home=None, return_dataset=False):
+    """
+    Loads the football receivers dataset that is well suited to clustering
+    tasks. The dataset contains 494 instances with 28 integer, real valued, and
+    categorical attributes and a discrete target.
+
+    The Yellowbrick datasets are hosted online and when requested, the dataset
+    is downloaded to your local computer for use. Note that if the dataset
+    hasn't been downloaded before, an Internet connection is required. However,
+    if the data is cached locally, no data will be downloaded. Yellowbrick
+    checks the known signature of the dataset with the data downloaded to
+    ensure the download completes successfully.
+
+    Datasets are stored alongside the code, but the location can be specified
+    with the ``data_home`` parameter or the $YELLOWBRICK_DATA envvar.
+
+    Parameters
+    ----------
+    data_home : str, optional
+        The path on disk where data is stored. If not passed in, it is looked
+        up from YELLOWBRICK_DATA or the default returned by ``get_data_home``.
+
+    return_dataset : bool, default=False
+        Return the raw dataset object instead of X and y numpy arrays to
+        get access to alternative targets, extra features, content and meta.
+
+    Returns
+    -------
+    X : array-like with shape (n_instances, n_features) if return_dataset=False
+        A pandas DataFrame or numpy array describing the instance features.
+
+    y : array-like with shape (n_instances,) if return_dataset=False
+        A pandas Series or numpy array describing the target vector.
+
+    dataset : Dataset instance if return_dataset=True
+        The Yellowbrick Dataset object provides an interface to accessing the
+        data in a variety of formats as well as associated metadata and content.
+    """
+    return _load_dataset('nfl', data_home, return_dataset)

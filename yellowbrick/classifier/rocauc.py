@@ -1,12 +1,12 @@
 # yellowbrick.classifier.rocauc
 # Implements visual ROC/AUC curves for classification evaluation.
 #
-# Author:   Rebecca Bilbro <rbilbro@districtdatalabs.com>
-# Author:   Benjamin Bengfort <bbengfort@districtdatalabs.com>
+# Author:   Rebecca Bilbro
+# Author:   Benjamin Bengfort
 # Author:   Neal Humphrey
-# Created:  Wed May 18 12:39:40 2016 -0400
+# Created:  Tue May 03 18:15:42 2017 -0400
 #
-# Copyright (C) 2017 District Data Labs
+# Copyright (C) 2016 The scikit-yb developers
 # For license information, see LICENSE.txt
 #
 # ID: rocauc.py [5388065] neal@nhumphrey.com $
@@ -22,14 +22,14 @@ Implements visual ROC/AUC curves for classification evaluation.
 import numpy as np
 
 from ..exceptions import ModelError
-from ..exceptions import YellowbrickValueError
 from ..style.palettes import LINE_COLOR
+from ..exceptions import YellowbrickValueError
 from .base import ClassificationScoreVisualizer
 
 from scipy import interp
+from sklearn.metrics import auc, roc_curve
 from sklearn.preprocessing import label_binarize
 from sklearn.model_selection import train_test_split
-from sklearn.metrics import auc, roc_curve
 
 
 # Dictionary keys for ROCAUC
@@ -41,6 +41,7 @@ MICRO = "micro"
 ## ROCAUC Visualizer
 ##########################################################################
 
+
 class ROCAUC(ClassificationScoreVisualizer):
     """
     Receiver Operating Characteristic (ROC) curves are a measure of a
@@ -51,7 +52,7 @@ class ROCAUC(ClassificationScoreVisualizer):
     therefore the top-left corner of the plot: false positives are zero and
     true positives are one.
 
-    This leads to another metric, area under the curve  (AUC), a computation
+    This leads to another metric, area under the curve (AUC), a computation
     of the relationship between false positives and true positives. The higher
     the AUC, the better the model generally is. However, it is also important
     to inspect the "steepness" of the curve, as this describes the
@@ -75,19 +76,19 @@ class ROCAUC(ClassificationScoreVisualizer):
         vector passed to the ``score()`` method. Class names are used for
         labeling only and must be in the correct order to prevent confusion.
 
-    micro : bool, default = True
+    micro : bool, default: True
         Plot the micro-averages ROC curve, computed from the sum of all true
         positives and false positives across all classes. Micro is not defined
         for binary classification problems with estimators with only a
         decision_function method.
 
-    macro : bool, default = True
+    macro : bool, default: True
         Plot the macro-averages ROC curve, which simply takes the average of
         curves across all classes. Macro is not defined for binary
         classification problems with estimators with only a decision_function
         method.
 
-    per_class : bool, default = True
+    per_class : bool, default: True
         Plot the ROC curves for each individual class. This should be set
         to false if only the macro or micro average curves are required. Per-
         class classification is not defined for binary classification problems
@@ -136,8 +137,16 @@ class ROCAUC(ClassificationScoreVisualizer):
     >>> oz.poof()
     """
 
-    def __init__(self, model, ax=None, classes=None,
-                 micro=True, macro=True, per_class=True, **kwargs):
+    def __init__(
+        self,
+        model,
+        ax=None,
+        classes=None,
+        micro=True,
+        macro=True,
+        per_class=True,
+        **kwargs
+    ):
         super(ROCAUC, self).__init__(model, ax=ax, classes=classes, **kwargs)
 
         # Set the visual parameters for ROCAUC
@@ -205,13 +214,13 @@ class ROCAUC(ClassificationScoreVisualizer):
         self.roc_auc = dict()
 
         # If the decision is binary, compute the ROC curve and ROC area
-        if self._binary_decision == True:
+        if self._binary_decision is True:
             self.fpr[0], self.tpr[0], _ = roc_curve(y, y_pred)
             self.roc_auc[0] = auc(self.fpr[0], self.tpr[0])
         else:
             # Otherwise compute the ROC curve and ROC area for each class
             for i, c in enumerate(classes):
-                self.fpr[i], self.tpr[i], _ = roc_curve(y, y_pred[:,i], pos_label=c)
+                self.fpr[i], self.tpr[i], _ = roc_curve(y, y_pred[:, i], pos_label=c)
                 self.roc_auc[i] = auc(self.fpr[i], self.tpr[i])
 
         # Compute micro average
@@ -247,50 +256,55 @@ class ROCAUC(ClassificationScoreVisualizer):
         -------
         ax : the axis with the plotted figure
         """
-        colors = self.colors[0:len(self.classes_)]
+        colors = self.colors[0: len(self.classes_)]
         n_classes = len(colors)
 
         # If it's a binary decision, plot the single ROC curve
-        if self._binary_decision == True:
+        if self._binary_decision is True:
             self.ax.plot(
-                self.fpr[0], self.tpr[0],
-                label='ROC for binary decision, AUC = {:0.2f}'.format(
-                        self.roc_auc[0]
-                )
+                self.fpr[0],
+                self.tpr[0],
+                label="ROC for binary decision, AUC = {:0.2f}".format(self.roc_auc[0]),
             )
 
         # If per-class plotting is requested, plot ROC curves for each class
         if self.per_class:
             for i, color in zip(range(n_classes), colors):
                 self.ax.plot(
-                    self.fpr[i], self.tpr[i], color=color,
-                    label='ROC of class {}, AUC = {:0.2f}'.format(
-                        self.classes_[i], self.roc_auc[i],
-                    )
+                    self.fpr[i],
+                    self.tpr[i],
+                    color=color,
+                    label="ROC of class {}, AUC = {:0.2f}".format(
+                        self.classes_[i], self.roc_auc[i]
+                    ),
                 )
 
         # If requested, plot the ROC curve for the micro average
         if self.micro:
             self.ax.plot(
-                self.fpr[MICRO], self.tpr[MICRO], linestyle="--",
-                color= self.colors[len(self.classes_)-1],
-                label='micro-average ROC curve, AUC = {:0.2f}'.format(
-                    self.roc_auc["micro"],
-                )
+                self.fpr[MICRO],
+                self.tpr[MICRO],
+                linestyle="--",
+                color=self.colors[len(self.classes_) - 1],
+                label="micro-average ROC curve, AUC = {:0.2f}".format(
+                    self.roc_auc["micro"]
+                ),
             )
 
         # If requested, plot the ROC curve for the macro average
         if self.macro:
             self.ax.plot(
-                self.fpr[MACRO], self.tpr[MACRO], linestyle="--",
-                color= self.colors[len(self.classes_)-1],
-                label='macro-average ROC curve, AUC = {:0.2f}'.format(
-                    self.roc_auc["macro"],
-                )
+                self.fpr[MACRO],
+                self.tpr[MACRO],
+                linestyle="--",
+                color=self.colors[len(self.classes_) - 1],
+                label="macro-average ROC curve, AUC = {:0.2f}".format(
+                    self.roc_auc["macro"]
+                ),
             )
 
         # Plot the line of no discrimination to compare the curve to.
-        self.ax.plot([0,1], [0,1], linestyle=':', c=LINE_COLOR)
+        self.ax.plot([0, 1], [0, 1], linestyle=":", c=LINE_COLOR)
         return self.ax
 
     def finalize(self, **kwargs):
@@ -304,16 +318,16 @@ class ROCAUC(ClassificationScoreVisualizer):
 
         """
         # Set the title and add the legend
-        self.set_title('ROC Curves for {}'.format(self.name))
-        self.ax.legend(loc='lower right', frameon=True)
+        self.set_title("ROC Curves for {}".format(self.name))
+        self.ax.legend(loc="lower right", frameon=True)
 
         # Set the limits for the ROC/AUC (always between 0 and 1)
         self.ax.set_xlim([0.0, 1.0])
         self.ax.set_ylim([0.0, 1.0])
 
         # Set x and y axis labels
-        self.ax.set_ylabel('True Postive Rate')
-        self.ax.set_xlabel('False Positive Rate')
+        self.ax.set_ylabel("True Postive Rate")
+        self.ax.set_xlabel("False Positive Rate")
 
     def _get_y_scores(self, X):
         """
@@ -333,10 +347,7 @@ class ROCAUC(ClassificationScoreVisualizer):
             that is associated with y_true values.
         """
         # The resolution order of scoring functions
-        attrs = (
-            'predict_proba',
-            'decision_function',
-        )
+        attrs = ("predict_proba", "decision_function")
 
         # Return the first resolved function
         for attr in attrs:
@@ -365,7 +376,7 @@ class ROCAUC(ClassificationScoreVisualizer):
         # Convert y to binarized array for micro and macro scores
         y = label_binarize(y, classes=classes)
         if n_classes == 2:
-            y = np.hstack((1-y, y))
+            y = np.hstack((1 - y, y))
 
         # Compute micro-average
         self.fpr[MICRO], self.tpr[MICRO], _ = roc_curve(y.ravel(), y_pred.ravel())
@@ -395,6 +406,7 @@ class ROCAUC(ClassificationScoreVisualizer):
 ##########################################################################
 ## Quick method for ROCAUC
 ##########################################################################
+
 
 def roc_auc(model, X, y=None, ax=None, **kwargs):
     """ROCAUC Quick method:
@@ -436,19 +448,19 @@ def roc_auc(model, X, y=None, ax=None, **kwargs):
         vector passed to the ``score()`` method. Class names are used for
         labeling only and must be in the correct order to prevent confusion.
 
-    micro : bool, default = True
+    micro : bool, default: True
         Plot the micro-averages ROC curve, computed from the sum of all true
         positives and false positives across all classes. Micro is not defined
         for binary classification problems with estimators with only a
         decision_function method.
 
-    macro : bool, default = True
+    macro : bool, default: True
         Plot the macro-averages ROC curve, which simply takes the average of
         curves across all classes. Macro is not defined for binary
         classification problems with estimators with only a decision_function
         method.
 
-    per_class : bool, default = True
+    per_class : bool, default: True
         Plot the ROC curves for each individual class. This should be set
         to false if only the macro or micro average curves are required. Per-
         class classification is not defined for binary classification problems
@@ -485,8 +497,8 @@ def roc_auc(model, X, y=None, ax=None, **kwargs):
 
     Returns
     -------
-    ax : matplotlib axes
-        Returns the axes that the roc-auc curve was drawn on.
+    viz : Visualizer
+        Returns the visualizer object
     """
     # Instantiate the visualizer
     visualizer = ROCAUC(model, ax, **kwargs)
@@ -499,5 +511,5 @@ def roc_auc(model, X, y=None, ax=None, **kwargs):
     visualizer.score(X_test, y_test)
     visualizer.finalize()
 
-    # Return the axes object on the visualizer
-    return visualizer.ax
+    # Return the visualizer
+    return visualizer

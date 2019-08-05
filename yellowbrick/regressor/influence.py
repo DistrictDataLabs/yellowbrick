@@ -1,7 +1,7 @@
 # yellowbrick.regressor.influence
 # Visualize the influence and leverage of individual instances on a regression model.
 #
-# Author:   Benjamin Bengfort <benjamin@bengfort.com>
+# Author:   Benjamin Bengfort
 # Created:  Sun Jun 09 15:21:17 2019 -0400
 #
 # Copyright (C) 2019 The scikit-yb developers
@@ -111,7 +111,7 @@ class CooksDistance(Visualizer):
 
         # Set "hyperparameters"
         self.set_params(
-            draw_threshold=draw_threshold, linefmt=linefmt, markerfmt=markerfmt,
+            draw_threshold=draw_threshold, linefmt=linefmt, markerfmt=markerfmt
         )
 
         # An internal LinearRegression used to compute the residuals and MSE
@@ -198,6 +198,8 @@ class CooksDistance(Visualizer):
                 c=baseline.get_color(),
                 lw=baseline.get_linewidth(),
             )
+
+        return self.ax
 
     def finalize(self):
         """

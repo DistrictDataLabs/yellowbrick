@@ -21,6 +21,7 @@ import warnings
 import matplotlib as mpl
 import matplotlib.pyplot as plt
 from mpl_toolkits.axes_grid1 import make_axes_locatable
+import mpl_toolkits.mplot3d  # noqa
 
 from yellowbrick.style import palettes
 from yellowbrick.draw import manual_legend
@@ -31,6 +32,7 @@ from yellowbrick.exceptions import YellowbrickValueError, YellowbrickWarning, No
 ##########################################################################
 ## Projection Visualizers
 ##########################################################################
+
 
 class ProjectionVisualizer(DataVisualizer):
     """
@@ -52,28 +54,42 @@ class ProjectionVisualizer(DataVisualizer):
         will be used (or generated if required).
 
     features : list, default: None
-        a list of feature names to use
-        If a DataFrame is passed to fit and features is None, feature
-        names are selected as the columns of the DataFrame.
-
+        The names of the features specified by the columns of the input dataset.
+        This length of this list must match the number of columns in X, otherwise
+        an exception will be raised on ``fit()``.
+        
     classes : list, default: None
-        a list of class names for the legend
-        If classes is None and a y value is passed to fit then the classes
-        are selected from the target vector.
+        The class labels for each class in y, ordered by sorted class index. These
+        names act as a label encoder for the legend, identifying integer classes
+        or renaming string labels. If omitted, the class labels will be taken from
+        the unique values in y.
 
-    color : list or tuple of colors, default: None
-        Specify the colors for each individual class.
+        Note that the length of this list must match the number of unique values in
+        y, otherwise an exception is raised. This parameter is only used in the
+        discrete target type case and is ignored otherwise.
+
+    colors : list or tuple, default: None
+        A single color to plot all instances as or a list of colors to color each
+        instance according to its class in the discrete case or as an ordered
+        colormap in the sequential case. If not enough colors per class are
+        specified then the colors are treated as a cycle.
 
     colormap : string or cmap, default: None
-        Optional string or matplotlib cmap to colorize points.
-        Use either color to colorize the points on a per class basis or
-        colormap to color them on a continuous scale.
-
+        The colormap used to create the individual colors. In the discrete case
+        it is used to compute the number of colors needed for each class and
+        in the continuous case it is used to create a sequential color map based
+        on the range of the target.
+        
     target_type : str, default: "auto"
         Specify the type of target as either "discrete" (classes) or "continuous"
         (real numbers, usually for regression). If "auto", then it will
         attempt to determine the type by counting the number of unique values.
 
+        If the target is discrete, the colors are returned as a dict with classes
+        being the keys. If continuous the colors will be list having value of
+        color for each point. In either case, if no target is specified, then
+        color will be specified as the first color in the color cycle.
+        
     projection : int or string, default: 2
         The number of axes to project into, either 2d or 3d. To plot 3d plots
         with matplotlib, please ensure a 3d axes is passed to the visualizer,
@@ -92,31 +108,49 @@ class ProjectionVisualizer(DataVisualizer):
         the visualization as defined in other Visualizers.
     """
 
-    def __init__(self, ax=None, features=None, classes=None, color=None,
-             colormap=None, target_type="auto", projection=2, alpha=0.75,
-             colorbar=True, **kwargs):
+    def __init__(
+        self,
+        ax=None,
+        features=None,
+        classes=None,
+        colors=None,
+        colormap=None,
+        target_type="auto",
+        projection=2,
+        alpha=0.75,
+        colorbar=True,
+        **kwargs
+    ):
 
         # TODO: add this to resolve_colors
-        if color==None and colormap==None:
-            colormap=palettes.DEFAULT_SEQUENCE
+        if colors is None and colormap is None:
+            colormap = palettes.DEFAULT_SEQUENCE
 
-        super(ProjectionVisualizer, self).__init__(ax=ax, features=features,
-                                                     classes=classes, color=color,
-                                                     colormap=colormap,
-                                                     target_type=target_type, **kwargs)
+        super(ProjectionVisualizer, self).__init__(
+            ax=ax,
+            features=features,
+            classes=classes,
+            colors=colors,
+            colormap=colormap,
+            target_type=target_type,
+            **kwargs
+        )
+
         # Convert string to integer
         if isinstance(projection, str):
-            if projection in {'2D', '2d'}:
+            if projection in {"2D", "2d"}:
                 projection = 2
-            if projection in {'3D', '3d'}:
+            if projection in {"3D", "3d"}:
                 projection = 3
         if projection not in {2, 3}:
             raise YellowbrickValueError("Projection dimensions must be either 2 or 3")
         self.projection = projection
 
-        if self.ax.name!='3d' and self.projection == 3:
-                warnings.warn("data projection to 3 dimensions requires a 3d axes to draw on.",
-                              YellowbrickWarning)
+        if self.ax.name != "3d" and self.projection == 3:
+            warnings.warn(
+                "data projection to 3 dimensions requires a 3d axes to draw on.",
+                YellowbrickWarning,
+            )
 
         self.alpha = alpha
         self.colorbar = colorbar
@@ -128,9 +162,7 @@ class ProjectionVisualizer(DataVisualizer):
         The axes of the colorbar, right of the scatterplot.
         """
         if self._cax is None:
-            raise AttributeError(
-                "This visualizer does not have an axes for colorbar"
-            )
+            raise AttributeError("This visualizer does not have an axes for colorbar")
 
         return self._cax
 
@@ -141,9 +173,9 @@ class ProjectionVisualizer(DataVisualizer):
         creates an axes for users. A 3d axes is created for 3 dimensional plots.
         """
         if not hasattr(self, "_ax") or self._ax is None:
-            if self.projection==3:
+            if self.projection == 3:
                 fig = plt.gcf()
-                self._ax = fig.add_subplot(111, projection='3d')
+                self._ax = fig.add_subplot(111, projection="3d")
             else:
                 self._ax = plt.gca()
         return self._ax
@@ -152,26 +184,40 @@ class ProjectionVisualizer(DataVisualizer):
     def ax(self, ax):
         self._ax = ax
 
-    def layout(self):
+    def layout(self, divider=None):
         """
         Creates the layout for colorbar when target type is continuous.
         The colorbar is added to the right of the scatterplot.
 
         Subclasses can override this method to add other axes or layouts.
+        
+        Parameters
+        ----------
+        divider: AxesDivider
+            An AxesDivider to be passed among all layout calls.
         """
-        if self._cax is None and self._target_color_type == TargetType.CONTINUOUS:
-            # Ensure matplotlib version compatibility
-            if make_axes_locatable is None:
-                raise YellowbrickValueError((
-                    "Colorbar requires matplotlib 2.0.2 or greater "
-                    "please upgrade matplotlib"
-                ))
+        if (
+            self._target_color_type == TargetType.CONTINUOUS
+            and self.projection == 2
+            and self.colorbar
+            and self._cax is None
+        ):
+                # Ensure matplotlib version compatibility
+                if make_axes_locatable is None:
+                    raise YellowbrickValueError(
+                        (
+                            "Colorbar requires matplotlib 2.0.2 or greater "
+                            "please upgrade matplotlib"
+                        )
+                    )
 
-            # Create the new axes for the colorbar
-            divider = make_axes_locatable(self.ax)
-            self._cax = divider.append_axes("right", size="5%", pad=0.3)
-            self._cax.set_yticks([])
-            self._cax.set_xticks([])
+                # Create the new axes for the colorbar
+                if divider is None:
+                    divider = make_axes_locatable(self.ax)
+
+                self._cax = divider.append_axes("right", size="5%", pad=0.3)
+                self._cax.set_yticks([])
+                self._cax.set_xticks([])
 
     def fit_transform(self, X, y=None):
         """
@@ -213,10 +259,13 @@ class ProjectionVisualizer(DataVisualizer):
             Returns the axes that the scatter plot was drawn on.
         """
         scatter_kwargs = self._determine_scatter_kwargs(y)
+        
+        # Draws the layout of the visualizer. It draws the axes for colorbars, 
+        # heatmap, etc.
+        self.layout()
 
         if self.projection == 2:
             # Adds colorbar axis for continuous target type.
-            self.layout()
             self.ax.scatter(Xp[:, 0], Xp[:, 1], **scatter_kwargs)
 
         if self.projection == 3:
@@ -230,18 +279,21 @@ class ProjectionVisualizer(DataVisualizer):
         """
         if self._target_color_type == TargetType.DISCRETE:
             # Add the legend
-            manual_legend(self, self.classes_, list(self._colors.values()),
-                          frameon=True)
+            manual_legend(
+                self, self.classes_, list(self._colors.values()), frameon=True
+            )
 
         elif self._target_color_type == TargetType.CONTINUOUS:
-            if self.projection == 3:
-                sm = plt.cm.ScalarMappable(cmap=self._colors, norm = self._norm)
-                self.cbar = plt.colorbar(sm, ax=self.ax)
+            if self.colorbar:
+                if self.projection == 3:
+                    sm = plt.cm.ScalarMappable(cmap=self._colors, norm=self._norm)
+                    self.cbar = plt.colorbar(sm, ax=self.ax)
 
-            else:
-                # Manually draw the colorbar.
-                self.cbar = mpl.colorbar.ColorbarBase(self.cax, cmap=self._colors,
-                                                  norm=self._norm)
+                else:
+                    # Manually draw the colorbar.
+                    self.cbar = mpl.colorbar.ColorbarBase(
+                        self.cax, cmap=self._colors, norm=self._norm
+                    )
 
     def _determine_scatter_kwargs(self, y=None):
         """
@@ -269,7 +321,6 @@ class ProjectionVisualizer(DataVisualizer):
                 scatter_kwargs["c"] = [self._colors[self.classes_[yi]] for yi in y]
             except IndexError:
                 raise YellowbrickValueError("Target needs to be label encoded.")
-
 
         elif self._target_color_type == TargetType.CONTINUOUS:
             if y is None:
