@@ -170,6 +170,21 @@ class TestHelpers(object):
         fitted = clusterer().fit(X)
         assert is_fitted(fitted) is True
 
+    def test_check_fitted(self):
+        """
+        Verify the user can specify whether or not to check if the model is fitted
+        """
+        model = SVC()
+        assert check_fitted(model, is_fitted_by="auto") is False
+        assert check_fitted(model, is_fitted_by=True) is True
+        assert check_fitted(model, is_fitted_by=False) is False
+
+        X, y = make_classification(n_samples=20, n_features=3, n_redundant=0)
+        model.fit(X, y)
+        assert check_fitted(model, is_fitted_by="auto") is True
+        assert check_fitted(model, is_fitted_by=True) is True
+        assert check_fitted(model, is_fitted_by=False) is False
+
 ##########################################################################
 ## Numeric Function Tests
 ##########################################################################
