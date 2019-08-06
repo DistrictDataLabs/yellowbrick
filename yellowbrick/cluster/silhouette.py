@@ -21,12 +21,11 @@ Implements visualizers that use the silhouette metric for cluster evaluation.
 import numpy as np
 import matplotlib.ticker as ticker
 
+from sklearn.metrics import silhouette_score, silhouette_samples
+
 from yellowbrick.utils import check_fitted
 from yellowbrick.style import resolve_colors
 from yellowbrick.cluster.base import ClusteringScoreVisualizer
-
-from sklearn.metrics import silhouette_score, silhouette_samples
-
 
 ## Packages for export
 __all__ = ["SilhouetteVisualizer"]
@@ -237,8 +236,7 @@ class SilhouetteVisualizer(ClusteringScoreVisualizer):
         # but here we scale the plot according to our visualizations
 
         # l_xlim and u_xlim are lower and upper limits of the x-axis,
-        # set according to our calculated maximum and minimum silhouette score along
-        # with necessary padding
+        # set according to our calculated max and min score with necessary padding
         l_xlim = max(-1, min(-0.1, round(min(self.silhouette_samples_) - 0.1, 1)))
         u_xlim = min(1, round(max(self.silhouette_samples_) + 0.1, 1))
         self.ax.set_xlim([l_xlim, u_xlim])

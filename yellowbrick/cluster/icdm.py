@@ -28,6 +28,7 @@ from yellowbrick.cluster.base import ClusteringScoreVisualizer
 from yellowbrick.utils.timer import Timer
 from yellowbrick.utils.decorators import memoized
 from yellowbrick.exceptions import YellowbrickValueError
+from yellowbrick.cluster.base import ClusteringScoreVisualizer
 from yellowbrick.utils.helpers import prop_to_size, check_fitted
 
 try:
@@ -43,6 +44,7 @@ __all__ = [
     "intercluster_distance",
     "VALID_EMBEDDING",
     "VALID_SCORING",
+    "ICDM"
 ]
 
 
@@ -215,8 +217,7 @@ class InterclusterDistance(ClusteringScoreVisualizer):
             raise YellowbrickValueError(
                 (
                     "intercluster distance map legend requires matplotlib 2.0.2 or "
-                    "greater, please upgrade matplotlib or set legend=False on the "
-                    "visualizer"
+                    "later please upgrade matplotlib or set legend=False "
                 )
             )
 
@@ -353,8 +354,6 @@ class InterclusterDistance(ClusteringScoreVisualizer):
         if self.legend:
             self._make_size_legend()
 
-        return self.ax
-
     def _score_clusters(self, X, y=None):
         """
         Determines the "scores" of the cluster, the metric that determines the
@@ -423,6 +422,9 @@ class InterclusterDistance(ClusteringScoreVisualizer):
         # inset axes and while drawing.
         plt.sca(self.ax)
 
+
+# alias
+ICDM = InterclusterDistance
 
 ##########################################################################
 ## Helper Methods
