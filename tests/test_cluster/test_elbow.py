@@ -305,7 +305,6 @@ class TestKElbowVisualizer(VisualTestCase):
         visualizer.fit(X)
         assert len(visualizer.k_scores_) == 5
         assert visualizer.elbow_value_ == 3
-
         expected = np.array(
             [4286.479848, 12463.383743, 8766.999551, 6950.08391, 5865.79722]
         )

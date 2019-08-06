@@ -335,6 +335,7 @@ class KElbowVisualizer(ClusteringScoreVisualizer):
             )
             self.elbow_value_ = elbow_locator.knee
             if self.elbow_value_ is not None:
+                self.elbow_score_ = 0
                 warning_message = (
                     "No 'knee' or 'elbow' point detected, "
                     "pass `locate_elbow=False` to remove the warning"
@@ -355,8 +356,8 @@ class KElbowVisualizer(ClusteringScoreVisualizer):
         """
         # Plot the silhouette score against k
         self.ax.plot(self.k_values_, self.k_scores_, marker="D")
-        if self.locate_elbow and self.elbow_value_ is not None:
-            elbow_label = "$elbow\ at\ k={}, score={:0.3f}$".format(
+        if self.locate_elbow is True and self.elbow_value_ is not None:
+            elbow_label = "$elbow at k={}, score={:0.3f}$".format(
                 self.elbow_value_, self.elbow_score_
             )
             self.ax.axvline(
@@ -395,7 +396,7 @@ class KElbowVisualizer(ClusteringScoreVisualizer):
         self.ax.set_ylabel(metric.lower())
 
         # set the legend if locate_elbow=True
-        if self.locate_elbow and self.elbow_value_ is not None:
+        if self.locate_elbow is True and self.elbow_value_ is not None:
             self.ax.legend(loc="best", fontsize="medium")
 
         # Set the second y axis labels
