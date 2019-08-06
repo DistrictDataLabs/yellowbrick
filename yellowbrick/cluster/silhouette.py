@@ -28,7 +28,7 @@ from yellowbrick.style import resolve_colors
 from yellowbrick.cluster.base import ClusteringScoreVisualizer
 
 ## Packages for export
-__all__ = ["SilhouetteVisualizer"]
+__all__ = ["SilhouetteVisualizer", "silhouette_visualizer"]
 
 
 ##########################################################################
@@ -264,7 +264,9 @@ class SilhouetteVisualizer(ClusteringScoreVisualizer):
 ##########################################################################
 
 
-def silhouettes(model, X, y=None, ax=None, colors=None, is_fitted="auto", **kwargs):
+def silhouette_visualizer(
+    model, X, y=None, ax=None, colors=None, is_fitted="auto", **kwargs
+):
     """Quick Method:
     The Silhouette Visualizer displays the silhouette coefficient for each
     sample on a per-cluster basis, visually evaluating the density and

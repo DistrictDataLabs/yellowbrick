@@ -25,7 +25,7 @@ from sklearn.datasets import make_blobs
 from sklearn.cluster import KMeans, MiniBatchKMeans
 
 from tests.base import VisualTestCase
-from yellowbrick.cluster.silhouette import SilhouetteVisualizer
+from yellowbrick.cluster.silhouette import SilhouetteVisualizer, silhouette_visualizer
 
 
 ##########################################################################
@@ -170,3 +170,17 @@ class TestSilhouetteVisualizer(VisualTestCase):
             self.assert_images_similar(visualizer, remove_legend=True, tol=tol)
         except Exception as e:
             self.fail("error during silhouette: {}".format(e))
+
+    def test_quick_method(self):
+        """
+        Test the quick method producing a valid visualization
+        """
+        X, y = make_blobs(
+            n_samples=1000, n_features=12, centers=8, shuffle=False, random_state=0
+        )
+
+        model = MiniBatchKMeans(3, random_state=343)
+        oz = silhouette_visualizer(model, X, random_state=93, legend=False)
+        assert isinstance(oz, SilhouetteVisualizer)
+
+        self.assert_images_similar(oz)

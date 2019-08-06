@@ -40,7 +40,7 @@ except ImportError:
 
 
 ## Packages for export
-__all__ = ["KElbowVisualizer", "KElbow", "distortion_score"]
+__all__ = ["KElbowVisualizer", "KElbow", "distortion_score", "kelbow_visualizer"]
 
 
 ##########################################################################
@@ -179,9 +179,9 @@ class KElbowVisualizer(ClusteringScoreVisualizer):
     locate_elbow : bool, default: True
         Automatically find the "elbow" or "knee" which likely corresponds to the optimal
         value of k using the "knee point detection algorithm". The knee point detection
-        algorithm finds the point of maximum curvature, which in a well-behaved clustering
-        problem also represents the pivot of the elbow curve. The point is labeled with a
-        dashed line and annotated with the score and k values.
+        algorithm finds the point of maximum curvature, which in a well-behaved
+        clustering problem also represents the pivot of the elbow curve. The point is
+        labeled with a dashed line and annotated with the score and k values.
 
     kwargs : dict
         Keyword arguments that are passed to the base class and may influence
@@ -405,5 +405,83 @@ class KElbowVisualizer(ClusteringScoreVisualizer):
             self.axes[1].set_ylabel("fit time (seconds)", color="g")
             self.axes[1].tick_params("y", colors="g")
 
+
 # alias
 KElbow = KElbowVisualizer
+
+
+##########################################################################
+## Quick Method
+##########################################################################
+
+
+def kelbow_visualizer(
+    model,
+    X,
+    y=None,
+    k=10,
+    ax=None, 
+    timings=True, 
+    locate_elbow=True,
+    metric="distortion",
+    **kwargs
+):
+    """
+    Quick Method:
+
+    model : a Scikit-Learn clusterer
+        Should be an instance of an unfitted clusterer, specifically ``KMeans`` or
+        ``MiniBatchKMeans``. If it is not a clusterer, an exception is raised.
+
+    ax : matplotlib Axes, default: None
+        The axes to plot the figure on. If None is passed in the current axes
+        will be used (or generated if required).
+
+    k : integer, tuple, or iterable
+        The k values to compute silhouette scores for. If a single integer
+        is specified, then will compute the range (2,k). If a tuple of 2
+        integers is specified, then k will be in np.arange(k[0], k[1]).
+        Otherwise, specify an iterable of integers to use as values for k.
+
+    metric : string, default: ``"distortion"``
+        Select the scoring metric to evaluate the clusters. The default is the
+        mean distortion, defined by the sum of squared distances between each
+        observation and its closest centroid. Other metrics include:
+
+        - **distortion**: mean sum of squared distances to centers
+        - **silhouette**: mean ratio of intra-cluster and nearest-cluster distance
+        - **calinski_harabasz**: ratio of within to between cluster dispersion
+
+    timings : bool, default: True
+        Display the fitting time per k to evaluate the amount of time required
+        to train the clustering model.
+
+    locate_elbow : bool, default: True
+        Automatically find the "elbow" or "knee" which likely corresponds to the optimal
+        value of k using the "knee point detection algorithm". The knee point detection
+        algorithm finds the point of maximum curvature, which in a well-behaved
+        clustering problem also represents the pivot of the elbow curve. The point is
+        labeled with a dashed line and annotated with the score and k values.
+
+    kwargs : dict
+        Keyword arguments that are passed to the base class and may influence
+        the visualization as defined in other Visualizers.
+
+    Returns
+    -------
+    viz : KElbowVisualizer
+        The kelbow visualizer, fitted and finalized.
+    """
+    oz = KElbow(
+        model,
+        ax=ax,
+        k=k,
+        metric=metric,
+        timings=timings,
+        locate_elbow=locate_elbow,
+        **kwargs
+    )
+
+    oz.fit(X, y)
+    oz.finalize()
+    return oz
