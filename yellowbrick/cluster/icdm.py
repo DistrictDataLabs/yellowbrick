@@ -23,8 +23,6 @@ import matplotlib.pyplot as plt
 from matplotlib.patches import Circle
 from sklearn.manifold import MDS, TSNE
 
-from yellowbrick.cluster.base import ClusteringScoreVisualizer
-
 from yellowbrick.utils.timer import Timer
 from yellowbrick.utils.decorators import memoized
 from yellowbrick.exceptions import YellowbrickValueError
