@@ -1,10 +1,10 @@
 # yellowbrick.cluster.silhouette
 # Implements visualizers using the silhouette metric for cluster evaluation.
 #
-# Author:   Benjamin Bengfort <bbengfort@districtdatalabs.com>
+# Author:   Benjamin Bengfort
 # Created:  Mon Mar 27 10:09:24 2017 -0400
 #
-# Copyright (C) 2016 District Data Labs
+# Copyright (C) 2016 The scikit-yb developers
 # For license information, see LICENSE.txt
 #
 # ID: silhouette.py [57b563b] benjamin@bengfort.com $
@@ -20,21 +20,20 @@ Implements visualizers that use the silhouette metric for cluster evaluation.
 import numpy as np
 import matplotlib.ticker as ticker
 
-from ..style import resolve_colors
-from .base import ClusteringScoreVisualizer
+from yellowbrick.style import resolve_colors
+from yellowbrick.cluster.base import ClusteringScoreVisualizer
 
 from sklearn.metrics import silhouette_score, silhouette_samples
 
 
 ## Packages for export
-__all__ = [
-    "SilhouetteVisualizer"
-]
+__all__ = ["SilhouetteVisualizer"]
 
 
 ##########################################################################
 ## Silhouette Method for K Selection
 ##########################################################################
+
 
 class SilhouetteVisualizer(ClusteringScoreVisualizer):
     """
@@ -113,8 +112,8 @@ class SilhouetteVisualizer(ClusteringScoreVisualizer):
         # which will override colors. If neither is found, default to None.
         # The colormap may yet still be found in resolve_colors
         self.colors = colors
-        if 'colormap' in kwargs:
-            self.colors = kwargs['colormap']
+        if "colormap" in kwargs:
+            self.colors = kwargs["colormap"]
 
     def fit(self, X, y=None, **kwargs):
         """
@@ -156,17 +155,17 @@ class SilhouetteVisualizer(ClusteringScoreVisualizer):
         """
 
         # Track the positions of the lines being drawn
-        y_lower = 10 # The bottom of the silhouette
+        y_lower = 10  # The bottom of the silhouette
 
         # Get the colors from the various properties
-        color_kwargs = {'n_colors': self.n_clusters_}
+        color_kwargs = {"n_colors": self.n_clusters_}
 
         if self.colors is None:
-            color_kwargs['colormap'] = 'Set1'
+            color_kwargs["colormap"] = "Set1"
         elif isinstance(self.colors, str):
-            color_kwargs['colormap'] = self.colors
+            color_kwargs["colormap"] = self.colors
         else:
-            color_kwargs['colors'] = self.colors
+            color_kwargs["colors"] = self.colors
 
         colors = resolve_colors(**color_kwargs)
 
@@ -184,8 +183,12 @@ class SilhouetteVisualizer(ClusteringScoreVisualizer):
 
             color = colors[idx]
             self.ax.fill_betweenx(
-                np.arange(y_lower, y_upper), 0, values,
-                facecolor=color, edgecolor=color, alpha=0.5
+                np.arange(y_lower, y_upper),
+                0,
+                values,
+                facecolor=color,
+                edgecolor=color,
+                alpha=0.5,
             )
 
             # Collect the tick position for each cluster
@@ -196,8 +199,10 @@ class SilhouetteVisualizer(ClusteringScoreVisualizer):
 
         # The vertical line for average silhouette score of all the values
         self.ax.axvline(
-            x=self.silhouette_score_, color="red", linestyle="--",
-            label="Average Silhouette Score"
+            x=self.silhouette_score_,
+            color="red",
+            linestyle="--",
+            label="Average Silhouette Score",
         )
 
         return self.ax
@@ -209,18 +214,18 @@ class SilhouetteVisualizer(ClusteringScoreVisualizer):
         """
 
         # Set the title
-        self.set_title((
-            "Silhouette Plot of {} Clustering for {} Samples in {} Centers"
-        ).format(
-            self.name, self.n_samples_, self.n_clusters_
-        ))
+        self.set_title(
+            ("Silhouette Plot of {} Clustering for {} Samples in {} Centers").format(
+                self.name, self.n_samples_, self.n_clusters_
+            )
+        )
 
         # Set the X and Y limits
         # The silhouette coefficient can range from -1, 1;
         # but here we scale the plot according to our visualizations
 
         # l_xlim and u_xlim are lower and upper limits of the x-axis,
-        # set according to our calculated maximum and minimum silhouette score along with necessary padding
+        # set according to our calculated max and min score with necessary padding
         l_xlim = max(-1, min(-0.1, round(min(self.silhouette_samples_) - 0.1, 1)))
         u_xlim = min(1, round(max(self.silhouette_samples_) + 0.1, 1))
         self.ax.set_xlim([l_xlim, u_xlim])
@@ -236,7 +241,9 @@ class SilhouetteVisualizer(ClusteringScoreVisualizer):
         # Set the ticks on the axis object.
         self.ax.set_yticks(self.y_tick_pos_)
         self.ax.set_yticklabels(str(idx) for idx in range(self.n_clusters_))
-        self.ax.xaxis.set_major_locator(ticker.MultipleLocator(0.1))  # Set the ticks at multiples of 0.1
+        self.ax.xaxis.set_major_locator(
+            ticker.MultipleLocator(0.1)
+        )  # Set the ticks at multiples of 0.1
 
         # Show legend (Average Silhouette Score axis)
-        self.ax.legend(loc='best')
+        self.ax.legend(loc="best")

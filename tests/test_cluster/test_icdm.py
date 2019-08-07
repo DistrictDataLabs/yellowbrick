@@ -1,8 +1,11 @@
 # tests.test_cluster.test_icdm
 # Tests for the intercluster distance map visualizer.
 #
-# Author:  Benjamin Bengfort <benjamin@bengfort.com>
+# Author:  Benjamin Bengfort
 # Created: Tue Aug 21 11:57:44 2018 -0400
+#
+# Copyright (C) 2018 The scikit-yb developers
+# For license information, see LICENSE.txt
 #
 # ID: test_icdm.py [] benjamin@bengfort.com $
 
@@ -20,13 +23,13 @@ import matplotlib as mpl
 from yellowbrick.cluster.icdm import *
 from yellowbrick.exceptions import YellowbrickValueError
 
+from tests.fixtures import Dataset
 from tests.base import IS_WINDOWS_OR_CONDA, VisualTestCase
-from ..fixtures import Dataset
 
 from sklearn.datasets import make_blobs
 from sklearn.cluster import Birch, AgglomerativeClustering
-from sklearn.cluster import KMeans, AffinityPropagation, MiniBatchKMeans
 from sklearn.decomposition import LatentDirichletAllocation as LDA
+from sklearn.cluster import KMeans, AffinityPropagation, MiniBatchKMeans
 
 try:
     import pandas as pd
@@ -40,7 +43,8 @@ MPL_VERS_MAJ = int(mpl.__version__.split(".")[0])
 ## Fixtures
 ##########################################################################
 
-@pytest.fixture(scope='class')
+
+@pytest.fixture(scope="class")
 def blobs12(request):
     """
     Creates a fixture of 1000 instances in 12 clusters with 16 features.
@@ -51,7 +55,7 @@ def blobs12(request):
     request.cls.blobs12 = Dataset(X, y)
 
 
-@pytest.fixture(scope='class')
+@pytest.fixture(scope="class")
 def blobs4(request):
     """
     Creates a fixture of 400 instances in 4 clusters with 16 features.
@@ -63,18 +67,19 @@ def blobs4(request):
 
 
 def assert_fitted(oz):
-    for param in ('cluster_centers_', 'embedded_centers_', 'scores_', 'fit_time_'):
+    for param in ("cluster_centers_", "embedded_centers_", "scores_", "fit_time_"):
         assert hasattr(oz, param)
 
 
 def assert_not_fitted(oz):
-    for param in ('embedded_centers_', 'scores_', 'fit_time_'):
+    for param in ("embedded_centers_", "scores_", "fit_time_"):
         assert not hasattr(oz, param)
 
 
 ##########################################################################
 ## InterclusterDistance Test Cases
 ##########################################################################
+
 
 @pytest.mark.usefixtures("blobs12", "blobs4")
 class TestInterclusterDistance(VisualTestCase):
@@ -88,11 +93,11 @@ class TestInterclusterDistance(VisualTestCase):
         """
         # On init
         with pytest.raises(YellowbrickValueError, match="unknown embedding 'foo'"):
-            InterclusterDistance(KMeans(), embedding='foo')
+            InterclusterDistance(KMeans(), embedding="foo")
 
         # After init
         icdm = InterclusterDistance(KMeans())
-        icdm.embedding = 'foo'
+        icdm.embedding = "foo"
         with pytest.raises(YellowbrickValueError, match="unknown embedding 'foo'"):
             icdm.transformer
 
@@ -102,29 +107,29 @@ class TestInterclusterDistance(VisualTestCase):
         """
         # On init
         with pytest.raises(YellowbrickValueError, match="unknown scoring 'foo'"):
-            InterclusterDistance(KMeans(), scoring='foo')
+            InterclusterDistance(KMeans(), scoring="foo")
 
         # After init
         icdm = InterclusterDistance(KMeans())
-        icdm.scoring = 'foo'
+        icdm.scoring = "foo"
         with pytest.raises(YellowbrickValueError, match="unknown scoring method 'foo'"):
             icdm._score_clusters(None)
 
     @pytest.mark.xfail(
         IS_WINDOWS_OR_CONDA,
-        reason="font rendering different in OS and/or Python; see #892"
+        reason="font rendering different in OS and/or Python; see #892",
     )
     def test_kmeans_mds(self):
         """
         Visual similarity with KMeans and MDS scaling
         """
         model = KMeans(9, random_state=38)
-        oz = InterclusterDistance(model, random_state=83, embedding='mds')
+        oz = InterclusterDistance(model, random_state=83, embedding="mds")
 
         # Prefit assertions
         assert_not_fitted(oz)
 
-        assert oz.fit(self.blobs12.X) is oz # Fit returns self
+        assert oz.fit(self.blobs12.X) is oz  # Fit returns self
 
         # Postfit assertions
         assert_fitted(oz)
@@ -140,7 +145,7 @@ class TestInterclusterDistance(VisualTestCase):
     @pytest.mark.filterwarnings("ignore:the matrix subclass is not the recommended way")
     @pytest.mark.xfail(
         IS_WINDOWS_OR_CONDA,
-        reason="font rendering different in OS and/or Python; see #892"
+        reason="font rendering different in OS and/or Python; see #892",
     )
     def test_affinity_tsne_no_legend(self):
         """
@@ -148,13 +153,13 @@ class TestInterclusterDistance(VisualTestCase):
         """
         model = AffinityPropagation()
         oz = InterclusterDistance(
-            model, random_state=763, embedding='tsne', legend=False
+            model, random_state=763, embedding="tsne", legend=False
         )
 
         # Prefit assertions
         assert_not_fitted(oz)
 
-        assert oz.fit(self.blobs4.X) is oz # Fit returns self
+        assert oz.fit(self.blobs4.X) is oz  # Fit returns self
 
         # Postfit assertions
         assert_fitted(oz)
@@ -165,19 +170,18 @@ class TestInterclusterDistance(VisualTestCase):
         oz.finalize()
         self.assert_images_similar(oz)
 
-
     @pytest.mark.skip(reason="LDA not implemented yet")
     def test_lda_mds(self):
         """
         Visual similarity with LDA and MDS scaling
         """
         model = LDA(9, random_state=6667)
-        oz = InterclusterDistance(model, random_state=2332, embedding='mds')
+        oz = InterclusterDistance(model, random_state=2332, embedding="mds")
 
         # Prefit assertions
         assert_not_fitted(oz)
 
-        assert oz.fit(self.blobs12.X) is oz # Fit returns self
+        assert oz.fit(self.blobs12.X) is oz  # Fit returns self
 
         # Postfit assertions
         assert_fitted(oz)
@@ -197,12 +201,12 @@ class TestInterclusterDistance(VisualTestCase):
         """
         Visual similarity with Birch and MDS scaling
         """
-        oz = InterclusterDistance(Birch(n_clusters=9), random_state=83, embedding='mds')
+        oz = InterclusterDistance(Birch(n_clusters=9), random_state=83, embedding="mds")
 
         # Prefit assertions
         assert_not_fitted(oz)
 
-        assert oz.fit(self.blobs12.X) is oz # Fit returns self
+        assert oz.fit(self.blobs12.X) is oz  # Fit returns self
 
         # Postfit assertions
         assert_fitted(oz)
@@ -222,13 +226,13 @@ class TestInterclusterDistance(VisualTestCase):
         """
         model = AgglomerativeClustering(n_clusters=9)
         oz = InterclusterDistance(
-            model, random_state=83, embedding='tsne', legend=False
+            model, random_state=83, embedding="tsne", legend=False
         )
 
         # Prefit assertions
         assert_not_fitted(oz)
 
-        assert oz.fit(self.blobs12.X) is oz # Fit returns self
+        assert oz.fit(self.blobs12.X) is oz  # Fit returns self
 
         # Postfit assertions
         assert_fitted(oz)
@@ -243,7 +247,7 @@ class TestInterclusterDistance(VisualTestCase):
 
     @pytest.mark.xfail(
         IS_WINDOWS_OR_CONDA,
-        reason="font rendering different in OS and/or Python; see #892"
+        reason="font rendering different in OS and/or Python; see #892",
     )
     def test_quick_method(self):
         """
@@ -255,25 +259,31 @@ class TestInterclusterDistance(VisualTestCase):
 
         self.assert_images_similar(oz)
 
-    @pytest.mark.skipif(MPL_VERS_MAJ >= 2, reason="test requires mpl earlier than 2.0.2")
+    @pytest.mark.skipif(
+        MPL_VERS_MAJ >= 2, reason="test requires mpl earlier than 2.0.2"
+    )
     def test_legend_matplotlib_version(self, mock_toolkit):
         """
         ValueError is raised when matplotlib version is incorrect and legend=True
         """
         with pytst.raises(ImportError):
             from mpl_toolkits.axes_grid1 import inset_locator
+
             assert not inset_locator
 
         with pytest.raises(YellowbrickValueError, match="requires matplotlib 2.0.2"):
             InterclusterDistance(KMeans(), legend=True)
 
-    @pytest.mark.skipif(MPL_VERS_MAJ >= 2, reason="test requires mpl earlier than 2.0.2")
+    @pytest.mark.skipif(
+        MPL_VERS_MAJ >= 2, reason="test requires mpl earlier than 2.0.2"
+    )
     def test_no_legend_matplotlib_version(self, mock_toolkit):
         """
         No error is raised when matplotlib version is incorrect and legend=False
         """
         with pytst.raises(ImportError):
             from mpl_toolkits.axes_grid1 import inset_locator
+
             assert not inset_locator
 
         try:
