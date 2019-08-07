@@ -24,9 +24,9 @@ import numpy as np
 import numpy.testing as npt
 import matplotlib.pyplot as plt
 
-from yellowbrick.datasets import load_occupancy, load_concrete
 from yellowbrick.exceptions import NotFitted
 from yellowbrick.features.importances import *
+from yellowbrick.datasets import load_occupancy, load_concrete
 
 from sklearn.datasets import load_iris
 from sklearn.ensemble import RandomForestClassifier
@@ -391,7 +391,6 @@ class TestFeatureImportancesVisualizer(VisualTestCase):
         assert "coefficient" in visualizer._get_xlabel()
         assert "relative" not in visualizer._get_xlabel()
 
-
     def test_is_fitted(self):
         """
         Test identification if is fitted
@@ -407,6 +406,33 @@ class TestFeatureImportancesVisualizer(VisualTestCase):
 
         del visualizer.features_
         assert not visualizer._is_fitted()
+
+    @pytest.mark.xfail(
+        reason="""third test fails with AssertionError: Expected fit
+        to be called once. Called 0 times."""
+    )
+    def test_with_fitted(self):
+        """
+        Test that visualizer properly handles an already-fitted model
+        """
+        X, y = load_concrete(return_dataset=True).to_numpy()
+
+        model = Lasso().fit(X, y)
+
+        with mock.patch.object(model, "fit") as mockfit:
+            oz = FeatureImportances(model)
+            oz.fit(X, y)
+            mockfit.assert_not_called()
+
+        with mock.patch.object(model, "fit") as mockfit:
+            oz = FeatureImportances(model, is_fitted=True)
+            oz.fit(X, y)
+            mockfit.assert_not_called()
+
+        with mock.patch.object(model, "fit") as mockfit:
+            oz = FeatureImportances(model, is_fitted=False)
+            oz.fit(X, y)
+            mockfit.assert_called_once_with(X, y)
 
 
 ##########################################################################

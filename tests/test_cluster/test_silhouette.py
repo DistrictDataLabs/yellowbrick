@@ -24,7 +24,10 @@ import matplotlib.pyplot as plt
 from sklearn.datasets import make_blobs
 from sklearn.cluster import KMeans, MiniBatchKMeans
 
+from unittest import mock
 from tests.base import VisualTestCase
+
+from yellowbrick.datasets import load_nfl
 from yellowbrick.cluster.silhouette import SilhouetteVisualizer, silhouette_visualizer
 
 
@@ -184,3 +187,30 @@ class TestSilhouetteVisualizer(VisualTestCase):
         assert isinstance(oz, SilhouetteVisualizer)
 
         self.assert_images_similar(oz)
+
+    @pytest.mark.xfail(
+        reason="""third test fails with AssertionError: Expected fit
+        to be called once. Called 0 times."""
+    )
+    def test_with_fitted(self):
+        """
+        Test that visualizer properly handles an already-fitted model
+        """
+        X, y = load_nfl(return_dataset=True).to_numpy()
+
+        model = MiniBatchKMeans().fit(X, y)
+
+        with mock.patch.object(model, "fit") as mockfit:
+            oz = SilhouetteVisualizer(model)
+            oz.fit(X, y)
+            mockfit.assert_not_called()
+
+        with mock.patch.object(model, "fit") as mockfit:
+            oz = SilhouetteVisualizer(model, is_fitted=True)
+            oz.fit(X, y)
+            mockfit.assert_not_called()
+
+        with mock.patch.object(model, "fit") as mockfit:
+            oz = SilhouetteVisualizer(model, is_fitted=False)
+            oz.fit(X, y)
+            mockfit.assert_called_once_with(X, y)

@@ -185,25 +185,6 @@ class PredictionError(RegressionScoreVisualizer):
 
         return self.score_
 
-    def fit(self, X, y, **kwargs):
-        """
-        Parameters
-        ----------
-        X : ndarray or DataFrame of shape n x m
-            A matrix of n instances with m features
-
-        y : ndarray or Series of length n
-            An array or series of target values
-
-        kwargs: keyword arguments passed to Scikit-Learn API.
-
-        Returns
-        -------
-        self : visualizer instance
-        """
-        super(PredictionError, self).fit(X, y, **kwargs)
-        return self
-
     def draw(self, y, y_pred):
         """
         Parameters

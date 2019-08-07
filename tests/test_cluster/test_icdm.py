@@ -21,8 +21,10 @@ import pytest
 import matplotlib as mpl
 
 from yellowbrick.cluster.icdm import *
+from yellowbrick.datasets import load_nfl
 from yellowbrick.exceptions import YellowbrickValueError
 
+from unittest import mock
 from tests.fixtures import Dataset
 from tests.base import IS_WINDOWS_OR_CONDA, VisualTestCase
 
@@ -290,3 +292,30 @@ class TestInterclusterDistance(VisualTestCase):
             InterclusterDistance(KMeans(), legend=False)
         except YellowbrickValueError as e:
             self.fail(e)
+
+    @pytest.mark.xfail(
+        reason="""third test fails with AssertionError: Expected fit
+        to be called once. Called 0 times."""
+    )
+    def test_with_fitted(self):
+        """
+        Test that visualizer properly handles an already-fitted model
+        """
+        X, y = load_nfl(return_dataset=True).to_numpy()
+
+        model = KMeans().fit(X, y)
+
+        with mock.patch.object(model, "fit") as mockfit:
+            oz = ICDM(model)
+            oz.fit(X, y)
+            mockfit.assert_not_called()
+
+        with mock.patch.object(model, "fit") as mockfit:
+            oz = ICDM(model, is_fitted=True)
+            oz.fit(X, y)
+            mockfit.assert_not_called()
+
+        with mock.patch.object(model, "fit") as mockfit:
+            oz = ICDM(model, is_fitted=False)
+            oz.fit(X, y)
+            mockfit.assert_called_once_with(X, y)
