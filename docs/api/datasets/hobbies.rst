@@ -54,10 +54,37 @@ Word count of 288,520 with a vocabulary of 23,738 (12.154 lexical diversity).
 - gaming: 70,778 words with a vocabulary size of 9,120
 - sports: 68,884 words with a vocabulary size of 8,028
 
+Example
+-------
+
+The hobbies corpus loader returns a ``Corpus`` object with the raw text associated with the data set. This must be vectorized into a numeric form for use with scikit-learn. For example, you could use the :class:`sklearn.feature_extraction.text.TfidfVectorizer` as follows:
+
+.. code:: python
+
+    from yellowbrick.datasets import load_hobbies
+
+    from sklearn.naive_bayes import MultinomialNB
+    from sklearn.preprocessing import LabelEncoder
+    from sklearn.feature_extraction.text import TfidfVectorizer
+    from sklearn.model_selection import train_test_split as tts
+
+    corpus = load_hobbies()
+    X = TfidfVectorizer().fit_transform(corpus.data)
+    y = LabelEncoder().fit_transform(corpus.target)
+
+    X_train, X_test, y_train, y_test = tts(X, y, test_size=0.2)
+
+    model = MultinomialNB().fit(X_train, y_train)
+    model.score(X_test, y_test)
+
+For more detail on text analytics and machine learning with scikit-learn, please refer to `"Working with Text Data" <https://scikit-learn.org/stable/tutorial/text_analytics/working_with_text_data.html>`_ in the scikit-learn documentation.
+
 Citation
 --------
 
 Exported from S3 on: Jan 21, 2017 at 06:42.
+
+Bengfort, Benjamin, Rebecca Bilbro, and Tony Ojeda. Applied Text Analysis with Python: Enabling Language-aware Data Products with Machine Learning. " O'Reilly Media, Inc.", 2018.
 
 Loader
 ------

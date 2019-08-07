@@ -20,6 +20,20 @@ This database contains all legal 8-ply positions in the game of connect-4 in whi
 
 The symbol x represents the first player; o the second. The dataset contains the state of the game by representing each position in a 6x7 grid board. The outcome class is the game theoretical value for the first player.
 
+Example
+-------
+
+Note that to use the game dataset the categorical data in the features array must be encoded numerically. There are a number of numeric encoding mechanisms such as the :class:`sklearn.preprocessing.OrdinalEncoder` or the :class:`sklearn.preprocessing.OneHotEncoder` that may be used as follows:
+
+.. code:: python
+
+    from sklearn.preprocessing import OneHotEncoder
+    from yellowbrick.datasets import load_game
+
+    X, y = load_game()
+    X = OneHotEncoder().fit_transform(X)
+
+
 Citation
 --------
 

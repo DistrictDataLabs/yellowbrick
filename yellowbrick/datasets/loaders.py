@@ -1,8 +1,11 @@
 # yellowbrick.datasets.loaders
 # Dataset loading utilities and primary API to the datasets module.
 #
-# Author:  Benjamin Bengfort <benjamin@bengfort.com>
+# Author:  Benjamin Bengfort
 # Created: Tue Jul 31 13:31:23 2018 -0400
+#
+# Copyright (C) 2018 The scikit-yb developers
+# For license information, see LICENSE.txt
 #
 # ID: loaders.py [] benjamin@bengfort.com $
 
@@ -20,9 +23,17 @@ import json
 from .base import Dataset, Corpus
 
 __all__ = [
-    "load_concrete", "load_energy", "load_credit", "load_occupancy",
-    "load_mushroom", "load_hobbies", "load_game", "load_bikeshare",
-    "load_spam", "load_walking", "load_nfl",
+    "load_concrete",
+    "load_energy",
+    "load_credit",
+    "load_occupancy",
+    "load_mushroom",
+    "load_hobbies",
+    "load_game",
+    "load_bikeshare",
+    "load_spam",
+    "load_walking",
+    "load_nfl",
 ]
 
 
@@ -38,6 +49,7 @@ with open(MANIFEST, "r") as f:
 ##########################################################################
 ## Specific loading utilities
 ##########################################################################
+
 
 def _load_dataset(name, data_home=None, return_dataset=False):
     """
@@ -72,13 +84,13 @@ def load_concrete(data_home=None, return_dataset=False):
     ensure the download completes successfully.
 
     Datasets are stored alongside the code, but the location can be specified
-    with the ``data_home`` parameter or the $YELLOWBRICK_DATA envvar.
+    with the ``data_home`` parameter or the ``$YELLOWBRICK_DATA`` envvar.
 
     Parameters
     ----------
     data_home : str, optional
         The path on disk where data is stored. If not passed in, it is looked
-        up from YELLOWBRICK_DATA or the default returned by ``get_data_home``.
+        up from ``$YELLOWBRICK_DATA`` or the default returned by ``get_data_home``.
 
     return_dataset : bool, default=False
         Return the raw dataset object instead of X and y numpy arrays to
@@ -96,7 +108,7 @@ def load_concrete(data_home=None, return_dataset=False):
         The Yellowbrick Dataset object provides an interface to accessing the
         data in a variety of formats as well as associated metadata and content.
     """
-    return _load_dataset('concrete', data_home, return_dataset)
+    return _load_dataset("concrete", data_home, return_dataset)
 
 
 def load_energy(data_home=None, return_dataset=False):
@@ -113,13 +125,13 @@ def load_energy(data_home=None, return_dataset=False):
     ensure the download completes successfully.
 
     Datasets are stored alongside the code, but the location can be specified
-    with the ``data_home`` parameter or the $YELLOWBRICK_DATA envvar.
+    with the ``data_home`` parameter or the ``$YELLOWBRICK_DATA`` envvar.
 
     Parameters
     ----------
     data_home : str, optional
         The path on disk where data is stored. If not passed in, it is looked
-        up from YELLOWBRICK_DATA or the default returned by ``get_data_home``.
+        up from ``$YELLOWBRICK_DATA`` or the default returned by ``get_data_home``.
 
     return_dataset : bool, default=False
         Return the raw dataset object instead of X and y numpy arrays to
@@ -137,7 +149,7 @@ def load_energy(data_home=None, return_dataset=False):
         The Yellowbrick Dataset object provides an interface to accessing the
         data in a variety of formats as well as associated metadata and content.
     """
-    return _load_dataset('energy', data_home, return_dataset)
+    return _load_dataset("energy", data_home, return_dataset)
 
 
 def load_credit(data_home=None, return_dataset=False):
@@ -154,13 +166,13 @@ def load_credit(data_home=None, return_dataset=False):
     ensure the download completes successfully.
 
     Datasets are stored alongside the code, but the location can be specified
-    with the ``data_home`` parameter or the $YELLOWBRICK_DATA envvar.
+    with the ``data_home`` parameter or the ``$YELLOWBRICK_DATA`` envvar.
 
     Parameters
     ----------
     data_home : str, optional
         The path on disk where data is stored. If not passed in, it is looked
-        up from YELLOWBRICK_DATA or the default returned by ``get_data_home``.
+        up from ``$YELLOWBRICK_DATA`` or the default returned by ``get_data_home``.
 
     return_dataset : bool, default=False
         Return the raw dataset object instead of X and y numpy arrays to
@@ -178,7 +190,7 @@ def load_credit(data_home=None, return_dataset=False):
         The Yellowbrick Dataset object provides an interface to accessing the
         data in a variety of formats as well as associated metadata and content.
     """
-    return _load_dataset('credit', data_home, return_dataset)
+    return _load_dataset("credit", data_home, return_dataset)
 
 
 def load_occupancy(data_home=None, return_dataset=False):
@@ -195,13 +207,13 @@ def load_occupancy(data_home=None, return_dataset=False):
     ensure the download completes successfully.
 
     Datasets are stored alongside the code, but the location can be specified
-    with the ``data_home`` parameter or the $YELLOWBRICK_DATA envvar.
+    with the ``data_home`` parameter or the ``$YELLOWBRICK_DATA`` envvar.
 
     Parameters
     ----------
     data_home : str, optional
         The path on disk where data is stored. If not passed in, it is looked
-        up from YELLOWBRICK_DATA or the default returned by ``get_data_home``.
+        up from ``$YELLOWBRICK_DATA`` or the default returned by ``get_data_home``.
 
     return_dataset : bool, default=False
         Return the raw dataset object instead of X and y numpy arrays to
@@ -219,7 +231,7 @@ def load_occupancy(data_home=None, return_dataset=False):
         The Yellowbrick Dataset object provides an interface to accessing the
         data in a variety of formats as well as associated metadata and content.
     """
-    return _load_dataset('occupancy', data_home, return_dataset)
+    return _load_dataset("occupancy", data_home, return_dataset)
 
 
 def load_mushroom(data_home=None, return_dataset=False):
@@ -236,13 +248,13 @@ def load_mushroom(data_home=None, return_dataset=False):
     ensure the download completes successfully.
 
     Datasets are stored alongside the code, but the location can be specified
-    with the ``data_home`` parameter or the $YELLOWBRICK_DATA envvar.
+    with the ``data_home`` parameter or the ``$YELLOWBRICK_DATA`` envvar.
 
     Parameters
     ----------
     data_home : str, optional
         The path on disk where data is stored. If not passed in, it is looked
-        up from YELLOWBRICK_DATA or the default returned by ``get_data_home``.
+        up from ``$YELLOWBRICK_DATA`` or the default returned by ``get_data_home``.
 
     return_dataset : bool, default=False
         Return the raw dataset object instead of X and y numpy arrays to
@@ -260,7 +272,7 @@ def load_mushroom(data_home=None, return_dataset=False):
         The Yellowbrick Dataset object provides an interface to accessing the
         data in a variety of formats as well as associated metadata and content.
     """
-    return _load_dataset('mushroom', data_home, return_dataset)
+    return _load_dataset("mushroom", data_home, return_dataset)
 
 
 def load_hobbies(data_home=None):
@@ -278,13 +290,13 @@ def load_hobbies(data_home=None):
     ensure the download completes successfully.
 
     Datasets are stored alongside the code, but the location can be specified
-    with the ``data_home`` parameter or the $YELLOWBRICK_DATA envvar.
+    with the ``data_home`` parameter or the ``$YELLOWBRICK_DATA`` envvar.
 
     Parameters
     ----------
     data_home : str, optional
         The path on disk where data is stored. If not passed in, it is looked
-        up from YELLOWBRICK_DATA or the default returned by ``get_data_home``.
+        up from ``$YELLOWBRICK_DATA`` or the default returned by ``get_data_home``.
 
     Returns
     -------
@@ -292,7 +304,7 @@ def load_hobbies(data_home=None):
         The Yellowbrick Corpus object provides an interface to accessing the
         text documents and metadata associated with the corpus.
     """
-    return _load_corpus('hobbies', data_home)
+    return _load_corpus("hobbies", data_home)
 
 
 def load_game(data_home=None, return_dataset=False):
@@ -300,6 +312,11 @@ def load_game(data_home=None, return_dataset=False):
     Load the Connect-4 game multivariate and spatial dataset that is well
     suited to multiclass classification tasks. The dataset contains 67557
     instances with 42 categorical attributes and a discrete target.
+
+    Note that the game data is stored with categorical features that need to
+    be numerically encoded before use with scikit-learn estimators. We
+    recommend the use of the ``sklearn.preprocessing.OneHotEncoder`` for this
+    task and to develop a ``Pipeline`` using this dataset.
 
     The Yellowbrick datasets are hosted online and when requested, the dataset
     is downloaded to your local computer for use. Note that if the dataset
@@ -309,13 +326,13 @@ def load_game(data_home=None, return_dataset=False):
     ensure the download completes successfully.
 
     Datasets are stored alongside the code, but the location can be specified
-    with the ``data_home`` parameter or the $YELLOWBRICK_DATA envvar.
+    with the ``data_home`` parameter or the ``$YELLOWBRICK_DATA`` envvar.
 
     Parameters
     ----------
     data_home : str, optional
         The path on disk where data is stored. If not passed in, it is looked
-        up from YELLOWBRICK_DATA or the default returned by ``get_data_home``.
+        up from ``$YELLOWBRICK_DATA`` or the default returned by ``get_data_home``.
 
     return_dataset : bool, default=False
         Return the raw dataset object instead of X and y numpy arrays to
@@ -333,7 +350,7 @@ def load_game(data_home=None, return_dataset=False):
         The Yellowbrick Dataset object provides an interface to accessing the
         data in a variety of formats as well as associated metadata and content.
     """
-    return _load_dataset('game', data_home, return_dataset)
+    return _load_dataset("game", data_home, return_dataset)
 
 
 def load_bikeshare(data_home=None, return_dataset=False):
@@ -350,13 +367,13 @@ def load_bikeshare(data_home=None, return_dataset=False):
     ensure the download completes successfully.
 
     Datasets are stored alongside the code, but the location can be specified
-    with the ``data_home`` parameter or the $YELLOWBRICK_DATA envvar.
+    with the ``data_home`` parameter or the ``$YELLOWBRICK_DATA`` envvar.
 
     Parameters
     ----------
     data_home : str, optional
         The path on disk where data is stored. If not passed in, it is looked
-        up from YELLOWBRICK_DATA or the default returned by ``get_data_home``.
+        up from ``$YELLOWBRICK_DATA`` or the default returned by ``get_data_home``.
 
     return_dataset : bool, default=False
         Return the raw dataset object instead of X and y numpy arrays to
@@ -374,7 +391,7 @@ def load_bikeshare(data_home=None, return_dataset=False):
         The Yellowbrick Dataset object provides an interface to accessing the
         data in a variety of formats as well as associated metadata and content.
     """
-    return _load_dataset('bikeshare', data_home, return_dataset)
+    return _load_dataset("bikeshare", data_home, return_dataset)
 
 
 def load_spam(data_home=None, return_dataset=False):
@@ -391,13 +408,13 @@ def load_spam(data_home=None, return_dataset=False):
     ensure the download completes successfully.
 
     Datasets are stored alongside the code, but the location can be specified
-    with the ``data_home`` parameter or the $YELLOWBRICK_DATA envvar.
+    with the ``data_home`` parameter or the ``$YELLOWBRICK_DATA`` envvar.
 
     Parameters
     ----------
     data_home : str, optional
         The path on disk where data is stored. If not passed in, it is looked
-        up from YELLOWBRICK_DATA or the default returned by ``get_data_home``.
+        up from ``$YELLOWBRICK_DATA`` or the default returned by ``get_data_home``.
 
     return_dataset : bool, default=False
         Return the raw dataset object instead of X and y numpy arrays to
@@ -415,7 +432,7 @@ def load_spam(data_home=None, return_dataset=False):
         The Yellowbrick Dataset object provides an interface to accessing the
         data in a variety of formats as well as associated metadata and content.
     """
-    return _load_dataset('spam', data_home, return_dataset)
+    return _load_dataset("spam", data_home, return_dataset)
 
 
 def load_walking(data_home=None, return_dataset=False):
@@ -432,13 +449,13 @@ def load_walking(data_home=None, return_dataset=False):
     ensure the download completes successfully.
 
     Datasets are stored alongside the code, but the location can be specified
-    with the ``data_home`` parameter or the $YELLOWBRICK_DATA envvar.
+    with the ``data_home`` parameter or the ``$YELLOWBRICK_DATA`` envvar.
 
     Parameters
     ----------
     data_home : str, optional
         The path on disk where data is stored. If not passed in, it is looked
-        up from YELLOWBRICK_DATA or the default returned by ``get_data_home``.
+        up from ``$YELLOWBRICK_DATA`` or the default returned by ``get_data_home``.
 
     return_dataset : bool, default=False
         Return the raw dataset object instead of X and y numpy arrays to
@@ -456,7 +473,7 @@ def load_walking(data_home=None, return_dataset=False):
         The Yellowbrick Dataset object provides an interface to accessing the
         data in a variety of formats as well as associated metadata and content.
     """
-    return _load_dataset('walking', data_home, return_dataset)
+    return _load_dataset("walking", data_home, return_dataset)
 
 
 def load_nfl(data_home=None, return_dataset=False):
@@ -473,13 +490,13 @@ def load_nfl(data_home=None, return_dataset=False):
     ensure the download completes successfully.
 
     Datasets are stored alongside the code, but the location can be specified
-    with the ``data_home`` parameter or the $YELLOWBRICK_DATA envvar.
+    with the ``data_home`` parameter or the ``$YELLOWBRICK_DATA`` envvar.
 
     Parameters
     ----------
     data_home : str, optional
         The path on disk where data is stored. If not passed in, it is looked
-        up from YELLOWBRICK_DATA or the default returned by ``get_data_home``.
+        up from ``$YELLOWBRICK_DATA`` or the default returned by ``get_data_home``.
 
     return_dataset : bool, default=False
         Return the raw dataset object instead of X and y numpy arrays to
@@ -497,4 +514,4 @@ def load_nfl(data_home=None, return_dataset=False):
         The Yellowbrick Dataset object provides an interface to accessing the
         data in a variety of formats as well as associated metadata and content.
     """
-    return _load_dataset('nfl', data_home, return_dataset)
+    return _load_dataset("nfl", data_home, return_dataset)

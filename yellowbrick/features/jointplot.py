@@ -338,6 +338,7 @@ class JointPlot(FeatureVisualizer):
         elif self.kind in ('hex', 'hexbin'):
             joint_kws.setdefault("mincnt", 1)
             joint_kws.setdefault("gridsize", 50)
+            joint_kws.setdefault("cmap", "Blues")
             self.ax.hexbin(x, y, **joint_kws)
 
         # Something bad happened
@@ -380,9 +381,11 @@ class JointPlot(FeatureVisualizer):
         # Add the title to the plot if the user has set one.
         self.set_title("")
 
+        # TODO: use manual legend so legend works with both scatter and hexbin
         # Set the legend with full opacity patches using manual legend.
         # Or Add the colorbar if this is a continuous plot.
-        self.ax.legend(loc="best", frameon=True)
+        if self.kind == "scatter":
+            self.ax.legend(loc="best", frameon=True)
 
         # Finalize the histograms
         if self.hist:
