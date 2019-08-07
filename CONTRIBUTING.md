@@ -30,7 +30,7 @@ Yellowbrick is hosted on GitHub at https://github.com/DistrictDataLabs/yellowbri
 
 The typical workflow for a contributor to the codebase is as follows:
 
-1. **Discover** a bug or a feature by using Yellowbrick. 
+1. **Discover** a bug or a feature by using Yellowbrick.
 2. **Discuss** with the core contributes by [adding an issue](https://github.com/DistrictDataLabs/yellowbrick/issues).
 3. **Fork** the repository into your own GitHub account.
 4. Create a **Pull Request** first thing to [connect with us](https://github.com/DistrictDataLabs/yellowbrick/pulls) about your task.
@@ -44,7 +44,7 @@ Once you have a good sense of how you are going to implement the new feature (or
 
 Ideally, any pull request should be capable of resolution within 6 weeks of being opened. This timeline helps to keep our pull request queue small and allows Yellowbrick to maintain a robust release schedule to give our users the best experience possible. However, the most important thing is to keep the dialogue going! And if you're unsure whether you can complete your idea within 6 weeks, you should still go ahead and open a PR and we will be happy to help you scope it down as needed.
 
-If we have comments or questions when we evaluate your pull request and receive no response, we will also close the PR after this period of time. Please know that this does not mean we don't value your contribution, just that things go stale. If in the future you want to pick it back up, feel free to address our original feedback and to reference the original PR in a new pull request. 
+If we have comments or questions when we evaluate your pull request and receive no response, we will also close the PR after this period of time. Please know that this does not mean we don't value your contribution, just that things go stale. If in the future you want to pick it back up, feel free to address our original feedback and to reference the original PR in a new pull request.
 
 ### Forking the Repository
 
@@ -158,12 +158,12 @@ There are two basic types of Visualizers:
 - **Feature Visualizers** are high dimensional data visualizations that are essentially transformers.
 - **Score Visualizers** wrap a scikit-learn regressor, classifier, or clusterer and visualize the behavior or performance of the model on test data.
 
-These two basic types of visualizers map well to the two basic objects in scikit-learn:
+These two basic types of visualizers map well to the two basic estimator objects in scikit-learn:
 
 - **Transformers** take input data and return a new data set.
-- **Estimators** are fit to training data and can make predictions.
+- **Models** are fit to training data and can make predictions.
 
-The scikit-learn API is object oriented, and estimators and transformers are initialized with parameters by instantiating their class. Hyperparameters can also be set using the `set_attrs()` method and retrieved with the corresponding `get_attrs()` method. All scikit-learn estimators have a `fit(X, y=None)` method that accepts a two dimensional data array, `X`, and optionally a vector `y` of target values. The `fit()` method trains the estimator, making it ready to transform data or make predictions. Transformers have an associated `transform(X)` method that returns a new dataset, `Xprime` and models have a `predict(X)` method that returns a vector of predictions, `yhat`. Models also have a `score(X, y)` method that evaluate the performance of the model.
+The scikit-learn API is object oriented, and estimators are initialized with parameters by instantiating their class. Hyperparameters can also be set using the `set_attrs()` method and retrieved with the corresponding `get_attrs()` method. All scikit-learn estimators have a `fit(X, y=None)` method that accepts a two dimensional data array, `X`, and optionally a vector `y` of target values. The `fit()` method trains the estimator, making it ready to transform data or make predictions. Transformers have an associated `transform(X)` method that returns a new dataset, `Xprime` and models have a `predict(X)` method that returns a vector of predictions, `yhat`. Models may also have a `score(X, y)` method that evaluate the performance of the model.
 
 Visualizers interact with scikit-learn objects by intersecting with them at the methods defined above. Specifically, visualizers perform actions related to `fit()`, `transform()`, `predict()`, and `score()` then call a `draw()` method which initializes the underlying figure associated with the visualizer. The user calls the visualizer's `poof()` method, which in turn calls a `finalize()` method on the visualizer to draw legends, titles, etc. and then `poof()` renders the figure. The Visualizer API is therefore:
 
@@ -184,14 +184,13 @@ class MyVisualizer(Visualizer):
         super(MyVisualizer, self).__init__(ax, **kwargs)
 
     def fit(self, X, y=None):
+        super(MyVisualizer, self).fit(X, y)
         self.draw(X)
         return self
 
     def draw(self, X):
-        if self.ax is None:
-            self.ax = self.gca()
-
         self.ax.plot(X)
+        return self.ax
 
     def finalize(self):
         self.set_title("My Visualizer")
