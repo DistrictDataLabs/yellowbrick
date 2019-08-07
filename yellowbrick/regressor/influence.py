@@ -106,7 +106,7 @@ class CooksDistance(Visualizer):
     def __init__(
         self, ax=None, draw_threshold=True, linefmt="C0-", markerfmt=",", **kwargs
     ):
-        # Initializ the visualizer
+        # Initialize the visualizer
         super(CooksDistance, self).__init__(ax=ax, **kwargs)
 
         # Set "hyperparameters"

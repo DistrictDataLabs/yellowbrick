@@ -24,11 +24,12 @@ import yellowbrick as yb
 import numpy.testing as npt
 import matplotlib.pyplot as plt
 
-from yellowbrick.classifier.confusion_matrix import *
 from yellowbrick.datasets import load_occupancy
+from yellowbrick.classifier.confusion_matrix import *
 
-from tests.base import IS_WINDOWS_OR_CONDA, VisualTestCase
+from unittest.mock import patch
 from tests.fixtures import Dataset, Split
+from tests.base import IS_WINDOWS_OR_CONDA, VisualTestCase
 
 from sklearn.svm import SVC
 from sklearn.datasets import load_digits
@@ -406,3 +407,32 @@ class TestConfusionMatrix(VisualTestCase):
         s = visualizer.score(X_test, y_test)
 
         assert 0 <= s <= 1
+
+    @pytest.mark.xfail(
+        reason="""third test fails with AssertionError: Expected fit
+        to be called once. Called 0 times. This should be fixed by #939"""
+    )
+    def test_with_fitted(self):
+        """
+        Test that visualizer properly handles an already-fitted model
+        """
+        X, y = load_occupancy(return_dataset=True).to_numpy()
+
+        model = LogisticRegression().fit(X, y)
+        classes = ["unoccupied", "occupied"]
+
+        with patch.object(model, "fit") as mockfit:
+            oz = ConfusionMatrix(model, classes=classes)
+            oz.fit(X, y)
+            mockfit.assert_not_called()
+
+        with patch.object(model, "fit") as mockfit:
+            oz = ConfusionMatrix(model, classes=classes, is_fitted=True)
+            oz.fit(X, y)
+            mockfit.assert_not_called()
+
+        with patch.object(model, "fit") as mockfit:
+            oz = ConfusionMatrix(model, classes=classes, is_fitted=False)
+            oz.fit(X, y)
+            mockfit.assert_called_once_with(X, y)
+

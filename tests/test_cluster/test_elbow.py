@@ -33,8 +33,8 @@ from tests.fixtures import Dataset
 from tests.base import VisualTestCase
 from yellowbrick.datasets import load_hobbies
 from yellowbrick.cluster.elbow import distortion_score
-from yellowbrick.cluster.elbow import KElbowVisualizer
 from yellowbrick.exceptions import YellowbrickValueError
+from yellowbrick.cluster.elbow import KElbowVisualizer, kelbow_visualizer
 
 from tests.base import IS_WINDOWS_OR_CONDA
 
@@ -357,3 +357,18 @@ class TestKElbowVisualizer(VisualTestCase):
         visualizer.finalize()
 
         self.assert_images_similar(visualizer)
+
+    @pytest.mark.xfail(reason="images not close due to timing lines")
+    def test_quick_method(self):
+        """
+        Test the quick method producing a valid visualization
+        """
+        X, y = make_blobs(
+            n_samples=1000, n_features=12, centers=8, shuffle=False, random_state=2
+        )
+
+        model = MiniBatchKMeans(3, random_state=43)
+        oz = kelbow_visualizer(model, X, random_state=13, legend=False)
+        assert isinstance(oz, KElbowVisualizer)
+
+        self.assert_images_similar(oz)

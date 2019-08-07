@@ -28,14 +28,13 @@ from yellowbrick.regressor.residuals import *
 from yellowbrick.exceptions import YellowbrickValueError
 
 from unittest import mock
-from tests.base import IS_WINDOWS_OR_CONDA, VisualTestCase
 from tests.fixtures import Dataset, Split
-
-from sklearn.linear_model import Ridge, Lasso
-from sklearn.linear_model import LinearRegression
-from sklearn.neural_network import MLPRegressor
+from tests.base import IS_WINDOWS_OR_CONDA, VisualTestCase
 
 from sklearn.datasets import make_regression
+from sklearn.linear_model import Ridge, Lasso
+from sklearn.neural_network import MLPRegressor
+from sklearn.linear_model import LinearRegression
 from sklearn.model_selection import train_test_split as tts
 
 
@@ -224,6 +223,33 @@ class TestPredictionError(VisualTestCase):
         assert "alpha" in scatter_kwargs
         assert scatter_kwargs["alpha"] == 0.7
 
+    @pytest.mark.xfail(
+        reason="""third test fails with AssertionError: Expected fit
+        to be called once. Called 0 times."""
+    )
+    def test_peplot_with_fitted(self):
+        """
+        Test that PredictionError properly handles an already-fitted model
+        """
+        X, y = load_energy(return_dataset=True).to_numpy()
+
+        model = Ridge().fit(X, y)
+
+        with mock.patch.object(model, "fit") as mockfit:
+            oz = PredictionError(model)
+            oz.fit(X, y)
+            mockfit.assert_not_called()
+
+        with mock.patch.object(model, "fit") as mockfit:
+            oz = PredictionError(model, is_fitted=True)
+            oz.fit(X, y)
+            mockfit.assert_not_called()
+
+        with mock.patch.object(model, "fit") as mockfit:
+            oz = PredictionError(model, is_fitted=False)
+            oz.fit(X, y)
+            mockfit.assert_called_once_with(X, y)
+
 
 ##########################################################################
 ## Residuals Plot Test Cases
@@ -403,3 +429,30 @@ class TestResidualsPlot(VisualTestCase):
         _, scatter_kwargs = visualizer.ax.scatter.call_args
         assert "alpha" in scatter_kwargs
         assert scatter_kwargs["alpha"] == 0.75
+
+    @pytest.mark.xfail(
+        reason="""third test fails with AssertionError: Expected fit
+        to be called once. Called 0 times."""
+    )
+    def test_residuals_with_fitted(self):
+        """
+        Test that ResidualsPlot properly handles an already-fitted model
+        """
+        X, y = load_energy(return_dataset=True).to_numpy()
+
+        model = Ridge().fit(X, y)
+
+        with mock.patch.object(model, "fit") as mockfit:
+            oz = ResidualsPlot(model)
+            oz.fit(X, y)
+            mockfit.assert_not_called()
+
+        with mock.patch.object(model, "fit") as mockfit:
+            oz = ResidualsPlot(model, is_fitted=True)
+            oz.fit(X, y)
+            mockfit.assert_not_called()
+
+        with mock.patch.object(model, "fit") as mockfit:
+            oz = ResidualsPlot(model, is_fitted=False)
+            oz.fit(X, y)
+            mockfit.assert_called_once_with(X, y)

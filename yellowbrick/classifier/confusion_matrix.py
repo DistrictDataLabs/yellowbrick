@@ -19,13 +19,13 @@ Visual confusion matrix for classifier scoring.
 
 import numpy as np
 
-from ..utils import div_safe
-from ..style import find_text_color
-from ..style.palettes import color_sequence
-from .base import ClassificationScoreVisualizer
-
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import confusion_matrix as confusion_matrix_metric
+
+from yellowbrick.utils import div_safe
+from yellowbrick.style import find_text_color
+from yellowbrick.style.palettes import color_sequence
+from yellowbrick.classifier.base import ClassificationScoreVisualizer
 
 
 ##########################################################################
@@ -53,7 +53,9 @@ class ConfusionMatrix(ClassificationScoreVisualizer):
     Parameters
     ----------
     model : estimator
-        Must be a classifier, otherwise raises YellowbrickTypeError
+        Must be a classifier, otherwise raises ``YellowbrickTypeError``. If
+        the internal model is not fitted, it is fit when the visualizer is
+        fitted, unless otherwise specified by ``is_fitted``.
 
     ax : matplotlib Axes, default: None
         The axes to plot the figure on. If None is passed in the current axes
@@ -93,6 +95,15 @@ class ConfusionMatrix(ClassificationScoreVisualizer):
         Specify the fontsize of the text in the grid and labels to make the
         matrix a bit easier to read. Uses rcParams font size by default.
 
+    is_fitted : bool or str, default="auto"
+        Specify if the wrapped estimator is already fitted. If False, the estimator
+        will be fit when the visualizer is fit, otherwise, the estimator will not be
+        modified. If "auto" (default), a helper method will check if the estimator
+        is fitted before fitting it again.
+
+    kwargs : dict
+        Keyword arguments passed to the super class.
+
     Attributes
     ----------
     score_ : float
@@ -124,9 +135,12 @@ class ConfusionMatrix(ClassificationScoreVisualizer):
         label_encoder=None,
         cmap="YlOrRd",
         fontsize=None,
+        is_fitted="auto",
         **kwargs
     ):
-        super(ConfusionMatrix, self).__init__(model, ax=ax, classes=classes, **kwargs)
+        super(ConfusionMatrix, self).__init__(
+            model, ax=ax, classes=classes, is_fitted=is_fitted, **kwargs
+        )
 
         # Visual parameters
         self.fontsize = fontsize
@@ -318,6 +332,7 @@ def confusion_matrix(
     cmap="YlOrRd",
     fontsize=None,
     random_state=None,
+    is_fitted="auto",
     **kwargs
 ):
     """Quick method:
@@ -336,7 +351,9 @@ def confusion_matrix(
     Parameters
     ----------
     model : estimator
-        Must be a classifier, otherwise raises YellowbrickTypeError
+        Must be a classifier, otherwise raises ``YellowbrickTypeError``. If
+        the internal model is not fitted, it is fit when the visualizer is
+        fitted, unless otherwise specified by ``is_fitted``.
 
     X  : ndarray or DataFrame of shape n x m
         A matrix of n instances with m features.
@@ -385,6 +402,15 @@ def confusion_matrix(
     random_state : int, RandomState instance or None, optional (default=None)
         Passes a random state parameter to the train_test_split function.
 
+    is_fitted : bool or str, default="auto"
+        Specify if the wrapped estimator is already fitted. If False, the estimator
+        will be fit when the visualizer is fit, otherwise, the estimator will not be
+        modified. If "auto" (default), a helper method will check if the estimator
+        is fitted before fitting it again.
+
+    kwargs : dict
+        Keyword arguments passed to the super class.
+
     Returns
     -------
     ax : matplotlib axes
@@ -400,6 +426,7 @@ def confusion_matrix(
         label_encoder,
         cmap,
         fontsize,
+        is_fitted,
         **kwargs
     )
 
