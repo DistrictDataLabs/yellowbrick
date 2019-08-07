@@ -24,16 +24,16 @@ import numpy as np
 from scipy.stats import mstats
 from collections import defaultdict
 
-from yellowbrick.base import ModelVisualizer
-from yellowbrick.style.colors import resolve_colors
-from yellowbrick.utils import is_classifier, is_probabilistic, is_monotonic
-from yellowbrick.exceptions import YellowbrickTypeError, YellowbrickValueError
-
 from sklearn.base import clone
 from sklearn.model_selection import ShuffleSplit
 from sklearn.metrics import precision_recall_curve
 from sklearn.utils import indexable, safe_indexing
 from sklearn.utils.multiclass import type_of_target
+
+from yellowbrick.base import ModelVisualizer
+from yellowbrick.style.colors import resolve_colors
+from yellowbrick.utils import is_classifier, is_probabilistic, is_monotonic
+from yellowbrick.exceptions import YellowbrickTypeError, YellowbrickValueError
 
 
 # Quantiles for lower bound, curve, and upper bound
@@ -74,8 +74,8 @@ class DiscriminationThreshold(ModelVisualizer):
     Parameters
     ----------
     model : Classification Estimator
-        A binary classification estimator that implements ``predict_proba`` or
-        ``decision_function`` methods. Will raise ``TypeError`` if the model
+        An unfitted binary classification estimator that implements ``predict_proba``
+        or ``decision_function`` methods. Will raise ``TypeError`` if the model
         cannot be used with the visualizer.
 
     ax : matplotlib Axes, default: None
@@ -499,8 +499,8 @@ def discrimination_threshold(
     Parameters
     ----------
     model : Classification Estimator
-        A binary classification estimator that implements ``predict_proba`` or
-        ``decision_function`` methods. Will raise ``TypeError`` if the model
+        An unfitted binary classification estimator that implements ``predict_proba``
+        or ``decision_function`` methods. Will raise ``TypeError`` if the model
         cannot be used with the visualizer.
 
     X : ndarray or DataFrame of shape n x m

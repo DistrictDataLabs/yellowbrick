@@ -7,7 +7,6 @@
 # Copyright (C) 2018 The scikit-yb developers
 # For license information, see LICENSE.txt
 #
-#
 # ID: icdm.py [] benjamin@bengfort.com $
 
 """
@@ -26,9 +25,9 @@ from sklearn.manifold import MDS, TSNE
 
 from yellowbrick.utils.timer import Timer
 from yellowbrick.utils.decorators import memoized
-from yellowbrick.utils.helpers import prop_to_size
 from yellowbrick.exceptions import YellowbrickValueError
 from yellowbrick.cluster.base import ClusteringScoreVisualizer
+from yellowbrick.utils.helpers import prop_to_size, check_fitted
 
 try:
     # Only available in Matplotlib >= 2.0.2
@@ -76,7 +75,9 @@ class InterclusterDistance(ClusteringScoreVisualizer):
         Should be an instance of a centroidal clustering algorithm (or a
         hierarchical algorithm with a specified number of clusters). Also
         accepts some other models like LDA for text clustering.
-        If it is not a clusterer, an exception is raised.
+        If it is not a clusterer, an exception is raised. If the estimator
+        is not fitted, it is fit when the visualizer is fitted, unless
+        otherwise specified by ``is_fitted``.
 
     ax : matplotlib Axes, default: None
         The axes to plot the figure on. If None is passed in the current axes
@@ -123,6 +124,12 @@ class InterclusterDistance(ClusteringScoreVisualizer):
     random_state : int or RandomState, default: None
         Fixes the random state for stochastic embedding algorithms.
 
+    is_fitted : bool or str, default='auto'
+        Specify if the wrapped estimator is already fitted. If False, the estimator
+        will be fit when the visualizer is fit, otherwise, the estimator will not be
+        modified. If 'auto' (default), a helper method will check if the estimator
+        is fitted before fitting it again.
+
     kwargs : dict
         Keyword arguments passed to the base class and may influence the
         feature visualization properties.
@@ -166,6 +173,7 @@ class InterclusterDistance(ClusteringScoreVisualizer):
         legend_loc="lower left",
         legend_size=1.5,
         random_state=None,
+        is_fitted="auto",
         **kwargs
     ):
         # Initialize the visualizer bases
@@ -274,16 +282,17 @@ class InterclusterDistance(ClusteringScoreVisualizer):
         into 2D space using the embedding method specified.
         """
         with Timer() as self.fit_time_:
-            # Fit the underlying estimator
-            self.estimator.fit(X, y)
+            if not check_fitted(self.estimator, is_fitted_by=self.is_fitted):
+                # Fit the underlying estimator
+                self.estimator.fit(X, y)
 
-            # Get the centers
-            # TODO: is this how sklearn stores all centers in the model?
-            C = self.cluster_centers_
+        # Get the centers
+        # TODO: is this how sklearn stores all centers in the model?
+        C = self.cluster_centers_
 
-            # Embed the centers in 2D space and get the cluster scores
-            self.embedded_centers_ = self.transformer.fit_transform(C)
-            self.scores_ = self._score_clusters(X, y)
+        # Embed the centers in 2D space and get the cluster scores
+        self.embedded_centers_ = self.transformer.fit_transform(C)
+        self.scores_ = self._score_clusters(X, y)
 
         # Draw the clusters and fit returns self
         self.draw()
@@ -470,10 +479,10 @@ def intercluster_distance(
     legend_loc="lower left",
     legend_size=1.5,
     random_state=None,
+    is_fitted="auto",
     **kwargs
 ):
     """Quick Method:
-
     Intercluster distance maps display an embedding of the cluster centers in
     2 dimensions with the distance to other centers preserved. E.g. the closer
     to centers are in the visualization, the closer they are in the original
@@ -489,7 +498,9 @@ def intercluster_distance(
         Should be an instance of a centroidal clustering algorithm (or a
         hierarchical algorithm with a specified number of clusters). Also
         accepts some other models like LDA for text clustering.
-        If it is not a clusterer, an exception is raised.
+        If it is not a clusterer, an exception is raised. If the estimator
+        is not fitted, it is fit when the visualizer is fitted, unless
+        otherwise specified by ``is_fitted``.
 
     X : array-like of shape (n, m)
         A matrix or data frame with n instances and m features
@@ -542,6 +553,12 @@ def intercluster_distance(
     random_state : int or RandomState, default: None
         Fixes the random state for stochastic embedding algorithms.
 
+    is_fitted : bool or str, default='auto'
+        Specify if the wrapped estimator is already fitted. If False, the estimator
+        will be fit when the visualizer is fit, otherwise, the estimator will not be
+        modified. If 'auto' (default), a helper method will check if the estimator
+        is fitted before fitting it again.
+
     kwargs : dict
         Keyword arguments passed to the base class and may influence the
         feature visualization properties.
@@ -562,9 +579,10 @@ def intercluster_distance(
         legend_loc=legend_loc,
         legend_size=legend_size,
         random_state=random_state,
+        is_fitted=is_fitted,
         **kwargs
     )
 
     oz.fit(X, y)
-    oz.poof()
+    oz.finalize()
     return oz

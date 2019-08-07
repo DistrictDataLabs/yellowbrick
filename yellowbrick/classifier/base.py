@@ -21,10 +21,10 @@ API for classification visualizer hierarchy.
 
 import numpy as np
 
-from ..utils import isclassifier
-from ..base import ScoreVisualizer
-from ..style.palettes import color_palette
-from ..exceptions import YellowbrickTypeError
+from yellowbrick.utils import isclassifier
+from yellowbrick.base import ScoreVisualizer
+from yellowbrick.style.palettes import color_palette
+from yellowbrick.exceptions import YellowbrickTypeError
 
 
 ##########################################################################
@@ -33,12 +33,45 @@ from ..exceptions import YellowbrickTypeError
 
 
 class ClassificationScoreVisualizer(ScoreVisualizer):
-    def __init__(self, model, ax=None, fig=None, classes=None, **kwargs):
+    def __init__(
+        self, model, ax=None, fig=None, classes=None, is_fitted="auto", **kwargs
+    ):
         """
         Check to see if model is an instance of a classifer.
         Should return an error if it isn't.
 
-        .. todo:: document this class.
+        Parameters
+        -----------
+        model : sklearn.Estimator (a classifier)
+            ClassificationScoreVisualizer wraps a classifier to produce a
+            visualization of its score. If the internal model is not fitted,
+            it is fit when the visualizer is fitted, unless otherwise specified
+            by ``is_fitted``.
+
+        ax : matplotlib Axes, default: None
+            The axis to plot the figure on. If None is passed in the current axes
+            will be used (or generated if required).
+
+        fig : matplotlib Figure, default: None
+            The figure to plot the Visualizer on. If None is passed in the current
+            plot will be used (or generated if required).
+
+        classes : a list of class names for the legend
+            If classes is None and a y value is passed to fit then the classes
+            are selected from the target vector.
+
+        is_fitted : bool or str, default="auto"
+            Specify if the wrapped estimator is already fitted. If False, the estimator
+            will be fit when the visualizer is fit, otherwise, the estimator will not be
+            modified. If "auto" (default), a helper method will check if the estimator
+            is fitted before fitting it again.
+
+        kwargs : dict
+            Keyword arguments that are passed to the base class and may influence
+            the visualization as defined in other Visualizers. Optional keyword
+            arguments include:
+
+        .. todo:: Finish documenting class.
         .. todo:: accept as input ``classes``, as all visualizers need this.
         """
         # A bit of type checking
@@ -47,11 +80,6 @@ class ClassificationScoreVisualizer(ScoreVisualizer):
                 "This estimator is not a classifier; "
                 "try a regression or clustering score visualizer instead!"
             )
-
-        # Initialize the super method.
-        super(ClassificationScoreVisualizer, self).__init__(
-            model, ax=ax, fig=fig, **kwargs
-        )
 
         # Convert to array if necessary to match estimator.classes_
         if classes is not None:
@@ -65,6 +93,11 @@ class ClassificationScoreVisualizer(ScoreVisualizer):
 
         self.colors = color_palette(kwargs.pop("colors", None), n_colors)
         self.classes_ = classes
+
+        # Initialize the super method.
+        super(ClassificationScoreVisualizer, self).__init__(
+            model, ax=ax, fig=fig, **kwargs
+        )
 
     @property
     def classes_(self):
@@ -103,8 +136,7 @@ class ClassificationScoreVisualizer(ScoreVisualizer):
             Returns the instance of the classification score visualizer
 
         """
-        # Fit the inner estimator
-        self.estimator.fit(X, y)
+        super(ClassificationScoreVisualizer, self).fit(X, y, **kwargs)
 
         # Extract the classes from the estimator
         if self.classes_ is None:

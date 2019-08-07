@@ -2,9 +2,10 @@
 # Implements visualizers using the silhouette metric for cluster evaluation.
 #
 # Author:   Benjamin Bengfort
+# Author:   Rebecca Bilbro
 # Created:  Mon Mar 27 10:09:24 2017 -0400
 #
-# Copyright (C) 2016 The scikit-yb developers
+# Copyright (C) 2017 The scikit-yb developers
 # For license information, see LICENSE.txt
 #
 # ID: silhouette.py [57b563b] benjamin@bengfort.com $
@@ -20,14 +21,14 @@ Implements visualizers that use the silhouette metric for cluster evaluation.
 import numpy as np
 import matplotlib.ticker as ticker
 
+from sklearn.metrics import silhouette_score, silhouette_samples
+
+from yellowbrick.utils import check_fitted
 from yellowbrick.style import resolve_colors
 from yellowbrick.cluster.base import ClusteringScoreVisualizer
 
-from sklearn.metrics import silhouette_score, silhouette_samples
-
-
 ## Packages for export
-__all__ = ["SilhouetteVisualizer"]
+__all__ = ["SilhouetteVisualizer", "silhouette_visualizer"]
 
 
 ##########################################################################
@@ -59,7 +60,8 @@ class SilhouetteVisualizer(ClusteringScoreVisualizer):
     ----------
     model : a Scikit-Learn clusterer
         Should be an instance of a centroidal clustering algorithm (``KMeans``
-        or ``MiniBatchKMeans``).
+        or ``MiniBatchKMeans``). If the estimator is not fitted, it is fit when
+        the visualizer is fitted, unless otherwise specified by ``is_fitted``.
 
     ax : matplotlib Axes, default: None
         The axes to plot the figure on. If None is passed in the current axes
@@ -69,6 +71,12 @@ class SilhouetteVisualizer(ClusteringScoreVisualizer):
         A collection of colors to use for each cluster group. If there are
         fewer colors than cluster groups, colors will repeat. May also be a
         Yellowbrick or matplotlib colormap string.
+
+    is_fitted : bool or str, default='auto'
+        Specify if the wrapped estimator is already fitted. If False, the estimator
+        will be fit when the visualizer is fit, otherwise, the estimator will not be
+        modified. If 'auto' (default), a helper method will check if the estimator
+        is fitted before fitting it again.
 
     kwargs : dict
         Keyword arguments that are passed to the base class and may influence
@@ -104,7 +112,9 @@ class SilhouetteVisualizer(ClusteringScoreVisualizer):
     >>> model.poof()
     """
 
-    def __init__(self, model, ax=None, colors=None, **kwargs):
+    def __init__(self, model, ax=None, colors=None, is_fitted="auto", **kwargs):
+
+        # Initialize the visualizer bases
         super(SilhouetteVisualizer, self).__init__(model, ax=ax, **kwargs)
 
         # Visual Properties
@@ -123,8 +133,9 @@ class SilhouetteVisualizer(ClusteringScoreVisualizer):
         # NOTE: Probably this would be better in score, but the standard score
         # is a little different and I'm not sure how it's used.
 
-        # Fit the wrapped estimator
-        self.estimator.fit(X, y, **kwargs)
+        if not check_fitted(self.estimator, is_fitted_by=self.is_fitted):
+            # Fit the wrapped estimator
+            self.estimator.fit(X, y, **kwargs)
 
         # Get the properties of the dataset
         self.n_samples_ = X.shape[0]
@@ -241,9 +252,73 @@ class SilhouetteVisualizer(ClusteringScoreVisualizer):
         # Set the ticks on the axis object.
         self.ax.set_yticks(self.y_tick_pos_)
         self.ax.set_yticklabels(str(idx) for idx in range(self.n_clusters_))
-        self.ax.xaxis.set_major_locator(
-            ticker.MultipleLocator(0.1)
-        )  # Set the ticks at multiples of 0.1
+        # Set the ticks at multiples of 0.1
+        self.ax.xaxis.set_major_locator(ticker.MultipleLocator(0.1))
 
         # Show legend (Average Silhouette Score axis)
         self.ax.legend(loc="best")
+
+
+##########################################################################
+## Quick Method
+##########################################################################
+
+
+def silhouette_visualizer(
+    model, X, y=None, ax=None, colors=None, is_fitted="auto", **kwargs
+):
+    """Quick Method:
+    The Silhouette Visualizer displays the silhouette coefficient for each
+    sample on a per-cluster basis, visually evaluating the density and
+    separation between clusters. The score is calculated by averaging the
+    silhouette coefficient for each sample, computed as the difference
+    between the average intra-cluster distance and the mean nearest-cluster
+    distance for each sample, normalized by the maximum value. This produces a
+    score between -1 and +1, where scores near +1 indicate high separation
+    and scores near -1 indicate that the samples may have been assigned to
+    the wrong cluster.
+
+    Parameters
+    ----------
+    model : a Scikit-Learn clusterer
+        Should be an instance of a centroidal clustering algorithm (``KMeans``
+        or ``MiniBatchKMeans``). If the estimator is not fitted, it is fit when
+        the visualizer is fitted, unless otherwise specified by ``is_fitted``.
+
+    ax : matplotlib Axes, default: None
+        The axes to plot the figure on. If None is passed in the current axes
+        will be used (or generated if required).
+
+    X : array-like of shape (n, m)
+        A matrix or data frame with n instances and m features
+
+    y : array-like of shape (n,), optional
+        A vector or series representing the target for each instance
+
+    colors : iterable or string, default: None
+        A collection of colors to use for each cluster group. If there are
+        fewer colors than cluster groups, colors will repeat. May also be a
+        Yellowbrick or matplotlib colormap string.
+
+    is_fitted : bool or str, default='auto'
+        Specify if the wrapped estimator is already fitted. If False, the estimator
+        will be fit when the visualizer is fit, otherwise, the estimator will not be
+        modified. If 'auto' (default), a helper method will check if the estimator
+        is fitted before fitting it again.
+
+    kwargs : dict
+        Keyword arguments that are passed to the base class and may influence
+        the visualization as defined in other Visualizers.
+
+    Returns
+    -------
+    viz : SilhouetteVisualizer
+        The silhouette visualizer, fitted and finalized.
+    """
+    oz = SilhouetteVisualizer(
+        model, ax=ax, colors=colors, is_fitted=is_fitted, **kwargs
+    )
+
+    oz.fit(X, y)
+    oz.finalize()
+    return oz

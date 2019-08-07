@@ -24,8 +24,11 @@ import matplotlib.pyplot as plt
 from sklearn.datasets import make_blobs
 from sklearn.cluster import KMeans, MiniBatchKMeans
 
+from unittest import mock
 from tests.base import VisualTestCase
-from yellowbrick.cluster.silhouette import SilhouetteVisualizer
+
+from yellowbrick.datasets import load_nfl
+from yellowbrick.cluster.silhouette import SilhouetteVisualizer, silhouette_visualizer
 
 
 ##########################################################################
@@ -170,3 +173,44 @@ class TestSilhouetteVisualizer(VisualTestCase):
             self.assert_images_similar(visualizer, remove_legend=True, tol=tol)
         except Exception as e:
             self.fail("error during silhouette: {}".format(e))
+
+    def test_quick_method(self):
+        """
+        Test the quick method producing a valid visualization
+        """
+        X, y = make_blobs(
+            n_samples=1000, n_features=12, centers=8, shuffle=False, random_state=0
+        )
+
+        model = MiniBatchKMeans(3, random_state=343)
+        oz = silhouette_visualizer(model, X, random_state=93, legend=False)
+        assert isinstance(oz, SilhouetteVisualizer)
+
+        self.assert_images_similar(oz)
+
+    @pytest.mark.xfail(
+        reason="""third test fails with AssertionError: Expected fit
+        to be called once. Called 0 times."""
+    )
+    def test_with_fitted(self):
+        """
+        Test that visualizer properly handles an already-fitted model
+        """
+        X, y = load_nfl(return_dataset=True).to_numpy()
+
+        model = MiniBatchKMeans().fit(X, y)
+
+        with mock.patch.object(model, "fit") as mockfit:
+            oz = SilhouetteVisualizer(model)
+            oz.fit(X, y)
+            mockfit.assert_not_called()
+
+        with mock.patch.object(model, "fit") as mockfit:
+            oz = SilhouetteVisualizer(model, is_fitted=True)
+            oz.fit(X, y)
+            mockfit.assert_not_called()
+
+        with mock.patch.object(model, "fit") as mockfit:
+            oz = SilhouetteVisualizer(model, is_fitted=False)
+            oz.fit(X, y)
+            mockfit.assert_called_once_with(X, y)

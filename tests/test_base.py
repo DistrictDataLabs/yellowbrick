@@ -24,16 +24,17 @@ import matplotlib.pyplot as plt
 
 from yellowbrick.base import *
 from yellowbrick.base import VisualizerGrid
+from yellowbrick.datasets import load_occupancy
 from yellowbrick.exceptions import YellowbrickWarning
 from yellowbrick.exceptions import YellowbrickValueError
 
 from unittest.mock import patch
 from unittest.mock import MagicMock
-from tests.base import IS_WINDOWS_OR_CONDA, VisualTestCase
 from tests.rand import RandomVisualizer
+from tests.base import IS_WINDOWS_OR_CONDA, VisualTestCase
 
+from sklearn.svm import LinearSVC
 from sklearn.datasets import make_classification
-
 
 ##########################################################################
 ## Base Cases
@@ -159,6 +160,47 @@ class TestBaseClasses(VisualTestCase):
         with pytest.warns(YellowbrickWarning):
             viz = CustomVisualizer()
             viz.poof()
+
+##########################################################################
+## ScoreVisualizer Cases
+##########################################################################
+
+
+class MockVisualizer(ScoreVisualizer):
+    """
+    Mock for a downstream score visualizer
+    """
+    def fit(self, X, y):
+        super(MockVisualizer, self).fit(X, y)
+
+
+class TestScoreVisualizer(VisualTestCase):
+    """
+    Tests for the ScoreVisualizer
+    """
+    def test_with_fitted(self):
+        """
+        Test that visualizer properly handles an already-fitted model
+        """
+        X, y = load_occupancy(return_dataset=True).to_numpy()
+
+        model = LinearSVC().fit(X, y)
+        classes = ["unoccupied", "occupied"]
+
+        with patch.object(model, "fit") as mockfit:
+            oz = MockVisualizer(model, classes=classes)
+            oz.fit(X, y)
+            mockfit.assert_not_called()
+
+        with patch.object(model, "fit") as mockfit:
+            oz = MockVisualizer(model, classes=classes, is_fitted=True)
+            oz.fit(X, y)
+            mockfit.assert_not_called()
+
+        with patch.object(model, "fit") as mockfit:
+            oz = MockVisualizer(model, classes=classes, is_fitted=False)
+            oz.fit(X, y)
+            mockfit.assert_called_once_with(X, y)
 
 
 ##########################################################################
