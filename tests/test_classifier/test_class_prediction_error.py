@@ -30,7 +30,9 @@ from sklearn.svm import LinearSVC
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.datasets import make_multilabel_classification
 
+from unittest.mock import patch
 from tests.base import VisualTestCase
+
 
 try:
     import pandas as pd
@@ -150,3 +152,31 @@ class TestClassPredictionError(VisualTestCase):
         # Score the visualizer
         s = visualizer.score(X, y)
         assert 0 <= s <= 1
+
+    def test_with_fitted(self):
+        """
+        Test that visualizer properly handles an already-fitted model
+        """
+        X, y = load_occupancy(return_dataset=True).to_numpy()
+
+        model = RandomForestClassifier()
+        classes = ["unoccupied", "occupied"]
+
+        with patch.object(model, "fit") as mockfit:
+            model.fit(X, y)
+            oz = ClassPredictionError(model, classes=classes)
+            oz.fit(X, y)
+            mockfit.assert_called_once()
+
+        with patch.object(model, "fit") as mockfit:
+            model.fit(X, y)
+            oz = ClassPredictionError(model, classes=classes, is_fitted=True)
+            oz.fit(X, y)
+            mockfit.assert_called_once()
+
+        with patch.object(model, "fit") as mockfit:
+            model.fit(X, y)
+            oz = ClassPredictionError(model, classes=classes, is_fitted=False)
+            oz.fit(X, y)
+            assert mockfit.call_count == 2
+
