@@ -1,12 +1,18 @@
 # tests.test_target.test_binning
 # Tests for the BalancedBinningReference visualizer
 #
-# Author:  Juan L. Kehoe (juanluo2008@gmail.com)
-# Author:  Prema Damodaran Roman (pdamo24@gmail.com)
+# Author:  Juan L. Kehoe
+# Author:  Prema Damodaran Roman
 # Created: Thu Jul 20 10:21:49 2018 -0400
+#
+# Copyright (C) 2018 The scikit-yb developers
+# For license information, see LICENSE.txt
 #
 # ID: test_binning.py
 
+##########################################################################
+# Imports
+##########################################################################
 import pytest
 
 from yellowbrick.target.binning import *
@@ -20,8 +26,9 @@ except ImportError:
     pd = None
 
 ##########################################################################
-## BalancedBinningReference Tests
+# BalancedBinningReference Tests
 ##########################################################################
+
 
 class TestBalancedBinningReference(VisualTestCase):
     """

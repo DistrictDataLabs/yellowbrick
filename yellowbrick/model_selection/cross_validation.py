@@ -3,8 +3,11 @@
 #
 # Author:   Prema Damodaran Roman
 # Created:  Wed June 6 2018 13:32:00 -0500
-# Author:   Rebecca Bilbro <bilbro@gmail.com>
+# Author:   Rebecca Bilbro
 # Updated:  Fri Aug 10 13:15:43 2018 -0500
+#
+# Copyright (C) 2018 The scikit-yb developers
+# For license information, see LICENSE.txt
 #
 # ID: cross_validation.py [7f47800] pdamo24@gmail.com $
 
@@ -13,7 +16,7 @@ Implements cross-validation score plotting for model selection.
 """
 
 ##########################################################################
-## Imports
+# Imports
 ##########################################################################
 
 import numpy as np
@@ -24,8 +27,9 @@ from sklearn.model_selection import cross_val_score
 
 
 ##########################################################################
-## CVScores Visualizer
+# CVScores Visualizer
 ##########################################################################
+
 
 class CVScores(ModelVisualizer):
     """
@@ -69,6 +73,15 @@ class CVScores(ModelVisualizer):
     kwargs : dict
         Keyword arguments that are passed to the base class and may influence
         the visualization as defined in other Visualizers.
+
+    Attributes
+    -------
+    cv_scores_ : ndarray shape (n_splits, )
+        The cross-validated scores from each subsection of the data
+
+    cv_scores_mean_ : float
+        Average cross-validated score across all subsections of the data
+
 
     Examples
     --------
@@ -144,9 +157,11 @@ class CVScores(ModelVisualizer):
         xvals = np.arange(1, len(self.cv_scores_) + 1, 1)
         self.ax.bar(xvals, self.cv_scores_, width=width, color=self.color)
         self.ax.axhline(
-            self.cv_scores_mean_, color=self.color,
+            self.cv_scores_mean_,
+            color=self.color,
             label="Mean score = {:0.3f}".format(self.cv_scores_mean_),
-            linestyle='--', linewidth=linewidth
+            linestyle="--",
+            linewidth=linewidth,
         )
 
         return self.ax
@@ -157,7 +172,7 @@ class CVScores(ModelVisualizer):
         """
 
         # Set the title of the figure
-        self.set_title('Cross Validation Scores for {}'.format(self.name))
+        self.set_title("Cross Validation Scores for {}".format(self.name))
 
         # Add the legend
         loc = kwargs.pop("loc", "best")
@@ -168,13 +183,14 @@ class CVScores(ModelVisualizer):
         self.ax.xaxis.set_major_locator(ticker.MultipleLocator(1))
 
         # Set the axis labels
-        self.ax.set_xlabel('Training Instances')
-        self.ax.set_ylabel('Score')
+        self.ax.set_xlabel("Training Instances")
+        self.ax.set_ylabel("Score")
 
 
 ##########################################################################
-## Quick Method
+# Quick Method
 ##########################################################################
+
 
 def cv_scores(model, X, y, ax=None, cv=None, scoring=None, color=None, **kwargs):
     """
@@ -233,8 +249,8 @@ def cv_scores(model, X, y, ax=None, cv=None, scoring=None, color=None, **kwargs)
 
     Returns
     -------
-    ax : matplotlib.Axes
-        The axes object that the validation curves were drawn on.
+    visualizer : CVScores
+        The fitted visualizer.
 
     """
 
@@ -244,4 +260,5 @@ def cv_scores(model, X, y, ax=None, cv=None, scoring=None, color=None, **kwargs)
     # Fit and poof the visualizer
     visualizer.fit(X, y)
     visualizer.poof(**kwargs)
-    return visualizer.ax
+
+    return visualizer
