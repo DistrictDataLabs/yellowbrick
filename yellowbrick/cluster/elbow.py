@@ -330,21 +330,21 @@ class KElbowVisualizer(ClusteringScoreVisualizer):
                     "curve_direction": "increasing",
                 },
             }.get(self.metric, {})
-            elbow_locator = KneeLocator(
-                self.k_values_, self.k_scores_, **locator_kwargs
-            )
-            self.elbow_value_ = elbow_locator.knee
-            if self.elbow_value_ is not None:
-                self.elbow_score_ = 0
+            try:
+                elbow_locator = KneeLocator(
+                    self.k_values_, self.k_scores_, **locator_kwargs
+                )
+                self.elbow_value_ = elbow_locator.knee
+                self.elbow_score_ = self.k_scores_[
+                    self.k_values_.index(self.elbow_value_)
+                ]
+            except ValueError:
                 warning_message = (
                     "No 'knee' or 'elbow' point detected, "
                     "pass `locate_elbow=False` to remove the warning"
                 )
                 warnings.warn(warning_message, YellowbrickWarning)
-            else:
-                self.elbow_score_ = self.k_scores_[
-                    self.k_values_.index(self.elbow_value_)
-                ]
+                self.elbow_score_ = 0
 
         self.draw()
 
