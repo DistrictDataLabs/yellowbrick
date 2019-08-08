@@ -13,7 +13,7 @@ We currently have four text-specific visualizations implemented:
 -  :doc:`dispersion`: plot the dispersion of target words throughout a corpus
 -  :doc:`postag`: plot the counts of different parts-of-speech throughout a tagged corpus
 
-Note that the examples in this section require a corpus of text data, see :doc:`loading a text corpus <corpus>` for more information.
+Note that the examples in this section require a corpus of text data, see :doc:`the hobbies corpus <../datasets/hobbies>` for a sample dataset.
 
 .. code:: python
 
@@ -29,7 +29,6 @@ Note that the examples in this section require a corpus of text data, see :doc:`
 .. toctree::
    :maxdepth: 2
 
-   corpus
    freqdist
    tsne
    umap_vis

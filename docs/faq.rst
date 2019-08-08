@@ -129,4 +129,4 @@ You can use the ``alpha`` param to change the opacity of plotted points (where `
 How can I access the sample datasets used in the examples?
 ----------------------------------------------------------
 
-Visit the :doc:`api/datasets` page.
+Visit the :doc:`api/datasets/index` page.

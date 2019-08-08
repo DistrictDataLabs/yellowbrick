@@ -1,10 +1,13 @@
 # yellowbrick.datasets.base
 # Loading utilities for the yellowbrick datasets.
 #
-# Author:   Rebecca Bilbro <rbilbro@districtdatalabs.com>
-# Author:   Benjamin Bengfort <bbengfort@districtdatalabs.com>
-# Author:   Raul Peralta <raulpl25@gmail.com>
+# Author:   Rebecca Bilbro
+# Author:   Benjamin Bengfort
+# Author:   Raul Peralta
 # Created: Thu Jul 26 13:53:01 2018 -0400
+#
+# Copyright (C) 2018 The scikit-yb developers
+# For license information, see LICENSE.txt
 #
 # ID: base.py [] benjamin@bengfort.com $
 
@@ -36,6 +39,7 @@ except ImportError:
 ## Dataset Object
 ##########################################################################
 
+
 class BaseDataset(object):
     """
     Base functionality for Dataset and Corpus objects.
@@ -66,17 +70,18 @@ class BaseDataset(object):
             False and the dataset exists, an exception is raised.
         """
         download_data(
-            self.url, self.signature, data_home=self.data_home,
-            replace=replace, extract=True
+            self.url,
+            self.signature,
+            data_home=self.data_home,
+            replace=replace,
+            extract=True,
         )
 
     def contents(self):
         """
         Contents returns a list of the files in the data directory.
         """
-        data = find_dataset_path(
-            self.name, data_home=self.data_home, ext=None
-        )
+        data = find_dataset_path(self.name, data_home=self.data_home, ext=None)
         return os.listdir(data)
 
     @memoized
@@ -85,10 +90,8 @@ class BaseDataset(object):
         Returns the contents of the README.md file that describes the dataset
         in detail and contains attribution information.
         """
-        path = find_dataset_path(
-            self.name, data_home=self.data_home, fname="README.md"
-        )
-        with open(path, 'r') as f:
+        path = find_dataset_path(self.name, data_home=self.data_home, fname="README.md")
+        with open(path, "r") as f:
             return f.read()
 
     @memoized
@@ -103,7 +106,7 @@ class BaseDataset(object):
         if path is None:
             return None
 
-        with open(path, 'r') as f:
+        with open(path, "r") as f:
             return json.load(f)
 
     @memoized
@@ -118,7 +121,7 @@ class BaseDataset(object):
         if path is None:
             return None
 
-        with open(path, 'r') as f:
+        with open(path, "r") as f:
             return f.read()
 
 
@@ -189,10 +192,12 @@ class Dataset(BaseDataset):
         path = find_dataset_path(self.name, ext=".npz", data_home=self.data_home)
         with np.load(path, allow_pickle=False) as npf:
             if "X" not in npf or "y" not in npf:
-                raise DatasetsError((
-                    "the downloaded dataset was improperly packaged without numpy arrays "
-                    "- please report this bug to the Yellowbrick maintainers!"
-                ))
+                raise DatasetsError(
+                    (
+                        "the downloaded dataset was improperly packaged without numpy "
+                        "arrays - please report this bug to the Yellowbrick maintainers!"
+                    )
+                )
 
             # TODO: How to handle the case where y is None?
             return npf["X"], npf["y"]
@@ -212,22 +217,25 @@ class Dataset(BaseDataset):
         """
         # Ensure the metadata is valid before continuing
         if self.meta is None:
-            raise DatasetsError((
-                "the downloaded dataset was improperly packaged without meta.json "
-                "- please report this bug to the Yellowbrick maintainers!"
-            ))
+            raise DatasetsError(
+                (
+                    "the downloaded dataset was improperly packaged without meta.json "
+                    "- please report this bug to the Yellowbrick maintainers!"
+                )
+            )
 
         if "features" not in self.meta or "target" not in self.meta:
-            raise DatasetsError((
-                "the downloaded dataset was improperly packaged without features "
-                "or target - please report this bug to the Yellowbrick maintainers!"
-            ))
+            raise DatasetsError(
+                (
+                    "the downloaded dataset was improperly packaged without features "
+                    "or target - please report this bug to the Yellowbrick maintainers!"
+                )
+            )
 
         # Load data frame and return features and target
         # TODO: Return y as None if there is no self.meta["target"]
         df = self.to_dataframe()
         return df[self.meta["features"]], df[self.meta["target"]]
-
 
     def to_dataframe(self):
         """
@@ -290,7 +298,8 @@ class Corpus(BaseDataset):
         Return the unique labels assigned to the documents.
         """
         return [
-            name for name in os.listdir(self.root)
+            name
+            for name in os.listdir(self.root)
             if os.path.isdir(os.path.join(self.root, name))
         ]
 
@@ -310,19 +319,16 @@ class Corpus(BaseDataset):
         """
         Read all of the documents from disk into an in-memory list.
         """
+
         def read(path):
-            with open(path, 'r', encoding='UTF-8') as f:
+            with open(path, "r", encoding="UTF-8") as f:
                 return f.read()
 
-        return [
-            read(f) for f in self.files
-        ]
+        return [read(f) for f in self.files]
 
     @property
     def target(self):
         """
         Returns the label associated with each item in data.
         """
-        return [
-            os.path.basename(os.path.dirname(f)) for f in self.files
-        ]
+        return [os.path.basename(os.path.dirname(f)) for f in self.files]

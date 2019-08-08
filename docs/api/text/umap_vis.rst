@@ -26,7 +26,7 @@ documents. Next, the Yellowbrick visualizer plots the scatter plot,
 coloring by cluster or by class, or neither if a structural analysis is
 required.
 
-After importing the required tools, we can :doc:`load the corpus <corpus>` and vectorize the text using TF-IDF. Once the corpus is vectorized we can visualize it, showing the distribution of classes.
+After importing the required tools, we can use the :doc:`the hobbies corpus <../datasets/hobbies>` and vectorize the text using TF-IDF. Once the corpus is vectorized we can visualize it, showing the distribution of classes.
 
 .. note to contributors: the below code requires an additional dependency on umap-learn 
     that is not part of the core requirements, so has not been modified with a plot 

@@ -138,8 +138,9 @@ class PrecisionRecallCurve(ClassificationScoreVisualizer):
         In the multiclass case, a mapping of class/metric to recall array.
 
 
-    Example
-    -------
+    Examples
+    --------
+
     >>> from yellowbrick.classifier import PrecisionRecallCurve
     >>> from sklearn.model_selection import train_test_split
     >>> from sklearn.svm import LinearSVC

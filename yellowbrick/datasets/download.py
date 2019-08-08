@@ -1,10 +1,13 @@
 # yellowbrick.datasets.download
 # Downloads the example datasets for running the examples.
 #
-# Author:   Rebecca Bilbro <rbilbro@districtdatalabs.com>
-# Author:   Benjamin Bengfort <bbengfort@districtdatalabs.com>
-# Author:   Raul Peralta <raulpl25@gmail.com>
+# Author:   Rebecca Bilbro
+# Author:   Benjamin Bengfort
+# Author:   Raul Peralta
 # Created:  Wed May 18 11:54:45 2016 -0400
+#
+# Copyright (C) 2018 The scikit-yb developers
+# For license information, see LICENSE.txt
 #
 # ID: download.py [1f73d2b] benjamin@bengfort.com $
 
@@ -34,6 +37,7 @@ CHUNK = 524288
 ##########################################################################
 ## Download functions
 ##########################################################################
+
 
 def download_data(url, signature, data_home=None, replace=False, extract=True):
     """
@@ -74,9 +78,11 @@ def download_data(url, signature, data_home=None, replace=False, extract=True):
     # If the archive exists cleanup or raise override exception
     if os.path.exists(archive):
         if not replace:
-            raise DatasetsError((
-                "dataset already exists at {}, set replace=False to overwrite"
-            ).format(archive))
+            raise DatasetsError(
+                ("dataset already exists at {}, set replace=False to overwrite").format(
+                    archive
+                )
+            )
 
         cleanup_dataset(name, data_home=data_home)
 
@@ -87,7 +93,7 @@ def download_data(url, signature, data_home=None, replace=False, extract=True):
     # Fetch the response in a streaming fashion and write it to disk.
     response = urlopen(url)
 
-    with open(archive, 'wb') as f:
+    with open(archive, "wb") as f:
         while True:
             chunk = response.read(CHUNK)
             if not chunk:
@@ -96,9 +102,7 @@ def download_data(url, signature, data_home=None, replace=False, extract=True):
 
     # Compare the signature of the archive to the expected one
     if sha256sum(archive) != signature:
-        raise ValueError(
-            "Download signature does not match hardcoded signature!"
-        )
+        raise ValueError("Download signature does not match hardcoded signature!")
 
     # If extract, extract the zipfile.
     if extract:
