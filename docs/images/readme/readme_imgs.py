@@ -146,7 +146,7 @@ def intercluster_distance(ax=None):
 def k_elbow(ax=None):
     X, y = make_blobs(centers=12, n_samples=1000, n_features=16, shuffle=True)
 
-    viz = KElbowVisualizer(KMeans(), k=(4,12), ax=ax)
+    viz = KElbowVisualizer(KMeans(), k=(4,12), ax=ax, locate_elbow=False)
     viz.fit(X)
     viz.finalize()
 
@@ -169,7 +169,7 @@ def clustering_visualizers(saveto=None):
     )
 
     intercluster_distance(axa)
-    k_elbow(axb).ax.get_legend().remove()
+    k_elbow(axb)
     silhouette(axc).ax.get_legend().remove()
 
     plt.tight_layout(pad=1.5)
@@ -223,7 +223,7 @@ def full_image(saveto=None, center_logo=False):
 
     # Bottom row: clusterers
     intercluster_distance(axes[2][0])
-    k_elbow(axes[2][1]).ax.get_legend().remove()
+    k_elbow(axes[2][1])
     silhouette(axes[2][2]).ax.get_legend().remove()
 
     plt.tight_layout(pad=1.5)
