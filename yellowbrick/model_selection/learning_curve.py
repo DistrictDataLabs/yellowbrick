@@ -1,8 +1,11 @@
 # yellowbrick.model_selection.learning_curve
 # Implements a learning curve visualization for model selection.
 #
-# Author:   Jason Keung <jason.s.keung@gmail.com>
+# Author:   Jason Keung
 # Created:  Mon May 22 09:22:00 2017 -0500
+#
+# Copyright (C) 2017 The scikit-yb developers
+# For license information, see LICENSE.txt
 #
 # ID: learning_curve.py [] jason.s.keung@gmail.com $
 
@@ -28,8 +31,9 @@ DEFAULT_TRAIN_SIZES = np.linspace(0.1, 1.0, 5)
 
 
 ##########################################################################
-## LearningCurve Visualizer
+# LearningCurve Visualizer
 ##########################################################################
+
 
 class LearningCurve(ModelVisualizer):
     """
@@ -84,7 +88,7 @@ class LearningCurve(ModelVisualizer):
           - An iterable yielding train/test splits.
 
         see the scikit-learn
-        `cross-validation guide <http://scikit-learn.org/stable/modules/cross_validation.html>`_
+        `cross-validation guide <https://bit.ly/2MMQAI7>`_
         for more information on the possible strategies that can be used here.
 
     scoring : string, callable or None, optional, default: None
@@ -156,18 +160,29 @@ class LearningCurve(ModelVisualizer):
     -----
     This visualizer is essentially a wrapper for the
     ``sklearn.model_selection.learning_curve utility``, discussed in the
-    `validation curves <http://scikit-learn.org/stable/modules/learning_curve.html#learning-curve>`_
+    `validation curves <https://bit.ly/2KlumeB>`_
     documentation.
 
     .. seealso:: The documentation for the
-        `learning_curve <http://scikit-learn.org/stable/modules/generated/sklearn.model_selection.learning_curve.html#sklearn.model_selection.learning_curve>`_
+        `learning_curve <https://bit.ly/2Yz9sBB>`_
         function, which this visualizer wraps.
     """
-    def __init__(self, model, ax=None, groups=None,
-                   train_sizes=DEFAULT_TRAIN_SIZES, cv=None, scoring=None,
-                   exploit_incremental_learning=False, n_jobs=1,
-                   pre_dispatch="all", shuffle=False, random_state=None,
-                   **kwargs):
+
+    def __init__(
+        self,
+        model,
+        ax=None,
+        groups=None,
+        train_sizes=DEFAULT_TRAIN_SIZES,
+        cv=None,
+        scoring=None,
+        exploit_incremental_learning=False,
+        n_jobs=1,
+        pre_dispatch="all",
+        shuffle=False,
+        random_state=None,
+        **kwargs
+    ):
 
         # Initialize the model visualizer
         super(LearningCurve, self).__init__(model, ax=ax, **kwargs)
@@ -177,14 +192,20 @@ class LearningCurve(ModelVisualizer):
         if train_sizes.ndim != 1:
             raise YellowbrickValueError(
                 "must specify array of train sizes, '{}' is not valid".format(
-                repr(train_sizes)
-            ))
+                    repr(train_sizes)
+                )
+            )
 
         # Set the metric parameters to be used later
         self.set_params(
-            groups=groups, train_sizes=train_sizes, cv=cv, scoring=scoring,
+            groups=groups,
+            train_sizes=train_sizes,
+            cv=cv,
+            scoring=scoring,
             exploit_incremental_learning=exploit_incremental_learning,
-            n_jobs=n_jobs, pre_dispatch=pre_dispatch, shuffle=shuffle,
+            n_jobs=n_jobs,
+            pre_dispatch=pre_dispatch,
+            shuffle=shuffle,
             random_state=random_state,
         )
 
@@ -214,9 +235,15 @@ class LearningCurve(ModelVisualizer):
         sklc_kwargs = {
             key: self.get_params()[key]
             for key in (
-                'groups', 'train_sizes', 'cv', 'scoring',
-                'exploit_incremental_learning', 'n_jobs',
-                'pre_dispatch', 'shuffle', 'random_state',
+                "groups",
+                "train_sizes",
+                "cv",
+                "scoring",
+                "exploit_incremental_learning",
+                "n_jobs",
+                "pre_dispatch",
+                "shuffle",
+                "random_state",
             )
         }
 
@@ -254,15 +281,13 @@ class LearningCurve(ModelVisualizer):
         for idx, (mean, std) in enumerate(curves):
             # Plot one standard deviation above and below the mean
             self.ax.fill_between(
-                self.train_sizes_, mean - std, mean+std, alpha=0.25,
-                color=colors[idx],
+                self.train_sizes_, mean - std, mean + std, alpha=0.25, color=colors[idx]
             )
 
         # Plot the mean curves so they are in front of the variance fill
         for idx, (mean, _) in enumerate(curves):
             self.ax.plot(
-                self.train_sizes_, mean, 'o-', color=colors[idx],
-                label=labels[idx],
+                self.train_sizes_, mean, "o-", color=colors[idx], label=labels[idx]
             )
 
         return self.ax
@@ -272,25 +297,37 @@ class LearningCurve(ModelVisualizer):
         Add the title, legend, and other visual final touches to the plot.
         """
         # Set the title of the figure
-        self.set_title('Learning Curve for {}'.format(self.name))
+        self.set_title("Learning Curve for {}".format(self.name))
 
         # Add the legend
-        self.ax.legend(frameon=True, loc='best')
+        self.ax.legend(frameon=True, loc="best")
 
         # Set the axis labels
-        self.ax.set_xlabel('Training Instances')
-        self.ax.set_ylabel('Score')
+        self.ax.set_xlabel("Training Instances")
+        self.ax.set_ylabel("Score")
 
 
 ##########################################################################
-## Quick Methods
+# Quick Methods
 ##########################################################################
 
-def learning_curve(model, X, y, ax=None, groups=None,
-               train_sizes=DEFAULT_TRAIN_SIZES, cv=None, scoring=None,
-               exploit_incremental_learning=False, n_jobs=1,
-               pre_dispatch="all", shuffle=False, random_state=None,
-               **kwargs):
+
+def learning_curve(
+    model,
+    X,
+    y,
+    ax=None,
+    groups=None,
+    train_sizes=DEFAULT_TRAIN_SIZES,
+    cv=None,
+    scoring=None,
+    exploit_incremental_learning=False,
+    n_jobs=1,
+    pre_dispatch="all",
+    shuffle=False,
+    random_state=None,
+    **kwargs
+):
     """
     Displays a learning curve based on number of samples vs training and
     cross validation scores. The learning curve aims to show how a model
@@ -341,7 +378,7 @@ def learning_curve(model, X, y, ax=None, groups=None,
           - An iterable yielding train/test splits.
 
         see the scikit-learn
-        `cross-validation guide <http://scikit-learn.org/stable/modules/cross_validation.html>`_
+        `cross-validation guide <https://bit.ly/2MMQAI7>`_
         for more information on the possible strategies that can be used here.
 
     scoring : string, callable or None, optional, default: None
@@ -379,18 +416,25 @@ def learning_curve(model, X, y, ax=None, groups=None,
 
     Returns
     -------
-    ax : matplotlib axes
-        Returns the axes that the learning curve were drawn on.
+    visualizer : LearningCurve
+        Returns the fitted visualizer.
     """
     # Initialize the visualizer
     oz = LearningCurve(
-        model, ax=ax, groups=groups, train_sizes=train_sizes, cv=cv,
-        scoring=scoring, n_jobs=n_jobs, pre_dispatch=pre_dispatch,
-        shuffle=shuffle, random_state=random_state,
+        model,
+        ax=ax,
+        groups=groups,
+        train_sizes=train_sizes,
+        cv=cv,
+        scoring=scoring,
+        n_jobs=n_jobs,
+        pre_dispatch=pre_dispatch,
+        shuffle=shuffle,
+        random_state=random_state,
         exploit_incremental_learning=exploit_incremental_learning,
     )
 
     # Fit and poof the visualizer
     oz.fit(X, y)
     oz.poof(**kwargs)
-    return oz.ax
+    return oz
