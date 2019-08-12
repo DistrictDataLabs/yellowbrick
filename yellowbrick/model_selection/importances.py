@@ -27,7 +27,7 @@ import matplotlib.pyplot as plt
 from yellowbrick.draw import bar_stack
 from yellowbrick.base import ModelVisualizer
 from yellowbrick.style.colors import resolve_colors
-from yellowbrick.utils import is_dataframe, is_classifier, check_fitted
+from yellowbrick.utils import is_dataframe, is_classifier
 from yellowbrick.exceptions import YellowbrickTypeError, NotFitted, YellowbrickWarning
 
 ##########################################################################

@@ -1,12 +1,12 @@
 # yellowbrick.features.decomposition
 #
 # Author:   George Richardson
-# Created:  Fri Mar 22 13:41:24 2018 -0400
+# Created:  Fri Mar 2 16:16:00 2018 +0000
 #
 # Copyright (C) 2016 The scikit-yb developers
 # For license information, see LICENSE.txt
 #
-# ID: decomposition.py [] benjamin@bengfort.com $
+# ID: decomposition.py [] g.raymond.richardson@gmail.com $
 
 ##########################################################################
 ## Imports
