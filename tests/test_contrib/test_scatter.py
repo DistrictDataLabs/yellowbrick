@@ -18,7 +18,6 @@ Test the ScatterViz feature analysis visualizers
 
 import pytest
 import numpy as np
-import matplotlib as mpl
 
 from unittest import mock
 from tests.base import VisualTestCase
