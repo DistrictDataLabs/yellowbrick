@@ -22,11 +22,11 @@ API for classification visualizer hierarchy.
 import warnings
 import numpy as np
 
-from ..utils import isclassifier
-from ..base import ScoreVisualizer
-from ..style.palettes import color_palette
-from ..exceptions import NotFitted, YellowbrickWarning
-from ..exceptions import YellowbrickTypeError, YellowbrickValueError
+from yellowbrick.utils import isclassifier
+from yellowbrick.base import ScoreVisualizer
+from yellowbrick.style.palettes import color_palette
+from yellowbrick.exceptions import NotFitted, YellowbrickWarning
+from yellowbrick.exceptions import YellowbrickTypeError, YellowbrickValueError
 
 
 ##########################################################################
@@ -73,6 +73,12 @@ class ClassificationScoreVisualizer(ScoreVisualizer):
         passed to ``fit()`` or ``score()``. The encoder disambiguates this mismatch
         ensuring that classes are labeled correctly in the visualization.
 
+    is_fitted : bool or str, default="auto"
+        Specify if the wrapped estimator is already fitted. If False, the estimator
+        will be fit when the visualizer is fit, otherwise, the estimator will not be
+        modified. If "auto" (default), a helper method will check if the estimator
+        is fitted before fitting it again.
+
     force_model : bool, default: False
         Do not check to ensure that the underlying estimator is a classifier. This
         will prevent an exception when the visualizer is initialized but may result
@@ -103,6 +109,7 @@ class ClassificationScoreVisualizer(ScoreVisualizer):
         fig=None,
         classes=None,
         encoder=None,
+        is_fitted="auto",
         force_model=False,
         **kwargs
     ):
@@ -115,7 +122,7 @@ class ClassificationScoreVisualizer(ScoreVisualizer):
 
         # Initialize the super method.
         super(ClassificationScoreVisualizer, self).__init__(
-            model, ax=ax, fig=fig, **kwargs
+            model, ax=ax, fig=fig, is_fitted=is_fitted, **kwargs,
         )
 
         self.set_params(classes=classes, encoder=encoder, force_model=force_model)
@@ -235,10 +242,9 @@ class ClassificationScoreVisualizer(ScoreVisualizer):
             if yp.dtype.kind in {'i', 'u'}:
                 idx = yp
             else:
-                # Sort values to get indices
-                labels = np.unique(yp)
-
-
+                # # Sort values to get indices
+                # labels = np.unique(yp)
+                raise YellowbrickValueError("use label encoder instead")
 
             # Use index mapping for classes
             try:

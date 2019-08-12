@@ -18,11 +18,13 @@ import math
 import warnings
 import matplotlib.pyplot as plt
 
-from .utils import get_model_name
-from .utils.wrapper import Wrapper
 from sklearn.base import BaseEstimator
-from .exceptions import YellowbrickWarning
-from .exceptions import YellowbrickValueError, YellowbrickTypeError
+
+from yellowbrick.utils import get_model_name
+from yellowbrick.utils.wrapper import Wrapper
+from yellowbrick.utils.helpers import check_fitted
+from yellowbrick.exceptions import YellowbrickWarning
+from yellowbrick.exceptions import YellowbrickValueError, YellowbrickTypeError
 
 
 ##########################################################################
@@ -279,9 +281,11 @@ class ModelVisualizer(Visualizer, Wrapper):
 
     Parameters
     ----------
-    model : Estimator
+    model : a Scikit-Learn estimator
         A Scikit-Learn estimator to wrap functionality for, usually regressor,
-        classifier, or clusterer predictive model.
+        classifier, or clusterer predictive model. If the estimator is not fitted,
+        it is fit when the visualizer is fitted, unless otherwise specified by
+        ``is_fitted``.
 
     ax : matplotlib Axes, default: None
         The axis to plot the figure on. If None is passed in the current axes
@@ -290,6 +294,12 @@ class ModelVisualizer(Visualizer, Wrapper):
     fig : matplotlib Figure, default: None
         The figure to plot the Visualizer on. If None is passed in the current
         plot will be used (or generated if required).
+
+    is_fitted : bool or str, default="auto"
+        Specify if the wrapped estimator is already fitted. If False, the estimator
+        will be fit when the visualizer is fit, otherwise, the estimator will not be
+        modified. If "auto" (default), a helper method will check if the estimator
+        is fitted before fitting it again.
 
     kwargs : dict
         Keyword arguments that are passed to the base class and may influence
@@ -300,8 +310,9 @@ class ModelVisualizer(Visualizer, Wrapper):
     Model visualizers can wrap either fitted or unfitted models.
     """
 
-    def __init__(self, model, ax=None, fig=None, **kwargs):
+    def __init__(self, model, ax=None, fig=None, is_fitted="auto", **kwargs):
         self.estimator = model
+        self.is_fitted = is_fitted
         self.name = get_model_name(self.estimator)
 
         # Initialize base classes independently
@@ -332,7 +343,8 @@ class ModelVisualizer(Visualizer, Wrapper):
         self : visualizer
             The fit method must always return self to support pipelines.
         """
-        self.estimator.fit(X, y)
+        if not check_fitted(self.estimator, is_fitted_by=self.is_fitted):
+            self.estimator.fit(X, y, **kwargs)
         return self
 
 
@@ -351,9 +363,11 @@ class ScoreVisualizer(ModelVisualizer):
 
     Parameters
     ----------
-    model : Estimator
+    model : a Scikit-Learn estimator
         A Scikit-Learn estimator to wrap functionality for, usually regressor,
-        classifier, or clusterer predictive model.
+        classifier, or clusterer predictive model. If the estimator is not fitted,
+        it is fit when the visualizer is fitted, unless otherwise specified by
+        ``is_fitted``.
 
     ax : matplotlib Axes, default: None
         The axis to plot the figure on. If None is passed in the current axes
@@ -362,6 +376,12 @@ class ScoreVisualizer(ModelVisualizer):
     fig : matplotlib Figure, default: None
         The figure to plot the Visualizer on. If None is passed in the current
         plot will be used (or generated if required).
+
+    is_fitted : bool or str, default="auto"
+        Specify if the wrapped estimator is already fitted. If False, the estimator
+        will be fit when the visualizer is fit, otherwise, the estimator will not be
+        modified. If "auto" (default), a helper method will check if the estimator
+        is fitted before fitting it again.
 
     kwargs : dict
         Keyword arguments that are passed to the base class and may influence

@@ -48,8 +48,8 @@ class StatsModelsWrapper(BaseEstimator):
 
     >>> gaussian_model = glm_gaussian_partial(y_train, X_train)
 
-    Note
-    ----
+    Notes
+    -----
     .. note:: This wrapper is trivial, options and extra things like weights
         are not currently handled.
     """

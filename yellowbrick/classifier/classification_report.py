@@ -27,10 +27,10 @@ import matplotlib.pyplot as plt
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import precision_recall_fscore_support
 
-from ..style import find_text_color
-from ..style.palettes import color_sequence
-from ..exceptions import YellowbrickValueError
-from .base import ClassificationScoreVisualizer
+from yellowbrick.style import find_text_color
+from yellowbrick.style.palettes import color_sequence
+from yellowbrick.exceptions import YellowbrickValueError
+from yellowbrick.classifier.base import ClassificationScoreVisualizer
 
 ##########################################################################
 ## Classification Report
@@ -54,7 +54,8 @@ class ClassificationReport(ClassificationScoreVisualizer):
 
     model : the Scikit-Learn estimator
         Should be an instance of a classifier, else the __init__ will
-        return an error.
+        return an error.  If the internal model is not fitted, it is fit when
+        the visualizer is fitted, unless otherwise specified by ``is_fitted``.
 
     classes : list of str, defult: None
         The class labels to use for the legend ordered by the index of the
@@ -77,12 +78,18 @@ class ClassificationReport(ClassificationScoreVisualizer):
         passed to ``fit()`` or ``score()``. The encoder disambiguates this mismatch
         ensuring that classes are labeled correctly in the visualization.
 
+    is_fitted : bool or str, default="auto"
+        Specify if the wrapped estimator is already fitted. If False, the estimator
+        will be fit when the visualizer is fit, otherwise, the estimator will not be
+        modified. If "auto" (default), a helper method will check if the estimator
+        is fitted before fitting it again.
+
     force_model : bool, default: False
         Do not check to ensure that the underlying estimator is a classifier. This
         will prevent an exception when the visualizer is initialized but may result
         in unexpected or unintended behavior.
 
-    kwargs: dict
+    kwargs : dict
         Keyword arguments passed to the super class.
 
     Examples
@@ -121,6 +128,7 @@ class ClassificationReport(ClassificationScoreVisualizer):
         cmap="YlOrRd",
         support=None,
         encoder=None,
+        is_fitted="auto",
         force_model=False,
         **kwargs
     ):
@@ -129,6 +137,7 @@ class ClassificationReport(ClassificationScoreVisualizer):
             ax=ax,
             classes=classes,
             encoder=encoder,
+            is_fitted=is_fitted,
             force_model=force_model,
             **kwargs
         )
@@ -273,7 +282,14 @@ class ClassificationReport(ClassificationScoreVisualizer):
 
 
 def classification_report(
-    model, X, y=None, ax=None, classes=None, random_state=None, **kwargs
+    model,
+    X,
+    y=None,
+    ax=None,
+    classes=None,
+    random_state=None,
+    is_fitted="auto",
+    **kwargs
 ):
     """Quick method:
 
@@ -294,7 +310,10 @@ def classification_report(
     ax : matplotlib axes
         The axes to plot the figure on.
 
-    model : the Scikit-Learn estimator (should be a classifier)
+    model : the Scikit-Learn estimator
+        Should be an instance of a classifier, else the __init__ will
+        return an error.  If the internal model is not fitted, it is fit when
+        the visualizer is fitted, unless otherwise specified by ``is_fitted``.
 
     classes : list of strings
         The names of the classes in the target
@@ -302,13 +321,24 @@ def classification_report(
     random_state: integer
         The seed value for a random generator
 
+    is_fitted : bool or str, default="auto"
+        Specify if the wrapped estimator is already fitted. If False, the estimator
+        will be fit when the visualizer is fit, otherwise, the estimator will not be
+        modified. If "auto" (default), a helper method will check if the estimator
+        is fitted before fitting it again.
+
+    kwargs: dict
+        Keyword arguments passed to the super class.
+
     Returns
     -------
     ax : matplotlib axes
         Returns the axes that the classification report was drawn on.
     """
     # Instantiate the visualizer
-    visualizer = ClassificationReport(model, ax, classes, **kwargs)
+    visualizer = ClassificationReport(
+        model=model, ax=ax, classes=classes, is_fitted=is_fitted, **kwargs
+    )
 
     # Create the train and test splits
     X_train, X_test, y_train, y_test = train_test_split(

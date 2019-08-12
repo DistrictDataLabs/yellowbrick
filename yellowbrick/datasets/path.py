@@ -1,8 +1,11 @@
 # yellowbrick.datasets.path
 # Helper functions for looking up dataset paths.
 #
-# Author:  Benjamin Bengfort <benjamin@bengfort.com>
+# Author:  Benjamin Bengfort
 # Created: Thu Jul 26 14:10:51 2018 -0400
+#
+# Copyright (C) 2018 The scikit-yb developers
+# For license information, see LICENSE.txt
 #
 # ID: path.py [] benjamin@bengfort.com $
 
@@ -32,6 +35,7 @@ FIXTURES = os.path.join(os.path.dirname(__file__), "fixtures")
 ## Dataset path utilities
 ##########################################################################
 
+
 def get_data_home(path=None):
     """
     Return the path of the Yellowbrick data directory. This folder is used by
@@ -39,13 +43,13 @@ def get_data_home(path=None):
 
     By default, this folder is colocated with the code in the install directory
     so that data shipped with the package can be easily located. Alternatively
-    it can be set by the YELLOWBRICK_DATA environment variable, or
-    programmatically by giving a folder path. Note that the '~' symbol is
+    it can be set by the ``$YELLOWBRICK_DATA`` environment variable, or
+    programmatically by giving a folder path. Note that the ``'~'`` symbol is
     expanded to the user home directory, and environment variables are also
     expanded when resolving the path.
     """
     if path is None:
-        path = os.environ.get('YELLOWBRICK_DATA', FIXTURES)
+        path = os.environ.get("YELLOWBRICK_DATA", FIXTURES)
 
     path = os.path.expanduser(path)
     path = os.path.expandvars(path)
@@ -121,9 +125,11 @@ def find_dataset_path(dataset, data_home=None, fname=None, ext=".csv.gz", raises
         if not raises:
             return None
 
-        raise DatasetsError((
-            "could not find dataset at {} - does it need to be downloaded?"
-        ).format(path))
+        raise DatasetsError(
+            ("could not find dataset at {} - does it need to be downloaded?").format(
+                path
+            )
+        )
 
     return path
 
@@ -184,7 +190,7 @@ def dataset_archive(dataset, signature, data_home=None, ext=".zip"):
         True if the dataset archive exists and is the latest version.
     """
     data_home = get_data_home(data_home)
-    path = os.path.join(data_home, dataset+ext)
+    path = os.path.join(data_home, dataset + ext)
 
     if os.path.exists(path) and os.path.isfile(path):
         return sha256sum(path) == signature
@@ -219,7 +225,7 @@ def cleanup_dataset(dataset, data_home=None, ext=".zip"):
 
     # Paths to remove
     datadir = os.path.join(data_home, dataset)
-    archive = os.path.join(data_home, dataset+ext)
+    archive = os.path.join(data_home, dataset + ext)
 
     # Remove directory and contents
     if os.path.exists(datadir):

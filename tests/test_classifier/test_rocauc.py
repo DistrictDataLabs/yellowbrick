@@ -23,7 +23,9 @@ import pytest
 import numpy as np
 import numpy.testing as npt
 
+from unittest.mock import patch
 from tests.base import VisualTestCase
+
 from yellowbrick.classifier.rocauc import *
 from yellowbrick.datasets import load_occupancy
 from yellowbrick.exceptions import ModelError, YellowbrickValueError
@@ -463,3 +465,31 @@ class TestROCAUC(VisualTestCase):
         visualizer = ROCAUC(FakeClassifier())
         with pytest.raises(ModelError):
             visualizer._get_y_scores(self.binary.X.train)
+
+    @pytest.mark.xfail(
+        reason="""third test fails with AssertionError: Expected fit
+        to be called once. Called 0 times. This should be fixed by #939"""
+    )
+    def test_with_fitted(self):
+        """
+        Test that visualizer properly handles an already-fitted model
+        """
+        X, y = load_occupancy(return_dataset=True).to_numpy()
+
+        model = GaussianNB().fit(X, y)
+        classes = ["unoccupied", "occupied"]
+
+        with patch.object(model, "fit") as mockfit:
+            oz = ROCAUC(model, classes=classes)
+            oz.fit(X, y)
+            mockfit.assert_not_called()
+
+        with patch.object(model, "fit") as mockfit:
+            oz = ROCAUC(model, classes=classes, is_fitted=True)
+            oz.fit(X, y)
+            mockfit.assert_not_called()
+
+        with patch.object(model, "fit") as mockfit:
+            oz = ROCAUC(model, classes=classes, is_fitted=False)
+            oz.fit(X, y)
+            mockfit.assert_called_once_with(X, y)

@@ -21,14 +21,13 @@ Shows the balance of classes and their associated predictions.
 import numpy as np
 import matplotlib.pyplot as plt
 
-from .base import ClassificationScoreVisualizer
-
 from sklearn.utils.multiclass import unique_labels
 from sklearn.metrics.classification import _check_targets
 from sklearn.model_selection import train_test_split as tts
 
-from ..draw import bar_stack
-from ..exceptions import ModelError, YellowbrickValueError, NotFitted
+from yellowbrick.draw import bar_stack
+from yellowbrick.classifier.base import ClassificationScoreVisualizer
+from yellowbrick.exceptions import ModelError, YellowbrickValueError, NotFitted
 
 
 ##########################################################################
@@ -47,7 +46,9 @@ class ClassPredictionError(ClassificationScoreVisualizer):
     ----------
     model: estimator
         A scikit-learn estimator that should be a classifier. If the model is
-        not a classifier, an exception is raised.
+        not a classifier, an exception is raised. If the internal model is not
+        fitted, it is fit when the visualizer is fitted, unless otherwise specified
+        by ``is_fitted``.
 
     ax: axes, default: None
         the axis to plot the figure on.
@@ -70,6 +71,12 @@ class ClassPredictionError(ClassificationScoreVisualizer):
         will prevent an exception when the visualizer is initialized but may result
         in unexpected or unintended behavior.
 
+    is_fitted : bool or str, default="auto"
+        Specify if the wrapped estimator is already fitted. If False, the estimator
+        will be fit when the visualizer is fit, otherwise, the estimator will not be
+        modified. If "auto" (default), a helper method will check if the estimator
+        is fitted before fitting it again.
+
     kwargs: dict
         Keyword arguments passed to the super class.
 
@@ -91,6 +98,11 @@ class ClassPredictionError(ClassificationScoreVisualizer):
         An ndarray of predictions whose rows are the true classes and
         whose columns are the predicted classes
     """
+
+    def __init__(self, model, ax=None, classes=None, is_fitted="auto", **kwargs):
+        super(ClassPredictionError, self).__init__(
+            model, ax=ax, classes=classes, is_fitted=is_fitted, **kwargs
+        )
 
     def score(self, X, y, **kwargs):
         """
@@ -119,7 +131,9 @@ class ClassPredictionError(ClassificationScoreVisualizer):
         if y_type not in ("binary", "multiclass"):
             raise YellowbrickValueError("{} is not supported".format(y_type))
 
-        indices = unique_labels(self._decode_labels(y_true), self._decode_labels(y_pred))
+        indices = unique_labels(
+            self._decode_labels(y_true), self._decode_labels(y_pred)
+        )
 
         if len(self.classes_) > len(indices):
             raise ModelError(
@@ -195,7 +209,15 @@ class ClassPredictionError(ClassificationScoreVisualizer):
 
 
 def class_prediction_error(
-    model, X, y=None, ax=None, classes=None, test_size=0.2, random_state=None, **kwargs
+    model,
+    X,
+    y=None,
+    ax=None,
+    classes=None,
+    test_size=0.2,
+    random_state=None,
+    is_fitted="auto",
+    **kwargs
 ):
     """Quick method:
     Divides the dataset X and y into train and test splits, fits the model on the train
@@ -228,13 +250,25 @@ def class_prediction_error(
     random_state : int or None, default=None
         The value to seed the random number generator for shuffling data.
 
+    is_fitted : bool or str, default="auto"
+        Specify if the wrapped estimator is already fitted. If False, the estimator
+        will be fit when the visualizer is fit, otherwise, the estimator will not be
+        modified. If "auto" (default), a helper method will check if the estimator
+        is fitted before fitting it again.
+
+    kwargs: dict
+        Keyword arguments passed to the super class. Here, used
+        to colorize the bars in the histogram.
+
     Returns
     -------
     ax : matplotlib axes
         Returns the axes that the class prediction error plot was drawn on.
     """
     # Instantiate the visualizer
-    visualizer = ClassPredictionError(model=model, ax=ax, classes=classes, **kwargs)
+    visualizer = ClassPredictionError(
+        model=model, ax=ax, classes=classes, is_fitted=is_fitted, **kwargs
+    )
 
     # Create the train and test splits
     X_train, X_test, y_train, y_test = tts(
