@@ -1,8 +1,11 @@
 # tests.test_model_selection.test_cross_validation
 # Tests for the CVScores visualizer
 #
-# Author:  Rebecca Bilbro <bilbro@gmail.com>
+# Author:  Rebecca Bilbro
 # Created: Fri Aug 10 13:45:11 2018 -0400
+#
+# Copyright (C) 2018 The scikit-yb developers
+# For license information, see LICENSE.txt
 #
 # ID: test_cross_validation.py [] bilbro@gmail.com $
 
@@ -11,7 +14,7 @@ Tests for the CVScores visualizer
 """
 
 ##########################################################################
-## Imports
+# Imports
 ##########################################################################
 
 import pytest
@@ -25,8 +28,8 @@ from sklearn.naive_bayes import BernoulliNB
 from sklearn.tree import DecisionTreeRegressor
 from sklearn.preprocessing import OneHotEncoder
 from sklearn.neighbors import KNeighborsClassifier
-from sklearn.model_selection import ShuffleSplit, StratifiedKFold
 from sklearn.linear_model import RidgeCV, LogisticRegressionCV
+from sklearn.model_selection import ShuffleSplit, StratifiedKFold
 
 from yellowbrick.datasets import load_mushroom
 from yellowbrick.model_selection.cross_validation import *
@@ -39,8 +42,9 @@ except ImportError:
 
 
 ##########################################################################
-## Test Cases
+# Test Cases
 ##########################################################################
+
 
 @pytest.mark.usefixtures("classification", "regression")
 class TestCrossValidation(VisualTestCase):
@@ -48,14 +52,14 @@ class TestCrossValidation(VisualTestCase):
     Test the CVScores visualizer
     """
 
-    @patch.object(CVScores, 'draw')
+    @patch.object(CVScores, "draw")
     def test_fit(self, mock_draw):
         """
         Assert that fit returns self and creates expected properties
         """
         X, y = self.classification
 
-        params = ("cv_scores_",  "cv_scores_mean_")
+        params = ("cv_scores_", "cv_scores_mean_")
 
         oz = CVScores(SVC())
 
@@ -76,9 +80,7 @@ class TestCrossValidation(VisualTestCase):
 
         cv = ShuffleSplit(3, random_state=288)
 
-        oz = CVScores(
-            KNeighborsClassifier(), cv=cv, scoring='f1_weighted',
-        )
+        oz = CVScores(KNeighborsClassifier(), cv=cv, scoring="f1_weighted")
 
         oz.fit(X, y)
         oz.finalize()
@@ -93,16 +95,12 @@ class TestCrossValidation(VisualTestCase):
 
         cv = ShuffleSplit(3, random_state=288)
 
-        oz_external_cv = CVScores(
-            LogisticRegressionCV(), cv=cv
-        )
+        oz_external_cv = CVScores(LogisticRegressionCV(), cv=cv)
 
-        oz_internal_cv = CVScores(
-            LogisticRegressionCV(cv=cv)
-        )
+        oz_internal_cv = CVScores(LogisticRegressionCV(cv=cv))
 
-        oz_external_cv.fit(X,y)
-        oz_internal_cv.fit(X,y)
+        oz_external_cv.fit(X, y)
+        oz_internal_cv.fit(X, y)
 
         npt.assert_array_almost_equal(
             oz_external_cv.cv_scores_, oz_internal_cv.cv_scores_, decimal=1
@@ -116,9 +114,7 @@ class TestCrossValidation(VisualTestCase):
 
         cv = ShuffleSplit(3, random_state=938)
 
-        oz = CVScores(
-            DecisionTreeRegressor(random_state=23), cv=cv, scoring='r2',
-        )
+        oz = CVScores(DecisionTreeRegressor(random_state=23), cv=cv, scoring="r2")
 
         oz.fit(X, y)
         oz.finalize()
@@ -133,16 +129,12 @@ class TestCrossValidation(VisualTestCase):
 
         cv = ShuffleSplit(3, random_state=288)
 
-        oz_external_cv = CVScores(
-            RidgeCV(), cv=cv
-        )
+        oz_external_cv = CVScores(RidgeCV(), cv=cv)
 
-        oz_internal_cv = CVScores(
-            RidgeCV(cv=cv)
-        )
+        oz_internal_cv = CVScores(RidgeCV(cv=cv))
 
-        oz_external_cv.fit(X,y)
-        oz_internal_cv.fit(X,y)
+        oz_external_cv.fit(X, y)
+        oz_internal_cv.fit(X, y)
 
         npt.assert_array_almost_equal(
             oz_external_cv.cv_scores_, oz_internal_cv.cv_scores_
@@ -155,9 +147,9 @@ class TestCrossValidation(VisualTestCase):
         X, y = self.classification
 
         cv = ShuffleSplit(n_splits=5, test_size=0.2, random_state=321)
-        ax = cv_scores(SVC(), X, y, cv=cv)
+        viz = cv_scores(SVC(), X, y, cv=cv)
 
-        self.assert_images_similar(ax=ax, tol=2.0)
+        self.assert_images_similar(viz, tol=2.0)
 
     @pytest.mark.skipif(pd is None, reason="test requires pandas")
     def test_pandas_integration(self):

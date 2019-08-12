@@ -4,7 +4,7 @@
 # Author:   Naresh Bachwani
 # Created:  Wed Jul 17 09:53:07 2019 -0400
 #
-# Copyright (C) 2019, the scikit-yb developers.
+# Copyright (C) 2019 the scikit-yb developers.
 # For license information, see LICENSE.txt
 #
 # ID: test_projection.py [] naresh-bachwani@noreply.github.com $
@@ -17,16 +17,10 @@ Test the base ProjectionVisualizer drawing functionality
 ## Imports
 ##########################################################################
 
-
 import pytest
 import numpy.testing as npt
 import matplotlib.pyplot as plt
 
-from yellowbrick.features.projection import *
-from yellowbrick.exceptions import YellowbrickValueError
-
-from tests.base import VisualTestCase
-from ..fixtures import Dataset
 from unittest import mock
 
 from sklearn.decomposition import PCA
@@ -34,6 +28,10 @@ from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import StandardScaler
 from sklearn.datasets import make_classification, make_regression
 
+from tests.fixtures import Dataset
+from tests.base import VisualTestCase
+from yellowbrick.features.projection import *
+from yellowbrick.exceptions import YellowbrickValueError
 
 ##########################################################################
 ## Fixtures

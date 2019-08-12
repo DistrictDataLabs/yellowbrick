@@ -1,8 +1,11 @@
 # tests.test_model_selection.test_learning_curve
 # Tests for the LearningCurve visualizer
 #
-# Author:   Jason Keung <jason.s.keung@gmail.com>
+# Author:   Jason Keung
 # Created:  Tues May 23 11:45:00 2017 -0400
+#
+# Copyright (C) 2017 The scikit-yb developers
+# For license information, see LICENSE.txt
 #
 # ID: test_learning_curve.py jason.s.keung@gmail.com $
 
@@ -11,7 +14,7 @@ Tests for the LearningCurve visualizer
 """
 
 ##########################################################################
-## Imports
+# Imports
 ##########################################################################
 
 import sys
@@ -41,8 +44,9 @@ except ImportError:
 
 
 ##########################################################################
-## LearningCurve Test Cases
+# LearningCurve Test Cases
 ##########################################################################
+
 
 @pytest.mark.usefixtures("classification", "regression", "clusters")
 class TestLearningCurve(VisualTestCase):
@@ -50,7 +54,7 @@ class TestLearningCurve(VisualTestCase):
     Test the LearningCurve visualizer
     """
 
-    @patch.object(LearningCurve, 'draw')
+    @patch.object(LearningCurve, "draw")
     def test_fit(self, mock_draw):
         """
         Assert that fit returns self and creates expected properties
@@ -58,8 +62,12 @@ class TestLearningCurve(VisualTestCase):
         X, y = self.classification
         params = (
             "train_sizes_",
-            "train_scores_", "train_scores_mean_", "train_scores_std_",
-            "test_scores_", "test_scores_mean_", "test_scores_std_"
+            "train_scores_",
+            "train_scores_mean_",
+            "train_scores_std_",
+            "test_scores_",
+            "test_scores_mean_",
+            "test_scores_std_",
         )
 
         oz = LearningCurve(GaussianNB(), random_state=12)
@@ -72,9 +80,7 @@ class TestLearningCurve(VisualTestCase):
         for param in params:
             assert hasattr(oz, param)
 
-    @pytest.mark.xfail(
-        sys.platform == 'win32', reason="images not close on windows"
-    )
+    @pytest.mark.xfail(sys.platform == "win32", reason="images not close on windows")
     def test_classifier(self):
         """
         Test image closeness on a classification dataset
@@ -88,9 +94,7 @@ class TestLearningCurve(VisualTestCase):
 
         self.assert_images_similar(oz)
 
-    @pytest.mark.xfail(
-        sys.platform == 'win32', reason="images not close on windows"
-    )
+    @pytest.mark.xfail(sys.platform == "win32", reason="images not close on windows")
     def test_regressor(self):
         """
         Test image closeness on a regression dataset
@@ -109,32 +113,31 @@ class TestLearningCurve(VisualTestCase):
         """
         X, y = self.clusters
 
-        oz = LearningCurve(
-            MiniBatchKMeans(random_state=281), random_state=182
-        ).fit(X)
+        oz = LearningCurve(MiniBatchKMeans(random_state=281), random_state=182).fit(X)
         oz.finalize()
 
         self.assert_images_similar(oz, tol=10)
 
-    @pytest.mark.xfail(
-        sys.platform == 'win32', reason="images not close on windows"
-    )
+    @pytest.mark.xfail(sys.platform == "win32", reason="images not close on windows")
     def test_quick_method(self):
         """
         Test the learning curve quick method acts as expected
         """
         X, y = self.classification
-        train_sizes = np.linspace(.1, 1.0, 8)
-        ax = learning_curve(GaussianNB(), X, y, train_sizes=train_sizes,
+        train_sizes = np.linspace(0.1, 1.0, 8)
+        viz = learning_curve(
+            GaussianNB(),
+            X,
+            y,
+            train_sizes=train_sizes,
             cv=ShuffleSplit(n_splits=10, test_size=0.2, random_state=34),
-            scoring='f1_macro', random_state=43,
+            scoring="f1_macro",
+            random_state=43,
         )
 
-        self.assert_images_similar(ax=ax)
+        self.assert_images_similar(viz)
 
-    @pytest.mark.xfail(
-        sys.platform == 'win32', reason="images not close on windows"
-    )
+    @pytest.mark.xfail(sys.platform == "win32", reason="images not close on windows")
     @pytest.mark.skipif(pd is None, reason="test requires pandas")
     def test_pandas_integration(self):
         """
@@ -171,7 +174,7 @@ class TestLearningCurve(VisualTestCase):
 
         self.assert_images_similar(oz)
 
-    @patch.object(LearningCurve, 'draw')
+    @patch.object(LearningCurve, "draw")
     def test_reshape_scores(self, mock_draw):
         """
         Test supplying an alternate CV methodology and train_sizes
