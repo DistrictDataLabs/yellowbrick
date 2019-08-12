@@ -1,4 +1,4 @@
-# yellowbrick.features.importances
+# yellowbrick.model_selection.importances
 # Feature importance visualizer
 #
 # Author:  Benjamin Bengfort
@@ -131,12 +131,9 @@ class FeatureImportances(ModelVisualizer):
         is_fitted="auto",
         **kwargs
     ):
-        # Whether or not to check if the internal model is fitted
-        self.is_fitted = is_fitted
-
         # Initialize the visualizer bases
         super(FeatureImportances, self).__init__(
-            model, ax=ax, **kwargs
+            model, ax=ax, is_fitted=is_fitted, **kwargs
         )
 
         # Data Parameters
@@ -171,8 +168,8 @@ class FeatureImportances(ModelVisualizer):
         self : visualizer
             The fit method must always return self to support pipelines.
         """
-        if not check_fitted(self.estimator, is_fitted_by=self.is_fitted):
-            super(FeatureImportances, self).fit(X, y, **kwargs)
+        # Super call fits the underlying estimator if it's not already fitted
+        super(FeatureImportances, self).fit(X, y, **kwargs)
 
         # Get the feature importances from the model
         self.feature_importances_ = self._find_importances_param()

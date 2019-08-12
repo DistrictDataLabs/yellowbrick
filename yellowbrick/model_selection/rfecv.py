@@ -1,8 +1,11 @@
-# yellowbrick.features.rfecv
+# yellowbrick.model_selection.rfecv
 # Visualize the number of features selected with recursive feature elimination
 #
-# Author:  Benjamin Bengfort <benjamin@bengfort.com>
+# Author:  Benjamin Bengfort
 # Created: Tue Apr 03 17:31:37 2018 -0400
+#
+# Copyright (C) 2018 The scikit-yb developers
+# For license information, see LICENSE.txt
 #
 # ID: rfecv.py [] benjamin@bengfort.com $
 
@@ -27,6 +30,7 @@ from sklearn.model_selection import cross_val_score
 ##########################################################################
 ## Recursive Feature Elimination
 ##########################################################################
+
 
 class RFECV(ModelVisualizer):
     """
@@ -133,8 +137,9 @@ class RFECV(ModelVisualizer):
         or ``feature_importances_`` attribute when fitted.
     """
 
-    def __init__(self, model, ax=None, step=1, groups=None, cv=None,
-                 scoring=None, **kwargs):
+    def __init__(
+        self, model, ax=None, step=1, groups=None, cv=None, scoring=None, **kwargs
+    ):
 
         # Initialize the model visualizer
         super(RFECV, self).__init__(model, ax=ax, **kwargs)
@@ -176,14 +181,11 @@ class RFECV(ModelVisualizer):
 
         # Create the RFE model
         rfe = RFE(self.estimator, step=step)
-        self.n_feature_subsets_ = np.arange(1, n_features+step, step)
+        self.n_feature_subsets_ = np.arange(1, n_features + step, step)
 
         # Create the cross validation params
         # TODO: handle random state
-        cv_params = {
-            key: self.get_params()[key]
-            for key in ('groups', 'cv', 'scoring')
-        }
+        cv_params = {key: self.get_params()[key] for key in ("groups", "cv", "scoring")}
 
         # Perform cross-validation for each feature subset
         scores = []
@@ -222,19 +224,20 @@ class RFECV(ModelVisualizer):
         means = self.cv_scores_.mean(axis=1)
         sigmas = self.cv_scores_.std(axis=1)
 
-
         # Plot one standard deviation above and below the mean
-        self.ax.fill_between(x, means - sigmas, means+sigmas, alpha=0.25)
+        self.ax.fill_between(x, means - sigmas, means + sigmas, alpha=0.25)
 
         # Plot the curve
-        self.ax.plot(x, means, 'o-')
+        self.ax.plot(x, means, "o-")
 
         # Plot the maximum number of features
         self.ax.axvline(
-            self.n_features_, c='k', ls='--',
+            self.n_features_,
+            c="k",
+            ls="--",
             label="n_features = {}\nscore = {:0.3f}".format(
                 self.n_features_, self.cv_scores_.mean(axis=1).max()
-            )
+            ),
         )
 
         return self.ax
@@ -244,22 +247,22 @@ class RFECV(ModelVisualizer):
         Add the title, legend, and other visual final touches to the plot.
         """
         # Set the title of the figure
-        self.set_title('RFECV for {}'.format(self.name))
+        self.set_title("RFECV for {}".format(self.name))
 
         # Add the legend
-        self.ax.legend(frameon=True, loc='best')
+        self.ax.legend(frameon=True, loc="best")
 
         # Set the axis labels
-        self.ax.set_xlabel('Number of Features Selected')
-        self.ax.set_ylabel('Score')
+        self.ax.set_xlabel("Number of Features Selected")
+        self.ax.set_ylabel("Score")
 
 
 ##########################################################################
 ## Quick Methods
 ##########################################################################
 
-def rfecv(model, X, y, ax=None, step=1, groups=None, cv=None,
-          scoring=None, **kwargs):
+
+def rfecv(model, X, y, ax=None, step=1, groups=None, cv=None, scoring=None, **kwargs):
     """
     Performs recursive feature elimination with cross-validation to determine
     an optimal number of features for a model. Visualizes the feature subsets
@@ -323,8 +326,8 @@ def rfecv(model, X, y, ax=None, step=1, groups=None, cv=None,
 
     Returns
     -------
-    ax : matplotlib axes
-        Returns the axes that the rfecv were drawn on.
+    viz : RFECV
+        Returns the fitted, finalized visualizer.
     """
     # Initialize the visualizer
     oz = RFECV(model, ax=ax, step=step, groups=groups, cv=cv, scoring=scoring)
@@ -332,4 +335,5 @@ def rfecv(model, X, y, ax=None, step=1, groups=None, cv=None,
     # Fit and poof the visualizer
     oz.fit(X, y)
     oz.poof(**kwargs)
-    return oz.ax
+
+    return oz
