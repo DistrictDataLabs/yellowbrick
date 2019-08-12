@@ -22,6 +22,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from mpl_toolkits.axes_grid1 import make_axes_locatable
 
+from yellowbrick.style import palettes
 from yellowbrick.features.projection import ProjectionVisualizer
 from yellowbrick.exceptions import YellowbrickValueError, NotFitted
 
@@ -248,13 +249,14 @@ class PCA(ProjectionVisualizer):
         super(PCA, self).layout(divider)
 
         if self.heatmap:
-            # Axes for heatmap
-            if self._uax is None:
-                self._uax = divider.append_axes("bottom", size="20%", pad=0.7)
 
             # Axes for colorbar(for heatmap).
+            if self._uax is None:
+                self._uax = divider.append_axes("bottom", size="10%", pad=0.7)
+
+            # Axes for heatmap
             if self._lax is None:
-                self._lax = divider.append_axes("bottom", size="100%", pad=0.5)
+                self._lax = divider.append_axes("bottom", size="15%", pad=0.5)
 
     def fit(self, X, y=None, **kwargs):
         """
@@ -340,9 +342,12 @@ class PCA(ProjectionVisualizer):
             self._draw_projection_features(Xp, y)
         if self.projection == 2:
             if self.heatmap:
+                if not self.colormap:
+                    self.colormap = palettes.DEFAULT_SEQUENCE
                 # TODO: change to pcolormesh instead of imshow per #615 spec
                 im = self.lax.imshow(
-                    self.pca_components_, interpolation="none", cmap=self.colormap
+                    self.pca_components_, interpolation="none", cmap=self.colormap,
+                    aspect='auto'
                 )
                 plt.colorbar(
                     im,
@@ -421,20 +426,23 @@ class PCA(ProjectionVisualizer):
         super(PCA, self).finalize()
 
         self.ax.set_title("Principal Component Plot")
-        self.ax.set_xlabel("Principal Component 1", linespacing=1)
-        self.ax.set_ylabel("Principal Component 2", linespacing=1.2)
+        self.ax.set_xlabel("$PC_1$")
+        self.ax.set_ylabel("$PC_2$")
         if self.projection == 3:
-            self.ax.set_zlabel("Principal Component 3", linespacing=1.2)
+            self.ax.set_zlabel("$PC_3$")
         if self.heatmap == True:
             self.lax.set_xticks(np.arange(-0.5, len(self.features_)))
+            self.lax.set_xticklabels([])
+            # Makes the labels centered.
+            self.lax.set_xticks(np.arange(0, len(self.features_)), minor=True)
             self.lax.set_xticklabels(
-                self.features_, rotation=90, ha="left", fontsize=12
+                self.features_, rotation=90, fontsize=12, minor=True
             )
             self.lax.set_yticks(np.arange(0.5, 2))
             self.lax.set_yticklabels(
-                ["First PC", "Second PC"], va="bottom", fontsize=12
+                ["$PC_1$", "$PC_2$"], va="bottom", fontsize=10
             )
-
+        self.fig.tight_layout()
 
 ##########################################################################
 ## Quick Method

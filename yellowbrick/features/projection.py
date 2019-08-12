@@ -282,7 +282,11 @@ class ProjectionVisualizer(DataVisualizer):
             manual_legend(
                 self, self.classes_, list(self._colors.values()), frameon=True
             )
-
+        
+        self.ax.set_xticklabels([])
+        self.ax.set_yticklabels([])
+        if self.projection == 3:
+            self.ax.set_zticklabels([])
         elif self._target_color_type == TargetType.CONTINUOUS:
             if self.colorbar:
                 if self.projection == 3:

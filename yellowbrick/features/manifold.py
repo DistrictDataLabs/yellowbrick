@@ -360,7 +360,8 @@ class Manifold(ProjectionVisualizer):
 
         # Call super to compute features, classes, colors, etc.
         super(Manifold, self).fit(X, y)
-        self.manifold.fit(X)
+        with Timer() as self.fit_time_:
+            self.manifold.fit(X)
         return self
 
     def fit_transform(self, X, y=None, **kwargs):
@@ -439,6 +440,7 @@ class Manifold(ProjectionVisualizer):
     def draw(self, Xp, y=None):
         # Calls draw method from super class which draws scatter plot.
         super(Manifold, self).draw(Xp, y)
+        return self.ax
 
     def finalize(self):
         """
@@ -450,10 +452,6 @@ class Manifold(ProjectionVisualizer):
             )
         )
         self.ax.set_xlabel("Using {} features".format(len(self.features_)))
-        self.ax.set_xticklabels([])
-        self.ax.set_yticklabels([])
-        if self.projection == 3:
-            self.ax.set_zticklabels([])
         # Draws legend for discrete target and colorbar for continuous.
         super(Manifold, self).finalize()
 
@@ -586,6 +584,27 @@ def manifold_embedding(
         Keyword arguments passed to the base class and may influence the
         feature visualization properties.
         
+    Attributes
+    ----------
+    fit_time_ : yellowbrick.utils.timer.Timer
+        The amount of time in seconds it took to fit the Manifold.
+
+    classes_ : ndarray, shape (n_classes,)
+        The class labels that define the discrete values in the target. Only
+        available if the target type is discrete. This is guaranteed to be
+        strings even if the classes are a different type.
+    
+    features_ : ndarray, shape (n_features,)
+        The names of the features discovered or used in the visualizer that
+        can be used as an index to access or modify data in X. If a user passes
+        feature names in, those features are used. Otherwise the columns of a
+        DataFrame are used or just simply the indices of the data array.
+
+    range_ : (min y, max y)
+        A tuple that describes the minimum and maximum values in the target.
+        Only available if the target type is continuous.
+
+
     Returns
     -------
     ax : matplotlib axes
