@@ -122,10 +122,6 @@ class ProjectionVisualizer(DataVisualizer):
         **kwargs
     ):
 
-        # TODO: add this to resolve_colors
-        if colors is None and colormap is None:
-            colormap = palettes.DEFAULT_SEQUENCE
-
         super(ProjectionVisualizer, self).__init__(
             ax=ax,
             features=features,

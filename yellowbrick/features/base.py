@@ -27,6 +27,7 @@ from yellowbrick.style import resolve_colors
 from yellowbrick.exceptions import NotFitted
 from yellowbrick.utils.target import target_color_type, TargetType
 from yellowbrick.exceptions import YellowbrickKeyError, YellowbrickValueError
+from yellowbrick.style import palettes
 
 from matplotlib.colors import Normalize
 from sklearn.base import TransformerMixin
@@ -374,7 +375,8 @@ class DataVisualizer(MultiFeatureVisualizer):
         elif self._target_color_type == TargetType.CONTINUOUS:
             y = np.asarray(y)
             self.range_ = (y.min(), y.max())
-
+            if self.colormap is None:
+                self.colormap = palettes.DEFAULT_SEQUENCE
             # TODO: allow for Yellowbrick palettes here as well
             self._colors = mpl.cm.get_cmap(self.colormap)
 
