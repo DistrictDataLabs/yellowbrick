@@ -337,6 +337,7 @@ class TestPCA(VisualTestCase):
         # TODO: manually modifying ticks should be removed after #916 is fixed
         visualizer.lax.set_xticks([])
         visualizer.lax.set_yticks([])
+        visualizer.lax.set_xticks([], minor=True)
         visualizer.uax.set_xticklabels([])
         # Image comparison tests
         self.assert_images_similar(visualizer)
@@ -361,6 +362,7 @@ class TestPCA(VisualTestCase):
         # TODO: manually modifying ticks should be removed after #916 is fixed
         visualizer.lax.set_xticks([])
         visualizer.lax.set_yticks([])
+        visualizer.lax.set_xticks([], minor=True)
         visualizer.uax.set_xticklabels([])
         visualizer.cax.set_yticklabels([])
 
