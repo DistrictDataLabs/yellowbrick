@@ -112,23 +112,20 @@ class TestManifold(VisualTestCase):
 
     @pytest.mark.filterwarnings("ignore:Conversion of the second argument")
     @pytest.mark.parametrize(
-        "algorithm",
-        ["lle", "ltsa", "hessian", "modified", "isomap"],
+        "algorithm", ["lle", "ltsa", "hessian", "modified", "isomap"]
     )
     def test_manifold_algorithm_transform_fit(self, algorithm):
         """
         Test manifold fit with algorithms having transform implemented
         """
         X, y = make_s_curve(1000, random_state=94)
-        manifold = Manifold(manifold=algorithm, target="auto")
+        with pytest.warns(YellowbrickWarning):
+            manifold = Manifold(manifold=algorithm, target="auto")
 
         assert manifold.fit(X, y) is manifold, "fit did not return self"
 
     @pytest.mark.filterwarnings("ignore:Conversion of the second argument")
-    @pytest.mark.parametrize(
-        "algorithm",
-        ["mds", "spectral", "tsne"],
-    )
+    @pytest.mark.parametrize("algorithm", ["mds", "spectral", "tsne"])
     def test_manifold_algorithm_no_transform_fit(self, algorithm):
         """
         Test manifold fit with algorithms not having transform implemented
@@ -138,7 +135,6 @@ class TestManifold(VisualTestCase):
         oz = Manifold(manifold=algorithm, n_neighbors=10, random_state=223)
         with pytest.raises(ModelError, match=msg):
             oz.fit(X)
-        
 
     @patch("yellowbrick.features.manifold.Manifold.draw", spec=True)
     @pytest.mark.parametrize("projection", [2, 3])
@@ -157,7 +153,7 @@ class TestManifold(VisualTestCase):
         mock_draw.assert_called_once()
         assert hasattr(manifold, "fit_time_")
         assert manifold._target_color_type == TargetType.CONTINUOUS
-    
+
     @patch("yellowbrick.features.manifold.Manifold.fit_transform", spec=True)
     @patch("yellowbrick.features.manifold.Manifold.draw", spec=True)
     @pytest.mark.parametrize("projection", [2, 3])
@@ -166,20 +162,22 @@ class TestManifold(VisualTestCase):
         Test manifold transform method
         """
         X, y = make_s_curve(1000, random_state=888)
-        manifold = Manifold(manifold="lle", target="auto", projection=projection)
+        manifold = Manifold(
+            manifold="lle", target="auto", n_neighbors=5, projection=projection
+        )
 
         manifold.fit(X, y)
         Xp = manifold.transform(X, y)
         assert Xp.shape == (X.shape[0], projection)
 
         mock_draw.assert_called_once()
-    
+
     def test_manifold_no_transform(self):
         """
         Test the exception when manifold doesn't implement transform.
         """
         X, _ = make_s_curve(1000, random_state=888)
-        manifold = Manifold(manifold="lle", target="auto")
+        manifold = Manifold(manifold="lle", n_neighbors=5, target="auto")
 
         msg = "instance is not fitted yet, please call fit"
         with pytest.raises(NotFitted, match=msg):
@@ -196,8 +194,8 @@ class TestManifold(VisualTestCase):
         mock_fit(X)
         msg = "requires data to be simultaneously fit and transformed"
         with pytest.raises(ModelError, match=msg):
-            manifold.transform(X)    
-    
+            manifold.transform(X)
+
     @pytest.mark.filterwarnings("ignore:Conversion of the second argument")
     def test_manifold_classification(self):
         """
@@ -319,7 +317,7 @@ class TestManifold(VisualTestCase):
         Test manifold on a dataset made up of a pandas DataFrame and Series
         """
         X, y = make_s_curve(200, random_state=888)
- 
+
         oz = Manifold(
             manifold="ltsa",
             colormap="nipy_spectral",
@@ -327,9 +325,8 @@ class TestManifold(VisualTestCase):
             target="continuous",
             random_state=223,
         )
-        oz.fit_transform(X, y)  
+        oz.fit_transform(X, y)
         oz.finalize()
         oz.cbar.set_ticks([])
         # TODO: find a way to decrease this tolerance
         self.assert_images_similar(oz, tol=40)
-

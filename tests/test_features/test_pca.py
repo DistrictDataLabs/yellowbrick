@@ -109,7 +109,7 @@ class TestPCA(VisualTestCase):
         visualizer.fit(*self.continuous)
         visualizer.transform(*self.continuous)
         assert hasattr(visualizer, "range_")
-        assert  not hasattr(visualizer, "classes_")
+        assert not hasattr(visualizer, "classes_")
         visualizer.finalize()
 
         visualizer.cax.set_yticklabels([])
@@ -120,7 +120,7 @@ class TestPCA(VisualTestCase):
         """
         Test discrete target.
         """
-        colors = ["Y", "C0"]
+        colors = ["y", "C0"]
         classes = ["cats", "dogs"]
         visualizer = PCA(colors=colors, classes=classes, random_state=83)
         assert not hasattr(visualizer, "classes_")
@@ -144,7 +144,7 @@ class TestPCA(VisualTestCase):
     @pytest.mark.parametrize("n_components", [2, 3])
     def test_transform(self, n_components):
         Xprime = PCA(projection=n_components).fit_transform(*self.continuous)
-        assert  Xprime.shape == (500, n_components)
+        assert Xprime.shape == (500, n_components)
 
     def test_transform_without_fit(self):
         """
@@ -159,7 +159,9 @@ class TestPCA(VisualTestCase):
         """
         Test the quick method PCA visualizer 2 dimensions scaled.
         """
-        visualizer = pca_decomposition(*self.binary, projection=2, scale=True, random_state=28)
+        visualizer = pca_decomposition(
+            *self.binary, projection=2, scale=True, random_state=28
+        )
         self.assert_images_similar(visualizer)
 
     def test_scale_true_2d(self):
@@ -354,9 +356,7 @@ class TestPCA(VisualTestCase):
             "colorbar": True,
             "heatmap": True,
         }
-        visualizer = PCA(**params).fit(
-            self.continuous.X, self.continuous.y
-        )
+        visualizer = PCA(**params).fit(self.continuous.X, self.continuous.y)
         visualizer.transform(self.continuous.X, self.continuous.y)
         visualizer.finalize()
         # TODO: manually modifying ticks should be removed after #916 is fixed
