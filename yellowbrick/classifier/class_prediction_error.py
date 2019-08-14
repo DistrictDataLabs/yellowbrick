@@ -44,21 +44,23 @@ class ClassPredictionError(ClassificationScoreVisualizer):
 
     Parameters
     ----------
-    model: estimator
+    model : estimator
         A scikit-learn estimator that should be a classifier. If the model is
         not a classifier, an exception is raised. If the internal model is not
         fitted, it is fit when the visualizer is fitted, unless otherwise specified
         by ``is_fitted``.
 
-    ax: axes, default: None
-        the axis to plot the figure on.
+    ax : matplotlib Axes, default: None
+        The axes to plot the figure on. If not specified the current axes will be
+        used (or generated if required).
 
     classes : list of str, defult: None
-        The class labels to use for the legend ordered by the index of the
+        The class labels to use for the legend ordered by the index of the sorted
         classes discovered in the ``fit()`` method. Specifying classes in this
         manner is used to change the class names to a more specific format or
-        to label encoded integer classes. For more advanced usage specify an
-        encoder rather than class labels.
+        to label encoded integer classes. Some visualizers may also use this
+        field to filter the visualization for specific classes. For more advanced
+        usage specify an encoder rather than class labels.
 
     encoder : dict or LabelEncoder, default: None
         A mapping of classes to human readable labels. Often there is a mismatch
@@ -66,19 +68,19 @@ class ClassPredictionError(ClassificationScoreVisualizer):
         passed to ``fit()`` or ``score()``. The encoder disambiguates this mismatch
         ensuring that classes are labeled correctly in the visualization.
 
-    force_model : bool, default: False
-        Do not check to ensure that the underlying estimator is a classifier. This
-        will prevent an exception when the visualizer is initialized but may result
-        in unexpected or unintended behavior.
-
     is_fitted : bool or str, default="auto"
         Specify if the wrapped estimator is already fitted. If False, the estimator
         will be fit when the visualizer is fit, otherwise, the estimator will not be
         modified. If "auto" (default), a helper method will check if the estimator
         is fitted before fitting it again.
 
-    kwargs: dict
-        Keyword arguments passed to the super class.
+    force_model : bool, default: False
+        Do not check to ensure that the underlying estimator is a classifier. This
+        will prevent an exception when the visualizer is initialized but may result
+        in unexpected or unintended behavior.
+
+    kwargs : dict
+        Keyword arguments passed to the visualizer base classes.
 
     Attributes
     ----------
@@ -99,9 +101,24 @@ class ClassPredictionError(ClassificationScoreVisualizer):
         whose columns are the predicted classes
     """
 
-    def __init__(self, model, ax=None, classes=None, is_fitted="auto", **kwargs):
+    def __init__(
+        self,
+        model,
+        ax=None,
+        classes=None,
+        encoder=None,
+        is_fitted="auto",
+        force_model=False,
+        **kwargs
+    ):
         super(ClassPredictionError, self).__init__(
-            model, ax=ax, classes=classes, is_fitted=is_fitted, **kwargs
+            model,
+            ax=ax,
+            classes=classes,
+            encoder=encoder,
+            is_fitted=is_fitted,
+            force_model=force_model,
+            **kwargs
         )
 
     def score(self, X, y, **kwargs):
@@ -211,26 +228,30 @@ class ClassPredictionError(ClassificationScoreVisualizer):
 def class_prediction_error(
     model,
     X,
-    y=None,
+    y,
     ax=None,
-    classes=None,
     test_size=0.2,
     random_state=None,
+    classes=None,
+    encoder=None,
     is_fitted="auto",
+    force_model=False,
     **kwargs
 ):
-    """Quick method:
+    """Class Prediction Error
+
     Divides the dataset X and y into train and test splits, fits the model on the train
     split, then scores the model on the test split. The visualizer displays the support
     for each class in the fitted classification model displayed as a stacked bar plot.
     Each bar is segmented to show the distribution of predicted classes for each class.
 
-    This helper function is a quick wrapper to utilize the ClassPredictionError for
-    one-off analysis.
-
     Parameters
     ----------
-    model : the Scikit-Learn estimator (should be a classifier)
+    model : estimator
+        A scikit-learn estimator that should be a classifier. If the model is
+        not a classifier, an exception is raised. If the internal model is not
+        fitted, it is fit when the visualizer is fitted, unless otherwise specified
+        by ``is_fitted``.
 
     X  : ndarray or DataFrame of shape n x m
         A matrix of n instances with m features.
@@ -238,11 +259,9 @@ def class_prediction_error(
     y  : ndarray or Series of length n
         An array or series of target or class values.
 
-    ax : matplotlib axes
-        The axes to plot the figure on.
-
-    classes : list of strings
-        The names of the classes in the target
+    ax : matplotlib Axes, default: None
+        The axes to plot the figure on. If not specified the current axes will be
+        used (or generated if required).
 
     test_size : float, default=0.2
         The percentage of the data to reserve as test data.
@@ -250,24 +269,48 @@ def class_prediction_error(
     random_state : int or None, default=None
         The value to seed the random number generator for shuffling data.
 
+    classes : list of str, defult: None
+        The class labels to use for the legend ordered by the index of the sorted
+        classes discovered in the ``fit()`` method. Specifying classes in this
+        manner is used to change the class names to a more specific format or
+        to label encoded integer classes. Some visualizers may also use this
+        field to filter the visualization for specific classes. For more advanced
+        usage specify an encoder rather than class labels.
+
+    encoder : dict or LabelEncoder, default: None
+        A mapping of classes to human readable labels. Often there is a mismatch
+        between desired class labels and those contained in the target variable
+        passed to ``fit()`` or ``score()``. The encoder disambiguates this mismatch
+        ensuring that classes are labeled correctly in the visualization.
+
     is_fitted : bool or str, default="auto"
         Specify if the wrapped estimator is already fitted. If False, the estimator
         will be fit when the visualizer is fit, otherwise, the estimator will not be
         modified. If "auto" (default), a helper method will check if the estimator
         is fitted before fitting it again.
 
+    force_model : bool, default: False
+        Do not check to ensure that the underlying estimator is a classifier. This
+        will prevent an exception when the visualizer is initialized but may result
+        in unexpected or unintended behavior.
+
     kwargs: dict
-        Keyword arguments passed to the super class. Here, used
-        to colorize the bars in the histogram.
+        Keyword arguments passed to the visualizer base classes.
 
     Returns
     -------
-    ax : matplotlib axes
-        Returns the axes that the class prediction error plot was drawn on.
+    viz : ClassPredictionError
+        Returns the fitted, finalized visualizer
     """
     # Instantiate the visualizer
     visualizer = ClassPredictionError(
-        model=model, ax=ax, classes=classes, is_fitted=is_fitted, **kwargs
+        model=model,
+        ax=ax,
+        classes=classes,
+        encoder=encoder,
+        is_fitted=is_fitted,
+        force_model=force_model,
+        **kwargs
     )
 
     # Create the train and test splits
@@ -278,6 +321,7 @@ def class_prediction_error(
     # Fit and transform the visualizer (calls draw)
     visualizer.fit(X_train, y_train, **kwargs)
     visualizer.score(X_test, y_test)
+    visualizer.finalize()
 
     # Return the visualizer
     return visualizer

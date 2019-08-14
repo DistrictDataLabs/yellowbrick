@@ -435,4 +435,3 @@ class TestConfusionMatrix(VisualTestCase):
             oz = ConfusionMatrix(model, classes=classes, is_fitted=False)
             oz.fit(X, y)
             mockfit.assert_called_once_with(X, y)
-

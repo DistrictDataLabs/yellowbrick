@@ -49,11 +49,13 @@ class ClassificationScoreVisualizer(ScoreVisualizer):
     ----------
     model : estimator
         A scikit-learn estimator that should be a classifier. If the model is
-        not a classifier, an exception is raised.
+        not a classifier, an exception is raised. If the internal model is not
+        fitted, it is fit when the visualizer is fitted, unless otherwise specified
+        by ``is_fitted``.
 
     ax : matplotlib Axes, default: None
-        The axis to plot the figure on. If None is passed in the current axes
-        will be used (or generated if required).
+        The axes to plot the figure on. If not specified the current axes will be
+        used (or generated if required).
 
     fig : matplotlib Figure, default: None
         The figure to plot the Visualizer on. If None is passed in the current
@@ -84,8 +86,8 @@ class ClassificationScoreVisualizer(ScoreVisualizer):
         will prevent an exception when the visualizer is initialized but may result
         in unexpected or unintended behavior.
 
-    kwargs: dict
-        Keyword arguments passed to the super class.
+    kwargs : dict
+        Keyword arguments passed to the visualizer base classes.
 
     Attributes
     ----------
@@ -111,7 +113,7 @@ class ClassificationScoreVisualizer(ScoreVisualizer):
         encoder=None,
         is_fitted="auto",
         force_model=False,
-        **kwargs
+        **kwargs,
     ):
         # A bit of type checking
         if not force_model and not isclassifier(model):
@@ -122,7 +124,7 @@ class ClassificationScoreVisualizer(ScoreVisualizer):
 
         # Initialize the super method.
         super(ClassificationScoreVisualizer, self).__init__(
-            model, ax=ax, fig=fig, is_fitted=is_fitted, **kwargs,
+            model, ax=ax, fig=fig, is_fitted=is_fitted, **kwargs
         )
 
         self.set_params(classes=classes, encoder=encoder, force_model=force_model)
@@ -175,7 +177,7 @@ class ClassificationScoreVisualizer(ScoreVisualizer):
         # Ensure the classes are aligned with the estimator
         # TODO: should we simply warn here, why would this be the case?
         if hasattr(self.estimator, "classes_"):
-            if not np.all(self.classes_ == self.estimator.classes_, axis=0):
+            if not np.array_equal(self.classes_, self.estimator.classes_):
                 raise YellowbrickValueError(
                     "unique classes in y do not match estimator.classes_"
                 )
@@ -230,7 +232,7 @@ class ClassificationScoreVisualizer(ScoreVisualizer):
 
         if self.encoder is not None:
             # Use the label encoder or other transformer
-            if hasattr(self.encoder, 'inverse_transform'):
+            if hasattr(self.encoder, "inverse_transform"):
                 return self.encoder.inverse_transform(y)
 
             # Otherwise, treat as a dictionary
@@ -239,7 +241,7 @@ class ClassificationScoreVisualizer(ScoreVisualizer):
         if self.classes is not None:
             # Determine indices to perform class mappings on
             yp = np.asarray(y)
-            if yp.dtype.kind in {'i', 'u'}:
+            if yp.dtype.kind in {"i", "u"}:
                 idx = yp
             else:
                 # # Sort values to get indices

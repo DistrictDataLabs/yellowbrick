@@ -73,14 +73,15 @@ class DiscriminationThreshold(ModelVisualizer):
 
     Parameters
     ----------
-    model : Classification Estimator
-        An unfitted binary classification estimator that implements ``predict_proba``
-        or ``decision_function`` methods. Will raise ``TypeError`` if the model
-        cannot be used with the visualizer.
+    model : estimator
+        A scikit-learn estimator that should be a classifier. If the model is
+        not a classifier, an exception is raised. If the internal model is not
+        fitted, it is fit when the visualizer is fitted, unless otherwise specified
+        by ``is_fitted``.
 
     ax : matplotlib Axes, default: None
-        The axis to plot the figure on. If None is passed in the current axes
-        will be used (or generated if required).
+        The axes to plot the figure on. If not specified the current axes will be
+        used (or generated if required).
 
     n_trials : integer, default: 50
         Number of times to shuffle and split the dataset to account for noise
@@ -131,8 +132,19 @@ class DiscriminationThreshold(ModelVisualizer):
         Note that if a splitter is provided, it's random state will also be
         updated with this random state, even if it was previously set.
 
+    is_fitted : bool or str, default="auto"
+        Specify if the wrapped estimator is already fitted. If False, the estimator
+        will be fit when the visualizer is fit, otherwise, the estimator will not be
+        modified. If "auto" (default), a helper method will check if the estimator
+        is fitted before fitting it again.
+
+    force_model : bool, default: False
+        Do not check to ensure that the underlying estimator is a classifier. This
+        will prevent an exception when the visualizer is initialized but may result
+        in unexpected or unintended behavior.
+
     kwargs : dict
-        Keyword arguments that are passed to the base visualizer class.
+        Keyword arguments passed to the visualizer base classes.
 
     Attributes
     ----------
@@ -172,11 +184,15 @@ class DiscriminationThreshold(ModelVisualizer):
         exclude=None,
         quantiles=QUANTILES_MEDIAN_80,
         random_state=None,
+        is_fitted="auto",
+        force_model=False,
         **kwargs
     ):
 
         # Perform some quick type checking to help users avoid error.
-        if not is_classifier(model) or not is_probabilistic(model):
+        if not force_model and (
+            not is_classifier(model) or not is_probabilistic(model)
+        ):
             raise YellowbrickTypeError(
                 "{} requires a probabilistic binary classifier".format(
                     self.__class__.__name__
@@ -189,7 +205,9 @@ class DiscriminationThreshold(ModelVisualizer):
         self._check_exclude(exclude)
 
         # Initialize the ModelVisualizer
-        super(DiscriminationThreshold, self).__init__(model, ax=ax, **kwargs)
+        super(DiscriminationThreshold, self).__init__(
+            model, ax=ax, is_fitted=is_fitted, **kwargs
+        )
 
         # Set params
         self.set_params(
@@ -281,6 +299,10 @@ class DiscriminationThreshold(ModelVisualizer):
             self.cv_scores_[metric] = median
             self.cv_scores_["{}_lower".format(metric)] = lower
             self.cv_scores_["{}_upper".format(metric)] = upper
+
+        # TODO: fit the underlying estimator with the best decision threshold
+        # Call super to ensure the underlying estimator is correctly fitted
+        super(DiscriminationThreshold, self).fit(X, y)
 
         # Draw and always return self
         self.draw()
@@ -482,9 +504,11 @@ def discrimination_threshold(
     exclude=None,
     quantiles=QUANTILES_MEDIAN_80,
     random_state=None,
+    is_fitted="auto",
+    force_model=False,
     **kwargs
 ):
-    """Quick method for DiscriminationThreshold.
+    """Discrimination Threshold:
 
     Visualizes how precision, recall, f1 score, and queue rate change as the
     discrimination threshold increases. For probabilistic, binary classifiers,
@@ -498,10 +522,11 @@ def discrimination_threshold(
 
     Parameters
     ----------
-    model : Classification Estimator
-        An unfitted binary classification estimator that implements ``predict_proba``
-        or ``decision_function`` methods. Will raise ``TypeError`` if the model
-        cannot be used with the visualizer.
+    model : estimator
+        A scikit-learn estimator that should be a classifier. If the model is
+        not a classifier, an exception is raised. If the internal model is not
+        fitted, it is fit when the visualizer is fitted, unless otherwise specified
+        by ``is_fitted``.
 
     X : ndarray or DataFrame of shape n x m
         A matrix of n instances with m features
@@ -511,8 +536,8 @@ def discrimination_threshold(
         be a binary classification target.
 
     ax : matplotlib Axes, default: None
-        The axis to plot the figure on. If None is passed in the current axes
-        will be used (or generated if required).
+        The axes to plot the figure on. If not specified the current axes will be
+        used (or generated if required).
 
     n_trials : integer, default: 50
         Number of times to shuffle and split the dataset to account for noise
@@ -563,13 +588,24 @@ def discrimination_threshold(
         Note that if a splitter is provided, it's random state will also be
         updated with this random state, even if it was previously set.
 
+    is_fitted : bool or str, default="auto"
+        Specify if the wrapped estimator is already fitted. If False, the estimator
+        will be fit when the visualizer is fit, otherwise, the estimator will not be
+        modified. If "auto" (default), a helper method will check if the estimator
+        is fitted before fitting it again.
+
+    force_model : bool, default: False
+        Do not check to ensure that the underlying estimator is a classifier. This
+        will prevent an exception when the visualizer is initialized but may result
+        in unexpected or unintended behavior.
+
     kwargs : dict
-        Keyword arguments that are passed to the base visualizer class.
+        Keyword arguments passed to the visualizer base classes.
 
     Returns
     -------
-    viz : Visualizer
-        Returns the visualizer object
+    viz : DiscriminationThreshold
+        Returns the fitted and finalized visualizer object.
     """
     # Instantiate the visualizer
     visualizer = DiscriminationThreshold(
@@ -582,12 +618,14 @@ def discrimination_threshold(
         exclude=exclude,
         quantiles=quantiles,
         random_state=random_state,
+        is_fitted=is_fitted,
+        force_model=force_model,
         **kwargs
     )
 
     # Fit and transform the visualizer (calls draw)
     visualizer.fit(X, y)
-    visualizer.poof()
+    visualizer.finalize()
 
     # Return the visualizer
     return visualizer

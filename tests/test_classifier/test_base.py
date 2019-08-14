@@ -33,9 +33,9 @@ from yellowbrick.exceptions import YellowbrickTypeError
 ## Test Classification Score Visualizer
 ##########################################################################
 
-@pytest.mark.usefixtures('binary', 'multiclass')
-class TestClassificationScoreVisualizer(object):
 
+@pytest.mark.usefixtures("binary", "multiclass")
+class TestClassificationScoreVisualizer(object):
     def test_fit_score(self):
         """
         Ensure correct fit and score behavior
@@ -85,20 +85,22 @@ class TestClassificationScoreVisualizer(object):
         """
         Assert warning is issued and encoder is used with multiple decoding params
         """
-        with pytest.warns(YellowbrickWarning, match="both classes and encoder specified"):
+        with pytest.warns(
+            YellowbrickWarning, match="both classes and encoder specified"
+        ):
             oz = ClassificationScoreVisualizer(
                 GaussianNB(),
-                classes=['a', 'b', 'c'],
-                encoder={0: 'foo', 1: 'bar', 2: 'zap'},
+                classes=["a", "b", "c"],
+                encoder={0: "foo", 1: "bar", 2: "zap"},
             )
             encoded = oz._decode_labels([0, 1, 2])
-            npt.assert_array_equal(encoded, ['foo', 'bar', 'zap'])
+            npt.assert_array_equal(encoded, ["foo", "bar", "zap"])
 
     def test_decode_labels_from_numeric(self):
         """
         Test that a numeric y can be decoded using classes and encoder
         """
-        classes = np.array(['a', 'b', 'c', 'd', 'e'])
+        classes = np.array(["a", "b", "c", "d", "e"])
         y = np.random.randint(0, 5, 100)
         decoded = classes[y]
 
@@ -117,7 +119,7 @@ class TestClassificationScoreVisualizer(object):
         """
         Test that string y can be decoded using classes and encoder
         """
-        classes = np.array(['a', 'b', 'c', 'd', 'e'])
+        classes = np.array(["a", "b", "c", "d", "e"])
         decoded = classes[np.random.randint(0, 5, 100)]
         y = np.array([v.upper() for v in decoded])
 
@@ -129,7 +131,6 @@ class TestClassificationScoreVisualizer(object):
         npt.assert_array_equal(oz._decode_labels(y), decoded)
 
         class L2UTransformer(object):
-
             def transform(self, y):
                 return np.array([yi.upper() for yi in y])
 

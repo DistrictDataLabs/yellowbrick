@@ -63,20 +63,14 @@ class ROCAUC(ClassificationScoreVisualizer):
     Parameters
     ----------
     model : estimator
-        Must be a classifier, otherwise raises ``YellowbrickTypeError``. If
-        the internal model is not fitted, it is fit when the visualizer is
-        fitted, unless otherwise specified by ``is_fitted``.
+        A scikit-learn estimator that should be a classifier. If the model is
+        not a classifier, an exception is raised. If the internal model is not
+        fitted, it is fit when the visualizer is fitted, unless otherwise specified
+        by ``is_fitted``.
 
     ax : matplotlib Axes, default: None
-        The axes to plot the figure on. If None is passed in the current axes
-        will be used (or generated if required).
-
-    classes : list of str, defult: None
-        The class labels to use for the legend ordered by the index of the
-        classes discovered in the ``fit()`` method. Specifying classes in this
-        manner is used to change the class names to a more specific format or
-        to label encoded integer classes. For more advanced usage specify an
-        encoder rather than class labels.
+        The axes to plot the figure on. If not specified the current axes will be
+        used (or generated if required).
 
     micro : bool, default: True
         Plot the micro-averages ROC curve, computed from the sum of all true
@@ -96,6 +90,14 @@ class ROCAUC(ClassificationScoreVisualizer):
         class classification is not defined for binary classification problems
         with estimators with only a decision_function method.
 
+    classes : list of str, defult: None
+        The class labels to use for the legend ordered by the index of the sorted
+        classes discovered in the ``fit()`` method. Specifying classes in this
+        manner is used to change the class names to a more specific format or
+        to label encoded integer classes. Some visualizers may also use this
+        field to filter the visualization for specific classes. For more advanced
+        usage specify an encoder rather than class labels.
+
     encoder : dict or LabelEncoder, default: None
         A mapping of classes to human readable labels. Often there is a mismatch
         between desired class labels and those contained in the target variable
@@ -113,8 +115,8 @@ class ROCAUC(ClassificationScoreVisualizer):
         will prevent an exception when the visualizer is initialized but may result
         in unexpected or unintended behavior.
 
-    kwargs: dict
-        Keyword arguments passed to the super class.
+    kwargs : dict
+        Keyword arguments passed to the visualizer base classes.
 
     Attributes
     ----------
@@ -169,10 +171,10 @@ class ROCAUC(ClassificationScoreVisualizer):
         self,
         model,
         ax=None,
-        classes=None,
         micro=True,
         macro=True,
         per_class=True,
+        classes=None,
         encoder=None,
         is_fitted="auto",
         force_model=False,
@@ -189,9 +191,7 @@ class ROCAUC(ClassificationScoreVisualizer):
         )
 
         # Set the visual parameters for ROCAUC
-        self.micro = micro
-        self.macro = macro
-        self.per_class = per_class
+        self.set_params(micro=micro, macro=macro, per_class=per_class)
 
     def score(self, X, y=None, **kwargs):
         """
@@ -447,8 +447,23 @@ class ROCAUC(ClassificationScoreVisualizer):
 ##########################################################################
 
 
-def roc_auc(model, X, y=None, ax=None, is_fitted="auto", **kwargs):
-    """ROCAUC Quick method:
+def roc_auc(
+    model,
+    X,
+    y,
+    ax=None,
+    test_size=0.2,
+    random_state=None,
+    micro=True,
+    macro=True,
+    per_class=True,
+    classes=None,
+    encoder=None,
+    is_fitted="auto",
+    force_model=False,
+    **kwargs
+):
+    """ROCAUC
 
     Receiver Operating Characteristic (ROC) curves are a measure of a
     classifier's predictive quality that compares and visualizes the tradeoff
@@ -468,10 +483,11 @@ def roc_auc(model, X, y=None, ax=None, is_fitted="auto", **kwargs):
 
     Parameters
     ----------
-    model : the Scikit-Learn estimator
-        Should be an instance of a classifier, else the __init__ will return an error.
-        If the internal model is not fitted, it is fit when the visualizer is fitted,
-        unless otherwise specified by ``is_fitted``.
+    model : estimator
+        A scikit-learn estimator that should be a classifier. If the model is
+        not a classifier, an exception is raised. If the internal model is not
+        fitted, it is fit when the visualizer is fitted, unless otherwise specified
+        by ``is_fitted``.
 
     X : ndarray or DataFrame of shape n x m
         A matrix of n instances with m features
@@ -479,14 +495,15 @@ def roc_auc(model, X, y=None, ax=None, is_fitted="auto", **kwargs):
     y : ndarray or Series of length n
         An array or series of target or class values
 
-    ax : the axis to plot the figure on.
+    ax : matplotlib Axes, default: None
+        The axes to plot the figure on. If not specified the current axes will be
+        used (or generated if required).
 
-    classes : list
-        A list of class names for the legend. If classes is None and a y value
-        is passed to fit then the classes are selected from the target vector.
-        Note that the curves must be computed based on what is in the target
-        vector passed to the ``score()`` method. Class names are used for
-        labeling only and must be in the correct order to prevent confusion.
+    test_size : float, default=0.2
+        The percentage of the data to reserve as test data.
+
+    random_state : int or None, default=None
+        The value to seed the random number generator for shuffling data.
 
     micro : bool, default: True
         Plot the micro-averages ROC curve, computed from the sum of all true
@@ -506,14 +523,33 @@ def roc_auc(model, X, y=None, ax=None, is_fitted="auto", **kwargs):
         class classification is not defined for binary classification problems
         with estimators with only a decision_function method.
 
+    classes : list of str, defult: None
+        The class labels to use for the legend ordered by the index of the sorted
+        classes discovered in the ``fit()`` method. Specifying classes in this
+        manner is used to change the class names to a more specific format or
+        to label encoded integer classes. Some visualizers may also use this
+        field to filter the visualization for specific classes. For more advanced
+        usage specify an encoder rather than class labels.
+
+    encoder : dict or LabelEncoder, default: None
+        A mapping of classes to human readable labels. Often there is a mismatch
+        between desired class labels and those contained in the target variable
+        passed to ``fit()`` or ``score()``. The encoder disambiguates this mismatch
+        ensuring that classes are labeled correctly in the visualization.
+
     is_fitted : bool or str, default="auto"
         Specify if the wrapped estimator is already fitted. If False, the estimator
         will be fit when the visualizer is fit, otherwise, the estimator will not be
         modified. If "auto" (default), a helper method will check if the estimator
         is fitted before fitting it again.
 
+    force_model : bool, default: False
+        Do not check to ensure that the underlying estimator is a classifier. This
+        will prevent an exception when the visualizer is initialized but may result
+        in unexpected or unintended behavior.
+
     kwargs : dict
-        Keyword arguments passed to the visualization base class.
+        Keyword arguments passed to the visualizer base classes.
 
     Notes
     -----
@@ -531,13 +567,7 @@ def roc_auc(model, X, y=None, ax=None, is_fitted="auto", **kwargs):
     ensure the best quality visualization, do not use a LabelEncoder for this
     and do not pass in class labels.
 
-<<<<<<< HEAD
-    .. seealso::
-        http://scikit-learn.org/stable/auto_examples/model_selection/plot_roc.html
-
-=======
     .. seealso:: https://bit.ly/2IORWO2
->>>>>>> develop
     .. todo:: Allow the class list to filter the curves on the visualization.
 
     Examples
@@ -552,14 +582,27 @@ def roc_auc(model, X, y=None, ax=None, is_fitted="auto", **kwargs):
 
     Returns
     -------
-    viz : Visualizer
-        Returns the visualizer object
+    viz : ROCAUC
+        Returns the fitted, finalized visualizer object
     """
     # Instantiate the visualizer
-    visualizer = ROCAUC(model=model, ax=ax, is_fitted=is_fitted, **kwargs)
+    visualizer = ROCAUC(
+        model=model,
+        ax=ax,
+        micro=micro,
+        macro=macro,
+        per_class=per_class,
+        classes=classes,
+        encoder=encoder,
+        is_fitted=is_fitted,
+        force_model=force_model,
+        **kwargs
+    )
 
     # Create the train and test splits
-    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2)
+    X_train, X_test, y_train, y_test = train_test_split(
+        X, y, test_size=test_size, random_state=random_state
+    )
 
     # Fit and transform the visualizer (calls draw)
     visualizer.fit(X_train, y_train, **kwargs)

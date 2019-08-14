@@ -72,6 +72,7 @@ def assert_fitted(estimator, attrs=ATTRS, X_test=None):
 ## Fixtures
 ##########################################################################
 
+
 @pytest.fixture(scope="class")
 def binary(request):
     """
