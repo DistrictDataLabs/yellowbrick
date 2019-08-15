@@ -127,7 +127,7 @@ def pcoords():
 def pca():
     X, y = load_credit()
     colors = np.array(["r" if yi else "b" for yi in y])
-    oz = PCADecomposition(scale=True, color=colors, proj_dim=3)
+    oz = PCA(scale=True, color=colors, proj_dim=3)
     oz.fit_transform(X, y)
     savefig(oz, "pca_projection_3d")
 
