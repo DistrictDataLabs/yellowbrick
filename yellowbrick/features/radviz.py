@@ -1,10 +1,10 @@
 # yellowbrick.features.radviz
 # Implements radviz for feature analysis.
 #
-# Author:   Benjamin Bengfort <bbengfort@districtdatalabs.com>
+# Author:   Benjamin Bengfort
 # Created:  Fri Oct 07 13:18:00 2016 -0400
 #
-# Copyright (C) 2016 District Data Labs
+# Copyright (C) 2016 The scikit-yb developers
 # For license information, see LICENSE.txt
 #
 # ID: radviz.py [0f4b236] benjamin@bengfort.com $
@@ -30,8 +30,18 @@ from yellowbrick.features.base import DataVisualizer
 ## Quick Methods
 ##########################################################################
 
-def radviz(X, y=None, ax=None, features=None, classes=None,
-           colors=None, colormap=None, alpha=1.0, **kwargs):
+
+def radviz(
+    X,
+    y=None,
+    ax=None,
+    features=None,
+    classes=None,
+    colors=None,
+    colormap=None,
+    alpha=1.0,
+    **kwargs
+):
     """
     Displays each feature as an axis around a circle surrounding a scatter
     plot whose points are each individual instance.
@@ -69,25 +79,32 @@ def radviz(X, y=None, ax=None, features=None, classes=None,
 
     Returns
     -------
-    ax : matplotlib axes
-        Returns the axes that the parallel coordinates were drawn on.
+    viz : RadViz
+        Returns the fitted, finalized visualizer
     """
     # Instantiate the visualizer
     visualizer = RadialVisualizer(
-        ax, features, classes, colors, colormap, alpha, **kwargs
+        ax=ax,
+        features=features,
+        classes=classes,
+        colors=colors,
+        colormap=colormap,
+        alpha=alpha,
+        **kwargs
     )
 
     # Fit and transform the visualizer (calls draw)
     visualizer.fit(X, y, **kwargs)
     visualizer.transform(X)
 
-    # Return the axes object on the visualizer
-    return visualizer.ax
+    # Return the visualizer object
+    return visualizer
 
 
 ##########################################################################
 ## Static RadViz Visualizer
 ##########################################################################
+
 
 class RadialVisualizer(DataVisualizer):
     """
@@ -160,13 +177,25 @@ class RadialVisualizer(DataVisualizer):
         strings even if the classes are a different type.
     """
 
-    def __init__(self, ax=None, features=None, classes=None, colors=None,
-                 colormap=None, alpha=1.0, **kwargs):
+    def __init__(
+        self,
+        ax=None,
+        features=None,
+        classes=None,
+        colors=None,
+        colormap=None,
+        alpha=1.0,
+        **kwargs
+    ):
         if "target_type" not in kwargs:
             kwargs["target_type"] = "discrete"
         super(RadialVisualizer, self).__init__(
-            ax=ax, features=features, classes=classes,
-            colors=colors, colormap=colormap, **kwargs
+            ax=ax,
+            features=features,
+            classes=classes,
+            colors=colors,
+            colormap=colormap,
+            **kwargs
         )
         self.alpha = alpha
 
@@ -223,29 +252,26 @@ class RadialVisualizer(DataVisualizer):
         nrows, ncols = X.shape
 
         # Set the axes limits
-        self.ax.set_xlim([-1,1])
-        self.ax.set_ylim([-1,1])
+        self.ax.set_xlim([-1, 1])
+        self.ax.set_ylim([-1, 1])
 
         # Create a data structure to hold scatter plot representations
-        to_plot = {
-            label: [[], []] for label in self.classes_
-        }
+        to_plot = {label: [[], []] for label in self.classes_}
 
         # Compute the arcs around the circumference for each feature axis
         # TODO: make this an independent function for override
-        s = np.array([
+        s = np.array(
+            [
                 (np.cos(t), np.sin(t))
-                for t in [
-                    2.0 * np.pi * (i / float(ncols))
-                    for i in range(ncols)
-                ]
-            ])
+                for t in [2.0 * np.pi * (i / float(ncols)) for i in range(ncols)]
+            ]
+        )
 
         # Compute the locations of the scatter plot for each class
         # Normalize the data first to plot along the 0, 1 axis
         for i, row in enumerate(self.normalize(X)):
             row_ = np.repeat(np.expand_dims(row, axis=1), 2, axis=1)
-            xy   = (s * row_).sum(axis=0) / row.sum()
+            xy = (s * row_).sum(axis=0) / row.sum()
             label = self._label_encoder[y[i]]
 
             to_plot[label][0].append(xy[0])
@@ -267,26 +293,61 @@ class RadialVisualizer(DataVisualizer):
 
         # Add the circular axis path
         # TODO: Make this a seperate function (along with labeling)
-        self.ax.add_patch(patches.Circle(
-            (0.0, 0.0), radius=1.0, facecolor='none', edgecolor='grey', linewidth=.5
-        ))
+        self.ax.add_patch(
+            patches.Circle(
+                (0.0, 0.0),
+                radius=1.0,
+                facecolor="none",
+                edgecolor="grey",
+                linewidth=0.5,
+            )
+        )
 
         # Add the feature names
         for xy, name in zip(s, self.features_):
             # Add the patch indicating the location of the axis
-            self.ax.add_patch(patches.Circle(xy, radius=0.025, facecolor='#777777'))
+            self.ax.add_patch(patches.Circle(xy, radius=0.025, facecolor="#777777"))
 
             # Add the feature names offset around the axis marker
             if xy[0] < 0.0 and xy[1] < 0.0:
-                self.ax.text(xy[0] - 0.025, xy[1] - 0.025, name, ha='right', va='top', size='small')
+                self.ax.text(
+                    xy[0] - 0.025,
+                    xy[1] - 0.025,
+                    name,
+                    ha="right",
+                    va="top",
+                    size="small",
+                )
             elif xy[0] < 0.0 and xy[1] >= 0.0:
-                self.ax.text(xy[0] - 0.025, xy[1] + 0.025, name, ha='right', va='bottom', size='small')
+                self.ax.text(
+                    xy[0] - 0.025,
+                    xy[1] + 0.025,
+                    name,
+                    ha="right",
+                    va="bottom",
+                    size="small",
+                )
             elif xy[0] >= 0.0 and xy[1] < 0.0:
-                self.ax.text(xy[0] + 0.025, xy[1] - 0.025, name, ha='left', va='top', size='small')
+                self.ax.text(
+                    xy[0] + 0.025,
+                    xy[1] - 0.025,
+                    name,
+                    ha="left",
+                    va="top",
+                    size="small",
+                )
             elif xy[0] >= 0.0 and xy[1] >= 0.0:
-                self.ax.text(xy[0] + 0.025, xy[1] + 0.025, name, ha='left', va='bottom', size='small')
+                self.ax.text(
+                    xy[0] + 0.025,
+                    xy[1] + 0.025,
+                    name,
+                    ha="left",
+                    va="bottom",
+                    size="small",
+                )
 
-        self.ax.axis('equal')
+        self.ax.axis("equal")
+        return self.ax
 
     def finalize(self, **kwargs):
         """
@@ -299,9 +360,7 @@ class RadialVisualizer(DataVisualizer):
 
         """
         # Set the title
-        self.set_title(
-            'RadViz for {} Features'.format(len(self.features_))
-        )
+        self.set_title("RadViz for {} Features".format(len(self.features_)))
 
         # Remove the ticks from the graph
         self.ax.set_yticks([])
@@ -309,7 +368,7 @@ class RadialVisualizer(DataVisualizer):
 
         # Add the legend
         colors = self.get_colors(self.classes_)
-        manual_legend(self, self.classes_, colors, loc='best')
+        manual_legend(self, self.classes_, colors, loc="best")
 
 
 # Alias for RadViz

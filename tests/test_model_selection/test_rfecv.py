@@ -1,8 +1,11 @@
-# tests.test_feautures.test_rfecv
+# tests.test_model_selection.test_rfecv
 # Tests for the RFECV visualizer
 #
-# Author:  Benjamin Bengfort <benjamin@bengfort.com>
+# Author:  Benjamin Bengfort
 # Created: Tue Apr 03 17:35:16 2018 -0400
+#
+# Copyright (C) 2018 The scikit-yb developers
+# For license information, see LICENSE.txt
 #
 # ID: test_rfecv.py [] benjamin@bengfort.com $
 
@@ -20,17 +23,17 @@ import numpy as np
 import numpy.testing as npt
 
 from unittest.mock import patch
-from tests.base import VisualTestCase
-from ..fixtures import Dataset
 
+from tests.fixtures import Dataset
+from tests.base import VisualTestCase
+from yellowbrick.model_selection.rfecv import *
 from yellowbrick.datasets import load_occupancy
-from yellowbrick.features.rfecv import *
 from yellowbrick.exceptions import YellowbrickValueError
 
 from sklearn.svm import SVC
+from sklearn.datasets import make_classification
 from sklearn.model_selection import ShuffleSplit
 from sklearn.model_selection import StratifiedKFold
-from sklearn.datasets import make_classification
 from sklearn.linear_model import LogisticRegression
 from sklearn.ensemble import RandomForestClassifier
 
@@ -44,14 +47,21 @@ except ImportError:
 ## Fixtures
 ##########################################################################
 
+
 @pytest.fixture(scope="class")
 def dataset(request):
     """
     Creates a multiclass classification dataset fixture for RFECV
     """
     X, y = make_classification(
-        n_samples=600, n_features=15, n_informative=7, n_redundant=4,
-        n_repeated=0, n_classes=8, n_clusters_per_class=1, random_state=0
+        n_samples=600,
+        n_features=15,
+        n_informative=7,
+        n_redundant=4,
+        n_repeated=0,
+        n_classes=8,
+        n_clusters_per_class=1,
+        random_state=0,
     )
 
     dataset = Dataset(X, y)
@@ -62,21 +72,26 @@ def dataset(request):
 ## Test Cases
 ##########################################################################
 
+
 @pytest.mark.usefixtures("dataset")
 class TestRFECV(VisualTestCase):
     """
     Test the RFECV visualizer
     """
 
-    @patch.object(RFECV, 'draw')
+    @patch.object(RFECV, "draw")
     def test_fit(self, mock_draw):
         """
         Assert that fit returns self and creates expected properties with NB
         """
         X, y = self.dataset
         params = (
-            "n_features_", "support_", "ranking_",
-            "cv_scores_", "rfe_estimator_", "n_feature_subsets_"
+            "n_features_",
+            "support_",
+            "ranking_",
+            "cv_scores_",
+            "rfe_estimator_",
+            "n_feature_subsets_",
         )
 
         rf = RandomForestClassifier()
@@ -97,9 +112,7 @@ class TestRFECV(VisualTestCase):
         assert oz._wrapped is not rf
         assert oz._wrapped is oz.rfe_estimator_
 
-    @pytest.mark.xfail(
-        sys.platform == 'win32', reason="images not close on windows"
-    )
+    @pytest.mark.xfail(sys.platform == "win32", reason="images not close on windows")
     def test_rfecv_classification(self):
         """
         Test image closeness on a classification dataset with an SVM
@@ -111,10 +124,8 @@ class TestRFECV(VisualTestCase):
 
         self.assert_images_similar(oz, remove_legend=True)
 
-    @pytest.mark.xfail(
-        sys.platform == 'win32', reason="images not close on windows"
-    )
-    @pytest.mark.filterwarnings('ignore:F-score is ill-defined')
+    @pytest.mark.xfail(sys.platform == "win32", reason="images not close on windows")
+    @pytest.mark.filterwarnings("ignore:F-score is ill-defined")
     def test_quick_method(self):
         """
         Test the recv quick method works with LogisticRegression
@@ -123,13 +134,11 @@ class TestRFECV(VisualTestCase):
         model = LogisticRegression()
         X, y = self.dataset
 
-        ax = rfecv(model, X, y, step=2, cv=cv, scoring='f1_weighted')
+        viz = rfecv(model, X, y, step=2, cv=cv, scoring="f1_weighted")
 
-        self.assert_images_similar(ax=ax, remove_legend=True)
+        self.assert_images_similar(viz, remove_legend=True)
 
-    @pytest.mark.xfail(
-        sys.platform == 'win32', reason="images not close on windows"
-    )
+    @pytest.mark.xfail(sys.platform == "win32", reason="images not close on windows")
     @pytest.mark.skipif(pd is None, reason="test requires pandas")
     def test_pandas_integration(self):
         """
@@ -148,9 +157,7 @@ class TestRFECV(VisualTestCase):
 
         self.assert_images_similar(oz, remove_legend=True)
 
-    @pytest.mark.xfail(
-        sys.platform == 'win32', reason="images not close on windows"
-    )
+    @pytest.mark.xfail(sys.platform == "win32", reason="images not close on windows")
     def test_numpy_integration(self):
         """
         Test on a real dataset with numpy ndarray
@@ -182,13 +189,19 @@ class TestRFECV(VisualTestCase):
         Test RFECV step=5 with LogisticRegression
         """
         X, y = make_classification(
-            n_samples=200, n_features=30, n_informative=18, n_redundant=6,
-            n_repeated=0, n_classes=8, n_clusters_per_class=1, random_state=0
+            n_samples=200,
+            n_features=30,
+            n_informative=18,
+            n_redundant=6,
+            n_repeated=0,
+            n_classes=8,
+            n_clusters_per_class=1,
+            random_state=0,
         )
 
         oz = RFECV(LogisticRegression(random_state=32), step=5).fit(X, y)
         assert hasattr(oz, "n_feature_subsets_")
-        npt.assert_array_equal(oz.n_feature_subsets_, np.arange(1,35,5))
+        npt.assert_array_equal(oz.n_feature_subsets_, np.arange(1, 35, 5))
 
         oz.finalize()
         tol = 1.75 if sys.platform == "win32" else 0.25

@@ -4,7 +4,7 @@
 # Author:   Naresh Bachwani
 # Created:  Wed Jul 17 09:53:07 2019 -0400
 #
-# Copyright (C) 2019, the scikit-yb developers.
+# Copyright (C) 2019 the scikit-yb developers.
 # For license information, see LICENSE.txt
 #
 # ID: test_projection.py [] naresh-bachwani@noreply.github.com $
@@ -17,7 +17,6 @@ Test the base ProjectionVisualizer drawing functionality
 ## Imports
 ##########################################################################
 
-
 import pytest
 import numpy.testing as npt
 import matplotlib.pyplot as plt
@@ -26,50 +25,11 @@ from yellowbrick.features.projection import *
 from yellowbrick.exceptions import YellowbrickValueError
 
 from tests.base import VisualTestCase
-from ..fixtures import Dataset
 from unittest import mock
 
 from sklearn.decomposition import PCA
 from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import StandardScaler
-from sklearn.datasets import make_classification, make_regression
-
-
-##########################################################################
-## Fixtures
-##########################################################################
-
-
-@pytest.fixture(scope="class")
-def discrete(request):
-    """
-    Creare a random classification fixture.
-    """
-    X, y = make_classification(
-        n_samples=400,
-        n_features=12,
-        n_informative=10,
-        n_redundant=0,
-        n_classes=5,
-        random_state=2019,
-    )
-
-    # Set a class attribute for discrete data
-    request.cls.discrete = Dataset(X, y)
-
-
-@pytest.fixture(scope="class")
-def continuous(request):
-    """
-    Creates a random regressor fixture.
-    """
-    X, y = make_regression(
-        n_samples=500, n_features=22, n_informative=8, random_state=2019
-    )
-
-    # Set a class attribute for continuous data
-    request.cls.continuous = Dataset(X, y)
-
 
 ##########################################################################
 ## MockVisualizer
@@ -272,7 +232,7 @@ class TestProjectionVisualizer(VisualTestCase):
 
     def test_colorbar_false(self):
         """
-        Test that colorbar equals false works correctly 
+        Test that colorbar equals false works correctly
         """
         visualizer = MockVisualizer(colorbar=False, colormap="YlOrRd")
         visualizer.fit_transform(*self.continuous)

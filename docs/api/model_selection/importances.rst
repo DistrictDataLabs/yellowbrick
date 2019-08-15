@@ -31,7 +31,7 @@ with a ``GradientBoostingClassifier`` to visualize the ranked features.
     from sklearn.ensemble import RandomForestClassifier
 
     from yellowbrick.datasets import load_occupancy
-    from yellowbrick.features import FeatureImportances
+    from yellowbrick.model_selection import FeatureImportances
 
     # Load the classification data set
     X, y = load_occupancy()
@@ -64,7 +64,7 @@ title case our features for better readability:
 
     from sklearn.linear_model import Lasso
     from yellowbrick.datasets import load_concrete
-    from yellowbrick.features import FeatureImportances
+    from yellowbrick.model_selection import FeatureImportances
 
     # Load the regression dataset
     dataset = load_concrete(return_dataset=True)
@@ -91,7 +91,7 @@ Taking the mean of the importances may be undesirable for several reasons. For e
     :context: close-figs
     :alt: Stacked per-class importances with Logistic Regression
 
-    from yellowbrick.features import FeatureImportances
+    from yellowbrick.model_selection import FeatureImportances
     from sklearn.linear_model import LogisticRegression
     from sklearn.datasets import load_iris
 
@@ -130,7 +130,7 @@ This method may also be used for instances; but generally there are very many in
 API Reference
 -------------
 
-.. automodule:: yellowbrick.features.importances
+.. automodule:: yellowbrick.model_selection.importances
     :members: FeatureImportances
     :undoc-members:
     :show-inheritance:

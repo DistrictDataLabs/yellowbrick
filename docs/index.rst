@@ -62,8 +62,6 @@ Feature Visualization
 - :doc:`Radial Visualization <api/features/radviz>`: separation of instances around a circular plot
 - :doc:`api/features/pca`: projection of instances based on principal components
 - :doc:`api/features/manifold`: high dimensional visualization with manifold learning
-- :doc:`api/features/importances`: rank features by importance or linear coefficients for a specific model
-- :doc:`api/features/rfecv`: find the best subset of features based on importance
 - :doc:`Joint Plots <api/features/jointplot>`: direct data visualization with feature selection
 
 Classification Visualization
@@ -96,6 +94,8 @@ Model Selection Visualization
 
 -  :doc:`api/model_selection/validation_curve`: tune a model with respect to a single hyperparameter
 -  :doc:`api/model_selection/learning_curve`: show if a model might benefit from more data or less complexity
+-  :doc:`api/model_selection/importances`: rank features by importance or linear coefficients for a specific model
+-  :doc:`api/model_selection/rfecv`: find the best subset of features based on importance
 
 Target Visualization
 ~~~~~~~~~~~~~~~~~~~~

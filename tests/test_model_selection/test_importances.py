@@ -1,12 +1,11 @@
-# tests.test_features.test_importances
+# tests.test_model_selection.test_importances
 # Test the feature importance visualizers
 #
-# Author:  Benjamin Bengfort <benjamin@bengfort.com>
+# Author:  Benjamin Bengfort
+# Author:  Rebecca Bilbro
 # Created: Fri Mar 02 15:23:22 2018 -0500
-# Author:  Rebecca Bilbro <rbilbro@districtdatalabs.com>
-# Updated: Sun Jun 24 12:10:43 2018 -0500
 #
-# Copyright (C) 2018 District Data Labs
+# Copyright (C) 2018 The scikit-yb developers
 # For license information, see LICENSE.txt
 #
 # ID: test_importances.py [] benjamin@bengfort.com $
@@ -25,7 +24,7 @@ import numpy.testing as npt
 import matplotlib.pyplot as plt
 
 from yellowbrick.exceptions import NotFitted
-from yellowbrick.features.importances import *
+from yellowbrick.model_selection.importances import *
 from yellowbrick.datasets import load_occupancy, load_concrete
 
 from sklearn.datasets import load_iris
@@ -46,6 +45,7 @@ except ImportError:
 ##########################################################################
 ## Feature Importances Tests
 ##########################################################################
+
 
 class TestFeatureImportancesVisualizer(VisualTestCase):
     """
@@ -108,7 +108,7 @@ class TestFeatureImportancesVisualizer(VisualTestCase):
         g = feature_importances(clf, X, y, ax=ax)
 
         # Appveyor and Linux conda non-text-based differences
-        self.assert_images_similar(ax=g.ax, tol=15.0)
+        self.assert_images_similar(g, tol=15.0)
 
     def test_fit_no_importances_model(self):
         """
@@ -127,8 +127,8 @@ class TestFeatureImportancesVisualizer(VisualTestCase):
         """
         On fit, sorted features_ and feature_importances_ params are created
         """
-        coefs = np.array([0.4, 0.2, 0.08, 0.07, 0.16, .23, 0.38, 0.1, 0.05])
-        names = np.array(['a', 'b',  'c',  'd',  'e', 'f',  'g', 'h',  'i'])
+        coefs = np.array([0.4, 0.2, 0.08, 0.07, 0.16, 0.23, 0.38, 0.1, 0.05])
+        names = np.array(["a", "b", "c", "d", "e", "f", "g", "h", "i"])
 
         model = MockEstimator()
         model.make_importance_param(value=coefs)
@@ -136,8 +136,8 @@ class TestFeatureImportancesVisualizer(VisualTestCase):
         visualizer = FeatureImportances(model, labels=names)
         visualizer.fit(np.random.rand(100, len(names)), np.random.rand(100))
 
-        assert hasattr(visualizer, 'features_')
-        assert hasattr(visualizer, 'feature_importances_')
+        assert hasattr(visualizer, "features_")
+        assert hasattr(visualizer, "feature_importances_")
 
         # get the expected sort index
         sort_idx = np.argsort(coefs)
@@ -150,7 +150,7 @@ class TestFeatureImportancesVisualizer(VisualTestCase):
         """
         Test fit computes relative importances
         """
-        coefs = np.array([0.4, 0.2, 0.08, 0.07, 0.16, .23, 0.38, 0.1, 0.05])
+        coefs = np.array([0.4, 0.2, 0.08, 0.07, 0.16, 0.23, 0.38, 0.1, 0.05])
 
         model = MockEstimator()
         model.make_importance_param(value=coefs)
@@ -166,7 +166,7 @@ class TestFeatureImportancesVisualizer(VisualTestCase):
         """
         Test fit stores unmodified importances
         """
-        coefs = np.array([0.4, 0.2, 0.08, 0.07, 0.16, .23, 0.38, 0.1, 0.05])
+        coefs = np.array([0.4, 0.2, 0.08, 0.07, 0.16, 0.23, 0.38, 0.1, 0.05])
 
         model = MockEstimator()
         model.make_importance_param(value=coefs)
@@ -181,7 +181,7 @@ class TestFeatureImportancesVisualizer(VisualTestCase):
         """
         Test fit with absolute values
         """
-        coefs = np.array([0.4, 0.2, -0.08, 0.07, 0.16, .23, -0.38, 0.1, -0.05])
+        coefs = np.array([0.4, 0.2, -0.08, 0.07, 0.16, 0.23, -0.38, 0.1, -0.05])
 
         model = MockEstimator()
         model.make_importance_param(value=coefs)
@@ -190,24 +190,25 @@ class TestFeatureImportancesVisualizer(VisualTestCase):
         visualizer = FeatureImportances(model, absolute=True, relative=False)
         visualizer.fit(np.random.rand(100, len(coefs)), np.random.rand(100))
 
-        expected = np.array([0.05, 0.07, 0.08, 0.1, 0.16, 0.2, .23, 0.38, 0.4])
+        expected = np.array([0.05, 0.07, 0.08, 0.1, 0.16, 0.2, 0.23, 0.38, 0.4])
         npt.assert_array_equal(visualizer.feature_importances_, expected)
 
         # Test no absolute value
         visualizer = FeatureImportances(model, absolute=False, relative=False)
         visualizer.fit(np.random.rand(100, len(coefs)), np.random.rand(100))
 
-        expected = np.array([-0.38, -0.08, -0.05, 0.07, 0.1, 0.16, 0.2, .23, 0.4])
+        expected = np.array([-0.38, -0.08, -0.05, 0.07, 0.1, 0.16, 0.2, 0.23, 0.4])
         npt.assert_array_equal(visualizer.feature_importances_, expected)
 
     def test_multi_coefs(self):
         """
         Test fit with multidimensional coefficients and stack warning
         """
-        coefs = np.array([
-            [0.4, 0.2, -0.08, 0.07, 0.16, 0.23, -0.38, 0.1, -0.05],
-            [0.41, 0.12, -0.1, 0.1, 0.14, 0.21, 0.01, 0.31, -0.15],
-            [0.31, 0.2, -0.01, 0.1, 0.22, 0.23, 0.01, 0.12, -0.15]
+        coefs = np.array(
+            [
+                [0.4, 0.2, -0.08, 0.07, 0.16, 0.23, -0.38, 0.1, -0.05],
+                [0.41, 0.12, -0.1, 0.1, 0.14, 0.21, 0.01, 0.31, -0.15],
+                [0.31, 0.2, -0.01, 0.1, 0.22, 0.23, 0.01, 0.12, -0.15],
             ]
         )
 
@@ -242,9 +243,9 @@ class TestFeatureImportancesVisualizer(VisualTestCase):
         """
         Ensure feature names are extracted from DataFrame columns
         """
-        labels = ['a', 'b', 'c', 'd', 'e', 'f']
+        labels = ["a", "b", "c", "d", "e", "f"]
         df = pd.DataFrame(np.random.rand(100, 6), columns=labels)
-        s = pd.Series(np.random.rand(100), name='target')
+        s = pd.Series(np.random.rand(100), name="target")
 
         assert df.shape == (100, 6)
 
@@ -254,7 +255,7 @@ class TestFeatureImportancesVisualizer(VisualTestCase):
         visualizer = FeatureImportances(model)
         visualizer.fit(df, s)
 
-        assert hasattr(visualizer, 'features_')
+        assert hasattr(visualizer, "features_")
         npt.assert_array_equal(visualizer.features_, np.array(df.columns))
 
     def test_fit_makes_labels(self):
@@ -268,7 +269,7 @@ class TestFeatureImportancesVisualizer(VisualTestCase):
         visualizer.fit(np.random.rand(100, 10), np.random.rand(100))
 
         # Don't have to worry about label space since importances are linspace
-        assert hasattr(visualizer, 'features_')
+        assert hasattr(visualizer, "features_")
         npt.assert_array_equal(np.arange(10), visualizer.features_)
 
     def test_fit_calls_draw(self):
@@ -276,12 +277,12 @@ class TestFeatureImportancesVisualizer(VisualTestCase):
         Assert that fit calls draw
         """
         model = MockEstimator()
-        model.make_importance_param('coef_')
+        model.make_importance_param("coef_")
 
         visualizer = FeatureImportances(model)
 
-        with mock.patch.object(visualizer, 'draw') as mdraw:
-            visualizer.fit(np.random.rand(100,42), np.random.rand(100))
+        with mock.patch.object(visualizer, "draw") as mdraw:
+            visualizer.fit(np.random.rand(100, 42), np.random.rand(100))
             mdraw.assert_called_once()
 
     def test_draw_raises_unfitted(self):
@@ -296,35 +297,36 @@ class TestFeatureImportancesVisualizer(VisualTestCase):
         """
         Test the expected parameters can be found
         """
-        params = ('feature_importances_', 'coef_')
+        params = ("feature_importances_", "coef_")
 
         for param in params:
             model = MockEstimator()
-            model.make_importance_param(param, 'foo')
+            model.make_importance_param(param, "foo")
             visualizer = FeatureImportances(model)
 
             assert hasattr(model, param), "expected '{}' missing".format(param)
             for oparam in params:
-                if oparam == param: continue
+                if oparam == param:
+                    continue
                 assert not hasattr(model, oparam), "unexpected '{}'".format(oparam)
 
             importances = visualizer._find_importances_param()
-            assert importances == 'foo'
+            assert importances == "foo"
 
     def test_find_importances_param_priority(self):
         """
         With both feature_importances_ and coef_, one has priority
         """
         model = MockEstimator()
-        model.make_importance_param('feature_importances_', 'foo')
-        model.make_importance_param('coef_', 'bar')
+        model.make_importance_param("feature_importances_", "foo")
+        model.make_importance_param("coef_", "bar")
         visualizer = FeatureImportances(model)
 
-        assert hasattr(model, 'feature_importances_')
-        assert hasattr(model, 'coef_')
+        assert hasattr(model, "feature_importances_")
+        assert hasattr(model, "coef_")
 
         importances = visualizer._find_importances_param()
-        assert importances == 'foo'
+        assert importances == "foo"
 
     def test_find_importances_param_not_found(self):
         """
@@ -333,8 +335,8 @@ class TestFeatureImportancesVisualizer(VisualTestCase):
         model = MockEstimator()
         visualizer = FeatureImportances(model)
 
-        assert not hasattr(model, 'feature_importances_')
-        assert not hasattr(model, 'coef_')
+        assert not hasattr(model, "feature_importances_")
+        assert not hasattr(model, "coef_")
 
         with pytest.raises(YellowbrickTypeError):
             visualizer._find_importances_param()
@@ -346,9 +348,9 @@ class TestFeatureImportancesVisualizer(VisualTestCase):
         model = MockClassifier()
         visualizer = FeatureImportances(model)
 
-        assert not hasattr(model, 'classes_')
+        assert not hasattr(model, "classes_")
 
-        e = 'could not find classes_ param on {}'.format(
+        e = "could not find classes_ param on {}".format(
             visualizer.estimator.__class__.__name__
         )
         with pytest.raises(YellowbrickTypeError, match=e):
@@ -359,7 +361,7 @@ class TestFeatureImportancesVisualizer(VisualTestCase):
         Check the various xlabels are sensical
         """
         model = MockEstimator()
-        model.make_importance_param('feature_importances_')
+        model.make_importance_param("feature_importances_")
         visualizer = FeatureImportances(model, xlabel="foo", relative=True)
 
         # Assert the visualizer uses the user supplied xlabel
@@ -375,7 +377,7 @@ class TestFeatureImportancesVisualizer(VisualTestCase):
 
         # Check coeficients
         model = MockEstimator()
-        model.make_importance_param('coef_')
+        model.make_importance_param("coef_")
         visualizer = FeatureImportances(model, xlabel="baz", relative=True)
 
         # Assert the visualizer uses the user supplied xlabel
@@ -407,10 +409,6 @@ class TestFeatureImportancesVisualizer(VisualTestCase):
         del visualizer.features_
         assert not visualizer._is_fitted()
 
-    @pytest.mark.xfail(
-        reason="""third test fails with AssertionError: Expected fit
-        to be called once. Called 0 times."""
-    )
     def test_with_fitted(self):
         """
         Test that visualizer properly handles an already-fitted model
@@ -439,12 +437,13 @@ class TestFeatureImportancesVisualizer(VisualTestCase):
 ## Mock Estimator
 ##########################################################################
 
+
 class MockEstimator(BaseEstimator):
     """
     Creates params when fit is called on demand.
     """
 
-    def make_importance_param(self, name='feature_importances_', value=None):
+    def make_importance_param(self, name="feature_importances_", value=None):
         if value is None:
             value = np.random.rand(42)
         setattr(self, name, value)
@@ -458,3 +457,4 @@ class MockClassifier(BaseEstimator, ClassifierMixin):
     Creates empty classifier.
     """
     pass
+

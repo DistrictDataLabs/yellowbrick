@@ -1,10 +1,10 @@
 # tests.test_features.test_base
 # Tests for the feature selection and analysis base classes
 #
-# Author:   Benjamin Bengfort <bbengfort@districtdatalabs.com>
+# Author:   Benjamin Bengfort
 # Created:  Fri Oct 07 13:43:55 2016 -0400
 #
-# Copyright (C) 2016 District Data Labs
+# Copyright (C) 2016 The scikit-yb developers
 # For license information, see LICENSE.txt
 #
 # ID: test_base.py [2e898a6] benjamin@bengfort.com $
@@ -21,7 +21,7 @@ import pytest
 import numpy as np
 import numpy.testing as npt
 
-from ..fixtures import Dataset
+from tests.fixtures import Dataset
 from yellowbrick.base import Visualizer
 from yellowbrick.features.base import *
 
@@ -40,7 +40,8 @@ except ImportError:
 ## Fixtures
 ##########################################################################
 
-@pytest.fixture(scope='class')
+
+@pytest.fixture(scope="class")
 def discrete(request):
     """
     Create a random classification dataset fixture.
@@ -51,23 +52,20 @@ def discrete(request):
         n_features=12,
         n_informative=10,
         n_redundant=0,
-        random_state=2019
+        random_state=2019,
     )
 
     # Dataset is accessible on the class so it is only generated once
     request.cls.discrete = Dataset(X, y)
 
 
-@pytest.fixture(scope='class')
+@pytest.fixture(scope="class")
 def continuous(request):
     """
     Creates a random regression dataset fixture.
     """
     X, y = make_regression(
-        n_samples=500,
-        n_features=22,
-        n_informative=8,
-        random_state=2019
+        n_samples=500, n_features=22, n_informative=8, random_state=2019
     )
 
     # Dataset is accessible on the class so it is only generated once
@@ -77,6 +75,7 @@ def continuous(request):
 ##########################################################################
 ## FeatureVisualizer Base Tests
 ##########################################################################
+
 
 @pytest.mark.usefixtures("discrete")
 class TestFeatureVisualizer(object):
@@ -105,16 +104,17 @@ class TestFeatureVisualizer(object):
         """
         Test the fit/transform/poof quick method
         """
+
         class MockFeatureVisaulizer(FeatureVisualizer):
             pass
 
         viz = MockFeatureVisaulizer()
         viz.fit = Mock(return_value=viz)
-        viz.transform = Mock(return_value='a')
+        viz.transform = Mock(return_value="a")
         viz.poof = Mock()
 
         X, y = self.discrete
-        assert viz.fit_transform_poof(X, y, outpath="a.png", clear_figure=True) == 'a'
+        assert viz.fit_transform_poof(X, y, outpath="a.png", clear_figure=True) == "a"
         assert viz.fit.called_once_with(X, y)
         assert viz.transform.called_once_with(X, y)
         assert viz.poof.called_once_with(outpath="a.png", clear_figure=True)
@@ -124,7 +124,8 @@ class TestFeatureVisualizer(object):
 ## MultiFeatureVisualizer Tests
 ##########################################################################
 
-@pytest.mark.usefixtures('discrete')
+
+@pytest.mark.usefixtures("discrete")
 class TestMultiFeatureVisualizer(object):
     """
     Test the MultiFeatureVisualizer base class
@@ -145,12 +146,12 @@ class TestMultiFeatureVisualizer(object):
         Test that a user can supply feature names directly
         """
         X, y = self.discrete
-        features = ["f{}".format(i+1) for i in range(X.shape[1])]
+        features = ["f{}".format(i + 1) for i in range(X.shape[1])]
         oz = MultiFeatureVisualizer(features=features)
 
-        assert not hasattr(oz, 'features_')
+        assert not hasattr(oz, "features_")
         assert oz.fit(X, y) is oz
-        assert hasattr(oz, 'features_')
+        assert hasattr(oz, "features_")
         npt.assert_array_equal(oz.features_, np.asarray(features))
 
     def test_numeric_features(self):
@@ -160,9 +161,9 @@ class TestMultiFeatureVisualizer(object):
         X, y = self.discrete
         oz = MultiFeatureVisualizer()
 
-        assert not hasattr(oz, 'features_')
+        assert not hasattr(oz, "features_")
         assert oz.fit(X, y) is oz
-        assert hasattr(oz, 'features_')
+        assert hasattr(oz, "features_")
         assert len(oz.features_) == X.shape[1]
 
     @pytest.mark.skipif(pd is None, reason="test requires pandas")
@@ -171,15 +172,15 @@ class TestMultiFeatureVisualizer(object):
         Ensure that DataFrame column names are uses as features
         """
         X, y = self.discrete
-        features = ["f{}".format(i+1) for i in range(X.shape[1])]
+        features = ["f{}".format(i + 1) for i in range(X.shape[1])]
 
         X = pd.DataFrame(X, columns=features)
         y = pd.Series(y, name="target")
 
         oz = MultiFeatureVisualizer()
-        assert not hasattr(oz, 'features_')
+        assert not hasattr(oz, "features_")
         assert oz.fit(X, y) is oz
-        assert hasattr(oz, 'features_')
+        assert hasattr(oz, "features_")
         npt.assert_array_equal(oz.features_, np.asarray(features))
 
     @pytest.mark.skipif(pd is None, reason="test requires pandas")
@@ -196,15 +197,16 @@ class TestMultiFeatureVisualizer(object):
         y = pd.Series(y, name="target")
 
         oz = MultiFeatureVisualizer()
-        assert not hasattr(oz, 'features_')
+        assert not hasattr(oz, "features_")
         assert oz.fit(X, y) is oz
-        assert hasattr(oz, 'features_')
+        assert hasattr(oz, "features_")
         assert len(oz.features_) == X.shape[1]
 
 
 ##########################################################################
 ## DataVisualizer Tests
 ##########################################################################
+
 
 @pytest.mark.usefixtures("discrete", "continuous")
 class TestDataVisualizer(object):
@@ -213,8 +215,12 @@ class TestDataVisualizer(object):
     """
 
     FIELDS = (
-        'features_', 'classes_', 'range_',
-        '_colors', '_target_color_type', '_label_encoder',
+        "features_",
+        "classes_",
+        "range_",
+        "_colors",
+        "_target_color_type",
+        "_label_encoder",
     )
 
     def assert_not_fitted(self, obj):
@@ -230,14 +236,14 @@ class TestDataVisualizer(object):
         __tracebackhide__ = True
         # Mutually exclusive fields
         if obj._target_color_type == TargetType.SINGLE:
-            assert (not hasattr(obj, 'classes_')) and (not hasattr(obj, 'range_'))
+            assert (not hasattr(obj, "classes_")) and (not hasattr(obj, "range_"))
 
         elif obj._target_color_type == TargetType.DISCRETE:
-            assert hasattr(obj, '_label_encoder')
-            assert hasattr(obj, 'classes_') and (not hasattr(obj, 'range_'))
+            assert hasattr(obj, "_label_encoder")
+            assert hasattr(obj, "classes_") and (not hasattr(obj, "range_"))
 
         elif obj._target_color_type == TargetType.CONTINUOUS:
-            assert (not hasattr(obj, 'classes_')) and hasattr(obj, 'range_')
+            assert (not hasattr(obj, "classes_")) and hasattr(obj, "range_")
 
         else:
             raise ValueError(
@@ -245,7 +251,7 @@ class TestDataVisualizer(object):
             )
 
         for field in fields:
-            if field in {'classes_', 'range_', '_label_encoder'}:
+            if field in {"classes_", "range_", "_label_encoder"}:
                 continue  # handled by mutually exclusive
             assert hasattr(obj, field)
 
@@ -271,7 +277,7 @@ class TestDataVisualizer(object):
         X, _ = getattr(self, target_type)
         oz = DataVisualizer(target_type=target_type).fit(X, y=None)
 
-        assert oz._colors == 'C0'
+        assert oz._colors == "C0"
         assert oz._target_color_type == TargetType.SINGLE
 
     @pytest.mark.parametrize("dataset", ("discrete", "continuous"))
@@ -280,7 +286,9 @@ class TestDataVisualizer(object):
         Ensure user specified target type overrides auto discovery
         """
         X, y = getattr(self, dataset)
-        target_type = TargetType.CONTINUOUS if dataset == "discrete" else TargetType.DISCRETE
+        target_type = (
+            TargetType.CONTINUOUS if dataset == "discrete" else TargetType.DISCRETE
+        )
 
         oz = DataVisualizer(target_type=target_type)
         assert oz.target_type != TargetType.AUTO
@@ -330,8 +338,8 @@ class TestDataVisualizer(object):
         Ensure classes are assigned correctly for label encoding
         """
         X, y = self.discrete
-        classes = ['a', 'b', 'c', 'd', 'e']
-        oz = DataVisualizer(classes=classes, target_type='discrete').fit(X, y)
+        classes = ["a", "b", "c", "d", "e"]
+        oz = DataVisualizer(classes=classes, target_type="discrete").fit(X, y)
 
         npt.assert_array_equal(oz.classes_, classes)
         assert list(oz._colors.keys()) == classes
@@ -341,8 +349,8 @@ class TestDataVisualizer(object):
         Ensure classes are ignored in continuous case
         """
         X, y = self.continuous
-        classes = ['a', 'b', 'c', 'd', 'e']
-        oz = DataVisualizer(classes=classes, target_type='continuous').fit(X, y)
+        classes = ["a", "b", "c", "d", "e"]
+        oz = DataVisualizer(classes=classes, target_type="continuous").fit(X, y)
 
         assert not hasattr(oz, "classes_")
 
@@ -364,11 +372,9 @@ class TestDataVisualizer(object):
         """
         oz = DataVisualizer()
         with pytest.raises(NotFitted, match="cannot determine colors"):
-            oz.get_colors(['a', 'b', 'c'])
+            oz.get_colors(["a", "b", "c"])
 
-    @pytest.mark.parametrize('color, expected', [
-        (None, 'C0'), ('#F3B8AB', '#F3B8AB')
-    ])
+    @pytest.mark.parametrize("color, expected", [(None, "C0"), ("#F3B8AB", "#F3B8AB")])
     def test_get_colors_single(self, color, expected):
         """
         Test color assignment for single target type
@@ -400,39 +406,39 @@ class TestDataVisualizer(object):
         """
         X, y = self.discrete
         oz = DataVisualizer(
-            classes=['a', 'b', 'c', 'd', 'e'],
-            colors=['g', 'r', 'b', 'm', 'y']
+            classes=["a", "b", "c", "d", "e"], colors=["g", "r", "b", "m", "y"]
         ).fit(X, y)
         assert oz.get_target_color_type() == TargetType.DISCRETE
 
         colors = oz.get_colors(y)
         assert len(colors) == len(y)
-        assert set(colors) == set(['g', 'r', 'b', 'm', 'y'])
+        assert set(colors) == set(["g", "r", "b", "m", "y"])
 
     def test_get_colors_not_label_encoded(self):
         """
         Assert exception is raised on unknown class label for get_colors
         """
         X, y = self.discrete
-        oz = DataVisualizer(classes='abcde').fit(X, y)
+        oz = DataVisualizer(classes="abcde").fit(X, y)
 
         with pytest.raises(YellowbrickKeyError, match="could not determine color"):
             oz.get_colors(["foo"])
 
-    @pytest.mark.parametrize("colors, colormap", [
-        (["#3f78de", "#f38b33"], None),
-        (['b', 'g', 'r', 'm', 'y'], None),
-        (None, "Blues"),
-    ])
+    @pytest.mark.parametrize(
+        "colors, colormap",
+        [
+            (["#3f78de", "#f38b33"], None),
+            (["b", "g", "r", "m", "y"], None),
+            (None, "Blues"),
+        ],
+    )
     def test_user_get_colors_discrete(self, colors, colormap):
         """
         Test the ways that users can specify colors
         """
         X, y = self.discrete
         oz = DataVisualizer(
-            colors=colors,
-            colormap=colormap,
-            target_type="discrete"
+            colors=colors, colormap=colormap, target_type="discrete"
         ).fit(X, y)
 
         colors = oz.get_colors(y)
