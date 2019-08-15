@@ -58,7 +58,7 @@ class TestPCA(VisualTestCase):
         assert not hasattr(visualizer, "range_")
         self.assert_images_similar(visualizer)
 
-    @pytest.mark.xfailif(IS_WINDOWS_OR_CONDA, reason="RMS of 10.205 on miniconda")
+    @pytest.mark.xfail(IS_WINDOWS_OR_CONDA, reason="RMS of 10.205 on miniconda")
     def test_continuous(self):
         """
         Test continuous target
@@ -116,7 +116,7 @@ class TestPCA(VisualTestCase):
         with pytest.raises(NotFitted, match=msg):
             oz.transform(*self.continuous)
 
-    @pytest.mark.xfailif(IS_WINDOWS_OR_CONDA, reason="RMS of 12.115 on miniconda")
+    @pytest.mark.xfail(IS_WINDOWS_OR_CONDA, reason="RMS of 12.115 on miniconda")
     def test_pca_decomposition_quick_method(self):
         """
         Test the quick method PCA visualizer 2 dimensions scaled.
@@ -142,7 +142,7 @@ class TestPCA(VisualTestCase):
         # Assert PCA transformation occurred successfully
         assert pca_array.shape == (self.discrete.X.shape[0], 2)
 
-    @pytest.mark.xfailif(IS_WINDOWS_OR_CONDA, reason="RMS of 8.828 on miniconda")
+    @pytest.mark.xfail(IS_WINDOWS_OR_CONDA, reason="RMS of 8.828 on miniconda")
     def test_scale_false_2d(self):
         """
         Test the PCA visualizer 2 dimensions non-scaled.
@@ -270,7 +270,7 @@ class TestPCA(VisualTestCase):
         assert scatter_kwargs["alpha"] == 0.3
         assert pca_array.shape == (self.discrete.X.shape[0], 2)
 
-    @pytest.mark.xfailif(IS_WINDOWS_OR_CONDA, reason="RMS of 7.332 on miniconda")
+    @pytest.mark.xfail(IS_WINDOWS_OR_CONDA, reason="RMS of 7.332 on miniconda")
     def test_colorbar(self):
         """
         Test the PCA visualizer's colorbar features.
@@ -291,7 +291,7 @@ class TestPCA(VisualTestCase):
         # AppVeyor tests fail with RMS of 7.280
         self.assert_images_similar(visualizer, windows_tol=7.5)
 
-    @pytest.mark.xfailif(IS_WINDOWS_OR_CONDA, reason="RMS of 14.515 on miniconda")
+    @pytest.mark.xfail(IS_WINDOWS_OR_CONDA, reason="RMS of 14.515 on miniconda")
     def test_heatmap(self):
         """
         Test the PCA visualizer's heatmap features.
@@ -316,7 +316,7 @@ class TestPCA(VisualTestCase):
         # AppVeyor tests fail with RMS 14.492
         self.assert_images_similar(visualizer, windows_tol=14.5)
 
-    @pytest.mark.xfailif(IS_WINDOWS_OR_CONDA, reason="RMS of 10.987 on miniconda")
+    @pytest.mark.xfail(IS_WINDOWS_OR_CONDA, reason="RMS of 10.987 on miniconda")
     def test_colorbar_heatmap(self):
         """
         Test the PCA visualizer with both colorbar and heatmap.
