@@ -1,10 +1,10 @@
 # tests.test_features.test_radviz
 # Test the RadViz feature analysis visualizers
 #
-# Author:   Benjamin Bengfort <bbengfort@districtdatalabs.com>
+# Author:   Benjamin Bengfort
 # Created:  Fri Oct 07 12:19:19 2016 -0400
 #
-# Copyright (C) 2016 District Data Labs
+# Copyright (C) 2016 The scikit-yb developers
 # For license information, see LICENSE.txt
 #
 # ID: test_radviz.py [01d5996] benjamin@bengfort.com $

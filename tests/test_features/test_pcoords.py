@@ -1,7 +1,7 @@
 # tests.test_features.test_pcoords
 # Testing for the parallel coordinates feature visualizers
 #
-# Author:  Benjamin Bengfort <bbengfort@districtdatalabs.com>
+# Author:  Benjamin Bengfort
 # Author:  @thekylesaurus
 # Created: Thu Oct 06 11:21:27 2016 -0400
 #
