@@ -2,10 +2,13 @@
 # yellowbrick.features.pca
 # Decomposition based feature visualization with PCA.
 #
-# Author:   Carlo Morales <@cjmorale>
-# Author:   Raúl Peralta Lozada <@RaulPL>
-# Author:   Benjamin Bengfort <@bbengfort>
+# Author:   Carlo Morales
+# Author:   Raúl Peralta Lozada
+# Author:   Benjamin Bengfort
 # Created:  Tue May 23 18:34:27 2017 -0400
+#
+# Copyright (C) 2017 The scikit-yb developers
+# For license information, see LICENSE.txt
 #
 # ID: pca.py [] cmorales@pacificmetrics.com $
 
@@ -72,7 +75,6 @@ class PCA(ProjectionVisualizer):
         The number of axes to project into, either 2d or 3d. To plot 3d plots
         with matplotlib, please ensure a 3d axes is passed to the visualizer,
         otherwise one will be created using the current figure.
-
 
     proj_features : bool, default: False
         Boolean that indicates if the user wants to project the features
@@ -509,7 +511,6 @@ def pca_decomposition(
         The number of axes to project into, either 2d or 3d. To plot 3d plots
         with matplotlib, please ensure a 3d axes is passed to the visualizer,
         otherwise one will be created using the current figure.
-
 
     proj_features : bool, default: False
         Boolean that indicates if the user wants to project the features

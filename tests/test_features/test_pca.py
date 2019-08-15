@@ -2,10 +2,13 @@
 # tests.test_features.test_pca
 # Tests for the PCA based feature visualizer.
 #
-# Author:   Carlo Morales <@cjmorale>
-# Author:   Raúl Peralta Lozada <@RaulPL>
-# Author:   Benjamin Bengfort <@bbengfort>
+# Author:   Carlo Morales
+# Author:   Raúl Peralta Lozada
+# Author:   Benjamin Bengfort
 # Created:  Tue May 23 18:34:27 2017 -0400
+#
+# Copyright (C) 2017 The scikit-yb developers.
+# For license information, see LICENSE.txt
 #
 # ID: test_pca.py [] cmorales@pacificmetrics.com $
 
@@ -37,7 +40,7 @@ except ImportError:
 
 
 ##########################################################################
-##PCA Tests
+# PCA Tests
 ##########################################################################
 
 

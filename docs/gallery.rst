@@ -54,18 +54,6 @@ Feature Analysis
     :alt: Isomap Manifold Visualization
     :target: api/features/manifold.html#continuous-target
 
-.. image:: images/gallery/feature_importances.png
-    :width: 200px
-    :height: 100px
-    :alt: Feature Importance using Ensemble Classifier
-    :target: api/features/importances.html#feature-importances
-
-.. image:: images/gallery/rfecv_sklearn_example.png
-    :width: 200px
-    :height: 100px
-    :alt: Recursive Feature Elimination with Ensemble Classifier
-    :target: api/features/rfecv.html#recursive-feature-elimination
-
 .. image:: images/gallery/scatter.png
     :width: 200px
     :height: 100px
@@ -206,6 +194,17 @@ Model Selection Visualizers
     :alt: Nearest Neighbor Decision Boundary Prototype
     :target: api/contrib/boundaries.html#decisionboundaries-vizualizer
 
+.. image:: images/gallery/feature_importances.png
+    :width: 200px
+    :height: 100px
+    :alt: Feature Importance using Ensemble Classifier
+    :target: api/model_selection/importances.html#feature-importances
+
+.. image:: images/gallery/rfecv_sklearn_example.png
+    :width: 200px
+    :height: 100px
+    :alt: Recursive Feature Elimination with Ensemble Classifier
+    :target: api/model_selection/rfecv.html#recursive-feature-elimination
 
 Text Modeling Visualizers
 ---------------------------

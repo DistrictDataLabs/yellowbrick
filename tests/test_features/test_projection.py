@@ -232,7 +232,7 @@ class TestProjectionVisualizer(VisualTestCase):
 
     def test_colorbar_false(self):
         """
-        Test that colorbar equals false works correctly 
+        Test that colorbar equals false works correctly
         """
         visualizer = MockVisualizer(colorbar=False, colormap="YlOrRd")
         visualizer.fit_transform(*self.continuous)
