@@ -1,3 +1,14 @@
+# tests.test_features.conftest
+# Provides fixtures for the feature tests module.
+#
+# Author:   Naresh Bachwani
+# Created:  Thu Aug 15 07:35:53 2019 -0400
+#
+# Copyright (C) 2016 The scikit-yb developers
+# For license information, see LICENSE.txt
+#
+# ID: conftest.py [] nbnb76543@gmail.com $
+
 """
 Provides fixtures for the feature tests module.
 """
@@ -5,14 +16,17 @@ Provides fixtures for the feature tests module.
 ##########################################################################
 ## Imports
 ##########################################################################
+
 import pytest
-from sklearn.datasets import make_classification, make_regression, make_s_curve
 
 from tests.fixtures import Dataset
+from sklearn.datasets import make_classification, make_regression, make_s_curve
+
 
 ##########################################################################
 ## Fixtures
 ##########################################################################
+
 
 @pytest.fixture(scope="class")
 def discrete(request):
@@ -48,6 +62,7 @@ def continuous(request):
     # Set a class attribute for continuous data
     request.cls.continuous = Dataset(X, y)
 
+
 @pytest.fixture(scope="class")
 def s_curves(request):
     """
@@ -56,4 +71,3 @@ def s_curves(request):
     X, y = make_s_curve(1000, random_state=888)
     # Set a class attribute for continuous data
     request.cls.s_curves = Dataset(X, y)
-

@@ -23,9 +23,9 @@ from yellowbrick.exceptions import YellowbrickValueError, ModelError, NotFitted
 
 from sklearn.pipeline import Pipeline
 from sklearn.decomposition import PCA
-from sklearn.manifold import LocallyLinearEmbedding
-from sklearn.datasets import make_s_curve
 from sklearn.datasets import make_blobs
+from sklearn.datasets import make_s_curve
+from sklearn.manifold import LocallyLinearEmbedding
 
 from unittest.mock import patch
 from tests.base import VisualTestCase
