@@ -1,11 +1,11 @@
 # yellowbrick.features.base
 # Base classes for feature visualizers and feature selection tools.
 #
-# Author:   Rebecca Bilbro <rbilbro@districtdatalabs.com>
-# Author:   Benjamin Bengfort <bbengfort@districtdatalabs.com>
+# Author:   Rebecca Bilbro
+# Author:   Benjamin Bengfort
 # Created:  Fri Oct 07 13:41:24 2016 -0400
 #
-# Copyright (C) 2016 District Data Labs
+# Copyright (C) 2016 The scikit-yb developers
 # For license information, see LICENSE.txt
 #
 # ID: base.py [2e898a6] benjamin@bengfort.com $
@@ -37,6 +37,7 @@ from sklearn.base import TransformerMixin
 ## Feature Visualizers
 ##########################################################################
 
+
 class FeatureVisualizer(Visualizer, TransformerMixin):
     """Base class for feature visualization.
 
@@ -59,12 +60,16 @@ class FeatureVisualizer(Visualizer, TransformerMixin):
         The axis to plot the figure on. If None is passed in the current axes
         will be used (or generated if required).
 
+    fig : matplotlib Figure, default: None
+        The figure to plot the Visualizer on. If None is passed in the current
+        plot will be used (or generated if required).
+
     kwargs : dict
         Any additional keyword arguments to pass to the base Visualizer.
     """
 
-    def __init__(self, ax=None, **kwargs):
-        super(FeatureVisualizer, self).__init__(ax=ax, **kwargs)
+    def __init__(self, ax=None, fig=None, **kwargs):
+        super(FeatureVisualizer, self).__init__(ax=ax, fig=fig, **kwargs)
 
     def transform(self, X, y=None):
         """
@@ -132,6 +137,10 @@ class MultiFeatureVisualizer(FeatureVisualizer):
         The axis to plot the figure on. If None is passed in the current axes
         will be used (or generated if required).
 
+    fig : matplotlib Figure, default: None
+        The figure to plot the Visualizer on. If None is passed in the current
+        plot will be used (or generated if required).
+
     features : list, default: None
         The names of the features specified by the columns of the input dataset.
         This length of this list must match the number of columns in X, otherwise
@@ -150,8 +159,8 @@ class MultiFeatureVisualizer(FeatureVisualizer):
         DataFrame are used or just simply the indices of the data array.
     """
 
-    def __init__(self, ax=None, features=None, **kwargs):
-        super(MultiFeatureVisualizer, self).__init__(ax=ax, **kwargs)
+    def __init__(self, ax=None, fig=None, features=None, **kwargs):
+        super(MultiFeatureVisualizer, self).__init__(ax=ax, fig=fig, **kwargs)
 
         # Data Parameters
         self.features = features
@@ -181,10 +190,12 @@ class MultiFeatureVisualizer(FeatureVisualizer):
             # Use the user-specified features with some checking
             # TODO: allow the user specified features to filter the dataset
             if len(self.features) != n_columns:
-                raise YellowbrickValueError((
-                    "number of supplied feature names does not match the number "
-                    "of columns in the training data."
-                ))
+                raise YellowbrickValueError(
+                    (
+                        "number of supplied feature names does not match the number "
+                        "of columns in the training data."
+                    )
+                )
 
             self.features_ = np.array(self.features)
 
@@ -205,6 +216,7 @@ class MultiFeatureVisualizer(FeatureVisualizer):
 ##########################################################################
 ## Data Visualizers
 ##########################################################################
+
 
 class DataVisualizer(MultiFeatureVisualizer):
     """Visualizations of instances in feature space.
@@ -232,6 +244,10 @@ class DataVisualizer(MultiFeatureVisualizer):
     ax : matplotlib.Axes, default: None
         The axis to plot the figure on. If None is passed in the current axes
         will be used (or generated if required).
+
+    fig : matplotlib Figure, default: None
+        The figure to plot the Visualizer on. If None is passed in the current
+        plot will be used (or generated if required).
 
     features : list, default: None
         The names of the features specified by the columns of the input dataset.
@@ -292,9 +308,18 @@ class DataVisualizer(MultiFeatureVisualizer):
         Only available if the target type is continuous.
     """
 
-    def __init__(self, ax=None, features=None, classes=None, colors=None,
-                 colormap=None, target_type="auto", **kwargs):
-        super(DataVisualizer, self).__init__(ax=ax, features=features, **kwargs)
+    def __init__(
+        self,
+        ax=None,
+        fig=None,
+        features=None,
+        classes=None,
+        colors=None,
+        colormap=None,
+        target_type="auto",
+        **kwargs
+    ):
+        super(DataVisualizer, self).__init__(ax=ax, fig=fig, features=features, **kwargs)
 
         # Validate raises YellowbrickValueError if invalid
         TargetType.validate(target_type)
@@ -340,7 +365,7 @@ class DataVisualizer(MultiFeatureVisualizer):
         # Handle the single target color type
         if self._target_color_type == TargetType.SINGLE:
             # use the user supplied color or the first color in the color cycle
-            self._colors = self.colors or 'C0'
+            self._colors = self.colors or "C0"
 
         # Compute classes and colors if target type is discrete
         elif self._target_color_type == TargetType.DISCRETE:
@@ -353,10 +378,12 @@ class DataVisualizer(MultiFeatureVisualizer):
 
                 # Validate user supplied class labels
                 if len(self.classes_) != len(labels):
-                    raise YellowbrickValueError((
-                        "number of specified classes does not match "
-                        "number of unique values in target"
-                    ))
+                    raise YellowbrickValueError(
+                        (
+                            "number of specified classes does not match "
+                            "number of unique values in target"
+                        )
+                    )
 
             # Get the string labels from the unique values in y
             else:
@@ -364,9 +391,7 @@ class DataVisualizer(MultiFeatureVisualizer):
 
             # Create a map of class labels to colors
             color_values = resolve_colors(
-                n_colors=len(self.classes_),
-                colormap=self.colormap,
-                colors=self.colors
+                n_colors=len(self.classes_), colormap=self.colormap, colors=self.colors
             )
             self._colors = dict(zip(self.classes_, color_values))
             self._label_encoder = dict(zip(labels, self.classes_))
@@ -408,11 +433,15 @@ class DataVisualizer(MultiFeatureVisualizer):
             self._target_color_type = TargetType(self.target_type)
 
         # Ensures that target is either SINGLE, DISCRETE or CONTINUOUS before continuing
-        if self._target_color_type == TargetType.AUTO or self._target_color_type == TargetType.UNKNOWN:
-            raise YellowbrickValueError((
-                "could not determine target color type "
-                "from target='{}' to '{}'"
-            ).format(self.target_type, self._target_color_type))
+        if (
+            self._target_color_type == TargetType.AUTO
+            or self._target_color_type == TargetType.UNKNOWN
+        ):
+            raise YellowbrickValueError(
+                (
+                    "could not determine target color type " "from target='{}' to '{}'"
+                ).format(self.target_type, self._target_color_type)
+            )
 
     def get_target_color_type(self):
         """
@@ -448,9 +477,7 @@ class DataVisualizer(MultiFeatureVisualizer):
                 # Use the label encoder to get the class name (or use the value
                 # if the label is not mapped in the encoder) then use the class
                 # name to get the color from the color map.
-                return [
-                    self._colors[self._label_encoder.get(yi, yi)] for yi in y
-                ]
+                return [self._colors[self._label_encoder.get(yi, yi)] for yi in y]
             except KeyError:
                 unknown = set(y) - set(self._label_encoder.keys())
                 unknown = ", ".join(["'{}'".format(uk) for uk in unknown])

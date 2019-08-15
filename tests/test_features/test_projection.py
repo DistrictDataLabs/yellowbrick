@@ -4,7 +4,7 @@
 # Author:   Naresh Bachwani
 # Created:  Wed Jul 17 09:53:07 2019 -0400
 #
-# Copyright (C) 2019, the scikit-yb developers.
+# Copyright (C) 2019 the scikit-yb developers.
 # For license information, see LICENSE.txt
 #
 # ID: test_projection.py [] naresh-bachwani@noreply.github.com $
@@ -16,7 +16,6 @@ Test the base ProjectionVisualizer drawing functionality
 ##########################################################################
 ## Imports
 ##########################################################################
-
 
 import pytest
 import numpy.testing as npt
