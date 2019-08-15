@@ -23,13 +23,10 @@ import numpy.testing as npt
 import numpy as np
 
 from unittest import mock
-from ..fixtures import Dataset
 from tests.base import VisualTestCase
 
 from yellowbrick.features.pca import *
 from yellowbrick.exceptions import YellowbrickError, NotFitted
-
-from sklearn.datasets import make_classification, make_regression
 
 # Note: this can be removed when we deprecate mpl in #826
 try:
@@ -38,52 +35,13 @@ try:
 except ImportError:
     make_axes_locatable = None
 
-##########################################################################
-## Fixtures
-##########################################################################
-
-
-@pytest.fixture(scope="class")
-def binary(request):
-    """
-    Creates a fixture of train and test splits for the sklearn digits dataset
-    For ease of use returns a Dataset named tuple composed of two Split tuples.
-    """
-    X, y = make_classification(
-        n_samples=400,
-        n_features=12,
-        n_informative=8,
-        n_redundant=0,
-        n_classes=2,
-        n_clusters_per_class=1,
-        class_sep=1.8,
-        random_state=854,
-        scale=[14.2, 2.1, 0.32, 0.001, 32.3, 44.1, 102.3, 2.3, 2.4, 38.2, 0.05, 1.0],
-    )
-
-    # Set a class attribute for digits
-    request.cls.binary = Dataset(X, y)
-
-
-@pytest.fixture(scope="class")
-def continuous(request):
-    """
-    Creates a random regressor fixture.
-    """
-    X, y = make_regression(
-        n_samples=500, n_features=22, n_informative=8, random_state=2019
-    )
-
-    # Set a class attribute for continuous data
-    request.cls.continuous = Dataset(X, y)
-
 
 ##########################################################################
 ##PCA Tests
 ##########################################################################
 
 
-@pytest.mark.usefixtures("binary", "continuous")
+@pytest.mark.usefixtures("discrete", "continuous")
 class TestPCA(VisualTestCase):
     """
     Test the PCA visualizer
@@ -120,14 +78,15 @@ class TestPCA(VisualTestCase):
         """
         Test discrete target.
         """
-        colors = ["y", "C0"]
-        classes = ["cats", "dogs"]
+        classes = ["a", "b", "c", "d", "e"]
+        colors = ["r", "b", "g", "m", "c"]
+
         visualizer = PCA(colors=colors, classes=classes, random_state=83)
         assert not hasattr(visualizer, "classes_")
-        visualizer.fit(*self.binary)
+        visualizer.fit(*self.discrete)
         assert hasattr(visualizer, "classes_")
         assert not hasattr(visualizer, "range_")
-        visualizer.transform(*self.binary)
+        visualizer.transform(*self.discrete)
 
         # Make sure that classes are set correctly.
         npt.assert_array_equal(visualizer.classes_, classes)
@@ -139,7 +98,7 @@ class TestPCA(VisualTestCase):
         Test that fit returns self.
         """
         pca = PCA()
-        assert pca.fit(*self.binary) is pca
+        assert pca.fit(*self.discrete) is pca
 
     @pytest.mark.parametrize("n_components", [2, 3])
     def test_transform(self, n_components):
@@ -160,7 +119,7 @@ class TestPCA(VisualTestCase):
         Test the quick method PCA visualizer 2 dimensions scaled.
         """
         visualizer = pca_decomposition(
-            *self.binary, projection=2, scale=True, random_state=28
+            *self.discrete, projection=2, scale=True, random_state=28
         )
         self.assert_images_similar(visualizer)
 
@@ -169,14 +128,14 @@ class TestPCA(VisualTestCase):
         Test the PCA visualizer 2 dimensions scaled.
         """
         params = {"scale": True, "projection": 2, "random_state": 9932}
-        visualizer = PCA(**params).fit(*self.binary)
-        pca_array = visualizer.transform(*self.binary)
+        visualizer = PCA(**params).fit(*self.discrete)
+        pca_array = visualizer.transform(*self.discrete)
 
         # Image comparison tests
         self.assert_images_similar(visualizer)
 
         # Assert PCA transformation occurred successfully
-        assert pca_array.shape == (self.binary.X.shape[0], 2)
+        assert pca_array.shape == (self.discrete.X.shape[0], 2)
 
     def test_scale_false_2d(self):
         """
@@ -203,42 +162,42 @@ class TestPCA(VisualTestCase):
             "proj_features": True,
             "projection": 2,
         }
-        visualizer = PCA(**params).fit(self.binary.X)
-        pca_array = visualizer.transform(self.binary.X)
+        visualizer = PCA(**params).fit(self.discrete.X)
+        pca_array = visualizer.transform(self.discrete.X)
 
         # Image comparison tests
         self.assert_images_similar(visualizer, tol=5)
 
         # Assert PCA transformation occurred successfully
-        assert pca_array.shape == (self.binary.X.shape[0], 2)
+        assert pca_array.shape == (self.discrete.X.shape[0], 2)
 
     def test_scale_true_3d(self):
         """
         Test the PCA visualizer 3 dimensions scaled.
         """
         params = {"scale": True, "projection": 3, "random_state": 7382}
-        visualizer = PCA(**params).fit(self.binary.X)
-        pca_array = visualizer.transform(self.binary.X)
+        visualizer = PCA(**params).fit(self.discrete.X)
+        pca_array = visualizer.transform(self.discrete.X)
 
         # Image comparison tests
         self.assert_images_similar(visualizer)
 
         # Assert PCA transformation occurred successfully
-        assert pca_array.shape == (self.binary.X.shape[0], 3)
+        assert pca_array.shape == (self.discrete.X.shape[0], 3)
 
     def test_scale_false_3d(self):
         """
         Test the PCA visualizer 3 dimensions non-scaled.
         """
         params = {"scale": False, "projection": 3, "random_state": 98}
-        visualizer = PCA(**params).fit(self.binary.X)
-        pca_array = visualizer.transform(self.binary.X)
+        visualizer = PCA(**params).fit(self.discrete.X)
+        pca_array = visualizer.transform(self.discrete.X)
 
         # Image comparison tests
         self.assert_images_similar(visualizer)
 
         # Assert PCA transformation occurred successfully
-        assert pca_array.shape == (self.binary.X.shape[0], 3)
+        assert pca_array.shape == (self.discrete.X.shape[0], 3)
 
     @pytest.mark.xfail(
         sys.platform == "win32", reason="images not close on windows (RMSE=3)"
@@ -253,14 +212,14 @@ class TestPCA(VisualTestCase):
             "proj_features": True,
             "projection": 3,
         }
-        visualizer = PCA(**params).fit(*self.binary)
-        pca_array = visualizer.transform(*self.binary)
+        visualizer = PCA(**params).fit(*self.discrete)
+        pca_array = visualizer.transform(*self.discrete)
 
         # Image comparison tests
         self.assert_images_similar(visualizer, tol=5)
 
         # Assert PCA transformation occurred successfully
-        assert pca_array.shape == (self.binary.X.shape[0], 3)
+        assert pca_array.shape == (self.discrete.X.shape[0], 3)
 
     def test_scale_true_4d_exception(self):
         """
@@ -290,19 +249,19 @@ class TestPCA(VisualTestCase):
         """
         # Instantiate a prediction error plot, provide custom alpha
         params = {"alpha": 0.3, "projection": 2, "random_state": 9932}
-        visualizer = PCA(**params).fit(self.binary.X)
-        pca_array = visualizer.transform(self.binary.X)
+        visualizer = PCA(**params).fit(self.discrete.X)
+        pca_array = visualizer.transform(self.discrete.X)
         assert visualizer.alpha == 0.3
 
         visualizer.ax = mock.MagicMock()
-        visualizer.fit(self.binary.X)
-        visualizer.transform(self.binary.X)
+        visualizer.fit(self.discrete.X)
+        visualizer.transform(self.discrete.X)
 
         # Test that alpha was passed to internal matplotlib scatterplot
         _, scatter_kwargs = visualizer.ax.scatter.call_args
         assert "alpha" in scatter_kwargs
         assert scatter_kwargs["alpha"] == 0.3
-        assert pca_array.shape == (self.binary.X.shape[0], 2)
+        assert pca_array.shape == (self.discrete.X.shape[0], 2)
 
     def test_colorbar(self):
         """
@@ -312,7 +271,7 @@ class TestPCA(VisualTestCase):
             "scale": True,
             "projection": 2,
             "random_state": 7382,
-            "color": self.binary.y,
+            "color": self.discrete.y,
             "colorbar": True,
         }
         visualizer = PCA(**params).fit(*self.continuous)
@@ -330,11 +289,11 @@ class TestPCA(VisualTestCase):
             "scale": True,
             "projection": 2,
             "random_state": 7382,
-            "color": self.binary.y,
+            "color": self.discrete.y,
             "heatmap": True,
         }
-        visualizer = PCA(**params).fit(self.binary.X, self.binary.y)
-        visualizer.transform(self.binary.X, self.binary.y)
+        visualizer = PCA(**params).fit(self.discrete.X, self.discrete.y)
+        visualizer.transform(self.discrete.X, self.discrete.y)
         visualizer.finalize()
         # TODO: manually modifying ticks should be removed after #916 is fixed
         visualizer.lax.set_xticks([])
@@ -352,7 +311,7 @@ class TestPCA(VisualTestCase):
             "scale": True,
             "projection": 2,
             "random_state": 7382,
-            "color": self.binary.y,
+            "color": self.discrete.y,
             "colorbar": True,
             "heatmap": True,
         }

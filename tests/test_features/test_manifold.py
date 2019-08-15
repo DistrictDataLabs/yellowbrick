@@ -24,8 +24,8 @@ from yellowbrick.exceptions import YellowbrickValueError, ModelError, NotFitted
 from sklearn.pipeline import Pipeline
 from sklearn.decomposition import PCA
 from sklearn.manifold import LocallyLinearEmbedding
-from sklearn.datasets.samples_generator import make_s_curve
-from sklearn.datasets import make_classification, make_regression, make_blobs
+from sklearn.datasets import make_s_curve
+from sklearn.datasets import make_blobs
 
 from unittest.mock import patch
 from tests.base import VisualTestCase
@@ -40,7 +40,7 @@ except ImportError:
 ## Manifold Visualizer Tests
 ##########################################################################
 
-
+@pytest.mark.usefixtures("s_curves", "discrete", "continuous")
 class TestManifold(VisualTestCase):
     """
     Test Manifold visualizer
@@ -130,7 +130,7 @@ class TestManifold(VisualTestCase):
         """
         Test manifold fit with algorithms not having transform implemented
         """
-        X, y = make_s_curve(200, random_state=888)
+        X, y = self.s_curves
         msg = "requires data to be simultaneously fit and transformed"
         oz = Manifold(manifold=algorithm, n_neighbors=10, random_state=223)
         with pytest.raises(ModelError, match=msg):
@@ -142,7 +142,7 @@ class TestManifold(VisualTestCase):
         """
         Test manifold fit_transform method
         """
-        X, y = make_s_curve(1000, random_state=888)
+        X, y = self.s_curves
         manifold = Manifold(target="auto", projection=projection)
 
         assert not hasattr(manifold, "fit_time_")
@@ -161,7 +161,7 @@ class TestManifold(VisualTestCase):
         """
         Test manifold transform method
         """
-        X, y = make_s_curve(1000, random_state=888)
+        X, y = self.s_curves
         manifold = Manifold(
             manifold="lle", target="auto", n_neighbors=5, projection=projection
         )
@@ -176,7 +176,7 @@ class TestManifold(VisualTestCase):
         """
         Test the exception when manifold doesn't implement transform.
         """
-        X, _ = make_s_curve(1000, random_state=888)
+        X, _ = self.s_curves
         manifold = Manifold(manifold="lle", n_neighbors=5, target="auto")
 
         msg = "instance is not fitted yet, please call fit"
@@ -189,7 +189,7 @@ class TestManifold(VisualTestCase):
         """
         Assert that transform raises error when MDS, TSNE or Spectral Embedding algorithms are used.
         """
-        X, _ = make_s_curve(1000, random_state=888)
+        X, _ = self.s_curves
         manifold = Manifold(manifold=manifolds, target="auto", n_neighbors=10)
         mock_fit(X)
         msg = "requires data to be simultaneously fit and transformed"
@@ -201,15 +201,7 @@ class TestManifold(VisualTestCase):
         """
         Image similarity test for classification dataset (discrete y)
         """
-        X, y = make_classification(
-            n_samples=300,
-            n_features=7,
-            n_informative=4,
-            n_redundant=2,
-            n_classes=4,
-            n_clusters_per_class=2,
-            random_state=78,
-        )
+        X, y = self.discrete
 
         oz = Manifold(
             manifold="spectral", target="discrete", n_neighbors=5, random_state=108
@@ -226,15 +218,7 @@ class TestManifold(VisualTestCase):
         """
         Image similarity test for classification dataset (discrete y)
         """
-        X, y = make_classification(
-            n_samples=300,
-            n_features=7,
-            n_informative=4,
-            n_redundant=2,
-            n_classes=4,
-            n_clusters_per_class=2,
-            random_state=78,
-        )
+        X, y = self.discrete
 
         oz = Manifold(
             manifold="spectral",
@@ -256,9 +240,7 @@ class TestManifold(VisualTestCase):
         """
         Image similarity test for regression dataset (continuous y)
         """
-        X, y = make_regression(
-            n_samples=300, n_features=7, n_informative=4, random_state=87
-        )
+        X, y = self.continuous
 
         oz = Manifold(manifold="tsne", target="continuous", random_state=1)
         assert not hasattr(oz, "range_")
@@ -273,9 +255,7 @@ class TestManifold(VisualTestCase):
         """
         Image similarity test for regression dataset (continuous y)
         """
-        X, y = make_regression(
-            n_samples=300, n_features=7, n_informative=4, random_state=87
-        )
+        X, y = self.continuous
 
         oz = Manifold(
             manifold="tsne", target="continuous", random_state=1, projection=3
@@ -316,7 +296,7 @@ class TestManifold(VisualTestCase):
         """
         Test manifold on a dataset made up of a pandas DataFrame and Series
         """
-        X, y = make_s_curve(200, random_state=888)
+        X, y = self.s_curves
 
         oz = Manifold(
             manifold="ltsa",
