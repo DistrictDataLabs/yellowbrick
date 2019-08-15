@@ -23,7 +23,6 @@ import matplotlib.pyplot as plt
 from mpl_toolkits.axes_grid1 import make_axes_locatable
 import mpl_toolkits.mplot3d  # noqa
 
-from yellowbrick.style import palettes
 from yellowbrick.draw import manual_legend
 from yellowbrick.features.base import DataVisualizer, TargetType
 from yellowbrick.exceptions import YellowbrickValueError, YellowbrickWarning, NotFitted
@@ -121,10 +120,6 @@ class ProjectionVisualizer(DataVisualizer):
         colorbar=True,
         **kwargs
     ):
-
-        # TODO: add this to resolve_colors
-        if colors is None and colormap is None:
-            colormap = palettes.DEFAULT_SEQUENCE
 
         super(ProjectionVisualizer, self).__init__(
             ax=ax,
@@ -277,12 +272,16 @@ class ProjectionVisualizer(DataVisualizer):
         """
         Draws legends and colorbar for scatter plots.
         """
+        self.ax.set_xticklabels([])
+        self.ax.set_yticklabels([])
+        if self.projection == 3:
+            self.ax.set_zticklabels([])
+
         if self._target_color_type == TargetType.DISCRETE:
             # Add the legend
             manual_legend(
                 self, self.classes_, list(self._colors.values()), frameon=True
             )
-
         elif self._target_color_type == TargetType.CONTINUOUS:
             if self.colorbar:
                 if self.projection == 3:

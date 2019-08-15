@@ -78,6 +78,6 @@ API Reference
 -------------
 
 .. automodule:: yellowbrick.features.pca
-    :members: PCADecomposition
+    :members: PCA
     :undoc-members:
     :show-inheritance:

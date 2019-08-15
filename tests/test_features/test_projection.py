@@ -21,53 +21,15 @@ import pytest
 import numpy.testing as npt
 import matplotlib.pyplot as plt
 
+from yellowbrick.features.projection import *
+from yellowbrick.exceptions import YellowbrickValueError
+
+from tests.base import VisualTestCase
 from unittest import mock
 
 from sklearn.decomposition import PCA
 from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import StandardScaler
-from sklearn.datasets import make_classification, make_regression
-
-from tests.fixtures import Dataset
-from tests.base import VisualTestCase
-from yellowbrick.features.projection import *
-from yellowbrick.exceptions import YellowbrickValueError
-
-##########################################################################
-## Fixtures
-##########################################################################
-
-
-@pytest.fixture(scope="class")
-def discrete(request):
-    """
-    Creare a random classification fixture.
-    """
-    X, y = make_classification(
-        n_samples=400,
-        n_features=12,
-        n_informative=10,
-        n_redundant=0,
-        n_classes=5,
-        random_state=2019,
-    )
-
-    # Set a class attribute for discrete data
-    request.cls.discrete = Dataset(X, y)
-
-
-@pytest.fixture(scope="class")
-def continuous(request):
-    """
-    Creates a random regressor fixture.
-    """
-    X, y = make_regression(
-        n_samples=500, n_features=22, n_informative=8, random_state=2019
-    )
-
-    # Set a class attribute for continuous data
-    request.cls.continuous = Dataset(X, y)
-
 
 ##########################################################################
 ## MockVisualizer
