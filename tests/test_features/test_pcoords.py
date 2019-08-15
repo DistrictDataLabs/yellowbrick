@@ -39,15 +39,23 @@ except ImportError:
 ## Fixtures
 ##########################################################################
 
-@pytest.fixture(scope='class')
+
+@pytest.fixture(scope="class")
 def dataset(request):
     """
     Creates a random multiclass classification dataset fixture
     """
     X, y = make_classification(
-        n_samples=200, n_features=5, n_informative=4, n_redundant=0,
-        n_classes=3, n_clusters_per_class=1, random_state=451, flip_y=0,
-        class_sep=3, scale=np.array([1.0, 2.0, 100.0, 20.0, 1.0])
+        n_samples=200,
+        n_features=5,
+        n_informative=4,
+        n_redundant=0,
+        n_classes=3,
+        n_clusters_per_class=1,
+        random_state=451,
+        flip_y=0,
+        class_sep=3,
+        scale=np.array([1.0, 2.0, 100.0, 20.0, 1.0]),
     )
 
     dataset = Dataset(X, y)
@@ -58,7 +66,8 @@ def dataset(request):
 ## Parallel Coordinates Tests
 ##########################################################################
 
-@pytest.mark.usefixtures('dataset')
+
+@pytest.mark.usefixtures("dataset")
 class TestParallelCoordinates(VisualTestCase):
     """
     Test the ParallelCoordinates visualizer
@@ -105,7 +114,7 @@ class TestParallelCoordinates(VisualTestCase):
         Test image closeness when class and feature labels are supplied
         """
         visualizer = ParallelCoordinates(
-            classes=['a', 'b', 'c'], features=['f1', 'f2', 'f3', 'f4', 'f5']
+            classes=["a", "b", "c"], features=["f1", "f2", "f3", "f4", "f5"]
         )
         visualizer.fit_transform(self.dataset.X, self.dataset.y)
         visualizer.finalize()
@@ -116,7 +125,7 @@ class TestParallelCoordinates(VisualTestCase):
         Test image closeness when class and feature labels are supplied in fast mode
         """
         visualizer = ParallelCoordinates(
-            classes=['a', 'b', 'c'], features=['f1', 'f2', 'f3', 'f4', 'f5'], fast=True
+            classes=["a", "b", "c"], features=["f1", "f2", "f3", "f4", "f5"], fast=True
         )
         visualizer.fit_transform(self.dataset.X, self.dataset.y)
         visualizer.finalize()
@@ -126,7 +135,7 @@ class TestParallelCoordinates(VisualTestCase):
         """
         Test image closeness on l2 normalized 3 class dataset
         """
-        visualizer = ParallelCoordinates(normalize='l2')
+        visualizer = ParallelCoordinates(normalize="l2")
         visualizer.fit_transform(self.dataset.X, self.dataset.y)
         visualizer.finalize()
         self.assert_images_similar(visualizer, tol=0.25)
@@ -135,7 +144,7 @@ class TestParallelCoordinates(VisualTestCase):
         """
         Test image closeness on l2 normalized 3 class dataset in fast mode
         """
-        visualizer = ParallelCoordinates(normalize='l2', fast=True)
+        visualizer = ParallelCoordinates(normalize="l2", fast=True)
         visualizer.fit_transform(self.dataset.X, self.dataset.y)
         visualizer.finalize()
         self.assert_images_similar(visualizer, tol=0.25)
@@ -144,7 +153,7 @@ class TestParallelCoordinates(VisualTestCase):
         """
         Test image closeness on minmax normalized 3 class dataset
         """
-        visualizer = ParallelCoordinates(normalize='minmax')
+        visualizer = ParallelCoordinates(normalize="minmax")
         visualizer.fit_transform(self.dataset.X, self.dataset.y)
         visualizer.finalize()
         self.assert_images_similar(visualizer, tol=0.25)
@@ -153,7 +162,7 @@ class TestParallelCoordinates(VisualTestCase):
         """
         Test image closeness on minmax normalized 3 class dataset in fast mode
         """
-        visualizer = ParallelCoordinates(normalize='minmax', fast=True)
+        visualizer = ParallelCoordinates(normalize="minmax", fast=True)
         visualizer.fit_transform(self.dataset.X, self.dataset.y)
         visualizer.finalize()
         self.assert_images_similar(visualizer, tol=0.25)
@@ -165,7 +174,9 @@ class TestParallelCoordinates(VisualTestCase):
         """
         data = load_occupancy(return_dataset=True)
         X, y = data.to_pandas()
-        classes = [k for k, _ in sorted(data.meta['labels'].items(), key=lambda i: i[1])]
+        classes = [
+            k for k, _ in sorted(data.meta["labels"].items(), key=lambda i: i[1])
+        ]
 
         assert isinstance(X, pd.DataFrame)
         assert isinstance(y, pd.Series)
@@ -184,7 +195,9 @@ class TestParallelCoordinates(VisualTestCase):
         """
         data = load_occupancy(return_dataset=True)
         X, y = data.to_numpy()
-        classes = [k for k, _ in sorted(data.meta['labels'].items(), key=lambda i: i[1])]
+        classes = [
+            k for k, _ in sorted(data.meta["labels"].items(), key=lambda i: i[1])
+        ]
 
         assert isinstance(X, np.ndarray)
         assert isinstance(y, np.ndarray)
@@ -204,7 +217,9 @@ class TestParallelCoordinates(VisualTestCase):
         """
         data = load_occupancy(return_dataset=True)
         X, y = data.to_pandas()
-        classes = [k for k, _ in sorted(data.meta['labels'].items(), key=lambda i: i[1])]
+        classes = [
+            k for k, _ in sorted(data.meta["labels"].items(), key=lambda i: i[1])
+        ]
 
         assert isinstance(X, pd.DataFrame)
         assert isinstance(y, pd.Series)
@@ -221,7 +236,9 @@ class TestParallelCoordinates(VisualTestCase):
         """
         data = load_occupancy(return_dataset=True)
         X, y = data.to_numpy()
-        classes = [k for k, _ in sorted(data.meta['labels'].items(), key=lambda i: i[1])]
+        classes = [
+            k for k, _ in sorted(data.meta["labels"].items(), key=lambda i: i[1])
+        ]
 
         assert isinstance(X, np.ndarray)
         assert isinstance(y, np.ndarray)
@@ -237,7 +254,7 @@ class TestParallelCoordinates(VisualTestCase):
         Invalid argument to 'normalize' should raise
         """
         with pytest.raises(YellowbrickValueError):
-            ParallelCoordinates(normalize='foo')
+            ParallelCoordinates(normalize="foo")
 
     def test_sample_int(self):
         """
@@ -256,7 +273,9 @@ class TestParallelCoordinates(VisualTestCase):
         visualizer = ParallelCoordinates(sample=3, shuffle=True, random_state=444)
         visualizer.fit_transform(self.dataset.X, self.dataset.y)
 
-        visualizer = ParallelCoordinates(sample=3, shuffle=True, random_state=np.random.RandomState())
+        visualizer = ParallelCoordinates(
+            sample=3, shuffle=True, random_state=np.random.RandomState()
+        )
         visualizer.fit_transform(self.dataset.X, self.dataset.y)
 
     def test_sample_int_shuffle_false(self):
@@ -269,7 +288,9 @@ class TestParallelCoordinates(VisualTestCase):
         visualizer = ParallelCoordinates(sample=3, shuffle=False, random_state=444)
         visualizer.fit_transform(self.dataset.X, self.dataset.y)
 
-        visualizer = ParallelCoordinates(sample=3, shuffle=False, random_state=np.random.RandomState())
+        visualizer = ParallelCoordinates(
+            sample=3, shuffle=False, random_state=np.random.RandomState()
+        )
         visualizer.fit_transform(self.dataset.X, self.dataset.y)
 
     def test_sample_int_invalid(self):
@@ -296,7 +317,9 @@ class TestParallelCoordinates(VisualTestCase):
         visualizer = ParallelCoordinates(sample=0.5, shuffle=True, random_state=444)
         visualizer.fit_transform(self.dataset.X, self.dataset.y)
 
-        visualizer = ParallelCoordinates(sample=0.5, shuffle=True, random_state=np.random.RandomState())
+        visualizer = ParallelCoordinates(
+            sample=0.5, shuffle=True, random_state=np.random.RandomState()
+        )
         visualizer.fit_transform(self.dataset.X, self.dataset.y)
 
     def test_sample_float_shuffle_false(self):
@@ -309,7 +332,9 @@ class TestParallelCoordinates(VisualTestCase):
         visualizer = ParallelCoordinates(sample=0.5, shuffle=False, random_state=444)
         visualizer.fit_transform(self.dataset.X, self.dataset.y)
 
-        visualizer = ParallelCoordinates(sample=0.5, shuffle=False, random_state=np.random.RandomState())
+        visualizer = ParallelCoordinates(
+            sample=0.5, shuffle=False, random_state=np.random.RandomState()
+        )
         visualizer.fit_transform(self.dataset.X, self.dataset.y)
 
     def test_sample_float_invalid(self):
@@ -327,7 +352,7 @@ class TestParallelCoordinates(VisualTestCase):
         Non-numeric values for 'sample' argument should raise.
         """
         with pytest.raises(YellowbrickTypeError):
-            ParallelCoordinates(sample='foo')
+            ParallelCoordinates(sample="foo")
 
     @staticmethod
     def test_static_subsample():
@@ -352,7 +377,9 @@ class TestParallelCoordinates(VisualTestCase):
         assert np.array_equal(yprime, y)
 
         sample = 50
-        visualizer = ParallelCoordinates(sample=sample, random_state=None, shuffle=False)
+        visualizer = ParallelCoordinates(
+            sample=sample, random_state=None, shuffle=False
+        )
         Xprime, yprime = visualizer._subsample(X, y)
         assert np.array_equal(Xprime, X[:sample, :])
         assert np.array_equal(yprime, y[:sample])
@@ -366,8 +393,8 @@ class TestParallelCoordinates(VisualTestCase):
 
         visualizer = ParallelCoordinates(sample=0.5, random_state=None, shuffle=False)
         Xprime, yprime = visualizer._subsample(X, y)
-        assert np.array_equal(Xprime, X[:int(ntotal/2), :])
-        assert np.array_equal(yprime, y[:int(ntotal/2)])
+        assert np.array_equal(Xprime, X[: int(ntotal / 2), :])
+        assert np.array_equal(yprime, y[: int(ntotal / 2)])
 
         sample = 0.5
         visualizer = ParallelCoordinates(sample=sample, random_state=None, shuffle=True)
@@ -384,7 +411,9 @@ class TestParallelCoordinates(VisualTestCase):
         assert len(yprime) == ntotal * sample
 
         sample = 0.99
-        visualizer = ParallelCoordinates(sample=sample, random_state=np.random.RandomState(), shuffle=True)
+        visualizer = ParallelCoordinates(
+            sample=sample, random_state=np.random.RandomState(), shuffle=True
+        )
         Xprime, yprime = visualizer._subsample(X, y)
         assert np.array_equal(Xprime, X[yprime.flatten(), :])
         assert len(Xprime) == ntotal * sample

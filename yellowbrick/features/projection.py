@@ -56,7 +56,7 @@ class ProjectionVisualizer(DataVisualizer):
         The names of the features specified by the columns of the input dataset.
         This length of this list must match the number of columns in X, otherwise
         an exception will be raised on ``fit()``.
-        
+
     classes : list, default: None
         The class labels for each class in y, ordered by sorted class index. These
         names act as a label encoder for the legend, identifying integer classes
@@ -78,7 +78,7 @@ class ProjectionVisualizer(DataVisualizer):
         it is used to compute the number of colors needed for each class and
         in the continuous case it is used to create a sequential color map based
         on the range of the target.
-        
+
     target_type : str, default: "auto"
         Specify the type of target as either "discrete" (classes) or "continuous"
         (real numbers, usually for regression). If "auto", then it will
@@ -88,7 +88,7 @@ class ProjectionVisualizer(DataVisualizer):
         being the keys. If continuous the colors will be list having value of
         color for each point. In either case, if no target is specified, then
         color will be specified as the first color in the color cycle.
-        
+
     projection : int or string, default: 2
         The number of axes to project into, either 2d or 3d. To plot 3d plots
         with matplotlib, please ensure a 3d axes is passed to the visualizer,
@@ -185,7 +185,7 @@ class ProjectionVisualizer(DataVisualizer):
         The colorbar is added to the right of the scatterplot.
 
         Subclasses can override this method to add other axes or layouts.
-        
+
         Parameters
         ----------
         divider: AxesDivider
@@ -197,22 +197,22 @@ class ProjectionVisualizer(DataVisualizer):
             and self.colorbar
             and self._cax is None
         ):
-                # Ensure matplotlib version compatibility
-                if make_axes_locatable is None:
-                    raise YellowbrickValueError(
-                        (
-                            "Colorbar requires matplotlib 2.0.2 or greater "
-                            "please upgrade matplotlib"
-                        )
+            # Ensure matplotlib version compatibility
+            if make_axes_locatable is None:
+                raise YellowbrickValueError(
+                    (
+                        "Colorbar requires matplotlib 2.0.2 or greater "
+                        "please upgrade matplotlib"
                     )
+                )
 
-                # Create the new axes for the colorbar
-                if divider is None:
-                    divider = make_axes_locatable(self.ax)
+            # Create the new axes for the colorbar
+            if divider is None:
+                divider = make_axes_locatable(self.ax)
 
-                self._cax = divider.append_axes("right", size="5%", pad=0.3)
-                self._cax.set_yticks([])
-                self._cax.set_xticks([])
+            self._cax = divider.append_axes("right", size="5%", pad=0.3)
+            self._cax.set_yticks([])
+            self._cax.set_xticks([])
 
     def fit_transform(self, X, y=None):
         """
@@ -254,8 +254,8 @@ class ProjectionVisualizer(DataVisualizer):
             Returns the axes that the scatter plot was drawn on.
         """
         scatter_kwargs = self._determine_scatter_kwargs(y)
-        
-        # Draws the layout of the visualizer. It draws the axes for colorbars, 
+
+        # Draws the layout of the visualizer. It draws the axes for colorbars,
         # heatmap, etc.
         self.layout()
 

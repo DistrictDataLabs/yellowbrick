@@ -333,7 +333,7 @@ class ParallelCoordinates(DataVisualizer):
                 self._rng = random_state
             else:
                 raise YellowbrickTypeError(
-                    "`random_state` parameter must be None, int, or np.random.RandomState"
+                    "`random_state` must be None, int, or np.random.RandomState"
                 )
         else:
             self._rng = None

@@ -4,6 +4,9 @@
 # Author:  Benjamin Bengfort <benjamin@bengfort.com>
 # Created: Sat May 12 11:24:41 2018 -0400
 #
+# Copyright (C) 2018 The scikit-yb developers
+# For license information, see LICENSE.txt
+#
 # ID: test_manifold.py [] benjamin@bengfort.com $
 
 """
@@ -39,6 +42,7 @@ except ImportError:
 ##########################################################################
 ## Manifold Visualizer Tests
 ##########################################################################
+
 
 @pytest.mark.usefixtures("s_curves", "discrete", "continuous")
 class TestManifold(VisualTestCase):

@@ -1,8 +1,11 @@
 # yellowbrick.features.manifold
 # Use manifold algorithms for high dimensional visualization.
 #
-# Author:  Benjamin Bengfort <benjamin@bengfort.com>
+# Author:  Benjamin Bengfort
 # Created: Sat May 12 11:25:24 2018 -0400
+#
+# Copyright (C) 2018 The scikit-yb developers
+# For license information, see LICENSE.txt
 #
 # ID: manifold.py [] benjamin@bengfort.com $
 
@@ -18,14 +21,14 @@ import warnings
 
 from yellowbrick.utils.timer import Timer
 from yellowbrick.utils.types import is_estimator
+from yellowbrick.exceptions import ModelError, NotFitted
 from yellowbrick.features.projection import ProjectionVisualizer
 from yellowbrick.exceptions import YellowbrickValueError, YellowbrickWarning
-from yellowbrick.exceptions import ModelError, NotFitted
 
 from sklearn.base import clone
+from sklearn.exceptions import NotFittedError
 from sklearn.manifold import LocallyLinearEmbedding
 from sklearn.manifold import Isomap, MDS, TSNE, SpectralEmbedding
-from sklearn.exceptions import NotFittedError
 
 
 ##########################################################################
@@ -113,7 +116,7 @@ class Manifold(ProjectionVisualizer):
         embedding. If n_neighbors is not specified for those embeddings, it is
         set to 5 and a warning is issued. If the manifold algorithm doesn't use
         nearest neighbors, then this parameter is ignored.
-        
+
     features : list, default: None
         The names of the features specified by the columns of the input dataset.
         This length of this list must match the number of columns in X, otherwise
@@ -140,7 +143,7 @@ class Manifold(ProjectionVisualizer):
         it is used to compute the number of colors needed for each class and
         in the continuous case it is used to create a sequential color map based
         on the range of the target.
-        
+
     target_type : str, default: "auto"
         Specify the type of target as either "discrete" (classes) or "continuous"
         (real numbers, usually for regression). If "auto", then it will
@@ -162,7 +165,7 @@ class Manifold(ProjectionVisualizer):
 
     random_state : int or RandomState, default: None
         Fixes the random state for stochastic manifold algorithms.
-    
+
     colorbar : bool, default: True
         If the target_type is "continous" draw a colorbar to the right of the
         scatter plot. The colobar axes is accessible using the cax property.
@@ -180,7 +183,7 @@ class Manifold(ProjectionVisualizer):
         The class labels that define the discrete values in the target. Only
         available if the target type is discrete. This is guaranteed to be
         strings even if the classes are a different type.
-    
+
     features_ : ndarray, shape (n_features,)
         The names of the features discovered or used in the visualizer that
         can be used as an index to access or modify data in X. If a user passes
@@ -335,7 +338,7 @@ class Manifold(ProjectionVisualizer):
         """
         Fits the manifold on X and transforms the data to plot it on the axes.
         See fit_transform() for more details.
-        
+
         Parameters
         ----------
         X : array-like of shape (n, m)
@@ -344,18 +347,20 @@ class Manifold(ProjectionVisualizer):
         y : array-like of shape (n,), optional
             A vector or series with target values for each instance in X. This
             vector is used to determine the color of the points in X.
-            
+
         Returns
         -------
         self : Manifold
             Returns the visualizer object.
-            
+
         """
-        if not hasattr(self.manifold, 'transform'):
+        if not hasattr(self.manifold, "transform"):
             name = self.manifold.__class__.__name__
-            raise ModelError((
-                "{} requires data to be simultaneously fit and transformed, "
-                "use fit_transform instead").format(name)
+            raise ModelError(
+                (
+                    "{} requires data to be simultaneously fit and transformed, "
+                    "use fit_transform instead"
+                ).format(name)
             )
 
         # Call super to compute features, classes, colors, etc.
@@ -373,7 +378,7 @@ class Manifold(ProjectionVisualizer):
 
         Note also that fit records the amount of time it takes to fit the
         manifold and reports that information in the visualization.
-        
+
         Parameters
         ----------
         X : array-like of shape (n, m)
@@ -387,7 +392,7 @@ class Manifold(ProjectionVisualizer):
         -------
         Xprime : array-like of shape (n, 2)
             Returns the 2-dimensional embedding of the instances.
-        
+
         """
         # Because some manifolds do not have transform, we cannot call individual
         # fit and transform methods, but must do it manually here.
@@ -407,18 +412,18 @@ class Manifold(ProjectionVisualizer):
         ----------
         X : array-like of shape (n, m)
             A matrix or data frame with n instances and m features
-            
+
         y : array-like of shape (n,), optional
             The target, used to specify the colors of the points.
-            
+
         Returns
         -------
         Xprime : array-like of shape (n, 2)
             Returns the 2-dimensional embedding of the instances.
-            
+
         Note
         ----
-        This method does not work with MDS, TSNE and SpectralEmbedding because 
+        This method does not work with MDS, TSNE and SpectralEmbedding because
         it is yet to be implemented in sklearn.
         """
         # Because some manifolds do not have transform we cannot call super
@@ -427,14 +432,16 @@ class Manifold(ProjectionVisualizer):
             self.draw(Xp, y)
             return Xp
         except NotFittedError:
-             raise NotFitted.from_estimator(self, 'transform')
+            raise NotFitted.from_estimator(self, "transform")
         except AttributeError:
             name = self.manifold.__class__.__name__
-            raise ModelError((
-                "{} requires data to be simultaneously fit and transformed, "
-                "use fit_transform instead").format(name)
+            raise ModelError(
+                (
+                    "{} requires data to be simultaneously fit and transformed, "
+                    "use fit_transform instead"
+                ).format(name)
             )
-                    
+
         return Xp
 
     def draw(self, Xp, y=None):
@@ -500,7 +507,7 @@ def manifold_embedding(
     ax : matplotlib.Axes, default: None
         The axis to plot the figure on. If None is passed in the current axes
         will be used (or generated if required).
-        
+
     manifold : str or Transformer, default: "lle"
         Specify the manifold algorithm to perform the embedding. Either one of
         the strings listed in the table below, or an actual scikit-learn
@@ -526,7 +533,7 @@ def manifold_embedding(
         embedding. If n_neighbors is not specified for those embeddings, it is
         set to 5 and a warning is issued. If the manifold algorithm doesn't use
         nearest neighbors, then this parameter is ignored.
-        
+
     features : list, default: None
         The names of the features specified by the columns of the input dataset.
         This length of this list must match the number of columns in X, otherwise
@@ -553,7 +560,7 @@ def manifold_embedding(
         it is used to compute the number of colors needed for each class and
         in the continuous case it is used to create a sequential color map based
         on the range of the target.
-        
+
     target_type : str, default: "auto"
         Specify the type of target as either "discrete" (classes) or "continuous"
         (real numbers, usually for regression). If "auto", then it will
@@ -575,7 +582,7 @@ def manifold_embedding(
 
     random_state : int or RandomState, default: None
         Fixes the random state for stochastic manifold algorithms.
-    
+
     colorbar : bool, default: True
         If the target_type is "continous" draw a colorbar to the right of the
         scatter plot. The colobar axes is accessible using the cax property.
@@ -583,7 +590,7 @@ def manifold_embedding(
     kwargs : dict
         Keyword arguments passed to the base class and may influence the
         feature visualization properties.
-        
+
     Attributes
     ----------
     fit_time_ : yellowbrick.utils.timer.Timer
@@ -593,7 +600,7 @@ def manifold_embedding(
         The class labels that define the discrete values in the target. Only
         available if the target type is discrete. This is guaranteed to be
         strings even if the classes are a different type.
-    
+
     features_ : ndarray, shape (n_features,)
         The names of the features discovered or used in the visualizer that
         can be used as an index to access or modify data in X. If a user passes
@@ -607,8 +614,8 @@ def manifold_embedding(
 
     Returns
     -------
-    ax : matplotlib axes
-        Returns the axes that the embedded scatter plot was drawn on.
+    viz : Manifold
+        Returns the fitted, finalized visualizer
     """
     # Instantiate the visualizer
     viz = Manifold(
@@ -627,9 +634,9 @@ def manifold_embedding(
         **kwargs
     )
 
-    # Fit and poof (calls draw)
-    viz.fit(X, y)
-    viz.poof()
+    # Fit and finalize (calls draw)
+    viz.fit_transform(X, y)
+    viz.finalize()
 
-    # Return the axes object
-    return viz.ax
+    # Return the visualizer object
+    return viz
