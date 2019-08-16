@@ -1,4 +1,3 @@
-
 # yellowbrick.features.jointplot
 # Implementation of joint plots for univariate and bivariate analysis.
 #
@@ -24,6 +23,7 @@ except ImportError:
     make_axes_locatable = None
 
 from .base import FeatureVisualizer
+
 # from ..bestfit import draw_best_fit # TODO: return in #728
 from ..utils.types import is_dataframe
 from ..exceptions import YellowbrickValueError
@@ -37,9 +37,7 @@ HISTCOLOR = "#6897bb"
 
 
 # Objects for export
-__all__ = [
-    "JointPlot", "JointPlotVisualizer", "joint_plot",
-]
+__all__ = ["JointPlot", "JointPlotVisualizer", "joint_plot"]
 
 
 ##########################################################################
@@ -129,14 +127,24 @@ class JointPlot(FeatureVisualizer):
 
     # TODO: should we couple more closely with Rank2D?
     correlation_methods = {
-        'pearson': lambda x, y: pearsonr(x,y)[0],
-        'spearman': lambda x, y: spearmanr(x,y)[0],
-        'covariance': lambda x, y: np.cov(x,y)[0,1],
-        'kendalltau': lambda x, y: kendalltau(x,y)[0],
+        "pearson": lambda x, y: pearsonr(x, y)[0],
+        "spearman": lambda x, y: spearmanr(x, y)[0],
+        "covariance": lambda x, y: np.cov(x, y)[0, 1],
+        "kendalltau": lambda x, y: kendalltau(x, y)[0],
     }
 
-    def __init__(self, ax=None, columns=None, correlation='pearson', kind="scatter",
-                 hist=True, alpha=0.65, joint_kws=None, hist_kws=None, **kwargs):
+    def __init__(
+        self,
+        ax=None,
+        columns=None,
+        correlation="pearson",
+        kind="scatter",
+        hist=True,
+        alpha=0.65,
+        joint_kws=None,
+        hist_kws=None,
+        **kwargs
+    ):
         # Initialize the visualizer
         super(JointPlot, self).__init__(ax=ax, **kwargs)
         self._xhax, self._yhax = None, None
@@ -146,10 +154,12 @@ class JointPlot(FeatureVisualizer):
         if self.columns is not None and not isinstance(self.columns, (int, str)):
             self.columns = tuple(self.columns)
             if len(self.columns) > 2:
-                raise YellowbrickValueError((
-                    "'{}' contains too many indices or is invalid for joint plot - "
-                    "specify either a single int or str index or two columns as a list"
-                ).format(columns))
+                raise YellowbrickValueError(
+                    (
+                        "'{}' contains too many indices or is invalid for joint plot - "
+                        "specify either a single int or str index or two columns as a list"
+                    ).format(columns)
+                )
 
         # Seet and validate the correlation
         self.correlation = correlation
@@ -157,25 +167,30 @@ class JointPlot(FeatureVisualizer):
             raise YellowbrickValueError(
                 "'{}' is an invalid correlation method, use one of {}".format(
                     self.correlation, ", ".join(self.correlation_methods.keys())
-            ))
+                )
+            )
 
         # Set and validate the kind of plot
         self.kind = kind
-        if self.kind not in {'scatter', 'hex', 'hexbin'}:
-            raise YellowbrickValueError((
-                "'{}' is invalid joint plot kind, use 'scatter' or 'hex'"
-            ).format(self.kind))
+        if self.kind not in {"scatter", "hex", "hexbin"}:
+            raise YellowbrickValueError(
+                ("'{}' is invalid joint plot kind, use 'scatter' or 'hex'").format(
+                    self.kind
+                )
+            )
 
         # Set and validate the histogram if specified
         self.hist = hist
-        if self.hist not in {True, 'density', 'frequency', None, False}:
-                raise YellowbrickValueError((
+        if self.hist not in {True, "density", "frequency", None, False}:
+            raise YellowbrickValueError(
+                (
                     "'{}' is an invalid argument for hist, use None, True, "
                     "False, 'density', or 'frequency'"
-                ).format(hist))
+                ).format(hist)
+            )
 
         # If hist is True, test the version availability
-        if self.hist in {True, 'density', 'frequency'}:
+        if self.hist in {True, "density", "frequency"}:
             self._layout()
 
         # Set the additional visual parameters
@@ -218,10 +233,12 @@ class JointPlot(FeatureVisualizer):
 
         # Ensure matplotlib version compatibility
         if make_axes_locatable is None:
-            raise YellowbrickValueError((
-                "joint plot histograms requires matplotlib 2.0.2 or greater "
-                "please upgrade matplotlib or set hist=False on the visualizer"
-            ))
+            raise YellowbrickValueError(
+                (
+                    "joint plot histograms requires matplotlib 2.0.2 or greater "
+                    "please upgrade matplotlib or set hist=False on the visualizer"
+                )
+            )
 
         # Create the new axes for the histograms
         divider = make_axes_locatable(self.ax)
@@ -231,8 +248,8 @@ class JointPlot(FeatureVisualizer):
         # Modify the display of the axes
         self._xhax.xaxis.tick_top()
         self._yhax.yaxis.tick_right()
-        self._xhax.grid(False, axis='y')
-        self._yhax.grid(False, axis='x')
+        self._xhax.grid(False, axis="y")
+        self._yhax.grid(False, axis="x")
 
     def fit(self, X, y=None):
         """
@@ -267,15 +284,19 @@ class JointPlot(FeatureVisualizer):
 
         # Case where no columns are specified
         if self.columns is None:
-            if (y is None and (X.ndim != 2 or X.shape[1] != 2)) or (y is not None and (X.ndim != 1 or y.ndim != 1)):
-                raise YellowbrickValueError((
-                    "when self.columns is None specify either X and y as 1D arrays "
-                    "or X as a matrix with 2 columns"
-                ))
+            if (y is None and (X.ndim != 2 or X.shape[1] != 2)) or (
+                y is not None and (X.ndim != 1 or y.ndim != 1)
+            ):
+                raise YellowbrickValueError(
+                    (
+                        "when self.columns is None specify either X and y as 1D arrays "
+                        "or X as a matrix with 2 columns"
+                    )
+                )
 
             if y is None:
                 # Draw the first column as x and the second column as y
-                self.draw(X[:,0], X[:,1], xlabel="0", ylabel="1")
+                self.draw(X[:, 0], X[:, 1], xlabel="0", ylabel="1")
                 return self
 
             # Draw x against y
@@ -283,7 +304,7 @@ class JointPlot(FeatureVisualizer):
             return self
 
         # Case where a single string or int index is specified
-        if isinstance(self.columns, (int,str)):
+        if isinstance(self.columns, (int, str)):
             if y is None:
                 raise YellowbrickValueError(
                     "when self.columns is a single index, y must be specified"
@@ -297,9 +318,11 @@ class JointPlot(FeatureVisualizer):
         # Case where there is a double index for both columns
         columns = tuple(self.columns)
         if len(columns) != 2:
-            raise YellowbrickValueError((
-                    "'{}' contains too many indices or is invalid for joint plot"
-                ).format(columns))
+            raise YellowbrickValueError(
+                ("'{}' contains too many indices or is invalid for joint plot").format(
+                    columns
+                )
+            )
 
         # TODO: color the points based on the target if it is given
         x = self._index_into(columns[0], X)
@@ -335,7 +358,7 @@ class JointPlot(FeatureVisualizer):
             # TODO: Draw best fit line (or should this be kind='reg'?)
 
         # Draw hexbin joint plot
-        elif self.kind in ('hex', 'hexbin'):
+        elif self.kind in ("hex", "hexbin"):
             joint_kws.setdefault("mincnt", 1)
             joint_kws.setdefault("gridsize", 50)
             joint_kws.setdefault("cmap", "Blues")
@@ -406,12 +429,13 @@ class JointPlot(FeatureVisualizer):
                 # Assume column indexing
                 return data[idx]
             # Otherwise assume numpy array-like indexing
-            return data[:,idx]
+            return data[:, idx]
         except Exception as e:
             raise IndexError(
                 "could not index column '{}' into type {}: {}".format(
                     self.columns, data.__class__.__name__, e
-            ))
+                )
+            )
 
 
 # Alias for JointPlot
@@ -421,6 +445,7 @@ JointPlotVisualizer = JointPlot
 ##########################################################################
 ## Quick Method for JointPlot visualizations
 ##########################################################################
+
 
 def joint_plot():
     raise NotImplementedError("quick method still needs to be implemented")

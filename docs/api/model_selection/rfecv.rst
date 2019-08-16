@@ -17,7 +17,7 @@ To show how this works in practice, we'll start with a contrived example using a
     from sklearn.svm import SVC
     from sklearn.datasets import make_classification
 
-    from yellowbrick.features import RFECV
+    from yellowbrick.model_selection import RFECV
 
     # Create a dataset with only 3 informative features
     X, y = make_classification(
@@ -45,7 +45,7 @@ Exploring a real dataset, we can see the impact of RFECV on a credit default bin
     from sklearn.ensemble import RandomForestClassifier
     from sklearn.model_selection import StratifiedKFold
 
-    from yellowbrick.features import RFECV
+    from yellowbrick.model_selection import RFECV
     from yellowbrick.datasets import load_credit
 
     # Load classification dataset
@@ -66,7 +66,7 @@ In this example we can see that 19 features were selected, though there doesn't 
 API Reference
 -------------
 
-.. automodule:: yellowbrick.features.rfecv
+.. automodule:: yellowbrick.model_selection.rfecv
     :members: RFECV
     :undoc-members:
     :show-inheritance:

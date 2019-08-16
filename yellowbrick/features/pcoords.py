@@ -1,11 +1,11 @@
 # yellowbrick.features.pcoords
 # Implementations of parallel coordinates for feature analysis.
 #
-# Author:  Benjamin Bengfort <bbengfort@districtdatalabs.com>
+# Author:  Benjamin Bengfort
 # Author:  @thekylesaurus
 # Created: Mon Oct 03 21:46:06 2016 -0400
 #
-# Copyright (C) 2016 District Data Labs
+# Copyright (C) 2016 The scikit-yb developers
 # For license information, see LICENSE.txt
 #
 # ID: pcoords.py [0f4b236] benjamin@bengfort.com $
@@ -34,10 +34,23 @@ from yellowbrick.exceptions import YellowbrickTypeError, YellowbrickValueError
 ## Quick Methods
 ##########################################################################
 
-def parallel_coordinates(X, y, ax=None, features=None, classes=None,
-                         normalize=None, sample=1.0, colors=None, colormap=None,
-                         alpha=None, fast=False, vlines=True, vlines_kwds=None,
-                         **kwargs):
+
+def parallel_coordinates(
+    X,
+    y,
+    ax=None,
+    features=None,
+    classes=None,
+    normalize=None,
+    sample=1.0,
+    colors=None,
+    colormap=None,
+    alpha=None,
+    fast=False,
+    vlines=True,
+    vlines_kwds=None,
+    **kwargs
+):
     """Displays each feature as a vertical axis and each instance as a line.
 
     This helper function is a quick wrapper to utilize the ParallelCoordinates
@@ -109,26 +122,37 @@ def parallel_coordinates(X, y, ax=None, features=None, classes=None,
 
     Returns
     -------
-    ax : matplotlib axes
-        Returns the axes that the parallel coordinates were drawn on.
+    viz : ParallelCoordinates
+        Returns the fitted, finalized visualizer
     """
     # Instantiate the visualizer
     visualizer = ParallelCoordinates(
-        ax, features, classes, normalize, sample, colors, colormap, alpha,
-        fast, vlines, vlines_kwds, **kwargs
+        ax=ax,
+        features=features,
+        classes=classes,
+        normalize=normalize,
+        sample=sample,
+        colors=colors,
+        colormap=colormap,
+        alpha=alpha,
+        fast=fast,
+        vlines=vlines,
+        vlines_kwds=vlines_kwds,
+        **kwargs
     )
 
     # Fit and transform the visualizer (calls draw)
     visualizer.fit(X, y, **kwargs)
     visualizer.transform(X)
 
-    # Return the axes object on the visualizer
-    return visualizer.ax
+    # Return the visualizer object
+    return visualizer
 
 
 ##########################################################################
 ## Static Parallel Coordinates Visualizer
 ##########################################################################
+
 
 class ParallelCoordinates(DataVisualizer):
     """
@@ -239,32 +263,39 @@ class ParallelCoordinates(DataVisualizer):
     """
 
     NORMALIZERS = {
-        'minmax': MinMaxScaler(),
-        'maxabs': MaxAbsScaler(),
-        'standard': StandardScaler(),
-        'l1': Normalizer('l1'),
-        'l2': Normalizer('l2'),
+        "minmax": MinMaxScaler(),
+        "maxabs": MaxAbsScaler(),
+        "standard": StandardScaler(),
+        "l1": Normalizer("l1"),
+        "l2": Normalizer("l2"),
     }
 
-    def __init__(self,
-                 ax=None,
-                 features=None,
-                 classes=None,
-                 normalize=None,
-                 sample=1.0,
-                 random_state=None,
-                 shuffle=False,
-                 colors=None,
-                 colormap=None,
-                 alpha=None,
-                 fast=False,
-                 vlines=True,
-                 vlines_kwds=None,
-                 **kwargs):
+    def __init__(
+        self,
+        ax=None,
+        features=None,
+        classes=None,
+        normalize=None,
+        sample=1.0,
+        random_state=None,
+        shuffle=False,
+        colors=None,
+        colormap=None,
+        alpha=None,
+        fast=False,
+        vlines=True,
+        vlines_kwds=None,
+        **kwargs
+    ):
         if "target_type" not in kwargs:
             kwargs["target_type"] = "discrete"
         super(ParallelCoordinates, self).__init__(
-            ax, features, classes, colors, colormap, **kwargs
+            ax=ax,
+            features=features,
+            classes=classes,
+            colors=colors,
+            colormap=colormap,
+            **kwargs
         )
 
         # Validate 'normalize' argument
@@ -272,8 +303,7 @@ class ParallelCoordinates(DataVisualizer):
             self.normalize = normalize
         else:
             raise YellowbrickValueError(
-                "'{}' is an unrecognized normalization method"
-                .format(normalize)
+                "'{}' is an unrecognized normalization method".format(normalize)
             )
 
         # Validate 'sample' argument
@@ -288,18 +318,14 @@ class ParallelCoordinates(DataVisualizer):
                     "`sample` parameter of type `float` must be between 0 and 1"
                 )
         else:
-            raise YellowbrickTypeError(
-                "`sample` parameter must be int or float"
-            )
+            raise YellowbrickTypeError("`sample` parameter must be int or float")
         self.sample = sample
 
         # Set sample parameters
         if isinstance(shuffle, bool):
             self.shuffle = shuffle
         else:
-            raise YellowbrickTypeError(
-                "`shuffle` parameter must be boolean"
-            )
+            raise YellowbrickTypeError("`shuffle` parameter must be boolean")
         if self.shuffle:
             if (random_state is None) or isinstance(random_state, int):
                 self._rng = RandomState(random_state)
@@ -307,7 +333,7 @@ class ParallelCoordinates(DataVisualizer):
                 self._rng = random_state
             else:
                 raise YellowbrickTypeError(
-                    "`random_state` parameter must be None, int, or np.random.RandomState"
+                    "`random_state` must be None, int, or np.random.RandomState"
                 )
         else:
             self._rng = None
@@ -316,9 +342,7 @@ class ParallelCoordinates(DataVisualizer):
         self.fast = fast
         self.alpha = alpha
         self.show_vlines = vlines
-        self.vlines_kwds = vlines_kwds or {
-            'linewidth': 1, 'color': 'black'
-        }
+        self.vlines_kwds = vlines_kwds or {"linewidth": 1, "color": "black"}
 
         # Internal properties
         self._increments = None
@@ -420,9 +444,7 @@ class ParallelCoordinates(DataVisualizer):
             yi = y[idx]
             color = self.get_colors([yi])[0]
 
-            self.ax.plot(
-                self._increments, Xi, color=color, alpha=alpha, **kwargs
-            )
+            self.ax.plot(self._increments, Xi, color=color, alpha=alpha, **kwargs)
 
         return self.ax
 
@@ -485,7 +507,7 @@ class ParallelCoordinates(DataVisualizer):
         """
         # Set the title
         self.set_title(
-            'Parallel Coordinates for {} Features'.format(len(self.features_))
+            "Parallel Coordinates for {} Features".format(len(self.features_))
         )
 
         # Add the vertical lines
@@ -502,7 +524,7 @@ class ParallelCoordinates(DataVisualizer):
         # Add the legend sorting classes by name
         labels = sorted(list(self._colors.keys()))
         colors = [self._colors[lbl] for lbl in labels]
-        manual_legend(self, labels, colors, loc='best', frameon=True)
+        manual_legend(self, labels, colors, loc="best", frameon=True)
 
         # Add the grid view
         self.ax.grid()

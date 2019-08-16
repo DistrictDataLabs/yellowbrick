@@ -160,11 +160,11 @@ class LearningCurve(ModelVisualizer):
     -----
     This visualizer is essentially a wrapper for the
     ``sklearn.model_selection.learning_curve utility``, discussed in the
-    `validation curves <https://bit.ly/2KlumeB>`_
+    `validation curves <https://bit.ly/2KlumeB>`__
     documentation.
 
     .. seealso:: The documentation for the
-        `learning_curve <https://bit.ly/2Yz9sBB>`_
+        `learning_curve <https://bit.ly/2Yz9sBB>`__
         function, which this visualizer wraps.
     """
 

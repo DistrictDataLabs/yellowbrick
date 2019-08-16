@@ -33,8 +33,8 @@ from tests.fixtures import Dataset
 from tests.base import VisualTestCase
 from yellowbrick.datasets import load_hobbies
 from yellowbrick.cluster.elbow import distortion_score
-from yellowbrick.exceptions import YellowbrickValueError
 from yellowbrick.cluster.elbow import KElbowVisualizer, kelbow_visualizer
+from yellowbrick.exceptions import YellowbrickValueError, YellowbrickWarning
 
 from tests.base import IS_WINDOWS_OR_CONDA
 
@@ -312,6 +312,22 @@ class TestKElbowVisualizer(VisualTestCase):
         visualizer.finalize()
         self.assert_images_similar(visualizer, windows_tol=2.2)
         assert_array_almost_equal(visualizer.k_scores_, expected)
+
+    def test_no_knee(self):
+        """
+        Assert that a warning is issued if there is no knee detected
+        """
+        X, y = make_blobs(n_samples=1000, centers=3, n_features=12, random_state=12)
+        message = (
+            "No 'knee' or 'elbow point' detected "
+            "This could be due to bad clustering, no "
+            "actual clusters being formed etc."
+        )
+        with pytest.warns(YellowbrickWarning, match=message):
+            visualizer = KElbowVisualizer(
+                KMeans(random_state=12), k=(4, 12), locate_elbow=True
+            )
+            visualizer.fit(X)
 
     def test_bad_metric(self):
         """
