@@ -2,6 +2,7 @@
 # A suite of visual analysis and diagnostic tools for machine learning.
 #
 # Author:   Rebecca Bilbro
+# Author:   Benjamin Bengfort
 # Created:  Wed May 18 10:46:33 2016 -0400
 #
 # Copyright (C) 2016 The scikit-yb developers
