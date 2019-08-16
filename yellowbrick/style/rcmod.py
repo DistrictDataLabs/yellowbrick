@@ -1,10 +1,10 @@
 # yellowbrick.style.rcmod
 # Modifies the matplotlib rcParams in order to make yellowbrick appealing.
 #
-# Author:   Benjamin Bengfort <bbengfort@districtdatalabs.com>
+# Author:   Benjamin Bengfort
 # Created:  Thu Oct 06 08:45:38 2016 -0400
 #
-# Copyright (C) 2016 District Data Labs
+# Copyright (C) 2016 The scikit-yb developers
 # For license information, see LICENSE.txt
 #
 # ID: rcmod.py [c6aff34] benjamin@bengfort.com $
@@ -27,7 +27,8 @@ import matplotlib as mpl
 
 # Check to see if we have a slightly modern version of mpl
 from distutils.version import LooseVersion
-mpl_ge_150 = LooseVersion(mpl.__version__) >= '1.5.0'
+
+mpl_ge_150 = LooseVersion(mpl.__version__) >= "1.5.0"
 
 
 from .. import _orig_rc_params
@@ -38,10 +39,7 @@ from .palettes import color_palette, set_color_codes
 ## Exports
 ##########################################################################
 
-__all__ = [
-    "set_aesthetic", "set_style", "set_palette",
-    "reset_defaults", "reset_orig",
-]
+__all__ = ["set_aesthetic", "set_style", "set_palette", "reset_defaults", "reset_orig"]
 
 
 ##########################################################################
@@ -49,21 +47,16 @@ __all__ = [
 ##########################################################################
 
 _style_keys = (
-
     "axes.facecolor",
     "axes.edgecolor",
     "axes.grid",
     "axes.axisbelow",
     "axes.linewidth",
     "axes.labelcolor",
-
     "figure.facecolor",
-
     "grid.color",
     "grid.linestyle",
-
     "text.color",
-
     "xtick.color",
     "ytick.color",
     "xtick.direction",
@@ -72,13 +65,10 @@ _style_keys = (
     "ytick.major.size",
     "xtick.minor.size",
     "ytick.minor.size",
-
     "legend.frameon",
     "legend.numpoints",
     "legend.scatterpoints",
-
     "lines.solid_capstyle",
-
     "image.cmap",
     "font.family",
     "font.sans-serif",
@@ -86,27 +76,23 @@ _style_keys = (
 
 _context_keys = (
     "figure.figsize",
-
     "font.size",
     "axes.labelsize",
     "axes.titlesize",
     "xtick.labelsize",
     "ytick.labelsize",
     "legend.fontsize",
-
     "grid.linewidth",
     "lines.linewidth",
     "patch.linewidth",
     "lines.markersize",
     "lines.markeredgewidth",
-
     "xtick.major.width",
     "ytick.major.width",
     "xtick.minor.width",
     "ytick.minor.width",
-
     "xtick.major.pad",
-    "ytick.major.pad"
+    "ytick.major.pad",
 )
 
 
@@ -114,8 +100,10 @@ _context_keys = (
 ## rcParams Keys
 ##########################################################################
 
-def set_aesthetic(palette="yellowbrick", font="sans-serif", font_scale=1,
-                  color_codes=True, rc=None):
+
+def set_aesthetic(
+    palette="yellowbrick", font="sans-serif", font_scale=1, color_codes=True, rc=None
+):
     """
     Set aesthetic parameters in one step.
 
@@ -161,6 +149,7 @@ def reset_orig():
 ##########################################################################
 ## Axes Styles
 ##########################################################################
+
 
 def _axes_style(style=None, rc=None):
     """
@@ -210,8 +199,12 @@ def _axes_style(style=None, rc=None):
             "axes.axisbelow": True,
             "image.cmap": "Greys",
             "font.family": ["sans-serif"],
-            "font.sans-serif": ["Arial", "Liberation Sans",
-                                "Bitstream Vera Sans", "sans-serif"],
+            "font.sans-serif": [
+                "Arial",
+                "Liberation Sans",
+                "Bitstream Vera Sans",
+                "sans-serif",
+            ],
             "grid.linestyle": "-",
             "axes.grid": True,
             "lines.solid_capstyle": "round",
@@ -260,6 +253,7 @@ def set_style(style=None, rc=None):
 ## Context
 ##########################################################################
 
+
 def _plotting_context(context=None, font_scale=1, rc=None):
     """
     Return a parameter dict to scale elements of the figure.
@@ -296,7 +290,6 @@ def _plotting_context(context=None, font_scale=1, rc=None):
     else:
         # Set up dictionary of default parameters
         base_context = {
-
             "figure.figsize": np.array([8, 5.5]),
             "font.size": 12,
             "axes.labelsize": 11,
@@ -304,29 +297,32 @@ def _plotting_context(context=None, font_scale=1, rc=None):
             "xtick.labelsize": 10,
             "ytick.labelsize": 10,
             "legend.fontsize": 10,
-
             "grid.linewidth": 1,
             "lines.linewidth": 1.75,
-            "patch.linewidth": .3,
+            "patch.linewidth": 0.3,
             "lines.markersize": 7,
             "lines.markeredgewidth": 0,
-
             "xtick.major.width": 1,
             "ytick.major.width": 1,
-            "xtick.minor.width": .5,
-            "ytick.minor.width": .5,
-
+            "xtick.minor.width": 0.5,
+            "ytick.minor.width": 0.5,
             "xtick.major.pad": 7,
             "ytick.major.pad": 7,
         }
 
         # Scale all the parameters by the same factor depending on the context
-        scaling = dict(paper=.8, notebook=1, talk=1.3, poster=1.6)['notebook']
+        scaling = dict(paper=0.8, notebook=1, talk=1.3, poster=1.6)["notebook"]
         context_dict = {k: v * scaling for k, v in base_context.items()}
 
         # Now independently scale the fonts
-        font_keys = ["axes.labelsize", "axes.titlesize", "legend.fontsize",
-                     "xtick.labelsize", "ytick.labelsize", "font.size"]
+        font_keys = [
+            "axes.labelsize",
+            "axes.titlesize",
+            "legend.fontsize",
+            "xtick.labelsize",
+            "ytick.labelsize",
+            "font.size",
+        ]
         font_dict = {k: context_dict[k] * font_scale for k in font_keys}
         context_dict.update(font_dict)
 
@@ -393,17 +389,20 @@ class _RCAesthetics(dict):
         def wrapper(*args, **kwargs):
             with self:
                 return func(*args, **kwargs)
+
         return wrapper
 
 
 class _AxesStyle(_RCAesthetics):
     """Light wrapper on a dict to set style temporarily."""
+
     _keys = _style_keys
     _set = staticmethod(set_style)
 
 
 class _PlottingContext(_RCAesthetics):
     """Light wrapper on a dict to set context temporarily."""
+
     _keys = _context_keys
     _set = staticmethod(_set_context)
 
@@ -411,6 +410,7 @@ class _PlottingContext(_RCAesthetics):
 ##########################################################################
 ## Colors/Palettes
 ##########################################################################
+
 
 def set_palette(palette, n_colors=None, color_codes=False):
     """
@@ -432,8 +432,9 @@ def set_palette(palette, n_colors=None, color_codes=False):
     colors = color_palette(palette, n_colors)
     if mpl_ge_150:
         from cycler import cycler
-        cyl = cycler('color', colors)
-        mpl.rcParams['axes.prop_cycle'] = cyl
+
+        cyl = cycler("color", colors)
+        mpl.rcParams["axes.prop_cycle"] = cyl
     else:
         mpl.rcParams["axes.color_cycle"] = list(colors)
     mpl.rcParams["patch.facecolor"] = colors[0]

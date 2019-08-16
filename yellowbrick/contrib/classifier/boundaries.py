@@ -1,10 +1,10 @@
 # yellowbrick.contrib.classifier.boundaries
 # Decision boundaries classifier visualizer for Yellowbrick.
 #
-# Author:   Nathan Danielsen <ndanielsen@gmail.com.com>
+# Author:   Nathan Danielsen
 # Created:  Sat Mar 12 14:17:29 2017 -0700
 #
-# Copyright (C) 2017 District Data Labs
+# Copyright (C) 2017 The scikit-yb developers
 # For license information, see LICENSE.txt
 
 import itertools

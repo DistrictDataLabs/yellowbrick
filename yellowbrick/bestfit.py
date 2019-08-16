@@ -1,10 +1,10 @@
 # yellowbrick.bestfit
 # Uses Scikit-Learn to compute a best fit function, then draws it in the plot.
 #
-# Author:   Benjamin Bengfort <bbengfort@districtdatalabs.com>
+# Author:   Benjamin Bengfort
 # Created:  Sun Jun 26 17:27:08 2016 -0400
 #
-# Copyright (C) 2016 District Data Labs
+# Copyright (C) 2016 The sckit-yb developers
 # For license information, see LICENSE.txt
 #
 # ID: bestfit.py [56236f3] benjamin@bengfort.com $
@@ -35,18 +35,19 @@ from yellowbrick.exceptions import YellowbrickValueError
 ##########################################################################
 
 # Names of the various estimator functions
-LINEAR      = 'linear'
-QUADRATIC   = 'quadratic'
-EXPONENTIAL = 'exponential'
-LOG         = 'log'
-SELECT_BEST = 'select_best'
+LINEAR = "linear"
+QUADRATIC = "quadratic"
+EXPONENTIAL = "exponential"
+LOG = "log"
+SELECT_BEST = "select_best"
 
 
 ##########################################################################
 ## Draw Line of Best Fit
 ##########################################################################
 
-def draw_best_fit(X, y, ax, estimator='linear', **kwargs):
+
+def draw_best_fit(X, y, ax, estimator="linear", **kwargs):
     """
     Uses Scikit-Learn to fit a model to X and y then uses the resulting model
     to predict the curve based on the X values. This curve is drawn to the ax
@@ -95,11 +96,11 @@ def draw_best_fit(X, y, ax, estimator='linear', **kwargs):
 
     # Estimators are the types of best fit lines that can be drawn.
     estimators = {
-        LINEAR: fit_linear,               # Uses OLS to fit the regression
-        QUADRATIC: fit_quadratic,         # Uses OLS with Polynomial order 2
-        EXPONENTIAL: fit_exponential,     # Not implemented yet
-        LOG: fit_log,                     # Not implemented yet
-        SELECT_BEST: fit_select_best,     # Selects the best fit via MSE
+        LINEAR: fit_linear,  # Uses OLS to fit the regression
+        QUADRATIC: fit_quadratic,  # Uses OLS with Polynomial order 2
+        EXPONENTIAL: fit_exponential,  # Not implemented yet
+        LOG: fit_log,  # Not implemented yet
+        SELECT_BEST: fit_select_best,  # Selects the best fit via MSE
     }
 
     # Check to make sure that a correct estimator value was passed in.
@@ -115,10 +116,11 @@ def draw_best_fit(X, y, ax, estimator='linear', **kwargs):
 
     # Ensure that X and y are the same length
     if len(X) != len(y):
-        raise YellowbrickValueError((
-            "X and y must have same length:"
-             " X len {} doesn't match y len {}!"
-        ).format(len(X), len(y)))
+        raise YellowbrickValueError(
+            (
+                "X and y must have same length:" " X len {} doesn't match y len {}!"
+            ).format(len(X), len(y))
+        )
 
     # Ensure that X and y are np.arrays
     X = np.array(X)
@@ -127,7 +129,7 @@ def draw_best_fit(X, y, ax, estimator='linear', **kwargs):
     # Verify that X is a two dimensional array for Scikit-Learn esitmators
     # and that its dimensions are (n, 1) where n is the number of rows.
     if X.ndim < 2:
-        X = X[:,np.newaxis] # Reshape X into the correct dimensions
+        X = X[:, np.newaxis]  # Reshape X into the correct dimensions
 
     if X.ndim > 2:
         raise YellowbrickValueError(
@@ -144,8 +146,8 @@ def draw_best_fit(X, y, ax, estimator='linear', **kwargs):
     model = estimator(X, y)
 
     # Set the color if not passed in.
-    if 'c' not in kwargs and 'color' not in kwargs:
-        kwargs['color'] = LINE_COLOR
+    if "c" not in kwargs and "color" not in kwargs:
+        kwargs["color"] = LINE_COLOR
 
     # Get the current working axes
     ax = ax or plt.gca()
@@ -153,7 +155,7 @@ def draw_best_fit(X, y, ax, estimator='linear', **kwargs):
     # Plot line of best fit onto the axes that were passed in.
     # TODO: determine if xlim or X.min(), X.max() are better params
     xr = np.linspace(*ax.get_xlim(), num=100)
-    ax.plot(xr, model.predict(xr[:,np.newaxis]), **kwargs)
+    ax.plot(xr, model.predict(xr[:, np.newaxis]), **kwargs)
     return ax
 
 
@@ -161,12 +163,13 @@ def draw_best_fit(X, y, ax, estimator='linear', **kwargs):
 ## Estimator Functions
 ##########################################################################
 
+
 def fit_select_best(X, y):
     """
     Selects the best fit of the estimators already implemented by choosing the
     model with the smallest mean square error metric for the trained values.
     """
-    models = [fit(X,y) for fit in [fit_linear, fit_quadratic]]
+    models = [fit(X, y) for fit in [fit_linear, fit_quadratic]]
     errors = map(lambda model: mse(y, model.predict(X)), models)
 
     return min(zip(models, errors), key=itemgetter(1))[0]
@@ -185,9 +188,7 @@ def fit_quadratic(X, y):
     """
     Uses OLS with Polynomial order 2.
     """
-    model = make_pipeline(
-        PolynomialFeatures(2), linear_model.LinearRegression()
-    )
+    model = make_pipeline(PolynomialFeatures(2), linear_model.LinearRegression())
     model.fit(X, y)
     return model
 
@@ -209,6 +210,7 @@ def fit_log(X, y):
 ##########################################################################
 ## Draw 45 Degree Line
 ##########################################################################
+
 
 def draw_identity_line(ax=None, dynamic=True, **kwargs):
     """
@@ -249,15 +251,15 @@ def draw_identity_line(ax=None, dynamic=True, **kwargs):
     ax = ax or plt.gca()
 
     # Define the standard line color
-    if 'c' not in kwargs and 'color' not in kwargs:
-        kwargs['color'] = LINE_COLOR
+    if "c" not in kwargs and "color" not in kwargs:
+        kwargs["color"] = LINE_COLOR
 
     # Define the standard opacity
-    if 'alpha' not in kwargs:
-        kwargs['alpha'] = 0.5
+    if "alpha" not in kwargs:
+        kwargs["alpha"] = 0.5
 
     # Draw the identity line
-    identity, = ax.plot([],[], **kwargs)
+    identity, = ax.plot([], [], **kwargs)
 
     # Define the callback
     def callback(ax):
@@ -266,35 +268,35 @@ def draw_identity_line(ax=None, dynamic=True, **kwargs):
         ylim = ax.get_ylim()
 
         # Set the bounding range of the line
-        data = (
-            max(xlim[0], ylim[0]), min(xlim[1], ylim[1])
-        )
+        data = (max(xlim[0], ylim[0]), min(xlim[1], ylim[1]))
         identity.set_data(data, data)
 
     # Register the callback and return
     callback(ax)
 
     if dynamic:
-        ax.callbacks.connect('xlim_changed', callback)
-        ax.callbacks.connect('ylim_changed', callback)
+        ax.callbacks.connect("xlim_changed", callback)
+        ax.callbacks.connect("ylim_changed", callback)
 
     return ax
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     import os
     import pandas as pd
 
-    path = os.path.join(os.path.dirname(__file__), "..", "examples", "data", "concrete.xls")
+    path = os.path.join(
+        os.path.dirname(__file__), "..", "examples", "data", "concrete.xls"
+    )
     if not os.path.exists(path):
         raise Exception("Could not find path for testing")
 
-    xkey = 'Fine Aggregate (component 7)(kg in a m^3 mixture)'
-    ykey = 'Coarse Aggregate  (component 6)(kg in a m^3 mixture)'
+    xkey = "Fine Aggregate (component 7)(kg in a m^3 mixture)"
+    ykey = "Coarse Aggregate  (component 6)(kg in a m^3 mixture)"
     data = pd.read_excel(path)
 
     fig, axe = plt.subplots()
     axe.scatter(data[xkey], data[ykey])
-    draw_best_fit(data[xkey], data[ykey], axe, 'select_best')
+    draw_best_fit(data[xkey], data[ykey], axe, "select_best")
 
     plt.show()

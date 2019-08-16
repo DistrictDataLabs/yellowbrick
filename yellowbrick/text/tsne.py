@@ -1,11 +1,11 @@
 # yellowbrick.text.tsne
 # Implements TSNE visualizations of documents in 2D space.
 #
-# Author:   Benjamin Bengfort <benjamin@bengfort.com>
-# Author:   Rebecca Bilbro <bilbro@gmail.com>
+# Author:   Benjamin Bengfort
+# Author:   Rebecca Bilbro
 # Created:  Mon Feb 20 06:33:29 2017 -0500
 #
-# Copyright (C) 2016 Bengfort.com
+# Copyright (C) 2016 The scikit-yb developers
 # For license information, see LICENSE.txt
 #
 # ID: tsne.py [6aa9198] benjamin@bengfort.com $
@@ -35,8 +35,19 @@ from sklearn.decomposition import TruncatedSVD, PCA
 ## Quick Methods
 ##########################################################################
 
-def tsne(X, y=None, ax=None, decompose='svd', decompose_by=50, classes=None,
-           colors=None, colormap=None, alpha=0.7, **kwargs):
+
+def tsne(
+    X,
+    y=None,
+    ax=None,
+    decompose="svd",
+    decompose_by=50,
+    classes=None,
+    colors=None,
+    colormap=None,
+    alpha=0.7,
+    **kwargs
+):
     """
     Display a projection of a vectorized corpus in two dimensions using TSNE,
     a nonlinear dimensionality reduction method that is particularly well
@@ -108,6 +119,7 @@ def tsne(X, y=None, ax=None, decompose='svd', decompose_by=50, classes=None,
 ## TSNEVisualizer
 ##########################################################################
 
+
 class TSNEVisualizer(TextVisualizer):
     """
     Display a projection of a vectorized corpus in two dimensions using TSNE,
@@ -175,9 +187,19 @@ class TSNEVisualizer(TextVisualizer):
     # NOTE: cannot be np.nan
     NULL_CLASS = None
 
-    def __init__(self, ax=None, decompose='svd', decompose_by=50,
-                 labels=None, classes=None, colors=None, colormap=None,
-                 random_state=None, alpha=0.7, **kwargs):
+    def __init__(
+        self,
+        ax=None,
+        decompose="svd",
+        decompose_by=50,
+        labels=None,
+        classes=None,
+        colors=None,
+        colormap=None,
+        random_state=None,
+        alpha=0.7,
+        **kwargs
+    ):
 
         # Visual Parameters
         self.alpha = alpha
@@ -188,16 +210,14 @@ class TSNEVisualizer(TextVisualizer):
 
         # Fetch TSNE kwargs from kwargs by popping only keys belonging to TSNE params
         tsne_kwargs = {
-            key: kwargs.pop(key)
-            for key in TSNE().get_params()
-            if key in kwargs
+            key: kwargs.pop(key) for key in TSNE().get_params() if key in kwargs
         }
         self.transformer_ = self.make_transformer(decompose, decompose_by, tsne_kwargs)
 
         # Call super at the end so that size and title are set correctly
         super(TSNEVisualizer, self).__init__(ax=ax, **kwargs)
 
-    def make_transformer(self, decompose='svd', decompose_by=50, tsne_kwargs={}):
+    def make_transformer(self, decompose="svd", decompose_by=50, tsne_kwargs={}):
         """
         Creates an internal transformer pipeline to project the data set into
         2D space using TSNE, applying an pre-decomposition technique ahead of
@@ -226,10 +246,7 @@ class TSNEVisualizer(TextVisualizer):
 
         # TODO: detect decompose by inferring from sparse matrix or dense or
         # If number of features > 50 etc.
-        decompositions = {
-            'svd': TruncatedSVD,
-            'pca': PCA,
-        }
+        decompositions = {"svd": TruncatedSVD, "pca": PCA}
 
         if decompose and decompose.lower() not in decompositions:
             raise YellowbrickValueError(
@@ -244,12 +261,20 @@ class TSNEVisualizer(TextVisualizer):
         # Add the pre-decomposition
         if decompose:
             klass = decompositions[decompose]
-            steps.append((decompose, klass(
-                n_components=decompose_by, random_state=self.random_state)))
+            steps.append(
+                (
+                    decompose,
+                    klass(n_components=decompose_by, random_state=self.random_state),
+                )
+            )
 
         # Add the TSNE manifold
-        steps.append(('tsne', TSNE(
-            n_components=2, random_state=self.random_state, **tsne_kwargs)))
+        steps.append(
+            (
+                "tsne",
+                TSNE(n_components=2, random_state=self.random_state, **tsne_kwargs),
+            )
+        )
 
         # return the pipeline
         return Pipeline(steps)
@@ -312,15 +337,17 @@ class TSNEVisualizer(TextVisualizer):
         # Resolve the labels with the classes
         labels = self.labels if self.labels is not None else self.classes_
         if len(labels) != len(self.classes_):
-            raise YellowbrickValueError((
-                "number of supplied labels ({}) does not "
-                "match the number of classes ({})"
-            ).format(len(labels), len(self.classes_)))
-
+            raise YellowbrickValueError(
+                (
+                    "number of supplied labels ({}) does not "
+                    "match the number of classes ({})"
+                ).format(len(labels), len(self.classes_))
+            )
 
         # Create the color mapping for the labels.
         self.color_values_ = resolve_colors(
-            n_colors=len(labels), colormap=self.colormap, colors=self.colors)
+            n_colors=len(labels), colormap=self.colormap, colors=self.colors
+        )
         colors = dict(zip(labels, self.color_values_))
 
         # Transform labels into a map of class to label
@@ -329,24 +356,23 @@ class TSNEVisualizer(TextVisualizer):
         # Expand the points into vectors of x and y for scatter plotting,
         # assigning them to their label if the label has been passed in.
         # Additionally, filter classes not specified directly by the user.
-        series = defaultdict(lambda: {'x':[], 'y':[]})
+        series = defaultdict(lambda: {"x": [], "y": []})
 
         if target is not None:
             for t, point in zip(target, points):
                 label = labels[t]
-                series[label]['x'].append(point[0])
-                series[label]['y'].append(point[1])
+                series[label]["x"].append(point[0])
+                series[label]["y"].append(point[1])
         else:
             label = self.classes_[0]
-            for x,y in points:
-                series[label]['x'].append(x)
-                series[label]['y'].append(y)
+            for x, y in points:
+                series[label]["x"].append(x)
+                series[label]["y"].append(y)
 
         # Plot the points
         for label, points in series.items():
             self.ax.scatter(
-                points['x'], points['y'], c=colors[label],
-                alpha=self.alpha, label=label
+                points["x"], points["y"], c=colors[label], alpha=self.alpha, label=label
             )
 
     def finalize(self, **kwargs):
@@ -354,9 +380,7 @@ class TSNEVisualizer(TextVisualizer):
         Finalize the drawing by adding a title and legend, and removing the
         axes objects that do not convey information about TNSE.
         """
-        self.set_title(
-            "TSNE Projection of {} Documents".format(self.n_instances_)
-        )
+        self.set_title("TSNE Projection of {} Documents".format(self.n_instances_))
 
         # Remove the ticks
         self.ax.set_yticks([])
@@ -367,6 +391,9 @@ class TSNEVisualizer(TextVisualizer):
             box = self.ax.get_position()
             self.ax.set_position([box.x0, box.y0, box.width * 0.8, box.height])
             manual_legend(
-                self, self.classes_, self.color_values_,
-                loc='center left', bbox_to_anchor=(1, 0.5)
+                self,
+                self.classes_,
+                self.color_values_,
+                loc="center left",
+                bbox_to_anchor=(1, 0.5),
             )

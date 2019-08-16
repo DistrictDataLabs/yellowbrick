@@ -1,12 +1,13 @@
 # yellowbrick.text.umap_vis
 # Implements UMAP visualizations of documents in 2D space.
 #
-# Author:   John Healy <jchealy@gmail.com>
+# Author:   John Healy
 # Created:  Mon Dec 03 14:00:00 2018 -0500
 #
 # Copyright (C) 2019 The sckit-yb developers
 # For license information, see LICENSE.txt
 #
+# ID: umap_vis.py [] jchealy@gmail.com $
 
 """
 Implements UMAP visualizations of documents in 2D space.

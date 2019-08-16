@@ -2,12 +2,12 @@
 # Implementation of part-of-speech visualization for text.
 #
 # Author:   Rebecca Bilbro
-# Created:  2019-02-18 13:12
+# Created:  Sun Mar 5 18:07:06 2017 -0500
 #
-# Copyright (C) 2019 The scikit-yb developers
+# Copyright (C) 2017 The scikit-yb developers
 # For license information, see LICENSE.txt
 #
-# ID: postag.py bilbro@gmail.com $
+# ID: postag.py [] bilbro@gmail.com $
 
 """
 Implementation of part-of-speech visualization for text,
@@ -33,28 +33,53 @@ from yellowbrick.exceptions import YellowbrickValueError
 # NOTE: Penn Treebank converts all sentence closers (!,?,;) to periods
 PUNCT_TAGS = [".", ":", ",", "``", "''", "(", ")", "#", "$"]
 
-TAGSET_NAMES = {
-    "penn_treebank": "Penn Treebank",
-    "universal": "Universal Dependencies"
-}
+TAGSET_NAMES = {"penn_treebank": "Penn Treebank", "universal": "Universal Dependencies"}
 
 PENN_TAGS = [
-    "noun", "verb", "adjective", "adverb", "preposition", "determiner",
-    "pronoun", "conjunction", "infinitive", "wh- word", "modal", 
-    "possessive", "existential", "punctuation", "digit", "non-English",
-    "interjection", "list", "symbol", "other"
+    "noun",
+    "verb",
+    "adjective",
+    "adverb",
+    "preposition",
+    "determiner",
+    "pronoun",
+    "conjunction",
+    "infinitive",
+    "wh- word",
+    "modal",
+    "possessive",
+    "existential",
+    "punctuation",
+    "digit",
+    "non-English",
+    "interjection",
+    "list",
+    "symbol",
+    "other",
 ]
 
 UNIVERSAL_TAGS = [
-    "noun", "verb", "adjective", "adverb", "adposition", "determiner",
-    "pronoun", "conjunction", "infinitive", "punctuation", "number", 
-    "interjection", "symbol", "other"
+    "noun",
+    "verb",
+    "adjective",
+    "adverb",
+    "adposition",
+    "determiner",
+    "pronoun",
+    "conjunction",
+    "infinitive",
+    "punctuation",
+    "number",
+    "interjection",
+    "symbol",
+    "other",
 ]
 
 
 ##########################################################################
 # PosTagVisualizer
 ##########################################################################
+
 
 class PosTagVisualizer(TextVisualizer):
     """
@@ -65,19 +90,19 @@ class PosTagVisualizer(TextVisualizer):
     only about a word’s definition, but also its use in context (for
     example the words “ship” and “shop” can be either a verb or a noun,
     depending on the context).
-    
+
     The PosTagVisualizer creates a bar chart to visualize the relative
     proportions of different parts-of-speech in a corpus.
-    
+
     Note that the PosTagVisualizer requires documents to already be
     part-of-speech tagged; the visualizer expects the corpus to come in
     the form of a list of (document) lists of (sentence) lists of
     (tag, token) tuples.
-    
+
     Parameters
     ----------
     ax : matplotlib axes
-        The axes to plot the figure on. 
+        The axes to plot the figure on.
 
     tagset: string
         The tagset that was used to perform part-of-speech tagging.
@@ -96,17 +121,17 @@ class PosTagVisualizer(TextVisualizer):
         from most to least frequent.
 
     stack : bool {True, False}, default : False
-        Plot the PosTag frequency chart as a per-class stacked bar chart. 
+        Plot the PosTag frequency chart as a per-class stacked bar chart.
         Note that fit() requires y for this visualization.
 
     kwargs : dict
         Pass any additional keyword arguments to the PosTagVisualizer.
-    
+
     Attributes
     ----------
     pos_tag_counts_: dict
         Mapping of part-of-speech tags to counts.
-   
+
     Examples
     --------
     >>> viz = PosTagVisualizer()
@@ -129,11 +154,11 @@ class PosTagVisualizer(TextVisualizer):
         self.tagset_names = TAGSET_NAMES
 
         if tagset not in self.tagset_names:
-            raise YellowbrickValueError((
-                "'{}' is an invalid tagset. Please choose one of {}."
-            ).format(
-                tagset, ", ".join(self.tagset_names.keys())
-            ))
+            raise YellowbrickValueError(
+                ("'{}' is an invalid tagset. Please choose one of {}.").format(
+                    tagset, ", ".join(self.tagset_names.keys())
+                )
+            )
         else:
             self.tagset = tagset
 
@@ -147,7 +172,7 @@ class PosTagVisualizer(TextVisualizer):
         """
         Fits the corpus to the appropriate tag map.
         Text documents must be tokenized & tagged before passing to fit.
-        
+
         Parameters
         ----------
         X : list or generator
@@ -161,13 +186,13 @@ class PosTagVisualizer(TextVisualizer):
 
         kwargs : dict
             Pass generic arguments to the drawing method
- 
+
         Returns
         -------
         self : instance
             Returns the instance of the transformer/visualizer
         """
-        self.labels_ = ['documents']
+        self.labels_ = ["documents"]
         if self.stack:
             if y is None:
                 raise YellowbrickValueError("Specify y for stack=True")
@@ -202,14 +227,11 @@ class PosTagVisualizer(TextVisualizer):
     def _make_tag_map(self, tagset):
         """
         Returns a map of the tagset to a counter unless stack=True then returns
-        a map of labels to a map of tagset to counters. 
+        a map of labels to a map of tagset to counters.
         """
         # ensures the dict contains a zero counter per tag
         zeros = [0] * len(tagset)
-        return {
-            label: dict(zip(tagset, zeros))
-            for label in self.labels_
-        }
+        return {label: dict(zip(tagset, zeros)) for label in self.labels_}
         return dict(zip(tagset, zeros))
 
     def _handle_universal(self, X, y=None):
@@ -226,11 +248,13 @@ class PosTagVisualizer(TextVisualizer):
         """
         jump = {
             # combine proper and regular nouns
-            "NOUN": "noun", "PROPN": "noun",
+            "NOUN": "noun",
+            "PROPN": "noun",
             "ADJ": "adjective",
             "VERB": "verb",
             # include particles with adverbs
-            "ADV": "adverb", "PART": "adverb",
+            "ADV": "adverb",
+            "PART": "adverb",
             "ADP": "adposition",
             "PRON": "pronoun",
             "CCONJ": "conjunction",
@@ -247,9 +271,9 @@ class PosTagVisualizer(TextVisualizer):
                     if tag == "SPACE":
                         continue
                     if self.stack:
-                        counter = self.pos_tag_counts_[y[idx]] 
+                        counter = self.pos_tag_counts_[y[idx]]
                     else:
-                        counter = self.pos_tag_counts_['documents']
+                        counter = self.pos_tag_counts_["documents"]
 
                     counter[jump.get(tag, "other")] += 1
 
@@ -268,9 +292,9 @@ class PosTagVisualizer(TextVisualizer):
             for tagged_sent in tagged_doc:
                 for _, tag in tagged_sent:
                     if self.stack:
-                        counter = self.pos_tag_counts_[y[idx]] 
+                        counter = self.pos_tag_counts_[y[idx]]
                     else:
-                        counter = self.pos_tag_counts_['documents']
+                        counter = self.pos_tag_counts_["documents"]
 
                     if tag.startswith("N"):
                         counter["noun"] += 1
@@ -331,32 +355,33 @@ class PosTagVisualizer(TextVisualizer):
             Axes on which the PosTagVisualizer was drawn.
         """
         # Converts nested dict to nested list
-        pos_tag_counts = np.array([
-            list(i.values()) for i in self.pos_tag_counts_.values()
-        ])
+        pos_tag_counts = np.array(
+            [list(i.values()) for i in self.pos_tag_counts_.values()]
+        )
         # stores sum of nested list column wise
         pos_tag_sum = np.sum(pos_tag_counts, axis=0)
 
         if self.frequency:
             # sorts the count and tags by sum for frequency true
             idx = (pos_tag_sum).argsort()[::-1]
-            self._pos_tags = np.array(self._pos_tags)[idx] 
-            pos_tag_counts = pos_tag_counts[:,idx]
+            self._pos_tags = np.array(self._pos_tags)[idx]
+            pos_tag_counts = pos_tag_counts[:, idx]
 
         if self.stack:
             bar_stack(
-                pos_tag_counts, ax=self.ax, labels=list(self.labels_),
-                ticks=self._pos_tags, colors=self.colors, colormap=self.colormap
+                pos_tag_counts,
+                ax=self.ax,
+                labels=list(self.labels_),
+                ticks=self._pos_tags,
+                colors=self.colors,
+                colormap=self.colormap,
             )
         else:
             xidx = np.arange(len(self._pos_tags))
             colors = resolve_colors(
-                n_colors=len(self._pos_tags), colormap=self.colormap,
-                colors=self.colors
+                n_colors=len(self._pos_tags), colormap=self.colormap, colors=self.colors
             )
-            self.ax.bar(
-                xidx, pos_tag_counts[0], color=colors
-            )
+            self.ax.bar(xidx, pos_tag_counts[0], color=colors)
 
         return self.ax
 
@@ -376,7 +401,8 @@ class PosTagVisualizer(TextVisualizer):
             self.ax.set_xlabel(
                 "{} part-of-speech tags, sorted by frequency".format(
                     self.tagset_names[self.tagset]
-                ))
+                )
+            )
         else:
             self.ax.set_xlabel(
                 "{} part-of-speech tags".format(self.tagset_names[self.tagset])
@@ -402,6 +428,7 @@ class PosTagVisualizer(TextVisualizer):
 ##########################################################################
 ## Quick Method
 ##########################################################################
+
 
 def postag(
     X,
@@ -456,8 +483,13 @@ def postag(
     """
     # Instantiate the visualizer
     visualizer = PosTagVisualizer(
-        ax=ax, tagset=tagset, colors=colors, colormap=colormap,
-        frequency=frequency, stack=stack, **kwargs
+        ax=ax,
+        tagset=tagset,
+        colors=colors,
+        colormap=colormap,
+        frequency=frequency,
+        stack=stack,
+        **kwargs
     )
 
     # Fit and transform the visualizer (calls draw)
@@ -465,5 +497,3 @@ def postag(
 
     # Return the axes object on the visualizer
     return visualizer.ax
-
-    

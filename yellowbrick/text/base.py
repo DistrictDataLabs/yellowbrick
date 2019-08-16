@@ -1,10 +1,10 @@
 # yellowbrick.text.base
 # Base classes for text feature visualizers and feature selection tools.
 #
-# Author:   Rebecca Bilbro <rbilbro@districtdatalabs.com>
-# Created:  2017-01-20 14:44
+# Author:   Rebecca Bilbro
+# Created:  Sat Jan 21 09:37:01 2017 -0500
 #
-# Copyright (C) 2017 District Data Labs
+# Copyright (C) 2017 The scikit-yb developers
 # For license information, see LICENSE.txt
 #
 # ID: base.py [75d9b20] rebecca.bilbro@bytecubed.com $
@@ -24,6 +24,7 @@ from sklearn.base import TransformerMixin
 ##########################################################################
 ## Text Visualizers
 ##########################################################################
+
 
 class TextVisualizer(Visualizer, TransformerMixin):
     """

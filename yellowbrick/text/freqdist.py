@@ -1,10 +1,10 @@
 # yellowbrick.text.freqdist
 # Implementations of frequency distributions for text visualization.
 #
-# Author:   Rebecca Bilbro <rbilbro@districtdatalabs.com>
-# Created:  2017-02-08 10:06
+# Author:   Rebecca Bilbro
+# Created:  Mon Feb 20 12:38:20 2017 -0500
 #
-# Copyright (C) 2017 District Data Labs
+# Copyright (C) 2017 The scikit-yb developers
 # For license information, see LICENSE.txt
 #
 # ID: freqdist.py [67b2740] rebecca.bilbro@bytecubed.com $
@@ -29,7 +29,8 @@ from yellowbrick.exceptions import YellowbrickValueError
 ## Quick Method
 ##########################################################################
 
-def freqdist(X, y=None, ax=None, n=50, orient='h', color=None, **kwargs):
+
+def freqdist(X, y=None, ax=None, n=50, orient="h", color=None, **kwargs):
     """Displays frequency distribution plot for text.
 
     This helper function is a quick wrapper to utilize the FreqDist
@@ -66,9 +67,7 @@ def freqdist(X, y=None, ax=None, n=50, orient='h', color=None, **kwargs):
         Returns the axes that the plot was drawn on.
     """
     # Instantiate the visualizer
-    visualizer = FreqDistVisualizer(
-        ax=ax, n=n, orient=orient, color=color, **kwargs
-    )
+    visualizer = FreqDistVisualizer(ax=ax, n=n, orient=orient, color=color, **kwargs)
 
     # Fit and transform the visualizer (calls draw)
     visualizer.fit(X, y, **kwargs)
@@ -114,15 +113,13 @@ class FrequencyVisualizer(TextVisualizer):
     process, but can and should be set as early as possible.
     """
 
-    def __init__(self, features, ax=None, n=50, orient='h', color=None, **kwargs):
+    def __init__(self, features, ax=None, n=50, orient="h", color=None, **kwargs):
         super(FreqDistVisualizer, self).__init__(ax=ax, **kwargs)
 
         # Check that the orient is correct
         orient = orient.lower().strip()
-        if orient not in {'h', 'v'}:
-            raise YellowbrickValueError(
-                "Orientation must be 'h' or 'v'"
-            )
+        if orient not in {"h", "v"}:
+            raise YellowbrickValueError("Orientation must be 'h' or 'v'")
 
         # Visualizer parameters
         self.N = n
@@ -191,7 +188,7 @@ class FrequencyVisualizer(TextVisualizer):
 
         # Frequency distribution of entire corpus.
         self.freqdist_ = self.count(X)
-        self.sorted_ = self.freqdist_.argsort()[::-1] # Descending order
+        self.sorted_ = self.freqdist_.argsort()[::-1]  # Descending order
 
         # Compute the number of words, vocab, and hapaxes
         self.vocab_ = self.freqdist_.shape[0]
@@ -213,26 +210,24 @@ class FrequencyVisualizer(TextVisualizer):
 
         """
         # Prepare the data
-        bins  = np.arange(self.N)
-        words = [self.features[i] for i in self.sorted_[:self.N]]
+        bins = np.arange(self.N)
+        words = [self.features[i] for i in self.sorted_[: self.N]]
         freqs = {}
 
         # Set up the bar plots
         if self.conditional_freqdist_:
-            for label, values in sorted(self.conditional_freqdist_.items(), key=itemgetter(0)):
-                freqs[label] = [
-                    values[i] for i in self.sorted_[:self.N]
-                ]
+            for label, values in sorted(
+                self.conditional_freqdist_.items(), key=itemgetter(0)
+            ):
+                freqs[label] = [values[i] for i in self.sorted_[: self.N]]
         else:
-            freqs['corpus'] = [
-                self.freqdist_[i] for i in self.sorted_[:self.N]
-            ]
+            freqs["corpus"] = [self.freqdist_[i] for i in self.sorted_[: self.N]]
 
         # Draw a horizontal barplot
-        if self.orient == 'h':
+        if self.orient == "h":
             # Add the barchart, stacking if necessary
             for label, freq in freqs.items():
-                self.ax.barh(bins, freq, label=label, color=self.color, align='center')
+                self.ax.barh(bins, freq, label=label, color=self.color, align="center")
 
             # Set the y ticks to the words
             self.ax.set_yticks(bins)
@@ -246,10 +241,10 @@ class FrequencyVisualizer(TextVisualizer):
             self.ax.xaxis.grid(True)
 
         # Draw a vertical barplot
-        elif self.orient == 'v':
+        elif self.orient == "v":
             # Add the barchart, stacking if necessary
             for label, freq in freqs.items():
-                self.ax.bar(bins, freq, label=label, color=self.color, align='edge')
+                self.ax.bar(bins, freq, label=label, color=self.color, align="edge")
 
             # Set the y ticks to the words
             self.ax.set_xticks(bins)
@@ -261,9 +256,7 @@ class FrequencyVisualizer(TextVisualizer):
 
         # Unknown state
         else:
-            raise YellowbrickValueError(
-                "Orientation must be 'h' or 'v'"
-            )
+            raise YellowbrickValueError("Orientation must be 'h' or 'v'")
 
     def finalize(self, **kwargs):
         """
@@ -276,21 +269,25 @@ class FrequencyVisualizer(TextVisualizer):
 
         """
         # Set the title
-        self.set_title(
-            'Frequency Distribution of Top {} tokens'.format(self.N)
-        )
+        self.set_title("Frequency Distribution of Top {} tokens".format(self.N))
 
         # Create the vocab, count, and hapaxes labels
         infolabel = "vocab: {:,}\nwords: {:,}\nhapax: {:,}".format(
             self.vocab_, self.words_, self.hapaxes_
         )
 
-        self.ax.text(0.68, 0.97, infolabel, transform=self.ax.transAxes,
-                     fontsize=9, verticalalignment='top',
-                     bbox={'boxstyle':'round', 'facecolor':'white', 'alpha':.8})
+        self.ax.text(
+            0.68,
+            0.97,
+            infolabel,
+            transform=self.ax.transAxes,
+            fontsize=9,
+            verticalalignment="top",
+            bbox={"boxstyle": "round", "facecolor": "white", "alpha": 0.8},
+        )
 
         # Set the legend and the grid
-        self.ax.legend(loc='upper right', frameon=True)
+        self.ax.legend(loc="upper right", frameon=True)
 
 
 # Backwards compatibility alias

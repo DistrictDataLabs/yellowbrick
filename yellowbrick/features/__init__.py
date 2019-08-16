@@ -1,10 +1,10 @@
 # yellowbrick.features
 # Visualizers for feature analysis and diagnostics.
 #
-# Author:   Benjamin Bengfort <bbengfort@districtdatalabs.com>
+# Author:   Benjamin Bengfort
 # Created:  Mon Oct 03 21:30:18 2016 -0400
 #
-# Copyright (C) 2016 District Data Labs
+# Copyright (C) 2016 The scikit-yb developers
 # For license information, see LICENSE.txt
 #
 # ID: __init__.py [0f4b236] benjamin@bengfort.com $
