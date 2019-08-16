@@ -1,4 +1,3 @@
-# -*- coding: utf8 -*-
 # tests.test_text.test_postag
 # Tests for the part-of-speech tagging visualization
 #
@@ -8,7 +7,7 @@
 # Copyright (C) 2019 The scikit-yb developers
 # For license information, see LICENSE.txt
 #
-# ID: test_postag.py [bd9cbb9] $
+# ID: test_postag.py [bd9cbb9] bilbro@gmail.com $
 
 """
 Tests for the part-of-speech tagging visualization
@@ -90,13 +89,14 @@ sonnets = [
     Despite of wrinkles this thy golden time.
     But if thou live, remember'd not to be,
     Die single, and thine image dies with thee.
-    """
+    """,
 ]
 
 
 ##########################################################################
 ## PosTag Utils
 ##########################################################################
+
 
 def check_nltk_data():
     """
@@ -147,21 +147,16 @@ def get_tagged_docs(X, model="nltk", tagger="word"):
     elif model == "nltk":
         if tagger == "wordpunct":
             for doc in X:
-                yield [
-                    pos_tag(wordpunct_tokenize(sent))
-                    for sent in sent_tokenize(doc)
-                ]
+                yield [pos_tag(wordpunct_tokenize(sent)) for sent in sent_tokenize(doc)]
         else:
             for doc in X:
-                yield [
-                    pos_tag(word_tokenize(sent))
-                    for sent in sent_tokenize(doc)
-                ]
+                yield [pos_tag(word_tokenize(sent)) for sent in sent_tokenize(doc)]
 
 
 ##########################################################################
 ## PosTag Tests
 ##########################################################################
+
 
 class TestPosTag(VisualTestCase):
     """
@@ -178,10 +173,10 @@ class TestPosTag(VisualTestCase):
         _, ax = plt.subplots()
         tagged_docs = list(get_tagged_docs(sonnets))
 
-        postag(tagged_docs, ax=ax)
-        ax.grid(False)
+        viz = postag(tagged_docs, ax=ax)
+        viz.ax.grid(False)
 
-        self.assert_images_similar(ax=ax)
+        self.assert_images_similar(viz)
 
     def test_unknown_tagset(self):
         """
@@ -205,10 +200,28 @@ class TestPosTag(VisualTestCase):
         ax.grid(False)
 
         # Sorted tags i.e predetermined order
-        sorted_tags = ['noun', 'adjective', 'punctuation', 'verb', 'preposition',
-                       'determiner', 'adverb', 'conjunction', 'pronoun', 'wh- word',
-                       'modal', 'infinitive', 'possessive', 'other', 'symbol',
-                       'existential', 'digit', 'non-English', 'interjection', 'list']
+        sorted_tags = [
+            "noun",
+            "adjective",
+            "punctuation",
+            "verb",
+            "preposition",
+            "determiner",
+            "adverb",
+            "conjunction",
+            "pronoun",
+            "wh- word",
+            "modal",
+            "infinitive",
+            "possessive",
+            "other",
+            "symbol",
+            "existential",
+            "digit",
+            "non-English",
+            "interjection",
+            "list",
+        ]
 
         # Extract tick labels from the plot
         ticks_ax = [tick.get_text() for tick in ax.xaxis.get_ticklabels()]
@@ -284,7 +297,7 @@ class TestPosTag(VisualTestCase):
         tagged_docs = list(get_tagged_docs(sonnets))
 
         visualizer = PosTagVisualizer(stack=True, ax=ax)
-        visualizer.fit(tagged_docs, y=['a', 'b', 'c'])
+        visualizer.fit(tagged_docs, y=["a", "b", "c"])
         visualizer.ax.grid(False)
 
         self.assert_images_similar(ax=ax)
@@ -300,14 +313,32 @@ class TestPosTag(VisualTestCase):
         tagged_docs = list(get_tagged_docs(sonnets))
 
         visualizer = PosTagVisualizer(stack=True, frequency=True, ax=ax)
-        visualizer.fit(tagged_docs, y=['a', 'b', 'c'])
+        visualizer.fit(tagged_docs, y=["a", "b", "c"])
         visualizer.ax.grid(False)
 
         # Sorted tags i.e predetermined order
-        sorted_tags = ['noun', 'adjective', 'punctuation', 'verb', 'preposition',
-                       'determiner', 'adverb', 'conjunction', 'pronoun', 'wh- word',
-                       'modal', 'infinitive', 'possessive', 'other', 'symbol',
-                       'existential', 'digit', 'non-English', 'interjection', 'list']
+        sorted_tags = [
+            "noun",
+            "adjective",
+            "punctuation",
+            "verb",
+            "preposition",
+            "determiner",
+            "adverb",
+            "conjunction",
+            "pronoun",
+            "wh- word",
+            "modal",
+            "infinitive",
+            "possessive",
+            "other",
+            "symbol",
+            "existential",
+            "digit",
+            "non-English",
+            "interjection",
+            "list",
+        ]
 
         # Extract tick labels from the plot
         ticks_ax = [tick.get_text() for tick in ax.xaxis.get_ticklabels()]
@@ -316,6 +347,3 @@ class TestPosTag(VisualTestCase):
         assert ticks_ax == sorted_tags
 
         self.assert_images_similar(ax=ax)
-
-
-

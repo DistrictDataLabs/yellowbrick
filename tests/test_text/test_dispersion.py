@@ -2,7 +2,6 @@
 # Tests for the dispersion plot visualization
 #
 # Author:   Larry Gray
-# Github:   @lwgray
 # Created:  2018-06-22 15:27
 #
 # Copyright (C) 2018 The scikit-yb developers
@@ -37,8 +36,8 @@ corpus = load_hobbies()
 ## DispersionPlot Tests
 ##########################################################################
 
-class TestDispersionPlot(VisualTestCase):
 
+class TestDispersionPlot(VisualTestCase):
     def test_quick_method(self):
         """
         Assert no errors occur when using the qucik method
@@ -46,19 +45,19 @@ class TestDispersionPlot(VisualTestCase):
         _, ax = plt.subplots()
 
         text = [doc.split() for doc in corpus.data]
-        target_words = ['Game', 'player', 'score', 'oil', 'Man']
+        target_words = ["Game", "player", "score", "oil", "Man"]
 
-        dispersion(words=target_words, corpus=text, ax=ax)
-        ax.grid(False)
+        viz = dispersion(words=target_words, corpus=text, ax=ax)
+        viz.ax.grid(False)
 
-        self.assert_images_similar(ax=ax, tol=25)
+        self.assert_images_similar(viz, tol=25)
 
     def test_integrated_dispersion_plot(self):
         """
         Assert no errors occur during DispersionPlot integration
         """
         text = [doc.split() for doc in corpus.data]
-        target_words = ['Game', 'player', 'score', 'oil', 'Man']
+        target_words = ["Game", "player", "score", "oil", "Man"]
 
         visualizer = DispersionPlot(target_words)
         visualizer.fit(text)
@@ -72,7 +71,7 @@ class TestDispersionPlot(VisualTestCase):
         with ignore_case parameter turned on
         """
         text = [doc.split() for doc in corpus.data]
-        target_words = ['Game', 'player', 'score', 'oil', 'Man']
+        target_words = ["Game", "player", "score", "oil", "Man"]
 
         visualizer = DispersionPlot(target_words, ignore_case=True)
         visualizer.fit(text)
@@ -86,7 +85,7 @@ class TestDispersionPlot(VisualTestCase):
         when the corpus' text type is a generator
         """
         text = [doc.split() for doc in corpus.data]
-        target_words = ['Game', 'player', 'score', 'oil', 'Man']
+        target_words = ["Game", "player", "score", "oil", "Man"]
 
         visualizer = DispersionPlot(target_words, ignore_case=True)
         visualizer.fit(text)
@@ -100,7 +99,7 @@ class TestDispersionPlot(VisualTestCase):
         with annotate_docs parameter turned on
         """
         text = [doc.split() for doc in corpus.data]
-        target_words = ['girl', 'she', 'boy', 'he', 'man']
+        target_words = ["girl", "she", "boy", "he", "man"]
 
         visualizer = DispersionPlot(target_words, annotate_docs=True)
         visualizer.fit(text)
@@ -115,7 +114,7 @@ class TestDispersionPlot(VisualTestCase):
         """
         target = corpus.target
         text = [doc.split() for doc in corpus.data]
-        target_words = ['girl', 'she', 'boy', 'he', 'man']
+        target_words = ["girl", "she", "boy", "he", "man"]
 
         visualizer = DispersionPlot(target_words)
         visualizer.fit(text, target)
@@ -129,14 +128,13 @@ class TestDispersionPlot(VisualTestCase):
         """
         target = corpus.target
         text = [doc.split() for doc in corpus.data]
-        target_words = ['girl', 'she', 'boy', 'he', 'man']
+        target_words = ["girl", "she", "boy", "he", "man"]
 
-        visualizer = DispersionPlot(target_words, annotate_docs=True,
-                                    labels=['a', 'b'])
+        visualizer = DispersionPlot(target_words, annotate_docs=True, labels=["a", "b"])
 
         msg = (
-            r'number of supplied labels \(\d\) '
-            r'does not match the number of classes \(\d\)'
+            r"number of supplied labels \(\d\) "
+            r"does not match the number of classes \(\d\)"
         )
 
         with pytest.raises(YellowbrickValueError, match=msg):

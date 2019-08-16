@@ -40,7 +40,7 @@ class TextVisualizer(Visualizer, TransformerMixin):
     Accepts as input a DataFrame or Numpy array.
     """
 
-    def __init__(self, ax=None, **kwargs):
+    def __init__(self, ax=None, fig=None, **kwargs):
         """
         These parameters can be influenced later on in the visualization
         process, but can and should be set as early as possible.
@@ -50,11 +50,15 @@ class TextVisualizer(Visualizer, TransformerMixin):
         ax : axes
             the axis to plot the figure on
 
+        fig : matplotlib Figure, default: None
+            The figure to plot the Visualizer on. If None is passed in the current
+            plot will be used (or generated if required).
+
         kwargs : dict
             Pass generic arguments to the drawing method
 
         """
-        super(TextVisualizer, self).__init__(ax=ax, **kwargs)
+        super(TextVisualizer, self).__init__(ax=ax, fig=fig, **kwargs)
 
     def fit(self, X, y=None, **fit_params):
         """

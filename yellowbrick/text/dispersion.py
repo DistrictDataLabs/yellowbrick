@@ -43,7 +43,7 @@ class DispersionPlot(TextVisualizer):
     ----------
     target_words : list
         A list of target words whose dispersion across a corpus passed at fit
-	will be visualized.
+        will be visualized.
 
     ax : matplotlib axes, default: None
         The axes to plot the figure on.
@@ -59,7 +59,7 @@ class DispersionPlot(TextVisualizer):
         Qualitative colormap for discrete target
 
     ignore_case : boolean, default: False
-	Specify whether input  will be case-sensitive.
+        Specify whether input  will be case-sensitive.
 
     annotate_docs : boolean, default: False
         Specify whether document boundaries will be displayed.  Vertical lines
@@ -243,6 +243,8 @@ class DispersionPlot(TextVisualizer):
         self.ax.set_yticks(list(range(len(self.indexed_words_))))
         self.ax.set_yticklabels(self.indexed_words_)
 
+        return self.ax
+
     def finalize(self, **kwargs):
         """
         The finalize method executes any subclass-specific axes
@@ -319,15 +321,15 @@ def dispersion(
         are positioned at the end of each document.
 
     ignore_case : boolean, default: False
-	Specify whether input  will be case-sensitive.
+        Specify whether input  will be case-sensitive.
 
     kwargs : dict
         Pass any additional keyword arguments to the super class.
 
     Returns
     -------
-    ax: matplotlib axes
-        Returns the axes that the plot was drawn on
+    viz: DispersionPlot
+        Returns the fitted, finalized visualizer
     """
 
     # Instantiate the visualizer
@@ -344,6 +346,7 @@ def dispersion(
 
     # Fit and transform the visualizer (calls draw)
     visualizer.fit(corpus, y, **kwargs)
+    visualizer.finalize()
 
-    # Return the axes object on the visualizer
-    return visualizer.ax
+    # Return the visualizer objec
+    return visualizer

@@ -63,8 +63,8 @@ def freqdist(X, y=None, ax=None, n=50, orient="h", color=None, **kwargs):
 
     Returns
     -------
-    ax: matplotlib axes
-        Returns the axes that the plot was drawn on.
+    visualizer: FreqDistVisualizer
+        Returns the fitted, finalized visualizer
     """
     # Instantiate the visualizer
     visualizer = FreqDistVisualizer(ax=ax, n=n, orient=orient, color=color, **kwargs)
@@ -72,9 +72,10 @@ def freqdist(X, y=None, ax=None, n=50, orient="h", color=None, **kwargs):
     # Fit and transform the visualizer (calls draw)
     visualizer.fit(X, y, **kwargs)
     visualizer.transform(X)
+    visualizer.finalize()
 
-    # Return the axes object on the visualizer
-    return visualizer.ax
+    # Return the visualizer object
+    return visualizer
 
 
 class FrequencyVisualizer(TextVisualizer):
@@ -257,6 +258,8 @@ class FrequencyVisualizer(TextVisualizer):
         # Unknown state
         else:
             raise YellowbrickValueError("Orientation must be 'h' or 'v'")
+
+        return self.ax
 
     def finalize(self, **kwargs):
         """

@@ -478,8 +478,8 @@ def postag(
 
     Returns
     -------
-    ax : matplotlib axes
-        Returns the axes on which the PosTagVisualizer was drawn.
+    visualizer: PosTagVisualizer
+        Returns the fitted, finalized visualizer
     """
     # Instantiate the visualizer
     visualizer = PosTagVisualizer(
@@ -494,6 +494,7 @@ def postag(
 
     # Fit and transform the visualizer (calls draw)
     visualizer.fit(X, y=y, **kwargs)
+    visualizer.finalize()
 
-    # Return the axes object on the visualizer
-    return visualizer.ax
+    # Return the visualizer object
+    return visualizer

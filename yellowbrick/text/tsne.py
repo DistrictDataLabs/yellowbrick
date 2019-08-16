@@ -99,20 +99,28 @@ def tsne(
 
     Returns
     -------
-    ax : matplotlib axes
-        Returns the axes that the parallel coordinates were drawn on.
+    visualizer: TSNEVisualizer
+        Returns the fitted, finalized visualizer
     """
     # Instantiate the visualizer
     visualizer = TSNEVisualizer(
-        ax, decompose, decompose_by, classes, colors, colormap, alpha, **kwargs
+        ax=ax,
+        decompose=decompose,
+        decompose_by=decompose_by,
+        classes=classes,
+        colors=colors,
+        colormap=colormap,
+        alpha=alpha,
+        **kwargs
     )
 
     # Fit and transform the visualizer (calls draw)
     visualizer.fit(X, y, **kwargs)
     visualizer.transform(X)
+    visualizer.finalize()
 
-    # Return the axes object on the visualizer
-    return visualizer.ax
+    # Return the visualizer object
+    return visualizer
 
 
 ##########################################################################
@@ -374,6 +382,8 @@ class TSNEVisualizer(TextVisualizer):
             self.ax.scatter(
                 points["x"], points["y"], c=colors[label], alpha=self.alpha, label=label
             )
+
+        return self.ax
 
     def finalize(self, **kwargs):
         """
