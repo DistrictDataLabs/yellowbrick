@@ -7,7 +7,7 @@
 # Copyright (C) 2016 The scikit-yb developers
 # For license information, see LICENSE.txt
 #
-# ID: palettes.py [] pvomelveny@gmail.com
+# ID: palettes.py [] pvomelveny@gmail.com $
 
 """
 Implements the variety of colors that yellowbrick allows access to by name.
