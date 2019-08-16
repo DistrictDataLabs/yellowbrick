@@ -1,10 +1,10 @@
 # yellowbrick
 # A suite of visual analysis and diagnostic tools for machine learning.
 #
-# Author:   Rebecca Bilbro <rbilbro@districtdatalabs.com>
+# Author:   Rebecca Bilbro
 # Created:  Wed May 18 10:46:33 2016 -0400
 #
-# Copyright (C) 2016 District Data Labs
+# Copyright (C) 2016 The scikit-yb developers
 # For license information, see LICENSE.txt
 #
 # ID: __init__.py [0c5ba04] benjamin@bengfort.com $
@@ -20,6 +20,7 @@ selection, model selection, and parameter tuning for machine learning.
 
 # Capture the original matplotlib rcParams
 import matplotlib as mpl
+
 _orig_rc_params = mpl.rcParams.copy()
 
 # Import the version number at the top level
@@ -35,6 +36,7 @@ from .style.palettes import color_palette, set_color_codes
 from .anscombe import anscombe
 from .datasaurus import datasaurus
 from .classifier import ROCAUC, ClassBalance, ClassificationScoreVisualizer
+
 # from .classifier import crplot, rocplot
 # from .regressor import peplot, residuals_plot
 
@@ -43,7 +45,7 @@ from .classifier import ROCAUC, ClassBalance, ClassificationScoreVisualizer
 ## Set default aesthetics
 ##########################################################################
 
-set_aesthetic() # NOTE: modifies mpl.rcParams
+set_aesthetic()  # NOTE: modifies mpl.rcParams
 
 
 ##########################################################################
