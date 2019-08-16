@@ -4,6 +4,7 @@
 # Author:   Benjamin Bengfort <benjamin@bengfort.com>
 # Created:  Thu Dec 27 20:16:18 2018 -0500
 #
+# Copyright (C) 2018 The sckit-yb developers
 # For license information, see LICENSE.txt
 #
 # ID: target.py [] benjamin@bengfort.com $
@@ -23,9 +24,7 @@ from sklearn.utils.multiclass import type_of_target
 from yellowbrick.exceptions import YellowbrickValueError
 
 
-__all__ = [
-    'MAX_DISCRETE_CLASSES', 'TargetType', 'target_color_type'
-]
+__all__ = ["MAX_DISCRETE_CLASSES", "TargetType", "target_color_type"]
 
 MAX_DISCRETE_CLASSES = 12
 
@@ -33,10 +32,10 @@ MAX_DISCRETE_CLASSES = 12
 class TargetType(Enum):
     """Constants for defining target colors by input type"""
 
-    AUTO = 'auto'
-    SINGLE = 'single'
-    DISCRETE = 'discrete'
-    CONTINUOUS = 'continuous'
+    AUTO = "auto"
+    SINGLE = "single"
+    DISCRETE = "discrete"
+    CONTINUOUS = "continuous"
     UNKNOWN = "unknown"
 
     @classmethod
@@ -47,9 +46,7 @@ class TargetType(Enum):
         try:
             klass(val)
         except ValueError:
-            raise YellowbrickValueError(
-                "unknown target color type '{}'".format(val)
-            )
+            raise YellowbrickValueError("unknown target color type '{}'".format(val))
 
     def __eq__(self, other):
         if isinstance(other, str):
@@ -63,6 +60,7 @@ class TargetType(Enum):
 ##########################################################################
 ## Helper Functions
 ##########################################################################
+
 
 def target_color_type(y):
     """

@@ -1,10 +1,10 @@
 # yellowbrick.cluster
 # Visualizers for Cluster analysis and diagnostics
 #
-# Author:   Benjamin Bengfort <bbengfort@districtdatalabs.com>
+# Author:   Benjamin Bengfort
 # Created:  Thu Mar 23 17:26:57 2017 -0400
 #
-# Copyright (C) 2016 District Data Labs
+# Copyright (C) 2016 The scikit-yb developers
 # For license information, see LICENSE.txt
 #
 # ID: __init__.py [241edca] benjamin@bengfort.com $
@@ -22,4 +22,4 @@ related to evaluating Scikit-Learn clustering models.
 from .base import *
 from .elbow import *
 from .silhouette import *
-from .icdm import * 
+from .icdm import *

@@ -2,10 +2,13 @@
 # yellowbrick.features.pca
 # Decomposition based feature visualization with PCA.
 #
-# Author:   Carlo Morales <@cjmorale>
-# Author:   Raúl Peralta Lozada <@RaulPL>
-# Author:   Benjamin Bengfort <@bbengfort>
+# Author:   Carlo Morales
+# Author:   Raúl Peralta Lozada
+# Author:   Benjamin Bengfort
 # Created:  Tue May 23 18:34:27 2017 -0400
+#
+# Copyright (C) 2017 The scikit-yb developers
+# For license information, see LICENSE.txt
 #
 # ID: pca.py [] cmorales@pacificmetrics.com $
 
@@ -22,6 +25,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from mpl_toolkits.axes_grid1 import make_axes_locatable
 
+from yellowbrick.style import palettes
 from yellowbrick.features.projection import ProjectionVisualizer
 from yellowbrick.exceptions import YellowbrickValueError, NotFitted
 
@@ -35,6 +39,7 @@ from sklearn.exceptions import NotFittedError
 # 2D and 3D PCA Visualizer
 ##########################################################################
 
+
 class PCA(ProjectionVisualizer):
     """
     Produce a two or three dimensional principal component plot of a data array
@@ -45,14 +50,14 @@ class PCA(ProjectionVisualizer):
     Parameters
     ----------
     ax : matplotlib Axes, default: None
-        The axes to plot the figure on. If None is passed in, the current axes 
+        The axes to plot the figure on. If None is passed in, the current axes
         will be used (or generated if required).
 
     features : list, default: None
         The names of the features specified by the columns of the input dataset.
         This length of this list must match the number of columns in X, otherwise
         an exception will be raised on ``fit()``.
-        
+
     classes : list, default: None
         The class labels for each class in y, ordered by sorted class index. These
         names act as a label encoder for the legend, identifying integer classes
@@ -71,7 +76,6 @@ class PCA(ProjectionVisualizer):
         with matplotlib, please ensure a 3d axes is passed to the visualizer,
         otherwise one will be created using the current figure.
 
-
     proj_features : bool, default: False
         Boolean that indicates if the user wants to project the features
         in the projected space. If True the plot will be similar to a biplot.
@@ -87,24 +91,24 @@ class PCA(ProjectionVisualizer):
         it is used to compute the number of colors needed for each class and
         in the continuous case it is used to create a sequential color map based
         on the range of the target.
-        
+
     alpha : float, default: 0.75
         Specify a transparency where 1 is completely opaque and 0 is completely
         transparent. This property makes densely clustered points more visible.
 
     random_state : int, RandomState instance or None, optional (default None)
-        This parameter sets the random state on this solver. If the input X is 
-        larger than 500x500 and the number of components to extract is lower 
-        than 80% of the smallest dimension of the data, then the more efficient 
+        This parameter sets the random state on this solver. If the input X is
+        larger than 500x500 and the number of components to extract is lower
+        than 80% of the smallest dimension of the data, then the more efficient
         `randomized` solver is enabled.
 
     colorbar : bool, default: True
         If the target_type is "continous" draw a colorbar to the right of the
         scatter plot. The colobar axes is accessible using the cax property.
-        
+
     heatmap : bool, default: False
         Add a heatmap showing contribution of each feature in the principal components.
-        Also draws a colorbar for readability purpose. The heatmap is accessible 
+        Also draws a colorbar for readability purpose. The heatmap is accessible
         using lax property and colorbar using uax property.
 
     kwargs : dict
@@ -114,14 +118,14 @@ class PCA(ProjectionVisualizer):
     Attributes
     ----------
     pca_components_ : ndarray, shape (n_features, n_components)
-        This tells about the magnitude of each feature in the pricipal components. 
+        This tells about the magnitude of each feature in the pricipal components.
         This is primarily used to draw the biplots.
 
     classes_ : ndarray, shape (n_classes,)
         The class labels that define the discrete values in the target. Only
         available if the target type is discrete. This is guaranteed to be
         strings even if the classes are a different type.
-    
+
     features_ : ndarray, shape (n_features,)
         The names of the features discovered or used in the visualizer that
         can be used as an index to access or modify data in X. If a user passes
@@ -200,7 +204,7 @@ class PCA(ProjectionVisualizer):
     @property
     def uax(self):
         """
-        The axes of the colorbar, bottom of scatter plot. This is the colorbar 
+        The axes of the colorbar, bottom of scatter plot. This is the colorbar
         for heatmap and not for the scatter plot.
         """
         if self._uax is None:
@@ -248,13 +252,14 @@ class PCA(ProjectionVisualizer):
         super(PCA, self).layout(divider)
 
         if self.heatmap:
-            # Axes for heatmap
-            if self._uax is None:
-                self._uax = divider.append_axes("bottom", size="20%", pad=0.7)
 
             # Axes for colorbar(for heatmap).
+            if self._uax is None:
+                self._uax = divider.append_axes("bottom", size="10%", pad=0.7)
+
+            # Axes for heatmap
             if self._lax is None:
-                self._lax = divider.append_axes("bottom", size="100%", pad=0.5)
+                self._lax = divider.append_axes("bottom", size="15%", pad=0.5)
 
     def fit(self, X, y=None, **kwargs):
         """
@@ -273,8 +278,8 @@ class PCA(ProjectionVisualizer):
         -------
         self : visualizer
             Returns self for use in Pipelines.
-            
-        
+
+
         """
         # Call super fit to compute features, classes, colors, etc.
         super(PCA, self).fit(X=X, y=y, **kwargs)
@@ -318,7 +323,7 @@ class PCA(ProjectionVisualizer):
 
         If 2 dimensions are selected, a colorbar and heatmap can also be optionally
         included to show the magnitude of each feature value to the component.
-        
+
         Parameters
         ----------
         Xp : array-like of shape (n, 2) or (n, 3)
@@ -340,9 +345,14 @@ class PCA(ProjectionVisualizer):
             self._draw_projection_features(Xp, y)
         if self.projection == 2:
             if self.heatmap:
+                if not self.colormap:
+                    self.colormap = palettes.DEFAULT_SEQUENCE
                 # TODO: change to pcolormesh instead of imshow per #615 spec
                 im = self.lax.imshow(
-                    self.pca_components_, interpolation="none", cmap=self.colormap
+                    self.pca_components_,
+                    interpolation="none",
+                    cmap=self.colormap,
+                    aspect="auto",
                 )
                 plt.colorbar(
                     im,
@@ -421,19 +431,21 @@ class PCA(ProjectionVisualizer):
         super(PCA, self).finalize()
 
         self.ax.set_title("Principal Component Plot")
-        self.ax.set_xlabel("Principal Component 1", linespacing=1)
-        self.ax.set_ylabel("Principal Component 2", linespacing=1.2)
+        self.ax.set_xlabel("$PC_1$")
+        self.ax.set_ylabel("$PC_2$")
         if self.projection == 3:
-            self.ax.set_zlabel("Principal Component 3", linespacing=1.2)
+            self.ax.set_zlabel("$PC_3$")
         if self.heatmap == True:
             self.lax.set_xticks(np.arange(-0.5, len(self.features_)))
+            self.lax.set_xticklabels([])
+            # Makes the labels centered.
+            self.lax.set_xticks(np.arange(0, len(self.features_)), minor=True)
             self.lax.set_xticklabels(
-                self.features_, rotation=90, ha="left", fontsize=12
+                self.features_, rotation=90, fontsize=12, minor=True
             )
             self.lax.set_yticks(np.arange(0.5, 2))
-            self.lax.set_yticklabels(
-                ["First PC", "Second PC"], va="bottom", fontsize=12
-            )
+            self.lax.set_yticklabels(["$PC_1$", "$PC_2$"], va="bottom", fontsize=10)
+        self.fig.tight_layout()
 
 
 ##########################################################################
@@ -474,14 +486,14 @@ def pca_decomposition(
         An array or series of target or class values.
 
     ax : matplotlib Axes, default: None
-        The axes to plot the figure on. If None is passed in, the current axes 
+        The axes to plot the figure on. If None is passed in, the current axes
         will be used (or generated if required).
 
     features : list, default: None
         The names of the features specified by the columns of the input dataset.
         This length of this list must match the number of columns in X, otherwise
         an exception will be raised on ``fit()``.
-        
+
     classes : list, default: None
         The class labels for each class in y, ordered by sorted class index. These
         names act as a label encoder for the legend, identifying integer classes
@@ -500,7 +512,6 @@ def pca_decomposition(
         with matplotlib, please ensure a 3d axes is passed to the visualizer,
         otherwise one will be created using the current figure.
 
-
     proj_features : bool, default: False
         Boolean that indicates if the user wants to project the features
         in the projected space. If True the plot will be similar to a biplot.
@@ -516,24 +527,24 @@ def pca_decomposition(
         it is used to compute the number of colors needed for each class and
         in the continuous case it is used to create a sequential color map based
         on the range of the target.
-        
+
     alpha : float, default: 0.75
         Specify a transparency where 1 is completely opaque and 0 is completely
         transparent. This property makes densely clustered points more visible.
 
     random_state : int, RandomState instance or None, optional (default None)
-        This parameter sets the random state on this solver. If the input X is 
-        larger than 500x500 and the number of components to extract is lower 
-        than 80% of the smallest dimension of the data, then the more efficient 
+        This parameter sets the random state on this solver. If the input X is
+        larger than 500x500 and the number of components to extract is lower
+        than 80% of the smallest dimension of the data, then the more efficient
         `randomized` solver is enabled.
 
     colorbar : bool, default: True
         If the target_type is "continous" draw a colorbar to the right of the
         scatter plot. The colobar axes is accessible using the cax property.
-        
+
     heatmap : bool, default: False
         Add a heatmap showing contribution of each feature in the principal components.
-        Also draws a colorbar for readability purpose. The heatmap is accessible 
+        Also draws a colorbar for readability purpose. The heatmap is accessible
         using lax property and colorbar using uax property.
 
     kwargs : dict
@@ -543,14 +554,14 @@ def pca_decomposition(
     Attributes
     ----------
     pca_components_ : ndarray, shape (n_features, n_components)
-        This tells about the magnitude of each feature in the pricipal components. 
+        This tells about the magnitude of each feature in the pricipal components.
         This is primarily used to draw the biplots.
 
     classes_ : ndarray, shape (n_classes,)
         The class labels that define the discrete values in the target. Only
         available if the target type is discrete. This is guaranteed to be
         strings even if the classes are a different type.
-    
+
     features_ : ndarray, shape (n_features,)
         The names of the features discovered or used in the visualizer that
         can be used as an index to access or modify data in X. If a user passes
@@ -589,10 +600,11 @@ def pca_decomposition(
     # Fit and transform the visualizer (calls draw)
     visualizer.fit(X, y)
     visualizer.transform(X, y)
-    visualizer.poof()
+    visualizer.finalize()
 
     # Returns the visualizer object.
     return visualizer
 
+
 # Alias for PCA
-PCADecomposition=PCA
+PCADecomposition = PCA

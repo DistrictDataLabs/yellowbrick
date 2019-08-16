@@ -1,11 +1,13 @@
 # yellowbrick.utils.timer
 # Timer utilities
 #
-# Author:   ZJ Poh <poh.zijie@gmail.com>
+# Author:   ZJ Poh
 # Created:  Mon Jul 16 10:51:13 2017 -0700
 #
-# Copyright (C) 2017 District Data Labs
+# Copyright (C) 2017 The sckit-yb developers
 # For license information, see LICENSE.txt
+#
+# ID: timer.py [] poh.zijie@gmail.com $
 """
 Timer utilities
 """
@@ -34,6 +36,7 @@ class Timer:
         ...     do_something()
         >>> print(timer.interval)
     """
+
     def __init__(self):
         self.time = time.time
 

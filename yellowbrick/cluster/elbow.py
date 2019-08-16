@@ -333,8 +333,8 @@ class KElbowVisualizer(ClusteringScoreVisualizer):
             elbow_locator = KneeLocator(
                 self.k_values_, self.k_scores_, **locator_kwargs
             )
-            self.elbow_value_ = elbow_locator.knee
-            if self.elbow_value_ is not None:
+            if elbow_locator.knee is None:
+                self.elbow_value_ = None
                 self.elbow_score_ = 0
                 warning_message = (
                     "No 'knee' or 'elbow' point detected, "
@@ -342,6 +342,7 @@ class KElbowVisualizer(ClusteringScoreVisualizer):
                 )
                 warnings.warn(warning_message, YellowbrickWarning)
             else:
+                self.elbow_value_ = elbow_locator.knee
                 self.elbow_score_ = self.k_scores_[
                     self.k_values_.index(self.elbow_value_)
                 ]
@@ -420,8 +421,8 @@ def kelbow_visualizer(
     X,
     y=None,
     k=10,
-    ax=None, 
-    timings=True, 
+    ax=None,
+    timings=True,
     locate_elbow=True,
     metric="distortion",
     **kwargs
