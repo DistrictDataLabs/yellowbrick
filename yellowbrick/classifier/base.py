@@ -28,11 +28,12 @@ from yellowbrick.style.palettes import color_palette
 from yellowbrick.exceptions import NotFitted, YellowbrickWarning
 from yellowbrick.exceptions import YellowbrickTypeError, YellowbrickValueError
 
+from sklearn.preprocessing import LabelEncoder
+
 
 ##########################################################################
 ## Base Classification Visualizer
 ##########################################################################
-
 
 class ClassificationScoreVisualizer(ScoreVisualizer):
     """Base class for classifier model selection.
@@ -169,7 +170,7 @@ class ClassificationScoreVisualizer(ScoreVisualizer):
             Returns the instance of the classification score visualizer
         """
         # Super fits the wrapped estimator
-        super(ClassificationScoreVisualizer, self).fit(X, y)
+        super(ClassificationScoreVisualizer, self).fit(X, y, **kwargs)
 
         # Extract the classes and the class counts from the target
         self.classes_, self.class_counts_ = np.unique(y, return_counts=True)
@@ -244,9 +245,8 @@ class ClassificationScoreVisualizer(ScoreVisualizer):
             if yp.dtype.kind in {"i", "u"}:
                 idx = yp
             else:
-                # # Sort values to get indices
-                # labels = np.unique(yp)
-                raise YellowbrickValueError("use label encoder instead")
+                # Use label encoder to get indices by sorted class names
+                idx = LabelEncoder().fit_transform(yp)
 
             # Use index mapping for classes
             try:

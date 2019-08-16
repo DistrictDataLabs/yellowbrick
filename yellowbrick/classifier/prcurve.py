@@ -235,7 +235,7 @@ class PrecisionRecallCurve(ClassificationScoreVisualizer):
             self.target_type_ = MULTICLASS
             self.estimator = OneVsRestClassifier(self.estimator)
 
-            # Use label_binarize to create multi-label ouptut for OneVsRestClassifier
+            # Use label_binarize to create multi-label output for OneVsRestClassifier
             self._target_labels = np.unique(y)
             Y = label_binarize(y, classes=self._target_labels)
         elif ttype.startswith(BINARY):
