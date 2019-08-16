@@ -1,10 +1,10 @@
 # yellowbrick.utils.decorators
 # Decorators and descriptors for annotating yellowbrick library functions.
 #
-# Author:   Benjamin Bengfort <bbengfort@districtdatalabs.com>
+# Author:   Benjamin Bengfort
 # Created:  Thu May 18 15:13:33 2017 -0400
 #
-# Copyright (C) 2017 District Data Labs
+# Copyright (C) 2017 The sckit-yb developers
 # For license information, see LICENSE.txt
 #
 # ID: decorators.py [79cd8cf] benjamin@bengfort.com $
@@ -24,6 +24,7 @@ from functools import wraps
 ## Decorators
 ##########################################################################
 
+
 def memoized(fget):
     """
     Return a property attribute for new-style classes that only calls its
@@ -40,7 +41,7 @@ def memoized(fget):
     python-memoized-property
         `python-memoized-property <https://github.com/estebistec/python-memoized-property>`_
     """
-    attr_name = '_{0}'.format(fget.__name__)
+    attr_name = "_{0}".format(fget.__name__)
 
     @wraps(fget)
     def fget_memoized(self):

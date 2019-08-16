@@ -7,7 +7,7 @@
 # Copyright (C) 2018 The scikit-yb developers
 # For license information, see LICENSE.txt
 #
-# ID: test_freqdist.py [bd9cbb9] $
+# ID: test_freqdist.py [bd9cbb9] bilbro@gmail.com $
 
 """
 Tests for the frequency distribution text visualization
@@ -35,11 +35,11 @@ corpus = load_hobbies()
 ## FreqDist Tests
 ##########################################################################
 
-class TestFreqDist(VisualTestCase):
 
+class TestFreqDist(VisualTestCase):
     @pytest.mark.xfail(
         IS_WINDOWS_OR_CONDA,
-        reason="font rendering different in OS and/or Python; see #892"
+        reason="font rendering different in OS and/or Python; see #892",
     )
     def test_integrated_freqdist(self):
         """
@@ -47,8 +47,8 @@ class TestFreqDist(VisualTestCase):
         """
         vectorizer = CountVectorizer()
 
-        docs       = vectorizer.fit_transform(corpus.data)
-        features   = vectorizer.get_feature_names()
+        docs = vectorizer.fit_transform(corpus.data)
+        features = vectorizer.get_feature_names()
 
         visualizer = FreqDistVisualizer(features)
         visualizer.fit(docs)

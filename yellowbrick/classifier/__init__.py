@@ -1,13 +1,13 @@
 # yellowbrick.classifier
 # Visualizations related to evaluating Scikit-Learn classification models
 #
-# Author:   Rebecca Bilbro <rbilbro@districtdatalabs.com>
-# Author:   Benjamin Bengfort <bbengfort@districtdatalabs.com>
+# Author:   Rebecca Bilbro
+# Author:   Benjamin Bengfort
 # Author:   Neal Humphrey
-# Author:   Jason Keung <jason.s.keung@gmail.com>
+# Author:   Jason Keung
 # Created:  Wed May 18 12:39:40 2016 -0400
 #
-# Copyright (C) 2016 District Data Labs
+# Copyright (C) 2016 The scikit-yb developers
 # For license information, see LICENSE.txt
 #
 # ID: __init__.py [5eee25b] benjamin@bengfort.com $

@@ -51,11 +51,24 @@ def is_fitted(estimator):
     except AttributeError:
         # Some clustering models (LDA, PCA, Agglomerative) don't implement ``predict``
         try:
-            check_is_fitted(estimator, [
-                "coef_", "estimator_", "labels_", "n_clusters_", "children_",
-                "components_", "n_components_", "n_iter_", "n_batch_iter_",
-                "explained_variance_", "singular_values_", "mean_"
-            ], all_or_any=any)
+            check_is_fitted(
+                estimator,
+                [
+                    "coef_",
+                    "estimator_",
+                    "labels_",
+                    "n_clusters_",
+                    "children_",
+                    "components_",
+                    "n_components_",
+                    "n_iter_",
+                    "n_batch_iter_",
+                    "explained_variance_",
+                    "singular_values_",
+                    "mean_",
+                ],
+                all_or_any=any,
+            )
             return True
         except sklearn.exceptions.NotFittedError:
             return False
@@ -66,7 +79,7 @@ def is_fitted(estimator):
     return True
 
 
-def check_fitted(estimator, is_fitted_by='auto', **kwargs):
+def check_fitted(estimator, is_fitted_by="auto", **kwargs):
     """
     Determines whether or not to check if the model has been fitted, and will return
     ``True`` if so. The ``is_fitted_by`` argument is set to ``'auto'`` by default,
@@ -97,7 +110,7 @@ def check_fitted(estimator, is_fitted_by='auto', **kwargs):
     is_fitted : bool
         Whether or not the model is already fitted
     """
-    if isinstance(is_fitted_by, str) and is_fitted_by.lower() == 'auto':
+    if isinstance(is_fitted_by, str) and is_fitted_by.lower() == "auto":
         return is_fitted(estimator)
     return bool(is_fitted_by)
 
