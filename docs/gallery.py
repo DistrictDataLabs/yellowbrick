@@ -10,9 +10,10 @@ import matplotlib.pyplot as plt
 from yellowbrick.datasets import load_occupancy, load_credit, load_concrete
 from yellowbrick.datasets import load_spam, load_game, load_energy, load_hobbies
 
-from yellowbrick.features import RFECV, JointPlot
+from yellowbrick.model_selection import RFECV, FeatureImportances
+
+from yellowbrick.features import PCA, Manifold, JointPlot
 from yellowbrick.features import RadViz, Rank1D, Rank2D, ParallelCoordinates
-from yellowbrick.features import PCADecomposition, Manifold, FeatureImportances
 
 from yellowbrick.contrib.scatter import ScatterVisualizer
 
@@ -28,9 +29,18 @@ from yellowbrick.cluster import InterclusterDistance
 from yellowbrick.model_selection import ValidationCurve, LearningCurve, CVScores
 from yellowbrick.contrib.classifier import DecisionViz
 
-from yellowbrick.text import FreqDistVisualizer, TSNEVisualizer, DispersionPlot, PosTagVisualizer
+from yellowbrick.text import (
+    FreqDistVisualizer,
+    TSNEVisualizer,
+    DispersionPlot,
+    PosTagVisualizer,
+)
 
-from yellowbrick.target import BalancedBinningReference, ClassBalance, FeatureCorrelation
+from yellowbrick.target import (
+    BalancedBinningReference,
+    ClassBalance,
+    FeatureCorrelation,
+)
 
 from sklearn.tree import DecisionTreeRegressor
 from sklearn.preprocessing import StandardScaler
@@ -55,12 +65,13 @@ GALLERY = path.join(path.dirname(__file__), "images", "gallery")
 ## Helper Methods
 ##########################################################################
 
+
 def newfig():
     """
     Helper function to create an axes object of the gallery dimensions.
     """
     # NOTE: this figsize generates a better thumbnail
-    _, ax = plt.subplots(figsize=(8,4))
+    _, ax = plt.subplots(figsize=(8, 4))
     return ax
 
 
@@ -75,7 +86,7 @@ def savefig(viz, name, gallery=GALLERY):
     if len(name.split(".")) > 1:
         raise ValueError("name should not specify extension")
 
-    outpath = path.join(gallery, name+".png")
+    outpath = path.join(gallery, name + ".png")
     viz.poof(outpath=outpath)
     print("created {}".format(outpath))
 
@@ -83,6 +94,7 @@ def savefig(viz, name, gallery=GALLERY):
 ##########################################################################
 ## Feature Analysis
 ##########################################################################
+
 
 def radviz():
     X, y = load_occupancy()
@@ -114,8 +126,8 @@ def pcoords():
 
 def pca():
     X, y = load_credit()
-    colors = np.array(['r' if yi else 'b' for yi in y])
-    oz = PCADecomposition(scale=True, color=colors, proj_dim=3)
+    colors = np.array(["r" if yi else "b" for yi in y])
+    oz = PCA(scale=True, color=colors, proj_dim=3)
     oz.fit_transform(X, y)
     savefig(oz, "pca_projection_3d")
 
@@ -131,21 +143,6 @@ def manifold(dataset, manifold):
     oz = Manifold(manifold=manifold, ax=newfig())
     oz.fit_transform(X, y)
     savefig(oz, "{}_{}_manifold".format(dataset, manifold))
-
-
-def importances():
-    X, y = load_occupancy()
-    oz = FeatureImportances(RandomForestClassifier(), ax=newfig())
-    oz.fit(X, y)
-    savefig(oz, "feature_importances")
-
-
-def rfecv():
-    X, y = load_credit()
-    model = RandomForestClassifier(n_estimators=10)
-    oz = RFECV(model, cv=3, scoring='f1_weighted', ax=newfig())
-    oz.fit(X, y)
-    savefig(oz, "rfecv_sklearn_example")
 
 
 def scatter():
@@ -165,6 +162,7 @@ def jointplot():
 ##########################################################################
 ## Regression
 ##########################################################################
+
 
 def residuals():
     X, y = load_concrete()
@@ -196,6 +194,7 @@ def alphas():
 ## Classification
 ##########################################################################
 
+
 def classreport():
     X, y = load_occupancy()
     X_train, X_test, y_train, y_test = tts(X, y, test_size=0.2)
@@ -213,7 +212,7 @@ def confusion(dataset):
     else:
         raise ValueError("uknown dataset")
 
-    X_train, X_test, y_train, y_test = tts(data.data, data.target, test_size =0.2)
+    X_train, X_test, y_train, y_test = tts(data.data, data.target, test_size=0.2)
     oz = ConfusionMatrix(LogisticRegression(), ax=newfig())
     oz.fit(X_train, y_train)
     oz.score(X_test, y_test)
@@ -231,7 +230,7 @@ def rocauc(dataset):
     else:
         raise ValueError("uknown dataset")
 
-    X_train, X_test, y_train, y_test = tts(X, y, test_size =0.2)
+    X_train, X_test, y_train, y_test = tts(X, y, test_size=0.2)
     oz = ROCAUC(model, ax=newfig())
     oz.fit(X_train, y_train)
     oz.score(X_test, y_test)
@@ -248,7 +247,12 @@ def prcurve(dataset):
         X = OrdinalEncoder().fit_transform(X)
         y = LabelEncoder().fit_transform(y)
         model = MultinomialNB()
-        kws = {"per_class":True, "iso_f1_curves":True, "fill_area":False, "micro": False}
+        kws = {
+            "per_class": True,
+            "iso_f1_curves": True,
+            "fill_area": False,
+            "micro": False,
+        }
     else:
         raise ValueError("uknown dataset")
 
@@ -285,9 +289,10 @@ def discrimination():
 ## Clustering
 ##########################################################################
 
+
 def elbow():
     X, _ = make_blobs(centers=8, n_features=12, shuffle=True)
-    oz = KElbowVisualizer(KMeans(), k=(4,12), ax=newfig())
+    oz = KElbowVisualizer(KMeans(), k=(4, 12), ax=newfig())
     oz.fit(X)
     savefig(oz, "elbow")
 
@@ -310,12 +315,17 @@ def icdm():
 ## Model Selection
 ##########################################################################
 
+
 def validation():
     X, y = load_energy()
     oz = ValidationCurve(
-            DecisionTreeRegressor(), param_name="max_depth",
-            param_range=np.arange(1, 11), cv=10, scoring="r2", ax=newfig()
-        )
+        DecisionTreeRegressor(),
+        param_name="max_depth",
+        param_range=np.arange(1, 11),
+        cv=10,
+        scoring="r2",
+        ax=newfig(),
+    )
     oz.fit(X, y)
     savefig(oz, "validation_curve")
 
@@ -323,14 +333,14 @@ def validation():
 def learning():
     X, y = load_energy()
     sizes = np.linspace(0.3, 1.0, 10)
-    oz = LearningCurve(RidgeCV(), train_sizes=sizes, scoring='r2', ax=newfig())
+    oz = LearningCurve(RidgeCV(), train_sizes=sizes, scoring="r2", ax=newfig())
     oz.fit(X, y)
     savefig(oz, "learning_curve")
 
 
 def cvscores():
     X, y = load_energy()
-    oz = CVScores(Ridge(), scoring='r2', cv=10, ax=newfig())
+    oz = CVScores(Ridge(), scoring="r2", cv=10, ax=newfig())
     oz.fit(X, y)
     savefig(oz, "cv_scores")
 
@@ -346,9 +356,25 @@ def decision():
     savefig(oz, "decision_boundaries")
 
 
+def importances():
+    X, y = load_occupancy()
+    oz = FeatureImportances(RandomForestClassifier(), ax=newfig())
+    oz.fit(X, y)
+    savefig(oz, "feature_importances")
+
+
+def rfecv():
+    X, y = load_credit()
+    model = RandomForestClassifier(n_estimators=10)
+    oz = RFECV(model, cv=3, scoring="f1_weighted", ax=newfig())
+    oz.fit(X, y)
+    savefig(oz, "rfecv_sklearn_example")
+
+
 ##########################################################################
 ## Text Model Diagnostics
 ##########################################################################
+
 
 def freqdist():
     corpus = load_hobbies()
@@ -371,7 +397,7 @@ def tsne():
 
 def dispersion():
     corpus = load_hobbies()
-    target_words = ['Game', 'player', 'score', 'oil', 'Man']
+    target_words = ["Game", "player", "score", "oil", "Man"]
 
     oz = DispersionPlot(target_words, ax=newfig())
     oz.fit([doc.split() for doc in corpus.data])
@@ -382,64 +408,155 @@ def postag():
     tagged_stanzas = [
         [
             [
-                ('Whose', 'JJ'),('woods', 'NNS'),('these', 'DT'),
-                ('are', 'VBP'),('I', 'PRP'),('think', 'VBP'),('I', 'PRP'),
-                ('know', 'VBP'),('.', '.')
-                ],
-            [
-                ('His', 'PRP$'),('house', 'NN'),('is', 'VBZ'),('in', 'IN'),
-                ('the', 'DT'),('village', 'NN'),('though', 'IN'),(';', ':'),
-                ('He', 'PRP'),('will', 'MD'),('not', 'RB'),('see', 'VB'),
-                ('me', 'PRP'),('stopping', 'VBG'), ('here', 'RB'),('To', 'TO'),
-                ('watch', 'VB'),('his', 'PRP$'),('woods', 'NNS'),('fill', 'VB'),
-                ('up', 'RP'),('with', 'IN'),('snow', 'NNS'),('.', '.')
-                ]
+                ("Whose", "JJ"),
+                ("woods", "NNS"),
+                ("these", "DT"),
+                ("are", "VBP"),
+                ("I", "PRP"),
+                ("think", "VBP"),
+                ("I", "PRP"),
+                ("know", "VBP"),
+                (".", "."),
             ],
+            [
+                ("His", "PRP$"),
+                ("house", "NN"),
+                ("is", "VBZ"),
+                ("in", "IN"),
+                ("the", "DT"),
+                ("village", "NN"),
+                ("though", "IN"),
+                (";", ":"),
+                ("He", "PRP"),
+                ("will", "MD"),
+                ("not", "RB"),
+                ("see", "VB"),
+                ("me", "PRP"),
+                ("stopping", "VBG"),
+                ("here", "RB"),
+                ("To", "TO"),
+                ("watch", "VB"),
+                ("his", "PRP$"),
+                ("woods", "NNS"),
+                ("fill", "VB"),
+                ("up", "RP"),
+                ("with", "IN"),
+                ("snow", "NNS"),
+                (".", "."),
+            ],
+        ],
         [
             [
-                ('My', 'PRP$'),('little', 'JJ'),('horse', 'NN'),('must', 'MD'),
-                ('think', 'VB'),('it', 'PRP'),('queer', 'JJR'),('To', 'TO'),
-                ('stop', 'VB'),('without', 'IN'),('a', 'DT'),('farmhouse', 'NN'),
-                ('near', 'IN'),('Between', 'NNP'),('the', 'DT'),('woods', 'NNS'),
-                ('and', 'CC'),('frozen', 'JJ'),('lake', 'VB'),('The', 'DT'),
-                ('darkest', 'JJS'),('evening', 'NN'),('of', 'IN'),('the', 'DT'),
-                ('year', 'NN'),('.', '.')
-                ]
-            ],
+                ("My", "PRP$"),
+                ("little", "JJ"),
+                ("horse", "NN"),
+                ("must", "MD"),
+                ("think", "VB"),
+                ("it", "PRP"),
+                ("queer", "JJR"),
+                ("To", "TO"),
+                ("stop", "VB"),
+                ("without", "IN"),
+                ("a", "DT"),
+                ("farmhouse", "NN"),
+                ("near", "IN"),
+                ("Between", "NNP"),
+                ("the", "DT"),
+                ("woods", "NNS"),
+                ("and", "CC"),
+                ("frozen", "JJ"),
+                ("lake", "VB"),
+                ("The", "DT"),
+                ("darkest", "JJS"),
+                ("evening", "NN"),
+                ("of", "IN"),
+                ("the", "DT"),
+                ("year", "NN"),
+                (".", "."),
+            ]
+        ],
         [
-            [  
-                ('He', 'PRP'),('gives', 'VBZ'),('his', 'PRP$'),('harness', 'NN'),
-                ('bells', 'VBZ'),('a', 'DT'),('shake', 'NN'),('To', 'TO'),
-                ('ask', 'VB'),('if', 'IN'),('there', 'EX'),('is', 'VBZ'),
-                ('some', 'DT'),('mistake', 'NN'),('.', '.')
-                ],
             [
-                ('The', 'DT'),('only', 'JJ'),('other', 'JJ'),('sound', 'NN'),
-                ('’', 'NNP'),('s', 'VBZ'),('the', 'DT'),('sweep', 'NN'), 
-                ('Of', 'IN'),('easy', 'JJ'),('wind', 'NN'),('and', 'CC'),
-                ('downy', 'JJ'),('flake', 'NN'),('.', '.')
-                ]
+                ("He", "PRP"),
+                ("gives", "VBZ"),
+                ("his", "PRP$"),
+                ("harness", "NN"),
+                ("bells", "VBZ"),
+                ("a", "DT"),
+                ("shake", "NN"),
+                ("To", "TO"),
+                ("ask", "VB"),
+                ("if", "IN"),
+                ("there", "EX"),
+                ("is", "VBZ"),
+                ("some", "DT"),
+                ("mistake", "NN"),
+                (".", "."),
             ],
+            [
+                ("The", "DT"),
+                ("only", "JJ"),
+                ("other", "JJ"),
+                ("sound", "NN"),
+                ("’", "NNP"),
+                ("s", "VBZ"),
+                ("the", "DT"),
+                ("sweep", "NN"),
+                ("Of", "IN"),
+                ("easy", "JJ"),
+                ("wind", "NN"),
+                ("and", "CC"),
+                ("downy", "JJ"),
+                ("flake", "NN"),
+                (".", "."),
+            ],
+        ],
         [
             [
-                ('The', 'DT'),('woods', 'NNS'),('are', 'VBP'),('lovely', 'RB'),
-                (',', ','),('dark', 'JJ'),('and', 'CC'),('deep', 'JJ'),(',', ','),
-                ('But', 'CC'),('I', 'PRP'),('have', 'VBP'),('promises', 'NNS'),
-                ('to', 'TO'),('keep', 'VB'),(',', ','),('And', 'CC'),('miles', 'NNS'),
-                ('to', 'TO'),('go', 'VB'),('before', 'IN'),('I', 'PRP'),
-                ('sleep', 'VBP'),(',', ','),('And', 'CC'),('miles', 'NNS'),
-                ('to', 'TO'),('go', 'VB'),('before', 'IN'),('I', 'PRP'),
-                ('sleep', 'VBP'),('.', '.')
-                ]
-        ]
+                ("The", "DT"),
+                ("woods", "NNS"),
+                ("are", "VBP"),
+                ("lovely", "RB"),
+                (",", ","),
+                ("dark", "JJ"),
+                ("and", "CC"),
+                ("deep", "JJ"),
+                (",", ","),
+                ("But", "CC"),
+                ("I", "PRP"),
+                ("have", "VBP"),
+                ("promises", "NNS"),
+                ("to", "TO"),
+                ("keep", "VB"),
+                (",", ","),
+                ("And", "CC"),
+                ("miles", "NNS"),
+                ("to", "TO"),
+                ("go", "VB"),
+                ("before", "IN"),
+                ("I", "PRP"),
+                ("sleep", "VBP"),
+                (",", ","),
+                ("And", "CC"),
+                ("miles", "NNS"),
+                ("to", "TO"),
+                ("go", "VB"),
+                ("before", "IN"),
+                ("I", "PRP"),
+                ("sleep", "VBP"),
+                (".", "."),
+            ]
+        ],
     ]
     oz = PosTagVisualizer(ax=newfig())
     oz.fit(tagged_stanzas)
     savefig(oz, "postag")
 
+
 ##########################################################################
 ## Target Visualizations
 ##########################################################################
+
 
 def binning():
     _, y = load_concrete()
@@ -514,8 +631,11 @@ if __name__ == "__main__":
 
     parser = argparse.ArgumentParser(description="gallery image generator")
     parser.add_argument(
-        "plots", nargs="+", choices=plots.keys(), metavar="plot",
-        help="names of images to generate"
+        "plots",
+        nargs="+",
+        choices=plots.keys(),
+        metavar="plot",
+        help="names of images to generate",
     )
     args = parser.parse_args()
 

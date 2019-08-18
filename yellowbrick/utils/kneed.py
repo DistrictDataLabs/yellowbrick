@@ -2,22 +2,22 @@
 # A port of the knee-point detection package, kneed.
 #
 # Author:   Kevin Arvai
-# Author:   Pradeep Singh 
+# Author:   Pradeep Singh
 # Created:  Mon Apr 15 09:43:18 2019 -0400
 #
 # Copyright (C) 2017 Kevin Arvai
 # All rights reserved.
-# Redistribution and use in source and binary forms, with or without modification, 
+# Redistribution and use in source and binary forms, with or without modification,
 # are permitted provided that the following conditions are met:
-# 
+#
 # 1. Redistributions of source code must retain the above copyright notice, this list
 # of conditions and the following disclaimer.
 #
-# 2. Redistributions in binary form must reproduce the above copyright notice, this 
-# list of conditions and the following disclaimer in the documentation and/or other 
+# 2. Redistributions in binary form must reproduce the above copyright notice, this
+# list of conditions and the following disclaimer in the documentation and/or other
 # materials provided with the distribution.
 #
-# 3. Neither the name of the copyright holder nor the names of its contributors may 
+# 3. Neither the name of the copyright holder nor the names of its contributors may
 # be used to endorse or promote products derived from this software without specific
 # prior written permission.
 #
@@ -26,7 +26,7 @@
 # WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
 # DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR
 # ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
-# (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS 
+# (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS
 # OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
 # THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
 # NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN
@@ -78,7 +78,10 @@ class KneeLocator(object):
     The KneeLocator is implemented using the "knee point detection algorithm" which can be read at
     `<https://www1.icsi.berkeley.edu/~barath/papers/kneedle-simplex11.pdf>`
     """
-    def __init__(self, x, y, S=1.0, curve_nature='concave', curve_direction='increasing'):
+
+    def __init__(
+        self, x, y, S=1.0, curve_nature="concave", curve_direction="increasing"
+    ):
 
         # Raw Input
         self.x = x
@@ -101,7 +104,10 @@ class KneeLocator(object):
 
         # Step 3: Calculate the Difference curve
         self.x_normalized, self.y_normalized = self.transform_xy(
-            self.x_normalized, self.y_normalized, self.curve_direction, self.curve_nature
+            self.x_normalized,
+            self.y_normalized,
+            self.curve_direction,
+            self.curve_nature,
         )
         # normalized difference curve
         self.y_distance = self.y_normalized - self.x_normalized
@@ -119,11 +125,23 @@ class KneeLocator(object):
         self.y_distance_minima = self.y_distance[self.minima_indices]
 
         # Step 5: Calculate thresholds
-        self.Tmx = self.y_distance_maxima - (self.S * np.abs(np.diff(self.x_normalized).mean()))
+        self.Tmx = self.y_distance_maxima - (
+            self.S * np.abs(np.diff(self.x_normalized).mean())
+        )
 
         # Step 6: find knee
         self.find_knee()
-        self.knee, self.norm_knee = min(self.all_knees), min(self.all_norm_knees)
+        if (self.all_knees or self.all_norm_knees) == set():
+            warning_message = (
+                "No 'knee' or 'elbow point' detected "
+                "This could be due to bad clustering, no "
+                "actual clusters being formed etc."
+            )
+            warnings.warn(warning_message, YellowbrickWarning)
+            self.knee = None
+            self.norm_knee = None
+        else:
+            self.knee, self.norm_knee = min(self.all_knees), min(self.all_norm_knees)
 
     @staticmethod
     def __normalize(a):
@@ -140,26 +158,27 @@ class KneeLocator(object):
     def transform_xy(x, y, direction, curve):
         """transform x and y to concave, increasing based on curve_direction and curve_nature"""
         # convert elbows to knees
-        if curve == 'convex':
+        if curve == "convex":
             x = x.max() - x
             y = y.max() - y
         # flip decreasing functions to increasing
-        if direction == 'decreasing':
+        if direction == "decreasing":
             y = np.flip(y)
 
-        if curve == 'convex':
+        if curve == "convex":
             x = np.flip(x)
             y = np.flip(y)
 
         return x, y
 
-    def find_knee(self, ):
+    def find_knee(self,):
         """This function finds and sets the knee value and the normalized knee value. """
         if not self.maxima_inidices.size:
-            warning_message = \
-                'No "knee" or "elbow point" detected ' \
-                'This could be due to bad clustering, no '\
-                'actual clusters being formed etc.'
+            warning_message = (
+                'No "knee" or "elbow point" detected '
+                "This could be due to bad clustering, no "
+                "actual clusters being formed etc."
+            )
             warnings.warn(warning_message, YellowbrickWarning)
             return None, None
 
@@ -190,8 +209,8 @@ class KneeLocator(object):
 
             # evaluate the threshold
             if self.y_distance[idx] < threshold:
-                if self.curve_nature == 'convex':
-                    if self.curve_direction == 'decreasing':
+                if self.curve_nature == "convex":
+                    if self.curve_direction == "decreasing":
                         knee = self.x[threshold_index]
                         self.all_knees.add(knee)
                         norm_knee = self.x_normalized[threshold_index]
@@ -202,8 +221,8 @@ class KneeLocator(object):
                         norm_knee = self.x_normalized[-(threshold_index + 1)]
                         self.all_norm_knees.add(norm_knee)
 
-                elif self.curve_nature == 'concave':
-                    if self.curve_direction == 'decreasing':
+                elif self.curve_nature == "concave":
+                    if self.curve_direction == "decreasing":
                         knee = self.x[-(threshold_index + 1)]
                         self.all_knees.add(knee)
                         norm_knee = self.x_normalized[-(threshold_index + 1)]
@@ -214,7 +233,7 @@ class KneeLocator(object):
                         norm_knee = self.x_normalized[threshold_index]
                         self.all_norm_knees.add(norm_knee)
 
-    def plot_knee_normalized(self, ):
+    def plot_knee_normalized(self,):
         """
         Plots the normalized curve, the distance curve (x_distance, y_normalized) and the
         knee, if it exists.
@@ -222,14 +241,16 @@ class KneeLocator(object):
         import matplotlib.pyplot as plt
 
         plt.figure(figsize=(8, 8))
-        plt.plot(self.x_normalized, self.y_normalized,)
-        plt.plot(self.x_distance, self.y_distance, 'r')
-        plt.xticks(np.arange(self.x_normalized.min(), self.x_normalized.max() + 0.1, 0.1))
+        plt.plot(self.x_normalized, self.y_normalized)
+        plt.plot(self.x_distance, self.y_distance, "r")
+        plt.xticks(
+            np.arange(self.x_normalized.min(), self.x_normalized.max() + 0.1, 0.1)
+        )
         plt.yticks(np.arange(self.y_distance.min(), self.y_normalized.max() + 0.1, 0.1))
 
         plt.vlines(self.norm_knee, plt.ylim()[0], plt.ylim()[1])
 
-    def plot_knee(self, ):
+    def plot_knee(self,):
         """
         Plot the curve and the knee, if it exists
         

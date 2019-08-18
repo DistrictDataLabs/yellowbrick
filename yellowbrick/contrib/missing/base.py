@@ -1,10 +1,10 @@
 # yellowbrick.contrib.missing.base
 # Base Visualizer for missing values
 #
-# Author:  Nathan Danielsen <nathan.danielsen@gmail.com>
+# Author:  Nathan Danielsen
 # Created: Fri Mar 29 5:17:36 2018 -0500
 #
-# Copyright (C) 2018 District Data Labs
+# Copyright (C) 2018 The scikit-yb developers
 # For license information, see LICENSE.txt
 #
 # ID: base.py [] nathan.danielsen@gmail.com.com $

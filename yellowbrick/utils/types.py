@@ -1,10 +1,10 @@
 # yellowbrick.utils.types
 # Detection utilities for Scikit-Learn and Numpy types for flexibility
 #
-# Author:   Benjamin Bengfort <bbengfort@districtdatalabs.com>
+# Author:   Benjamin Bengfort
 # Created:  Fri May 19 10:51:13 2017 -0700
 #
-# Copyright (C) 2017 District Data Labs
+# Copyright (C) 2017 The sckit-yb developers
 # For license information, see LICENSE.txt
 #
 # ID: types.py [79cd8cf] benjamin@bengfort.com $
@@ -27,6 +27,7 @@ from sklearn.base import BaseEstimator
 ## Model Type checking utilities
 ##########################################################################
 
+
 def is_estimator(model):
     """
     Determines if a model is an estimator using issubclass and isinstance.
@@ -41,6 +42,7 @@ def is_estimator(model):
         return issubclass(model, BaseEstimator)
 
     return isinstance(model, BaseEstimator)
+
 
 # Alias for closer name to isinstance and issubclass
 isestimator = is_estimator
@@ -65,6 +67,7 @@ def is_classifier(estimator):
     # Test the _estimator_type property
     return getattr(estimator, "_estimator_type", None) == "classifier"
 
+
 # Alias for closer name to isinstance and issubclass
 isclassifier = is_classifier
 
@@ -88,6 +91,7 @@ def is_regressor(estimator):
     # Test the _estimator_type property
     return getattr(estimator, "_estimator_type", None) == "regressor"
 
+
 # Alias for closer name to isinstance and issubclass
 isregressor = is_regressor
 
@@ -105,6 +109,7 @@ def is_clusterer(estimator):
 
     # Test the _estimator_type property
     return getattr(estimator, "_estimator_type", None) == "clusterer"
+
 
 # Alias for closer name to isinstance and issubclass
 isclusterer = is_clusterer
@@ -144,10 +149,10 @@ def is_probabilistic(estimator):
         The object to test if is probabilistic, especially a Scikit-Learn
         estimator or Yellowbrick visualizer.
     """
-    return any([
-        hasattr(estimator, 'predict_proba'),
-        hasattr(estimator, 'decision_function'),
-    ])
+    return any(
+        [hasattr(estimator, "predict_proba"), hasattr(estimator, "decision_function")]
+    )
+
 
 # Alias for closer name to isinstance and issubclass
 isprobabilistic = is_probabilistic
@@ -156,6 +161,7 @@ isprobabilistic = is_probabilistic
 ##########################################################################
 ## Data Type checking utilities
 ##########################################################################
+
 
 def is_dataframe(obj):
     """
@@ -169,10 +175,12 @@ def is_dataframe(obj):
     try:
         # This is the best method of type checking
         from pandas import DataFrame
+
         return isinstance(obj, DataFrame)
     except ImportError:
         # Pandas is not a dependency, so this is scary
         return obj.__class__.__name__ == "DataFrame"
+
 
 # Alias for closer name to isinstance and issubclass
 isdataframe = is_dataframe
@@ -190,10 +198,12 @@ def is_series(obj):
     try:
         # This is the best method of type checking
         from pandas import Series
+
         return isinstance(obj, Series)
     except ImportError:
         # Pandas is not a dependency, so this is scary
         return obj.__class__.__name__ == "Series"
+
 
 # Alias for closer name to isinstance and issubclass
 isseries = is_series
@@ -208,7 +218,7 @@ def is_structured_array(obj):
     obj: instance
         The object to test whether or not is a Numpy Structured Array.
     """
-    if isinstance(obj, np.ndarray) and hasattr(obj, 'dtype'):
+    if isinstance(obj, np.ndarray) and hasattr(obj, "dtype"):
         if obj.dtype.names is not None:
             return True
     return False

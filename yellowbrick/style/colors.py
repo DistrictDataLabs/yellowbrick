@@ -1,10 +1,10 @@
 # yellowbrick.colors
 # Colors and color helpers brought in from a different library.
 #
-# Author:   Benjamin Bengfort <bbengfort@districtdatalabs.com>
+# Author:   Benjamin Bengfort
 # Created:  Fri Jun 24 17:02:53 2016 -0400
 #
-# Copyright (C) 2016 District Data Labs
+# Copyright (C) 2016 The scikit-yb developers
 # For license information, see LICENSE.txt
 #
 # ID: colors.py [c6aff34] benjamin@bengfort.com $
@@ -31,6 +31,7 @@ from yellowbrick.exceptions import YellowbrickValueError
 
 # Check to see if matplotlib is at least sorta up to date
 from distutils.version import LooseVersion
+
 mpl_ge_150 = LooseVersion(mpl.__version__) >= "1.5.0"
 
 
@@ -38,20 +39,21 @@ mpl_ge_150 = LooseVersion(mpl.__version__) >= "1.5.0"
 ## Color Utilities
 ##########################################################################
 
+
 def get_color_cycle():
     """
     Returns the current color cycle from matplotlib.
     """
     if mpl_ge_150:
-        cyl = mpl.rcParams['axes.prop_cycle']
+        cyl = mpl.rcParams["axes.prop_cycle"]
         # matplotlib 1.5 verifies that axes.prop_cycle *is* a cycler
         # but no garuantee that there's a `color` key.
         # so users could have a custom rcParams w/ no color...
         try:
-            return [x['color'] for x in cyl]
+            return [x["color"] for x in cyl]
         except KeyError:
             pass  # just return axes.color style below
-    return mpl.rcParams['axes.color_cycle']
+    return mpl.rcParams["axes.color_cycle"]
 
 
 def resolve_colors(n_colors=None, colormap=None, colors=None):
@@ -90,6 +92,7 @@ def resolve_colors(n_colors=None, colormap=None, colors=None):
     if colormap is not None and colors is None:
         # Must import here to avoid recursive import
         from .palettes import PALETTES, ColorPalette
+
         if isinstance(colormap, str):
             try:
 
@@ -123,21 +126,22 @@ def resolve_colors(n_colors=None, colormap=None, colors=None):
             _colors = list(map(colormap, np.linspace(0, 1, num=n_colors)))
         else:
             raise YellowbrickValueError(
-                "Colormap type {} is not recognized. Possible types are: {}"
-                .format(type(colormap), ', '.join(['yellowbrick.style.ColorPalette,',
-                                                   'matplotlib.cm,',
-                                                   'str'])))
+                "Colormap type {} is not recognized. Possible types are: {}".format(
+                    type(colormap),
+                    ", ".join(
+                        ["yellowbrick.style.ColorPalette,", "matplotlib.cm,", "str"]
+                    ),
+                )
+            )
 
     # Work with the color list
     elif colors is not None:
 
         # Warn if both colormap and colors is specified.
         if colormap is not None:
-            warnings.warn(
-                "both colormap and colors specified; using colors"
-            )
+            warnings.warn("both colormap and colors specified; using colors")
 
-        _colors = list(colors) # Ensure colors is a list
+        _colors = list(colors)  # Ensure colors is a list
 
     # Get the default colors
     else:
@@ -145,9 +149,7 @@ def resolve_colors(n_colors=None, colormap=None, colors=None):
 
     # Truncate or multiple the color list according to the number of colors
     if n_colors is not None and len(_colors) != n_colors:
-        _colors = [
-            _colors[idx % len(_colors)] for idx in np.arange(n_colors)
-        ]
+        _colors = [_colors[idx % len(_colors)] for idx in np.arange(n_colors)]
 
     return _colors
 
@@ -157,7 +159,7 @@ class ColorMap(object):
     A helper for mapping categorical values to colors on demand.
     """
 
-    def __init__(self, colors='flatui', shuffle=False):
+    def __init__(self, colors="flatui", shuffle=False):
         """
         Specify either a list of colors or one of the color names. If shuffle
         is True then the colors will be shuffled randomly.

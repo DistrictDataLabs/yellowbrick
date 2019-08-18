@@ -1,7 +1,7 @@
 # tests.test_text.test_base
 # Tests for the text visualization base classes
 #
-# Author:   Benjamin Bengfort <bbengfort@districtdatalabs.com>
+# Author:   Benjamin Bengfort
 # Created:  Mon Feb 20 06:34:50 2017 -0500
 #
 # Copyright (C) 2016 The scikit-yb developers
@@ -26,8 +26,8 @@ from sklearn.base import BaseEstimator, TransformerMixin
 ## TextVisualizer Base Tests
 ##########################################################################
 
-class TestTextVisualizerBase(object):
 
+class TestTextVisualizerBase(object):
     def test_subclass(self):
         """
         Assert the text visualizer is subclassed correctly

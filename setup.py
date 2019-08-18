@@ -2,10 +2,10 @@
 # setup
 # Setup script for installing yellowbrick
 #
-# Author:   Benjamin Bengfort <bbengfort@districtdatalabs.com>
+# Author:   Benjamin Bengfort
 # Created:  Wed May 18 14:33:26 2016 -0400
 #
-# Copyright (C) 2016 District Data Labs
+# Copyright (C) 2016 The scikit-yb developers
 # For license information, see LICENSE.txt and NOTICE.md
 #
 # ID: setup.py [c4f3ba7] benjamin@bengfort.com $
