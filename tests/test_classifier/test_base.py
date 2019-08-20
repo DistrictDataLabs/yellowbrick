@@ -231,6 +231,7 @@ class TestClassificationScoreVisualizer(object):
         """
         Assert warning and None returned if encoder doesn't have classes
         """
+
         class L2UTransformer(object):
             def transform(self, y):
                 return np.array([yi.upper() for yi in y])
@@ -243,6 +244,6 @@ class TestClassificationScoreVisualizer(object):
         """
         Ensure dictionary encoder labels are returned sorted
         """
-        le = {3: 'a', 2: 'c', 1: 'b'}
+        le = {3: "a", 2: "c", 1: "b"}
         oz = ClassificationScoreVisualizer(GaussianNB(), encoder=le)
-        npt.assert_array_equal(oz._labels(), ['b', 'c', 'a'])
+        npt.assert_array_equal(oz._labels(), ["b", "c", "a"])

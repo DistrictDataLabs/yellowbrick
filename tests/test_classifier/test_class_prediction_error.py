@@ -44,7 +44,7 @@ except ImportError:
 ##  Tests
 ##########################################################################
 
-@pytest.mark.usefixtures('multiclass')
+
 class TestClassPredictionError(VisualTestCase):
     """
     Test ClassPredictionError visualizer

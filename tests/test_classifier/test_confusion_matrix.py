@@ -226,18 +226,20 @@ class TestConfusionMatrix(VisualTestCase):
         _, ax = plt.subplots()
 
         model = LogisticRegression(random_state=93)
-        classes = np.array([
-            "zero",
-            "one",
-            "two",
-            "three",
-            "four",
-            "five",
-            "six",
-            "seven",
-            "eight",
-            "nine",
-        ])
+        classes = np.array(
+            [
+                "zero",
+                "one",
+                "two",
+                "three",
+                "four",
+                "five",
+                "six",
+                "seven",
+                "eight",
+                "nine",
+            ]
+        )
         mapping = {
             0: "zero",
             1: "one",

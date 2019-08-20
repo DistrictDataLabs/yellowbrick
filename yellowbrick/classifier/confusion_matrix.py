@@ -112,7 +112,7 @@ class ConfusionMatrix(ClassificationScoreVisualizer):
     classes_ : ndarray of shape (n_classes,)
         The class labels observed while fitting.
 
-    class_count_ : ndarray of shape (n_classes,)
+    class_counts_ : ndarray of shape (n_classes,)
         Number of samples encountered for each class supporting the confusion matrix.
 
     score_ : float
