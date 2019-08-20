@@ -238,3 +238,11 @@ class TestClassificationScoreVisualizer(object):
         oz = ClassificationScoreVisualizer(GaussianNB(), encoder=L2UTransformer())
         with pytest.warns(YellowbrickWarning, match="could not determine class labels"):
             assert oz._labels() is None
+
+    def test_dict_labels_sorted(self):
+        """
+        Ensure dictionary encoder labels are returned sorted
+        """
+        le = {3: 'a', 2: 'c', 1: 'b'}
+        oz = ClassificationScoreVisualizer(GaussianNB(), encoder=le)
+        npt.assert_array_equal(oz._labels(), ['b', 'c', 'a'])

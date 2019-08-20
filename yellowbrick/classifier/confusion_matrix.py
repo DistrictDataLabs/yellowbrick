@@ -166,7 +166,6 @@ class ConfusionMatrix(ClassificationScoreVisualizer):
 
         # Estimator parameters
         self.percent = percent
-        self.label_encoder = encoder
         self.sample_weight = sample_weight
 
         # Used to draw diagonal line for predicted class = true class
@@ -198,19 +197,16 @@ class ConfusionMatrix(ClassificationScoreVisualizer):
         # Create predictions from X (will raise not fitted error)
         y_pred = self.predict(X)
 
-        # Encode the target with the supplied label encoder
-        if self.label_encoder:
-            try:
-                y = self.label_encoder.inverse_transform(y)
-                y_pred = self.label_encoder.inverse_transform(y_pred)
-            except AttributeError:
-                # if a mapping is passed to class apply it here.
-                y = np.array([self.label_encoder[x] for x in y])
-                y_pred = np.array([self.label_encoder[x] for x in y_pred])
+        # Decode the target with the label encoder and get human readable labels
+        y = self._decode_labels(y)
+        y_pred = self._decode_labels(y_pred)
+        labels = self._labels()
+        if labels is None:
+            labels = self.classes_
 
         # Compute the confusion matrix and class counts
         self.confusion_matrix_ = confusion_matrix_metric(
-            y, y_pred, labels=self.classes_, sample_weight=self.sample_weight
+            y, y_pred, labels=labels, sample_weight=self.sample_weight
         )
         self.class_counts_ = dict(zip(*np.unique(y, return_counts=True)))
 
@@ -218,7 +214,7 @@ class ConfusionMatrix(ClassificationScoreVisualizer):
         # Needed because sklearn confusion_matrix only returns counts for
         # selected classes but percent should be calculated on all classes
         selected_class_counts = []
-        for c in self.classes_:
+        for c in labels:
             try:
                 selected_class_counts.append(self.class_counts_[c])
             except KeyError:
@@ -248,15 +244,20 @@ class ConfusionMatrix(ClassificationScoreVisualizer):
         # Y axis should be sorted top to bottom in pcolormesh
         cm_display = cm_display[::-1, ::]
 
+        # Get the human readable labels
+        labels = self._labels()
+        if labels is None:
+            labels = self.classes_
+
         # Set up the dimensions of the pcolormesh
-        n_classes = len(self.classes_)
+        n_classes = len(labels)
         X, Y = np.arange(n_classes + 1), np.arange(n_classes + 1)
         self.ax.set_ylim(bottom=0, top=cm_display.shape[0])
         self.ax.set_xlim(left=0, right=cm_display.shape[1])
 
         # Fetch the grid labels from the classes in correct order; set ticks.
-        xticklabels = self.classes_
-        yticklabels = self.classes_[::-1]
+        xticklabels = labels
+        yticklabels = labels[::-1]
         ticks = np.arange(n_classes) + 0.5
 
         self.ax.set(xticks=ticks, yticks=ticks)

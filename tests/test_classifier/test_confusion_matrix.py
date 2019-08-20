@@ -24,6 +24,7 @@ import yellowbrick as yb
 import numpy.testing as npt
 import matplotlib.pyplot as plt
 
+from yellowbrick.exceptions import ModelError
 from yellowbrick.datasets import load_occupancy
 from yellowbrick.classifier.confusion_matrix import *
 
@@ -32,14 +33,13 @@ from tests.fixtures import Dataset, Split
 from tests.base import IS_WINDOWS_OR_CONDA, VisualTestCase
 
 from sklearn.svm import SVC
-from sklearn.datasets import load_digits
 from sklearn.naive_bayes import GaussianNB
 from sklearn.preprocessing import LabelEncoder
 from sklearn.tree import DecisionTreeClassifier
-from sklearn.datasets import make_classification
 from sklearn.linear_model import LogisticRegression
 from sklearn.linear_model import PassiveAggressiveRegressor
 from sklearn.model_selection import train_test_split as tts
+from sklearn.datasets import load_digits, make_classification
 
 try:
     import pandas as pd
@@ -190,6 +190,7 @@ class TestConfusionMatrix(VisualTestCase):
             ),
         )
 
+    @pytest.mark.xfail(reason="class filtering is not currently supported")
     def test_class_filter_eg_zoom_in(self):
         """
         Test filtering classes zooms in on the confusion matrix.
@@ -210,38 +211,13 @@ class TestConfusionMatrix(VisualTestCase):
 
     def test_extra_classes(self):
         """
-        Assert that any extra classes are simply ignored
+        Assert that any extra classes raise an exception
         """
-        # TODO: raise exception instead
-        _, ax = plt.subplots()
-
         model = LogisticRegression(random_state=93)
-        cm = ConfusionMatrix(model, ax=ax, classes=[0, 1, 2, 11])
-        cm.fit(self.digits.X.train, self.digits.y.train)
-        cm.score(self.digits.X.test, self.digits.y.test)
+        cm = ConfusionMatrix(model, classes=[0, 1, 2, 11])
 
-        npt.assert_array_equal(cm.class_counts_, [38, 37, 39, 0])
-
-        # Ensure correct confusion matrix under the hood
-        npt.assert_array_equal(
-            cm.confusion_matrix_,
-            np.array([[38, 0, 0, 0], [0, 35, 0, 0], [0, 0, 39, 0], [0, 0, 0, 0]]),
-        )
-
-        self.assert_images_similar(cm, tol=10)
-
-    def test_one_class(self):
-        """
-        Test single class confusion matrix with LogisticRegression
-        """
-        _, ax = plt.subplots()
-
-        model = LogisticRegression(random_state=93)
-        cm = ConfusionMatrix(model, ax=ax, classes=[0])
-        cm.fit(self.digits.X.train, self.digits.y.train)
-        cm.score(self.digits.X.test, self.digits.y.test)
-
-        self.assert_images_similar(cm, tol=10)
+        with pytest.raises(ModelError, match="could not decode"):
+            cm.fit(self.digits.X.train, self.digits.y.train)
 
     def test_defined_mapping(self):
         """
@@ -250,7 +226,8 @@ class TestConfusionMatrix(VisualTestCase):
         _, ax = plt.subplots()
 
         model = LogisticRegression(random_state=93)
-        classes = [
+        classes = np.array([
+            "zero",
             "one",
             "two",
             "three",
@@ -260,7 +237,7 @@ class TestConfusionMatrix(VisualTestCase):
             "seven",
             "eight",
             "nine",
-        ]
+        ])
         mapping = {
             0: "zero",
             1: "one",
@@ -273,13 +250,17 @@ class TestConfusionMatrix(VisualTestCase):
             8: "eight",
             9: "nine",
         }
-        cm = ConfusionMatrix(model, ax=ax, classes=classes, label_encoder=mapping)
+        cm = ConfusionMatrix(model, ax=ax, encoder=mapping)
         cm.fit(self.digits.X.train, self.digits.y.train)
         cm.score(self.digits.X.test, self.digits.y.test)
 
-        assert [l.get_text() for l in ax.get_xticklabels()] == classes
+        xlabels = np.array([l.get_text() for l in ax.get_xticklabels()])
+        npt.assert_array_equal(xlabels, classes)
+
         ylabels = [l.get_text() for l in ax.get_yticklabels()]
         ylabels.reverse()
+        ylabels = np.asarray(ylabels)
+        npt.assert_array_equal(ylabels, classes)
 
     def test_inverse_mapping(self):
         """
@@ -289,18 +270,6 @@ class TestConfusionMatrix(VisualTestCase):
 
         model = LogisticRegression(random_state=93)
         le = LabelEncoder()
-        classes = [
-            "zero",
-            "one",
-            "two",
-            "three",
-            "four",
-            "five",
-            "six",
-            "seven",
-            "eight",
-            "nine",
-        ]
         le.fit(
             [
                 "zero",
@@ -316,14 +285,17 @@ class TestConfusionMatrix(VisualTestCase):
             ]
         )
 
-        cm = ConfusionMatrix(model, ax=ax, classes=classes, label_encoder=le)
+        cm = ConfusionMatrix(model, ax=ax, encoder=le)
         cm.fit(self.digits.X.train, self.digits.y.train)
         cm.score(self.digits.X.test, self.digits.y.test)
 
-        assert [l.get_text() for l in ax.get_xticklabels()] == classes
+        xlabels = np.array([l.get_text() for l in ax.get_xticklabels()])
+        npt.assert_array_equal(xlabels, le.classes_)
+
         ylabels = [l.get_text() for l in ax.get_yticklabels()]
         ylabels.reverse()
-        assert ylabels == classes
+        ylabels = np.asarray(ylabels)
+        npt.assert_array_equal(ylabels, le.classes_)
 
     @pytest.mark.xfail(
         IS_WINDOWS_OR_CONDA,
@@ -408,10 +380,6 @@ class TestConfusionMatrix(VisualTestCase):
 
         assert 0 <= s <= 1
 
-    @pytest.mark.xfail(
-        reason="""third test fails with AssertionError: Expected fit
-        to be called once. Called 0 times. This should be fixed by #939"""
-    )
     def test_with_fitted(self):
         """
         Test that visualizer properly handles an already-fitted model

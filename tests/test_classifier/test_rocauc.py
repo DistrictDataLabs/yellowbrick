@@ -18,7 +18,6 @@ Testing for the ROCAUC visualizer
 ## Imports
 ##########################################################################
 
-import os
 import pytest
 import numpy as np
 import numpy.testing as npt
@@ -46,9 +45,6 @@ except ImportError:
 ##########################################################################
 ## Fixtures
 ##########################################################################
-
-# Increased tolerance for AppVeyor tests
-TOL = 10 if os.name == "nt" else 0.1
 
 
 class FakeClassifier(BaseEstimator, ClassifierMixin):
@@ -83,6 +79,10 @@ def assert_valid_rocauc_scores(visualizer, nscores=4):
 
 @pytest.mark.usefixtures("binary", "multiclass")
 class TestROCAUC(VisualTestCase):
+    """
+    Test ROCAUC visualizer
+    """
+
     def test_binary_probability(self):
         """
         Test ROCAUC with a binary classifier with a predict_proba function
@@ -102,7 +102,7 @@ class TestROCAUC(VisualTestCase):
 
         # Compare the images
         visualizer.finalize()
-        self.assert_images_similar(visualizer, tol=TOL)
+        self.assert_images_similar(visualizer, tol=0.1, windows_tol=10)
 
     def test_binary_probability_decision(self):
         """
@@ -123,7 +123,7 @@ class TestROCAUC(VisualTestCase):
 
         # Compare the images
         visualizer.finalize()
-        self.assert_images_similar(visualizer, tol=TOL)
+        self.assert_images_similar(visualizer, tol=0.1, windows_tol=10)
 
     def test_binary_decision(self):
         """
@@ -206,7 +206,7 @@ class TestROCAUC(VisualTestCase):
 
         # Compare the images
         visualizer.finalize()
-        self.assert_images_similar(visualizer, tol=TOL)
+        self.assert_images_similar(visualizer, tol=0.1, windows_tol=10)
 
     def test_rocauc_quickmethod(self):
         """
@@ -247,7 +247,7 @@ class TestROCAUC(VisualTestCase):
 
         # Score the visualizer (should be the macro average)
         s = visualizer.score(self.binary.X.test, self.binary.y.test)
-        assert s == pytest.approx(0.8)
+        assert s == pytest.approx(0.8661, abs=1e-4)
 
         # Assert that there is no micro score
         assert "micro" not in visualizer.fpr
@@ -256,7 +256,7 @@ class TestROCAUC(VisualTestCase):
 
         # Compare the images
         visualizer.finalize()
-        self.assert_images_similar(visualizer, tol=TOL)
+        self.assert_images_similar(visualizer, tol=0.1, windows_tol=10)
 
     def test_rocauc_no_macro(self):
         """
@@ -268,7 +268,7 @@ class TestROCAUC(VisualTestCase):
 
         # Score the visualizer (should be the micro average)
         s = visualizer.score(self.binary.X.test, self.binary.y.test)
-        assert s == pytest.approx(0.8)
+        assert s == pytest.approx(0.8573, abs=1e-4)
 
         # Assert that there is no macro score
         assert "macro" not in visualizer.fpr
@@ -277,7 +277,7 @@ class TestROCAUC(VisualTestCase):
 
         # Compare the images
         visualizer.finalize()
-        self.assert_images_similar(visualizer, tol=TOL)
+        self.assert_images_similar(visualizer, tol=0.1, windows_tol=10)
 
     def test_rocauc_no_macro_no_micro(self):
         """
@@ -303,7 +303,7 @@ class TestROCAUC(VisualTestCase):
 
         # Compare the images
         visualizer.finalize()
-        self.assert_images_similar(visualizer, tol=TOL)
+        self.assert_images_similar(visualizer, tol=0.1, windows_tol=10)
 
     def test_rocauc_no_classes(self):
         """
@@ -315,7 +315,7 @@ class TestROCAUC(VisualTestCase):
 
         # Score the visualizer (should be the micro average)
         s = visualizer.score(self.binary.X.test, self.binary.y.test)
-        assert s == pytest.approx(0.8)
+        assert s == pytest.approx(0.8661, abs=1e-4)
 
         # Assert that there still are per-class scores
         for c in (0, 1):
@@ -325,7 +325,7 @@ class TestROCAUC(VisualTestCase):
 
         # Compare the images
         visualizer.finalize()
-        self.assert_images_similar(visualizer, tol=TOL)
+        self.assert_images_similar(visualizer, tol=0.1, windows_tol=10)
 
     def test_rocauc_no_curves(self):
         """
@@ -466,10 +466,6 @@ class TestROCAUC(VisualTestCase):
         with pytest.raises(ModelError):
             visualizer._get_y_scores(self.binary.X.train)
 
-    @pytest.mark.xfail(
-        reason="""third test fails with AssertionError: Expected fit
-        to be called once. Called 0 times. This should be fixed by #939"""
-    )
     def test_with_fitted(self):
         """
         Test that visualizer properly handles an already-fitted model

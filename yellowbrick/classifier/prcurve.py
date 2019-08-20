@@ -231,18 +231,17 @@ class PrecisionRecallCurve(ClassificationScoreVisualizer):
         """
         # The target determines what kind of estimator is fit
         ttype = type_of_target(y)
+        self._target_labels = np.unique(y)
         if ttype.startswith(MULTICLASS):
             self.target_type_ = MULTICLASS
             self.estimator = OneVsRestClassifier(self.estimator)
 
             # Use label_binarize to create multi-label output for OneVsRestClassifier
-            self._target_labels = np.unique(y)
             Y = label_binarize(y, classes=self._target_labels)
         elif ttype.startswith(BINARY):
-            self.target_type_ = BINARY
-
             # Different variable is used here to prevent transformation
             Y = y
+            self.target_type_ = BINARY
         else:
             raise YellowbrickValueError(
                 (
@@ -254,7 +253,7 @@ class PrecisionRecallCurve(ClassificationScoreVisualizer):
         # Fit the model and return self
         return super(PrecisionRecallCurve, self).fit(X, Y)
 
-    def score(self, X, y=None):
+    def score(self, X, y):
         """
         Generates the Precision-Recall curve on the specified test data.
 
@@ -265,14 +264,19 @@ class PrecisionRecallCurve(ClassificationScoreVisualizer):
             precision at each threshold, weighted by the increase in recall from
             the previous threshold.
         """
-        # Call super to check if fitted and to compute classes_
-        # Note that self.score_ computed in super will be overridden below
-        super(PrecisionRecallCurve, self).score(X, y)
-
         # If we don't do this check, then it is possible that OneVsRestClassifier
         # has not correctly been fitted for multi-class targets.
         if not hasattr(self, "target_type_"):
             raise NotFitted.from_estimator(self, "score")
+
+        # Must perform label binarization before calling super
+        if self.target_type_ == MULTICLASS:
+            # Use label_binarize to create multi-label output for OneVsRestClassifier
+            y = label_binarize(y, classes=self._target_labels)
+
+        # Call super to check if fitted and to compute classes_
+        # Note that self.score_ computed in super will be overridden below
+        super(PrecisionRecallCurve, self).score(X, y)
 
         # Compute the prediction/threshold scores
         y_scores = self._get_y_scores(X)
@@ -282,23 +286,20 @@ class PrecisionRecallCurve(ClassificationScoreVisualizer):
             self.precision_, self.recall_, _ = sk_precision_recall_curve(y, y_scores)
             self.score_ = average_precision_score(y, y_scores)
         else:
-            # Use label_binarize to create multi-label output for OneVsRestClassifier
-            Y = label_binarize(y, classes=self._target_labels)
-
             self.precision_, self.recall_, self.score_ = {}, {}, {}
 
             # Compute PRCurve for all classes
             for i, class_i in enumerate(self.classes_):
                 self.precision_[class_i], self.recall_[
                     class_i
-                ], _ = sk_precision_recall_curve(Y[:, i], y_scores[:, i])
-                self.score_[class_i] = average_precision_score(Y[:, i], y_scores[:, i])
+                ], _ = sk_precision_recall_curve(y[:, i], y_scores[:, i])
+                self.score_[class_i] = average_precision_score(y[:, i], y_scores[:, i])
 
             # Compute micro average PR curve
             self.precision_[MICRO], self.recall_[MICRO], _ = sk_precision_recall_curve(
-                Y.ravel(), y_scores.ravel()
+                y.ravel(), y_scores.ravel()
             )
-            self.score_[MICRO] = average_precision_score(Y, y_scores, average=MICRO)
+            self.score_[MICRO] = average_precision_score(y, y_scores, average=MICRO)
 
         # Draw the figure
         self.draw()

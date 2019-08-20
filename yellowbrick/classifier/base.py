@@ -25,8 +25,8 @@ import numpy as np
 from yellowbrick.utils import isclassifier
 from yellowbrick.base import ScoreVisualizer
 from yellowbrick.style.palettes import color_palette
-from yellowbrick.exceptions import NotFitted, YellowbrickWarning, ModelError
-from yellowbrick.exceptions import YellowbrickTypeError, YellowbrickValueError
+from yellowbrick.exceptions import NotFitted, YellowbrickWarning
+from yellowbrick.exceptions import YellowbrickTypeError, ModelError
 
 from sklearn.preprocessing import LabelEncoder
 
@@ -177,12 +177,11 @@ class ClassificationScoreVisualizer(ScoreVisualizer):
         self.classes_, self.class_counts_ = np.unique(y, return_counts=True)
 
         # Ensure the classes are aligned with the estimator
-        # TODO: should we simply warn here, why would this be the case?
+        # If they are not aligned, ignore class counts and issue a warning
         if hasattr(self.estimator, "classes_"):
             if not np.array_equal(self.classes_, self.estimator.classes_):
-                raise YellowbrickValueError(
-                    "unique classes in y do not match estimator.classes_"
-                )
+                self.classes_ = self.estimator.classes_
+                self.class_counts_ = None
 
         # Decode classes to human readable labels specified by the user
         self.classes_ = self._decode_labels(self.classes_)
@@ -322,8 +321,9 @@ class ClassificationScoreVisualizer(ScoreVisualizer):
                 warnings.warn(msg, YellowbrickWarning)
                 return None
 
-            # Otherwise, treat as dictionary
-            return np.asarray(list(self.encoder.values()))
+            # Otherwise, treat as dictionary and ensure sorted by key
+            keys = sorted(list(self.encoder.keys()))
+            return np.asarray([self.encoder[key] for key in keys])
 
         if self.classes is not None:
             return np.asarray(self.classes)

@@ -156,7 +156,9 @@ class ClassPredictionError(ClassificationScoreVisualizer):
         except ModelError as e:
             # raise visualizer-specific errors
             if labels is not None and len(labels) < len(indices):
-                raise NotImplementedError("filtering classes is currently not supported")
+                raise NotImplementedError(
+                    "filtering classes is currently not supported"
+                )
             else:
                 raise e
 
