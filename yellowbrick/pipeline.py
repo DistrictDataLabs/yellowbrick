@@ -90,13 +90,18 @@ class VisualPipeline(Pipeline):
         kwargs : dict
             Keyword arguments to pass to the ``poof()`` method of all steps.
         """
+        axes = []
         for name, step in self.visual_steps.items():
             if outdir is not None:
                 outpath = path.join(outdir, slugify(name) + ext)
             else:
                 outpath = None
 
-            step.poof(outpath=outpath, **kwargs)
+            ax = step.poof(outpath=outpath, **kwargs)
+            axes.append(ax)
+
+        # Return axes array to ensure figures are shown in notebook
+        return axes
 
     def fit_transform_poof(self, X, y=None, outpath=None, **kwargs):
         """

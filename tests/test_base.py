@@ -124,7 +124,7 @@ class TestBaseClasses(VisualTestCase):
         _, ax = plt.subplots()
         viz = CustomVisualizer(ax=ax)
         viz.finalize = MagicMock()
-        viz.poof()
+        assert viz.poof() is ax
 
         viz.finalize.assert_called_once_with()
         mock_plt.show.assert_called_once_with()
@@ -142,7 +142,7 @@ class TestBaseClasses(VisualTestCase):
         _, ax = plt.subplots()
         viz = CustomVisualizer(ax=ax)
         viz.finalize = MagicMock()
-        viz.poof(outpath="test.png")
+        assert viz.poof(outpath="test.png") is ax
 
         viz.finalize.assert_called_once_with()
         mock_plt.show.assert_not_called()
@@ -159,7 +159,7 @@ class TestBaseClasses(VisualTestCase):
 
         with pytest.warns(YellowbrickWarning):
             viz = CustomVisualizer()
-            viz.poof()
+            assert viz.poof() is not None
 
 ##########################################################################
 ## ScoreVisualizer Cases
@@ -228,7 +228,8 @@ class TestVisualizerGrid(VisualTestCase):
         grid = VisualizerGrid(visualizers)
 
         grid.fit(X, y)
-        grid.poof()  # poof is required here (do not replace with finalize)!
+        # poof is required here (do not replace with finalize)!
+        assert grid.poof() is not None
 
         self.assert_images_similar(grid)
 
@@ -249,7 +250,8 @@ class TestVisualizerGrid(VisualTestCase):
         grid = VisualizerGrid(visualizers, nrows=2)
 
         grid.fit(X, y)
-        grid.poof()  # poof is required here (do not replace with finalize)!
+        # poof is required here (do not replace with finalize)!
+        assert grid.poof() is not None
 
         self.assert_images_similar(grid)
 
@@ -270,7 +272,8 @@ class TestVisualizerGrid(VisualTestCase):
         grid = VisualizerGrid(visualizers, ncols=2)
 
         grid.fit(X, y)
-        grid.poof()  # poof is required here (do not replace with finalize)!
+        # poof is required here (do not replace with finalize)!
+        assert grid.poof() is not None
 
         self.assert_images_similar(grid)
 

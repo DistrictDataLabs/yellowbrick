@@ -248,6 +248,9 @@ class Visualizer(BaseEstimator):
         if clear_figure:
             self.fig.clear()
 
+        # Return ax to ensure display in notebooks
+        return self.ax
+
     ## ////////////////////////////////////////////////////////////////////
     ## Helper Functions
     ## ////////////////////////////////////////////////////////////////////
@@ -558,3 +561,6 @@ class VisualizerGrid(Visualizer):
 
         if clear_figure:
             plt.gcf().clear()
+
+        # Return Axes array to ensure poof works in notebooks
+        return self.axarr
