@@ -348,5 +348,5 @@ def dispersion(
     visualizer.fit(corpus, y, **kwargs)
     visualizer.finalize()
 
-    # Return the visualizer objec
+    # Return the visualizer object
     return visualizer
