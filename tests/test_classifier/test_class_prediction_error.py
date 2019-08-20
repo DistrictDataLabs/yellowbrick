@@ -66,8 +66,8 @@ class TestClassPredictionError(VisualTestCase):
         visualizer.finalize()
 
         # AppVeyor and Linux conda fail due to non-text-based differences
-        # AppVeyor fails with RMS 13.161
-        self.assert_images_similar(visualizer, tol=12.5, windows_tol=13.2)
+        # AppVeyor fails with RMS 13.161 - 13.289 (python - miniconda)
+        self.assert_images_similar(visualizer, tol=12.5, windows_tol=13.3)
 
     @pytest.mark.filterwarnings("ignore:could not determine class_counts_")
     @pytest.mark.skipif(pd is None, reason="test requires pandas")
@@ -85,8 +85,8 @@ class TestClassPredictionError(VisualTestCase):
         visualizer.finalize()
 
         # AppVeyor and Linux conda fail due to non-text-based differences
-        # AppVeyor fails with RMS 13.161
-        self.assert_images_similar(visualizer, tol=12.5, windows_tol=13.2)
+        # AppVeyor fails with RMS 13.161 - 13.289 (python - miniconda)
+        self.assert_images_similar(visualizer, tol=12.5, windows_tol=13.3)
 
     def test_class_prediction_error_quickmethod(self):
         """
