@@ -121,7 +121,7 @@ class ClassPredictionError(ClassificationScoreVisualizer):
             **kwargs
         )
 
-    def score(self, X, y, **kwargs):
+    def score(self, X, y):
         """
         Generates a 2D array where each row is the count of the
         predicted classes and each column is the true class
@@ -139,25 +139,32 @@ class ClassPredictionError(ClassificationScoreVisualizer):
         score_ : float
             Global accuracy score
         """
-
+        # Must be computed before calling super
         # We're relying on predict to raise NotFitted
         y_pred = self.predict(X)
-
         y_type, y_true, y_pred = _check_targets(y, y_pred)
-
         if y_type not in ("binary", "multiclass"):
             raise YellowbrickValueError("{} is not supported".format(y_type))
 
-        indices = unique_labels(
-            self._decode_labels(y_true), self._decode_labels(y_pred)
-        )
+        # Get the indices of the unique labels
+        indices = unique_labels(y_true, y_pred)
+        labels = self._labels()
 
-        if len(self.classes_) > len(indices):
+        # Call super to compute self.score_ and verify classes
+        try:
+            super(ClassPredictionError, self).score(X, y)
+        except ModelError as e:
+            # raise visualizer-specific errors
+            if labels is not None and len(labels) < len(indices):
+                raise NotImplementedError("filtering classes is currently not supported")
+            else:
+                raise e
+
+        # Ensure all labels are used
+        if labels is not None and len(labels) > len(indices):
             raise ModelError(
                 "y and y_pred contain zero values for one of the specified classes"
             )
-        elif len(self.classes_) < len(indices):
-            raise NotImplementedError("filtering classes is currently not supported")
 
         # Create a table of predictions whose rows are the true classes
         # and whose columns are the predicted classes; each element
@@ -171,8 +178,6 @@ class ClassPredictionError(ClassificationScoreVisualizer):
         )
 
         self.draw()
-        self.score_ = self.estimator.score(X, y)
-
         return self.score_
 
     def draw(self):

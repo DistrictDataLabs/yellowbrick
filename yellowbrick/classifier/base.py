@@ -25,7 +25,7 @@ import numpy as np
 from yellowbrick.utils import isclassifier
 from yellowbrick.base import ScoreVisualizer
 from yellowbrick.style.palettes import color_palette
-from yellowbrick.exceptions import NotFitted, YellowbrickWarning
+from yellowbrick.exceptions import NotFitted, YellowbrickWarning, ModelError
 from yellowbrick.exceptions import YellowbrickTypeError, YellowbrickValueError
 
 from sklearn.preprocessing import LabelEncoder
@@ -34,6 +34,7 @@ from sklearn.preprocessing import LabelEncoder
 ##########################################################################
 ## Base Classification Visualizer
 ##########################################################################
+
 
 class ClassificationScoreVisualizer(ScoreVisualizer):
     """Base class for classifier model selection.
@@ -189,7 +190,7 @@ class ClassificationScoreVisualizer(ScoreVisualizer):
         # Always return self from fit
         return self
 
-    def score(self, X, y, **kwargs):
+    def score(self, X, y):
         """
         The score function is the hook for visual interaction. Pass in test
         data and the visualizer will create predictions on the data and
@@ -211,8 +212,29 @@ class ClassificationScoreVisualizer(ScoreVisualizer):
             Returns the score of the underlying model, usually accuracy for
             classification models. Refer to the specific model for more details.
         """
+        # If the estimator has been passed in fitted but the visualizer was not fit
+        # then we can retrieve the classes from the estimator, unfortunately we cannot
+        # retrieve the class counts so we simply set them to None and warn the user.
+        # NOTE: cannot test if hasattr(self, "classes_") because it will be proxied.
+        if not hasattr(self, "class_counts_"):
+            if not hasattr(self.estimator, "classes_"):
+                raise NotFitted(
+                    (
+                        "could not determine required property classes_; "
+                        "the visualizer must either be fit or instantiated with a "
+                        "fitted classifier before calling score()"
+                    )
+                )
+
+            self.class_counts_ = None
+            self.classes_ = self._decode_labels(self.estimator.classes_)
+            warnings.warn(
+                "could not determine class_counts_ from previously fitted classifier",
+                YellowbrickWarning,
+            )
+
         # This method implements ScoreVisualizer (do not call super).
-        self.score_ = self.estimator.score(X, y, **kwargs)
+        self.score_ = self.estimator.score(X, y)
         return self.score_
 
     def _decode_labels(self, y):
@@ -223,8 +245,6 @@ class ClassificationScoreVisualizer(ScoreVisualizer):
         If both classes and encoder are set, a warning is issued and encoder is
         used instead of classes. If neither encoder nor classes is set then the
         original array is returned unmodified.
-
-        If classes is specified then y must be an array of integers.
         """
         if self.classes is not None and self.encoder is not None:
             warnings.warn(
@@ -234,10 +254,26 @@ class ClassificationScoreVisualizer(ScoreVisualizer):
         if self.encoder is not None:
             # Use the label encoder or other transformer
             if hasattr(self.encoder, "inverse_transform"):
-                return self.encoder.inverse_transform(y)
+                try:
+                    return self.encoder.inverse_transform(y)
+                except ValueError:
+                    y_labels = np.unique(y)
+                    raise ModelError(
+                        "could not decode {} y values to {} labels".format(
+                            y_labels, self._labels()
+                        )
+                    )
 
             # Otherwise, treat as a dictionary
-            return np.array([self.encoder[yi] for yi in y])
+            try:
+                return np.asarray([self.encoder[yi] for yi in y])
+            except KeyError as e:
+                raise ModelError(
+                    (
+                        "cannot decode class {} to label, "
+                        "key not specified by encoder"
+                    ).format(e)
+                )
 
         if self.classes is not None:
             # Determine indices to perform class mappings on
@@ -252,7 +288,44 @@ class ClassificationScoreVisualizer(ScoreVisualizer):
             try:
                 return np.asarray(self.classes)[idx]
             except IndexError:
-                raise YellowbrickValueError("BAD!")
+                y_labels = np.unique(yp)
+                raise ModelError(
+                    "could not decode {} y values to {} labels".format(
+                        y_labels, self._labels()
+                    )
+                )
 
-        # could not encode y, return it as it is, unmodified
+        # could not decode y without encoder or classes, return it as it is, unmodified
         return y
+
+    def _labels(self):
+        """
+        Returns the human specified labels in either the classes list or from the
+        encoder. Returns None if no human labels have been specified, but issues a
+        warning if a transformer has been passed that does not specify labels.
+        """
+        if self.classes is not None and self.encoder is not None:
+            warnings.warn(
+                "both classes and encoder specified, using encoder", YellowbrickWarning
+            )
+
+        if self.encoder is not None:
+            # Use label encoder or other transformer
+            if hasattr(self.encoder, "transform"):
+                if hasattr(self.encoder, "classes_"):
+                    return self.encoder.classes_
+
+                # This is not a label encoder
+                msg = "could not determine class labels from {}".format(
+                    self.encoder.__class__.__name__
+                )
+                warnings.warn(msg, YellowbrickWarning)
+                return None
+
+            # Otherwise, treat as dictionary
+            return np.asarray(list(self.encoder.values()))
+
+        if self.classes is not None:
+            return np.asarray(self.classes)
+
+        return None

@@ -178,8 +178,10 @@ class ClassificationReport(ClassificationScoreVisualizer):
         score_ : float
             Global accuracy score
         """
-        y_pred = self.predict(X)
+        # Call super to check if fitted and to compute self.score_
+        super(ClassificationReport, self).score(X, y)
 
+        y_pred = self.predict(X)
         scores = precision_recall_fscore_support(y, y_pred)
 
         # Calculate the percentage for the support metric
@@ -199,9 +201,7 @@ class ClassificationReport(ClassificationScoreVisualizer):
             self.scores_.pop("support")
 
         self.draw()
-
-        # super stores the score attribute from the sklearn classifier and returns it
-        return super(ClassificationReport, self).score(X, y)
+        return self.score_
 
     def draw(self):
         """

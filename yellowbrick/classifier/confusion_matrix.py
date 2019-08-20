@@ -192,6 +192,9 @@ class ConfusionMatrix(ClassificationScoreVisualizer):
         score_ : float
             Global accuracy score
         """
+        # Call super to check if fitted and to compute self.score_
+        super(ConfusionMatrix, self).score(X, y)
+
         # Create predictions from X (will raise not fitted error)
         y_pred = self.predict(X)
 
@@ -223,10 +226,6 @@ class ConfusionMatrix(ClassificationScoreVisualizer):
         self.class_counts_ = np.array(selected_class_counts)
 
         self.draw()
-
-        # Retrieve and store the score attribute from the sklearn classifier
-        self.score_ = self.estimator.score(X, y)
-
         return self.score_
 
     def draw(self):

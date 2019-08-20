@@ -265,6 +265,10 @@ class PrecisionRecallCurve(ClassificationScoreVisualizer):
             precision at each threshold, weighted by the increase in recall from
             the previous threshold.
         """
+        # Call super to check if fitted and to compute classes_
+        # Note that self.score_ computed in super will be overridden below
+        super(PrecisionRecallCurve, self).score(X, y)
+
         # If we don't do this check, then it is possible that OneVsRestClassifier
         # has not correctly been fitted for multi-class targets.
         if not hasattr(self, "target_type_"):

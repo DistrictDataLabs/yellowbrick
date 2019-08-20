@@ -193,7 +193,7 @@ class ROCAUC(ClassificationScoreVisualizer):
         # Set the visual parameters for ROCAUC
         self.set_params(micro=micro, macro=macro, per_class=per_class)
 
-    def score(self, X, y=None, **kwargs):
+    def score(self, X, y=None):
         """
         Generates the predicted target values using the Scikit-Learn
         estimator.
@@ -211,6 +211,9 @@ class ROCAUC(ClassificationScoreVisualizer):
         score_ : float
             Global accuracy unless micro or macro scores are requested.
         """
+        # Call super to check if fitted and to compute self.score_
+        # NOTE: this sets score to the base score if neither macro nor micro
+        super(ROCAUC, self).score(X, y)
 
         # Compute the predictions for the test data
         y_pred = self._get_y_scores(X)
@@ -280,9 +283,6 @@ class ROCAUC(ClassificationScoreVisualizer):
         # Set score to macro average if not micro
         if self.macro:
             self.score_ = self.roc_auc[MACRO]
-
-        # Set score to the base score if neither macro nor micro
-        self.score_ = self.estimator.score(X, y)
 
         return self.score_
 
