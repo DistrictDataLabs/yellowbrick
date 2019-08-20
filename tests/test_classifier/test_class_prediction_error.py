@@ -85,7 +85,8 @@ class TestClassPredictionError(VisualTestCase):
         visualizer.finalize()
 
         # AppVeyor and Linux conda fail due to non-text-based differences
-        self.assert_images_similar(visualizer, tol=12.5)
+        # AppVeyor fails with RMS 13.161
+        self.assert_images_similar(visualizer, tol=12.5, windows_tol=13.2)
 
     def test_class_prediction_error_quickmethod(self):
         """
