@@ -14,15 +14,11 @@ Yellowbrick extends the Scikit-Learn API to make model selection and hyperparame
 Recommended Learning Path
 -------------------------
 
-1. Check out the :doc:`quickstart`
+1. Check out the :doc:`quickstart`, try the :doc:`tutorial`, and check out the :doc:`oneliners`.
 
-2. Try the the :doc:`tutorial`.
+2. Use Yellowbrick in your work, referencing the :doc:`api/index` for assistance with specific visualizers and detailed information on optional parameters and customization options.
 
-3. Use Yellowbrick in your project.
-
-4. For details on specific Visualizers and extended usage head over to the :doc:`api/index`.
-
-5. Follow us on Twitter `@scikit_yb <https://twitter.com/scikit_yb>`_. You'll hear about new visualizers as they're added.
+3. Star us on `GitHub <https://github.com/DistrictDataLabs/yellowbrick/>`_ and follow us on `Twitter (@scikit_yb) <https://twitter.com/scikit_yb>`_ so that you'll hear about new visualizers as soon as they're added.
 
 Contributing
 ------------
@@ -149,13 +145,14 @@ Table of Contents
    quickstart
    tutorial
    api/index
-   evaluation
+   oneliners
    contributing/index
    matplotlib
    teaching
    gallery
    about
    faq
+   evaluation
    code_of_conduct
    changelog
    governance/index
