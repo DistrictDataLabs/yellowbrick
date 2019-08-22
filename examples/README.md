@@ -1,6 +1,6 @@
 # Yellowbrick Examples
 
-[![Visualizers](../docs/images/visualizers.png)](../docs/images/visualizers.png)
+[![Visualizers](..docs/images/readme/banner.png)](../docs/images/readme/banner.png)
 
 Welcome to the yellowbrick examples directory! This directory contains a gallery of visualizers and their application to classification, regression, clustering, and other machine learning techniques with scikit-learn. Examples have been submitted both by the Yellowbrick team and also users like you! The result is a rich gallery of tools and techniques to equip your machine learning with visual diagnostics and visualizer workflows!
 
