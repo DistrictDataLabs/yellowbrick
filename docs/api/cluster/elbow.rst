@@ -53,7 +53,7 @@ The ``KElbowVisualizer`` also displays the amount of time to train the clusterin
     visualizer.fit(X)        # Fit the data to the visualizer
     visualizer.poof()        # Draw/show/poof the data
 
-By default, the parameter ``locate_elbow`` is set to `True`, which automatically find the "elbow" which likely corresponds to the optimal value of k using the "knee point detection algorithm". However, users can turn off the feature by setting ``locate_elbow=False``.You can read about the implementation of this algorithm at `Knee point detection in Python <https://github.com/arvkevi/kneed>`_ by Kevin Arvai. 
+By default, the parameter ``locate_elbow`` is set to ``True``, which automatically find the "elbow" which likely corresponds to the optimal value of k using the "knee point detection algorithm". However, users can turn off the feature by setting ``locate_elbow=False``. You can read about the implementation of this algorithm at "`Knee point detection in Python <https://github.com/arvkevi/kneed>`_" by Kevin Arvai. 
 
 In the following example, we'll use the ``calinski_harabasz`` score and turn off ``locate_elbow`` feature.
 

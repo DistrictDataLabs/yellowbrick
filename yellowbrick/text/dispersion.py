@@ -285,7 +285,7 @@ def dispersion(
 ):
     """ Displays lexical dispersion plot for words in a corpus
 
-    This helper function is a quick wrapper to utilize the DisperstionPlot
+    This helper function is a quick wrapper to utilize the DispersionPlot
     Visualizer for one-off analysis
 
     Parameters

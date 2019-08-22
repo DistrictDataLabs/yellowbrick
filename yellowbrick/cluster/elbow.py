@@ -71,7 +71,7 @@ def distortion_score(X, labels, metric="euclidean"):
         The metric to use when calculating distance between instances in a
         feature array. If metric is a string, it must be one of the options
         allowed by `sklearn.metrics.pairwise.pairwise_distances
-        <https://bit.ly/2MSnF6J>`_
+        <http://bit.ly/2Z7Dxnn>`_
 
     .. todo:: add sample_size and random_state kwds similar to silhouette_score
     """
@@ -135,12 +135,12 @@ class KElbowVisualizer(ClusteringScoreVisualizer):
     average score for all clusters. By default, the ``distortion`` score is
     computed, the sum of square distances from each point to its assigned
     center. Other metrics can also be used such as the ``silhouette`` score,
-    the mean silhouette  coefficient for all samples or the
+    the mean silhouette coefficient for all samples or the
     ``calinski_harabasz`` score, which computes the ratio of dispersion between
     and within clusters.
 
     When these overall metrics for each model are plotted, it is possible to
-    visually determine the best value for K. If the line chart looks like an
+    visually determine the best value for k. If the line chart looks like an
     arm, then the "elbow" (the point of inflection on the curve) is the best
     value of k. The "arm" can be either up or down, but if there is a strong
     inflection point, it is a good indication that the underlying model fits
@@ -149,7 +149,7 @@ class KElbowVisualizer(ClusteringScoreVisualizer):
     Parameters
     ----------
 
-    model : a Scikit-Learn clusterer
+    model : a scikit-learn clusterer
         Should be an instance of an unfitted clusterer, specifically ``KMeans`` or
         ``MiniBatchKMeans``. If it is not a clusterer, an exception is raised.
 
@@ -220,14 +220,14 @@ class KElbowVisualizer(ClusteringScoreVisualizer):
     SSE, also can be used to explore if clustering is a correct choice.
 
     For a discussion on the Elbow method, read more at
-    `Robert Gove's Block <https://bl.ocks.org/rpgove/0060ff3b656618e9136b>`_.
-    For more on the 'Knee Point Detection Algorithm' see the paper `Finding a "kneedle"
-    in a Haystack <https://raghavan.usc.edu//papers/kneedle-simplex11.pdf>`_.
+    `Robert Gove's Block website <https://bl.ocks.org/rpgove/0060ff3b656618e9136b>`_.
+    For more on the knee point detection algorithm see the paper `"Finding a "kneedle"
+    in a Haystack" <https://raghavan.usc.edu//papers/kneedle-simplex11.pdf>`_.
 
     .. seealso:: The scikit-learn documentation for the `silhouette_score
         <https://bit.ly/2LYWjYb>`_ and `calinski_harabasz_score
-        <https://bit.ly/2ItAgts>`_. The default, `distortion_score`, is
-        implemented in`yellowbrick.cluster.elbow`.
+        <https://bit.ly/2ItAgts>`_. The default, ``distortion_score``, is
+        implemented in ``yellowbrick.cluster.elbow``.
 
     .. todo:: add parallelization option for performance
     .. todo:: add different metrics for scores and silhouette
