@@ -1,6 +1,6 @@
 # Yellowbrick
 
-[![Visualizers](https://www.scikit-yb.org/en/latest/_images/visualizers.png)](https://www.scikit-yb.org/)
+[![Visualizers](https://www.scikit-yb.org/en/latest/_images/readme/banner.png)](https://www.scikit-yb.org/)
 
 Yellowbrick is a suite of visual analysis and diagnostic tools designed to facilitate machine learning with scikit-learn. The library implements a new core API object, the `Visualizer` that is an scikit-learn estimator &mdash; an object that learns from data. Similar to transformers or models, visualizers learn from data by creating a visual representation of the model selection workflow.
 
