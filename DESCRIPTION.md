@@ -2,15 +2,15 @@
 
 [![Visualizers](https://www.scikit-yb.org/en/latest/_images/visualizers.png)](https://www.scikit-yb.org/)
 
-Yellowbrick is a suite of visual analysis and diagnostic tools designed to facilitate machine learning with scikit-learn. The library implements a new core API object, the "Visualizer" that is an scikit-learn estimator&mdash;an object that learns from data. Similar to transformers or models, visualizers learn from data by creating a visual representation of the model selection workflow.
+Yellowbrick is a suite of visual analysis and diagnostic tools designed to facilitate machine learning with scikit-learn. The library implements a new core API object, the `Visualizer` that is an scikit-learn estimator &mdash; an object that learns from data. Similar to transformers or models, visualizers learn from data by creating a visual representation of the model selection workflow.
 
 Visualizer allow users to steer the model selection process, building intuition around feature engineering, algorithm selection and hyperparameter tuning. For instance, they can help diagnose common problems surrounding model complexity and bias, heteroscedasticity, underfit and overtraining, or class balance issues. By applying visualizers to the model selection workflow, Yellowbrick allows you to steer predictive models toward more successful results, faster.
 
-The full documentation can be found at https://scikit-yb.org/ and includes a [Quick Start Guide](https://www.scikit-yb.org/en/latest/quickstart.html) for new users.
+The full documentation can be found at [scikit-yb.org](https://scikit-yb.org/) and includes a [Quick Start Guide](https://www.scikit-yb.org/en/latest/quickstart.html) for new users.
 
 ## Visualizers
 
-Visualizers are estimators&mash;objects that learn from data;mdash;whose primary objective is to create visualizations that allow insight into the model selection process. In scikit-learn terms, they can be similar to transformers when visualizing the data space or wrap a model estimator similar to how the “ModelCV” (e.g. [`RidgeCV`](https://scikit-learn.org/stable/modules/generated/sklearn.linear_model.RidgeCV.html), [`LassoCV`](https://scikit-learn.org/stable/modules/generated/sklearn.linear_model.LassoCV.html)) methods work. The primary goal of Yellowbrick is to create a sensical API similar to scikit-learn. Some of our most popular visualizers include:
+Visualizers are estimators &mdash; objects that learn from data &mdash;whose primary objective is to create visualizations that allow insight into the model selection process. In scikit-learn terms, they can be similar to transformers when visualizing the data space or wrap a model estimator similar to how the `ModelCV` (e.g. [`RidgeCV`](https://scikit-learn.org/stable/modules/generated/sklearn.linear_model.RidgeCV.html), [`LassoCV`](https://scikit-learn.org/stable/modules/generated/sklearn.linear_model.LassoCV.html)) methods work. The primary goal of Yellowbrick is to create a sensical API similar to scikit-learn. Some of our most popular visualizers include:
 
 ### Classification Visualization
 
@@ -63,10 +63,8 @@ Visualizers are estimators&mash;objects that learn from data;mdash;whose primary
 - **t-SNE Corpus Visualization**: uses stochastic neighbor embedding to project documents
 - **UMAP Corpus Visualization**: plot similar documents closer together to discover clusters
 
-... and more! Yellowbrick is adding new visualizers all the time so be sure to check out our [examples gallary](https://www.scikit-yb.org/en/latest/api/index.html)&mdash;or even the [develop](https://github.com/districtdatalabs/yellowbrick/tree/develop) branch&mdash; and feel free to contribute your ideas for new Visualizers!
+... and more! Yellowbrick is adding new visualizers all the time so be sure to check out our [examples gallary](https://www.scikit-yb.org/en/latest/api/index.html) &mdash; or even the [develop](https://github.com/districtdatalabs/yellowbrick/tree/develop) branch &mdash; and feel free to contribute your ideas for new Visualizers!
 
 ## Affiliations
-[![District Data Labs](docs/images/readme/affiliates_ddl.png)](https://www.districtdatalabs.com/)
-
-[![NumFOCUS Affiliated Project](docs/images/readme/affiliates_numfocus.png)](https://numfocus.org/)
+[![District Data Labs](docs/images/readme/affiliates_ddl.png)](https://www.districtdatalabs.com/) [![NumFOCUS Affiliated Project](docs/images/readme/affiliates_numfocus.png)](https://numfocus.org/)
 
