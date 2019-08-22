@@ -62,19 +62,29 @@ class PrecisionRecallCurve(ClassificationScoreVisualizer):
 
     Parameters
     ----------
-    model : the Scikit-Learn estimator
-        An unfitted classification model to score the precision-recall curve on.
+    model : estimator
+        A scikit-learn estimator that should be a classifier. If the model is
+        not a classifier, an exception is raised. If the internal model is not
+        fitted, it is fit when the visualizer is fitted, unless otherwise specified
+        by ``is_fitted``.
 
     ax : matplotlib Axes, default: None
-        The axes to plot the figure on. If None is passed in the current axes
-        will be used (or generated if required).
+        The axes to plot the figure on. If not specified the current axes will be
+        used (or generated if required).
 
-    classes : list
-        A list of class names for the legend. If classes is None and a y value
-        is passed to fit then the classes are selected from the target vector.
-        Note that the curves must be computed based on what is in the target
-        vector passed to the ``score()`` method. Class names are used for
-        labeling only and must be in the correct order to prevent confusion.
+    classes : list of str, defult: None
+        The class labels to use for the legend ordered by the index of the sorted
+        classes discovered in the ``fit()`` method. Specifying classes in this
+        manner is used to change the class names to a more specific format or
+        to label encoded integer classes. Some visualizers may also use this
+        field to filter the visualization for specific classes. For more advanced
+        usage specify an encoder rather than class labels.
+
+    encoder : dict or LabelEncoder, default: None
+        A mapping of classes to human readable labels. Often there is a mismatch
+        between desired class labels and those contained in the target variable
+        passed to ``fit()`` or ``score()``. The encoder disambiguates this mismatch
+        ensuring that classes are labeled correctly in the visualization.
 
     fill_area : bool, default: True
         Fill the area under the curve (or curves) with the curve color.
@@ -111,8 +121,19 @@ class PrecisionRecallCurve(ClassificationScoreVisualizer):
         Specify the alpha or opacity of the lines (0 being transparent, and
         1.0 being completly opaque).
 
+    is_fitted : bool or str, default="auto"
+        Specify if the wrapped estimator is already fitted. If False, the estimator
+        will be fit when the visualizer is fit, otherwise, the estimator will not be
+        modified. If "auto" (default), a helper method will check if the estimator
+        is fitted before fitting it again.
+
+    force_model : bool, default: False
+        Do not check to ensure that the underlying estimator is a classifier. This
+        will prevent an exception when the visualizer is initialized but may result
+        in unexpected or unintended behavior.
+
     kwargs : dict
-        Keyword arguments passed to the visualization base class.
+        Keyword arguments passed to the visualizer base classes.
 
     Attributes
     ----------
@@ -136,6 +157,12 @@ class PrecisionRecallCurve(ClassificationScoreVisualizer):
         Decreasing recall values such that element i is the recall of
         predictions with score >= thresholds[i] and the last element is 0.
         In the multiclass case, a mapping of class/metric to recall array.
+
+    classes_ : ndarray of shape (n_classes,)
+        The class labels observed while fitting.
+
+    class_count_ : ndarray of shape (n_classes,)
+        Number of samples encountered for each class during fitting.
 
 
     Examples
@@ -161,6 +188,7 @@ class PrecisionRecallCurve(ClassificationScoreVisualizer):
         model,
         ax=None,
         classes=None,
+        encoder=None,
         fill_area=True,
         ap_score=True,
         micro=True,
@@ -169,10 +197,18 @@ class PrecisionRecallCurve(ClassificationScoreVisualizer):
         per_class=False,
         fill_opacity=0.2,
         line_opacity=0.8,
+        is_fitted="auto",
+        force_model=False,
         **kwargs
     ):
         super(PrecisionRecallCurve, self).__init__(
-            model, ax=ax, classes=classes, **kwargs
+            model,
+            ax=ax,
+            classes=classes,
+            encoder=encoder,
+            is_fitted=is_fitted,
+            force_model=force_model,
+            **kwargs
         )
 
         # Set visual params
@@ -195,18 +231,17 @@ class PrecisionRecallCurve(ClassificationScoreVisualizer):
         """
         # The target determines what kind of estimator is fit
         ttype = type_of_target(y)
+        self._target_labels = np.unique(y)
         if ttype.startswith(MULTICLASS):
             self.target_type_ = MULTICLASS
             self.estimator = OneVsRestClassifier(self.estimator)
 
-            # Use label_binarize to create multi-label ouptut for OneVsRestClassifier
-            self._target_labels = np.unique(y)
+            # Use label_binarize to create multi-label output for OneVsRestClassifier
             Y = label_binarize(y, classes=self._target_labels)
         elif ttype.startswith(BINARY):
-            self.target_type_ = BINARY
-
             # Different variable is used here to prevent transformation
             Y = y
+            self.target_type_ = BINARY
         else:
             raise YellowbrickValueError(
                 (
@@ -218,7 +253,7 @@ class PrecisionRecallCurve(ClassificationScoreVisualizer):
         # Fit the model and return self
         return super(PrecisionRecallCurve, self).fit(X, Y)
 
-    def score(self, X, y=None):
+    def score(self, X, y):
         """
         Generates the Precision-Recall curve on the specified test data.
 
@@ -234,6 +269,15 @@ class PrecisionRecallCurve(ClassificationScoreVisualizer):
         if not hasattr(self, "target_type_"):
             raise NotFitted.from_estimator(self, "score")
 
+        # Must perform label binarization before calling super
+        if self.target_type_ == MULTICLASS:
+            # Use label_binarize to create multi-label output for OneVsRestClassifier
+            y = label_binarize(y, classes=self._target_labels)
+
+        # Call super to check if fitted and to compute classes_
+        # Note that self.score_ computed in super will be overridden below
+        super(PrecisionRecallCurve, self).score(X, y)
+
         # Compute the prediction/threshold scores
         y_scores = self._get_y_scores(X)
 
@@ -242,23 +286,20 @@ class PrecisionRecallCurve(ClassificationScoreVisualizer):
             self.precision_, self.recall_, _ = sk_precision_recall_curve(y, y_scores)
             self.score_ = average_precision_score(y, y_scores)
         else:
-            # Use label_binarize to create multi-label output for OneVsRestClassifier
-            Y = label_binarize(y, classes=self._target_labels)
-
             self.precision_, self.recall_, self.score_ = {}, {}, {}
 
             # Compute PRCurve for all classes
             for i, class_i in enumerate(self.classes_):
                 self.precision_[class_i], self.recall_[
                     class_i
-                ], _ = sk_precision_recall_curve(Y[:, i], y_scores[:, i])
-                self.score_[class_i] = average_precision_score(Y[:, i], y_scores[:, i])
+                ], _ = sk_precision_recall_curve(y[:, i], y_scores[:, i])
+                self.score_[class_i] = average_precision_score(y[:, i], y_scores[:, i])
 
             # Compute micro average PR curve
             self.precision_[MICRO], self.recall_[MICRO], _ = sk_precision_recall_curve(
-                Y.ravel(), y_scores.ravel()
+                y.ravel(), y_scores.ravel()
             )
-            self.score_[MICRO] = average_precision_score(Y, y_scores, average=MICRO)
+            self.score_[MICRO] = average_precision_score(y, y_scores, average=MICRO)
 
         # Draw the figure
         self.draw()
@@ -377,7 +418,7 @@ class PrecisionRecallCurve(ClassificationScoreVisualizer):
         # If we've gotten this far, we can't do anything
         raise ModelError(
             (
-                "{} requires estimators with predict_proba or decision_function methods."
+                "{} requires an estimator with predict_proba or decision_function."
             ).format(self.__class__.__name__)
         )
 
@@ -397,18 +438,41 @@ def precision_recall_curve(
     y,
     X_test=None,
     y_test=None,
-    ax=None,
     train_size=0.8,
     random_state=None,
     shuffle=True,
+    ax=None,
+    classes=None,
+    encoder=None,
+    fill_area=True,
+    ap_score=True,
+    micro=True,
+    iso_f1_curves=False,
+    iso_f1_values=DEFAULT_ISO_F1_VALUES,
+    per_class=False,
+    fill_opacity=0.2,
+    line_opacity=0.8,
+    is_fitted="auto",
+    force_model=False,
     **kwargs
 ):
-    """Precision-Recall Curve quick method:
+    """Precision-Recall Curve
+
+    Precision-Recall curves are a metric used to evaluate a classifier's quality,
+    particularly when classes are very imbalanced. The precision-recall curve
+    shows the tradeoff between precision, a measure of result relevancy, and
+    recall, a measure of how many relevant results are returned. A large area
+    under the curve represents both high recall and precision, the best case
+    scenario for a classifier, showing a model that returns accurate results
+    for the majority of classes it selects.
 
     Parameters
     ----------
-    model : the Scikit-Learn estimator
-        An unfitted classification model to score the precision-recall curve on.
+    model : estimator
+        A scikit-learn estimator that should be a classifier. If the model is
+        not a classifier, an exception is raised. If the internal model is not
+        fitted, it is fit when the visualizer is fitted, unless otherwise specified
+        by ``is_fitted``.
 
     X : ndarray or DataFrame of shape n x m
         A feature array of n instances with m features the model is trained on.
@@ -428,8 +492,8 @@ def precision_recall_curve(
         X_test. If not specified, y will be split into test and train along with X.
 
     ax : matplotlib Axes, default: None
-        The axes to plot the figure on. If None is passed in the current axes
-        will be used (or generated if required).
+        The axes to plot the figure on. If not specified the current axes will be
+        used (or generated if required).
 
     train_size : float or int, default=0.8
         If float, should be between 0.0 and 1.0 and represent the proportion
@@ -445,47 +509,68 @@ def precision_recall_curve(
     shuffle : bool, default=True
         Whether or not to shuffle the data before splitting.
 
-    classes : list
-        A list of class names for the legend. If classes is None and a y value
-        is passed to fit then the classes are selected from the target vector.
-        Note that the curves must be computed based on what is in the target
-        vector passed to the ``score()`` method. Class names are used for
-        labeling only and must be in the correct order to prevent confusion.
+    classes : list of str, defult: None
+        The class labels to use for the legend ordered by the index of the sorted
+        classes discovered in the ``fit()`` method. Specifying classes in this
+        manner is used to change the class names to a more specific format or
+        to label encoded integer classes. Some visualizers may also use this
+        field to filter the visualization for specific classes. For more advanced
+        usage specify an encoder rather than class labels.
 
-    fill_area : bool, default=True
+    encoder : dict or LabelEncoder, default: None
+        A mapping of classes to human readable labels. Often there is a mismatch
+        between desired class labels and those contained in the target variable
+        passed to ``fit()`` or ``score()``. The encoder disambiguates this mismatch
+        ensuring that classes are labeled correctly in the visualization.
+
+    fill_area : bool, default: True
         Fill the area under the curve (or curves) with the curve color.
 
-    ap_score : bool, default=True
+    ap_score : bool, default: True
         Annotate the graph with the average precision score, a summary of the
         plot that is computed as the weighted mean of precisions at each
         threshold, with the increase in recall from the previous threshold used
         as the weight.
 
-    micro : bool, default=True
+    micro : bool, default: True
         If multi-class classification, draw the precision-recall curve for the
         micro-average of all classes. In the multi-class case, either micro or
         per-class must be set to True. Ignored in the binary case.
 
-    iso_f1_curves : bool, default=False
+    iso_f1_curves : bool, default: False
         Draw ISO F1-Curves on the plot to show how close the precision-recall
         curves are to different F1 scores.
 
-    per_class : bool, default=False
+    iso_f1_values : tuple , default: (0.2, 0.4, 0.6, 0.8)
+        Values of f1 score for which to draw ISO F1-Curves
+
+    per_class : bool, default: False
         If multi-class classification, draw the precision-recall curve for
         each class using a OneVsRestClassifier to compute the recall on a
         per-class basis. In the multi-class case, either micro or per-class
         must be set to True. Ignored in the binary case.
 
-    fill_opacity : float, default=0.2
+    fill_opacity : float, default: 0.2
         Specify the alpha or opacity of the fill area (0 being transparent,
         and 1.0 being completly opaque).
 
-    line_opacity : float, default=0.8
+    line_opacity : float, default: 0.8
         Specify the alpha or opacity of the lines (0 being transparent, and
         1.0 being completly opaque).
 
+    is_fitted : bool or str, default="auto"
+        Specify if the wrapped estimator is already fitted. If False, the estimator
+        will be fit when the visualizer is fit, otherwise, the estimator will not be
+        modified. If "auto" (default), a helper method will check if the estimator
+        is fitted before fitting it again.
+
+    force_model : bool, default: False
+        Do not check to ensure that the underlying estimator is a classifier. This
+        will prevent an exception when the visualizer is initialized but may result
+        in unexpected or unintended behavior.
+
     kwargs : dict
-        Keyword arguments passed to the visualization base class.
+        Keyword arguments passed to the visualizer base classes.
 
     Returns
     -------
@@ -520,7 +605,23 @@ def precision_recall_curve(
         X_train, y_train = X, y
 
     # Instantiate the visualizer
-    viz = PRCurve(model, ax=ax, **kwargs)
+    viz = PRCurve(
+        model,
+        ax=ax,
+        classes=classes,
+        encoder=encoder,
+        fill_area=fill_area,
+        ap_score=ap_score,
+        micro=micro,
+        iso_f1_curves=iso_f1_curves,
+        iso_f1_values=iso_f1_values,
+        per_class=per_class,
+        fill_opacity=fill_opacity,
+        line_opacity=line_opacity,
+        is_fitted=is_fitted,
+        force_model=force_model,
+        **kwargs
+    )
 
     # Fit and transform the visualizer
     viz.fit(X_train, y_train)

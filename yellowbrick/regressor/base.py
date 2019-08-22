@@ -33,14 +33,45 @@ __all__ = ["RegressionScoreVisualizer"]
 
 
 class RegressionScoreVisualizer(ScoreVisualizer):
-    """
-    Base class for all ScoreVisualizers that evaluate a regression estimator.
+    """Base class for regressor model selection.
 
-    The primary functionality of this class is to perform a check to ensure
-    the passed in estimator is a regressor, otherwise it raises a
-    ``YellowbrickTypeError``.
+    The RegressionScoreVisualizer wraps a regression model to produce a
+    visualization when the score method is called, usually to allow the user
+    to effectively compare the performance between models.
 
-    .. todo:: enhance the docstrings here and for score
+    The base class provides helper functionality to ensure that regression
+    visualizers consistently store the trained score for access post visualization
+    and that a correct regressor is passed to the visualizer.
+
+    Parameters
+    ----------
+    model : estimator
+        A scikit-learn estimator that should be a regressor. If the model is
+        not a regressor, an exception is raised.
+
+    ax : matplotlib Axes, default: None
+        The axis to plot the figure on. If None is passed in the current axes
+        will be used (or generated if required).
+
+    fig : matplotlib Figure, default: None
+        The figure to plot the Visualizer on. If None is passed in the current
+        plot will be used (or generated if required).
+
+    force_model : bool, default: False
+        Do not check to ensure that the underlying estimator is a classifier. This
+        will prevent an exception when the visualizer is initialized but may result
+        in unexpected or unintended behavior.
+
+    kwargs: dict
+        Keyword arguments passed to the super class.
+
+    Attributes
+    ----------
+    score_ : float
+        An evaluation metric of the regressor on test data produced when
+        ``score()`` is called. This metric is between 0 and 1 -- higher scores are
+        generally better. For regressors, this score is usually the r2_score, but
+        ensure you check the underlying model for more details about the metric.
     """
 
     def __init__(self, model, ax=None, fig=None, force_model=False, **kwargs):
@@ -55,7 +86,19 @@ class RegressionScoreVisualizer(ScoreVisualizer):
 
     def score(self, X, y, **kwargs):
         """
-        The score method is the primary entry point for drawing.
+        The score function is the hook for visual interaction. Pass in test
+        data and the visualizer will create predictions on the data and
+        evaluate them with respect to the test values. The evaluation will
+        then be passed to draw() and the result of the estimator score will
+        be returned.
+
+        Parameters
+        ----------
+        X : array-like
+            X (also X_test) are the dependent variables of test set to predict
+
+        y : array-like
+            y (also y_test) is the independent actual variables to score against
 
         Returns
         -------

@@ -282,10 +282,6 @@ class TestClassificationReport(VisualTestCase):
 
         assert 0 <= s <= 1
 
-    @pytest.mark.xfail(
-        reason="""third test fails with AssertionError: Expected fit
-        to be called once. Called 0 times. This should be fixed by #939"""
-    )
     def test_with_fitted(self):
         """
         Test that visualizer properly handles an already-fitted model

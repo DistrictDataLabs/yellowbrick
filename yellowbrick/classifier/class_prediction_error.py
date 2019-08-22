@@ -26,8 +26,8 @@ from sklearn.metrics.classification import _check_targets
 from sklearn.model_selection import train_test_split as tts
 
 from yellowbrick.draw import bar_stack
-from yellowbrick.exceptions import ModelError, YellowbrickValueError
 from yellowbrick.classifier.base import ClassificationScoreVisualizer
+from yellowbrick.exceptions import ModelError, YellowbrickValueError, NotFitted
 
 
 ##########################################################################
@@ -44,18 +44,29 @@ class ClassPredictionError(ClassificationScoreVisualizer):
 
     Parameters
     ----------
-    model: estimator
-        Scikit-Learn estimator object. Should be an instance of a classifier,
-        else ``__init__()`` will raise an exception. If the internal model is not
+    model : estimator
+        A scikit-learn estimator that should be a classifier. If the model is
+        not a classifier, an exception is raised. If the internal model is not
         fitted, it is fit when the visualizer is fitted, unless otherwise specified
         by ``is_fitted``.
 
-    ax: axes, default: None
-        the axis to plot the figure on.
+    ax : matplotlib Axes, default: None
+        The axes to plot the figure on. If not specified the current axes will be
+        used (or generated if required).
 
-    classes: list, default: None
-        A list of class names for the legend. If classes is None and a y value
-        is passed to fit then the classes are selected from the target vector.
+    classes : list of str, defult: None
+        The class labels to use for the legend ordered by the index of the sorted
+        classes discovered in the ``fit()`` method. Specifying classes in this
+        manner is used to change the class names to a more specific format or
+        to label encoded integer classes. Some visualizers may also use this
+        field to filter the visualization for specific classes. For more advanced
+        usage specify an encoder rather than class labels.
+
+    encoder : dict or LabelEncoder, default: None
+        A mapping of classes to human readable labels. Often there is a mismatch
+        between desired class labels and those contained in the target variable
+        passed to ``fit()`` or ``score()``. The encoder disambiguates this mismatch
+        ensuring that classes are labeled correctly in the visualization.
 
     is_fitted : bool or str, default="auto"
         Specify if the wrapped estimator is already fitted. If False, the estimator
@@ -63,31 +74,54 @@ class ClassPredictionError(ClassificationScoreVisualizer):
         modified. If "auto" (default), a helper method will check if the estimator
         is fitted before fitting it again.
 
-    kwargs: dict
-        Keyword arguments passed to the super class. Here, used
-        to colorize the bars in the histogram.
+    force_model : bool, default: False
+        Do not check to ensure that the underlying estimator is a classifier. This
+        will prevent an exception when the visualizer is initialized but may result
+        in unexpected or unintended behavior.
+
+    kwargs : dict
+        Keyword arguments passed to the visualizer base classes.
 
     Attributes
     ----------
+    classes_ : ndarray of shape (n_classes,)
+        The class labels observed while fitting.
+
+    class_count_ : ndarray of shape (n_classes,)
+        Number of samples encountered for each class during fitting.
+
     score_ : float
-        Global accuracy score
+        An evaluation metric of the classifier on test data produced when
+        ``score()`` is called. This metric is between 0 and 1 -- higher scores are
+        generally better. For classifiers, this score is usually accuracy, but
+        ensure you check the underlying model for more details about the score.
 
     predictions_ : ndarray
         An ndarray of predictions whose rows are the true classes and
         whose columns are the predicted classes
-
-    Notes
-    -----
-    These parameters can be influenced later on in the visualization
-    process, but can and should be set as early as possible.
     """
 
-    def __init__(self, model, ax=None, classes=None, is_fitted="auto", **kwargs):
+    def __init__(
+        self,
+        model,
+        ax=None,
+        classes=None,
+        encoder=None,
+        is_fitted="auto",
+        force_model=False,
+        **kwargs
+    ):
         super(ClassPredictionError, self).__init__(
-            model, ax=ax, classes=classes, is_fitted=is_fitted, **kwargs
+            model,
+            ax=ax,
+            classes=classes,
+            encoder=encoder,
+            is_fitted=is_fitted,
+            force_model=force_model,
+            **kwargs
         )
 
-    def score(self, X, y, **kwargs):
+    def score(self, X, y):
         """
         Generates a 2D array where each row is the count of the
         predicted classes and each column is the true class
@@ -105,23 +139,34 @@ class ClassPredictionError(ClassificationScoreVisualizer):
         score_ : float
             Global accuracy score
         """
-
+        # Must be computed before calling super
         # We're relying on predict to raise NotFitted
         y_pred = self.predict(X)
-
         y_type, y_true, y_pred = _check_targets(y, y_pred)
-
         if y_type not in ("binary", "multiclass"):
             raise YellowbrickValueError("{} is not supported".format(y_type))
 
+        # Get the indices of the unique labels
         indices = unique_labels(y_true, y_pred)
+        labels = self._labels()
 
-        if len(self.classes_) > len(indices):
+        # Call super to compute self.score_ and verify classes
+        try:
+            super(ClassPredictionError, self).score(X, y)
+        except ModelError as e:
+            # raise visualizer-specific errors
+            if labels is not None and len(labels) < len(indices):
+                raise NotImplementedError(
+                    "filtering classes is currently not supported"
+                )
+            else:
+                raise e
+
+        # Ensure all labels are used
+        if labels is not None and len(labels) > len(indices):
             raise ModelError(
                 "y and y_pred contain zero values for one of the specified classes"
             )
-        elif len(self.classes_) < len(indices):
-            raise NotImplementedError("filtering classes is currently not supported")
 
         # Create a table of predictions whose rows are the true classes
         # and whose columns are the predicted classes; each element
@@ -135,8 +180,6 @@ class ClassPredictionError(ClassificationScoreVisualizer):
         )
 
         self.draw()
-        self.score_ = self.estimator.score(X, y)
-
         return self.score_
 
     def draw(self):
@@ -149,9 +192,12 @@ class ClassPredictionError(ClassificationScoreVisualizer):
             The axes on which the figure is plotted
         """
 
+        if not hasattr(self, "predictions_") or not hasattr(self, "classes_"):
+            raise NotFitted.from_estimator(self, "draw")
+
         legend_kws = {"bbox_to_anchor": (1.04, 0.5), "loc": "center left"}
         bar_stack(
-            self.predictions_,  # TODO: if not fitted, should raise a NotFitted error
+            self.predictions_,
             self.ax,
             labels=list(self.classes_),
             ticks=self.classes_,
@@ -189,26 +235,30 @@ class ClassPredictionError(ClassificationScoreVisualizer):
 def class_prediction_error(
     model,
     X,
-    y=None,
+    y,
     ax=None,
-    classes=None,
     test_size=0.2,
     random_state=None,
+    classes=None,
+    encoder=None,
     is_fitted="auto",
+    force_model=False,
     **kwargs
 ):
-    """Quick method:
+    """Class Prediction Error
+
     Divides the dataset X and y into train and test splits, fits the model on the train
     split, then scores the model on the test split. The visualizer displays the support
     for each class in the fitted classification model displayed as a stacked bar plot.
     Each bar is segmented to show the distribution of predicted classes for each class.
 
-    This helper function is a quick wrapper to utilize the ClassPredictionError for
-    one-off analysis.
-
     Parameters
     ----------
-    model : the Scikit-Learn estimator (should be a classifier)
+    model : estimator
+        A scikit-learn estimator that should be a classifier. If the model is
+        not a classifier, an exception is raised. If the internal model is not
+        fitted, it is fit when the visualizer is fitted, unless otherwise specified
+        by ``is_fitted``.
 
     X  : ndarray or DataFrame of shape n x m
         A matrix of n instances with m features.
@@ -216,11 +266,9 @@ def class_prediction_error(
     y  : ndarray or Series of length n
         An array or series of target or class values.
 
-    ax : matplotlib axes
-        The axes to plot the figure on.
-
-    classes : list of strings
-        The names of the classes in the target
+    ax : matplotlib Axes, default: None
+        The axes to plot the figure on. If not specified the current axes will be
+        used (or generated if required).
 
     test_size : float, default=0.2
         The percentage of the data to reserve as test data.
@@ -228,24 +276,48 @@ def class_prediction_error(
     random_state : int or None, default=None
         The value to seed the random number generator for shuffling data.
 
+    classes : list of str, defult: None
+        The class labels to use for the legend ordered by the index of the sorted
+        classes discovered in the ``fit()`` method. Specifying classes in this
+        manner is used to change the class names to a more specific format or
+        to label encoded integer classes. Some visualizers may also use this
+        field to filter the visualization for specific classes. For more advanced
+        usage specify an encoder rather than class labels.
+
+    encoder : dict or LabelEncoder, default: None
+        A mapping of classes to human readable labels. Often there is a mismatch
+        between desired class labels and those contained in the target variable
+        passed to ``fit()`` or ``score()``. The encoder disambiguates this mismatch
+        ensuring that classes are labeled correctly in the visualization.
+
     is_fitted : bool or str, default="auto"
         Specify if the wrapped estimator is already fitted. If False, the estimator
         will be fit when the visualizer is fit, otherwise, the estimator will not be
         modified. If "auto" (default), a helper method will check if the estimator
         is fitted before fitting it again.
 
+    force_model : bool, default: False
+        Do not check to ensure that the underlying estimator is a classifier. This
+        will prevent an exception when the visualizer is initialized but may result
+        in unexpected or unintended behavior.
+
     kwargs: dict
-        Keyword arguments passed to the super class. Here, used
-        to colorize the bars in the histogram.
+        Keyword arguments passed to the visualizer base classes.
 
     Returns
     -------
-    ax : matplotlib axes
-        Returns the axes that the class prediction error plot was drawn on.
+    viz : ClassPredictionError
+        Returns the fitted, finalized visualizer
     """
     # Instantiate the visualizer
     visualizer = ClassPredictionError(
-        model=model, ax=ax, classes=classes, is_fitted=is_fitted, **kwargs
+        model=model,
+        ax=ax,
+        classes=classes,
+        encoder=encoder,
+        is_fitted=is_fitted,
+        force_model=force_model,
+        **kwargs
     )
 
     # Create the train and test splits
@@ -256,6 +328,7 @@ def class_prediction_error(
     # Fit and transform the visualizer (calls draw)
     visualizer.fit(X_train, y_train, **kwargs)
     visualizer.score(X_test, y_test)
+    visualizer.finalize()
 
     # Return the visualizer
     return visualizer
