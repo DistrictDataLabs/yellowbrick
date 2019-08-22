@@ -1,6 +1,8 @@
 ##########################################################################
 ## Imports
 ##########################################################################
+import numpy as np
+import bisect
 
 from .base import FeatureVisualizer
 from yellowbrick.style import palettes
@@ -90,7 +92,8 @@ class ExplainedVariance(FeatureVisualizer):
     """
 
     def __init__(self, n_components=None, ax=None, scale=True, center=True, 
-                 colormap=palettes.DEFAULT_SEQUENCE, **kwargs):
+                 colormap=palettes.DEFAULT_SEQUENCE, cumulative=False, cutoff=95,
+                 **kwargs):
 
         super(ExplainedVariance, self).__init__(ax=ax, **kwargs)
 
@@ -102,10 +105,16 @@ class ExplainedVariance(FeatureVisualizer):
                                                            with_std=self.scale)), 
                                   ('pca', PCA(n_components=self.n_components))])
         self.pca_features = None
-
+        self.cumulative = cumulative
+        self.cutoff = cutoff
+        
     @property
     def explained_variance_(self):
         return self.pipeline.steps[-1][1].explained_variance_
+    
+    @property
+    def explained_variance_ratio_(self):
+        return self.pipeline.steps[-1][1].explained_variance_ratio_
 
     def fit(self, X, y=None):
         self.pipeline.fit(X)
@@ -117,8 +126,17 @@ class ExplainedVariance(FeatureVisualizer):
         return self.pca_features
 
     def draw(self):
-        X = self.explained_variance_
-        self.ax.plot(X)
+        X = self.explained_variance_ratio_
+        self.ax.plot(X, label = "Explained Variance")
+        if (self.cumulative):
+            X = np.cumsum(self.explained_variance_ratio_)
+            self.ax.plot(X, label = "Cumulative Variance")
+
+        n_comp = bisect.bisect_left(X, self.cutoff/100);
+        self.ax.vlines(n_comp, 0, X[n_comp], linestyle = "dashed",
+                       label=str(self.cutoff)+"% Variance")
+        self.ax.hlines(X[n_comp], 0, n_comp, linestyle = "dashed")
+
         return self.ax
 
     def finalize(self, **kwargs):
@@ -128,4 +146,5 @@ class ExplainedVariance(FeatureVisualizer):
         # Set the axes labels
         self.ax.set_ylabel('Explained Variance')
         self.ax.set_xlabel('Number of Components')
+        self.ax.legend(loc="center right")
 
