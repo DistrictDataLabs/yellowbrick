@@ -7,7 +7,7 @@
 Yellowbrick: Machine Learning Visualization
 ===========================================
 
-.. image:: images/visualizers.png
+.. image:: images/readme/banner.png
 
 Yellowbrick extends the Scikit-Learn API to make model selection and hyperparameter tuning easier. Under the hood, it's using Matplotlib.
 

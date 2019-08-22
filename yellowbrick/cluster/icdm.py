@@ -150,7 +150,7 @@ class InterclusterDistance(ClusteringScoreVisualizer):
 
     Notes
     -----
-    Currently the only two embeddings supportted are MDS and TSNE. Soon to
+    Currently the only two embeddings supported are MDS and TSNE. Soon to
     follow will be PCoA and a customized version of PCoA for LDA. The only
     supported scoring metric is membership, but in the future, silhouette
     scores and cluster diameter will be added.

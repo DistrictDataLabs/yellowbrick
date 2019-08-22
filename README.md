@@ -14,9 +14,7 @@
 
 **Visual analysis and diagnostic tools to facilitate machine learning model selection.**
 
-[![Classifiers](docs/images/readme/classifiers.png)](https://www.scikit-yb.org/en/latest/gallery.html)
-[![Clusterers](docs/images/readme/clusterers.png)](https://www.scikit-yb.org/en/latest/gallery.html)
-[![Regressors](docs/images/readme/regressors.png)](https://www.scikit-yb.org/en/latest/gallery.html)
+[![Banner](docs/images/readme/banner.png)](https://www.scikit-yb.org/en/latest/gallery.html)
 
 ## What is Yellowbrick?
 
@@ -118,6 +116,4 @@ We would be glad if you used Yellowbrick in your scientific publications! If you
 
 ## Affiliations
 
-[![District Data Labs](docs/images/readme/ddl-logo.png)](https://districtdatalabs.com/)
- 
-[![NumFOCUS Affiliated Project](docs/images/readme/numfocus.png)](https://numfocus.org)
+[![District Data Labs](docs/images/readme/affiliates_ddl.png)](https://districtdatalabs.com/) [![NumFOCUS Affiliated Project](docs/images/readme/affiliates_numfocus.png)](https://numfocus.org)
