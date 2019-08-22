@@ -53,13 +53,14 @@ class ConfusionMatrix(ClassificationScoreVisualizer):
     Parameters
     ----------
     model : estimator
-        Must be a classifier, otherwise raises ``YellowbrickTypeError``. If
-        the internal model is not fitted, it is fit when the visualizer is
-        fitted, unless otherwise specified by ``is_fitted``.
+        A scikit-learn estimator that should be a classifier. If the model is
+        not a classifier, an exception is raised. If the internal model is not
+        fitted, it is fit when the visualizer is fitted, unless otherwise specified
+        by ``is_fitted``.
 
     ax : matplotlib Axes, default: None
-        The axes to plot the figure on. If None is passed in the current axes
-        will be used (or generated if required).
+        The axes to plot the figure on. If not specified the current axes will be
+        used (or generated if required).
 
     sample_weight: array-like of shape = [n_samples], optional
         Passed to ``confusion_matrix`` to weight the samples.
@@ -70,22 +71,19 @@ class ConfusionMatrix(ClassificationScoreVisualizer):
         classes, percent should be set to False or inaccurate figures will be
         displayed.
 
-    classes : list, default: None
-        a list of class names to use in the confusion_matrix.
-        This is passed to the ``labels`` parameter of
-        ``sklearn.metrics.confusion_matrix()``, and follows the behaviour
-        indicated by that function. It may be used to reorder or select a
-        subset of labels. If None, classes that appear at least once in
-        ``y_true`` or ``y_pred`` are used in sorted order.
+    classes : list of str, defult: None
+        The class labels to use for the legend ordered by the index of the sorted
+        classes discovered in the ``fit()`` method. Specifying classes in this
+        manner is used to change the class names to a more specific format or
+        to label encoded integer classes. Some visualizers may also use this
+        field to filter the visualization for specific classes. For more advanced
+        usage specify an encoder rather than class labels.
 
-    label_encoder : dict or LabelEncoder, default: None
-        When specifying the ``classes`` argument, the input to ``fit()``
-        and ``score()`` must match the expected labels. If the ``X`` and ``y``
-        datasets have been encoded prior to training and the labels must be
-        preserved for the visualization, use this argument to provide a
-        mapping from the encoded class to the correct label. Because typically
-        a Scikit-Learn ``LabelEncoder`` is used to perform this operation, you
-        may provide it directly to the class to utilize its fitted encoding.
+    encoder : dict or LabelEncoder, default: None
+        A mapping of classes to human readable labels. Often there is a mismatch
+        between desired class labels and those contained in the target variable
+        passed to ``fit()`` or ``score()``. The encoder disambiguates this mismatch
+        ensuring that classes are labeled correctly in the visualization.
 
     cmap : string, default: ``'YlOrRd'``
         Specify a colormap to define the heatmap of the predicted class
@@ -101,19 +99,30 @@ class ConfusionMatrix(ClassificationScoreVisualizer):
         modified. If "auto" (default), a helper method will check if the estimator
         is fitted before fitting it again.
 
+    force_model : bool, default: False
+        Do not check to ensure that the underlying estimator is a classifier. This
+        will prevent an exception when the visualizer is initialized but may result
+        in unexpected or unintended behavior.
+
     kwargs : dict
-        Keyword arguments passed to the super class.
+        Keyword arguments passed to the visualizer base classes.
 
     Attributes
     ----------
+    classes_ : ndarray of shape (n_classes,)
+        The class labels observed while fitting.
+
+    class_counts_ : ndarray of shape (n_classes,)
+        Number of samples encountered for each class supporting the confusion matrix.
+
     score_ : float
-        Global accuracy score
+        An evaluation metric of the classifier on test data produced when
+        ``score()`` is called. This metric is between 0 and 1 -- higher scores are
+        generally better. For classifiers, this score is usually accuracy, but
+        ensure you check the underlying model for more details about the metric.
 
     confusion_matrix_ : array, shape = [n_classes, n_classes]
-        The numeric scores of the confusion matrix
-
-    class_counts_ : array, shape = [n_classes,]
-        The total number of each class supporting the confusion matrix
+        The numeric scores of the confusion matrix.
 
     Examples
     --------
@@ -129,17 +138,24 @@ class ConfusionMatrix(ClassificationScoreVisualizer):
         self,
         model,
         ax=None,
-        classes=None,
         sample_weight=None,
         percent=False,
-        label_encoder=None,
+        classes=None,
+        encoder=None,
         cmap="YlOrRd",
         fontsize=None,
         is_fitted="auto",
+        force_model=False,
         **kwargs
     ):
         super(ConfusionMatrix, self).__init__(
-            model, ax=ax, classes=classes, is_fitted=is_fitted, **kwargs
+            model,
+            ax=ax,
+            classes=classes,
+            encoder=encoder,
+            is_fitted=is_fitted,
+            force_model=force_model,
+            **kwargs
         )
 
         # Visual parameters
@@ -150,7 +166,6 @@ class ConfusionMatrix(ClassificationScoreVisualizer):
 
         # Estimator parameters
         self.percent = percent
-        self.label_encoder = label_encoder
         self.sample_weight = sample_weight
 
         # Used to draw diagonal line for predicted class = true class
@@ -176,30 +191,30 @@ class ConfusionMatrix(ClassificationScoreVisualizer):
         score_ : float
             Global accuracy score
         """
+        # Call super to check if fitted and to compute self.score_
+        super(ConfusionMatrix, self).score(X, y)
+
         # Create predictions from X (will raise not fitted error)
         y_pred = self.predict(X)
 
-        # Encode the target with the supplied label encoder
-        if self.label_encoder:
-            try:
-                y = self.label_encoder.inverse_transform(y)
-                y_pred = self.label_encoder.inverse_transform(y_pred)
-            except AttributeError:
-                # if a mapping is passed to class apply it here.
-                y = np.array([self.label_encoder[x] for x in y])
-                y_pred = np.array([self.label_encoder[x] for x in y_pred])
+        # Decode the target with the label encoder and get human readable labels
+        y = self._decode_labels(y)
+        y_pred = self._decode_labels(y_pred)
+        labels = self._labels()
+        if labels is None:
+            labels = self.classes_
 
         # Compute the confusion matrix and class counts
         self.confusion_matrix_ = confusion_matrix_metric(
-            y, y_pred, labels=self.classes_, sample_weight=self.sample_weight
+            y, y_pred, labels=labels, sample_weight=self.sample_weight
         )
-        self.class_counts_ = self.class_counts(y)
+        self.class_counts_ = dict(zip(*np.unique(y, return_counts=True)))
 
         # Make array of only the classes actually being used.
         # Needed because sklearn confusion_matrix only returns counts for
         # selected classes but percent should be calculated on all classes
         selected_class_counts = []
-        for c in self.classes_:
+        for c in labels:
             try:
                 selected_class_counts.append(self.class_counts_[c])
             except KeyError:
@@ -207,10 +222,6 @@ class ConfusionMatrix(ClassificationScoreVisualizer):
         self.class_counts_ = np.array(selected_class_counts)
 
         self.draw()
-
-        # Retrieve and store the score attribute from the sklearn classifier
-        self.score_ = self.estimator.score(X, y)
-
         return self.score_
 
     def draw(self):
@@ -233,15 +244,20 @@ class ConfusionMatrix(ClassificationScoreVisualizer):
         # Y axis should be sorted top to bottom in pcolormesh
         cm_display = cm_display[::-1, ::]
 
+        # Get the human readable labels
+        labels = self._labels()
+        if labels is None:
+            labels = self.classes_
+
         # Set up the dimensions of the pcolormesh
-        n_classes = len(self.classes_)
+        n_classes = len(labels)
         X, Y = np.arange(n_classes + 1), np.arange(n_classes + 1)
         self.ax.set_ylim(bottom=0, top=cm_display.shape[0])
         self.ax.set_xlim(left=0, right=cm_display.shape[1])
 
         # Fetch the grid labels from the classes in correct order; set ticks.
-        xticklabels = self.classes_
-        yticklabels = self.classes_[::-1]
+        xticklabels = labels
+        yticklabels = labels[::-1]
         ticks = np.arange(n_classes) + 0.5
 
         self.ax.set(xticks=ticks, yticks=ticks)
@@ -325,17 +341,19 @@ def confusion_matrix(
     X,
     y,
     ax=None,
-    classes=None,
+    test_size=0.2,
+    random_state=None,
     sample_weight=None,
     percent=False,
-    label_encoder=None,
+    classes=None,
+    encoder=None,
     cmap="YlOrRd",
     fontsize=None,
-    random_state=None,
     is_fitted="auto",
+    force_model=False,
     **kwargs
 ):
-    """Quick method:
+    """Confusion Matrix
 
     Creates a heatmap visualization of the sklearn.metrics.confusion_matrix().
     A confusion matrix shows each combination of the true and predicted
@@ -351,9 +369,10 @@ def confusion_matrix(
     Parameters
     ----------
     model : estimator
-        Must be a classifier, otherwise raises ``YellowbrickTypeError``. If
-        the internal model is not fitted, it is fit when the visualizer is
-        fitted, unless otherwise specified by ``is_fitted``.
+        A scikit-learn estimator that should be a classifier. If the model is
+        not a classifier, an exception is raised. If the internal model is not
+        fitted, it is fit when the visualizer is fitted, unless otherwise specified
+        by ``is_fitted``.
 
     X  : ndarray or DataFrame of shape n x m
         A matrix of n instances with m features.
@@ -362,8 +381,14 @@ def confusion_matrix(
         An array or series of target or class values.
 
     ax : matplotlib Axes, default: None
-        The axes to plot the figure on. If None is passed in the current axes
-        will be used (or generated if required).
+        The axes to plot the figure on. If not specified the current axes will be
+        used (or generated if required).
+
+    test_size : float, default=0.2
+        The percentage of the data to reserve as test data.
+
+    random_state : int or None, default=None
+        The value to seed the random number generator for shuffling data.
 
     sample_weight: array-like of shape = [n_samples], optional
         Passed to ``confusion_matrix`` to weight the samples.
@@ -374,22 +399,19 @@ def confusion_matrix(
         classes, percent should be set to False or inaccurate figures will be
         displayed.
 
-    classes : list, default: None
-        a list of class names to use in the confusion_matrix.
-        This is passed to the ``labels`` parameter of
-        ``sklearn.metrics.confusion_matrix()``, and follows the behaviour
-        indicated by that function. It may be used to reorder or select a
-        subset of labels. If None, classes that appear at least once in
-        ``y_true`` or ``y_pred`` are used in sorted order.
+    classes : list of str, defult: None
+        The class labels to use for the legend ordered by the index of the sorted
+        classes discovered in the ``fit()`` method. Specifying classes in this
+        manner is used to change the class names to a more specific format or
+        to label encoded integer classes. Some visualizers may also use this
+        field to filter the visualization for specific classes. For more advanced
+        usage specify an encoder rather than class labels.
 
-    label_encoder : dict or LabelEncoder, default: None
-        When specifying the ``classes`` argument, the input to ``fit()``
-        and ``score()`` must match the expected labels. If the ``X`` and ``y``
-        datasets have been encoded prior to training and the labels must be
-        preserved for the visualization, use this argument to provide a
-        mapping from the encoded class to the correct label. Because typically
-        a Scikit-Learn ``LabelEncoder`` is used to perform this operation, you
-        may provide it directly to the class to utilize its fitted encoding.
+    encoder : dict or LabelEncoder, default: None
+        A mapping of classes to human readable labels. Often there is a mismatch
+        between desired class labels and those contained in the target variable
+        passed to ``fit()`` or ``score()``. The encoder disambiguates this mismatch
+        ensuring that classes are labeled correctly in the visualization.
 
     cmap : string, default: ``'YlOrRd'``
         Specify a colormap to define the heatmap of the predicted class
@@ -399,46 +421,50 @@ def confusion_matrix(
         Specify the fontsize of the text in the grid and labels to make the
         matrix a bit easier to read. Uses rcParams font size by default.
 
-    random_state : int, RandomState instance or None, optional (default=None)
-        Passes a random state parameter to the train_test_split function.
-
     is_fitted : bool or str, default="auto"
         Specify if the wrapped estimator is already fitted. If False, the estimator
         will be fit when the visualizer is fit, otherwise, the estimator will not be
         modified. If "auto" (default), a helper method will check if the estimator
         is fitted before fitting it again.
 
+    force_model : bool, default: False
+        Do not check to ensure that the underlying estimator is a classifier. This
+        will prevent an exception when the visualizer is initialized but may result
+        in unexpected or unintended behavior.
+
     kwargs : dict
-        Keyword arguments passed to the super class.
+        Keyword arguments passed to the visualizer base classes.
 
     Returns
     -------
-    ax : matplotlib axes
-        Returns the axes that the classification report was drawn on.
+    viz : ConfusionMatrix
+        Returns the fitted, finalized visualizer
     """
     # Instantiate the visualizer
     visualizer = ConfusionMatrix(
-        model,
-        ax,
-        classes,
-        sample_weight,
-        percent,
-        label_encoder,
-        cmap,
-        fontsize,
-        is_fitted,
+        model=model,
+        ax=ax,
+        sample_weight=sample_weight,
+        percent=percent,
+        classes=classes,
+        encoder=encoder,
+        cmap=cmap,
+        fontsize=fontsize,
+        is_fitted=is_fitted,
+        force_model=force_model,
         **kwargs
     )
 
     # Create the train and test splits
     # TODO: determine how to use quick methods that require train and test data.
     X_train, X_test, y_train, y_test = train_test_split(
-        X, y, test_size=0.2, random_state=random_state
+        X, y, test_size=test_size, random_state=random_state
     )
 
     # Fit and transform the visualizer (calls draw)
     visualizer.fit(X_train, y_train, **kwargs)
     visualizer.score(X_test, y_test)
+    visualizer.finalize()
 
     # Return the visualizer
     return visualizer

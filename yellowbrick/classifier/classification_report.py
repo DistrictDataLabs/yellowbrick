@@ -49,17 +49,23 @@ class ClassificationReport(ClassificationScoreVisualizer):
 
     Parameters
     ----------
-    ax : Matplotlib Axes object
-        The axis to plot the figure on.
+    model : estimator
+        A scikit-learn estimator that should be a classifier. If the model is
+        not a classifier, an exception is raised. If the internal model is not
+        fitted, it is fit when the visualizer is fitted, unless otherwise specified
+        by ``is_fitted``.
 
-    model : the Scikit-Learn estimator
-        Should be an instance of a classifier, else the __init__ will
-        return an error.  If the internal model is not fitted, it is fit when
-        the visualizer is fitted, unless otherwise specified by ``is_fitted``.
+    ax : matplotlib Axes, default: None
+        The axes to plot the figure on. If not specified the current axes will be
+        used (or generated if required).
 
-    classes : a list of class names for the legend
-        If classes is None and a y value is passed to fit then the classes
-        are selected from the target vector.
+    classes : list of str, defult: None
+        The class labels to use for the legend ordered by the index of the sorted
+        classes discovered in the ``fit()`` method. Specifying classes in this
+        manner is used to change the class names to a more specific format or
+        to label encoded integer classes. Some visualizers may also use this
+        field to filter the visualization for specific classes. For more advanced
+        usage specify an encoder rather than class labels.
 
     cmap : string, default: ``'YlOrRd'``
         Specify a colormap to define the heatmap of the predicted class
@@ -69,14 +75,25 @@ class ClassificationReport(ClassificationScoreVisualizer):
         Specify if support will be displayed. It can be further defined by
         whether support should be reported as a raw count or percentage.
 
+    encoder : dict or LabelEncoder, default: None
+        A mapping of classes to human readable labels. Often there is a mismatch
+        between desired class labels and those contained in the target variable
+        passed to ``fit()`` or ``score()``. The encoder disambiguates this mismatch
+        ensuring that classes are labeled correctly in the visualization.
+
     is_fitted : bool or str, default="auto"
         Specify if the wrapped estimator is already fitted. If False, the estimator
         will be fit when the visualizer is fit, otherwise, the estimator will not be
         modified. If "auto" (default), a helper method will check if the estimator
         is fitted before fitting it again.
 
+    force_model : bool, default: False
+        Do not check to ensure that the underlying estimator is a classifier. This
+        will prevent an exception when the visualizer is initialized but may result
+        in unexpected or unintended behavior.
+
     kwargs : dict
-        Keyword arguments passed to the super class.
+        Keyword arguments passed to the visualizer base classes.
 
     Examples
     --------
@@ -89,8 +106,17 @@ class ClassificationReport(ClassificationScoreVisualizer):
 
     Attributes
     ----------
+    classes_ : ndarray of shape (n_classes,)
+        The class labels observed while fitting.
+
+    class_count_ : ndarray of shape (n_classes,)
+        Number of samples encountered for each class during fitting.
+
     score_ : float
-        Global accuracy score
+        An evaluation metric of the classifier on test data produced when
+        ``score()`` is called. This metric is between 0 and 1 -- higher scores are
+        generally better. For classifiers, this score is usually accuracy, but
+        ensure you check the underlying model for more details about the score.
 
     scores_ : dict of dicts
         Outer dictionary composed of precision, recall, f1, and support scores with
@@ -104,11 +130,19 @@ class ClassificationReport(ClassificationScoreVisualizer):
         classes=None,
         cmap="YlOrRd",
         support=None,
+        encoder=None,
         is_fitted="auto",
+        force_model=False,
         **kwargs
     ):
         super(ClassificationReport, self).__init__(
-            model, ax=ax, classes=classes, is_fitted=is_fitted, **kwargs
+            model,
+            ax=ax,
+            classes=classes,
+            encoder=encoder,
+            is_fitted=is_fitted,
+            force_model=force_model,
+            **kwargs
         )
 
         self.support = support
@@ -126,7 +160,7 @@ class ClassificationReport(ClassificationScoreVisualizer):
         if not support:
             self._displayed_scores.remove("support")
 
-    def score(self, X, y=None, **kwargs):
+    def score(self, X, y):
         """
         Generates the Scikit-Learn classification report.
 
@@ -144,8 +178,10 @@ class ClassificationReport(ClassificationScoreVisualizer):
         score_ : float
             Global accuracy score
         """
-        y_pred = self.predict(X)
+        # Call super to check if fitted and to compute self.score_
+        super(ClassificationReport, self).score(X, y)
 
+        y_pred = self.predict(X)
         scores = precision_recall_fscore_support(y, y_pred)
 
         # Calculate the percentage for the support metric
@@ -165,10 +201,6 @@ class ClassificationReport(ClassificationScoreVisualizer):
             self.scores_.pop("support")
 
         self.draw()
-
-        # Retrieve and store the score attribute from the sklearn classifier
-        self.score_ = self.estimator.score(X, y)
-
         return self.score_
 
     def draw(self):
@@ -255,42 +287,68 @@ class ClassificationReport(ClassificationScoreVisualizer):
 def classification_report(
     model,
     X,
-    y=None,
+    y,
     ax=None,
-    classes=None,
+    test_size=0.2,
     random_state=None,
+    classes=None,
+    cmap="YlOrRd",
+    support=None,
+    encoder=None,
     is_fitted="auto",
+    force_model=False,
     **kwargs
 ):
-    """Quick method:
+    """Classification Report
 
     Displays precision, recall, F1, and support scores for the model.
     Integrates numerical scores as well as color-coded heatmap.
 
-    This helper function is a quick wrapper to utilize the ClassificationReport
-    for one-off analysis.
-
     Parameters
     ----------
+    model : estimator
+        A scikit-learn estimator that should be a classifier. If the model is
+        not a classifier, an exception is raised. If the internal model is not
+        fitted, it is fit when the visualizer is fitted, unless otherwise specified
+        by ``is_fitted``.
+
     X  : ndarray or DataFrame of shape n x m
         A matrix of n instances with m features.
 
     y  : ndarray or Series of length n
         An array or series of target or class values.
 
-    ax : matplotlib axes
-        The axes to plot the figure on.
+    ax : matplotlib Axes, default: None
+        The axes to plot the figure on. If not specified the current axes will be
+        used (or generated if required).
 
-    model : the Scikit-Learn estimator
-        Should be an instance of a classifier, else the __init__ will
-        return an error.  If the internal model is not fitted, it is fit when
-        the visualizer is fitted, unless otherwise specified by ``is_fitted``.
+    test_size : float, default=0.2
+        The percentage of the data to reserve as test data.
 
-    classes : list of strings
-        The names of the classes in the target
+    random_state : int or None, default=None
+        The value to seed the random number generator for shuffling data.
 
-    random_state: integer
-        The seed value for a random generator
+    classes : list of str, defult: None
+        The class labels to use for the legend ordered by the index of the sorted
+        classes discovered in the ``fit()`` method. Specifying classes in this
+        manner is used to change the class names to a more specific format or
+        to label encoded integer classes. Some visualizers may also use this
+        field to filter the visualization for specific classes. For more advanced
+        usage specify an encoder rather than class labels.
+
+    cmap : string, default: ``'YlOrRd'``
+        Specify a colormap to define the heatmap of the predicted class
+        against the actual class in the classification report.
+
+    support: {True, False, None, 'percent', 'count'}, default: None
+        Specify if support will be displayed. It can be further defined by
+        whether support should be reported as a raw count or percentage.
+
+    encoder : dict or LabelEncoder, default: None
+        A mapping of classes to human readable labels. Often there is a mismatch
+        between desired class labels and those contained in the target variable
+        passed to ``fit()`` or ``score()``. The encoder disambiguates this mismatch
+        ensuring that classes are labeled correctly in the visualization.
 
     is_fitted : bool or str, default="auto"
         Specify if the wrapped estimator is already fitted. If False, the estimator
@@ -298,27 +356,41 @@ def classification_report(
         modified. If "auto" (default), a helper method will check if the estimator
         is fitted before fitting it again.
 
-    kwargs: dict
-        Keyword arguments passed to the super class.
+    force_model : bool, default: False
+        Do not check to ensure that the underlying estimator is a classifier. This
+        will prevent an exception when the visualizer is initialized but may result
+        in unexpected or unintended behavior.
+
+    kwargs : dict
+        Keyword arguments passed to the visualizer base classes.
 
     Returns
     -------
-    ax : matplotlib axes
-        Returns the axes that the classification report was drawn on.
+    viz : ClassificationReport
+        Returns the fitted, finalized visualizer
     """
     # Instantiate the visualizer
     visualizer = ClassificationReport(
-        model=model, ax=ax, classes=classes, is_fitted=is_fitted, **kwargs
+        model=model,
+        ax=ax,
+        classes=classes,
+        cmap=cmap,
+        support=support,
+        encoder=encoder,
+        is_fitted=is_fitted,
+        force_model=force_model,
+        **kwargs
     )
 
     # Create the train and test splits
     X_train, X_test, y_train, y_test = train_test_split(
-        X, y, test_size=0.2, random_state=random_state
+        X, y, test_size=test_size, random_state=random_state
     )
 
     # Fit and transform the visualizer (calls draw)
     visualizer.fit(X_train, y_train, **kwargs)
     visualizer.score(X_test, y_test)
+    visualizer.finalize()
 
     # Return the visualizer
     return visualizer
