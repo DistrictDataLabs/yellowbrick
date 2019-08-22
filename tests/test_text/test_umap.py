@@ -1,12 +1,13 @@
 # tests.test_text.test_umap
 # Tests for the UMAP visual corpus embedding mechanism.
 #
-# Author:   John Healy <jchealy@gmail.com>
+# Author:   John Healy
 # Created:  Mon Dec 03, 14:00:00
 #
 # Copyright (C) 2018 The scikit-yb developers
 # For license information, see LICENSE.txt
-
+#
+# ID: test_umap.py [] jchealy@gmail.com> $
 
 """
 Tests for the UMAP visual corpus embedding mechanism.
@@ -56,20 +57,26 @@ corpus = load_hobbies()
 ## UMAP Tests
 ##########################################################################
 
-@mock.patch('yellowbrick.text.umap_vis.UMAP', None)
+
+@mock.patch("yellowbrick.text.umap_vis.UMAP", None)
 def test_umap_unavailable():
     """
     Assert an appropriate exception is raised when UMAP is not installed
     """
     from yellowbrick.text.umap_vis import UMAP
+
     assert UMAP is None
 
-    with pytest.raises(YellowbrickValueError, match="umap package doesn't seem to be installed"):
+    with pytest.raises(
+        YellowbrickValueError, match="umap package doesn't seem to be installed"
+    ):
         UMAPVisualizer()
 
 
 @pytest.mark.skipif(UMAP is None, reason="tests require the umap library")
-@pytest.mark.xfail(sys.platform == 'win32', reason="not supported on windows 32bit with Python 2.7")
+@pytest.mark.xfail(
+    sys.platform == "win32", reason="not supported on windows 32bit with Python 2.7"
+)
 class TestUMAP(VisualTestCase):
     """
     UMAPVisualizer tests
@@ -80,7 +87,7 @@ class TestUMAP(VisualTestCase):
         Verify the pipeline creation step for UMAP
         """
 
-        umap = UMAPVisualizer() # Should not cause an exception.
+        umap = UMAPVisualizer()  # Should not cause an exception.
         assert umap.transformer_ is not None
 
         assert len(umap.transformer_.steps) == 1
@@ -89,12 +96,12 @@ class TestUMAP(VisualTestCase):
         """
         Check UMAP integrated visualization on the hobbies corpus
         """
-        tfidf  = TfidfVectorizer()
+        tfidf = TfidfVectorizer()
 
-        docs   = tfidf.fit_transform(corpus.data)
+        docs = tfidf.fit_transform(corpus.data)
         labels = corpus.target
 
-        umap = UMAPVisualizer(random_state=8392, colormap='Set1', alpha=1.0)
+        umap = UMAPVisualizer(random_state=8392, colormap="Set1", alpha=1.0)
         umap.fit_transform(docs, labels)
 
         tol = 55
@@ -109,7 +116,7 @@ class TestUMAP(VisualTestCase):
         # like size, are passed through to YB's finalize method. This test should
         # notify us  if UMAP's params change on the sklearn side.
         with pytest.raises(TypeError):
-            UMAP(size=(100,100))
+            UMAP(size=(100, 100))
 
     def test_sklearn_umap_title(self):
         """
@@ -143,9 +150,14 @@ class TestUMAP(VisualTestCase):
         Check UMAP accepts and properly handles custom colors from user
         """
         ## produce random data
-        X, y = make_classification(n_samples=200, n_features=100,
-                               n_informative=20, n_redundant=10,
-                               n_classes=5, random_state=42)
+        X, y = make_classification(
+            n_samples=200,
+            n_features=100,
+            n_informative=20,
+            n_redundant=10,
+            n_classes=5,
+            random_state=42,
+        )
 
         ## specify a list of custom colors >= n_classes
         purple_blues = ["indigo", "orchid", "plum", "navy", "purple", "blue"]
@@ -156,9 +168,9 @@ class TestUMAP(VisualTestCase):
 
         ## fit the visualizer and check that self.color_values is as long as
         ## n_classes and is the first n_classes items in self.colors
-        purple_umap.fit(X,y)
+        purple_umap.fit(X, y)
         assert len(purple_umap.color_values_) == len(purple_umap.classes_)
-        assert purple_umap.color_values_ == purple_blues[:len(purple_umap.classes_)]
+        assert purple_umap.color_values_ == purple_blues[: len(purple_umap.classes_)]
 
         ## specify a list of custom colors < n_classes
         greens = ["green", "lime", "teal"]
@@ -169,7 +181,7 @@ class TestUMAP(VisualTestCase):
 
         ## fit the visualizer and check that self.color_values is as long as
         ## n_classes and the user-supplied color list gets recycled as expected
-        green_umap.fit(X,y)
+        green_umap.fit(X, y)
         assert len(green_umap.color_values_) == len(green_umap.classes_)
         assert green_umap.color_values_ == ["green", "lime", "teal", "green", "lime"]
 
@@ -179,9 +191,14 @@ class TestUMAP(VisualTestCase):
         """
 
         ## produce random data
-        X, y = make_classification(n_samples=200, n_features=100,
-                               n_informative=20, n_redundant=10,
-                               n_classes=3, random_state=42)
+        X, y = make_classification(
+            n_samples=200,
+            n_features=100,
+            n_informative=20,
+            n_redundant=10,
+            n_classes=3,
+            random_state=42,
+        )
 
         ## visualize data with UMAP
         umap = UMAPVisualizer(random_state=87)
@@ -195,12 +212,17 @@ class TestUMAP(VisualTestCase):
         """
 
         ## produce random data
-        X, y = make_classification(n_samples=200, n_features=100,
-                               n_informative=20, n_redundant=10,
-                               n_classes=3, random_state=42)
+        X, y = make_classification(
+            n_samples=200,
+            n_features=100,
+            n_informative=20,
+            n_redundant=10,
+            n_classes=3,
+            random_state=42,
+        )
 
         ## visualize data with UMAP
-        umap = UMAPVisualizer(random_state=87, labels=['a', 'b', 'c'])
+        umap = UMAPVisualizer(random_state=87, labels=["a", "b", "c"])
         umap.fit(X, y)
 
         self.assert_images_similar(umap, tol=40)
@@ -210,28 +232,38 @@ class TestUMAP(VisualTestCase):
         Assert exception is raised when number of labels doesn't match
         """
         ## produce random data
-        X, y = make_classification(n_samples=200, n_features=100,
-                               n_informative=20, n_redundant=10,
-                               n_classes=3, random_state=42)
+        X, y = make_classification(
+            n_samples=200,
+            n_features=100,
+            n_informative=20,
+            n_redundant=10,
+            n_classes=3,
+            random_state=42,
+        )
 
         ## fewer labels than classes
-        umap = UMAPVisualizer(random_state=87, labels=['a', 'b'])
+        umap = UMAPVisualizer(random_state=87, labels=["a", "b"])
         with pytest.raises(YellowbrickValueError):
-            umap.fit(X,y)
+            umap.fit(X, y)
 
         ## more labels than classes
-        umap = UMAPVisualizer(random_state=87, labels=['a', 'b', 'c', 'd'])
+        umap = UMAPVisualizer(random_state=87, labels=["a", "b", "c", "d"])
         with pytest.raises(YellowbrickValueError):
-            umap.fit(X,y)
+            umap.fit(X, y)
 
     def test_no_target_umap(self):
         """
         Test UMAP when no target or classes are specified
         """
         ## produce random data
-        X, y = make_classification(n_samples=200, n_features=100,
-                               n_informative=20, n_redundant=10,
-                               n_classes=3, random_state=6897)
+        X, y = make_classification(
+            n_samples=200,
+            n_features=100,
+            n_informative=20,
+            n_redundant=10,
+            n_classes=3,
+            random_state=6897,
+        )
 
         ## visualize data with UMAP
         umap = UMAPVisualizer(random_state=64)
@@ -245,8 +277,12 @@ class TestUMAP(VisualTestCase):
         Test UMAP when passed a pandas DataFrame and series
         """
         X, y = make_classification(
-            n_samples=200, n_features=100, n_informative=20, n_redundant=10,
-            n_classes=3, random_state=3020
+            n_samples=200,
+            n_features=100,
+            n_informative=20,
+            n_redundant=10,
+            n_classes=3,
+            random_state=3020,
         )
 
         X = pandas.DataFrame(X)
@@ -262,9 +298,14 @@ class TestUMAP(VisualTestCase):
         Test that the user can supply an alpha param on instantiation
         """
         ## produce random data
-        X, y = make_classification(n_samples=200, n_features=100,
-                               n_informative=20, n_redundant=10,
-                               n_classes=3, random_state=42)
+        X, y = make_classification(
+            n_samples=200,
+            n_features=100,
+            n_informative=20,
+            n_redundant=10,
+            n_classes=3,
+            random_state=42,
+        )
 
         ## Instantiate a UMAPVisualizer, provide custom alpha
         umap = UMAPVisualizer(random_state=64, alpha=0.5)

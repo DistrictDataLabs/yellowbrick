@@ -58,27 +58,30 @@ rand2col = partial(np.random.rand, 120, 2)
 rand3col = partial(np.random.rand, 120, 3)
 
 
-@pytest.fixture(scope='class')
+@pytest.fixture(scope="class")
 def discrete(request):
     """
     Creates a simple 2-column dataset with a discrete target.
     """
     X, y = make_classification(
-        n_samples=120, n_features=2, n_informative=2, n_redundant=0,
-        n_classes=3, n_clusters_per_class=1, random_state=2221,
+        n_samples=120,
+        n_features=2,
+        n_informative=2,
+        n_redundant=0,
+        n_classes=3,
+        n_clusters_per_class=1,
+        random_state=2221,
     )
 
     request.cls.discrete = Dataset(X, y)
 
 
-@pytest.fixture(scope='class')
+@pytest.fixture(scope="class")
 def continuous(request):
     """
     Creates a simple 2-column dataset with a continuous target.
     """
-    X, y = make_regression(
-        n_samples=120, n_features=2, random_state=1112,
-    )
+    X, y = make_regression(n_samples=120, n_features=2, random_state=1112)
 
     request.cls.continuous = Dataset(X, y)
 
@@ -86,6 +89,7 @@ def continuous(request):
 ##########################################################################
 ## JointPlot Tests
 ##########################################################################
+
 
 @pytest.mark.usefixtures("discrete", "continuous")
 class TestJointPlotNoHistogram(VisualTestCase):
@@ -98,7 +102,7 @@ class TestJointPlotNoHistogram(VisualTestCase):
         Assert invalid columns arguments raise exception
         """
         with pytest.raises(YellowbrickValueError, match="invalid for joint plot"):
-            JointPlot(columns=['a', 'b', 'c'], hist=False)
+            JointPlot(columns=["a", "b", "c"], hist=False)
 
     def test_invalid_correlation_values(self):
         """
@@ -111,7 +115,7 @@ class TestJointPlotNoHistogram(VisualTestCase):
         """
         Assert invalid kind arguments raise exception
         """
-        for bad_kind in ('foo', None, 123):
+        for bad_kind in ("foo", None, 123):
             with pytest.raises(YellowbrickValueError, match="invalid joint plot kind"):
                 JointPlot(kind=bad_kind, hist=False)
 
@@ -119,8 +123,10 @@ class TestJointPlotNoHistogram(VisualTestCase):
         """
         Assert invalid hist arguments raise exception
         """
-        for bad_hist in ('foo', 123):
-            with pytest.raises(YellowbrickValueError, match="invalid argument for hist"):
+        for bad_hist in ("foo", 123):
+            with pytest.raises(
+                YellowbrickValueError, match="invalid argument for hist"
+            ):
                 JointPlot(hist=bad_hist)
 
     def test_no_haxes(self):
@@ -134,13 +140,13 @@ class TestJointPlotNoHistogram(VisualTestCase):
         with pytest.raises(AttributeError, match="histogram for the Y axis"):
             oz.yhax
 
-    @patch('yellowbrick.features.jointplot.plt')
+    @patch("yellowbrick.features.jointplot.plt")
     def test_correlation(self, mplt):
         """
         Test correlation is correctly computed
         """
-        x = self.discrete.X[:,0]
-        y = self.discrete.X[:,1]
+        x = self.discrete.X[:, 0]
+        y = self.discrete.X[:, 1]
 
         cases = (
             ("pearson", -0.3847799883805261),
@@ -152,26 +158,30 @@ class TestJointPlotNoHistogram(VisualTestCase):
         for alg, expected in cases:
             oz = JointPlot(hist=False, correlation=alg, columns=None)
             oz.ax = MagicMock()
-            oz.fit(x,y)
+            oz.fit(x, y)
 
-            assert hasattr(oz, 'corr_')
-            assert oz.corr_ == pytest.approx(expected), "{} not computed correctly".format(alg)
+            assert hasattr(oz, "corr_")
+            assert oz.corr_ == pytest.approx(
+                expected
+            ), "{} not computed correctly".format(alg)
 
     def test_columns_none_invalid_x(self):
         """
         When self.columns=None validate X and y
         """
         bad_kws = (
-            {'X': rand1d(), 'y': None},
-            {'X': rand3col(), 'y': None},
-            {'X': rand2col(), 'y': rand1d()},
-            {'X': rand3col(), 'y': rand1d()},
-            {'X': rand1d(), 'y': rand2col()},
+            {"X": rand1d(), "y": None},
+            {"X": rand3col(), "y": None},
+            {"X": rand2col(), "y": rand1d()},
+            {"X": rand3col(), "y": rand1d()},
+            {"X": rand1d(), "y": rand2col()},
         )
 
         for kws in bad_kws:
             oz = JointPlot(columns=None, hist=False)
-            with pytest.raises(YellowbrickValueError, match="when self.columns is None"):
+            with pytest.raises(
+                YellowbrickValueError, match="when self.columns is None"
+            ):
                 oz.fit(**kws)
 
     def test_columns_none_x_y(self):
@@ -179,7 +189,7 @@ class TestJointPlotNoHistogram(VisualTestCase):
         When self.columns=None image similarity with valid X and y
         """
         oz = JointPlot(hist=False, columns=None)
-        assert oz.fit(self.discrete.X[:,0], self.discrete.y) is oz
+        assert oz.fit(self.discrete.X[:, 0], self.discrete.y) is oz
         assert hasattr(oz, "corr_")
 
         oz.finalize()
@@ -195,7 +205,9 @@ class TestJointPlotNoHistogram(VisualTestCase):
         assert hasattr(oz, "corr_")
 
         oz.finalize()
-        tol = 4.0 if sys.platform == "win32" else 0.01 # Fails on AppVeyor with RMS 3.941
+        tol = (
+            4.0 if sys.platform == "win32" else 0.01
+        )  # Fails on AppVeyor with RMS 3.941
         self.assert_images_similar(oz, tol=tol)
 
     def test_columns_single_index_no_y(self):
@@ -244,7 +256,7 @@ class TestJointPlotNoHistogram(VisualTestCase):
         When self.columns=str image similarity on pandas dataset
         """
         oz = JointPlot(columns="a", hist=False)
-        X = pd.DataFrame(self.continuous.X, columns=['a', 'b'])
+        X = pd.DataFrame(self.continuous.X, columns=["a", "b"])
         y = pd.Series(self.continuous.y)
         assert oz.fit(X, y) is oz
         assert hasattr(oz, "corr_")
@@ -257,12 +269,14 @@ class TestJointPlotNoHistogram(VisualTestCase):
         """
         When self.columns=[int, int] image similarity on numpy dataset no y
         """
-        oz = JointPlot(columns=[0,1], hist=False)
+        oz = JointPlot(columns=[0, 1], hist=False)
         assert oz.fit(self.discrete.X, y=None) is oz
         assert hasattr(oz, "corr_")
 
         oz.finalize()
-        tol = 4.0 if sys.platform == "win32" else 0.01 # Fails on AppVeyor with RMS 3.941
+        tol = (
+            4.0 if sys.platform == "win32" else 0.01
+        )  # Fails on AppVeyor with RMS 3.941
         self.assert_images_similar(oz, tol=tol)
 
     @pytest.mark.skipif(pd is None, reason="test requires pandas")
@@ -270,13 +284,15 @@ class TestJointPlotNoHistogram(VisualTestCase):
         """
         When self.columns=[str, str] image similarity on pandas dataset no y
         """
-        oz = JointPlot(columns=['a', 'b'], hist=False)
-        X = pd.DataFrame(self.continuous.X, columns=['a', 'b'])
+        oz = JointPlot(columns=["a", "b"], hist=False)
+        X = pd.DataFrame(self.continuous.X, columns=["a", "b"])
         assert oz.fit(X, y=None) is oz
         assert hasattr(oz, "corr_")
 
         oz.finalize()
-        tol = 4.0 if sys.platform == "win32" else 0.01 # Fails on AppVeyor with RMS 3.911
+        tol = (
+            4.0 if sys.platform == "win32" else 0.01
+        )  # Fails on AppVeyor with RMS 3.911
         self.assert_images_similar(oz, tol=tol)
 
     @pytest.mark.skipif(pd is None, reason="test requires pandas")
@@ -284,14 +300,16 @@ class TestJointPlotNoHistogram(VisualTestCase):
         """
         When self.columns=[str, str] on DataFrame with discrete y
         """
-        oz = JointPlot(columns=['a', 'b'], hist=False)
-        X = pd.DataFrame(self.discrete.X, columns=['a', 'b'])
+        oz = JointPlot(columns=["a", "b"], hist=False)
+        X = pd.DataFrame(self.discrete.X, columns=["a", "b"])
         y = pd.Series(self.discrete.y)
         assert oz.fit(X, y) is oz
         assert hasattr(oz, "corr_")
 
         oz.finalize()
-        tol = 4.0 if sys.platform == "win32" else 0.01 # Fails on AppVeyor with RMS 3.940
+        tol = (
+            4.0 if sys.platform == "win32" else 0.01
+        )  # Fails on AppVeyor with RMS 3.940
         self.assert_images_similar(oz, tol=tol)
 
     @pytest.mark.skipif(pd is None, reason="test requires pandas")
@@ -299,18 +317,22 @@ class TestJointPlotNoHistogram(VisualTestCase):
         """
         When self.columns=[str, str] on DataFrame with continuous y
         """
-        oz = JointPlot(columns=['a', 'b'], hist=False)
-        X = pd.DataFrame(self.continuous.X, columns=['a', 'b'])
+        oz = JointPlot(columns=["a", "b"], hist=False)
+        X = pd.DataFrame(self.continuous.X, columns=["a", "b"])
         y = pd.Series(self.continuous.y)
         assert oz.fit(X, y) is oz
         assert hasattr(oz, "corr_")
 
         oz.finalize()
-        tol = 4.0 if sys.platform == "win32" else 0.01 # Fails on AppVeyor with RMS 3.911
+        tol = (
+            4.0 if sys.platform == "win32" else 0.01
+        )  # Fails on AppVeyor with RMS 3.911
         self.assert_images_similar(oz, tol=tol)
 
 
-@pytest.mark.skipif(make_axes_locatable is not None, reason="requires matplotlib <= 2.0.1")
+@pytest.mark.skipif(
+    make_axes_locatable is not None, reason="requires matplotlib <= 2.0.1"
+)
 def test_matplotlib_version_error():
     """
     Assert an exception is raised with incompatible matplotlib versions
@@ -345,14 +367,14 @@ class TestJointPlotHistogram(VisualTestCase):
 
     @pytest.mark.xfail(
         IS_WINDOWS_OR_CONDA,
-        reason="font rendering different in OS and/or Python; see #892"
+        reason="font rendering different in OS and/or Python; see #892",
     )
     def test_columns_none_x_y_hist(self):
         """
         When self.columns=None image similarity with valid X and y
         """
         oz = JointPlot(hist=True, columns=None)
-        assert oz.fit(self.discrete.X[:,0], self.discrete.y) is oz
+        assert oz.fit(self.discrete.X[:, 0], self.discrete.y) is oz
         assert hasattr(oz, "corr_")
 
         oz.finalize()
@@ -360,7 +382,7 @@ class TestJointPlotHistogram(VisualTestCase):
 
     @pytest.mark.xfail(
         IS_WINDOWS_OR_CONDA,
-        reason="font rendering different in OS and/or Python; see #892"
+        reason="font rendering different in OS and/or Python; see #892",
     )
     def test_columns_none_x_hist(self):
         """
@@ -375,7 +397,7 @@ class TestJointPlotHistogram(VisualTestCase):
 
     @pytest.mark.xfail(
         IS_WINDOWS_OR_CONDA,
-        reason="font rendering different in OS and/or Python; see #892"
+        reason="font rendering different in OS and/or Python; see #892",
     )
     def test_columns_single_int_index_numpy_hist(self):
         """
@@ -391,14 +413,14 @@ class TestJointPlotHistogram(VisualTestCase):
     @pytest.mark.skipif(pd is None, reason="test requires pandas")
     @pytest.mark.xfail(
         IS_WINDOWS_OR_CONDA,
-        reason="font rendering different in OS and/or Python; see #892"
+        reason="font rendering different in OS and/or Python; see #892",
     )
     def test_columns_single_str_index_pandas_hist(self):
         """
         When self.columns=str image similarity on pandas dataset
         """
         oz = JointPlot(columns="a", hist=True)
-        X = pd.DataFrame(self.continuous.X, columns=['a', 'b'])
+        X = pd.DataFrame(self.continuous.X, columns=["a", "b"])
         y = pd.Series(self.continuous.y)
         assert oz.fit(X, y) is oz
         assert hasattr(oz, "corr_")
@@ -408,13 +430,13 @@ class TestJointPlotHistogram(VisualTestCase):
 
     @pytest.mark.xfail(
         IS_WINDOWS_OR_CONDA,
-        reason="font rendering different in OS and/or Python; see #892"
+        reason="font rendering different in OS and/or Python; see #892",
     )
     def test_columns_double_int_index_numpy_no_y_hist(self):
         """
         When self.columns=[int, int] image similarity on numpy dataset no y
         """
-        oz = JointPlot(columns=[0,1], hist=True)
+        oz = JointPlot(columns=[0, 1], hist=True)
         assert oz.fit(self.discrete.X, y=None) is oz
         assert hasattr(oz, "corr_")
 
@@ -424,14 +446,14 @@ class TestJointPlotHistogram(VisualTestCase):
     @pytest.mark.skipif(pd is None, reason="test requires pandas")
     @pytest.mark.xfail(
         IS_WINDOWS_OR_CONDA,
-        reason="font rendering different in OS and/or Python; see #892"
+        reason="font rendering different in OS and/or Python; see #892",
     )
     def test_columns_double_str_index_pandas_no_y_hist(self):
         """
         When self.columns=[str, str] image similarity on pandas dataset no y
         """
-        oz = JointPlot(columns=['a', 'b'], hist=True)
-        X = pd.DataFrame(self.continuous.X, columns=['a', 'b'])
+        oz = JointPlot(columns=["a", "b"], hist=True)
+        X = pd.DataFrame(self.continuous.X, columns=["a", "b"])
         assert oz.fit(X, y=None) is oz
         assert hasattr(oz, "corr_")
 
@@ -441,14 +463,14 @@ class TestJointPlotHistogram(VisualTestCase):
     @pytest.mark.skipif(pd is None, reason="test requires pandas")
     @pytest.mark.xfail(
         IS_WINDOWS_OR_CONDA,
-        reason="font rendering different in OS and/or Python; see #892"
+        reason="font rendering different in OS and/or Python; see #892",
     )
     def test_columns_double_index_discrete_y_hist(self):
         """
         When self.columns=[str, str] on DataFrame with discrete y
         """
-        oz = JointPlot(columns=['a', 'b'], hist=True)
-        X = pd.DataFrame(self.discrete.X, columns=['a', 'b'])
+        oz = JointPlot(columns=["a", "b"], hist=True)
+        X = pd.DataFrame(self.discrete.X, columns=["a", "b"])
         y = pd.Series(self.discrete.y)
         assert oz.fit(X, y) is oz
         assert hasattr(oz, "corr_")
@@ -461,8 +483,8 @@ class TestJointPlotHistogram(VisualTestCase):
         """
         When self.columns=[str, str] on DataFrame with continuous y
         """
-        oz = JointPlot(columns=['a', 'b'], hist=True)
-        X = pd.DataFrame(self.continuous.X, columns=['a', 'b'])
+        oz = JointPlot(columns=["a", "b"], hist=True)
+        X = pd.DataFrame(self.continuous.X, columns=["a", "b"])
         y = pd.Series(self.continuous.y)
         assert oz.fit(X, y) is oz
         assert hasattr(oz, "corr_")

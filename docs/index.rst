@@ -7,22 +7,18 @@
 Yellowbrick: Machine Learning Visualization
 ===========================================
 
-.. image:: images/visualizers.png
+.. image:: images/readme/banner.png
 
 Yellowbrick extends the Scikit-Learn API to make model selection and hyperparameter tuning easier. Under the hood, it's using Matplotlib.
 
 Recommended Learning Path
 -------------------------
 
-1. Check out the :doc:`quickstart`
+1. Check out the :doc:`quickstart`, try the :doc:`tutorial`, and check out the :doc:`oneliners`.
 
-2. Try the the :doc:`tutorial`.
+2. Use Yellowbrick in your work, referencing the :doc:`api/index` for assistance with specific visualizers and detailed information on optional parameters and customization options.
 
-3. Use Yellowbrick in your project.
-
-4. For details on specific Visualizers and extended usage head over to the :doc:`api/index`.
-
-5. Follow us on Twitter `@scikit_yb <https://twitter.com/scikit_yb>`_. You'll hear about new visualizers as they're added.
+3. Star us on `GitHub <https://github.com/DistrictDataLabs/yellowbrick/>`_ and follow us on `Twitter (@scikit_yb) <https://twitter.com/scikit_yb>`_ so that you'll hear about new visualizers as soon as they're added.
 
 Contributing
 ------------
@@ -62,8 +58,6 @@ Feature Visualization
 - :doc:`Radial Visualization <api/features/radviz>`: separation of instances around a circular plot
 - :doc:`api/features/pca`: projection of instances based on principal components
 - :doc:`api/features/manifold`: high dimensional visualization with manifold learning
-- :doc:`api/features/importances`: rank features by importance or linear coefficients for a specific model
-- :doc:`api/features/rfecv`: find the best subset of features based on importance
 - :doc:`Joint Plots <api/features/jointplot>`: direct data visualization with feature selection
 
 Classification Visualization
@@ -96,6 +90,8 @@ Model Selection Visualization
 
 -  :doc:`api/model_selection/validation_curve`: tune a model with respect to a single hyperparameter
 -  :doc:`api/model_selection/learning_curve`: show if a model might benefit from more data or less complexity
+-  :doc:`api/model_selection/importances`: rank features by importance or linear coefficients for a specific model
+-  :doc:`api/model_selection/rfecv`: find the best subset of features based on importance
 
 Target Visualization
 ~~~~~~~~~~~~~~~~~~~~
@@ -149,13 +145,14 @@ Table of Contents
    quickstart
    tutorial
    api/index
-   evaluation
+   oneliners
    contributing/index
    matplotlib
    teaching
    gallery
    about
    faq
+   evaluation
    code_of_conduct
    changelog
    governance/index

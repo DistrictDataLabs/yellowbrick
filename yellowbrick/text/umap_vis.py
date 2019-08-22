@@ -1,12 +1,13 @@
 # yellowbrick.text.umap_vis
 # Implements UMAP visualizations of documents in 2D space.
 #
-# Author:   John Healy <jchealy@gmail.com>
+# Author:   John Healy
 # Created:  Mon Dec 03 14:00:00 2018 -0500
 #
 # Copyright (C) 2019 The sckit-yb developers
 # For license information, see LICENSE.txt
 #
+# ID: umap_vis.py [] jchealy@gmail.com $
 
 """
 Implements UMAP visualizations of documents in 2D space.
@@ -94,19 +95,19 @@ def umap(
     kwargs : dict
         Pass any additional keyword arguments to the UMAP transformer.
 
-    Returns
     -------
-    ax : matplotlib axes
-        Returns the axes that the parallel coordinates were drawn on.
+    visualizer: UMAPVisualizer
+        Returns the fitted, finalized visualizer
     """
     # Instantiate the visualizer
     visualizer = UMAPVisualizer(ax, classes, colors, colormap, alpha, **kwargs)
 
     # Fit and transform the visualizer (calls draw)
     visualizer.fit_transform(X, y, **kwargs)
+    visualizer.finalize()
 
-    # Return the axes object on the visualizer
-    return visualizer.ax
+    # Return the visualizer object
+    return visualizer
 
 
 ##########################################################################
@@ -339,6 +340,8 @@ class UMAPVisualizer(TextVisualizer):
             self.ax.scatter(
                 points["x"], points["y"], c=colors[label], alpha=self.alpha, label=label
             )
+
+        return self.ax
 
     def finalize(self, **kwargs):
         """
