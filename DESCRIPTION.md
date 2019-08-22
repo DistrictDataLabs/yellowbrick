@@ -1,6 +1,6 @@
 # Yellowbrick
 
-[![Visualizers](https://www.scikit-yb.org/en/develop/_images/readme/banner.png)](https://www.scikit-yb.org/)
+[![Visualizers](docs/images/readme/banner.png)](https://www.scikit-yb.org/)
 
 Yellowbrick is a suite of visual analysis and diagnostic tools designed to facilitate machine learning with scikit-learn. The library implements a new core API object, the `Visualizer` that is an scikit-learn estimator &mdash; an object that learns from data. Similar to transformers or models, visualizers learn from data by creating a visual representation of the model selection workflow.
 
@@ -10,7 +10,7 @@ The full documentation can be found at [scikit-yb.org](https://scikit-yb.org/) a
 
 ## Visualizers
 
-Visualizers are estimators &mdash; objects that learn from data &mdash;whose primary objective is to create visualizations that allow insight into the model selection process. In scikit-learn terms, they can be similar to transformers when visualizing the data space or wrap a model estimator similar to how the `ModelCV` (e.g. [`RidgeCV`](https://scikit-learn.org/stable/modules/generated/sklearn.linear_model.RidgeCV.html), [`LassoCV`](https://scikit-learn.org/stable/modules/generated/sklearn.linear_model.LassoCV.html)) methods work. The primary goal of Yellowbrick is to create a sensical API similar to scikit-learn. Some of our most popular visualizers include:
+Visualizers are estimators &mdash; objects that learn from data &mdash; whose primary objective is to create visualizations that allow insight into the model selection process. In scikit-learn terms, they can be similar to transformers when visualizing the data space or wrap a model estimator similar to how the `ModelCV` (e.g. [`RidgeCV`](https://scikit-learn.org/stable/modules/generated/sklearn.linear_model.RidgeCV.html), [`LassoCV`](https://scikit-learn.org/stable/modules/generated/sklearn.linear_model.LassoCV.html)) methods work. The primary goal of Yellowbrick is to create a sensical API similar to scikit-learn. Some of our most popular visualizers include:
 
 ### Classification Visualization
 
