@@ -20,6 +20,7 @@ Detection utilities for Scikit-Learn and Numpy types for flexibility
 import inspect
 import numpy as np
 
+from sklearn.pipeline import Pipeline
 from sklearn.base import BaseEstimator
 
 
@@ -28,24 +29,42 @@ from sklearn.base import BaseEstimator
 ##########################################################################
 
 
-def is_estimator(model):
+def is_estimator(obj):
     """
     Determines if a model is an estimator using issubclass and isinstance.
 
     Parameters
     ----------
-    estimator : class or instance
-        The object to test if it is a Scikit-Learn clusterer, especially a
-        Scikit-Learn estimator or Yellowbrick visualizer
+    obj : class or instance
+        The object to test if it is a scikit-learn estimator.
     """
-    if inspect.isclass(model):
-        return issubclass(model, BaseEstimator)
+    if inspect.isclass(obj):
+        return issubclass(obj, BaseEstimator)
 
-    return isinstance(model, BaseEstimator)
+    return isinstance(obj, BaseEstimator)
 
 
 # Alias for closer name to isinstance and issubclass
 isestimator = is_estimator
+
+
+def is_pipeline(obj):
+    """
+    Determines if a model is a pipeline using issubclass and isinstance.
+
+    Parameters
+    ----------
+    obj : class or instance
+        The object to test if it is a scikit-learn Pipeline.
+    """
+    if inspect.isclass(obj):
+        return issubclass(obj, Pipeline)
+
+    return isinstance(obj, Pipeline)
+
+
+# Alias for closer name to isinstance and issubclass
+ispipeline = is_pipeline
 
 
 def is_classifier(estimator):
@@ -55,8 +74,7 @@ def is_classifier(estimator):
     Parameters
     ----------
     estimator : class or instance
-        The object to test if it is a Scikit-Learn clusterer, especially a
-        Scikit-Learn estimator or Yellowbrick visualizer
+        The object to test if it is a scikit-learn classifier.
 
     See also
     --------
@@ -79,8 +97,7 @@ def is_regressor(estimator):
     Parameters
     ----------
     estimator : class or instance
-        The object to test if it is a Scikit-Learn clusterer, especially a
-        Scikit-Learn estimator or Yellowbrick visualizer
+        The object to test if it is a scikit-learn regressor.
 
     See also
     --------
@@ -103,8 +120,7 @@ def is_clusterer(estimator):
     Parameters
     ----------
     estimator : class or instance
-        The object to test if it is a Scikit-Learn clusterer, especially a
-        Scikit-Learn estimator or Yellowbrick visualizer
+        The object to test if it is a scikit-learn clusterer.
     """
 
     # Test the _estimator_type property
@@ -122,8 +138,7 @@ def is_gridsearch(estimator):
     Parameters
     ----------
     estimator : class or instance
-        The object to test if it is a Scikit-Learn clusterer, especially a
-        Scikit-Learn estimator or Yellowbrick visualizer
+        The object to test if it is a scikit-learn grid search.
     """
 
     from sklearn.model_selection import GridSearchCV, RandomizedSearchCV

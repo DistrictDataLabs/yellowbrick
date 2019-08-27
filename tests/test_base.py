@@ -34,6 +34,8 @@ from tests.rand import RandomVisualizer
 from tests.base import IS_WINDOWS_OR_CONDA, VisualTestCase
 
 from sklearn.svm import LinearSVC
+from sklearn.decomposition import PCA
+from sklearn.pipeline import Pipeline
 from sklearn.datasets import make_classification
 
 ##########################################################################
@@ -161,6 +163,60 @@ class TestBaseClasses(VisualTestCase):
             viz = CustomVisualizer()
             assert viz.poof() is not None
 
+
+##########################################################################
+## ModelVisualizer Cases
+##########################################################################
+
+
+class TestModelVisualizer(VisualTestCase):
+    """
+    Tests for the ModelVisualizer
+    """
+
+    def test_final_estimator(self):
+        """
+        Ensure the final estimator can be returned from a Pipeline or directly
+        """
+        svc = LinearSVC()
+        assert ModelVisualizer(svc)._final_estimator() is svc
+
+        short = Pipeline([("clf", svc)])
+        assert ModelVisualizer(short)._final_estimator() is svc
+
+        pipe = Pipeline([("pca", PCA()), ("clf", svc)])
+        assert ModelVisualizer(pipe)._final_estimator() is svc
+
+    @pytest.mark.parametrize(
+        "model", [LinearSVC(), Pipeline([("pca", PCA()), ("clf", LinearSVC())])]
+    )
+    def test_get_learned_attr(self, model):
+        """
+        Ensure a learned attribute can be feteched from a model
+        """
+        X, y = load_occupancy(return_dataset=True).to_numpy()
+        assert not hasattr(model, "classes_")
+
+        viz = ModelVisualizer(model)
+        assert viz.fit(X, y) is viz
+        assert hasattr(model, "classes_")
+
+        assert viz._get_learned_attr("classes_") is model.classes_
+
+    @pytest.mark.parametrize(
+        "model", [LinearSVC(), Pipeline([("pca", PCA()), ("clf", LinearSVC())])]
+    )
+    def test_get_learned_attr_not_fitted(self, model):
+        """
+        Assert NotFitted is raised on _get_learned_attr when not exists
+        """
+        assert not hasattr(model, "classes_")
+        viz = ModelVisualizer(model)
+
+        with pytest.raises(NotFitted, match="object has no attribute 'classes_'"):
+            viz._get_learned_attr("classes_")
+
+
 ##########################################################################
 ## ScoreVisualizer Cases
 ##########################################################################
@@ -170,6 +226,7 @@ class MockVisualizer(ScoreVisualizer):
     """
     Mock for a downstream score visualizer
     """
+
     def fit(self, X, y):
         super(MockVisualizer, self).fit(X, y)
 
@@ -178,6 +235,7 @@ class TestScoreVisualizer(VisualTestCase):
     """
     Tests for the ScoreVisualizer
     """
+
     def test_with_fitted(self):
         """
         Test that visualizer properly handles an already-fitted model

@@ -22,8 +22,9 @@ from sklearn.base import BaseEstimator
 
 from yellowbrick.utils import get_model_name
 from yellowbrick.utils.wrapper import Wrapper
+from yellowbrick.utils.types import is_pipeline
 from yellowbrick.utils.helpers import check_fitted
-from yellowbrick.exceptions import YellowbrickWarning
+from yellowbrick.exceptions import YellowbrickWarning, NotFitted
 from yellowbrick.exceptions import YellowbrickValueError, YellowbrickTypeError
 
 
@@ -349,6 +350,27 @@ class ModelVisualizer(Visualizer, Wrapper):
         if not check_fitted(self.estimator, is_fitted_by=self.is_fitted):
             self.estimator.fit(X, y, **kwargs)
         return self
+
+    def _final_estimator(self):
+        """
+        If the wrapped estimator is a Pipeline, return the final estimator in
+        the Pipeline, otherwise return the wrapped estimator.
+        """
+        if is_pipeline(self.estimator):
+            return self.estimator.steps[-1][1]
+        return self.estimator
+
+    def _get_learned_attr(self, attr):
+        """
+        Get a learned attribute (e.g. an attribute that is not available until
+        after fit() is called) from the underlying estimator. If the attribute
+        doesn't exist a NotFittedError is raised. If the estimator is a Pipeline,
+        the attribute is fetched from the final estimator.
+        """
+        try:
+            return getattr(self._final_estimator(), attr)
+        except AttributeError as e:
+            raise NotFitted(str(e))
 
 
 ##########################################################################
