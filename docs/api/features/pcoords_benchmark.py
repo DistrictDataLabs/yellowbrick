@@ -7,7 +7,6 @@ import numpy as np
 
 
 def plot_speedup(trials=5, factors=np.arange(1, 11)):
-
     def pcoords_time(X, y, fast=True):
         _, ax = plt.subplots()
         oz = ParallelCoordinates(fast=fast, ax=ax)
@@ -16,9 +15,9 @@ def plot_speedup(trials=5, factors=np.arange(1, 11)):
         oz.fit_transform(X, y)
         delta = time.time() - start
 
-        plt.cla()        # clear current axis
-        plt.clf()        # clear current figure
-        plt.close("all") # close all existing plots
+        plt.cla()  # clear current axis
+        plt.clf()  # clear current figure
+        plt.close("all")  # close all existing plots
 
         return delta
 
@@ -49,13 +48,12 @@ def plot_speedup(trials=5, factors=np.arange(1, 11)):
     variance = np.array(variance)
 
     series = pd.Series(speedups, index=factors)
-    _, ax = plt.subplots(figsize=(9,6))
-    series.plot(ax=ax, marker='o', label="speedup factor", color='b')
+    _, ax = plt.subplots(figsize=(9, 6))
+    series.plot(ax=ax, marker="o", label="speedup factor", color="b")
 
     # Plot one standard deviation above and below the mean
     ax.fill_between(
-        factors, speedups - variance, speedups + variance, alpha=0.25,
-        color='b',
+        factors, speedups - variance, speedups + variance, alpha=0.25, color="b"
     )
 
     ax.set_ylabel("speedup factor")
@@ -63,5 +61,6 @@ def plot_speedup(trials=5, factors=np.arange(1, 11)):
     ax.set_title("Speed Improvement of Fast Parallel Coordinates")
     plt.savefig("images/fast_parallel_coordinates_speedup_benchmark.png")
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     plot_speedup()

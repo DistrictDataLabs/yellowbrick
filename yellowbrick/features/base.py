@@ -319,7 +319,9 @@ class DataVisualizer(MultiFeatureVisualizer):
         target_type="auto",
         **kwargs
     ):
-        super(DataVisualizer, self).__init__(ax=ax, fig=fig, features=features, **kwargs)
+        super(DataVisualizer, self).__init__(
+            ax=ax, fig=fig, features=features, **kwargs
+        )
 
         # Validate raises YellowbrickValueError if invalid
         TargetType.validate(target_type)

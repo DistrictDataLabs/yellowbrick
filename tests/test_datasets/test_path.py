@@ -26,6 +26,7 @@ from yellowbrick.exceptions import DatasetsError
 ## Utilities
 ##########################################################################
 
+
 @contextlib.contextmanager
 def environ(**env):
     """
@@ -48,10 +49,10 @@ def environ(**env):
         os.environ.update(old_env)
 
 
-
 ##########################################################################
 ## Test Cases
 ##########################################################################
+
 
 def test_get_data_home_fixtures():
     """

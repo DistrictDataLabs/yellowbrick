@@ -22,6 +22,7 @@ from sklearn.base import BaseEstimator
 ## statsmodels Estimator
 ##########################################################################
 
+
 class StatsModelsWrapper(BaseEstimator):
     """
     Wrap a statsmodels GLM as a sklearn (fake) BaseEstimator for YellowBrick.
@@ -53,8 +54,8 @@ class StatsModelsWrapper(BaseEstimator):
     .. note:: This wrapper is trivial, options and extra things like weights
         are not currently handled.
     """
-    def __init__(self, glm_partial, stated_estimator_type="regressor",
-                 scorer=r2_score):
+
+    def __init__(self, glm_partial, stated_estimator_type="regressor", scorer=r2_score):
 
         # YellowBrick checks the attribute to see if it is a
         # regressor/clusterer/classifier

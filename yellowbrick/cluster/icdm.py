@@ -42,7 +42,7 @@ __all__ = [
     "intercluster_distance",
     "VALID_EMBEDDING",
     "VALID_SCORING",
-    "ICDM"
+    "ICDM",
 ]
 
 

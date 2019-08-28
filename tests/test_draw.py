@@ -26,29 +26,34 @@ from .base import VisualTestCase
 ## Simple tests for high-level drawing utilities
 ##########################################################################
 
+
 def test_manual_legend_uneven_colors():
     """
     Raise exception when colors and labels are mismatched in manual_legend
     """
     with pytest.raises(YellowbrickValueError, match="same number of colors as labels"):
-        manual_legend(None, ('a', 'b', 'c'), ('r', 'g'))
+        manual_legend(None, ("a", "b", "c"), ("r", "g"))
 
 
 @pytest.fixture(scope="class")
 def data(request):
 
     data = np.array(
-            [[4, 8, 7, 6, 5, 2, 1],
-             [6, 7, 9, 6, 9, 3, 6],
-             [5, 1, 6, 8, 4, 7, 8],
-             [6, 8, 1, 5, 6, 7, 4]]
-            )
+        [
+            [4, 8, 7, 6, 5, 2, 1],
+            [6, 7, 9, 6, 9, 3, 6],
+            [5, 1, 6, 8, 4, 7, 8],
+            [6, 8, 1, 5, 6, 7, 4],
+        ]
+    )
 
     request.cls.data = data
+
 
 ##########################################################################
 ## Visual test cases for high-level drawing utilities
 ##########################################################################
+
 
 @pytest.mark.usefixtures("data")
 class TestDraw(VisualTestCase):
@@ -67,15 +72,14 @@ class TestDraw(VisualTestCase):
         Bx, By = random.normal(42, 3, 100), random.normal(44, 1, 100)
         Cx, Cy = random.normal(20, 10, 100), random.normal(30, 1, 100)
 
-
         _, ax = plt.subplots()
-        ax.scatter(Ax, Ay, c='r', alpha=0.35, label='a')
-        ax.scatter(Bx, By, c='g', alpha=0.35, label='b')
-        ax.scatter(Cx, Cy, c='b', alpha=0.35, label='c')
+        ax.scatter(Ax, Ay, c="r", alpha=0.35, label="a")
+        ax.scatter(Bx, By, c="g", alpha=0.35, label="b")
+        ax.scatter(Cx, Cy, c="b", alpha=0.35, label="c")
 
         # Add the manual legend
         manual_legend(
-            ax, ('a', 'b', 'c'), ('r', 'g', 'b'), frameon=True, loc='upper left'
+            ax, ("a", "b", "c"), ("r", "g", "b"), frameon=True, loc="upper left"
         )
 
         # Assert image similarity
@@ -88,9 +92,9 @@ class TestDraw(VisualTestCase):
         _, ax = plt.subplots()
 
         # Plots stacked bar charts
-        bar_stack(self.data, ax=ax, orientation='v')
+        bar_stack(self.data, ax=ax, orientation="v")
 
-         # Assert image similarity
+        # Assert image similarity
         self.assert_images_similar(ax=ax, tol=0.1)
 
     def test_horizontal_bar_stack(self):
@@ -99,7 +103,7 @@ class TestDraw(VisualTestCase):
         """
         _, ax = plt.subplots()
         # Plots stacked bar charts
-        bar_stack(self.data, ax=ax, orientation='h')
+        bar_stack(self.data, ax=ax, orientation="h")
 
         # Assert image similarity
         self.assert_images_similar(ax=ax, tol=0.1)
@@ -122,19 +126,17 @@ class TestDraw(VisualTestCase):
         """
         Test labels and ticks for vertical barcharts
         """
-        labels =  ['books', 'cinema', 'cooking', 'gaming']
-        ticks = ['noun', 'verb', 'adverb', 'pronoun', 'preposition',
-                 'digit', 'other']
+        labels = ["books", "cinema", "cooking", "gaming"]
+        ticks = ["noun", "verb", "adverb", "pronoun", "preposition", "digit", "other"]
         _, ax = plt.subplots()
 
         # Plots stacked bar charts
-        bar_stack(self.data, labels = labels, ticks=ticks,
-                  colors=['r','b','g','y'])
+        bar_stack(self.data, labels=labels, ticks=ticks, colors=["r", "b", "g", "y"])
 
         # Extract tick labels from the plot
         ticks_ax = [tick.get_text() for tick in ax.xaxis.get_ticklabels()]
-        #Assert that ticks are set properly
-        assert ticks_ax==ticks
+        # Assert that ticks are set properly
+        assert ticks_ax == ticks
 
         # Assert image similarity
         self.assert_images_similar(ax=ax, tol=0.05)
@@ -143,19 +145,19 @@ class TestDraw(VisualTestCase):
         """
         Test labels and ticks with horizontal barcharts
         """
-        labels =  ['books', 'cinema', 'cooking', 'gaming']
-        ticks = ['noun', 'verb', 'adverb', 'pronoun', 'preposition',
-                 'digit', 'other']
+        labels = ["books", "cinema", "cooking", "gaming"]
+        ticks = ["noun", "verb", "adverb", "pronoun", "preposition", "digit", "other"]
         _, ax = plt.subplots()
 
         # Plots stacked bar charts
-        bar_stack(self.data, labels = labels, ticks=ticks, orientation='h',
-                  colormap='cool')
+        bar_stack(
+            self.data, labels=labels, ticks=ticks, orientation="h", colormap="cool"
+        )
 
         # Extract tick labels from the plot
         ticks_ax = [tick.get_text() for tick in ax.yaxis.get_ticklabels()]
-        #Assert that ticks are set properly
-        assert ticks_ax==ticks
+        # Assert that ticks are set properly
+        assert ticks_ax == ticks
 
         # Assert image similarity
         self.assert_images_similar(ax=ax, tol=0.05)

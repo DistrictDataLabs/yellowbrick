@@ -20,7 +20,7 @@ Testing package for the yellowbrick visualization library.
 import matplotlib
 
 ## IMPORTANT! Set matplotlib to use the Agg backend before imported anywhere!
-matplotlib.use('Agg')
+matplotlib.use("Agg")
 
 
 ##########################################################################
@@ -34,8 +34,8 @@ EXPECTED_VERSION = "1.0"
 ## Initialization Tests
 ##########################################################################
 
-class TestInitialization(object):
 
+class TestInitialization(object):
     def test_sanity(self):
         """
         Test that tests work by confirming 7-3 = 4
@@ -57,6 +57,7 @@ class TestInitialization(object):
         """
         try:
             import yellowbrick as yb
+
             assert yb.__version__ == EXPECTED_VERSION
         except ImportError:
             self.fail("Could not import the yellowbrick library!")

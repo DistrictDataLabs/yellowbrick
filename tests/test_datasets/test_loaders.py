@@ -36,15 +36,22 @@ except ImportError:
 ## Assertion Helpers
 ##########################################################################
 
+
 def assert_valid_dataset(data, name):
     __tracebackhide__ = True
     assert isinstance(data, Dataset), "not a Dataset object"
     assert name in DATASETS, "dataset not in manifest"
 
     assert dataset_exists(name), "dataset directory does not exist"
-    assert dataset_archive(name, DATASETS[name]["signature"]), "dataset archive does not match signature"
-    assert find_dataset_path(name, ext=".csv.gz", raises=False) is not None, "no .csv.tgz in dataset"
-    assert find_dataset_path(name, ext=".npz", raises=False) is not None, "no .npz in dataset"
+    assert dataset_archive(
+        name, DATASETS[name]["signature"]
+    ), "dataset archive does not match signature"
+    assert (
+        find_dataset_path(name, ext=".csv.gz", raises=False) is not None
+    ), "no .csv.tgz in dataset"
+    assert (
+        find_dataset_path(name, ext=".npz", raises=False) is not None
+    ), "no .npz in dataset"
 
     n_files = len(data.contents())
     assert n_files == 4 or n_files == 5, "not enough files in dataset"
@@ -64,7 +71,9 @@ def assert_valid_corpus(corpus, name):
     assert name in DATASETS, "corpus not in manifest"
 
     assert dataset_exists(name), "corpus directory does not exist"
-    assert dataset_archive(name, DATASETS[name]["signature"]), "corpus archive does not match signature"
+    assert dataset_archive(
+        name, DATASETS[name]["signature"]
+    ), "corpus archive does not match signature"
 
     n_contents = len(corpus.contents())
     assert n_contents > 2, "not enough files/directories in corpus"
@@ -108,6 +117,7 @@ def assert_valid_numpy(data):
 ##########################################################################
 ## Test Cases
 ##########################################################################
+
 
 class TestDatasetLoaders(object):
     """
@@ -250,10 +260,22 @@ class TestDatasetLoaders(object):
         assert y.shape == (494,)
 
     @pytest.mark.skipif(pd is None, reason="pandas is required for this test")
-    @pytest.mark.parametrize("loader", [
-        load_bikeshare, load_concrete, load_credit, load_energy, load_game,
-        load_mushroom, load_occupancy, load_spam, load_walking, load_nfl,
-    ], ids=lambda l: l.__name__)
+    @pytest.mark.parametrize(
+        "loader",
+        [
+            load_bikeshare,
+            load_concrete,
+            load_credit,
+            load_energy,
+            load_game,
+            load_mushroom,
+            load_occupancy,
+            load_spam,
+            load_walking,
+            load_nfl,
+        ],
+        ids=lambda l: l.__name__,
+    )
     def test_load_pandas(self, loader):
         """
         Test loading datasets as pandas objects
@@ -262,10 +284,22 @@ class TestDatasetLoaders(object):
         assert_valid_pandas(data)
 
     @patch("yellowbrick.datasets.base.pd", None)
-    @pytest.mark.parametrize("loader", [
-        load_bikeshare, load_concrete, load_credit, load_energy, load_game,
-        load_mushroom, load_occupancy, load_spam, load_walking, load_nfl,
-    ], ids=lambda l: l.__name__)
+    @pytest.mark.parametrize(
+        "loader",
+        [
+            load_bikeshare,
+            load_concrete,
+            load_credit,
+            load_energy,
+            load_game,
+            load_mushroom,
+            load_occupancy,
+            load_spam,
+            load_walking,
+            load_nfl,
+        ],
+        ids=lambda l: l.__name__,
+    )
     def test_load_numpy(self, loader):
         """
         Test loading datasets as numpy defaults

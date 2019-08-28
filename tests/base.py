@@ -30,13 +30,14 @@ from yellowbrick.exceptions import ImageComparisonFailure
 ## Environment
 ##########################################################################
 
+
 def is_windows_or_conda():
     """
     Simple detection mechanism to determine if the tests are running in a
     win32 or Anaconda/Miniconda environment.
     """
-    is_windows = sys.platform == 'win32'
-    is_conda = os.path.exists(os.path.join(sys.prefix, 'conda-meta'))
+    is_windows = sys.platform == "win32"
+    is_conda = os.path.exists(os.path.join(sys.prefix, "conda-meta"))
     return is_windows or is_conda
 
 
@@ -55,6 +56,7 @@ IS_WINDOWS_OR_CONDA = is_windows_or_conda()
 ## Visual Test Case
 ##########################################################################
 
+
 class VisualTestCase(object):
     """
     The visual test case class ensures that all tests inside of the class
@@ -70,17 +72,18 @@ class VisualTestCase(object):
         See: https://docs.pytest.org/en/latest/xunit_setup.html
         """
         # Reset the matplotlib environment
-        plt.cla()         # clear current axis
-        plt.clf()         # clear current figure
+        plt.cla()  # clear current axis
+        plt.clf()  # clear current figure
         plt.close("all")  # close all existing plots
 
         # Travis-CI does not have san-serif so ensure standard fonts are used.
         # Note that this must be set before each test otherwise it will be reset by
         # the Yellowbrick styles.
-        mpl.rcParams['font.family'] = 'DejaVu Sans'
+        mpl.rcParams["font.family"] = "DejaVu Sans"
 
-    def assert_images_similar(self, visualizer=None, ax=None,
-                              tol=0.01, windows_tol=None, **kwargs):
+    def assert_images_similar(
+        self, visualizer=None, ax=None, tol=0.01, windows_tol=None, **kwargs
+    ):
         """Accessible testing method for testing generation of a Visualizer.
 
         Requires the placement of a baseline image for comparison in the
@@ -141,6 +144,7 @@ class VisualTestCase(object):
 ## Image Comparison Test
 ##########################################################################
 
+
 class ImageComparison(object):
     """
     An image comparison wraps a single ``assert_images_similar`` statement to
@@ -195,15 +199,23 @@ class ImageComparison(object):
     ValueError : at least one of visualizer or ax must be specified.
     """
 
-    def __init__(self, stack, visualizer=None, ax=None, tol=0.01,
-                 windows_tol=0.01, ext=".png", remove_ticks=True,
-                 remove_title=True, remove_labels=True, remove_legend=True):
+    def __init__(
+        self,
+        stack,
+        visualizer=None,
+        ax=None,
+        tol=0.01,
+        windows_tol=0.01,
+        ext=".png",
+        remove_ticks=True,
+        remove_title=True,
+        remove_labels=True,
+        remove_legend=True,
+    ):
 
         # Ensure we have something to draw on
         if visualizer is None and ax is None:
-            raise ValueError(
-                "at least one of visualizer or ax must be specified"
-            )
+            raise ValueError("at least one of visualizer or ax must be specified")
 
         # Save the ax being drawn on
         self.ax = ax or visualizer.ax
@@ -215,10 +227,8 @@ class ImageComparison(object):
 
         # FrameInfo(frame, filename, lineno, function, code_context, index)
         self.test_func_name = frame[3]
-        if not self.test_func_name.startswith('test'):
-            raise ValueError(
-                "{} is not a test function".format(self.test_func_name)
-            )
+        if not self.test_func_name.startswith("test"):
+            raise ValueError("{} is not a test function".format(self.test_func_name))
 
         # Find the relative path to the Yellowbrick tests to compute the
         # module name for storing images in the actual and baseline dirs.
@@ -339,17 +349,18 @@ class ImageComparison(object):
         # Ensure we have an image to compare against (common failure)
         if not os.path.exists(expected):
             raise ImageComparisonFailure(
-                'baseline image does not exist:\n{}'.format(os.path.relpath(expected))
+                "baseline image does not exist:\n{}".format(os.path.relpath(expected))
             )
         # Perform the comparison
         err = compare_images(expected, actual, self.tol, in_decorator=True)
 
         # Raise image comparison failure if not close
         if err:
-            for key in ('actual', 'expected'):
+            for key in ("actual", "expected"):
                 err[key] = os.path.relpath(err[key])
 
-            raise ImageComparisonFailure((
-                "images not close (RMS {rms:0.3f})"
-                "\n{actual}\n\tvs\n{expected}"
-            ).format(**err))
+            raise ImageComparisonFailure(
+                (
+                    "images not close (RMS {rms:0.3f})" "\n{actual}\n\tvs\n{expected}"
+                ).format(**err)
+            )

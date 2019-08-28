@@ -35,8 +35,8 @@ from sklearn.pipeline import Pipeline
 ## Best fit tests
 ##########################################################################
 
-class TestBestFit(VisualTestCase):
 
+class TestBestFit(VisualTestCase):
     def test_bad_estimator(self):
         """
         Test that a bad estimator name raises a value error.
@@ -45,7 +45,7 @@ class TestBestFit(VisualTestCase):
         X, y = ANSCOMBE[1]
 
         with pytest.raises(YellowbrickValueError):
-            draw_best_fit(X, y, ax, 'pepper')
+            draw_best_fit(X, y, ax, "pepper")
 
     def test_ensure_same_length(self):
         """
@@ -56,12 +56,12 @@ class TestBestFit(VisualTestCase):
         y = np.array([1, 3, 6, 2])
 
         with pytest.raises(YellowbrickValueError):
-            draw_best_fit(X, y, ax, 'linear')
+            draw_best_fit(X, y, ax, "linear")
 
         with pytest.raises(YellowbrickValueError):
-            draw_best_fit(X[:,np.newaxis], y, ax, 'linear')
+            draw_best_fit(X[:, np.newaxis], y, ax, "linear")
 
-    @pytest.mark.filterwarnings('ignore')
+    @pytest.mark.filterwarnings("ignore")
     def test_draw_best_fit(self):
         """
         Test that drawing a best fit line works.
@@ -69,13 +69,14 @@ class TestBestFit(VisualTestCase):
         fig, ax = plt.subplots()
         X, y = ANSCOMBE[0]
 
-        assert ax == draw_best_fit(X, y, ax, 'linear')
-        assert ax == draw_best_fit(X, y, ax, 'quadratic')
+        assert ax == draw_best_fit(X, y, ax, "linear")
+        assert ax == draw_best_fit(X, y, ax, "quadratic")
 
 
 ##########################################################################
 ## Estimator tests
 ##########################################################################
+
 
 class TestEstimator(VisualTestCase):
     """
@@ -89,7 +90,7 @@ class TestEstimator(VisualTestCase):
         X, y = ANSCOMBE[0]
         X = np.array(X)
         y = np.array(y)
-        X = X[:,np.newaxis]
+        X = X[:, np.newaxis]
 
         model = fit_linear(X, y)
         assert model is not None
@@ -102,7 +103,7 @@ class TestEstimator(VisualTestCase):
         X, y = ANSCOMBE[1]
         X = np.array(X)
         y = np.array(y)
-        X = X[:,np.newaxis]
+        X = X[:, np.newaxis]
 
         model = fit_quadratic(X, y)
         assert model is not None
@@ -115,7 +116,7 @@ class TestEstimator(VisualTestCase):
         X, y = ANSCOMBE[1]
         X = np.array(X)
         y = np.array(y)
-        X = X[:,np.newaxis]
+        X = X[:, np.newaxis]
 
         model = fit_select_best(X, y)
         assert model is not None
@@ -124,7 +125,7 @@ class TestEstimator(VisualTestCase):
         X, y = ANSCOMBE[3]
         X = np.array(X)
         y = np.array(y)
-        X = X[:,np.newaxis]
+        X = X[:, np.newaxis]
 
         model = fit_select_best(X, y)
         assert model is not None

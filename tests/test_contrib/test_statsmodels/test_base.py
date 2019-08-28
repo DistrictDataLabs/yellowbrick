@@ -30,6 +30,7 @@ except ImportError:
 ## Test Cases
 ##########################################################################
 
+
 @pytest.mark.skipif(sm is None, reason="test requires statsmodels")
 def test_stats_models_wrapper():
     """

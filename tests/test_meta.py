@@ -48,6 +48,7 @@ def assert_path_not_exists(*parts):
 ## Test Cases
 ##########################################################################
 
+
 class TestMetaImageComparison(VisualTestCase):
     """
     Meta Test: ImageComparison test cases
@@ -57,6 +58,7 @@ class TestMetaImageComparison(VisualTestCase):
         """
         Test the image comparison initialization and properties
         """
+
         def inner_assertion_function(ax):
             stack = inspect.stack()
             return ImageComparison(stack, ax=ax)
@@ -68,12 +70,16 @@ class TestMetaImageComparison(VisualTestCase):
         assert compare.test_module_path == "test_meta"
 
         # Must use os.path.join for Windows/POSIX compatibility
-        assert compare.actual_image_path.endswith(os.path.join(
-            "tests", "actual_images", "test_meta", "test_image_comparison.png"
-        ))
-        assert compare.baseline_image_path.endswith(os.path.join(
-            "tests", "baseline_images", "test_meta", "test_image_comparison.png"
-        ))
+        assert compare.actual_image_path.endswith(
+            os.path.join(
+                "tests", "actual_images", "test_meta", "test_image_comparison.png"
+            )
+        )
+        assert compare.baseline_image_path.endswith(
+            os.path.join(
+                "tests", "baseline_images", "test_meta", "test_image_comparison.png"
+            )
+        )
 
     @patch.object(ImageComparison, "cleanup")
     @patch.object(ImageComparison, "save")
@@ -82,6 +88,7 @@ class TestMetaImageComparison(VisualTestCase):
         """
         Test that image comparison cleans up, saves, and compares
         """
+
         def inner_assertion_function():
             stack = inspect.stack()
             return ImageComparison(stack, ax=MagicMock())
@@ -135,7 +142,7 @@ class TestMetaImageComparison(VisualTestCase):
         viz = RandomVisualizer(random_state=111).fit()
         viz.finalize()
 
-        assert mpl.get_backend() == 'agg'
+        assert mpl.get_backend() == "agg"
 
         compare = self.assert_images_similar(viz, tol=1.0)
         assert_path_exists(compare.actual_image_path)
@@ -154,7 +161,9 @@ class TestMetaImageComparison(VisualTestCase):
 
         # Assert there is a diff
         assert_path_exists(
-            ACTUAL_IMAGES, "test_meta", "test_random_visualizer_not_close-failed-diff.png"
+            ACTUAL_IMAGES,
+            "test_meta",
+            "test_random_visualizer_not_close-failed-diff.png",
         )
 
     def test_random_visualizer_increased_tolerance(self):

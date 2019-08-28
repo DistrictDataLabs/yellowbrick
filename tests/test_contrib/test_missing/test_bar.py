@@ -33,12 +33,13 @@ except ImportError:
 
 @pytest.fixture(scope="class")
 def missing_bar_tolerance(request):
-    request.cls.tol = 0.5 if os.name == 'nt' else 0.01
+    request.cls.tol = 0.5 if os.name == "nt" else 0.01
 
 
 ##########################################################################
 ## Feature Importances Tests
 ##########################################################################
+
 
 @pytest.mark.usefixtures("missing_bar_tolerance")
 class TestMissingBarVisualizer(VisualTestCase):
@@ -51,8 +52,13 @@ class TestMissingBarVisualizer(VisualTestCase):
         Integration test of visualizer with pandas
         """
         X, y = make_classification(
-            n_samples=400, n_features=20, n_informative=8, n_redundant=8,
-            n_classes=2, n_clusters_per_class=4, random_state=854
+            n_samples=400,
+            n_features=20,
+            n_informative=8,
+            n_redundant=8,
+            n_classes=2,
+            n_clusters_per_class=4,
+            random_state=854,
         )
 
         # add nan values to a range of values in the matrix
@@ -71,8 +77,13 @@ class TestMissingBarVisualizer(VisualTestCase):
         Integration test of visualizer with numpy without target y passed in
         """
         X, y = make_classification(
-            n_samples=400, n_features=20, n_informative=8, n_redundant=8,
-            n_classes=2, n_clusters_per_class=4, random_state=856
+            n_samples=400,
+            n_features=20,
+            n_informative=8,
+            n_redundant=8,
+            n_classes=2,
+            n_clusters_per_class=4,
+            random_state=856,
         )
 
         # add nan values to a range of values in the matrix
@@ -91,8 +102,13 @@ class TestMissingBarVisualizer(VisualTestCase):
         but no class labels
         """
         X, y = make_classification(
-            n_samples=400, n_features=20, n_informative=8, n_redundant=8,
-            n_classes=2, n_clusters_per_class=4, random_state=856
+            n_samples=400,
+            n_features=20,
+            n_informative=8,
+            n_redundant=8,
+            n_classes=2,
+            n_clusters_per_class=4,
+            random_state=856,
         )
 
         # add nan values to a range of values in the matrix
@@ -111,15 +127,20 @@ class TestMissingBarVisualizer(VisualTestCase):
         but no class labels
         """
         X, y = make_classification(
-            n_samples=400, n_features=20, n_informative=8, n_redundant=8,
-            n_classes=2, n_clusters_per_class=4, random_state=856
+            n_samples=400,
+            n_features=20,
+            n_informative=8,
+            n_redundant=8,
+            n_classes=2,
+            n_clusters_per_class=4,
+            random_state=856,
         )
 
         # add nan values to a range of values in the matrix
         X[X > 1.5] = np.nan
 
         features = [str(n) for n in range(20)]
-        viz = MissingValuesBar(features=features, classes=['class A', 'class B'])
+        viz = MissingValuesBar(features=features, classes=["class A", "class B"])
         viz.fit(X, y)
         viz.finalize()
 

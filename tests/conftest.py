@@ -27,6 +27,7 @@ from pytest_flakes import FlakesItem
 ## Configure tests
 ##########################################################################
 
+
 def pytest_configure(config):
     """
     This function is called by pytest for every plugin and conftest file
@@ -39,16 +40,17 @@ def pytest_configure(config):
     """
     # This is redundant with the line in tests/__init__.py but ensures that
     # the backend is correctly set across all tests and plugins.
-    mpl.use('Agg')
+    mpl.use("Agg")
 
     # Travis-CI does not have san-serif so ensure standard fonts are used.
     # TODO: this is currently being reset before each test; needs fixing.
-    mpl.rcParams['font.family'] = 'DejaVu Sans'
+    mpl.rcParams["font.family"] = "DejaVu Sans"
 
 
 ##########################################################################
 ## PyTest Hooks
 ##########################################################################
+
 
 def docline(obj):
     """
@@ -74,7 +76,7 @@ def pytest_itemcollected(item):
     """
 
     # Ignore Session and PyFlake tests that are generated automatically
-    if not hasattr(item.parent, 'obj') or isinstance(item, FlakesItem):
+    if not hasattr(item.parent, "obj") or isinstance(item, FlakesItem):
         return
 
     # Collect test objects to inspect
@@ -85,7 +87,7 @@ def pytest_itemcollected(item):
     # or class name, and the docstring of the test case, then set the nodeid
     # so that pytest-spec will correctly parse the information.
     path = os.path.relpath(str(item.fspath))
-    prefix = docline(parent) or getattr(parent, '__name__', parent.__class__.__name__)
+    prefix = docline(parent) or getattr(parent, "__name__", parent.__class__.__name__)
     suffix = docline(node) or node.__name__
 
     # Add parametrize or test generation id to distinguish it in output
@@ -94,4 +96,4 @@ def pytest_itemcollected(item):
         suffix += " ({})".format(item._genid)
 
     if prefix or suffix:
-        item._nodeid = '::'.join((path, prefix.strip(), suffix.strip()))
+        item._nodeid = "::".join((path, prefix.strip(), suffix.strip()))

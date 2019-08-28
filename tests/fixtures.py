@@ -21,5 +21,5 @@ from collections import namedtuple
 
 
 ## Used for wrapping an dataset into a single variable.
-Dataset = namedtuple('Dataset', 'X,y')
-Split   = namedtuple('Split', 'train,test')
+Dataset = namedtuple("Dataset", "X,y")
+Split = namedtuple("Split", "train,test")

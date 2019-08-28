@@ -24,6 +24,7 @@ from yellowbrick.utils.decorators import *
 ## Decorator Tests
 ##########################################################################
 
+
 class TestDecorators(object):
     """
     Tests for the decorator utilities.
@@ -35,7 +36,6 @@ class TestDecorators(object):
         """
 
         class Visualizer(object):
-
             @memoized
             def foo(self):
                 return "bar"
@@ -51,13 +51,11 @@ class TestDecorators(object):
         """
 
         class Visualizer(object):
-
             def __init__(self):
                 """
                 This is the correct docstring.
                 """
                 pass
-
 
         def undecorated(*args, **kwargs):
             """

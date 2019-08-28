@@ -37,6 +37,7 @@ ACTUAL = os.path.join(BASE, "actual_images")
 ## Helper Methods
 ##########################################################################
 
+
 def relpath(path):
     """
     Compute the path relative to the test directory.
@@ -100,7 +101,7 @@ def list_images(path):
         bname, bext = os.path.splitext(name)
 
         output.append(bname)
-        output.append("-"*len(bname))
+        output.append("-" * len(bname))
 
         # Handle base path
         base_path = os.path.join(BASELINE, path, name)
@@ -117,7 +118,7 @@ def list_images(path):
             output.append("  - no actual image")
 
         # Handle diff path
-        diff_path = os.path.join(ACTUAL, path, '{}-failed-diff{}'.format(bname, bext))
+        diff_path = os.path.join(ACTUAL, path, "{}-failed-diff{}".format(bname, bext))
         if diff_path in diffs:
             output.append("  - {}".format(os.path.relpath(diff_path)))
 
@@ -132,10 +133,10 @@ def sync(path):
     Move all non-diff images from actual to baseline
     """
     for fname in os.listdir(os.path.join(ACTUAL, path)):
-        if fname.endswith('-diff.png'):
+        if fname.endswith("-diff.png"):
             continue
 
-        if fname.endswith('.png'):
+        if fname.endswith(".png"):
             src = os.path.join(ACTUAL, path, fname)
             dst = os.path.join(BASELINE, path, fname)
             shutil.copy2(src, dst)
@@ -145,6 +146,7 @@ def sync(path):
 ##########################################################################
 ## Main Method
 ##########################################################################
+
 
 def main(args):
     # Get directories relative to test dir
@@ -170,28 +172,28 @@ def main(args):
         sync(path)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
 
     args = {
-        ('-C', '--clear'): {
-            'action': 'store_true',
-            'help': 'clear actual, diffs, and baseline images for test',
+        ("-C", "--clear"): {
+            "action": "store_true",
+            "help": "clear actual, diffs, and baseline images for test",
         },
-        ('-L', '--list'): {
-            'action': 'store_true',
-            'help': 'list images images for tests and exit',
+        ("-L", "--list"): {
+            "action": "store_true",
+            "help": "list images images for tests and exit",
         },
-        'test_dirs' : {
-            'metavar': 'DIR', 'nargs': '+',
-            'help': 'directories to move images from actual to baseline',
+        "test_dirs": {
+            "metavar": "DIR",
+            "nargs": "+",
+            "help": "directories to move images from actual to baseline",
         },
     }
-
 
     # Create the parser and add the arguments
     parser = argparse.ArgumentParser(
         description="utility to manage baseline images for comparisons",
-        epilog="report any issues on GitHub"
+        epilog="report any issues on GitHub",
     )
 
     for pargs, kwargs in args.items():
