@@ -18,4 +18,5 @@ Visualizers for the results of GridSearchCV.
 ##########################################################################
 
 ## Hoist visualizers into the gridsearch namespace
+from .base import *
 from .pcolor import *
