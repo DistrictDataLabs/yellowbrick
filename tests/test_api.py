@@ -311,3 +311,27 @@ def test_fit(Viz):
     oz = Viz(model(), **kwargs) if model is not None else Viz(**kwargs)
 
     assert oz.fit(data.X.train, data.y.train) is oz
+
+
+@pytest.mark.xfail(reason="quick methods aren't primetime yet")
+@pytest.mark.parametrize("Viz, method", list(QUICK_METHODS.items()))
+def test_quickmethod(Viz, method):
+    """
+    Ensures the quick method accepts standard arguments and returns the visualizer
+    """
+    if Viz in SKIPS:
+        pytest.skip(SKIPS[Viz])
+
+    kwargs = {
+        "ax": mock.MagicMock(),
+        "fig": mock.MagicMock(),
+    }
+
+    model = get_model_for_visualizer(Viz)
+    pargs = [] if model is None else [model]
+
+    data = get_dataset_for_visualizer(Viz)
+    pargs.extend([data.X.train, data.y.train])
+
+    oz = method(*pargs, **kwargs)
+    assert isinstance(oz, Viz)
