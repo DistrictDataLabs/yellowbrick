@@ -42,8 +42,10 @@ def tts_plot(viz, X, y, test_size=0.20, random_state=42, score=True, finalize=Tr
     )
 
     viz.fit(X_train, y_train)
-    if score: viz.score(X_test, y_test)
-    if finalize: viz.finalize()
+    if score:
+        viz.score(X_test, y_test)
+    if finalize:
+        viz.finalize()
 
     return viz
 
@@ -75,9 +77,7 @@ def discrimination_threshold(ax=None):
 
 
 def classification_visualizers(saveto=None):
-    _, (axa, axb, axc) = plt.subplots(
-        nrows=1, ncols=3, figsize=FIGSIZE
-    )
+    _, (axa, axb, axc) = plt.subplots(nrows=1, ncols=3, figsize=FIGSIZE)
 
     class_prediction_error(axa)
     confusion_matrix(axb)
@@ -117,9 +117,7 @@ def alpha_selection(ax=None):
 
 
 def regression_visualizers(saveto=None):
-    _, (axa, axb, axc) = plt.subplots(
-        nrows=1, ncols=3, figsize=FIGSIZE
-    )
+    _, (axa, axb, axc) = plt.subplots(nrows=1, ncols=3, figsize=FIGSIZE)
 
     residuals_plot(axa)
     prediction_error(axb)
@@ -146,7 +144,7 @@ def intercluster_distance(ax=None):
 def k_elbow(ax=None):
     X, y = make_blobs(centers=12, n_samples=1000, n_features=16, shuffle=True)
 
-    viz = KElbowVisualizer(KMeans(), k=(4,12), ax=ax, locate_elbow=False)
+    viz = KElbowVisualizer(KMeans(), k=(4, 12), ax=ax, locate_elbow=False)
     viz.fit(X)
     viz.finalize()
 
@@ -164,9 +162,7 @@ def silhouette(ax=None):
 
 
 def clustering_visualizers(saveto=None):
-    _, (axa, axb, axc) = plt.subplots(
-        nrows=1, ncols=3, figsize=FIGSIZE
-    )
+    _, (axa, axb, axc) = plt.subplots(nrows=1, ncols=3, figsize=FIGSIZE)
 
     intercluster_distance(axa)
     k_elbow(axb)
@@ -185,27 +181,27 @@ def yb_logo(path=YB_LOGO_PATH, ax=None):
     Reads the YB image logo from the specified path and writes it to the axes.
     """
     # Load image
-    with open(path, 'rb') as fobj:
+    with open(path, "rb") as fobj:
         img = plt.imread(fobj, format="png")
 
     if ax is None:
         _, ax = plt.subplots()
 
     # Draw image
-    ax.imshow(img, interpolation='nearest')
+    ax.imshow(img, interpolation="nearest")
 
     # Remove spines, ticks, grid, and other marks
     ax.grid(False)
     ax.set_xticks([])
     ax.set_yticks([])
-    for pos in ['right','top','bottom','left']:
+    for pos in ["right", "top", "bottom", "left"]:
         ax.spines[pos].set_visible(False)
 
     return ax
 
 
 def full_image(saveto=None, center_logo=False):
-    _, axes = plt.subplots(nrows=3, ncols=3, figsize=(21,14))
+    _, axes = plt.subplots(nrows=3, ncols=3, figsize=(21, 14))
 
     # Top row: classifiers
     class_prediction_error(axes[0][0])
@@ -241,30 +237,47 @@ if __name__ == "__main__":
     )
 
     parser.add_argument(
-        "-c", "--classifiers", type=str, metavar="PATH", default="classifiers.png",
+        "-c",
+        "--classifiers",
+        type=str,
+        metavar="PATH",
+        default="classifiers.png",
         help="path to save the classifiers banner image",
     )
 
     parser.add_argument(
-        "-r", "--regressors", type=str, metavar="PATH", default="regressors.png",
+        "-r",
+        "--regressors",
+        type=str,
+        metavar="PATH",
+        default="regressors.png",
         help="path to save the regressors banner image",
     )
 
     parser.add_argument(
-        "-C", "--clusterers", type=str, metavar="PATH", default="clusterers.png",
+        "-C",
+        "--clusterers",
+        type=str,
+        metavar="PATH",
+        default="clusterers.png",
         help="path to save the clusterers banner image",
     )
 
     parser.add_argument(
-        "-b", "--banner", type=str, metavar="PATH", default="",
+        "-b",
+        "--banner",
+        type=str,
+        metavar="PATH",
+        default="",
         help="make full banner image and save to disk",
     )
 
     parser.add_argument(
-        "-y", "--yb", action="store_true",
-        help="replace middle image of banner with logo"
+        "-y",
+        "--yb",
+        action="store_true",
+        help="replace middle image of banner with logo",
     )
-
 
     args = parser.parse_args()
 
@@ -280,4 +293,3 @@ if __name__ == "__main__":
 
     if args.clusterers:
         clustering_visualizers(args.clusterers)
-

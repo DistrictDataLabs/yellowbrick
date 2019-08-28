@@ -7,7 +7,7 @@
 # Copyright (C) 2018 The scikit-yb developers
 # For license information, see LICENSE.txt
 #
-# ID: dispersion.py [] lwgray@gmail.com $
+# ID: dispersion.py [3822dd6] lwgray@gmail.com $
 
 """
 Implementation of lexical dispersion for text visualization

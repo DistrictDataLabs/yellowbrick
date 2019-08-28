@@ -7,7 +7,7 @@
 # Copyright (C) 2018 The scikit-yb developers
 # For license information, see LICENSE.txt
 #
-# ID: test_rfecv.py [] benjamin@bengfort.com $
+# ID: test_rfecv.py [a4599db] rebeccabilbro@users.noreply.github.com $
 
 """
 Tests for the RFECV visualizer

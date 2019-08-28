@@ -7,7 +7,7 @@
 # Copyright (C) 2018 The scikit-yb developers
 # For license information, see LICENSE.txt
 #
-# ID: test_manifold.py [] benjamin@bengfort.com $
+# ID: test_manifold.py [02f8c27] benjamin@bengfort.com $
 
 """
 Tests for the Manifold High Dimensional Visualizations

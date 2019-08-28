@@ -7,7 +7,7 @@
 # Copyright (C) 2018 The scikit-yb developers
 # For license information, see LICENSE.txt
 #
-# ID: rfecv.py [] benjamin@bengfort.com $
+# ID: rfecv.py [a4599db] rebeccabilbro@users.noreply.github.com $
 
 """
 Visualize the number of features selected using recursive feature elimination

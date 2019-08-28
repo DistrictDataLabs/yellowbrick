@@ -7,7 +7,7 @@
 # Copyright (C) 2018 The sckit-yb developers
 # For license information, see LICENSE.txt
 #
-# ID: datasaurus.py [] lwgray@gmail.com $
+# ID: datasaurus.py [e49d780] lwgray@gmail.com $
 
 """
 Plots a Datasaurus Quartet as an illustration of the importance of visualization.

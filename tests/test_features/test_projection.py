@@ -7,7 +7,7 @@
 # Copyright (C) 2019 the scikit-yb developers.
 # For license information, see LICENSE.txt
 #
-# ID: test_projection.py [] naresh-bachwani@noreply.github.com $
+# ID: test_projection.py [21eb9d2] 43993586+naresh-bachwani@users.noreply.github.com $
 
 """
 Test the base ProjectionVisualizer drawing functionality

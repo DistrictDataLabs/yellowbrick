@@ -7,7 +7,7 @@
 # Copyright (C) 2016 The scikit-yb developers
 # For license information, see LICENSE.txt
 #
-# ID: conftest.py [] nbnb76543@gmail.com $
+# ID: conftest.py [2c5f0e9] 43993586+naresh-bachwani@users.noreply.github.com $
 
 """
 Provides fixtures for the feature tests module.

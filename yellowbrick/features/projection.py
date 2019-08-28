@@ -7,7 +7,7 @@
 # Copyright (C) 2019, the scikit-yb developers
 # For license information, see LICENSE.txt
 #
-# ID: projection.py [] naresh-bachwani@noreply.github.com $
+# ID: projection.py [21eb9d2] 43993586+naresh-bachwani@users.noreply.github.com $
 
 """
 Base class for all projection (decomposition) high dimensional data visualizers.

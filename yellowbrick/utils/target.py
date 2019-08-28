@@ -7,7 +7,7 @@
 # Copyright (C) 2018 The sckit-yb developers
 # For license information, see LICENSE.txt
 #
-# ID: target.py [] benjamin@bengfort.com $
+# ID: target.py [899c88a] benjamin@bengfort.com $
 
 """
 Helper functions related to the target variable.

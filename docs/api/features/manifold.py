@@ -81,7 +81,8 @@ def dataset_example(dataset="occupancy", manifold="all", path="images/", **kwarg
 
 
 def select_features_example(
-    algorithm="isomap", path="images/occupancy_select_k_best_isomap_manifold.png",
+    algorithm="isomap",
+    path="images/occupancy_select_k_best_isomap_manifold.png",
     **kwargs
 ):
     _, ax = plt.subplots(figsize=(9, 6))
@@ -133,9 +134,7 @@ class SCurveExample(object):
         _, ax = plt.subplots(figsize=(9, 6))
         path = self._make_path(path, "s_curve_{}_manifold.png".format(algorithm))
 
-        oz = Manifold(
-            ax=ax, manifold=algorithm, colors="nipy_spectral"
-        )
+        oz = Manifold(ax=ax, manifold=algorithm, colors="nipy_spectral")
 
         oz.fit(self.X, self.y)
         oz.poof(outpath=path)
@@ -154,7 +153,6 @@ if __name__ == "__main__":
     dataset_example("concrete", "tsne", path="images/concrete_tsne_manifold.png")
     dataset_example("occupancy", "tsne", path="images/occupancy_tsne_manifold.png")
     dataset_example(
-        "concrete", "isomap", path="images/concrete_isomap_manifold.png",
-        n_neighbors=10
+        "concrete", "isomap", path="images/concrete_isomap_manifold.png", n_neighbors=10
     )
     select_features_example(algorithm="isomap", n_neighbors=10)

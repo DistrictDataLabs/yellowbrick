@@ -7,7 +7,7 @@
 # Copyright (C) 2017 The scikit-yb developers
 # For license information, see LICENSE.txt
 #
-# ID: boundaries.py [] nathan.danielsen@gmail.com $
+# ID: boundaries.py [a60bc41] nathan.danielsen@gmail.com $
 
 import itertools
 import numpy as np

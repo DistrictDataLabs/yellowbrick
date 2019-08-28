@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-# ID: umap.py [] rbilbro@districtdatalabs.com $
+# ID: umap_vis.py [73a44e5] jchealy@gmail.com $
 
 """
 Manually generate figures for the UMAP documentation.
@@ -32,7 +32,7 @@ def umap(docs, target, outpath, **kwargs):
     visualizer.poof(outpath=outpath)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
 
     # Load and vectorize the corpus
     corpus = load_hobbies()

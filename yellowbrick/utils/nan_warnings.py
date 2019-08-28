@@ -7,7 +7,7 @@
 # Copyright (C) 2018 The sckit-yb developers
 # For license information, see LICENSE.txt
 #
-# ID: nan_warnings.py [] Aylr@users.noreply.github.com $
+# ID: nan_warnings.py [d2276d6] Aylr@users.noreply.github.com $
 #
 """
 Small helpers that help find and filter missing data.

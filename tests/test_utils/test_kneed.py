@@ -53,57 +53,82 @@ y_concave_inc = np.array(100 - y_convex_dec)
 def test_concave_increasing():
     """Tests that a correct knee point is detected in
     curve having concave and increasing nature."""
-    kn = KneeLocator(x, y_concave_inc, curve_nature='concave', curve_direction='increasing')
+    kn = KneeLocator(
+        x, y_concave_inc, curve_nature="concave", curve_direction="increasing"
+    )
     assert kn.knee == 2
 
 
 def test_concave_decreasing():
     """Tests that a correct knee point is detected in
     curve having concave and decreasing nature."""
-    kn = KneeLocator(x, y_concave_dec, curve_nature='concave', curve_direction='decreasing')
+    kn = KneeLocator(
+        x, y_concave_dec, curve_nature="concave", curve_direction="decreasing"
+    )
     assert kn.knee == 7
 
 
 def test_convex_increasing():
     """Tests that a correct knee point is detected in
     curve having convex and increasing nature."""
-    kn = KneeLocator(x, y_convex_inc, curve_nature='convex', curve_direction='increasing')
+    kn = KneeLocator(
+        x, y_convex_inc, curve_nature="convex", curve_direction="increasing"
+    )
     assert kn.knee == 7
 
 
 def test_convex_decreasing():
     """Tests that a correct knee point is detected in
     curve having convex and decreasing nature."""
-    kn = KneeLocator(x, y_convex_dec, curve_nature='convex', curve_direction='decreasing')
+    kn = KneeLocator(
+        x, y_convex_dec, curve_nature="convex", curve_direction="decreasing"
+    )
     assert kn.knee == 2
 
 
 def test_concave_increasing_truncated():
     """Tests that a correct knee point is detected in
     curve having truncated concave increasing nature"""
-    kn = KneeLocator(x[:-3] / 10, y_concave_inc[:-3] / 10, curve_nature='concave', curve_direction='increasing')
+    kn = KneeLocator(
+        x[:-3] / 10,
+        y_concave_inc[:-3] / 10,
+        curve_nature="concave",
+        curve_direction="increasing",
+    )
     assert kn.knee == 0.2
 
 
 def test_concave_decreasing_truncated():
     """Tests that a correct knee point is detected in
     curve having truncated concave decreasing nature"""
-    kn = KneeLocator(x[:-3] / 10, y_concave_dec[:-3] / 10,
-                     curve_nature='concave', curve_direction='decreasing')
+    kn = KneeLocator(
+        x[:-3] / 10,
+        y_concave_dec[:-3] / 10,
+        curve_nature="concave",
+        curve_direction="decreasing",
+    )
     assert kn.knee == 0.4
 
 
 def test_convex_increasing_truncated():
     """Tests that a correct knee point is detected in
     curve having truncated convex increasing nature"""
-    kn = KneeLocator(x[:-3] / 10, y_convex_inc[:-3] / 10, curve_nature='convex', curve_direction='increasing')
+    kn = KneeLocator(
+        x[:-3] / 10,
+        y_convex_inc[:-3] / 10,
+        curve_nature="convex",
+        curve_direction="increasing",
+    )
     assert kn.knee == 0.4
 
 
 def test_convex_decreasing_truncated():
     """Tests that a correct knee point is detected in
     curve having truncated convex decreasing nature"""
-    kn = KneeLocator(x[:-3] / 10, y_convex_dec[:-3] / 10,
-                     curve_nature='convex', curve_direction='decreasing')
+    kn = KneeLocator(
+        x[:-3] / 10,
+        y_convex_dec[:-3] / 10,
+        curve_nature="convex",
+        curve_direction="decreasing",
+    )
     assert kn.knee == 0.2
-

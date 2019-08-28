@@ -11,12 +11,13 @@ from yellowbrick.exceptions import NotFitted
 ## NotFitted Exception Tests
 ##########################################################################
 
+
 class TestExceptions(object):
     """
     Test exception specific code and utilities
     """
 
-    @pytest.mark.parametrize("method", ['transform', None])
+    @pytest.mark.parametrize("method", ["transform", None])
     def test_not_fitted_from_estimator(self, method):
         """
         Ensure not fitted can be raised directly from an estimator

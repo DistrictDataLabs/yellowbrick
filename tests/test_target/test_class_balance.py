@@ -7,7 +7,7 @@
 # Copyright (C) 2018 The scikit-yb developers
 # For license information, see LICENSE.txt
 #
-# ID: test_class_balance.py [] benjamin@bengfort.com $
+# ID: test_class_balance.py [d742c57] benjamin@bengfort.com $
 
 """
 Tests for the ClassBalance visualizer

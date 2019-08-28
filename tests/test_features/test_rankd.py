@@ -7,7 +7,7 @@
 # Copyright (C) 2016 The scikit-yb developers
 # For license information, see LICENSE.txt
 #
-# ID: test_rankd.py [01d5996] benjamin@bengfort.com $
+# ID: test_rankd.py [7b4350a] nathan.danielsen@gmail.com $
 
 """
 Test the Rankd feature analysis visualizers

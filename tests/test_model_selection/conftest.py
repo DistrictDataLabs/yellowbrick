@@ -4,7 +4,7 @@
 # Author:  Benjamin Bengfort <benjamin@bengfort.com>
 # Created: Fri Mar 30 14:35:39 2018 -0400
 #
-# ID: conftest.py [] benjamin@bengfort.com $
+# ID: conftest.py [c5355ee] benjamin@bengfort.com $
 
 """
 Provides fixtures for the classification tests module.
