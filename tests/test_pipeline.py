@@ -4,7 +4,7 @@
 # Author:   Benjamin Bengfort <bbengfort@districtdatalabs.com>
 # Created:  Fri Oct 07 22:10:50 2016 -0400
 #
-# Copyright (C) 2016 District Data Labs
+# Copyright (C) 2016 The scikit-yb developers
 # For license information, see LICENSE.txt
 #
 # ID: test_pipeline.py [1efae1f] benjamin@bengfort.com $

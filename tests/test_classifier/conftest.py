@@ -7,7 +7,7 @@
 # Copyright (C) 2018 The scikit-yb developers
 # For license information, see LICENSE.txt
 #
-# ID: conftest.py [] benjamin@bengfort.com $
+# ID: conftest.py [1e04216] benjamin@bengfort.com $
 
 """
 Provides fixtures for the classification tests module.

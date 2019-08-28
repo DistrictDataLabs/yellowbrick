@@ -4,7 +4,7 @@
 # Author:   ZJ Poh <poh.zijie@gmail.com>
 # Created:  Tue Jul 17 21:11:11 2018 -0700
 #
-# Copyright (C) 2017 District Data Labs
+# Copyright (C) 2017 The scikit-yb developers
 # For license information, see LICENSE.txt
 """
 Tests for the stand alone timer functions in Yellowbrick utils.

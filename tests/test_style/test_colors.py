@@ -4,7 +4,7 @@
 # Author:   Benjamin Bengfort <bbengfort@districtdatalabs.com>
 # Created:  Thu Oct 06 09:30:49 2016 -0400
 #
-# Copyright (C) 2016 District Data Labs
+# Copyright (C) 2016 The scikit-yb developers
 # For license information, see LICENSE.txt
 #
 # ID: test_colors.py [c6aff34] benjamin@bengfort.com $

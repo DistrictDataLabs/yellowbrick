@@ -7,7 +7,7 @@
 # Copyright (C) 2017 The scikit-yb developers
 # For license information, see LICENSE.txt
 #
-# ID: utils.py [c6aff34] humphrey.neal@gmail.com $
+# ID: utils.py [45268fc] humphrey.neal@gmail.com $
 
 """
 Utility functions for styles

@@ -7,7 +7,7 @@
 # Copyright (C) 2018 The scikit-yb developers
 # For license information, see LICENSE.txt
 #
-# ID: __init__.py [] pbs929@users.noreply.github.com $
+# ID: __init__.py [03724ed] pbs929@users.noreply.github.com $
 
 """
 Visualizers for the results of GridSearchCV.

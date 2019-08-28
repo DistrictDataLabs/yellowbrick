@@ -6,7 +6,7 @@
 #
 # For license information, see LICENSE.txt
 #
-# ID: test_download.py [] benjamin@bengfort.com $
+# ID: test_download.py [57aab02] ndanielsen@users.noreply.github.com $
 
 """
 Tests the download from S3 to ensure data is accessible.

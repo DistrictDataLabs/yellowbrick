@@ -4,7 +4,7 @@
 # Author:  Benjamin Bengfort <bbengfort@districtdatalabs.com>
 # Created: Wed Mar 21 17:51:15 2018 -0400
 #
-# ID: random.py [] benjamin@bengfort.com $
+# ID: rand.py [cc69b3c] davidwaterman@gmail.com $
 
 """
 A visualizer that draws a random scatter plot for testing.

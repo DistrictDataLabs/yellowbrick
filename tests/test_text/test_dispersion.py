@@ -7,7 +7,7 @@
 # Copyright (C) 2018 The scikit-yb developers
 # For license information, see LICENSE.txt
 #
-# ID: test_dispersion.py [] lwgray@gmail.com $
+# ID: test_dispersion.py [25f1b9a] lwgray@gmail.com $
 
 """
 Tests for the dispersion plot text visualization

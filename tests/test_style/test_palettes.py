@@ -4,7 +4,7 @@
 # Author:   Benjamin Bengfort <bbengfort@districtdatalabs.com>
 # Created:  Tue Oct 04 16:21:58 2016 -0400
 #
-# Copyright (C) 2016 District Data Labs
+# Copyright (C) 2016 The scikit-yb developers
 # For license information, see LICENSE.txt
 #
 # ID: test_palettes.py [c6aff34] benjamin@bengfort.com $

@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-# ID: umap.py [] rbilbro@districtdatalabs.com $
+# ID: umap_vis.py [73a44e5] jchealy@gmail.com $
 
 """
 Manually generate figures for the UMAP documentation.

@@ -7,7 +7,7 @@
 # Copyright (C) 2018 The scikit-yb developers
 # For license information, see LICENSE.txt
 #
-# ID: dispersion.py [] nathan.danielsen@gmail.com.com $
+# ID: dispersion.py [1443e16] ndanielsen@users.noreply.github.com $
 
 """
 Dispersion visualizer for locations of missing values by column against index position.

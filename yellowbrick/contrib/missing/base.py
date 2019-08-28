@@ -7,7 +7,7 @@
 # Copyright (C) 2018 The scikit-yb developers
 # For license information, see LICENSE.txt
 #
-# ID: base.py [] nathan.danielsen@gmail.com.com $
+# ID: base.py [1443e16] ndanielsen@users.noreply.github.com $
 
 """
 Base classes for missing values visualizers.

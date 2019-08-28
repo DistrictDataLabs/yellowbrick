@@ -4,7 +4,7 @@
 # Author:   Benjamin Bengfort <bbengfort@districtdatalabs.com>
 # Created:  Mon May 22 11:18:06 2017 -0700
 #
-# Copyright (C) 2017 District Data Labs
+# Copyright (C) 2017 The scikit-yb developers
 # For license information, see LICENSE.txt
 #
 # ID: checks.py [4131cb1] benjamin@bengfort.com $

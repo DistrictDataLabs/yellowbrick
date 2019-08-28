@@ -7,7 +7,7 @@
 # Copyright (C) 2018 The scikit-yb developers
 # For license information, see LICENSE.txt
 #
-# ID: test_prcurve.py [] benjamin@bengfort.com $
+# ID: test_prcurve.py [48889c4] benjamin@bengfort.com $
 
 """
 Tests for the Precision-Recall curves visualizer

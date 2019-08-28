@@ -4,7 +4,7 @@
 # Author:   Rebecca Bilbro <rbilbro@districtdatalabs.com>
 # Created:  Wed May 18 10:48:46 2016 -0400
 #
-# Copyright (C) 2016 District Data Labs
+# Copyright (C) 2016 The scikit-yb developers
 # For license information, see LICENSE.txt
 #
 # ID: __init__.py [0c5ba04] benjamin@bengfort.com $

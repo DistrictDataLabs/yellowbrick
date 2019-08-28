@@ -4,7 +4,7 @@
 # Author:   Benjamin Bengfort <bbengfort@districtdatalabs.com>
 # Created:  Thu May 18 15:14:34 2017 -0400
 #
-# Copyright (C) 2017 District Data Labs
+# Copyright (C) 2017 The scikit-yb developers
 # For license information, see LICENSE.txt
 #
 # ID: test_decorators.py [79cd8cf] benjamin@bengfort.com $

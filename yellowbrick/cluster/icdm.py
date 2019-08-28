@@ -7,7 +7,7 @@
 # Copyright (C) 2018 The scikit-yb developers
 # For license information, see LICENSE.txt
 #
-# ID: icdm.py [] benjamin@bengfort.com $
+# ID: icdm.py [2f23976] benjamin@bengfort.com $
 
 """
 Implements Intercluster Distance Map visualizations.

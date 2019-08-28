@@ -4,7 +4,7 @@
 # Author:  Ian Ozsvald
 # Created: Wed Jan 10 12:47:00 2018 -0500
 #
-# ID: base.py [] benjamin@bengfort.com $
+# ID: base.py [d6ebc39] benjamin@bengfort.com $
 
 """
 A basic wrapper for statsmodels that emulates a scikit-learn estimator.

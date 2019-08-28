@@ -4,7 +4,7 @@
 # Author:  Benjamin Bengfort <benjamin@bengfort.com>
 # Created: Sun Aug 19 11:21:04 2018 -0400
 #
-# ID: test_draw.py [] benjamin@bengfort.com $
+# ID: test_draw.py [dd915ad] benjamin@bengfort.com $
 
 """
 Tests for the high-level drawing utility functions

@@ -4,10 +4,10 @@
 # Author:  Benjamin Bengfort <benjamin@bengfort.com>
 # Created: Fri Mar 02 21:51:56 2018 -0500
 #
-# Copyright (C) 2016 District Data Labs
+# Copyright (C) 2016 The scikit-yb developers
 # For license information, see LICENSE.txt
 #
-# ID: images.py [] benjamin@bengfort.com $
+# ID: images.py [ab37b18] benjamin@bengfort.com $
 
 """
 Helper utility to manage baseline images for image comparisons. Usage:

@@ -7,7 +7,7 @@
 # Copyright (C) 2017 The scikit-yb developers
 # For license information, see LICENSE.txt
 #
-# ID: postag.py [] bilbro@gmail.com $
+# ID: postag.py [849f5a8] rebecca.bilbro@bytecubed.com $
 
 """
 Implementation of part-of-speech visualization for text,

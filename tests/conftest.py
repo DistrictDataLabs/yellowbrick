@@ -1,13 +1,13 @@
 # tests.conftest
-# Global definitions for Yellowbrick PyTest
+# Global definitions for Yellowbrick pytest
 #
 # Author:  Benjamin Bengfort <bbengfort@districtdatalabs.com>
 # Created: Fri Mar 02 11:53:55 2018 -0500
 #
-# Copyright (C) 2016 District Data Labs
+# Copyright (C) 2016 The scikit-yb developers
 # For license information, see LICENSE.txt
 #
-# ID: conftest.py [] benjamin@bengfort.com $
+# ID: conftest.py [957cd53] benjamin@bengfort.com $
 
 """
 Global definitions for Yellowbrick PyTest

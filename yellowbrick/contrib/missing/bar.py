@@ -7,7 +7,7 @@
 # Copyright (C) 2018 The scikit-yb developers
 # For license information, see LICENSE.txt
 #
-# ID: bar.py [] nathan.danielsen@gmail.com.com $
+# ID: bar.py [1443e16] ndanielsen@users.noreply.github.com $
 
 """
 Bar visualizer of missing values by column.

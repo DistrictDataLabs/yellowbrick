@@ -7,7 +7,7 @@
 # Copyright (C) 2016-2019 The scikit-yb developers
 # For license information, see LICENSE.txt
 #
-# ID: conf.py [] benjamin@bengfort.com $
+# ID: conf.py [6d697b7] lalorenz6@gmail.com $
 
 """
 Yellowbrick documentation build config file, created by sphinx-quickstart.

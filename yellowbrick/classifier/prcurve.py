@@ -7,7 +7,7 @@
 # Copyright (C) 2018 The scikit-yb developers
 # For license information, see LICENSE.txt
 #
-# ID: prcurve.py [] benjamin@bengfort.com $
+# ID: prcurve.py [48889c4] benjamin@bengfort.com $
 
 """
 Implements Precision-Recall curves for classification models.

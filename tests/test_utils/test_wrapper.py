@@ -4,7 +4,7 @@
 # Author:   Benjamin Bengfort <bbengfort@districtdatalabs.com>
 # Created:  Mon May 22 09:25:52 2017 -0700
 #
-# Copyright (C) 2017 District Data Labs
+# Copyright (C) 2017 The scikit-yb developers
 # For license information, see LICENSE.txt
 #
 # ID: test_wrapper.py [b2ecd50] benjamin@bengfort.com $

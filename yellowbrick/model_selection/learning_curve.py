@@ -7,7 +7,7 @@
 # Copyright (C) 2017 The scikit-yb developers
 # For license information, see LICENSE.txt
 #
-# ID: learning_curve.py [] jason.s.keung@gmail.com $
+# ID: learning_curve.py [c5355ee] benjamin@bengfort.com $
 
 """
 Implements a learning curve visualization for model selection.

@@ -7,7 +7,7 @@
 # Copyright (C) 2019 The scikit-yb developers
 # For license information, see LICENSE.txt
 #
-# ID: test_influence.py [] benjamin@bengfort.com $
+# ID: test_influence.py [fe14cfd] benjamin@bengfort.com $
 
 """
 Test the regressor influence visualizers.

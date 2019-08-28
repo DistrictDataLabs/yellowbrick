@@ -7,7 +7,7 @@
 # Copyright (C) 2018 The scikit-yb developers
 # For license information, see LICENSE.txt
 #
-# ID: pcolor.py [] pbs929@users.noreply.github.com $
+# ID: pcolor.py [03724ed] pbs929@users.noreply.github.com $
 
 """
 Colorplot visualizer for gridsearch results.

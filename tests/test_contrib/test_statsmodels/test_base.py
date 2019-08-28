@@ -4,7 +4,7 @@
 # Author:  Ian Ozsvald
 # Created: Wed Jan 10 12:47:00 2018 -0500
 #
-# ID: test_base.py [] benjamin@bengfort.com $
+# ID: test_base.py [d6ebc39] benjamin@bengfort.com $
 
 """
 Tests for the statsmodels estimator wrapper.
