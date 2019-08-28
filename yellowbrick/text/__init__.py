@@ -17,8 +17,9 @@ Visualizers for text feature analysis and diagnostics.
 ## Imports
 ##########################################################################
 
+from .base import TextVisualizer
 from .tsne import TSNEVisualizer, tsne
 from .umap_vis import UMAPVisualizer, umap
-from .freqdist import FreqDistVisualizer, freqdist
+from .freqdist import FrequencyVisualizer, freqdist, FreqDistVisualizer
 from .postag import PosTagVisualizer
 from .dispersion import DispersionPlot, dispersion

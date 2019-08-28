@@ -17,13 +17,18 @@ Visualizers for feature analysis and diagnostics.
 ## Imports
 ##########################################################################
 
+## Hoist base classes into the features namespace
+from .base import FeatureVisualizer, MultiFeatureVisualizer, DataVisualizer
+from .projection import ProjectionVisualizer
+
 ## Hoist visualizers into the features namespace
 from .pcoords import ParallelCoordinates, parallel_coordinates
 from .radviz import RadialVisualizer, RadViz, radviz
-from .rankd import Rank1D, rank1d, Rank2D, rank2d
+from .rankd import RankDBase, Rank1D, rank1d, Rank2D, rank2d
 from .jointplot import JointPlot, JointPlotVisualizer, joint_plot
 from .pca import PCA, PCADecomposition, pca_decomposition
 from .manifold import Manifold, manifold_embedding
+from .decomposition import ExplainedVariance, explained_variance_visualizer
 
 # Alias the TargetType defined in yellowbrick.utils.target
 from yellowbrick.utils.target import TargetType
