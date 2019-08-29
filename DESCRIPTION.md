@@ -1,6 +1,6 @@
 # Yellowbrick
 
-[![Visualizers](docs/images/readme/banner.png)](https://www.scikit-yb.org/)
+[![Visualizers](https://github.com/DistrictDataLabs/yellowbrick/raw/develop/docs/images/readme/banner.png)](https://www.scikit-yb.org/)
 
 Yellowbrick is a suite of visual analysis and diagnostic tools designed to facilitate machine learning with scikit-learn. The library implements a new core API object, the `Visualizer` that is an scikit-learn estimator &mdash; an object that learns from data. Similar to transformers or models, visualizers learn from data by creating a visual representation of the model selection workflow.
 
@@ -16,7 +16,7 @@ Visualizers are estimators &mdash; objects that learn from data &mdash; whose pr
 
 - **Classification Report**: a visual classification report that displays a model's precision, recall, and F1 per-class scores as a heatmap
 - **Confusion Matrix**: a heatmap view of the confusion matrix of pairs of classes in multi-class classification
-- **Discrimination Threshold**: a visualization of the precision, recall, F1-score, and queue rate with respect to the discrimination threshold of a binary classifier 
+- **Discrimination Threshold**: a visualization of the precision, recall, F1-score, and queue rate with respect to the discrimination threshold of a binary classifier
 - **Precision-Recall Curve**: plot the precision vs recall scores for different probability thresholds
 - **ROCAUC**: graph the receiver operator characteristic (ROC) and area under the curve (AUC)
 
@@ -66,5 +66,5 @@ Visualizers are estimators &mdash; objects that learn from data &mdash; whose pr
 ... and more! Yellowbrick is adding new visualizers all the time so be sure to check out our [examples gallary](https://www.scikit-yb.org/en/latest/api/index.html) &mdash; or even the [develop](https://github.com/districtdatalabs/yellowbrick/tree/develop) branch &mdash; and feel free to contribute your ideas for new Visualizers!
 
 ## Affiliations
-[![District Data Labs](docs/images/readme/affiliates_ddl.png)](https://www.districtdatalabs.com/) [![NumFOCUS Affiliated Project](docs/images/readme/affiliates_numfocus.png)](https://numfocus.org/)
+[![District Data Labs](https://github.com/DistrictDataLabs/yellowbrick/raw/develop/docs/images/readme/affiliates_ddl.png)](https://www.districtdatalabs.com/) [![NumFOCUS Affiliated Project](https://github.com/DistrictDataLabs/yellowbrick/raw/develop/docs/images/readme/affiliates_numfocus.png)](https://numfocus.org/)
 
