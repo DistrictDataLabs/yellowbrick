@@ -7,7 +7,7 @@
 # Copyright (C) 2018 The scikit-yb developers
 # For license information, see LICENSE.txt
 #
-# ID: test_icdm.py [] benjamin@bengfort.com $
+# ID: test_icdm.py [2f23976] benjamin@bengfort.com $
 
 """
 Tests for the intercluster distance map visualizer.

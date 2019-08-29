@@ -7,7 +7,7 @@
 # Copyright (C) 2018 The scikit-yb developers
 # For license information, see LICENSE.txt
 #
-# ID: signature.py [] benjamin@bengfort.com $
+# ID: signature.py [7082742] benjamin@bengfort.com $
 
 """
 Performs SHA 256 hashing of a file for dataset archive verification.

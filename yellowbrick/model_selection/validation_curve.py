@@ -7,7 +7,7 @@
 # Copyright (C) 2018 The scikit-yb developers
 # For license information, see LICENSE.txt
 #
-# ID: validation_curve.py [] benjamin@bengfort.com $
+# ID: validation_curve.py [c5355ee] benjamin@bengfort.com $
 
 """
 Implements a visual validation curve for a hyperparameter.

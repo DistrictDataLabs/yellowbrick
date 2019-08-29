@@ -161,6 +161,7 @@ class TestBaseClasses(VisualTestCase):
             viz = CustomVisualizer()
             assert viz.poof() is not None
 
+
 ##########################################################################
 ## ScoreVisualizer Cases
 ##########################################################################
@@ -170,6 +171,7 @@ class MockVisualizer(ScoreVisualizer):
     """
     Mock for a downstream score visualizer
     """
+
     def fit(self, X, y):
         super(MockVisualizer, self).fit(X, y)
 
@@ -178,6 +180,7 @@ class TestScoreVisualizer(VisualTestCase):
     """
     Tests for the ScoreVisualizer
     """
+
     def test_with_fitted(self):
         """
         Test that visualizer properly handles an already-fitted model

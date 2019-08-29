@@ -4,7 +4,7 @@
 # Author:  Benjamin Bengfort <benjamin@bengfort.com>
 # Created: Fri Mar 30 10:36:12 2018 -0400
 #
-# ID: __init__.py [] benjamin@bengfort.com $
+# ID: __init__.py [c5355ee] benjamin@bengfort.com $
 
 """
 Visualizers that wrap the model selection libraries of Scikit-Learn

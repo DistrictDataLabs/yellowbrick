@@ -4,8 +4,7 @@
 # core support or still in development.
 #
 #
-# ID: __init__.py [] bilbro@gmail.com $
-
+# ID: __init__.py [a60bc41] nathan.danielsen@gmail.com $
 
 
 from .scatter import ScatterViz, ScatterVisualizer, scatterviz

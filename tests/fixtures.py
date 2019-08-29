@@ -7,7 +7,7 @@
 # Copyright (C) 2019 The scikit-yb developers.
 # For license information, see LICENSE.txt
 #
-# ID: fixtures.py [] benjamin@bengfort.com $
+# ID: fixtures.py [eb9f8cc] 8103276+zjpoh@users.noreply.github.com $
 
 """
 Helpers for pytest fixtures and data related testing.
@@ -21,5 +21,5 @@ from collections import namedtuple
 
 
 ## Used for wrapping an dataset into a single variable.
-Dataset = namedtuple('Dataset', 'X,y')
-Split   = namedtuple('Split', 'train,test')
+Dataset = namedtuple("Dataset", "X,y")
+Split = namedtuple("Split", "train,test")

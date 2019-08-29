@@ -7,7 +7,7 @@
 # Copyright (C) 2017 The sckit-yb developers
 # For license information, see LICENSE.txt
 #
-# ID: timer.py [] poh.zijie@gmail.com $
+# ID: timer.py [75b0f6a] 8103276+zjpoh@users.noreply.github.com $
 """
 Timer utilities
 """

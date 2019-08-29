@@ -4,10 +4,10 @@
 # Author:   Author:   Nathan Danielsen <nathan.danielsen@gmail.com>
 # Created:  Sun Mar 19 13:01:29 2017 -0400
 #
-# Copyright (C) 2017 District Data Labs
+# Copyright (C) 2017 The scikit-yb developers
 # For license information, see LICENSE.txt
 #
-# ID: test_boundaries.py [] nathan.danielsen@gmail.com $
+# ID: test_boundaries.py [a60bc41] nathan.danielsen@gmail.com $
 """
 Ensure that the Decision Boundary visualizations work.
 """

@@ -31,8 +31,8 @@ DATA = os.path.join(
 )
 
 # Quick reference dataset objects
-Dataset = namedtuple('Dataset', 'X,y')
-Split = namedtuple('Split', 'train,test')
+Dataset = namedtuple("Dataset", "X,y")
+Split = namedtuple("Split", "train,test")
 
 
 def _make_dataset(X, y, split=False):
@@ -58,8 +58,8 @@ def load_concrete(split=False):
     path = os.path.join(DATA, "concrete", "concrete.csv")
     data = pd.read_csv(path)
 
-    X = data[['cement', 'slag', 'ash', 'water', 'splast', 'coarse', 'fine', 'age']]
-    y = data['strength']
+    X = data[["cement", "slag", "ash", "water", "splast", "coarse", "fine", "age"]]
+    y = data["strength"]
     return _make_dataset(X, y, split)
 
 
@@ -81,7 +81,7 @@ def feature_analysis(fname="feature_analysis.png"):
     """
 
     # Create side-by-side axes grid
-    _, axes = plt.subplots(ncols=2, figsize=(18,6))
+    _, axes = plt.subplots(ncols=2, figsize=(18, 6))
 
     # Draw RadViz on the left
     data = load_occupancy(split=False)
@@ -130,7 +130,7 @@ def regression(fname="regression.png"):
 def classification(fname="classification.png"):
 
     # Create side-by-side axes grid
-    _, axes = plt.subplots(ncols=2, figsize=(18,6))
+    _, axes = plt.subplots(ncols=2, figsize=(18, 6))
 
     # Add ClassificationReport to the reft
     data = load_spam(split=True)
@@ -153,11 +153,11 @@ def classification(fname="classification.png"):
 
 def clustering(fname="clustering.png"):
     # Create side-by-side axes grid
-    _, axes = plt.subplots(ncols=2, figsize=(18,6))
+    _, axes = plt.subplots(ncols=2, figsize=(18, 6))
     X, y = make_blobs(centers=7)
 
     # Add K-Elbow to the left
-    oz = KElbowVisualizer(MiniBatchKMeans(), k=(3,12), ax=axes[0])
+    oz = KElbowVisualizer(MiniBatchKMeans(), k=(3, 12), ax=axes[0])
     oz.fit(X, y)
     oz.finalize()
 
@@ -171,9 +171,10 @@ def clustering(fname="clustering.png"):
     plt.tight_layout()
     plt.savefig(path)
 
+
 def hyperparameter_tuning(fname="hyperparameter_tuning.png"):
     # Create side-by-side axes grid
-    _, axes = plt.subplots(ncols=2, figsize=(18,6))
+    _, axes = plt.subplots(ncols=2, figsize=(18, 6))
 
     # Load the concrete dataset
     data = load_concrete(split=False)
@@ -187,7 +188,7 @@ def hyperparameter_tuning(fname="hyperparameter_tuning.png"):
     oz.finalize()
 
     # Add LearningCurve to the right
-    oz = LearningCurve(RandomForestRegressor(), scoring='r2', ax=axes[1])
+    oz = LearningCurve(RandomForestRegressor(), scoring="r2", ax=axes[1])
     oz.fit(data.X, data.y)
     oz.finalize()
 
@@ -197,8 +198,7 @@ def hyperparameter_tuning(fname="hyperparameter_tuning.png"):
     plt.savefig(path)
 
 
-
-if __name__ == '__main__':
+if __name__ == "__main__":
     parser = argparse.ArgumentParser(
         description="generate visualizations for JOSS paper"
     )

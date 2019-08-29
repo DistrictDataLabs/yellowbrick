@@ -4,7 +4,7 @@
 # Author:   Benjamin Bengfort <bbengfort@districtdatalabs.com>
 # Created:  Thu May 18 15:14:34 2017 -0400
 #
-# Copyright (C) 2017 District Data Labs
+# Copyright (C) 2017 The scikit-yb developers
 # For license information, see LICENSE.txt
 #
 # ID: test_decorators.py [79cd8cf] benjamin@bengfort.com $
@@ -24,6 +24,7 @@ from yellowbrick.utils.decorators import *
 ## Decorator Tests
 ##########################################################################
 
+
 class TestDecorators(object):
     """
     Tests for the decorator utilities.
@@ -35,7 +36,6 @@ class TestDecorators(object):
         """
 
         class Visualizer(object):
-
             @memoized
             def foo(self):
                 return "bar"
@@ -51,13 +51,11 @@ class TestDecorators(object):
         """
 
         class Visualizer(object):
-
             def __init__(self):
                 """
                 This is the correct docstring.
                 """
                 pass
-
 
         def undecorated(*args, **kwargs):
             """

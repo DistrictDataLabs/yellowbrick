@@ -7,7 +7,7 @@
 # Copyright (C) 2019 The scikit-yb developers
 # For license information, see LICENSE.txt
 #
-# ID: influence.py [] benjamin@bengfort.com $
+# ID: influence.py [fe14cfd] benjamin@bengfort.com $
 
 """
 Visualize the influence and leverage of individual instances on a regression model.

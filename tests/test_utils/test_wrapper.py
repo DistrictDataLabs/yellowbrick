@@ -4,7 +4,7 @@
 # Author:   Benjamin Bengfort <bbengfort@districtdatalabs.com>
 # Created:  Mon May 22 09:25:52 2017 -0700
 #
-# Copyright (C) 2017 District Data Labs
+# Copyright (C) 2017 The scikit-yb developers
 # For license information, see LICENSE.txt
 #
 # ID: test_wrapper.py [b2ecd50] benjamin@bengfort.com $
@@ -29,8 +29,8 @@ from sklearn.naive_bayes import GaussianNB
 ## Fixture
 ##########################################################################
 
-class MockVisualizer(Visualizer):
 
+class MockVisualizer(Visualizer):
     def __init__(self, ax=None, **kwargs):
         self.ax = ax
         self.fit = mock.MagicMock()
@@ -48,7 +48,6 @@ class MockVisualizer(Visualizer):
 
 
 class WrappedEstimator(MockVisualizer, Wrapper):
-
     def __init__(self, **kwargs):
         self.estimator = mock.MagicMock(spec=MultinomialNB())
 
@@ -59,12 +58,13 @@ class WrappedEstimator(MockVisualizer, Wrapper):
         return True
 
     def foo(self, a, b):
-        return a+b
+        return a + b
 
 
 ##########################################################################
 ## Wrapper Test Case
 ##########################################################################
+
 
 class TestWrapper(object):
     """
@@ -79,7 +79,7 @@ class TestWrapper(object):
 
         # Assert that all the wrapper methods are called
         assert obj.draw()
-        assert obj.foo(2,2) == 4
+        assert obj.foo(2, 2) == 4
         assert obj.estimator is not None
 
     def test_super_methods(self):

@@ -7,7 +7,7 @@
 # Copyright (C) 2018 The scikit-yb developers
 # For license information, see LICENSE.txt
 #
-# ID: test_feature_correlation.py [] poh.zijie@gmail.com $
+# ID: test_feature_correlation.py [33aec16] 8103276+zjpoh@users.noreply.github.com $
 
 """
 Test the feature correlation to dependent variable visualizer.

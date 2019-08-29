@@ -7,7 +7,7 @@
 # Copyright (C) 2016 The scikit-yb developers
 # For license information, see LICENSE.txt
 #
-# ID: test_scatter.py [fc94ec4] ndanielsen@users.noreply.github.com $
+# ID: test_scatter.py [a89633e] benjamin@bengfort.com $
 """
 Test the ScatterViz feature analysis visualizers
 """

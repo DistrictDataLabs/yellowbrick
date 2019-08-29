@@ -5,7 +5,7 @@
 # Author:   Benjamin Bengfort <bbengfort@districtdatalabs.com>
 # Created:  Thu Oct 06 08:20:33 2016 -0400
 #
-# Copyright (C) 2016 District Data Labs
+# Copyright (C) 2016 The scikit-yb developers
 # For license information, see LICENSE.txt
 #
 # ID: test_rcmod.py [c6aff34] benjamin@bengfort.com $
@@ -31,15 +31,16 @@ from tests.base import VisualTestCase
 ## Parameter Tests
 ##########################################################################
 
+
 class RCParamTester(VisualTestCase):
     """
     Base class for asserting parameters have been correctly changed.
     """
 
     excluded_params = {
-        "backend",               # This cannot be changed by manipulating rc
+        "backend",  # This cannot be changed by manipulating rc
         "svg.embed_char_paths",  # This param causes test issues and is deprecated
-        "font.family",           # breaks the visualtest case
+        "font.family",  # breaks the visualtest case
     }
 
     def flatten_list(self, orig_list):
@@ -63,8 +64,8 @@ class RCParamTester(VisualTestCase):
 ## Parameter Tests
 ##########################################################################
 
-class TestAxesStyle(RCParamTester):
 
+class TestAxesStyle(RCParamTester):
     def test_default_return(self):
         """
         Test that the axes style returns the default params
@@ -104,6 +105,7 @@ class TestAxesStyle(RCParamTester):
         @yb_rcmod._axes_style("whitegrid")
         def func():
             self.assert_rc_params(context_params)
+
         func()
         self.assert_rc_params(orig_params)
 
@@ -139,7 +141,6 @@ class TestAxesStyle(RCParamTester):
 
 
 class TestPlottingContext(RCParamTester):
-
     def test_default_return(self):
         """
         Test the context returns the default
@@ -155,8 +156,14 @@ class TestPlottingContext(RCParamTester):
         notebook_ref = yb_rcmod._plotting_context("notebook")
         notebook_big = yb_rcmod._plotting_context("notebook", 2)
 
-        font_keys = ["axes.labelsize", "axes.titlesize", "legend.fontsize",
-                     "xtick.labelsize", "ytick.labelsize", "font.size"]
+        font_keys = [
+            "axes.labelsize",
+            "axes.titlesize",
+            "legend.fontsize",
+            "xtick.labelsize",
+            "ytick.labelsize",
+            "font.size",
+        ]
 
         for k in font_keys:
             assert notebook_ref[k] * 2 == notebook_big[k]
@@ -193,6 +200,6 @@ class TestPlottingContext(RCParamTester):
         @yb_rcmod._plotting_context("paper")
         def func():
             self.assert_rc_params(context_params)
+
         func()
         self.assert_rc_params(orig_params)
-

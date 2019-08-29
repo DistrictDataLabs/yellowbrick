@@ -87,20 +87,8 @@ class TestHelpers(object):
 
     @pytest.mark.parametrize(
         "regressor",
-        [
-            SVR,
-            Ridge,
-            Lasso,
-            RidgeCV,
-            LassoCV,
-        ],
-        ids=[
-            "SVR",
-            "Ridge",
-            "Lasso",
-            "RidgeCV",
-            "LassoCV",
-        ],
+        [SVR, Ridge, Lasso, RidgeCV, LassoCV],
+        ids=["SVR", "Ridge", "Lasso", "RidgeCV", "LassoCV"],
     )
     def test_is_fitted_regressors(self, regressor):
         """
@@ -184,6 +172,7 @@ class TestHelpers(object):
         assert check_fitted(model, is_fitted_by="auto") is True
         assert check_fitted(model, is_fitted_by=True) is True
         assert check_fitted(model, is_fitted_by=False) is False
+
 
 ##########################################################################
 ## Numeric Function Tests
