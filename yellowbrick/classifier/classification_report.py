@@ -1,14 +1,14 @@
 # yellowbrick.classifier.classification_report
 # Visual classification report for classifier scoring.
 #
-# Author:   Rebecca Bilbro <rbilbro@districtdatalabs.com>
-# Author:   Benjamin Bengfort <bbengfort@districtdatalabs.com>
+# Author:   Rebecca Bilbro
+# Author:   Benjamin Bengfort
 # Author:   Neal Humphrey
 # Author:   Allyssa Riley
 # Author:   Larry Gray
-# Created:  Wed May 18 12:39:40 2016 -0400
+# Created:  Wed May 3 18:15:42 2017 -0400
 #
-# Copyright (C) 2017 District Data Labs
+# Copyright (C) 2017 The scikit-yb developers
 # For license information, see LICENSE.txt
 #
 # ID: classification_report.py [5388065] neal@nhumphrey.com $
@@ -21,26 +21,25 @@ Visual classification report for classifier scoring.
 ## Imports
 ##########################################################################
 
-from __future__ import division
 import numpy as np
 import matplotlib.pyplot as plt
 
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import precision_recall_fscore_support
 
-from ..style import find_text_color
-from ..style.palettes import color_sequence
-from .base import ClassificationScoreVisualizer
-from ..exceptions import YellowbrickValueError
+from yellowbrick.style import find_text_color
+from yellowbrick.style.palettes import color_sequence
+from yellowbrick.exceptions import YellowbrickValueError
+from yellowbrick.classifier.base import ClassificationScoreVisualizer
 
 ##########################################################################
 ## Classification Report
 ##########################################################################
 
-CMAP_UNDERCOLOR = 'w'
-CMAP_OVERCOLOR = '#2a7d4f'
-SCORES_KEYS = ('precision', 'recall', 'f1', 'support')
-PERCENT = 'percent'
+PERCENT = "percent"
+CMAP_UNDERCOLOR = "w"
+CMAP_OVERCOLOR = "#2a7d4f"
+SCORES_KEYS = ("precision", "recall", "f1", "support")
 
 
 class ClassificationReport(ClassificationScoreVisualizer):
@@ -50,15 +49,23 @@ class ClassificationReport(ClassificationScoreVisualizer):
 
     Parameters
     ----------
-    ax : The axis to plot the figure on.
+    model : estimator
+        A scikit-learn estimator that should be a classifier. If the model is
+        not a classifier, an exception is raised. If the internal model is not
+        fitted, it is fit when the visualizer is fitted, unless otherwise specified
+        by ``is_fitted``.
 
-    model : the Scikit-Learn estimator
-        Should be an instance of a classifier, else the __init__ will
-        return an error.
+    ax : matplotlib Axes, default: None
+        The axes to plot the figure on. If not specified the current axes will be
+        used (or generated if required).
 
-    classes : a list of class names for the legend
-        If classes is None and a y value is passed to fit then the classes
-        are selected from the target vector.
+    classes : list of str, defult: None
+        The class labels to use for the legend ordered by the index of the sorted
+        classes discovered in the ``fit()`` method. Specifying classes in this
+        manner is used to change the class names to a more specific format or
+        to label encoded integer classes. Some visualizers may also use this
+        field to filter the visualization for specific classes. For more advanced
+        usage specify an encoder rather than class labels.
 
     cmap : string, default: ``'YlOrRd'``
         Specify a colormap to define the heatmap of the predicted class
@@ -68,7 +75,25 @@ class ClassificationReport(ClassificationScoreVisualizer):
         Specify if support will be displayed. It can be further defined by
         whether support should be reported as a raw count or percentage.
 
-    kwargs : keyword arguments passed to the super class.
+    encoder : dict or LabelEncoder, default: None
+        A mapping of classes to human readable labels. Often there is a mismatch
+        between desired class labels and those contained in the target variable
+        passed to ``fit()`` or ``score()``. The encoder disambiguates this mismatch
+        ensuring that classes are labeled correctly in the visualization.
+
+    is_fitted : bool or str, default="auto"
+        Specify if the wrapped estimator is already fitted. If False, the estimator
+        will be fit when the visualizer is fit, otherwise, the estimator will not be
+        modified. If "auto" (default), a helper method will check if the estimator
+        is fitted before fitting it again.
+
+    force_model : bool, default: False
+        Do not check to ensure that the underlying estimator is a classifier. This
+        will prevent an exception when the visualizer is initialized but may result
+        in unexpected or unintended behavior.
+
+    kwargs : dict
+        Keyword arguments passed to the visualizer base classes.
 
     Examples
     --------
@@ -81,35 +106,61 @@ class ClassificationReport(ClassificationScoreVisualizer):
 
     Attributes
     ----------
+    classes_ : ndarray of shape (n_classes,)
+        The class labels observed while fitting.
+
+    class_count_ : ndarray of shape (n_classes,)
+        Number of samples encountered for each class during fitting.
+
     score_ : float
-        Global accuracy score
+        An evaluation metric of the classifier on test data produced when
+        ``score()`` is called. This metric is between 0 and 1 -- higher scores are
+        generally better. For classifiers, this score is usually accuracy, but
+        ensure you check the underlying model for more details about the score.
 
     scores_ : dict of dicts
         Outer dictionary composed of precision, recall, f1, and support scores with
         inner dictionaries specifiying the values for each class listed.
     """
-    def __init__(self, model, ax=None,  classes=None, cmap='YlOrRd',
-                 support=None, **kwargs):
+
+    def __init__(
+        self,
+        model,
+        ax=None,
+        classes=None,
+        cmap="YlOrRd",
+        support=None,
+        encoder=None,
+        is_fitted="auto",
+        force_model=False,
+        **kwargs
+    ):
         super(ClassificationReport, self).__init__(
-            model, ax=ax, classes=classes, **kwargs
+            model,
+            ax=ax,
+            classes=classes,
+            encoder=encoder,
+            is_fitted=is_fitted,
+            force_model=force_model,
+            **kwargs
         )
 
-        self.cmap = color_sequence(cmap)
-        self.cmap.set_under(color=CMAP_UNDERCOLOR)
-        self.cmap.set_over(color=CMAP_OVERCOLOR)
-        self._displayed_scores = [key for key in SCORES_KEYS]
         self.support = support
+        self.cmap = color_sequence(cmap)
+        self.cmap.set_over(color=CMAP_OVERCOLOR)
+        self.cmap.set_under(color=CMAP_UNDERCOLOR)
+        self._displayed_scores = [key for key in SCORES_KEYS]
 
         if support not in {None, True, False, "percent", "count"}:
             raise YellowbrickValueError(
-                "'{}' is an invalid argument for support, use None, True, " \
+                "'{}' is an invalid argument for support, use None, True, "
                 "False, 'percent', or 'count'".format(support)
             )
 
         if not support:
             self._displayed_scores.remove("support")
 
-    def score(self, X, y=None, **kwargs):
+    def score(self, X, y):
         """
         Generates the Scikit-Learn classification report.
 
@@ -127,8 +178,10 @@ class ClassificationReport(ClassificationScoreVisualizer):
         score_ : float
             Global accuracy score
         """
-        y_pred = self.predict(X)
+        # Call super to check if fitted and to compute self.score_
+        super(ClassificationReport, self).score(X, y)
 
+        y_pred = self.predict(X)
         scores = precision_recall_fscore_support(y, y_pred)
 
         # Calculate the percentage for the support metric
@@ -145,13 +198,9 @@ class ClassificationReport(ClassificationScoreVisualizer):
 
         # Remove support scores if not required
         if not self.support:
-            self.scores_.pop('support')
+            self.scores_.pop("support")
 
         self.draw()
-
-        # Retrieve and store the score attribute from the sklearn classifier
-        self.score_ = self.estimator.score(X, y)
-
         return self.score_
 
     def draw(self):
@@ -161,7 +210,6 @@ class ClassificationReport(ClassificationScoreVisualizer):
         # Create display grid
         cr_display = np.zeros((len(self.classes_), len(self._displayed_scores)))
 
-
         # For each class row, append columns for precision, recall, f1, and support
         for idx, cls in enumerate(self.classes_):
             for jdx, metric in enumerate(self._displayed_scores):
@@ -169,7 +217,10 @@ class ClassificationReport(ClassificationScoreVisualizer):
 
         # Set up the dimensions of the pcolormesh
         # NOTE: pcolormesh accepts grids that are (N+1,M+1)
-        X, Y = np.arange(len(self.classes_)+1), np.arange(len(self._displayed_scores)+1)
+        X, Y = (
+            np.arange(len(self.classes_) + 1),
+            np.arange(len(self._displayed_scores) + 1),
+        )
         self.ax.set_ylim(bottom=0, top=cr_display.shape[0])
         self.ax.set_xlim(left=0, right=cr_display.shape[1])
 
@@ -194,21 +245,18 @@ class ClassificationReport(ClassificationScoreVisualizer):
                 text_color = find_text_color(base_color)
 
                 # Add the label to the middle of the grid
-                cx, cy = x+0.5, y+0.5
-                self.ax.text(
-                    cy, cx, svalue, va='center', ha='center', color=text_color
-                )
-
+                cx, cy = x + 0.5, y + 0.5
+                self.ax.text(cy, cx, svalue, va="center", ha="center", color=text_color)
 
         # Draw the heatmap with colors bounded by the min and max of the grid
         # NOTE: I do not understand why this is Y, X instead of X, Y it works
         # in this order but raises an exception with the other order.
         g = self.ax.pcolormesh(
-            Y, X, cr_display, vmin=0, vmax=1, cmap=self.cmap, edgecolor='w',
+            Y, X, cr_display, vmin=0, vmax=1, cmap=self.cmap, edgecolor="w"
         )
 
         # Add the color bar
-        plt.colorbar(g, ax=self.ax)
+        plt.colorbar(g, ax=self.ax)  # TODO: Could use self.fig now
 
         # Return the axes being drawn on
         return self.ax
@@ -224,63 +272,125 @@ class ClassificationReport(ClassificationScoreVisualizer):
 
         """
         # Set the title of the classifiation report
-        self.set_title('{} Classification Report'.format(self.name))
+        self.set_title("{} Classification Report".format(self.name))
 
         # Set the tick marks appropriately
-        self.ax.set_xticks(np.arange(len(self._displayed_scores))+0.5)
-        self.ax.set_yticks(np.arange(len(self.classes_))+0.5)
+        self.ax.set_xticks(np.arange(len(self._displayed_scores)) + 0.5)
+        self.ax.set_yticks(np.arange(len(self.classes_)) + 0.5)
 
         self.ax.set_xticklabels(self._displayed_scores, rotation=45)
         self.ax.set_yticklabels(self.classes_)
 
-        plt.tight_layout()
+        plt.tight_layout()  # TODO: Could use self.fig now
 
 
-def classification_report(model, X, y=None, ax=None, classes=None,
-                          random_state=None,**kwargs):
-    """Quick method:
+def classification_report(
+    model,
+    X,
+    y,
+    ax=None,
+    test_size=0.2,
+    random_state=None,
+    classes=None,
+    cmap="YlOrRd",
+    support=None,
+    encoder=None,
+    is_fitted="auto",
+    force_model=False,
+    **kwargs
+):
+    """Classification Report
 
     Displays precision, recall, F1, and support scores for the model.
     Integrates numerical scores as well as color-coded heatmap.
 
-    This helper function is a quick wrapper to utilize the ClassificationReport
-    ScoreVisualizer for one-off analysis.
-
     Parameters
     ----------
+    model : estimator
+        A scikit-learn estimator that should be a classifier. If the model is
+        not a classifier, an exception is raised. If the internal model is not
+        fitted, it is fit when the visualizer is fitted, unless otherwise specified
+        by ``is_fitted``.
+
     X  : ndarray or DataFrame of shape n x m
         A matrix of n instances with m features.
 
     y  : ndarray or Series of length n
         An array or series of target or class values.
 
-    ax : matplotlib axes
-        The axes to plot the figure on.
+    ax : matplotlib Axes, default: None
+        The axes to plot the figure on. If not specified the current axes will be
+        used (or generated if required).
 
-    model : the Scikit-Learn estimator (should be a classifier)
+    test_size : float, default=0.2
+        The percentage of the data to reserve as test data.
 
-    classes : list of strings
-        The names of the classes in the target
+    random_state : int or None, default=None
+        The value to seed the random number generator for shuffling data.
 
-    random_state: integer
-        The seed value for a random generator
+    classes : list of str, defult: None
+        The class labels to use for the legend ordered by the index of the sorted
+        classes discovered in the ``fit()`` method. Specifying classes in this
+        manner is used to change the class names to a more specific format or
+        to label encoded integer classes. Some visualizers may also use this
+        field to filter the visualization for specific classes. For more advanced
+        usage specify an encoder rather than class labels.
+
+    cmap : string, default: ``'YlOrRd'``
+        Specify a colormap to define the heatmap of the predicted class
+        against the actual class in the classification report.
+
+    support: {True, False, None, 'percent', 'count'}, default: None
+        Specify if support will be displayed. It can be further defined by
+        whether support should be reported as a raw count or percentage.
+
+    encoder : dict or LabelEncoder, default: None
+        A mapping of classes to human readable labels. Often there is a mismatch
+        between desired class labels and those contained in the target variable
+        passed to ``fit()`` or ``score()``. The encoder disambiguates this mismatch
+        ensuring that classes are labeled correctly in the visualization.
+
+    is_fitted : bool or str, default="auto"
+        Specify if the wrapped estimator is already fitted. If False, the estimator
+        will be fit when the visualizer is fit, otherwise, the estimator will not be
+        modified. If "auto" (default), a helper method will check if the estimator
+        is fitted before fitting it again.
+
+    force_model : bool, default: False
+        Do not check to ensure that the underlying estimator is a classifier. This
+        will prevent an exception when the visualizer is initialized but may result
+        in unexpected or unintended behavior.
+
+    kwargs : dict
+        Keyword arguments passed to the visualizer base classes.
 
     Returns
     -------
-    ax : matplotlib axes
-        Returns the axes that the classification report was drawn on.
+    viz : ClassificationReport
+        Returns the fitted, finalized visualizer
     """
     # Instantiate the visualizer
-    visualizer = ClassificationReport(model, ax, classes, **kwargs)
+    visualizer = ClassificationReport(
+        model=model,
+        ax=ax,
+        classes=classes,
+        cmap=cmap,
+        support=support,
+        encoder=encoder,
+        is_fitted=is_fitted,
+        force_model=force_model,
+        **kwargs
+    )
 
     # Create the train and test splits
     X_train, X_test, y_train, y_test = train_test_split(
-        X, y, test_size=0.2, random_state=random_state
+        X, y, test_size=test_size, random_state=random_state
     )
 
     # Fit and transform the visualizer (calls draw)
     visualizer.fit(X_train, y_train, **kwargs)
     visualizer.score(X_test, y_test)
+    visualizer.finalize()
 
-    # Return the axes object on the visualizer
-    return visualizer.ax
+    # Return the visualizer
+    return visualizer

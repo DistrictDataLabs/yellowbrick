@@ -1,11 +1,11 @@
 # tests.test_classifier.test_threshold
 # Ensure that the discrimination threshold visualizations work.
 #
-# Author:  Nathan Danielsen <ndanielsen@gmail.com>
-# Author:  Benjamin Bengfort <bbengfort@districtdatalabs.com>
+# Author:  Nathan Danielsen
+# Author:  Benjamin Bengfort
 # Created: Wed April 26 20:17:29 2017 -0700
 #
-# Copyright (C) 2017 District Data Labs
+# Copyright (C) 2017 The scikit-yb developers
 # For license information, see LICENSE.txt
 #
 # ID: test_threshold.py [] nathan.danielsen@gmail.com $
@@ -19,16 +19,16 @@ Ensure that the DiscriminationThreshold visualizations work.
 ##########################################################################
 
 import sys
-import six
 import pytest
 import yellowbrick as yb
 import matplotlib.pyplot as plt
 
 from yellowbrick.classifier.threshold import *
+from yellowbrick.datasets import load_occupancy
 from yellowbrick.utils import is_probabilistic, is_classifier
 
+from unittest.mock import patch
 from tests.base import VisualTestCase
-from tests.dataset import DatasetMixin
 from numpy.testing.utils import assert_array_equal
 
 from sklearn.svm import LinearSVC, NuSVC
@@ -44,31 +44,30 @@ try:
 except ImportError:
     pd = None
 
-try:
-    from unittest.mock import patch
-except ImportError:
-    from mock import patch
-
 
 ##########################################################################
 ## DiscriminationThreshold Test Cases
 ##########################################################################
 
-class TestDiscriminationThreshold(VisualTestCase, DatasetMixin):
+
+class TestDiscriminationThreshold(VisualTestCase):
     """
     DiscriminationThreshold visualizer tests
     """
 
-    @pytest.mark.xfail(
-        sys.platform == 'win32', reason="images not close on windows"
-    )
+    @pytest.mark.xfail(sys.platform == "win32", reason="images not close on windows")
     def test_binary_discrimination_threshold(self):
         """
         Correctly generates viz for binary classification with BernoulliNB
         """
         X, y = make_classification(
-            n_samples=400, n_features=20, n_informative=8, n_redundant=8,
-            n_classes=2, n_clusters_per_class=4, random_state=854
+            n_samples=400,
+            n_features=20,
+            n_informative=8,
+            n_redundant=8,
+            n_classes=2,
+            n_clusters_per_class=4,
+            random_state=854,
         )
 
         _, ax = plt.subplots()
@@ -77,7 +76,7 @@ class TestDiscriminationThreshold(VisualTestCase, DatasetMixin):
         visualizer = DiscriminationThreshold(model, ax=ax, random_state=23)
 
         visualizer.fit(X, y)
-        visualizer.poof()
+        visualizer.finalize()
 
         self.assert_images_similar(visualizer)
 
@@ -86,8 +85,13 @@ class TestDiscriminationThreshold(VisualTestCase, DatasetMixin):
         Assert exception is raised in multiclass case.
         """
         X, y = make_classification(
-            n_samples=400, n_features=20, n_informative=8, n_redundant=8,
-            n_classes=3, n_clusters_per_class=4, random_state=854
+            n_samples=400,
+            n_features=20,
+            n_informative=8,
+            n_redundant=8,
+            n_classes=3,
+            n_clusters_per_class=4,
+            random_state=854,
         )
 
         visualizer = DiscriminationThreshold(GaussianNB(), random_state=23)
@@ -96,9 +100,7 @@ class TestDiscriminationThreshold(VisualTestCase, DatasetMixin):
         with pytest.raises(ValueError, match=msg):
             visualizer.fit(X, y)
 
-    @pytest.mark.xfail(
-        sys.platform == 'win32', reason="images not close on windows"
-    )
+    @pytest.mark.xfail(sys.platform == "win32", reason="images not close on windows")
     @pytest.mark.skipif(pd is None, reason="test requires pandas")
     def test_pandas_integration(self):
         """
@@ -107,24 +109,39 @@ class TestDiscriminationThreshold(VisualTestCase, DatasetMixin):
         _, ax = plt.subplots()
 
         # Load the occupancy dataset from fixtures
-        data = self.load_data('occupancy')
-        target = 'occupancy'
-        features = [
-            "temperature", "relative_humidity", "light", "C02", "humidity"
-        ]
+        data = load_occupancy(return_dataset=True)
+        X, y = data.to_pandas()
 
-        # Create instances and target
-        X = pd.DataFrame(data[features])
-        y = pd.Series(data[target].astype(int))
-
-        classes = ['unoccupied', 'occupied']
+        classes = ["unoccupied", "occupied"]
 
         # Create the visualizer
         viz = DiscriminationThreshold(
             LogisticRegression(), ax=ax, classes=classes, random_state=193
         )
         viz.fit(X, y)
-        viz.poof()
+        viz.finalize()
+
+        self.assert_images_similar(viz, tol=0.1)
+
+    @pytest.mark.xfail(sys.platform == "win32", reason="images not close on windows")
+    def test_numpy_integration(self):
+        """
+        Test with NumPy arrays
+        """
+        _, ax = plt.subplots()
+
+        # Load the occupancy dataset from fixtures
+        data = load_occupancy(return_dataset=True)
+        X, y = data.to_numpy()
+
+        classes = ["unoccupied", "occupied"]
+
+        # Create the visualizer
+        viz = DiscriminationThreshold(
+            LogisticRegression(), ax=ax, classes=classes, random_state=193
+        )
+        viz.fit(X, y)
+        viz.finalize()
 
         self.assert_images_similar(viz, tol=0.1)
 
@@ -134,8 +151,13 @@ class TestDiscriminationThreshold(VisualTestCase, DatasetMixin):
         """
 
         X, y = make_classification(
-            n_samples=400, n_features=20, n_informative=8, n_redundant=8,
-            n_classes=2, n_clusters_per_class=4, random_state=2721
+            n_samples=400,
+            n_features=20,
+            n_informative=8,
+            n_redundant=8,
+            n_classes=2,
+            n_clusters_per_class=4,
+            random_state=2721,
         )
 
         _, ax = plt.subplots()
@@ -143,14 +165,19 @@ class TestDiscriminationThreshold(VisualTestCase, DatasetMixin):
         discrimination_threshold(BernoulliNB(3), X, y, ax=ax, random_state=5)
         self.assert_images_similar(ax=ax, tol=10)
 
-    @patch.object(DiscriminationThreshold, 'draw', autospec=True)
+    @patch.object(DiscriminationThreshold, "draw", autospec=True)
     def test_fit(self, mock_draw):
         """
         Test the fit method generates scores, calls draw, and returns self
         """
         X, y = make_classification(
-            n_samples=400, n_features=20, n_informative=8, n_redundant=8,
-            n_classes=2, n_clusters_per_class=4, random_state=1221
+            n_samples=400,
+            n_features=20,
+            n_informative=8,
+            n_redundant=8,
+            n_classes=2,
+            n_clusters_per_class=4,
+            random_state=1221,
         )
 
         visualizer = DiscriminationThreshold(BernoulliNB())
@@ -160,8 +187,7 @@ class TestDiscriminationThreshold(VisualTestCase, DatasetMixin):
         out = visualizer.fit(X, y)
 
         assert out is visualizer
-        if six.PY3:
-            mock_draw.assert_called_once()
+        mock_draw.assert_called_once()
         assert hasattr(visualizer, "thresholds_")
         assert hasattr(visualizer, "cv_scores_")
 
@@ -170,17 +196,21 @@ class TestDiscriminationThreshold(VisualTestCase, DatasetMixin):
             assert "{}_lower".format(metric) in visualizer.cv_scores_
             assert "{}_upper".format(metric) in visualizer.cv_scores_
 
-    @pytest.mark.xfail(
-        sys.platform == 'win32', reason="images not close on windows"
-    )
+    @pytest.mark.xfail(sys.platform == "win32", reason="images not close on windows")
     def test_binary_discrimination_threshold_alt_args(self):
         """
         Correctly generates visualization with alternate arguments
         """
         X, y = make_classification(
-            n_samples=400, n_features=20, n_informative=10, n_redundant=3,
-            n_classes=2, n_clusters_per_class=4, random_state=1231,
-            flip_y=0.1, weights=[0.35, 0.65],
+            n_samples=400,
+            n_features=20,
+            n_informative=10,
+            n_redundant=3,
+            n_classes=2,
+            n_clusters_per_class=4,
+            random_state=1231,
+            flip_y=0.1,
+            weights=[0.35, 0.65],
         )
 
         exclude = ["queue_rate", "fscore"]
@@ -190,7 +220,7 @@ class TestDiscriminationThreshold(VisualTestCase, DatasetMixin):
         )
 
         visualizer.fit(X, y)
-        visualizer.poof()
+        visualizer.finalize()
 
         for metric in exclude:
             assert metric not in visualizer.cv_scores_

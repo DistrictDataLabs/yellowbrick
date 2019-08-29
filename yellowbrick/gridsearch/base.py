@@ -1,3 +1,14 @@
+# yellowbrick.gridsearch.base
+# Base class for grid search visualizers
+#
+# Author:   Phillip Schafer
+# Created:  Sat Feb 3 10:18:33 2018 -0500
+#
+# Copyright (C) 2018 The scikit-yb developers
+# For license information, see LICENSE.txt
+#
+# ID: base.py [03724ed] pbs929@users.noreply.github.com $
+
 """
 Base class for grid search visualizers
 """
@@ -9,16 +20,19 @@ Base class for grid search visualizers
 import numpy as np
 from ..utils import is_gridsearch
 from ..base import ModelVisualizer
-from ..exceptions import (YellowbrickTypeError,
-                          YellowbrickKeyError,
-                          YellowbrickValueError)
+from ..exceptions import (
+    YellowbrickTypeError,
+    YellowbrickKeyError,
+    YellowbrickValueError,
+)
 
 
 ##########################################################################
 ## Dimension reduction utility
 ##########################################################################
 
-def param_projection(cv_results, x_param, y_param, metric='mean_test_score'):
+
+def param_projection(cv_results, x_param, y_param, metric="mean_test_score"):
     """
     Projects the grid search results onto 2 dimensions.
 
@@ -55,19 +69,24 @@ def param_projection(cv_results, x_param, y_param, metric='mean_test_score'):
     # These are masked arrays where the cases where each parameter is
     # non-applicable are masked.
     try:
-        x_vals = cv_results['param_' + x_param]
+        x_vals = cv_results["param_" + x_param]
     except KeyError:
-        raise YellowbrickKeyError("Parameter '{}' does not exist in the grid "
-                                  "search results".format(x_param))
+        raise YellowbrickKeyError(
+            "Parameter '{}' does not exist in the grid "
+            "search results".format(x_param)
+        )
     try:
-        y_vals = cv_results['param_' + y_param]
+        y_vals = cv_results["param_" + y_param]
     except KeyError:
-        raise YellowbrickKeyError("Parameter '{}' does not exist in the grid "
-                                  "search results".format(y_param))
+        raise YellowbrickKeyError(
+            "Parameter '{}' does not exist in the grid "
+            "search results".format(y_param)
+        )
 
     if metric not in cv_results:
-        raise YellowbrickKeyError("Metric '{}' does not exist in the grid "
-                                  "search results".format(metric))
+        raise YellowbrickKeyError(
+            "Metric '{}' does not exist in the grid " "search results".format(metric)
+        )
 
     # Get unique, unmasked values of the two display parameters
     unique_x_vals = sorted(list(set(x_vals.compressed())))
@@ -115,8 +134,8 @@ def param_projection(cv_results, x_param, y_param, metric='mean_test_score'):
 ## Base Grid Search Visualizer
 ##########################################################################
 
-class GridSearchVisualizer(ModelVisualizer):
 
+class GridSearchVisualizer(ModelVisualizer):
     def __init__(self, model, ax=None, **kwargs):
         """
         Check to see if model is an instance of GridSearchCV.
@@ -124,9 +143,7 @@ class GridSearchVisualizer(ModelVisualizer):
         """
         # A bit of type checking
         if not is_gridsearch(model):
-            raise YellowbrickTypeError(
-                "This estimator is not a GridSearchCV instance"
-        )
+            raise YellowbrickTypeError("This estimator is not a GridSearchCV instance")
 
         # Initialize the super method.
         super(GridSearchVisualizer, self).__init__(model, ax=ax, **kwargs)

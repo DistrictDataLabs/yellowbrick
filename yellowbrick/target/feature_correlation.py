@@ -1,23 +1,26 @@
 # yellowbrick.classifier.feature_correlation
 # Feature correlation to dependent variable visualizer.
 #
-# Author    Zijie (ZJ) Poh <poh.zijie@gmail.com>
+# Author    Zijie (ZJ) Poh
 # Created:  Wed Jul 29 15:30:40 2018 -0700
 #
-# ID: feature_correlation.py [] poh.zijie@gmail.com $
+# Copyright (C) 2018 The scikit-yb developers
+# For license information, see LICENSE.txt
+#
+# ID: feature_correlation.py [33aec16] 8103276+zjpoh@users.noreply.github.com $
 
 """
 Feature Correlation to Dependent Variable Visualizer.
 """
 
 ##########################################################################
-## Imports
+# Imports
 ##########################################################################
 
 import numpy as np
 
-from yellowbrick.target.base import TargetVisualizer
 from yellowbrick.utils import is_dataframe
+from yellowbrick.target.base import TargetVisualizer
 from yellowbrick.exceptions import YellowbrickValueError, YellowbrickWarning
 
 from sklearn.feature_selection import mutual_info_classif
@@ -26,23 +29,24 @@ from sklearn.feature_selection import mutual_info_regression
 from scipy.stats import pearsonr
 
 ##########################################################################
-## Supported Correlation Computations
+# Supported Correlation Computations
 ##########################################################################
 
 CORRELATION_LABELS = {
-    'pearson': 'Pearson Correlation',
-    'mutual_info-regression': 'Mutual Information',
-    'mutual_info-classification': 'Mutual Information'
+    "pearson": "Pearson Correlation",
+    "mutual_info-regression": "Mutual Information",
+    "mutual_info-classification": "Mutual Information",
 }
 
 CORRELATION_METHODS = {
-    'mutual_info-regression': mutual_info_regression,
-    'mutual_info-classification': mutual_info_classif
+    "mutual_info-regression": mutual_info_regression,
+    "mutual_info-classification": mutual_info_classif,
 }
 
 ##########################################################################
-## Class Feature Correlation
+# Class Feature Correlation
 ##########################################################################
+
 
 class FeatureCorrelation(TargetVisualizer):
     """
@@ -85,6 +89,9 @@ class FeatureCorrelation(TargetVisualizer):
         Must have labels or the fitted data is a DataFrame with column names.
         If feature_index is provided, feature_names will be ignored.
 
+    color: string
+        Specify color for barchart
+
     kwargs : dict
         Keyword arguments that are passed to the base class and may influence
         the visualization as defined in other Visualizers.
@@ -105,9 +112,17 @@ class FeatureCorrelation(TargetVisualizer):
     >>> viz.poof()
     """
 
-    def __init__(self, ax=None, method='pearson',
-                 labels=None, sort=False, feature_index=None,
-                 feature_names=None, **kwargs):
+    def __init__(
+        self,
+        ax=None,
+        method="pearson",
+        labels=None,
+        sort=False,
+        feature_index=None,
+        feature_names=None,
+        color=None,
+        **kwargs
+    ):
         super(FeatureCorrelation, self).__init__(ax=None, **kwargs)
 
         self.correlation_labels = CORRELATION_LABELS
@@ -115,18 +130,19 @@ class FeatureCorrelation(TargetVisualizer):
 
         if method not in self.correlation_labels:
             raise YellowbrickValueError(
-                'Method {} not implement; choose from {}'.format(
+                "Method {} not implement; choose from {}".format(
                     method, ", ".join(self.correlation_labels)
                 )
             )
 
         # Parameters
         self.set_params(
+            sort=sort,
+            color=color,
             method=method,
             labels=labels,
-            sort=sort,
             feature_index=feature_index,
-            feature_names=feature_names
+            feature_names=feature_names,
         )
 
     def fit(self, X, y, **kwargs):
@@ -162,7 +178,7 @@ class FeatureCorrelation(TargetVisualizer):
         else:
             self.scores_ = np.array(
                 self.correlation_methods[self.method](X, y, **kwargs)
-        )
+            )
 
         # If feature indices are given, plot only the given features
         if self.feature_index:
@@ -184,7 +200,7 @@ class FeatureCorrelation(TargetVisualizer):
         """
         pos = np.arange(self.scores_.shape[0]) + 0.5
 
-        self.ax.barh(pos, self.scores_)
+        self.ax.barh(pos, self.scores_, color=self.color)
 
         # Set the labels for the bars
         self.ax.set_yticks(pos)
@@ -196,11 +212,11 @@ class FeatureCorrelation(TargetVisualizer):
         """
         Finalize the drawing setting labels and title.
         """
-        self.set_title('Features correlation with dependent variable')
+        self.set_title("Features correlation with dependent variable")
 
         self.ax.set_xlabel(self.correlation_labels[self.method])
 
-        self.ax.grid(False, axis='y')
+        self.ax.grid(False, axis="y")
 
     def _create_labels_for_features(self, X):
         """
@@ -230,33 +246,38 @@ class FeatureCorrelation(TargetVisualizer):
         if self.feature_index:
             if self.feature_names:
                 raise YellowbrickWarning(
-                    'Both feature_index and feature_names '
-                    'are specified. feature_names is ignored'
+                    "Both feature_index and feature_names "
+                    "are specified. feature_names is ignored"
                 )
-            if (min(self.feature_index) < 0
-                    or max(self.feature_index) >= X.shape[1]):
-                raise YellowbrickValueError('Feature index is out of range')
+            if min(self.feature_index) < 0 or max(self.feature_index) >= X.shape[1]:
+                raise YellowbrickValueError("Feature index is out of range")
         elif self.feature_names:
             self.feature_index = []
             features_list = self.features_.tolist()
             for feature_name in self.feature_names:
                 try:
-                    self.feature_index.append(
-                        features_list.index(feature_name)
-                    )
+                    self.feature_index.append(features_list.index(feature_name))
                 except ValueError:
-                    raise YellowbrickValueError(
-                        '{} not in labels'.format(feature_name)
-                    )
+                    raise YellowbrickValueError("{} not in labels".format(feature_name))
 
 
 ##########################################################################
-## Quick Method
+# Quick Method
 ##########################################################################
 
-def feature_correlation(X, y, ax=None, method='pearson',
-                        labels=None, sort=False, feature_index=None,
-                        feature_names=None, **kwargs):
+
+def feature_correlation(
+    X,
+    y,
+    ax=None,
+    method="pearson",
+    labels=None,
+    sort=False,
+    feature_index=None,
+    feature_names=None,
+    color=None,
+    **kwargs
+):
     """
     Displays the correlation between features and dependent variables.
 
@@ -304,23 +325,34 @@ def feature_correlation(X, y, ax=None, method='pearson',
         Must have labels or the fitted data is a DataFrame with column names.
         If feature_index is provided, feature_names will be ignored.
 
+    color: string
+        Specify color for barchart
+
     kwargs : dict
         Keyword arguments that are passed to the base class and may influence
         the visualization as defined in other Visualizers.
 
     Returns
     -------
-    ax : matplotlib axes
-        Returns the axes that the parallel coordinates were drawn on.
+    visualizer : FeatureCorrelation
+        Returns the fitted visualizer.
     """
 
     # Instantiate the visualizer
-    viz = FeatureCorrelation(ax, method, labels, sort,
-                             feature_index, feature_names, **kwargs)
+    viz = FeatureCorrelation(
+        ax=ax,
+        method=method,
+        labels=labels,
+        sort=sort,
+        color=color,
+        feature_index=feature_index,
+        feature_names=feature_names,
+        **kwargs
+    )
 
     # Fit and transform the visualizer (calls draw)
     viz.fit(X, y, **kwargs)
     viz.finalize()
 
-    # Return the axes object on the visualizer
-    return viz.ax
+    # Return the visualizer
+    return viz

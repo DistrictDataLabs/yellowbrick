@@ -1,54 +1,67 @@
 .. -*- mode: rst -*-
 
 MissingValues Bar
-=============================
+=================
 
-The MissingValues Bar visualizer creates a bar graph that counts the number of missing values per feature column.
+The MissingValues Bar visualizer creates a bar graph that counts the number of missing values per feature column. If the target ``y`` is supplied to fit, a stacked bar chart is produced.
 
-If the target y is supplied to fit, then produces a stacked bar chart.
 
-**Setup**
+Without Targets Supplied
+------------------------
 
-.. code:: python
+.. plot::
+    :context: close-figs
+    :alt: MissingValues Bar visualization on a dataset with no targets supplied
 
     import numpy as np
-    from sklearn.datasets import make_classification
 
+    from sklearn.datasets import make_classification
+    from yellowbrick.contrib.missing import MissingValuesBar
+
+    # Make a classification dataset
     X, y = make_classification(
-            n_samples=400, n_features=10, n_informative=2, n_redundant=3,
-            n_classes=2, n_clusters_per_class=2, random_state=854
-        )
-    # assign some NaN values
+        n_samples=400, n_features=10, n_informative=2, n_redundant=3,
+        n_classes=2, n_clusters_per_class=2, random_state=854
+    )
+
+    # Assign NaN values
     X[X > 1.5] = np.nan
     features = ["Feature {}".format(str(n)) for n in range(10)]
 
--------------------------------------------
-Without Targets Supplied
--------------------------------------------
+    # Instantiate the visualizer
+    visualizer = MissingValuesBar(features=features)
 
-.. code:: python
+    visualizer.fit(X)        # Fit the data to the visualizer
+    visualizer.poof()        # Draw/show/poof the data
 
+
+With Targets (``y``) Supplied
+-----------------------------
+
+.. plot::
+    :context: close-figs
+    :alt: MissingValuesBar visualization on a dataset with targets supplied
+
+    import numpy as np
+
+    from sklearn.datasets import make_classification
     from yellowbrick.contrib.missing import MissingValuesBar
 
-    viz = MissingValuesBar(features=features)
-    viz.fit(X)
-    viz.poof()
+    # Make a classification dataset
+    X, y = make_classification(
+        n_samples=400, n_features=10, n_informative=2, n_redundant=3,
+        n_classes=2, n_clusters_per_class=2, random_state=854
+    )
 
-.. image:: images/missingbar.png
+    # Assign NaN values
+    X[X > 1.5] = np.nan
+    features = ["Feature {}".format(str(n)) for n in range(10)]
 
--------------------------------------------
-With Targets (y) Supplied
--------------------------------------------
+    # Instantiate the visualizer
+    visualizer = MissingValuesBar(features=features)
 
-.. code:: python
-
-    from yellowbrick.contrib.missing import MissingValuesBar
-
-    viz = MissingValuesBar(features=features)
-    viz.fit(X, y=y) # supply the targets via y
-    viz.poof()
-
-.. image:: images/missingbar_with_targets.png
+    visualizer.fit(X, y=y)        # Supply the targets via y
+    visualizer.poof()             # Draw/show/poof the data
 
 
 API Reference

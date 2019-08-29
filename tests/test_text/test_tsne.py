@@ -1,10 +1,10 @@
 # tests.test_text.test_tsne
 # Tests for the TSNE visual corpus embedding mechanism.
 #
-# Author:   Benjamin Bengfort <benjamin@bengfort.com>
+# Author:   Benjamin Bengfort
 # Created:  Mon Feb 20 07:23:53 2017 -0500
 #
-# Copyright (C) 2016 Bengfort.com
+# Copyright (C) 2018 The scikit-yb developers
 # For license information, see LICENSE.txt
 #
 # ID: test_tsne.py [6aa9198] benjamin@bengfort.com $
@@ -17,12 +17,12 @@ Tests for the TSNE visual corpus embedding mechanism.
 ## Imports
 ##########################################################################
 
-import six
 import pytest
+from unittest import mock
 
 from yellowbrick.text.tsne import *
 from tests.base import VisualTestCase
-from tests.dataset import DatasetMixin
+from yellowbrick.datasets import load_hobbies
 from yellowbrick.exceptions import YellowbrickValueError
 
 from sklearn.manifold import TSNE
@@ -34,16 +34,20 @@ try:
 except ImportError:
     pandas = None
 
-try:
-    from unittest import mock
-except ImportError:
-    import mock
+
+##########################################################################
+## Data
+##########################################################################
+
+corpus = load_hobbies()
+
 
 ##########################################################################
 ## TSNE Tests
 ##########################################################################
 
-class TestTSNE(VisualTestCase, DatasetMixin):
+
+class TestTSNE(VisualTestCase):
     """
     TSNEVisualizer tests
     """
@@ -53,20 +57,20 @@ class TestTSNE(VisualTestCase, DatasetMixin):
         Ensure an error is raised when a bad decompose argument is specified
         """
         with pytest.raises(YellowbrickValueError):
-            TSNEVisualizer(decompose='bob')
+            TSNEVisualizer(decompose="bob")
 
     def test_make_pipeline(self):
         """
         Verify the pipeline creation step for TSNE
         """
 
-        tsne = TSNEVisualizer() # Should not cause an exception.
+        tsne = TSNEVisualizer()  # Should not cause an exception.
         assert tsne.transformer_ is not None
 
-        svdp = tsne.make_transformer('svd', 90)
+        svdp = tsne.make_transformer("svd", 90)
         assert len(svdp.steps) == 2
 
-        pcap = tsne.make_transformer('pca')
+        pcap = tsne.make_transformer("pca")
         assert len(pcap.steps) == 2
 
         none = tsne.make_transformer(None)
@@ -76,17 +80,15 @@ class TestTSNE(VisualTestCase, DatasetMixin):
         """
         Check tSNE integrated visualization on the hobbies corpus
         """
-        corpus = self.load_data('hobbies')
-        tfidf  = TfidfVectorizer()
+        tfidf = TfidfVectorizer()
 
-        docs   = tfidf.fit_transform(corpus.data)
+        docs = tfidf.fit_transform(corpus.data)
         labels = corpus.target
 
-        tsne = TSNEVisualizer(random_state=8392, colormap='Set1', alpha=1.0)
+        tsne = TSNEVisualizer(random_state=8392, colormap="Set1", alpha=1.0)
         tsne.fit_transform(docs, labels)
 
-        tol = 50 if six.PY3 else 55
-        self.assert_images_similar(tsne, tol=tol)
+        self.assert_images_similar(tsne, tol=50)
 
     def test_sklearn_tsne_size(self):
         """
@@ -97,7 +99,7 @@ class TestTSNE(VisualTestCase, DatasetMixin):
         # like size, are passed through to YB's finalize method. This test should
         # notify us  if TSNE's params change on the sklearn side.
         with pytest.raises(TypeError):
-            TSNE(size=(100,100))
+            TSNE(size=(100, 100))
 
     def test_sklearn_tsne_title(self):
         """
@@ -126,22 +128,66 @@ class TestTSNE(VisualTestCase, DatasetMixin):
 
         assert tsne._size == (100, 50)
 
+    def test_custom_colors_tsne(self):
+        """
+        Check tSNE accepts and properly handles custom colors from user
+        """
+        ## produce random data
+        X, y = make_classification(
+            n_samples=200,
+            n_features=100,
+            n_informative=20,
+            n_redundant=10,
+            n_classes=5,
+            random_state=42,
+        )
+
+        ## specify a list of custom colors >= n_classes
+        purple_blues = ["indigo", "orchid", "plum", "navy", "purple", "blue"]
+
+        ## instantiate the visualizer and check that self.colors is correct
+        purple_tsne = TSNEVisualizer(colors=purple_blues, random_state=87)
+        assert purple_tsne.colors == purple_blues
+
+        ## fit the visualizer and check that self.color_values is as long as
+        ## n_classes and is the first n_classes items in self.colors
+        purple_tsne.fit(X, y)
+        assert len(purple_tsne.color_values_) == len(purple_tsne.classes_)
+        assert purple_tsne.color_values_ == purple_blues[: len(purple_tsne.classes_)]
+
+        ## specify a list of custom colors < n_classes
+        greens = ["green", "lime", "teal"]
+
+        ## instantiate the visualizer and check that self.colors is correct
+        green_tsne = TSNEVisualizer(colors=greens, random_state=87)
+        assert green_tsne.colors == greens
+
+        ## fit the visualizer and check that self.color_values is as long as
+        ## n_classes and the user-supplied color list gets recycled as expected
+        green_tsne.fit(X, y)
+        assert len(green_tsne.color_values_) == len(green_tsne.classes_)
+        assert green_tsne.color_values_ == ["green", "lime", "teal", "green", "lime"]
+
     def test_make_classification_tsne(self):
         """
         Test tSNE integrated visualization on a sklearn classifier dataset
         """
 
         ## produce random data
-        X, y = make_classification(n_samples=200, n_features=100,
-                               n_informative=20, n_redundant=10,
-                               n_classes=3, random_state=42)
+        X, y = make_classification(
+            n_samples=200,
+            n_features=100,
+            n_informative=20,
+            n_redundant=10,
+            n_classes=3,
+            random_state=42,
+        )
 
         ## visualize data with t-SNE
         tsne = TSNEVisualizer(random_state=87)
         tsne.fit(X, y)
 
-        tol = 0.1 if six.PY3 else 40
-        self.assert_images_similar(tsne, tol=tol)
+        self.assert_images_similar(tsne, tol=0.1)
 
     def test_make_classification_tsne_class_labels(self):
         """
@@ -149,44 +195,58 @@ class TestTSNE(VisualTestCase, DatasetMixin):
         """
 
         ## produce random data
-        X, y = make_classification(n_samples=200, n_features=100,
-                               n_informative=20, n_redundant=10,
-                               n_classes=3, random_state=42)
+        X, y = make_classification(
+            n_samples=200,
+            n_features=100,
+            n_informative=20,
+            n_redundant=10,
+            n_classes=3,
+            random_state=42,
+        )
 
         ## visualize data with t-SNE
-        tsne = TSNEVisualizer(random_state=87, labels=['a', 'b', 'c'])
+        tsne = TSNEVisualizer(random_state=87, labels=["a", "b", "c"])
         tsne.fit(X, y)
 
-        tol = 0.1 if six.PY3 else 40
-        self.assert_images_similar(tsne, tol=tol)
+        self.assert_images_similar(tsne, tol=0.1)
 
     def test_tsne_mismtached_labels(self):
         """
         Assert exception is raised when number of labels doesn't match
         """
         ## produce random data
-        X, y = make_classification(n_samples=200, n_features=100,
-                               n_informative=20, n_redundant=10,
-                               n_classes=3, random_state=42)
+        X, y = make_classification(
+            n_samples=200,
+            n_features=100,
+            n_informative=20,
+            n_redundant=10,
+            n_classes=3,
+            random_state=42,
+        )
 
         ## fewer labels than classes
-        tsne = TSNEVisualizer(random_state=87, labels=['a', 'b'])
+        tsne = TSNEVisualizer(random_state=87, labels=["a", "b"])
         with pytest.raises(YellowbrickValueError):
-            tsne.fit(X,y)
+            tsne.fit(X, y)
 
         ## more labels than classes
-        tsne = TSNEVisualizer(random_state=87, labels=['a', 'b', 'c', 'd'])
+        tsne = TSNEVisualizer(random_state=87, labels=["a", "b", "c", "d"])
         with pytest.raises(YellowbrickValueError):
-            tsne.fit(X,y)
+            tsne.fit(X, y)
 
     def test_no_target_tsne(self):
         """
         Test tSNE when no target or classes are specified
         """
         ## produce random data
-        X, y = make_classification(n_samples=200, n_features=100,
-                               n_informative=20, n_redundant=10,
-                               n_classes=3, random_state=6897)
+        X, y = make_classification(
+            n_samples=200,
+            n_features=100,
+            n_informative=20,
+            n_redundant=10,
+            n_classes=3,
+            random_state=6897,
+        )
 
         ## visualize data with t-SNE
         tsne = TSNEVisualizer(random_state=64)
@@ -200,8 +260,12 @@ class TestTSNE(VisualTestCase, DatasetMixin):
         Test tSNE when passed a pandas DataFrame and series
         """
         X, y = make_classification(
-            n_samples=200, n_features=100, n_informative=20, n_redundant=10,
-            n_classes=3, random_state=3020
+            n_samples=200,
+            n_features=100,
+            n_informative=20,
+            n_redundant=10,
+            n_classes=3,
+            random_state=3020,
         )
 
         X = pandas.DataFrame(X)
@@ -210,17 +274,21 @@ class TestTSNE(VisualTestCase, DatasetMixin):
         tsne = TSNEVisualizer(random_state=64)
         tsne.fit(X, y)
 
-        tol = 0.1 if six.PY3 else 40
-        self.assert_images_similar(tsne, tol=tol)
+        self.assert_images_similar(tsne, tol=0.1)
 
     def test_alpha_param(self):
         """
         Test that the user can supply an alpha param on instantiation
         """
         ## produce random data
-        X, y = make_classification(n_samples=200, n_features=100,
-                               n_informative=20, n_redundant=10,
-                               n_classes=3, random_state=42)
+        X, y = make_classification(
+            n_samples=200,
+            n_features=100,
+            n_informative=20,
+            n_redundant=10,
+            n_classes=3,
+            random_state=42,
+        )
 
         ## Instantiate a TSNEVisualizer, provide custom alpha
         tsne = TSNEVisualizer(random_state=64, alpha=0.5)

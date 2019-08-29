@@ -1,10 +1,10 @@
 # yellowbrick.regressor
 # Visualizers for Regression analysis and diagnostics
 #
-# Author:   Benjamin Bengfort <bbengfort@districtdatalabs.com>
+# Author:   Benjamin Bengfort
 # Created:  Mon Mar 06 12:23:55 2017 -0500
 #
-# Copyright (C) 2016 District Data Labs
+# Copyright (C) 2016 The scikit-yb developers
 # For license information, see LICENSE.txt
 #
 # ID: __init__.py [7d3f5e6] benjamin@bengfort.com $
@@ -22,3 +22,4 @@ visualizations related to evaluating Scikit-Learn regressor models.
 from .base import *
 from .residuals import *
 from .alphas import *
+from .influence import *

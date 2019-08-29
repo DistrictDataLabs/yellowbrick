@@ -5,42 +5,35 @@ Classification Report
 
 The classification report visualizer displays the precision, recall, F1, and support scores for the model. In order to support easier interpretation and problem detection, the report integrates numerical scores with a color-coded heatmap. All heatmaps are in the range ``(0.0, 1.0)`` to facilitate easy comparison of classification models across different classification reports.
 
-.. code:: python
+.. plot::
+    :context: close-figs
+    :alt:  Classification Report
 
-    from sklearn.model_selection import train_test_split
+    from sklearn.model_selection import TimeSeriesSplit
+    from sklearn.naive_bayes import GaussianNB
 
-    # Load the classification data set
-    data = load_data("occupancy")
+    from yellowbrick.classifier import ClassificationReport
+    from yellowbrick.datasets import load_occupancy
 
-    # Specify the features of interest and the classes of the target
-    features = [
-        "temperature", "relative humidity", "light", "C02", "humidity"
-    ]
+    # Load the classification dataset
+    X, y = load_occupancy()
+
+    # Specify the target classes
     classes = ["unoccupied", "occupied"]
 
-    # Extract the instances and target
-    X = data[features]
-    y = data.occupancy
-
-    # Create the train and test data
-    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2)
-
-.. code:: python
-
-    from sklearn.naive_bayes import GaussianNB
-    from yellowbrick.classifier import ClassificationReport
+    # Create the training and test data
+    tscv = TimeSeriesSplit()
+    for train_index, test_index in tscv.split(X):
+        X_train, X_test = X.iloc[train_index], X.iloc[test_index]
+        y_train, y_test = y.iloc[train_index], y.iloc[test_index]
 
     # Instantiate the classification model and visualizer
-    bayes = GaussianNB()
-    visualizer = ClassificationReport(bayes, classes=classes, support=True)
+    model = GaussianNB()
+    visualizer = ClassificationReport(model, classes=classes, support=True)
 
-    visualizer.fit(X_train, y_train)  # Fit the visualizer and the model
-    visualizer.score(X_test, y_test)  # Evaluate the model on the test data
-    g = visualizer.poof()             # Draw/show/poof the data
-
-
-
-.. image:: images/classification_report.png
+    visualizer.fit(X_train, y_train)        # Fit the visualizer and the model
+    visualizer.score(X_test, y_test)        # Evaluate the model on the test data
+    visualizer.poof()                       # Draw/show/poof the data
 
 
 The classification report shows a representation of the main classification metrics on a per-class basis. This gives a deeper intuition of the classifier behavior over global accuracy which can mask functional weaknesses in one class of a multiclass problem. Visual classification reports are used to compare classification models to select models that are "redder", e.g. have stronger classification metrics or that are more balanced.
@@ -60,6 +53,7 @@ The metrics are defined in terms of true and false positives, and true and false
 **support**
     Support is the number of actual occurrences of the class in the specified dataset. Imbalanced support in the training data may indicate structural weaknesses in the reported scores of the classifier and could indicate the need for stratified sampling or rebalancing. Support doesn't change between models but instead diagnoses the evaluation process.
 
+.. note:: This example uses ``TimeSeriesSplit`` to split the data into the training and test sets. For more information on this cross-validation method, please refer to the scikit-learn `documentation <https://scikit-learn.org/stable/modules/generated/sklearn.model_selection.TimeSeriesSplit.html>`_.
 
 API Reference
 -------------

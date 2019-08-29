@@ -5,14 +5,14 @@ Effective Matplotlib
 
 Yellowbrick generates visualizations by wrapping `matplotlib <http://matplotlib.org/>`_, the most prominent Python scientific visualization library. Because of this, Yellowbrick is able to generate publication-ready images for a variety of GUI backends, image formats, and Jupyter notebooks. Yellowbrick strives to provide well-styled visual diagnostic tools and complete information. However, to customize figures or roll your own visualizers, a strong background in using matplotlib is required.
 
-With permission, we have included part of `Chris Moffitt's <https://github.com/chris1610>`_ `Effectively Using Matplotlib <http://pbpython.com/effective-matplotlib.html>`_ as a crash course into Matplotlib terminology and usage. For a complete example, please visit his excellent post on creating a visual sales analysis! Additionally we recommend `Nicolas P. Rougier's Matplotlib tutorial <https://www.labri.fr/perso/nrougier/teaching/matplotlib/>`_ for an in-depth dive.
+With permission, we have included part of `Chris Moffitt's <https://github.com/chris1610>`_ `Effectively Using Matplotlib <http://pbpython.com/effective-matplotlib.html>`_ as a crash course into Matplotlib terminology and usage. For a complete example, please visit his excellent post on creating a visual sales analysis! This post was also adapated for matplotlib's documentation, `The Lifecycle of a Plot <https://matplotlib.org/tutorials/introductory/lifecycle.html>`_, which gives another good perspective. Additionally we recommend `Nicolas P. Rougier's Matplotlib tutorial <https://www.labri.fr/perso/nrougier/teaching/matplotlib/>`_ for an in-depth dive.
 
 Figures and Axes
 ----------------
 
 This graphic from the `matplotlib faq is gold <https://matplotlib.org/faq/usage_faq.html>`_. Keep it handy to understand the different terminology of a plot.
 
-.. image:: images/matplotlib_anatomy.png
+.. image:: images/matplotlib/anatomy.png
 
 Most of the terms are straightforward but the main thing to remember is that the ``Figure`` is the final image that may contain 1 or more axes. The ``Axes`` represent an individual plot. Once you understand what these are and how to access them through the object oriented API, the rest of the process starts to fall into place.
 
@@ -64,7 +64,7 @@ Therefore you have complete control of the style and customization of a Yellowbr
 Creating a Custom Plot
 ----------------------
 
-.. image:: images/matplotlib_pbpython_example.png
+.. image:: images/matplotlib/pbpython_example.png
 
 The first step with any visualization is to plot the data. Often the simplest way to do this is using the standard pandas plotting function (given a ``DataFrame`` called ``top_10``):
 
@@ -173,7 +173,7 @@ For this example, we’ll draw a line showing an average and include labels show
     # Hide the legend
     ax.legend().set_visible(False)
 
-.. image:: images/matplotlib_single.png
+.. image:: images/matplotlib/single.png
 
 While this may not be the most exciting plot it does show how much power you have when following this approach.
 

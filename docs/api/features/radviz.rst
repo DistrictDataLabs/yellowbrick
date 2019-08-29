@@ -3,7 +3,7 @@
 RadViz Visualizer
 =================
 
-RadViz is a multivariate data visualization algorithm that plots each
+``RadViz`` is a multivariate data visualization algorithm that plots each
 feature dimension uniformly around the circumference of a circle then
 plots points on the interior of the circle such that the point
 normalizes its values on the axes from the center to each arc. This
@@ -16,43 +16,33 @@ just too much noise?
 
 If your data contains rows with missing values (``numpy.nan``), those missing
 values will not be plotted. In other words, you may not get the entire
-picture of your data. RadViz will raise a DataWarning to inform you of the
+picture of your data. ``RadViz`` will raise a ``DataWarning`` to inform you of the
 percent missing.
 
 If you do receive this warning, you may want to look at imputation strategies.
 A good starting place is the `scikit-learn Imputer. <http://scikit-learn.org/stable/modules/generated/sklearn.impute.SimpleImputer.html>`_
 
-.. code:: python
+.. plot::
+    :context: close-figs
+    :alt: RadViz on the Occupancy Dataset
 
-    # Load the classification data set
-    data = load_data("occupancy")
-
-    # Specify the features of interest and the classes of the target
-    features = ["temperature", "relative humidity", "light", "C02", "humidity"]
-    classes = ["unoccupied", "occupied"]
-
-    # Extract the instances and target
-    X = data[features]
-    y = data.occupancy
-
-.. code:: python
-
-    # Import the visualizer
+    from yellowbrick.datasets import load_occupancy
     from yellowbrick.features import RadViz
 
+    # Load the classification dataset
+    X, y = load_occupancy()
+
+    # Specify the target classes
+    classes = ["unoccupied", "occupied"]
+
     # Instantiate the visualizer
-    visualizer = RadViz(classes=classes, features=features)
+    visualizer = RadViz(classes=classes)
 
-    visualizer.fit(X, y)      # Fit the data to the visualizer
-    visualizer.transform(X)   # Transform the data
-    visualizer.poof()         # Draw/show/poof the data
+    visualizer.fit(X, y)           # Fit the data to the visualizer
+    visualizer.transform(X)        # Transform the data
+    visualizer.poof()              # Draw/show/poof the data
 
-
-
-.. image:: images/radviz.png
-
-
-For regression, the RadViz visualizer should use a color sequence to
+For regression, the ``RadViz`` visualizer should use a color sequence to
 display the target information, as opposed to discrete colors.
 
 API Reference

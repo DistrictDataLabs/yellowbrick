@@ -1,3 +1,14 @@
+# yellowbrick.utils.nan_warnings
+# Small helpers that help find and filter missing data.
+#
+# Author:   Aylr
+# Created:  Thu Dec 28 11:37:42 2017 -0700
+#
+# Copyright (C) 2018 The sckit-yb developers
+# For license information, see LICENSE.txt
+#
+# ID: nan_warnings.py [d2276d6] Aylr@users.noreply.github.com $
+#
 """
 Small helpers that help find and filter missing data.
 """
@@ -60,9 +71,10 @@ def warn_if_nans_exist(X):
     percent = 100 * null_count / total
 
     if null_count > 0:
-        warning_message = \
-            'Warning! Found {} rows of {} ({:0.2f}%) with nan values. Only ' \
-            'complete rows will be plotted.'.format(null_count, total, percent)
+        warning_message = (
+            "Warning! Found {} rows of {} ({:0.2f}%) with nan values. Only "
+            "complete rows will be plotted.".format(null_count, total, percent)
+        )
         warnings.warn(warning_message, DataWarning)
 
 

@@ -1,13 +1,13 @@
 # yellowbrick.contrib.missing.base
 # Base Visualizer for missing values
 #
-# Author:  Nathan Danielsen <nathan.danielsen@gmail.com>
+# Author:  Nathan Danielsen
 # Created: Fri Mar 29 5:17:36 2018 -0500
 #
-# Copyright (C) 2018 District Data Labs
+# Copyright (C) 2018 The scikit-yb developers
 # For license information, see LICENSE.txt
 #
-# ID: base.py [] nathan.danielsen@gmail.com.com $
+# ID: base.py [1443e16] ndanielsen@users.noreply.github.com $
 
 """
 Base classes for missing values visualizers.
@@ -16,14 +16,17 @@ Base classes for missing values visualizers.
 ##########################################################################
 ## Imports
 ##########################################################################
+
 import numpy as np
 
 from yellowbrick.features.base import DataVisualizer
 from yellowbrick.utils import is_dataframe
 
+
 ##########################################################################
 ## Feature Visualizers
 ##########################################################################
+
 
 class MissingDataVisualizer(DataVisualizer):
     """Base class for MissingDataVisualizers.
@@ -51,6 +54,12 @@ class MissingDataVisualizer(DataVisualizer):
         self : instance
             Returns the instance of the transformer/visualizer
         """
+        # Do not call super here - the data visualizer has been refactored
+        # to provide increased functionality that is not yet compatible with
+        # the current implementation. This mimicks the previous functionality.
+        # TODO: Refactor MissingDataVisualizer to make use of new features.
+        self.features_ = self.features
+
         if is_dataframe(X):
             self.X = X.values
             if self.features_ is None:
@@ -60,8 +69,8 @@ class MissingDataVisualizer(DataVisualizer):
 
         self.y = y
 
-        super(MissingDataVisualizer, self).fit(X, y, **kwargs)
-
+        self.draw(X, y, **kwargs)
+        return self
 
     def get_feature_names(self):
         if self.features_ is None:

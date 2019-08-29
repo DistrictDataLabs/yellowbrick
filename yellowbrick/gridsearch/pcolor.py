@@ -1,3 +1,14 @@
+# yellowbrick.gridsearch.pcolor
+# Colorplot visualizer for gridsearch results.
+#
+# Author:   Phillip Schafer
+# Created:  Sat Feb 3 10:18:33 2018 -0500
+#
+# Copyright (C) 2018 The scikit-yb developers
+# For license information, see LICENSE.txt
+#
+# ID: pcolor.py [03724ed] pbs929@users.noreply.github.com $
+
 """
 Colorplot visualizer for gridsearch results.
 """
@@ -8,18 +19,15 @@ from .base import GridSearchVisualizer
 
 
 ## Packages for export
-__all__ = [
-    "GridSearchColorPlot",
-    "gridsearch_color_plot"
-]
+__all__ = ["GridSearchColorPlot", "gridsearch_color_plot"]
 
 
 ##########################################################################
 ## Quick method
 ##########################################################################
 
-def gridsearch_color_plot(model, x_param, y_param, X=None, y=None, ax=None,
-                          **kwargs):
+
+def gridsearch_color_plot(model, x_param, y_param, X=None, y=None, ax=None, **kwargs):
     """Quick method:
     Create a color plot showing the best grid search scores across two
     parameters.
@@ -120,8 +128,16 @@ class GridSearchColorPlot(GridSearchVisualizer):
     >>> model.poof()
     """
 
-    def __init__(self, model, x_param, y_param, metric='mean_test_score',
-                 colormap='RdBu_r', ax=None, **kwargs):
+    def __init__(
+        self,
+        model,
+        x_param,
+        y_param,
+        metric="mean_test_score",
+        colormap="RdBu_r",
+        ax=None,
+        **kwargs
+    ):
         super(GridSearchColorPlot, self).__init__(model, ax=ax, **kwargs)
         self.x_param = x_param
         self.y_param = y_param
@@ -138,9 +154,10 @@ class GridSearchColorPlot(GridSearchVisualizer):
         data = np.ma.masked_invalid(best_scores)
 
         # Plot and fill in hatch for nans
-        mesh = self.ax.pcolor(data, cmap=self.colormap,
-                              vmin=np.nanmin(data), vmax=np.nanmax(data))
-        self.ax.patch.set(hatch='x', edgecolor='black')
+        mesh = self.ax.pcolor(
+            data, cmap=self.colormap, vmin=np.nanmin(data), vmax=np.nanmax(data)
+        )
+        self.ax.patch.set(hatch="x", edgecolor="black")
 
         # Ticks and tick labels
         self.ax.set_xticks(np.arange(len(x_vals)) + 0.5)

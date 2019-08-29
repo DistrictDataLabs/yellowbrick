@@ -1,10 +1,13 @@
 # yellowbrick.classifier.class_balance
 # Class balance visualizer for showing per-class support.
 #
-# Author:   Rebecca Bilbro <rbilbro@districtdatalabs.com>
-# Author:   Benjamin Bengfort <bbengfort@districtdatalabs.com>
+# Author:   Rebecca Bilbro
+# Author:   Benjamin Bengfort
 # Author:   Neal Humphrey
 # Created:  Wed May 18 12:39:40 2016 -0400
+#
+# Copyright (C) 2016 The scikit-yb developers
+# For license information, see LICENSE.txt
 #
 # ID: class_balance.py [5388065] neal@nhumphrey.com $
 
@@ -13,14 +16,14 @@ Class balance visualizer for showing per-class support.
 """
 
 ##########################################################################
-## Imports
+# Imports
 ##########################################################################
 
 import numpy as np
 
-from .base import TargetVisualizer
-from ..style.colors import resolve_colors
-from ..exceptions import YellowbrickValueError
+from yellowbrick.style.colors import resolve_colors
+from yellowbrick.target.base import TargetVisualizer
+from yellowbrick.exceptions import YellowbrickValueError
 
 from sklearn.utils.multiclass import unique_labels, type_of_target
 
@@ -31,8 +34,9 @@ COMPARE = "compare"
 
 
 ##########################################################################
-## Class Balance Chart
+# Class Balance Chart
 ##########################################################################
+
 
 class ClassBalance(TargetVisualizer):
     """
@@ -61,6 +65,12 @@ class ClassBalance(TargetVisualizer):
         LabelEncoder.classes\_ as this parameter. If not specified, the labels
         in the data will be used.
 
+    colors: list of strings
+        Specify colors for the barchart (will override colormap if both are provided).
+
+    colormap : string or matplotlib cmap
+        Specify a colormap to color the classes.
+
     kwargs: dict, optional
         Keyword arguments passed to the super class. Here, used
         to colorize the bars in the histogram.
@@ -74,8 +84,8 @@ class ClassBalance(TargetVisualizer):
         A table representing the support of each class in the target. It is a
         vector when in balance mode, or a table with two rows in compare mode.
 
-    Example
-    -------
+    Examples
+    --------
     To simply observe the balance of classes in the target:
 
     >>> viz = ClassBalance().fit(y)
@@ -89,8 +99,11 @@ class ClassBalance(TargetVisualizer):
     >>> viz.poof()
     """
 
-    def __init__(self, ax=None, labels=None, **kwargs):
+    def __init__(self, ax=None, labels=None, colors=None, colormap=None, **kwargs):
         self.labels = labels
+        self.colors = colors
+        self.colormap = colormap
+
         super(ClassBalance, self).__init__(ax, **kwargs)
 
     def fit(self, y_train, y_test=None):
@@ -108,7 +121,7 @@ class ClassBalance(TargetVisualizer):
         Parameters
         ----------
         y_train : array-like
-            Array or list of shape (n,) that containes discrete data.
+            Array or list of shape (n,) that contains discrete data.
 
         y_test : array-like, optional
             Array or list of shape (m,) that contains discrete data. If
@@ -117,10 +130,12 @@ class ClassBalance(TargetVisualizer):
 
         # check to make sure that y_train is not a 2D array, e.g. X
         if y_train.ndim == 2:
-            raise YellowbrickValueError((
-                "fit has changed to only require a 1D array, y "
-                "since version 0.9; please see the docs for more info"
-            ))
+            raise YellowbrickValueError(
+                (
+                    "fit has changed to only require a 1D array, y "
+                    "since version 0.9; please see the docs for more info"
+                )
+            )
 
         # Check the target types for the y variables
         self._validate_target(y_train)
@@ -133,27 +148,24 @@ class ClassBalance(TargetVisualizer):
         # Validate the classes with the class names
         if self.labels is not None:
             if len(self.labels) != len(self.classes_):
-                raise YellowbrickValueError((
-                    "discovered {} classes in the data, does not match "
-                    "the {} labels specified."
-                ).format(len(self.classes_), len(self.labels)))
+                raise YellowbrickValueError(
+                    (
+                        "discovered {} classes in the data, does not match "
+                        "the {} labels specified."
+                    ).format(len(self.classes_), len(self.labels))
+                )
 
         # Determine if we're in compare or balance mode
         self._mode = BALANCE if y_test is None else COMPARE
 
         # Compute the support values
         if self._mode == BALANCE:
-            self.support_ = np.array([
-                (y_train == idx).sum() for idx in self.classes_
-            ])
+            self.support_ = np.array([(y_train == idx).sum() for idx in self.classes_])
 
         else:
-            self.support_ = np.array([
-                [
-                    (y == idx).sum() for idx in self.classes_
-                ]
-                for y in targets
-            ])
+            self.support_ = np.array(
+                [[(y == idx).sum() for idx in self.classes_] for y in targets]
+            )
 
         # Draw the bar chart
         self.draw()
@@ -166,12 +178,17 @@ class ClassBalance(TargetVisualizer):
         Renders the class balance chart on the specified axes from support.
         """
         # Number of colors is either number of classes or 2
-        colors = resolve_colors(len(self.support_))
+        colors = resolve_colors(
+            len(self.support_), colormap=self.colormap, colors=self.colors
+        )
 
         if self._mode == BALANCE:
             self.ax.bar(
-                np.arange(len(self.support_)), self.support_,
-                color=colors, align='center', width=0.5
+                np.arange(len(self.support_)),
+                self.support_,
+                color=colors,
+                align="center",
+                width=0.5,
             )
 
         # Compare mode
@@ -185,8 +202,7 @@ class ClassBalance(TargetVisualizer):
                     index = index + bar_width
 
                 self.ax.bar(
-                    index, support, bar_width,
-                    color=colors[idx], label=labels[idx]
+                    index, support, bar_width, color=colors[idx], label=labels[idx]
                 )
 
         return self.ax
@@ -202,22 +218,20 @@ class ClassBalance(TargetVisualizer):
 
         """
         # Set the title
-        self.set_title(
-            'Class Balance for {:,} Instances'.format(self.support_.sum())
-        )
+        self.set_title("Class Balance for {:,} Instances".format(self.support_.sum()))
 
         # Set the x ticks with the class names or labels if specified
         labels = self.labels if self.labels is not None else self.classes_
         xticks = np.arange(len(labels))
         if self._mode == COMPARE:
-            xticks = xticks + (0.35/2)
+            xticks = xticks + (0.35 / 2)
 
         self.ax.set_xticks(xticks)
         self.ax.set_xticklabels(labels)
 
         # Compute the ceiling for the y limit
         cmax = self.support_.max()
-        self.ax.set_ylim(0, cmax + cmax* 0.1)
+        self.ax.set_ylim(0, cmax + cmax * 0.1)
         self.ax.set_ylabel("support")
 
         # Remove the vertical grid
@@ -237,16 +251,21 @@ class ClassBalance(TargetVisualizer):
 
         y_type = type_of_target(y)
         if y_type not in ("binary", "multiclass"):
-            raise YellowbrickValueError((
-                "'{}' target type not supported, only binary and multiclass"
-            ).format(y_type))
+            raise YellowbrickValueError(
+                ("'{}' target type not supported, only binary and multiclass").format(
+                    y_type
+                )
+            )
 
 
 ##########################################################################
-## Quick Method
+# Quick Method
 ##########################################################################
 
-def class_balance(y_train, y_test=None, ax=None, labels=None, **kwargs):
+
+def class_balance(
+    y_train, y_test=None, ax=None, labels=None, color=None, colormap=None, **kwargs
+):
     """Quick method:
 
     One of the biggest challenges for classification models is an imbalance of
@@ -282,21 +301,27 @@ def class_balance(y_train, y_test=None, ax=None, labels=None, **kwargs):
         LabelEncoder.classes\_ as this parameter. If not specified, the labels
         in the data will be used.
 
+    colors: list of strings
+        Specify colors for the barchart (will override colormap if both are provided).
+
+    colormap : string or matplotlib cmap
+        Specify a colormap to color the classes.
+
     kwargs: dict, optional
         Keyword arguments passed to the super class. Here, used
         to colorize the bars in the histogram.
 
     Returns
     -------
-    ax : matplotlib axes
-        Returns the axes that the class balance plot was drawn on.
+    visualizer : ClassBalance
+        Returns the fitted visualizer
     """
     # Instantiate the visualizer
-    visualizer = ClassBalance(ax=ax, labels=labels, **kwargs)
+    visualizer = ClassBalance(ax=ax, labels=labels, color=None, colormap=None, **kwargs)
 
     # Fit and transform the visualizer (calls draw)
     visualizer.fit(y_train, y_test)
     visualizer.finalize()
 
-    # Return the axes object on the visualizer
-    return visualizer.ax
+    # Return the visualizer
+    return visualizer

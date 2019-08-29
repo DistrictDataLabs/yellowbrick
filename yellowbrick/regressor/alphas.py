@@ -1,10 +1,11 @@
 # yellowbrick.regressor.alphas
 # Implements alpha selection visualizers for regularization
 #
-# Author:   Benjamin Bengfort <bbengfort@districtdatalabs.com>
+# Author:   Benjamin Bengfort
+# Author:   Rebecca Bilbro
 # Created:  Mon Mar 06 19:22:07 2017 -0500
 #
-# Copyright (C) 2016 District Data Labs
+# Copyright (C) 2016 The scikit-yb developers
 # For license information, see LICENSE.txt
 #
 # ID: alphas.py [7d3f5e6] benjamin@bengfort.com $
@@ -21,21 +22,20 @@ import numpy as np
 
 from functools import partial
 
-from .base import RegressionScoreVisualizer
-from ..exceptions import YellowbrickTypeError
-from ..exceptions import YellowbrickValueError
+from yellowbrick.exceptions import YellowbrickTypeError
+from yellowbrick.exceptions import YellowbrickValueError
+from yellowbrick.regressor.base import RegressionScoreVisualizer
 
 from sklearn.model_selection import cross_val_score
 
 ## Packages for export
-__all__ = [
-    "AlphaSelection", "ManualAlphaSelection"
-]
+__all__ = ["AlphaSelection", "ManualAlphaSelection"]
 
 
 ##########################################################################
 ## AlphaSelection Visualizer
 ##########################################################################
+
 
 class AlphaSelection(RegressionScoreVisualizer):
     """
@@ -68,12 +68,19 @@ class AlphaSelection(RegressionScoreVisualizer):
     model : a Scikit-Learn regressor
         Should be an instance of a regressor, and specifically one whose name
         ends with "CV" otherwise a will raise a YellowbrickTypeError exception
-        on instantiation. To use non-CV regressors see:
-        ``ManualAlphaSelection``.
+        on instantiation. To use non-CV regressors see: ``ManualAlphaSelection``.
+        If the estimator is not fitted, it is fit when the visualizer is fitted,
+        unless otherwise specified by ``is_fitted``.
 
     ax : matplotlib Axes, default: None
         The axes to plot the figure on. If None is passed in the current axes
         will be used (or generated if required).
+
+    is_fitted : bool or str, default='auto'
+        Specify if the wrapped estimator is already fitted. If False, the estimator
+        will be fit when the visualizer is fit, otherwise, the estimator will not be
+        modified. If 'auto' (default), a helper method will check if the estimator
+        is fitted before fitting it again.
 
     kwargs : dict
         Keyword arguments that are passed to the base class and may influence
@@ -108,18 +115,20 @@ class AlphaSelection(RegressionScoreVisualizer):
     For RidgeCV, make sure ``store_cv_values=True``.
     """
 
-    def __init__(self, model, ax=None, **kwargs):
+    def __init__(self, model, ax=None, is_fitted="auto", **kwargs):
 
         # Check to make sure this is a "RegressorCV"
         name = model.__class__.__name__
         if not name.endswith("CV"):
-            raise YellowbrickTypeError((
-                "'{}' is not a CV regularization model;"
-                " try ManualAlphaSelection instead."
-            ).format(name))
+            raise YellowbrickTypeError(
+                (
+                    "'{}' is not a CV regularization model;"
+                    " try ManualAlphaSelection instead."
+                ).format(name)
+            )
 
         # Set the store_cv_values parameter on RidgeCV
-        if 'store_cv_values' in model.get_params().keys():
+        if "store_cv_values" in model.get_params().keys():
             model.set_params(store_cv_values=True)
 
         # Call super to initialize the class
@@ -130,15 +139,12 @@ class AlphaSelection(RegressionScoreVisualizer):
         A simple pass-through method; calls fit on the estimator and then
         draws the alpha-error plot.
         """
-        self.estimator.fit(X, y, **kwargs)
+        # Fit the underlying model
+        super(AlphaSelection, self).fit(X, y, **kwargs)
+
+        # Draw the alpha to error curve
         self.draw()
         return self
-
-    def score(self, X, y, **kwargs):
-        """
-        Simply returns the score of the underlying CV model
-        """
-        return self.estimator.score(X, y, **kwargs)
 
     def draw(self):
         """
@@ -148,16 +154,15 @@ class AlphaSelection(RegressionScoreVisualizer):
         alphas = self._find_alphas_param()
         errors = self._find_errors_param()
 
-
-        alpha = self.estimator.alpha_ # Get decision from the estimator
-        name = self.name[:-2].lower() # Remove the CV from the label
+        alpha = self.estimator.alpha_  # Get decision from the estimator
+        name = self.name[:-2].lower()  # Remove the CV from the label
 
         # Plot the alpha against the error
         self.ax.plot(alphas, errors, label=name)
 
         # Draw a dashed vline at the alpha
         label = "$\\alpha={:0.3f}$".format(alpha)
-        self.ax.axvline(alpha, color='k', linestyle='dashed', label=label)
+        self.ax.axvline(alpha, color="k", linestyle="dashed", label=label)
 
         return self.ax
 
@@ -167,16 +172,14 @@ class AlphaSelection(RegressionScoreVisualizer):
         X and Y axis labels and adding the legend.
         """
         # Set the title
-        self.set_title(
-            '{} Alpha Error'.format(self.name)
-        )
+        self.set_title("{} Alpha Error".format(self.name))
 
         # Set the x and y labels
         self.ax.set_xlabel("alpha")
         self.ax.set_ylabel("error (or score)")
 
         # Set the legend
-        self.ax.legend(loc='best', frameon=True)
+        self.ax.legend(loc="best", frameon=True)
 
     def _find_alphas_param(self):
         """
@@ -186,7 +189,7 @@ class AlphaSelection(RegressionScoreVisualizer):
         """
 
         # NOTE: The order of the search is very important!
-        for attr in ("cv_alphas_", "alphas_", "alphas",):
+        for attr in ("cv_alphas_", "alphas_", "alphas"):
             try:
                 return getattr(self.estimator, attr)
             except AttributeError:
@@ -206,10 +209,10 @@ class AlphaSelection(RegressionScoreVisualizer):
         """
 
         # NOTE: The order of the search is very important!
-        if hasattr(self.estimator, 'mse_path_'):
+        if hasattr(self.estimator, "mse_path_"):
             return self.estimator.mse_path_.mean(1)
 
-        if hasattr(self.estimator, 'cv_values_'):
+        if hasattr(self.estimator, "cv_values_"):
             return self.estimator.cv_values_.mean(0)
 
         raise YellowbrickValueError(
@@ -218,9 +221,11 @@ class AlphaSelection(RegressionScoreVisualizer):
             )
         )
 
+
 ##########################################################################
 ## ManualAlphaSelection Visualizer
 ##########################################################################
+
 
 class ManualAlphaSelection(AlphaSelection):
     """
@@ -235,9 +240,9 @@ class ManualAlphaSelection(AlphaSelection):
     Parameters
     ----------
 
-    model : a Scikit-Learn regressor
-        Should be an instance of a regressor, and specifically one whose name
-        doesn't end with "CV". The regressor must support a call to
+    model : an unfitted Scikit-Learn regressor
+        Should be an instance of an unfitted regressor, and specifically one
+        whose name doesn't end with "CV". The regressor must support a call to
         ``set_params(alpha=alpha)`` and be fit multiple times. If the
         regressor name ends with "CV" a ``YellowbrickValueError`` is raised.
 
@@ -294,16 +299,16 @@ class ManualAlphaSelection(AlphaSelection):
     "RegressorCV" estimators.
     """
 
-    def __init__(self, model, ax=None, alphas=None,
-                 cv=None, scoring=None, **kwargs):
+    def __init__(self, model, ax=None, alphas=None, cv=None, scoring=None, **kwargs):
 
         # Check to make sure this is not a "RegressorCV"
         name = model.__class__.__name__
         if name.endswith("CV"):
-            raise YellowbrickTypeError((
-                "'{}' is a CV regularization model;"
-                " try AlphaSelection instead."
-            ).format(name))
+            raise YellowbrickTypeError(
+                (
+                    "'{}' is a CV regularization model;" " try AlphaSelection instead."
+                ).format(name)
+            )
 
         # Call super to initialize the class
         super(ManualAlphaSelection, self).__init__(model, ax=ax, **kwargs)
@@ -334,12 +339,6 @@ class ManualAlphaSelection(AlphaSelection):
         # Always make sure to return self from fit
         return self
 
-    def score(self, X, y, **kwargs):
-        """
-        Simply returns the score of the underlying CV model
-        """
-        return self.estimator.score(X, y, **kwargs)
-
     def draw(self):
         """
         Draws the alphas values against their associated error in a similar
@@ -351,11 +350,69 @@ class ManualAlphaSelection(AlphaSelection):
         # Draw a dashed vline at the alpha with maximal error
         alpha = self.alphas[np.where(self.errors == self.errors.max())][0]
         label = "$\\alpha_{{max}}={:0.3f}$".format(alpha)
-        self.ax.axvline(alpha, color='k', linestyle='dashed', label=label)
+        self.ax.axvline(alpha, color="k", linestyle="dashed", label=label)
 
         # Draw a dashed vline at the alpha with minimal error
         alpha = self.alphas[np.where(self.errors == self.errors.min())][0]
         label = "$\\alpha_{{min}}={:0.3f}$".format(alpha)
-        self.ax.axvline(alpha, color='k', linestyle='dashed', label=label)
+        self.ax.axvline(alpha, color="k", linestyle="dashed", label=label)
 
         return self.ax
+
+
+##########################################################################
+## Quick Method
+##########################################################################
+
+
+def alphas(model, X, y=None, ax=None, is_fitted="auto", **kwargs):
+    """Quick Method:
+    The Alpha Selection Visualizer demonstrates how different values of alpha
+    influence model selection during the regularization of linear models.
+    Generally speaking, alpha increases the affect of regularization, e.g. if
+    alpha is zero there is no regularization and the higher the alpha, the
+    more the regularization parameter influences the final model.
+
+    Parameters
+    ----------
+
+    model : a Scikit-Learn regressor
+        Should be an instance of a regressor, and specifically one whose name
+        ends with "CV" otherwise a will raise a YellowbrickTypeError exception
+        on instantiation. To use non-CV regressors see: ``ManualAlphaSelection``.
+        If the estimator is not fitted, it is fit when the visualizer is fitted,
+        unless otherwise specified by ``is_fitted``.
+
+    X  : ndarray or DataFrame of shape n x m
+        A matrix of n instances with m features.
+
+    y  : ndarray or Series of length n
+        An array or series of target values.
+
+    ax : matplotlib Axes, default: None
+        The axes to plot the figure on. If None is passed in the current axes
+        will be used (or generated if required).
+
+    is_fitted : bool or str, default='auto'
+        Specify if the wrapped estimator is already fitted. If False, the estimator
+        will be fit when the visualizer is fit, otherwise, the estimator will not be
+        modified. If 'auto' (default), a helper method will check if the estimator
+        is fitted before fitting it again.
+
+    kwargs : dict
+        Keyword arguments that are passed to the base class and may influence
+        the visualization as defined in other Visualizers.
+
+    Returns
+    -------
+    visualizer : AlphaSelection
+        Returns the alpha selection visualizer
+    """
+    # Instantiate the visualizer
+    visualizer = AlphaSelection(model, ax, is_fitted=is_fitted, **kwargs)
+
+    visualizer.score(X, y)
+    visualizer.finalize()
+
+    # Return the visualizer
+    return visualizer

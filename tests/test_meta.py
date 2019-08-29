@@ -4,7 +4,7 @@
 # Author:  Benjamin Bengfort <benjamin@bengfort.com>
 # Created: Sat Apr 07 13:16:53 2018 -0400
 #
-# ID: test_meta.py [] benjamin@bengfort.com $
+# ID: test_meta.py [0a2d2b4] benjamin@bengfort.com $
 
 """
 Meta testing for testing helper functions!
@@ -18,16 +18,14 @@ import os
 import pytest
 import inspect
 
+import matplotlib as mpl
+
 from tests.rand import RandomVisualizer
+from unittest.mock import MagicMock, patch
 from tests.base import ACTUAL_IMAGES, BASELINE_IMAGES
 from tests.base import VisualTestCase, ImageComparison
 
 from yellowbrick.exceptions import ImageComparisonFailure
-
-try:
-    from unittest.mock import MagicMock, patch
-except ImportError:
-    from mock import MagicMock, patch
 
 
 def assert_path_exists(*parts):
@@ -50,6 +48,7 @@ def assert_path_not_exists(*parts):
 ## Test Cases
 ##########################################################################
 
+
 class TestMetaImageComparison(VisualTestCase):
     """
     Meta Test: ImageComparison test cases
@@ -59,6 +58,7 @@ class TestMetaImageComparison(VisualTestCase):
         """
         Test the image comparison initialization and properties
         """
+
         def inner_assertion_function(ax):
             stack = inspect.stack()
             return ImageComparison(stack, ax=ax)
@@ -70,12 +70,16 @@ class TestMetaImageComparison(VisualTestCase):
         assert compare.test_module_path == "test_meta"
 
         # Must use os.path.join for Windows/POSIX compatibility
-        assert compare.actual_image_path.endswith(os.path.join(
-            "tests", "actual_images", "test_meta", "test_image_comparison.png"
-        ))
-        assert compare.baseline_image_path.endswith(os.path.join(
-            "tests", "baseline_images", "test_meta", "test_image_comparison.png"
-        ))
+        assert compare.actual_image_path.endswith(
+            os.path.join(
+                "tests", "actual_images", "test_meta", "test_image_comparison.png"
+            )
+        )
+        assert compare.baseline_image_path.endswith(
+            os.path.join(
+                "tests", "baseline_images", "test_meta", "test_image_comparison.png"
+            )
+        )
 
     @patch.object(ImageComparison, "cleanup")
     @patch.object(ImageComparison, "save")
@@ -84,6 +88,7 @@ class TestMetaImageComparison(VisualTestCase):
         """
         Test that image comparison cleans up, saves, and compares
         """
+
         def inner_assertion_function():
             stack = inspect.stack()
             return ImageComparison(stack, ax=MagicMock())
@@ -115,7 +120,7 @@ class TestMetaImageComparison(VisualTestCase):
         Test that a missing basline image raises an exception
         """
         viz = RandomVisualizer(random_state=14).fit()
-        viz.poof()
+        viz.finalize()
 
         # Assert the baseline image does not exist
         assert_path_not_exists(
@@ -135,7 +140,9 @@ class TestMetaImageComparison(VisualTestCase):
         Test that a random visualization is correctly compared to a baseline
         """
         viz = RandomVisualizer(random_state=111).fit()
-        viz.poof()
+        viz.finalize()
+
+        assert mpl.get_backend() == "agg"
 
         compare = self.assert_images_similar(viz, tol=1.0)
         assert_path_exists(compare.actual_image_path)
@@ -145,15 +152,18 @@ class TestMetaImageComparison(VisualTestCase):
         """
         Test that not close visualizers raise an assertion error.
         """
+        # Baseline image random_state=225
         viz = RandomVisualizer(random_state=224).fit()
-        viz.poof()
+        viz.finalize()
 
         with pytest.raises(ImageComparisonFailure, match="images not close"):
             self.assert_images_similar(viz)
 
         # Assert there is a diff
         assert_path_exists(
-            ACTUAL_IMAGES, "test_meta", "test_random_visualizer_not_close-failed-diff.png"
+            ACTUAL_IMAGES,
+            "test_meta",
+            "test_random_visualizer_not_close-failed-diff.png",
         )
 
     def test_random_visualizer_increased_tolerance(self):
@@ -161,6 +171,6 @@ class TestMetaImageComparison(VisualTestCase):
         Test that not close visualizers pass with increased tolerance
         """
         viz = RandomVisualizer(random_state=224).fit()
-        viz.poof()
+        viz.finalize()
 
         self.assert_images_similar(viz, tol=30)

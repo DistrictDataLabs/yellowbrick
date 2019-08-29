@@ -1,10 +1,10 @@
 # yellowbrick.pipeline
 # Implements a visual pipeline that subclasses Scikit-Learn pipelines.
 #
-# Author:   Benjamin Bengfort <bbengfort@districtdatalabs.com>
+# Author:   Benjamin Bengfort
 # Created:  Fri Oct 07 21:41:06 2016 -0400
 #
-# Copyright (C) 2016 District Data Labs
+# Copyright (C) 2016 The sckit-yb developers
 # For license information, see LICENSE.txt
 #
 # ID: pipeline.py [1efae1f] benjamin@bengfort.com $
@@ -26,6 +26,7 @@ from sklearn.pipeline import Pipeline
 ##########################################################################
 ## Visual Pipeline
 ##########################################################################
+
 
 class VisualPipeline(Pipeline):
     """Pipeline of transforms and visualizers with a final estimator.
@@ -68,10 +69,7 @@ class VisualPipeline(Pipeline):
 
     @property
     def visual_steps(self):
-        return dict(
-            step for step in self.steps
-            if isinstance(step[1], Visualizer)
-        )
+        return dict(step for step in self.steps if isinstance(step[1], Visualizer))
 
     def poof(self, outdir=None, ext=".pdf", **kwargs):
         """
@@ -92,13 +90,18 @@ class VisualPipeline(Pipeline):
         kwargs : dict
             Keyword arguments to pass to the ``poof()`` method of all steps.
         """
+        axes = []
         for name, step in self.visual_steps.items():
             if outdir is not None:
                 outpath = path.join(outdir, slugify(name) + ext)
             else:
                 outpath = None
 
-            step.poof(outpath=outpath, **kwargs)
+            ax = step.poof(outpath=outpath, **kwargs)
+            axes.append(ax)
+
+        # Return axes array to ensure figures are shown in notebook
+        return axes
 
     def fit_transform_poof(self, X, y=None, outpath=None, **kwargs):
         """

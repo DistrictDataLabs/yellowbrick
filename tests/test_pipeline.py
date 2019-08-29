@@ -4,7 +4,7 @@
 # Author:   Benjamin Bengfort <bbengfort@districtdatalabs.com>
 # Created:  Fri Oct 07 22:10:50 2016 -0400
 #
-# Copyright (C) 2016 District Data Labs
+# Copyright (C) 2016 The scikit-yb developers
 # For license information, see LICENSE.txt
 #
 # ID: test_pipeline.py [1efae1f] benjamin@bengfort.com $
@@ -18,34 +18,30 @@ Tests to ensure that the visual pipeline works as expected.
 ##########################################################################
 
 import os
-import unittest
+import pytest
 
+from unittest import mock
 from yellowbrick.base import Visualizer
 from yellowbrick.pipeline import VisualPipeline
 from sklearn.pipeline import Pipeline
 from sklearn.base import BaseEstimator, TransformerMixin
-
-try:
-    from unittest import mock
-except ImportError:
-    import mock
 
 
 ##########################################################################
 ## Mock Objects
 ##########################################################################
 
+
 class Thing(object):
     pass
 
 
 class MockEstimator(BaseEstimator):
-
     def fit(self, X, y=None, **kwargs):
         return self
 
-class MockVisualEstimator(Visualizer):
 
+class MockVisualEstimator(Visualizer):
     def fit(self, X, y=None, **kwargs):
         self.draw(**kwargs)
         return self
@@ -55,7 +51,6 @@ class MockVisualEstimator(Visualizer):
 
 
 class MockTransformer(BaseEstimator, TransformerMixin):
-
     def fit(self, X, y=None, **kwargs):
         return self
 
@@ -64,7 +59,6 @@ class MockTransformer(BaseEstimator, TransformerMixin):
 
 
 class MockVisualTransformer(Visualizer, TransformerMixin):
-
     def fit(self, X, y=None, **kwargs):
         self.draw(**kwargs)
         return self
@@ -80,8 +74,8 @@ class MockVisualTransformer(Visualizer, TransformerMixin):
 ## VisualPipeline Tests
 ##########################################################################
 
-class VisualPipelineTests(unittest.TestCase):
 
+class TestVisualPipeline(object):
     def test_validate_steps(self):
         """
         Assert that visual transformers can be added to pipelines
@@ -91,52 +85,54 @@ class VisualPipelineTests(unittest.TestCase):
         # TypeError if the steps don't match transforms --> estimator.
 
         # validate a bad intermediate transformer on the Pipeline
-        with self.assertRaises(TypeError):
-            Pipeline([
-                ('real', MockTransformer()),
-                ('bad', Thing()),
-                ('model', MockEstimator()),
-            ])
+        with pytest.raises(TypeError):
+            Pipeline(
+                [
+                    ("real", MockTransformer()),
+                    ("bad", Thing()),
+                    ("model", MockEstimator()),
+                ]
+            )
 
         # validate a bad intermediate transformer on the VisualPipeline
-        with self.assertRaises(TypeError):
-            VisualPipeline([
-                ('real', MockTransformer()),
-                ('bad', Thing()),
-                ('model', MockEstimator()),
-            ])
+        with pytest.raises(TypeError):
+            VisualPipeline(
+                [
+                    ("real", MockTransformer()),
+                    ("bad", Thing()),
+                    ("model", MockEstimator()),
+                ]
+            )
 
         # validate a bad final estimator on the Pipeline
-        with self.assertRaises(TypeError):
-            Pipeline([
-                ('real', MockTransformer()),
-                ('bad', Thing()),
-            ])
+        with pytest.raises(TypeError):
+            Pipeline([("real", MockTransformer()), ("bad", Thing())])
 
         # validate a bad final estimator on the VisualPipeline
-        with self.assertRaises(TypeError):
-            VisualPipeline([
-                ('real', MockTransformer()),
-                ('bad', Thing()),
-            ])
+        with pytest.raises(TypeError):
+            VisualPipeline([("real", MockTransformer()), ("bad", Thing())])
 
         # validate visual transformers on a Pipeline
         try:
-            Pipeline([
-                ('real', MockTransformer()),
-                ('visual', MockVisualTransformer()),
-                ('model', MockEstimator()),
-            ])
+            Pipeline(
+                [
+                    ("real", MockTransformer()),
+                    ("visual", MockVisualTransformer()),
+                    ("model", MockEstimator()),
+                ]
+            )
         except TypeError:
             self.fail("could not add a visual transformer to a Pipeline!")
 
         # validate visual transformers on a VisualPipeline
         try:
-            VisualPipeline([
-                ('real', MockTransformer()),
-                ('visual', MockVisualTransformer()),
-                ('model', MockEstimator()),
-            ])
+            VisualPipeline(
+                [
+                    ("real", MockTransformer()),
+                    ("visual", MockVisualTransformer()),
+                    ("model", MockEstimator()),
+                ]
+            )
         except TypeError:
             self.fail("could not add a visual transformer to a VisualPipeline!")
 
@@ -145,32 +141,36 @@ class VisualPipelineTests(unittest.TestCase):
         Test the visual steps property to filter visualizers
         """
 
-        pipeline = VisualPipeline([
-            ('a', MockTransformer()),
-            ('b', MockVisualTransformer()),
-            ('c', MockTransformer()),
-            ('d', MockVisualTransformer()),
-            ('e', MockEstimator()),
-        ])
+        pipeline = VisualPipeline(
+            [
+                ("a", MockTransformer()),
+                ("b", MockVisualTransformer()),
+                ("c", MockTransformer()),
+                ("d", MockVisualTransformer()),
+                ("e", MockEstimator()),
+            ]
+        )
 
-        self.assertNotIn('a', pipeline.visual_steps)
-        self.assertIn('b', pipeline.visual_steps)
-        self.assertNotIn('c', pipeline.visual_steps)
-        self.assertIn('d', pipeline.visual_steps)
-        self.assertNotIn('e', pipeline.visual_steps)
+        assert "a" not in pipeline.visual_steps
+        assert "b" in pipeline.visual_steps
+        assert "c" not in pipeline.visual_steps
+        assert "d" in pipeline.visual_steps
+        assert "e" not in pipeline.visual_steps
 
     def test_pipeline_poof(self):
         """
         Test the poof call against the VisualPipeline
         """
 
-        pipeline = VisualPipeline([
-            ('a', mock.MagicMock(MockTransformer())),
-            ('b', mock.MagicMock(MockVisualTransformer())),
-            ('c', mock.MagicMock(MockTransformer())),
-            ('d', mock.MagicMock(MockVisualTransformer())),
-            ('e', mock.MagicMock(MockEstimator()),)
-        ])
+        pipeline = VisualPipeline(
+            [
+                ("a", mock.MagicMock(MockTransformer())),
+                ("b", mock.MagicMock(MockVisualTransformer())),
+                ("c", mock.MagicMock(MockTransformer())),
+                ("d", mock.MagicMock(MockVisualTransformer())),
+                ("e", mock.MagicMock(MockEstimator())),
+            ]
+        )
 
         pipeline.poof()
         pipeline.steps[1][1].poof.assert_called_once_with(outpath=None)
@@ -180,41 +180,49 @@ class VisualPipelineTests(unittest.TestCase):
         """
         Test the poof call with an outdir to save all the figures
         """
-        pipeline = VisualPipeline([
-            ('a', mock.MagicMock(MockTransformer())),
-            ('b', mock.MagicMock(MockVisualTransformer())),
-            ('c', mock.MagicMock(MockTransformer())),
-            ('d', mock.MagicMock(MockVisualTransformer())),
-            ('e', mock.MagicMock(MockVisualEstimator()),)
-        ])
+        pipeline = VisualPipeline(
+            [
+                ("a", mock.MagicMock(MockTransformer())),
+                ("b", mock.MagicMock(MockVisualTransformer())),
+                ("c", mock.MagicMock(MockTransformer())),
+                ("d", mock.MagicMock(MockVisualTransformer())),
+                ("e", mock.MagicMock(MockVisualEstimator())),
+            ]
+        )
 
         # Must use path joining for Windows compatibility
         tmpdir = os.path.join("tmp", "figures")
 
         pipeline.poof(outdir=tmpdir)
-        pipeline.steps[1][1].poof.assert_called_once_with(outpath=os.path.join(tmpdir, "b.pdf"))
-        pipeline.steps[3][1].poof.assert_called_once_with(outpath=os.path.join(tmpdir, "d.pdf"))
-        pipeline.steps[4][1].poof.assert_called_once_with(outpath=os.path.join(tmpdir, "e.pdf"))
+        pipeline.steps[1][1].poof.assert_called_once_with(
+            outpath=os.path.join(tmpdir, "b.pdf")
+        )
+        pipeline.steps[3][1].poof.assert_called_once_with(
+            outpath=os.path.join(tmpdir, "d.pdf")
+        )
+        pipeline.steps[4][1].poof.assert_called_once_with(
+            outpath=os.path.join(tmpdir, "e.pdf")
+        )
 
-    @unittest.skip("need to find a way for fit to return self in mocks")
+    @pytest.mark.skip(reason="need to find a way for fit to return self in mocks")
     def test_fit_transform_poof_and_draw_calls(self):
         """
         Test calling fit, transform, and poof on the pipeline
         """
 
-        pipeline = VisualPipeline([
-            ('a', mock.MagicMock(MockTransformer())),
-            ('b', mock.MagicMock(MockVisualTransformer())),
-            ('c', mock.MagicMock(MockTransformer())),
-            ('d', mock.MagicMock(MockVisualTransformer())),
-            ('e', mock.MagicMock(MockEstimator()),)
-        ])
+        pipeline = VisualPipeline(
+            [
+                ("a", mock.MagicMock(MockTransformer())),
+                ("b", mock.MagicMock(MockVisualTransformer())),
+                ("c", mock.MagicMock(MockTransformer())),
+                ("d", mock.MagicMock(MockVisualTransformer())),
+                ("e", mock.MagicMock(MockEstimator())),
+            ]
+        )
 
-        X = [[1, 1, 1, 1, 1],
-             [2, 2, 2, 2, 2],
-             [3, 3, 3, 3, 3]]
+        X = [[1, 1, 1, 1, 1], [2, 2, 2, 2, 2], [3, 3, 3, 3, 3]]
 
-        y =  [1, 2, 3, 4, 5]
+        y = [1, 2, 3, 4, 5]
 
         pipeline.fit(X, y)
         for name, step in pipeline.named_steps.items():
@@ -222,10 +230,12 @@ class VisualPipelineTests(unittest.TestCase):
 
         pipeline.transform(X)
         for name, step in pipeline.named_steps.items():
-            if name == 'e': continue
+            if name == "e":
+                continue
             step.transform.assert_called_once_with(X)
 
         pipeline.poof()
         for name, step in pipeline.named_steps.items():
-            if name in {'a', 'c', 'e'}: continue
+            if name in {"a", "c", "e"}:
+                continue
             step.poof.assert_called_once_with(outpath=None)

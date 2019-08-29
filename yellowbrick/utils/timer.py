@@ -1,11 +1,13 @@
 # yellowbrick.utils.timer
 # Timer utilities
 #
-# Author:   ZJ Poh <poh.zijie@gmail.com>
+# Author:   ZJ Poh
 # Created:  Mon Jul 16 10:51:13 2017 -0700
 #
-# Copyright (C) 2017 District Data Labs
+# Copyright (C) 2017 The sckit-yb developers
 # For license information, see LICENSE.txt
+#
+# ID: timer.py [75b0f6a] 8103276+zjpoh@users.noreply.github.com $
 """
 Timer utilities
 """
@@ -32,8 +34,9 @@ class Timer:
     A context object timer. Usage:
         >>> with Timer() as timer:
         ...     do_something()
-        >>> print timer.interval
+        >>> print(timer.interval)
     """
+
     def __init__(self):
         self.time = time.time
 

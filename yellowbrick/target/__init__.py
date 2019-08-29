@@ -4,7 +4,7 @@
 # Author:  Benjamin Bengfort <benjamin@bengfort.com>
 # Created: Thu Jul 19 08:57:05 2018 -0400
 #
-# ID: __init__.py [] benjamin@bengfort.com $
+# ID: __init__.py [d742c57] benjamin@bengfort.com $
 
 """
 Implements visualizers related to the dependent (target) variable, y. For
@@ -22,3 +22,6 @@ correlation visualizations.
 from .class_balance import ClassBalance, class_balance
 from .binning import BalancedBinningReference, balanced_binning_reference
 from .feature_correlation import FeatureCorrelation
+
+# Alias the TargetType defined in yellowbrick.utils.target
+from yellowbrick.utils.target import TargetType

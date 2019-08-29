@@ -1,11 +1,11 @@
 # tests.test_classifier.test_rocauc
 # Testing for the ROCAUC visualizer
 #
-# Author:   Benjamin Bengfort <bbengfort@districtdatalabs.com>
-# Author:   Rebecca Bilbro <rbilbro@districtdatalabs.com>
+# Author:   Benjamin Bengfort
+# Author:   Rebecca Bilbro
 # Created:  Tue May 23 13:41:55 2017 -0700
 #
-# Copyright (C) 2017 District Data Labs
+# Copyright (C) 2017 The scikit-yb developers
 # For license information, see LICENSE.txt
 #
 # ID: test_rocauc.py [] benjamin@bengfort.com $
@@ -18,46 +18,70 @@ Testing for the ROCAUC visualizer
 ## Imports
 ##########################################################################
 
-import os
 import pytest
 import numpy as np
 import numpy.testing as npt
 
+from unittest.mock import patch
 from tests.base import VisualTestCase
-from tests.dataset import DatasetMixin
+
 from yellowbrick.classifier.rocauc import *
+from yellowbrick.datasets import load_occupancy
 from yellowbrick.exceptions import ModelError, YellowbrickValueError
 
 from sklearn.svm import LinearSVC
 from sklearn.naive_bayes import GaussianNB
 from sklearn.tree import DecisionTreeClassifier
-from sklearn.datasets import load_breast_cancer
 from sklearn.linear_model import LogisticRegression
 from sklearn.base import BaseEstimator, ClassifierMixin
+from sklearn.model_selection import train_test_split as tts
 from sklearn.ensemble import RandomForestClassifier, AdaBoostClassifier
 
+try:
+    import pandas as pd
+except ImportError:
+    pd = None
 
 ##########################################################################
 ## Fixtures
 ##########################################################################
-
-# Increased tolerance for AppVeyor tests
-TOL = 10 if os.name == 'nt'  else 0.1
 
 
 class FakeClassifier(BaseEstimator, ClassifierMixin):
     """
     A fake classifier for testing noops on the visualizer.
     """
+
     pass
+
+
+def assert_valid_rocauc_scores(visualizer, nscores=4):
+    """
+    Assertion helper to ensure scores are correctly computed
+    """
+    __tracebackhide__ = True
+    assert len(visualizer.fpr.keys()) == nscores
+    assert len(visualizer.tpr.keys()) == nscores
+    assert len(visualizer.roc_auc.keys()) == nscores
+
+    for k in (0, 1, "micro", "macro"):
+        assert k in visualizer.fpr
+        assert k in visualizer.tpr
+        assert k in visualizer.roc_auc
+        assert len(visualizer.fpr[k]) == len(visualizer.tpr[k])
+        assert 0.0 < visualizer.roc_auc[k] < 1.0
 
 
 ##########################################################################
 ##  Tests
 ##########################################################################
 
+
 @pytest.mark.usefixtures("binary", "multiclass")
-class ROCAUCTests(VisualTestCase, DatasetMixin):
+class TestROCAUC(VisualTestCase):
+    """
+    Test ROCAUC visualizer
+    """
 
     def test_binary_probability(self):
         """
@@ -74,21 +98,11 @@ class ROCAUCTests(VisualTestCase, DatasetMixin):
         assert 0 <= s <= 1
 
         # Check the scores
-        self.assertEqual(len(visualizer.fpr.keys()), 4)
-        self.assertEqual(len(visualizer.tpr.keys()), 4)
-        self.assertEqual(len(visualizer.roc_auc.keys()), 4)
-
-        for k in (0, 1, "micro", "macro"):
-            self.assertIn(k, visualizer.fpr)
-            self.assertIn(k, visualizer.tpr)
-            self.assertIn(k, visualizer.roc_auc)
-            self.assertEqual(len(visualizer.fpr[k]), len(visualizer.tpr[k]))
-            self.assertGreater(visualizer.roc_auc[k], 0.0)
-            self.assertLess(visualizer.roc_auc[k], 1.0)
+        assert_valid_rocauc_scores(visualizer)
 
         # Compare the images
-        visualizer.poof()
-        self.assert_images_similar(visualizer, tol=TOL)
+        visualizer.finalize()
+        self.assert_images_similar(visualizer, tol=0.1, windows_tol=10)
 
     def test_binary_probability_decision(self):
         """
@@ -105,28 +119,20 @@ class ROCAUCTests(VisualTestCase, DatasetMixin):
         assert 0 <= s <= 1
 
         # Check the scores
-        self.assertEqual(len(visualizer.fpr.keys()), 4)
-        self.assertEqual(len(visualizer.tpr.keys()), 4)
-        self.assertEqual(len(visualizer.roc_auc.keys()), 4)
-
-        for k in (0, 1, "micro", "macro"):
-            self.assertIn(k, visualizer.fpr)
-            self.assertIn(k, visualizer.tpr)
-            self.assertIn(k, visualizer.roc_auc)
-            self.assertEqual(len(visualizer.fpr[k]), len(visualizer.tpr[k]))
-            self.assertGreater(visualizer.roc_auc[k], 0.0)
-            self.assertLess(visualizer.roc_auc[k], 1.0)
+        assert_valid_rocauc_scores(visualizer)
 
         # Compare the images
-        visualizer.poof()
-        self.assert_images_similar(visualizer, tol=TOL)
+        visualizer.finalize()
+        self.assert_images_similar(visualizer, tol=0.1, windows_tol=10)
 
     def test_binary_decision(self):
         """
         Test ROCAUC with a binary classifier with a decision_function
         """
         # Create and fit the visualizer
-        visualizer = ROCAUC(LinearSVC(random_state=42), micro=False, macro=False, per_class=False)
+        visualizer = ROCAUC(
+            LinearSVC(random_state=42), micro=False, macro=False, per_class=False
+        )
         visualizer.fit(self.binary.X.train, self.binary.y.train)
 
         # Score the visualizer
@@ -136,13 +142,13 @@ class ROCAUCTests(VisualTestCase, DatasetMixin):
         assert 0 <= s <= 1
 
         # Check the scores
-        self.assertEqual(len(visualizer.fpr.keys()), 1)
-        self.assertEqual(len(visualizer.tpr.keys()), 1)
-        self.assertEqual(len(visualizer.roc_auc.keys()), 1)
+        assert len(visualizer.fpr.keys()) == 1
+        assert len(visualizer.tpr.keys()) == 1
+        assert len(visualizer.roc_auc.keys()) == 1
 
         # Compare the images
         # NOTE: increased tolerance for both AppVeyor and Travis CI tests
-        visualizer.poof()
+        visualizer.finalize()
         self.assert_images_similar(visualizer, tol=10)
 
     def test_binary_micro_error(self):
@@ -154,7 +160,7 @@ class ROCAUCTests(VisualTestCase, DatasetMixin):
         visualizer.fit(self.binary.X.train, self.binary.y.train)
 
         # Ensure score raises error (micro curves aren't defined for binary decisions)
-        with self.assertRaises(ModelError):
+        with pytest.raises(ModelError):
             visualizer.score(self.binary.X.test, self.binary.y.test)
 
     def test_binary_macro_error(self):
@@ -166,7 +172,7 @@ class ROCAUCTests(VisualTestCase, DatasetMixin):
         visualizer.fit(self.binary.X.train, self.binary.y.train)
 
         # Ensure score raises error (macro curves aren't defined for binary decisions)
-        with self.assertRaises(ModelError):
+        with pytest.raises(ModelError):
             visualizer.score(self.binary.X.test, self.binary.y.test)
 
     def test_binary_per_class_error(self):
@@ -178,7 +184,7 @@ class ROCAUCTests(VisualTestCase, DatasetMixin):
         visualizer.fit(self.binary.X.train, self.binary.y.train)
 
         # Ensure score raises error (per_class curves not defined for binary decisions)
-        with self.assertRaises(ModelError):
+        with pytest.raises(ModelError):
             visualizer.score(self.binary.X.test, self.binary.y.test)
 
     def test_multiclass_rocauc(self):
@@ -196,31 +202,40 @@ class ROCAUCTests(VisualTestCase, DatasetMixin):
         assert 0 <= s <= 1
 
         # Check the scores
-        self.assertEqual(len(visualizer.fpr.keys()), 8)
-        self.assertEqual(len(visualizer.tpr.keys()), 8)
-        self.assertEqual(len(visualizer.roc_auc.keys()), 8)
-
-        for k in (0, 1, "micro", "macro"):
-            self.assertIn(k, visualizer.fpr)
-            self.assertIn(k, visualizer.tpr)
-            self.assertIn(k, visualizer.roc_auc)
-            self.assertEqual(len(visualizer.fpr[k]), len(visualizer.tpr[k]))
-            self.assertGreater(visualizer.roc_auc[k], 0.0)
-            self.assertLess(visualizer.roc_auc[k], 1.0)
+        assert_valid_rocauc_scores(visualizer, nscores=8)
 
         # Compare the images
-        visualizer.poof()
-        self.assert_images_similar(visualizer, tol=TOL)
+        visualizer.finalize()
+        self.assert_images_similar(visualizer, tol=0.1, windows_tol=10)
 
     def test_rocauc_quickmethod(self):
         """
         Test the ROCAUC quick method
         """
-        data = load_breast_cancer()
+        X, y = load_occupancy(return_dataset=True).to_numpy()
         model = DecisionTreeClassifier()
 
         # TODO: image comparison of the quick method
-        roc_auc(model, data.data, data.target)
+        roc_auc(model, X, y)
+
+    @pytest.mark.skipif(pd is None, reason="test requires pandas")
+    def test_pandas_integration(self):
+        """
+        Test the ROCAUC with Pandas dataframe
+        """
+        X, y = load_occupancy(return_dataset=True).to_pandas()
+
+        # Create train/test splits
+        splits = tts(X, y, test_size=0.2, random_state=4512)
+        X_train, X_test, y_train, y_test = splits
+
+        visualizer = ROCAUC(GaussianNB())
+        visualizer.fit(X_train, y_train)
+        visualizer.score(X_test, y_test)
+
+        # Compare the images
+        visualizer.finalize()
+        self.assert_images_similar(visualizer)
 
     def test_rocauc_no_micro(self):
         """
@@ -232,16 +247,16 @@ class ROCAUCTests(VisualTestCase, DatasetMixin):
 
         # Score the visualizer (should be the macro average)
         s = visualizer.score(self.binary.X.test, self.binary.y.test)
-        self.assertAlmostEqual(s, 0.8)
+        assert s == pytest.approx(0.8661, abs=1e-4)
 
         # Assert that there is no micro score
-        self.assertNotIn("micro", visualizer.fpr)
-        self.assertNotIn("micro", visualizer.tpr)
-        self.assertNotIn("micro", visualizer.roc_auc)
+        assert "micro" not in visualizer.fpr
+        assert "micro" not in visualizer.tpr
+        assert "micro" not in visualizer.roc_auc
 
         # Compare the images
-        visualizer.poof()
-        self.assert_images_similar(visualizer, tol=TOL)
+        visualizer.finalize()
+        self.assert_images_similar(visualizer, tol=0.1, windows_tol=10)
 
     def test_rocauc_no_macro(self):
         """
@@ -253,16 +268,16 @@ class ROCAUCTests(VisualTestCase, DatasetMixin):
 
         # Score the visualizer (should be the micro average)
         s = visualizer.score(self.binary.X.test, self.binary.y.test)
-        self.assertAlmostEqual(s, 0.8)
+        assert s == pytest.approx(0.8573, abs=1e-4)
 
         # Assert that there is no macro score
-        self.assertNotIn("macro", visualizer.fpr)
-        self.assertNotIn("macro", visualizer.tpr)
-        self.assertNotIn("macro", visualizer.roc_auc)
+        assert "macro" not in visualizer.fpr
+        assert "macro" not in visualizer.tpr
+        assert "macro" not in visualizer.roc_auc
 
         # Compare the images
-        visualizer.poof()
-        self.assert_images_similar(visualizer, tol=TOL)
+        visualizer.finalize()
+        self.assert_images_similar(visualizer, tol=0.1, windows_tol=10)
 
     def test_rocauc_no_macro_no_micro(self):
         """
@@ -274,21 +289,21 @@ class ROCAUCTests(VisualTestCase, DatasetMixin):
 
         # Score the visualizer (should be the F1 score)
         s = visualizer.score(self.binary.X.test, self.binary.y.test)
-        self.assertAlmostEqual(s, 0.8)
+        assert s == pytest.approx(0.8)
 
         # Assert that there is no macro score
-        self.assertNotIn("macro", visualizer.fpr)
-        self.assertNotIn("macro", visualizer.tpr)
-        self.assertNotIn("macro", visualizer.roc_auc)
+        assert "macro" not in visualizer.fpr
+        assert "macro" not in visualizer.tpr
+        assert "macro" not in visualizer.roc_auc
 
         # Assert that there is no micro score
-        self.assertNotIn("micro", visualizer.fpr)
-        self.assertNotIn("micro", visualizer.tpr)
-        self.assertNotIn("micro", visualizer.roc_auc)
+        assert "micro" not in visualizer.fpr
+        assert "micro" not in visualizer.tpr
+        assert "micro" not in visualizer.roc_auc
 
         # Compare the images
-        visualizer.poof()
-        self.assert_images_similar(visualizer, tol=TOL)
+        visualizer.finalize()
+        self.assert_images_similar(visualizer, tol=0.1, windows_tol=10)
 
     def test_rocauc_no_classes(self):
         """
@@ -300,24 +315,26 @@ class ROCAUCTests(VisualTestCase, DatasetMixin):
 
         # Score the visualizer (should be the micro average)
         s = visualizer.score(self.binary.X.test, self.binary.y.test)
-        self.assertAlmostEqual(s, 0.8)
+        assert s == pytest.approx(0.8661, abs=1e-4)
 
         # Assert that there still are per-class scores
         for c in (0, 1):
-            self.assertIn(c, visualizer.fpr)
-            self.assertIn(c, visualizer.tpr)
-            self.assertIn(c, visualizer.roc_auc)
+            assert c in visualizer.fpr
+            assert c in visualizer.tpr
+            assert c in visualizer.roc_auc
 
         # Compare the images
-        visualizer.poof()
-        self.assert_images_similar(visualizer, tol=TOL)
+        visualizer.finalize()
+        self.assert_images_similar(visualizer, tol=0.1, windows_tol=10)
 
     def test_rocauc_no_curves(self):
         """
         Test ROCAUC with no curves specified at all
         """
         # Create and fit the visualizer
-        visualizer = ROCAUC(LogisticRegression(), per_class=False, macro=False, micro=False)
+        visualizer = ROCAUC(
+            LogisticRegression(), per_class=False, macro=False, micro=False
+        )
         visualizer.fit(self.binary.X.train, self.binary.y.train)
 
         # Attempt to score the visualizer
@@ -328,7 +345,7 @@ class ROCAUCTests(VisualTestCase, DatasetMixin):
         """
         Test ROCAUC with a target specifying a list of classes as strings
         """
-        class_labels = ['a', 'b', 'c', 'd', 'e', 'f']
+        class_labels = ["a", "b", "c", "d", "e", "f"]
 
         # Create and fit the visualizer
         visualizer = ROCAUC(LogisticRegression(), classes=class_labels)
@@ -336,14 +353,14 @@ class ROCAUCTests(VisualTestCase, DatasetMixin):
 
         # Score the visualizer
         visualizer.score(self.multiclass.X.test, self.multiclass.y.test)
-        self.assertEqual(list(visualizer.classes_), class_labels)
+        assert list(visualizer.classes_) == class_labels
 
     def test_rocauc_not_label_encoded(self):
         """
         Test ROCAUC with a target whose classes are unencoded strings before scoring
         """
         # Map numeric targets to strings
-        classes = {0: 'a', 1: 'b', 2: 'c', 3: 'd', 4: 'e', 5: 'f'}
+        classes = {0: "a", 1: "b", 2: "c", 3: "d", 4: "e", 5: "f"}
         y_train = np.array([classes[yi] for yi in self.multiclass.y.train])
         y_test = np.array([classes[yi] for yi in self.multiclass.y.test])
 
@@ -352,7 +369,7 @@ class ROCAUCTests(VisualTestCase, DatasetMixin):
         visualizer.fit(self.multiclass.X.train, y_train)
 
         # Confirm that y_train and y_test have the same targets before calling score
-        self.assertEqual(set(y_train), set(y_test))
+        assert set(y_train) == set(y_test)
 
     def test_binary_decision_function_rocauc(self):
         """
@@ -360,7 +377,7 @@ class ROCAUCTests(VisualTestCase, DatasetMixin):
         """
         # Load the model and assert there is no predict_proba method.
         model = LinearSVC()
-        with self.assertRaises(AttributeError):
+        with pytest.raises(AttributeError):
             model.predict_proba
 
         # Fit model and visualizer
@@ -368,9 +385,9 @@ class ROCAUCTests(VisualTestCase, DatasetMixin):
         visualizer.fit(self.binary.X.train, self.binary.y.train)
 
         # First 10 expected values in the y_scores
-        first_ten_expected = np.asarray([
-            -0.092, 0.019, -0.751, -0.838, 0.183, -0.344, -1.019, 2.203, 1.415, -0.529
-        ])
+        first_ten_expected = np.asarray(
+            [-0.092, 0.019, -0.751, -0.838, 0.183, -0.344, -1.019, 2.203, 1.415, -0.529]
+        )
 
         # Get the predict_proba scores and evaluate
         y_scores = visualizer._get_y_scores(self.binary.X.train)
@@ -384,7 +401,7 @@ class ROCAUCTests(VisualTestCase, DatasetMixin):
         """
         # Load the model and assert there is no predict_proba method.
         model = LinearSVC()
-        with self.assertRaises(AttributeError):
+        with pytest.raises(AttributeError):
             model.predict_proba
 
         # Fit model and visualizer
@@ -393,11 +410,11 @@ class ROCAUCTests(VisualTestCase, DatasetMixin):
 
         # First 5 expected arrays in the y_scores
         first_five_expected = [
-             [-0.370, -0.543, -1.059, -0.466, -0.743, -1.156],
-             [-0.445, -0.693, -0.362, -1.002, -0.815, -0.878],
-             [-1.058, -0.808, -0.291, -0.767, -0.651, -0.586],
-             [-0.446, -1.255, -0.489, -0.961, -0.807, -0.126],
-             [-1.066, -0.493, -0.639, -0.442, -0.639, -1.017]
+            [-0.370, -0.543, -1.059, -0.466, -0.743, -1.156],
+            [-0.445, -0.693, -0.362, -1.002, -0.815, -0.878],
+            [-1.058, -0.808, -0.291, -0.767, -0.651, -0.586],
+            [-0.446, -1.255, -0.489, -0.961, -0.807, -0.126],
+            [-1.066, -0.493, -0.639, -0.442, -0.639, -1.017],
         ]
 
         # Get the predict_proba scores and evaluate
@@ -412,7 +429,7 @@ class ROCAUCTests(VisualTestCase, DatasetMixin):
         """
         # Load the model and assert there is no decision_function method.
         model = GaussianNB()
-        with self.assertRaises(AttributeError):
+        with pytest.raises(AttributeError):
             model.decision_function
 
         # Fit model and visualizer
@@ -420,18 +437,20 @@ class ROCAUCTests(VisualTestCase, DatasetMixin):
         visualizer.fit(self.binary.X.train, self.binary.y.train)
 
         # First 10 expected arrays in the y_scores
-        first_ten_expected = np.asarray([
-            [0.595, 0.405],
-            [0.161, 0.839],
-            [0.990, 0.010],
-            [0.833, 0.167],
-            [0.766, 0.234],
-            [0.996, 0.004],
-            [0.592, 0.408],
-            [0.007, 0.993],
-            [0.035, 0.965],
-            [0.764, 0.236]
-        ])
+        first_ten_expected = np.asarray(
+            [
+                [0.595, 0.405],
+                [0.161, 0.839],
+                [0.990, 0.010],
+                [0.833, 0.167],
+                [0.766, 0.234],
+                [0.996, 0.004],
+                [0.592, 0.408],
+                [0.007, 0.993],
+                [0.035, 0.965],
+                [0.764, 0.236],
+            ]
+        )
 
         # Get the predict_proba scores and evaluate
         y_scores = visualizer._get_y_scores(self.binary.X.train)
@@ -444,5 +463,29 @@ class ROCAUCTests(VisualTestCase, DatasetMixin):
         Test ROCAUC with classifiers that have no scoring method
         """
         visualizer = ROCAUC(FakeClassifier())
-        with self.assertRaises(ModelError):
+        with pytest.raises(ModelError):
             visualizer._get_y_scores(self.binary.X.train)
+
+    def test_with_fitted(self):
+        """
+        Test that visualizer properly handles an already-fitted model
+        """
+        X, y = load_occupancy(return_dataset=True).to_numpy()
+
+        model = GaussianNB().fit(X, y)
+        classes = ["unoccupied", "occupied"]
+
+        with patch.object(model, "fit") as mockfit:
+            oz = ROCAUC(model, classes=classes)
+            oz.fit(X, y)
+            mockfit.assert_not_called()
+
+        with patch.object(model, "fit") as mockfit:
+            oz = ROCAUC(model, classes=classes, is_fitted=True)
+            oz.fit(X, y)
+            mockfit.assert_not_called()
+
+        with patch.object(model, "fit") as mockfit:
+            oz = ROCAUC(model, classes=classes, is_fitted=False)
+            oz.fit(X, y)
+            mockfit.assert_called_once_with(X, y)

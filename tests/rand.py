@@ -4,7 +4,7 @@
 # Author:  Benjamin Bengfort <bbengfort@districtdatalabs.com>
 # Created: Wed Mar 21 17:51:15 2018 -0400
 #
-# ID: random.py [] benjamin@bengfort.com $
+# ID: rand.py [cc69b3c] davidwaterman@gmail.com $
 
 """
 A visualizer that draws a random scatter plot for testing.
@@ -25,6 +25,7 @@ from sklearn.datasets import make_blobs
 ##########################################################################
 ## Random Visualizer
 ##########################################################################
+
 
 class RandomVisualizer(Visualizer):
     """
@@ -49,16 +50,13 @@ class RandomVisualizer(Visualizer):
         Used to specify the seed of the random state to ensure tests work.
     """
 
-    def __init__(self, ax=None, n_samples=100, n_blobs=3,
-                 random_state=None, **kwargs):
+    def __init__(self, ax=None, n_samples=100, n_blobs=3, random_state=None, **kwargs):
 
         super(RandomVisualizer, self).__init__(ax=ax, **kwargs)
         if isinstance(random_state, (int, float)) or random_state is None:
             random_state = np.random.RandomState(random_state)
 
-        self.set_params(
-            n_samples=n_samples, n_blobs=n_blobs, random_state=random_state,
-        )
+        self.set_params(n_samples=n_samples, n_blobs=n_blobs, random_state=random_state)
 
     def generate(self):
         """
@@ -79,8 +77,8 @@ class RandomVisualizer(Visualizer):
     def fit(self, *args, **kwargs):
         X, c = self.generate()
 
-        x = X[:,0]
-        y = X[:,1]
+        x = X[:, 0]
+        y = X[:, 1]
 
         self.draw(x, y, c)
         return self
@@ -89,7 +87,7 @@ class RandomVisualizer(Visualizer):
         colors = resolve_colors(self.n_blobs)
 
         for i in np.arange(self.n_blobs):
-            mask = c==i
+            mask = c == i
             label = "c{}".format(i)
             self.ax.scatter(x[mask], y[mask], label=label, c=colors[i])
 
@@ -103,7 +101,7 @@ class RandomVisualizer(Visualizer):
         return self.ax
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     r = RandomVisualizer()
     r.fit()
-    r.poof(outpath='test.png')
+    r.poof(outpath="test.png")

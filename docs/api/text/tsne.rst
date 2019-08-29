@@ -7,59 +7,86 @@ One very popular method for visualizing document similarity is to use t-distribu
 
 Unfortunately, ``TSNE`` is very expensive, so typically a simpler decomposition method such as SVD or PCA is applied ahead of time. The ``TSNEVisualizer`` creates an inner transformer pipeline that applies such a decomposition first (SVD with 50 components by default), then performs the t-SNE embedding. The visualizer then plots the scatter plot, coloring by cluster or by class, or neither if a structural analysis is required.
 
-.. code:: python
+After importing the required tools, we can use the :doc:`hobbies corpus <../datasets/hobbies>` and vectorize the text using TF-IDF. Once the corpus is vectorized we can visualize it, showing the distribution of classes.
 
-    from yellowbrick.text import TSNEVisualizer
+
+.. plot::
+    :context: close-figs
+    :alt: TSNE Plot
+
     from sklearn.feature_extraction.text import TfidfVectorizer
 
-After importing the required tools, we can :doc:`load the corpus <corpus>` and vectorize the text using TF-IDF.
-
-.. code:: python
+    from yellowbrick.text import TSNEVisualizer
+    from yellowbrick.datasets import load_hobbies
 
     # Load the data and create document vectors
-    corpus = load_corpus('hobbies')
-    tfidf  = TfidfVectorizer()
+    corpus = load_hobbies()
+    tfidf = TfidfVectorizer()
 
-    docs   = tfidf.fit_transform(corpus.data)
-    labels = corpus.target
-
-Now that the corpus is vectorized we can visualize it, showing the distribution of classes.
-
-.. code:: python
+    X = tfidf.fit_transform(corpus.data)
+    y = corpus.target
 
     # Create the visualizer and draw the vectors
     tsne = TSNEVisualizer()
-    tsne.fit(docs, labels)
+    tsne.fit(X, y)
     tsne.poof()
 
-.. image:: images/tsne_all_docs.png
+Note that you can pass the class labels or document categories directly to the ``TSNEVisualizer`` as follows:
+
+.. code:: python
+
+    labels = corpus.labels
+    tsne = TSNEVisualizer(labels=labels)
+    tsne.fit(X, y)
+    tsne.poof()
 
 If we omit the target during fit, we can visualize the whole dataset to see if any meaningful patterns are observed.
 
-.. code:: python
+.. plot::
+    :context: close-figs
+    :include-source: False 
+    :alt: TSNE Plot without Class Coloring
 
-    # Don't color points with their classes
+    from sklearn.feature_extraction.text import TfidfVectorizer
+
+    from yellowbrick.text import TSNEVisualizer
+    from yellowbrick.datasets import load_hobbies
+
+    # Load the data and create document vectors
+    corpus = load_hobbies()
+    tfidf = TfidfVectorizer()
+
+    X = tfidf.fit_transform(corpus.data)
     tsne = TSNEVisualizer(labels=["documents"])
-    tsne.fit(docs)
+    tsne.fit(X)
     tsne.poof()
-
-.. image:: images/tsne_no_labels.png
 
 This means we don't have to use class labels at all. Instead we can use cluster membership from K-Means to label each document. This will allow us to look for clusters of related text by their contents:
 
-.. code:: python
+.. plot::
+    :context: close-figs
+    :include-source: False 
+    :alt: TSNE Plot without Clustering
 
-    # Apply clustering instead of class names.
     from sklearn.cluster import KMeans
+    from sklearn.feature_extraction.text import TfidfVectorizer
+
+    from yellowbrick.text import TSNEVisualizer
+    from yellowbrick.datasets import load_hobbies
+
+    # Load the data and create document vectors
+    corpus = load_hobbies()
+    tfidf = TfidfVectorizer()
+
+    X = tfidf.fit_transform(corpus.data)
 
     clusters = KMeans(n_clusters=5)
-    clusters.fit(docs)
+    clusters.fit(X)
 
     tsne = TSNEVisualizer()
-    tsne.fit(docs, ["c{}".format(c) for c in clusters.labels_])
+    tsne.fit(X, ["c{}".format(c) for c in clusters.labels_])
     tsne.poof()
 
-.. image:: images/tsne_kmeans.png
 
 API Reference
 -------------

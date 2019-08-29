@@ -4,7 +4,7 @@
 # Author:   Benjamin Bengfort <bbengfort@districtdatalabs.com>
 # Created:  Mon May 22 11:18:06 2017 -0700
 #
-# Copyright (C) 2017 District Data Labs
+# Copyright (C) 2017 The scikit-yb developers
 # For license information, see LICENSE.txt
 #
 # ID: checks.py [4131cb1] benjamin@bengfort.com $
@@ -18,6 +18,7 @@ Performs checking that visualizers adhere to Yellowbrick conventions.
 ##########################################################################
 
 import sys
+
 sys.path.append("..")
 
 import numpy as np
@@ -34,6 +35,7 @@ from yellowbrick.text.base import TextVisualizer
 ##########################################################################
 ## Checking runable
 ##########################################################################
+
 
 def check_visualizer(Visualizer):
     """
@@ -52,6 +54,7 @@ def check_visualizer(Visualizer):
 ##########################################################################
 ## Generate the specific per-visualizer checking
 ##########################################################################
+
 
 def _yield_all_checks(name, Visualizer):
     """
@@ -125,6 +128,7 @@ def _yield_text_checks(name, Visualizer):
 ## Checking Functions
 ##########################################################################
 
+
 def check_instantiation(name, Visualizer, args, kwargs):
     # assert that visualizers can be passed an axes object.
     ax = plt.gca()
@@ -135,7 +139,7 @@ def check_instantiation(name, Visualizer, args, kwargs):
 
 def check_estimator_api(name, Visualizer):
     X = np.random.rand((5, 10))
-    y = np.random.randint(0,2, 10)
+    y = np.random.randint(0, 2, 10)
 
     # Ensure fit returns self.
     viz = Visualizer()
@@ -143,8 +147,9 @@ def check_estimator_api(name, Visualizer):
     assert viz == self
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     import sys
+
     sys.path.append("..")
 
     from yellowbrick.classifier import *
@@ -154,12 +159,24 @@ if __name__ == '__main__':
     from yellowbrick.text import *
 
     visualizers = [
-        ClassBalance, ClassificationReport, ConfusionMatrix, ROCAUC,
-        KElbowVisualizer, SilhouetteVisualizer,
-        ScatterVisualizer, JointPlotVisualizer, Rank2D, RadViz, ParallelCoordinates,
-        AlphaSelection, ManualAlphaSelection,
-        PredictionError, ResidualsPlot,
-        TSNEVisualizer, FreqDistVisualizer, PosTagVisualizer
+        ClassBalance,
+        ClassificationReport,
+        ConfusionMatrix,
+        ROCAUC,
+        KElbowVisualizer,
+        SilhouetteVisualizer,
+        ScatterVisualizer,
+        JointPlotVisualizer,
+        Rank2D,
+        RadViz,
+        ParallelCoordinates,
+        AlphaSelection,
+        ManualAlphaSelection,
+        PredictionError,
+        ResidualsPlot,
+        TSNEVisualizer,
+        FreqDistVisualizer,
+        PosTagVisualizer,
     ]
 
     for visualizer in visualizers:

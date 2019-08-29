@@ -1,39 +1,63 @@
 # tests.test_target.test_binning
 # Tests for the BalancedBinningReference visualizer
 #
-# Author:   Juan L. Kehoe (juanluo2008@gmail.com)
-# Author:  Prema Damodaran Roman (pdamo24@gmail.com)
+# Author:  Juan L. Kehoe
+# Author:  Prema Damodaran Roman
 # Created: Thu Jul 20 10:21:49 2018 -0400
+#
+# Copyright (C) 2018 The scikit-yb developers
+# For license information, see LICENSE.txt
 #
 # ID: test_binning.py
 
-from tests.base import VisualTestCase
-from tests.dataset import DatasetMixin
+##########################################################################
+# Imports
+##########################################################################
+import pytest
+
 from yellowbrick.target.binning import *
+from yellowbrick.datasets import load_occupancy
+
+from tests.base import VisualTestCase
+
+try:
+    import pandas as pd
+except ImportError:
+    pd = None
 
 ##########################################################################
-## BalancedBinningReference Tests
+# BalancedBinningReference Tests
 ##########################################################################
 
-class TestBalancedBinningReference(VisualTestCase, DatasetMixin):
-	"""
-	Test the BalancedBinningReference visualizer 
-	"""
 
-	def test_balancedbinningreference(self):
-		"""
-		Test Histogram on a real dataset
-		"""
-		# Load the data from the fixture
-		dataset = self.load_data('occupancy')
+class TestBalancedBinningReference(VisualTestCase):
+    """
+    Test the BalancedBinningReference visualizer
+    """
 
-		# Get the data
-		y = dataset["temperature"]
+    def test_numpy_bins(self):
+        """
+        Test Histogram on a NumPy array
+        """
+        # Load the data from the fixture
+        data = load_occupancy(return_dataset=True)
+        X, y = data.to_numpy()
 
-		
-		visualizer = BalancedBinningReference()
-		visualizer.fit(y)
-		visualizer.poof()
-		self.assert_images_similar(visualizer, tol=0.5)
-			
-		
+        visualizer = BalancedBinningReference()
+        visualizer.fit(y)
+        visualizer.finalize()
+        self.assert_images_similar(visualizer, tol=0.5)
+
+    @pytest.mark.skipif(pd is None, reason="pandas is required")
+    def test_pandas_bins(self):
+        """
+        Test Histogram on a Pandas Dataframe
+        """
+        # Load the data from the fixture
+        data = load_occupancy(return_dataset=True)
+        X, y = data.to_pandas()
+
+        visualizer = BalancedBinningReference()
+        visualizer.fit(y)
+        visualizer.finalize()
+        self.assert_images_similar(visualizer, tol=0.5)

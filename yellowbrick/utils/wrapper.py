@@ -1,10 +1,10 @@
 # yellowbrick.utils.wrapper
 # Utility package that provides a wrapper for new style classes.
 #
-# Author:   Benjamin Bengfort <bbengfort@districtdatalabs.com>
+# Author:   Benjamin Bengfort
 # Created:  Sun May 21 20:27:32 2017 -0700
 #
-# Copyright (C) 2017 District Data Labs
+# Copyright (C) 2017 The sckit-yb developers
 # For license information, see LICENSE.txt
 #
 # ID: wrapper.py [b2ecd50] benjamin@bengfort.com $

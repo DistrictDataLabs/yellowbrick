@@ -1,13 +1,12 @@
-#!/usr/bin/env python
-# download
+# yellowbrick.datasets.download
 # Downloads the example datasets for running the examples.
 #
-# Author:   Rebecca Bilbro <rbilbro@districtdatalabs.com>
-# Author:   Benjamin Bengfort <bbengfort@districtdatalabs.com>
-# Author:   Raul Peralta <raulpl25@gmail.com>
+# Author:   Rebecca Bilbro
+# Author:   Benjamin Bengfort
+# Author:   Raul Peralta
 # Created:  Wed May 18 11:54:45 2016 -0400
 #
-# Copyright (C) 2016 District Data Labs
+# Copyright (C) 2018 The scikit-yb developers
 # For license information, see LICENSE.txt
 #
 # ID: download.py [1f73d2b] benjamin@bengfort.com $
@@ -21,123 +20,91 @@ Downloads the example datasets for running the examples.
 ##########################################################################
 
 import os
-import numpy as np
+import zipfile
 
-from .utils import load_numpy, load_corpus, download_data, DATASETS
-from .utils import _lookup_path
+from urllib.request import urlopen
+
+from .signature import sha256sum
+from .path import get_data_home, cleanup_dataset
+
+from yellowbrick.exceptions import DatasetsError
+
+
+# Downlod chunk size
+CHUNK = 524288
+
 
 ##########################################################################
-## Functions
+## Download functions
 ##########################################################################
 
-FIXTURES = os.path.join(os.path.dirname(__file__), "fixtures")
 
+def download_data(url, signature, data_home=None, replace=False, extract=True):
+    """
+    Downloads the zipped data set specified at the given URL, saving it to
+    the data directory specified by ``get_data_home``. This function verifies
+    the download with the given signature and extracts the archive.
 
-def download_all(data_path=FIXTURES, verify=True):
-    """
-    Downloads all the example datasets. If verify is True then compare the
-    download signature with the hardcoded signature. If extract is True then
-    extract the contents of the zipfile to the given path.
-    """
-    for name, meta in DATASETS.items():
-        download_data(name, data_dir=data_path)
+    Parameters
+    ----------
+    url : str
+        The URL of the dataset on the Internet to GET
 
+    signature : str
+        The SHA 256 hash of the dataset archive being downloaded to verify
+        that the dataset has been correctly downloaded
 
-def load_concrete(data_path=FIXTURES):
-    """
-    Downloads the 'concrete' dataset, saving it to the output
-    path specified and returns the data.
-    """
-    # name of the dataset
-    name = 'concrete'
-    data = load_numpy(name, data_path=data_path)
-    return data
+    data_home : str, optional
+        The path on disk where data is stored. If not passed in, it is looked
+        up from YELLOWBRICK_DATA or the default returned by ``get_data_home``.
 
+    replace : bool, default: False
+        If the data archive already exists, replace the dataset. If this is
+        False and the dataset exists, an exception is raised.
 
-def load_energy(data_path=FIXTURES):
+    extract : bool, default: True
+        Extract the archive file after downloading it
     """
-    Downloads the 'energy' dataset, saving it to the output
-    path specified and returns the data.
-    """
-    # name of the dataset
-    name = 'energy'
-    data = load_numpy(name, data_path=data_path)
-    return data
+    data_home = get_data_home(data_home)
 
+    # Get the name of the file from the URL
+    basename = os.path.basename(url)
+    name, _ = os.path.splitext(basename)
 
-def load_credit(data_path=FIXTURES):
-    """
-    Downloads the 'credit' dataset, saving it to the output
-    path specified and returns the data.
-    """
-    # name of the dataset
-    name = 'credit'
-    data = load_numpy(name, data_path=data_path)
-    return data
+    # Get the archive and data directory paths
+    archive = os.path.join(data_home, basename)
+    datadir = os.path.join(data_home, name)
 
+    # If the archive exists cleanup or raise override exception
+    if os.path.exists(archive):
+        if not replace:
+            raise DatasetsError(
+                ("dataset already exists at {}, set replace=False to overwrite").format(
+                    archive
+                )
+            )
 
-def load_occupancy(data_path=FIXTURES):
-    """
-    Downloads the 'occupancy' dataset, saving it to the output
-    path specified and returns the data.
-    """
-    # name of the dataset
-    name = 'occupancy'
-    data = load_numpy(name, data_path=data_path)
-    return data
+        cleanup_dataset(name, data_home=data_home)
 
+    # Create the output directory if it does not exist
+    if not os.path.exists(datadir):
+        os.mkdir(datadir)
 
-def load_mushroom(data_path=FIXTURES):
-    """
-    Downloads the 'mushroom' dataset, saving it to the output
-    path specified and returns the data.
-    """
-    # name of the dataset
-    name = 'mushroom'
-    data = load_numpy(name, data_path=data_path)
-    return data
+    # Fetch the response in a streaming fashion and write it to disk.
+    response = urlopen(url)
 
+    with open(archive, "wb") as f:
+        while True:
+            chunk = response.read(CHUNK)
+            if not chunk:
+                break
+            f.write(chunk)
 
-def load_hobbies(data_path=FIXTURES):
-    """
-    Downloads the 'hobbies' dataset, saving it to the output
-    path specified and returns the data.
-    """
-    # name of the dataset
-    name = 'hobbies'
-    data = load_corpus(name, data_path=data_path)
-    return data
+    # Compare the signature of the archive to the expected one
+    if sha256sum(archive) != signature:
+        raise ValueError("Download signature does not match hardcoded signature!")
 
-
-def load_game(data_path=FIXTURES):
-    """
-    Downloads the 'game' dataset, saving it to the output
-    path specified and returns the data.
-    """
-    # name of the dataset
-    name = 'game'
-    path = _lookup_path(name, data_path=data_path)
-    dtype = np.array(['S1']*42+['|S4'])
-    return np.genfromtxt(path, dtype=dtype, delimiter=',', names=True)
-
-
-def load_bikeshare(data_path=FIXTURES):
-    """
-    Downloads the 'bikeshare' dataset, saving it to the output
-    path specified and returns the data.
-    """
-    # name of the dataset
-    name = 'bikeshare'
-    data = load_numpy(name, data_path=data_path)
-    return data
-
-
-def load_spam(data_path=FIXTURES):
-    """
-    Downloads the 'spam' dataset, saving it to the output
-    path specified and returns the data.
-    """
-    # name of the dataset
-    name = 'spam'
-    data = load_numpy(name, skip_header=True, data_path=data_path)
-    return data
+    # If extract, extract the zipfile.
+    if extract:
+        zf = zipfile.ZipFile(archive)
+        zf.extractall(path=data_home)

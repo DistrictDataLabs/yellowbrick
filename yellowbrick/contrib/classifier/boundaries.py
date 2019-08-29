@@ -1,11 +1,13 @@
 # yellowbrick.contrib.classifier.boundaries
 # Decision boundaries classifier visualizer for Yellowbrick.
 #
-# Author:   Nathan Danielsen <ndanielsen@gmail.com.com>
+# Author:   Nathan Danielsen
 # Created:  Sat Mar 12 14:17:29 2017 -0700
 #
-# Copyright (C) 2017 District Data Labs
+# Copyright (C) 2017 The scikit-yb developers
 # For license information, see LICENSE.txt
+#
+# ID: boundaries.py [a60bc41] nathan.danielsen@gmail.com $
 
 import itertools
 import numpy as np
@@ -28,20 +30,28 @@ from yellowbrick.utils import has_ndarray_int_columns
 ##########################################################################
 # Quick Methods
 ##########################################################################
+
+
 @deprecated("Will be moved to yellowbrick.contrib in v0.8")
-def decisionviz(model,
-                X,
-                y,
-                colors=None,
-                classes=None,
-                features=None,
-                show_scatter=True,
-                step_size=0.0025,
-                markers=None,
-                pcolormesh_alpha=0.8,
-                scatter_alpha=1.0,
-                title=None,
-                **kwargs):
+def decisionviz(
+    model,
+    X,
+    y,
+    ax=None,
+    x_name=None,
+    y_name=None,
+    features=None,
+    classes=None,
+    show_scatter=True,
+    step_size=0.0025,
+    markers=None,
+    pcolormesh_alpha=0.8,
+    scatter_alpha=1.0,
+    encoder=None,
+    is_fitted="auto",
+    force_model=False,
+    **kwargs
+):
     """DecisionBoundariesVisualizer is a bivariate data visualization algorithm
         that plots the decision boundaries of each class.
 
@@ -50,24 +60,40 @@ def decisionviz(model,
 
     Parameters
     ----------
-    model : the Scikit-Learn estimator, required
-        Should be an instance of a classifier, else the __init__ will
-        return an error.
+    model : estimator
+        A scikit-learn estimator that should be a classifier. If the model is
+        not a classifier, an exception is raised. If the internal model is not
+        fitted, it is fit when the visualizer is fitted, unless otherwise specified
+        by ``is_fitted``.
 
-    x : matrix, required
+    X : ndarray or DataFrame of shape n x m
+        A matrix of n instances with m features
+
+    y : ndarray or Series of length n
+        An array or series of target or class values
+
+    ax : matplotlib Axes, default: None
+        The axes to plot the figure on. If not specified the current axes will be
+        used (or generated if required).
+
+    x_name : string, default: None
         The feature name that corresponds to a column name or index postion
         in the matrix that will be plotted against the x-axis
 
-    y : array, required
+    y_name : string, default: None
         The feature name that corresponds to a column name or index postion
         in the matrix that will be plotted against the y-axis
 
-    classes : a list of class names for the legend, default: None
-        If classes is None and a y value is passed to fit then the classes
-        are selected from the target vector.
-
     features : list of strings, default: None
         The names of the features or columns
+
+    classes : list of str, defult: None
+        The class labels to use for the legend ordered by the index of the sorted
+        classes discovered in the ``fit()`` method. Specifying classes in this
+        manner is used to change the class names to a more specific format or
+        to label encoded integer classes. Some visualizers may also use this
+        field to filter the visualization for specific classes. For more advanced
+        usage specify an encoder rather than class labels.
 
     show_scatter : boolean, default: True
         If boolean is True, then a scatter plot with points will be drawn
@@ -89,40 +115,63 @@ def decisionviz(model,
     scatter_alpha : float, default: 1.0
         Sets the alpha transparency for the scatter plot points
 
-    title : string, default: stringified feature_one and feature_two
-        Sets the title of the visualization
+    encoder : dict or LabelEncoder, default: None
+        A mapping of classes to human readable labels. Often there is a mismatch
+        between desired class labels and those contained in the target variable
+        passed to ``fit()`` or ``score()``. The encoder disambiguates this mismatch
+        ensuring that classes are labeled correctly in the visualization.
 
-    kwargs : keyword arguments passed to the super class.
+    is_fitted : bool or str, default="auto"
+        Specify if the wrapped estimator is already fitted. If False, the estimator
+        will be fit when the visualizer is fit, otherwise, the estimator will not be
+        modified. If "auto" (default), a helper method will check if the estimator
+        is fitted before fitting it again.
+
+    force_model : bool, default: False
+        Do not check to ensure that the underlying estimator is a classifier. This
+        will prevent an exception when the visualizer is initialized but may result
+        in unexpected or unintended behavior.
+
+    kwargs : dict
+        Keyword arguments passed to the visualizer base classes.
 
     Returns
     -------
-    ax : matplotlib axes
-        Returns the axes that the decision boundaries graph were drawn on.
+    viz : DecisionBoundariesVisualizer
+        Returns the fitted and finalized visualizer
     """
     # Instantiate the visualizer
-    visualizer = DecisionBoundariesVisualizer(model,
-                    X,
-                    y,
-                    colors=colors,
-                    classes=classes,
-                    features=features,
-                    show_scatter=show_scatter,
-                    step_size=step_size,
-                    markers=markers,
-                    pcolormesh_alpha=pcolormesh_alpha,
-                    scatter_alpha=scatter_alpha,
-                    title=title,
-                    **kwargs)
+    visualizer = DecisionBoundariesVisualizer(
+        model,
+        ax=ax,
+        x=x_name,
+        y=y_name,
+        features=features,
+        classes=classes,
+        show_scatter=show_scatter,
+        step_size=step_size,
+        markers=markers,
+        pcolormesh_alpha=pcolormesh_alpha,
+        scatter_alpha=scatter_alpha,
+        encoder=encoder,
+        is_fitted=is_fitted,
+        force_model=force_model,
+        **kwargs
+    )
 
     # Fit, draw and poof the visualizer
-    visualizer.fit_draw_poof(X, y, **kwargs)
+    visualizer.fit(X, y)
+    visualizer.finalize()
 
     # Return the axes object on the visualizer
-    return visualizer.ax
+    return visualizer
+
 
 ##########################################################################
 # Static ScatterVisualizer Visualizer
 ##########################################################################
+
+
 @deprecated("Will be moved to yellowbrick.contrib in v0.8")
 class DecisionBoundariesVisualizer(ClassificationScoreVisualizer):
     """
@@ -131,10 +180,15 @@ class DecisionBoundariesVisualizer(ClassificationScoreVisualizer):
 
     Parameters
     ----------
+    model : estimator
+        A scikit-learn estimator that should be a classifier. If the model is
+        not a classifier, an exception is raised. If the internal model is not
+        fitted, it is fit when the visualizer is fitted, unless otherwise specified
+        by ``is_fitted``.
 
-    model : the Scikit-Learn estimator
-        Should be an instance of a classifier, else the __init__ will
-        return an error.
+    ax : matplotlib Axes, default: None
+        The axes to plot the figure on. If not specified the current axes will be
+        used (or generated if required).
 
     x : string, default: None
         The feature name that corresponds to a column name or index postion
@@ -144,12 +198,16 @@ class DecisionBoundariesVisualizer(ClassificationScoreVisualizer):
         The feature name that corresponds to a column name or index postion
         in the matrix that will be plotted against the y-axis
 
-    classes : a list of class names for the legend, default: None
-        If classes is None and a y value is passed to fit then the classes
-        are selected from the target vector.
-
     features : list of strings, default: None
         The names of the features or columns
+
+    classes : list of str, defult: None
+        The class labels to use for the legend ordered by the index of the sorted
+        classes discovered in the ``fit()`` method. Specifying classes in this
+        manner is used to change the class names to a more specific format or
+        to label encoded integer classes. Some visualizers may also use this
+        field to filter the visualization for specific classes. For more advanced
+        usage specify an encoder rather than class labels.
 
     show_scatter : boolean, default: True
         If boolean is True, then a scatter plot with points will be drawn
@@ -171,34 +229,54 @@ class DecisionBoundariesVisualizer(ClassificationScoreVisualizer):
     scatter_alpha : float, default: 1.0
         Sets the alpha transparency for the scatter plot points
 
-    title : string, default: stringified feature_one and feature_two
-        Sets the title of the visualization
+    encoder : dict or LabelEncoder, default: None
+        A mapping of classes to human readable labels. Often there is a mismatch
+        between desired class labels and those contained in the target variable
+        passed to ``fit()`` or ``score()``. The encoder disambiguates this mismatch
+        ensuring that classes are labeled correctly in the visualization.
 
-    kwargs : keyword arguments passed to the super class.
+    is_fitted : bool or str, default="auto"
+        Specify if the wrapped estimator is already fitted. If False, the estimator
+        will be fit when the visualizer is fit, otherwise, the estimator will not be
+        modified. If "auto" (default), a helper method will check if the estimator
+        is fitted before fitting it again.
 
-    These parameters can be influenced later on in the visualization
-    process, but can and should be set as early as possible.
+    force_model : bool, default: False
+        Do not check to ensure that the underlying estimator is a classifier. This
+        will prevent an exception when the visualizer is initialized but may result
+        in unexpected or unintended behavior.
+
+    kwargs : dict
+        Keyword arguments passed to the visualizer base classes.
 
     """
 
-    def __init__(self,
-                 model,
-                 x=None,
-                 y=None,
-                 features=None,
-                 show_scatter=True,
-                 step_size=0.0025,
-                 markers=None,
-                 pcolormesh_alpha=0.8,
-                 scatter_alpha=1.0,
-                #  title=None,
-                 *args,
-                 **kwargs):
-        """
-        Pass in a unfitted model to generate a decision boundaries
-        visualization.
-        """
-        super(DecisionBoundariesVisualizer, self).__init__(model, *args, **kwargs)
+    def __init__(
+        self,
+        model,
+        ax=None,
+        x=None,
+        y=None,
+        features=None,
+        classes=None,
+        show_scatter=True,
+        step_size=0.0025,
+        markers=None,
+        pcolormesh_alpha=0.8,
+        scatter_alpha=1.0,
+        encoder=None,
+        is_fitted="auto",
+        force_model=False,
+        **kwargs
+    ):
+        super(DecisionBoundariesVisualizer, self).__init__(
+            model,
+            ax=ax,
+            classes=classes,
+            encoder=encoder,
+            is_fitted=is_fitted,
+            force_model=force_model,
+        )
 
         self.x = x
         self.y = y
@@ -207,7 +285,8 @@ class DecisionBoundariesVisualizer(ClassificationScoreVisualizer):
         self.show_scatter = show_scatter
         self.step_size = step_size
         self.markers = itertools.cycle(
-            kwargs.pop('markers', (',', 'o', 'd', '*', 'v', 'h', '+')))
+            kwargs.pop("markers", (",", "o", "d", "*", "v", "h", "+"))
+        )
         self.pcolormesh_alpha = pcolormesh_alpha
         self.scatter_alpha = scatter_alpha
 
@@ -219,8 +298,7 @@ class DecisionBoundariesVisualizer(ClassificationScoreVisualizer):
         self.class_labels = None
 
         if self.x is not None and self.y is not None and self.features_ is not None:
-            raise YellowbrickValueError(
-                'Please specify x,y or features, not both.')
+            raise YellowbrickValueError("Please specify x,y or features, not both.")
 
         if self.x is not None and self.y is not None and self.features_ is None:
             self.features_ = [self.x, self.y]
@@ -229,7 +307,8 @@ class DecisionBoundariesVisualizer(ClassificationScoreVisualizer):
         if features is not None:
             if len(features) != 2:
                 raise YellowbrickValueError(
-                    'DecisionBoundariesVisualizer only accepts two features.')
+                    "DecisionBoundariesVisualizer only accepts two features."
+                )
 
     def _select_feature_columns(self, X):
         """ """
@@ -261,10 +340,12 @@ class DecisionBoundariesVisualizer(ClassificationScoreVisualizer):
             X_two_cols = X[:, [int(f_one), int(f_two)]]
 
         else:
-            raise YellowbrickValueError("""
+            raise YellowbrickValueError(
+                """
                 ScatterVisualizer only accepts two features, please
                 explicitly set these two features in the init kwargs or
-                pass a matrix/ dataframe in with only two columns.""")
+                pass a matrix/ dataframe in with only two columns."""
+            )
 
         return X_two_cols
 
@@ -291,18 +372,17 @@ class DecisionBoundariesVisualizer(ClassificationScoreVisualizer):
             Returns the instance of the visualizer
         """
         X = self._select_feature_columns(X)
+        self.classes_ = self._labels()
 
         # Assign each class a unique number for drawing
         if self.classes_ is None:
             self.classes_ = {
-                label: str(kls_num)
-                for kls_num, label in enumerate(np.unique(y))
+                label: str(kls_num) for kls_num, label in enumerate(np.unique(y))
             }
             self.class_labels = None
         elif len(set(y)) == len(self.classes_):
             self.classes_ = {
-                label: str(kls_num)
-                for kls_num, label in enumerate(self.classes_)
+                label: str(kls_num) for kls_num, label in enumerate(self.classes_)
             }
             self.class_labels = dict(zip(set(y), self.classes_))
         else:
@@ -316,8 +396,14 @@ class DecisionBoundariesVisualizer(ClassificationScoreVisualizer):
 
         # Plot the decision boundary. For that, we will assign a color to each
         # point in the mesh [x_min, x_max]x[y_min, y_max].
-        x_min, x_max = X[:, 0].min() - (X[:, 0].min() * .01), X[:, 0].max() + (X[:, 0].max() * .01)
-        y_min, y_max = X[:, 1].min() - (X[:, 1].min() * .01), X[:, 1].max() + (X[:, 1].max() * .01)
+        x_min, x_max = (
+            X[:, 0].min() - (X[:, 0].min() * 0.01),
+            X[:, 0].max() + (X[:, 0].max() * 0.01),
+        )
+        y_min, y_max = (
+            X[:, 1].min() - (X[:, 1].min() * 0.01),
+            X[:, 1].max() + (X[:, 1].max() * 0.01),
+        )
 
         self.ax.set_xlim([x_min, x_max])
         self.ax.set_ylim([y_min, y_max])
@@ -326,7 +412,8 @@ class DecisionBoundariesVisualizer(ClassificationScoreVisualizer):
         y_step = (y_max - y_min) * self.step_size
 
         self.xx, self.yy = np.meshgrid(
-            np.arange(x_min, x_max, x_step), np.arange(y_min, y_max, y_step))
+            np.arange(x_min, x_max, x_step), np.arange(y_min, y_max, y_step)
+        )
 
         # raise Exception(self.yy.ravel().shape)
         Z = self.estimator.predict(np.c_[self.xx.ravel(), self.yy.ravel()])
@@ -345,16 +432,17 @@ class DecisionBoundariesVisualizer(ClassificationScoreVisualizer):
         X = self._select_feature_columns(X)
 
         color_cycle = iter(
-            resolve_colors(colors=self.colors, n_colors=len(self.classes_)))
-        colors = OrderedDict([(c, next(color_cycle))
-                              for c in self.classes_.keys()])
+            resolve_colors(colors=self.colors, n_colors=len(self.classes_))
+        )
+        colors = OrderedDict([(c, next(color_cycle)) for c in self.classes_.keys()])
 
         self.ax.pcolormesh(
             self.xx,
             self.yy,
             self.Z_shape,
             alpha=self.pcolormesh_alpha,
-            cmap=ListedColormap(colors.values()))
+            cmap=ListedColormap(colors.values()),
+        )
 
         # Create a data structure to hold the scatter plot representations
         to_plot = OrderedDict()
@@ -387,13 +475,13 @@ class DecisionBoundariesVisualizer(ClassificationScoreVisualizer):
                     color=colors[kls],
                     alpha=self.scatter_alpha,
                     s=30,
-                    edgecolors='black',
+                    edgecolors="black",
                     label=str(kls),
-                    **kwargs)
+                    **kwargs
+                )
         else:
             labels = [
-                Patch(color=colors[kls], label=kls)
-                for kls in self.classes_.keys()
+                Patch(color=colors[kls], label=kls) for kls in self.classes_.keys()
             ]
             self.ax.legend(handles=labels)
 
@@ -412,7 +500,7 @@ class DecisionBoundariesVisualizer(ClassificationScoreVisualizer):
 
         self.set_title(self.title)
         # Add the legend
-        self.ax.legend(loc='best', frameon=True)
+        self.ax.legend(loc="best", frameon=True)
         self.ax.set_xlabel(feature_one)
         self.ax.set_ylabel(feature_two)
 

@@ -1,12 +1,12 @@
 # tests.test_classifier.test_class_prediction_error
 # Testing for the ClassPredictionError visualizer
 #
-# Author:   Benjamin Bengfort <bbengfort@districtdatalabs.com>
-# Author:   Rebecca Bilbro <rbilbro@districtdatalabs.com>
+# Author:   Benjamin Bengfort
+# Author:   Rebecca Bilbro
 # Author:   Larry Gray
 # Created:  Tue May 23 13:41:55 2017 -0700
 #
-# Copyright (C) 2017 District Data Labs
+# Copyright (C) 2017 The scikit-yb developers
 # For license information, see LICENSE.txt
 #
 # ID: test_rocauc.py [] benjamin@bengfort.com $
@@ -22,74 +22,114 @@ Testing for the ClassPredictionError visualizer
 import pytest
 import matplotlib.pyplot as plt
 
-from tests.dataset import DatasetMixin
-from yellowbrick.classifier.class_prediction_error import *
 from yellowbrick.exceptions import ModelError
+from yellowbrick.datasets import load_occupancy
+from yellowbrick.classifier.class_prediction_error import *
 
 from sklearn.svm import LinearSVC
 from sklearn.ensemble import RandomForestClassifier
-from sklearn.datasets import make_multilabel_classification, make_classification
+from sklearn.datasets import make_multilabel_classification
 
+from unittest.mock import patch
 from tests.base import VisualTestCase
 
-##########################################################################
-## Data
-##########################################################################
 
-X, y = make_classification(
-    n_classes=4, n_informative=3, n_clusters_per_class=1, random_state=42
-)
+try:
+    import pandas as pd
+except ImportError:
+    pd = None
+
 
 ##########################################################################
 ##  Tests
 ##########################################################################
 
 
-class ClassPredictionErrorTests(VisualTestCase, DatasetMixin):
+class TestClassPredictionError(VisualTestCase):
+    """
+    Test ClassPredictionError visualizer
+    """
 
-    def test_integration_class_prediction_error_(self):
+    @pytest.mark.filterwarnings("ignore:could not determine class_counts_")
+    def test_numpy_integration(self):
         """
-        Assert no errors occur during class prediction error integration
+        Assert no errors during class prediction error integration with NumPy arrays
         """
-        model = LinearSVC()
+        X, y = load_occupancy(return_dataset=True).to_numpy()
+
+        classes = ["unoccupied", "occupied"]
+
+        model = LinearSVC(random_state=42)
         model.fit(X, y)
-        visualizer = ClassPredictionError(model, classes=["A", "B", "C", "D"])
+        visualizer = ClassPredictionError(model, classes=classes)
         visualizer.score(X, y)
-        self.assert_images_similar(visualizer)
+        visualizer.finalize()
+
+        # AppVeyor and Linux conda fail due to non-text-based differences
+        # AppVeyor fails with RMS 13.161 - 13.289 (python - miniconda)
+        self.assert_images_similar(visualizer, tol=12.5, windows_tol=13.3)
+
+    @pytest.mark.filterwarnings("ignore:could not determine class_counts_")
+    @pytest.mark.skipif(pd is None, reason="test requires pandas")
+    def test_pandas_integration(self):
+        """
+        Assert no errors during class prediction error integration with Pandas
+        """
+        X, y = load_occupancy(return_dataset=True).to_pandas()
+        classes = ["unoccupied", "occupied"]
+
+        model = LinearSVC(random_state=42)
+        model.fit(X, y)
+        visualizer = ClassPredictionError(model, classes=classes)
+        visualizer.score(X, y)
+        visualizer.finalize()
+
+        # AppVeyor and Linux conda fail due to non-text-based differences
+        # AppVeyor fails with RMS 13.161 - 13.289 (python - miniconda)
+        self.assert_images_similar(visualizer, tol=12.5, windows_tol=13.3)
 
     def test_class_prediction_error_quickmethod(self):
         """
         Test the ClassPreditionError quickmethod
         """
+        X, y = load_occupancy(return_dataset=True).to_numpy()
+
         fig = plt.figure()
         ax = fig.add_subplot()
 
         clf = LinearSVC(random_state=42)
-        g = class_prediction_error(clf, X, y, ax, random_state=42)
+        viz = class_prediction_error(clf, X, y, ax=ax, random_state=42)
 
-        self.assert_images_similar(ax=g)
+        # Not sure why the tolerance must be so high for this
+        # Failing on travis with RMS 9.544
+        # AppVeyor and Linux conda fail due to non-text-based differences: RMS 12.961
+        self.assert_images_similar(viz, tol=13, windows_tol=13)
 
+    @pytest.mark.filterwarnings("ignore:could not determine class_counts_")
     def test_classes_greater_than_indices(self):
         """
-        Assert error when y and y_pred contain zero values for
-        one of the specified classess
+        A model error should be raised when there are more classes in fit than score
         """
-        model = LinearSVC()
+        X, y = load_occupancy(return_dataset=True).to_numpy()
+        classes = ["unoccupied", "occupied", "partytime"]
+
+        model = LinearSVC(random_state=42)
         model.fit(X, y)
-        with self.assertRaises(ModelError):
-            visualizer = ClassPredictionError(
-                model, classes=["A", "B", "C", "D", "E"]
-            )
+        with pytest.raises(ModelError):
+            visualizer = ClassPredictionError(model, classes=classes)
             visualizer.score(X, y)
 
     def test_classes_less_than_indices(self):
         """
         Assert error when there is an attempt to filter classes
         """
-        model = LinearSVC()
+        X, y = load_occupancy(return_dataset=True).to_numpy()
+        classes = ["unoccupied"]
+
+        model = LinearSVC(random_state=42)
         model.fit(X, y)
-        with self.assertRaises(NotImplementedError):
-            visualizer = ClassPredictionError(model, classes=["A"])
+        with pytest.raises(NotImplementedError):
+            visualizer = ClassPredictionError(model, classes=classes)
             visualizer.score(X, y)
 
     @pytest.mark.skip(reason="not implemented yet")
@@ -106,7 +146,7 @@ class ClassPredictionErrorTests(VisualTestCase, DatasetMixin):
         X, y = make_multilabel_classification()
         model = RandomForestClassifier()
         model.fit(X, y)
-        with self.assertRaises(YellowbrickValueError):
+        with pytest.raises(YellowbrickValueError):
             visualizer = ClassPredictionError(model)
             visualizer.score(X, y)
 
@@ -114,10 +154,36 @@ class ClassPredictionErrorTests(VisualTestCase, DatasetMixin):
         """
         Test that ClassPredictionError score() returns a score between 0 and 1
         """
+        X, y = load_occupancy(return_dataset=True).to_numpy()
+
         # Create and fit the visualizer
-        visualizer = ClassPredictionError(LinearSVC())
+        visualizer = ClassPredictionError(LinearSVC(random_state=42))
         visualizer.fit(X, y)
 
         # Score the visualizer
         s = visualizer.score(X, y)
         assert 0 <= s <= 1
+
+    def test_with_fitted(self):
+        """
+        Test that visualizer properly handles an already-fitted model
+        """
+        X, y = load_occupancy(return_dataset=True).to_numpy()
+
+        model = RandomForestClassifier().fit(X, y)
+        classes = ["unoccupied", "occupied"]
+
+        with patch.object(model, "fit") as mockfit:
+            oz = ClassPredictionError(model, classes=classes)
+            oz.fit(X, y)
+            mockfit.assert_not_called()
+
+        with patch.object(model, "fit") as mockfit:
+            oz = ClassPredictionError(model, classes=classes, is_fitted=True)
+            oz.fit(X, y)
+            mockfit.assert_not_called()
+
+        with patch.object(model, "fit") as mockfit:
+            oz = ClassPredictionError(model, classes=classes, is_fitted=False)
+            oz.fit(X, y)
+            mockfit.assert_called_once_with(X, y)

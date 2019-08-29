@@ -1,10 +1,13 @@
 # tests.test_target.test_class_balance
 # Tests for the ClassBalance visualizer
 #
-# Author:  Benjamin Bengfort <benjamin@bengfort.com>
+# Author:  Benjamin Bengfort
 # Created: Thu Jul 19 10:21:49 2018 -0400
 #
-# ID: test_class_balance.py [] benjamin@bengfort.com $
+# Copyright (C) 2018 The scikit-yb developers
+# For license information, see LICENSE.txt
+#
+# ID: test_class_balance.py [d742c57] benjamin@bengfort.com $
 
 """
 Tests for the ClassBalance visualizer
@@ -15,13 +18,13 @@ Tests for the ClassBalance visualizer
 ##########################################################################
 
 import pytest
-import numpy as np
 
 from yellowbrick.target.class_balance import *
+from yellowbrick.datasets import load_occupancy
 from yellowbrick.exceptions import YellowbrickValueError
 
 from tests.base import VisualTestCase
-from tests.dataset import DatasetMixin, Dataset, Split
+from tests.fixtures import Dataset, Split
 
 from sklearn.datasets import make_classification
 from sklearn.model_selection import train_test_split as tts
@@ -33,41 +36,45 @@ except ImportError:
 
 
 ##########################################################################
-## Data Fixtures
+# Data Fixtures
 ##########################################################################
 
+# TODO: convert to Pytest fixture
 def make_fixture(binary=False, balanced=False, split=False):
     """
     Make a dataset for testing ClassBalance based on the specified params.
     """
     kwargs = {
-        "n_samples":100, "n_features":20, "n_informative":8, "n_redundant":2,
-        "n_clusters_per_class":1, "random_state":89092,
+        "n_samples": 100,
+        "n_features": 20,
+        "n_informative": 8,
+        "n_redundant": 2,
+        "n_clusters_per_class": 1,
+        "random_state": 89092,
     }
 
     if binary:
-        kwargs['n_classes'] = 2
-        kwargs['weights'] = None if balanced else [0.3, 0.7]
+        kwargs["n_classes"] = 2
+        kwargs["weights"] = None if balanced else [0.3, 0.7]
     else:
-        kwargs['n_classes'] = 5
-        kwargs['weights'] = None if balanced else [0.1, 0.2, 0.4, 0.2, .01]
+        kwargs["n_classes"] = 5
+        kwargs["weights"] = None if balanced else [0.1, 0.2, 0.4, 0.2, 0.01]
 
     X, y = make_classification(**kwargs)
 
     if split:
-        X_train, X_test, y_train, y_test = tts(
-            X, y, test_size=0.2, random_state=101
-        )
+        X_train, X_test, y_train, y_test = tts(X, y, test_size=0.2, random_state=101)
         return Dataset(Split(X_train, X_test), Split(y_train, y_test))
 
     return Dataset(X, y)
 
 
 ##########################################################################
-##  Tests
+#  Tests
 ##########################################################################
 
-class ClassBalanceTests(VisualTestCase, DatasetMixin):
+
+class TestClassBalance(VisualTestCase):
     """
     Test ClassBalance visualizer
     """
@@ -118,7 +125,7 @@ class ClassBalanceTests(VisualTestCase, DatasetMixin):
         assert oz.fit(dataset.y) is oz
         assert oz._mode == BALANCE
 
-        #oz.finalize()
+        # oz.finalize()
         self.assert_images_similar(oz)
 
     def test_binary_compare(self):
@@ -131,7 +138,7 @@ class ClassBalanceTests(VisualTestCase, DatasetMixin):
         assert oz.fit(dataset.y.train, dataset.y.test) is oz
         assert oz._mode == COMPARE
 
-        #oz.finalize()
+        # oz.finalize()
         self.assert_images_similar(oz)
 
     def test_multiclass_balance(self):
@@ -144,7 +151,7 @@ class ClassBalanceTests(VisualTestCase, DatasetMixin):
         assert oz.fit(dataset.y) is oz
         assert oz._mode == BALANCE
 
-        #oz.finalize()
+        # oz.finalize()
         self.assert_images_similar(oz)
 
     def test_multiclass_compare(self):
@@ -157,7 +164,7 @@ class ClassBalanceTests(VisualTestCase, DatasetMixin):
         assert oz.fit(dataset.y.train, dataset.y.test) is oz
         assert oz._mode == COMPARE
 
-        #oz.finalize()
+        # oz.finalize()
         self.assert_images_similar(oz)
 
     @pytest.mark.skipif(pd is None, reason="test requires pandas")
@@ -165,16 +172,28 @@ class ClassBalanceTests(VisualTestCase, DatasetMixin):
         """
         Test pandas data frame with string target in balance mode
         """
-        data = self.load_data("occupancy")
-        y = pd.Series([
-            "occupied" if yi else "unoccupied" for yi in data['occupancy']
-        ])
+        data = load_occupancy(return_dataset=True)
+        X, y = data.to_pandas()
 
         # Create and fit the visualizer
         oz = ClassBalance()
         assert oz.fit(y) is oz
 
-        #oz.finalize()
+        # oz.finalize()
+        self.assert_images_similar(oz)
+
+    def test_numpy_occupancy_balance(self):
+        """
+        Test NumPy arrays with string target in balance mode
+        """
+        data = load_occupancy(return_dataset=True)
+        X, y = data.to_numpy()
+
+        # Create and fit the visualizer
+        oz = ClassBalance()
+        assert oz.fit(y) is oz
+
+        # oz.finalize()
         self.assert_images_similar(oz)
 
     @pytest.mark.skipif(pd is None, reason="test requires pandas")
@@ -182,15 +201,8 @@ class ClassBalanceTests(VisualTestCase, DatasetMixin):
         """
         Test pandas data frame with string target in compare mode
         """
-        data = self.load_data("occupancy")
-        features = [
-            "temperature", "relative_humidity", "light", "C02", "humidity"
-        ]
-
-        X = pd.DataFrame(data[features])
-        y = pd.Series([
-            "occupied" if yi else "unoccupied" for yi in data['occupancy']
-        ])
+        data = load_occupancy(return_dataset=True)
+        X, y = data.to_pandas()
 
         _, _, y_train, y_test = tts(X, y, test_size=0.4, random_state=2242)
 
@@ -198,7 +210,23 @@ class ClassBalanceTests(VisualTestCase, DatasetMixin):
         oz = ClassBalance()
         assert oz.fit(y_train, y_test) is oz
 
-        #oz.finalize()
+        # oz.finalize()
+        self.assert_images_similar(oz)
+
+    def test_numpy_occupancy_compare(self):
+        """
+        Test NumPy arrays with string target in compare mode
+        """
+        data = load_occupancy(return_dataset=True)
+        X, y = data.to_numpy()
+
+        _, _, y_train, y_test = tts(X, y, test_size=0.4, random_state=2242)
+
+        # Create and fit the visualizer
+        oz = ClassBalance()
+        assert oz.fit(y_train, y_test) is oz
+
+        # oz.finalize()
         self.assert_images_similar(oz)
 
     def test_quick_method(self):
@@ -207,5 +235,5 @@ class ClassBalanceTests(VisualTestCase, DatasetMixin):
         """
         dataset = make_fixture(binary=False, split=False)
 
-        ax = class_balance(dataset.y)
-        self.assert_images_similar(ax=ax, tol=0.5)
+        viz = class_balance(dataset.y)
+        self.assert_images_similar(viz, tol=0.5)

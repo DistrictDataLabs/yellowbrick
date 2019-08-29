@@ -3,8 +3,11 @@
 #
 # Author:   Prema Damodaran Roman
 # Created:  Wed June 6 2018 13:32:00 -0500
-# Author:   Rebecca Bilbro <bilbro@gmail.com>
+# Author:   Rebecca Bilbro
 # Updated:  Fri Aug 10 13:15:43 2018 -0500
+#
+# Copyright (C) 2018 The scikit-yb developers
+# For license information, see LICENSE.txt
 #
 # ID: cross_validation.py [7f47800] pdamo24@gmail.com $
 
@@ -13,7 +16,7 @@ Implements cross-validation score plotting for model selection.
 """
 
 ##########################################################################
-## Imports
+# Imports
 ##########################################################################
 
 import numpy as np
@@ -24,8 +27,9 @@ from sklearn.model_selection import cross_val_score
 
 
 ##########################################################################
-## CVScores Visualizer
+# CVScores Visualizer
 ##########################################################################
+
 
 class CVScores(ModelVisualizer):
     """
@@ -63,9 +67,21 @@ class CVScores(ModelVisualizer):
         See scikit-learn `cross-validation guide <https://goo.gl/FS3VU6>`_
         for more information on the possible metrics that can be used.
 
+    color: string
+        Specify color for barchart
+
     kwargs : dict
         Keyword arguments that are passed to the base class and may influence
         the visualization as defined in other Visualizers.
+
+    Attributes
+    -------
+    cv_scores_ : ndarray shape (n_splits, )
+        The cross-validated scores from each subsection of the data
+
+    cv_scores_mean_ : float
+        Average cross-validated score across all subsections of the data
+
 
     Examples
     --------
@@ -91,10 +107,11 @@ class CVScores(ModelVisualizer):
 
     """
 
-    def __init__(self, model, ax=None, cv=None, scoring=None, **kwargs):
+    def __init__(self, model, ax=None, cv=None, scoring=None, color=None, **kwargs):
         super(CVScores, self).__init__(model, ax=ax, **kwargs)
 
         self.cv = cv
+        self.color = color
         self.scoring = scoring
 
     def fit(self, X, y, **kwargs):
@@ -134,16 +151,17 @@ class CVScores(ModelVisualizer):
         average value of the scores.
         """
 
-        color = kwargs.pop("color", "b")
         width = kwargs.pop("width", 0.3)
         linewidth = kwargs.pop("linewidth", 1)
 
         xvals = np.arange(1, len(self.cv_scores_) + 1, 1)
-        self.ax.bar(xvals, self.cv_scores_, width=width)
+        self.ax.bar(xvals, self.cv_scores_, width=width, color=self.color)
         self.ax.axhline(
-            self.cv_scores_mean_, color=color,
+            self.cv_scores_mean_,
+            color=self.color,
             label="Mean score = {:0.3f}".format(self.cv_scores_mean_),
-            linestyle='--', linewidth=linewidth
+            linestyle="--",
+            linewidth=linewidth,
         )
 
         return self.ax
@@ -154,7 +172,7 @@ class CVScores(ModelVisualizer):
         """
 
         # Set the title of the figure
-        self.set_title('Cross Validation Scores for {}'.format(self.name))
+        self.set_title("Cross Validation Scores for {}".format(self.name))
 
         # Add the legend
         loc = kwargs.pop("loc", "best")
@@ -165,15 +183,16 @@ class CVScores(ModelVisualizer):
         self.ax.xaxis.set_major_locator(ticker.MultipleLocator(1))
 
         # Set the axis labels
-        self.ax.set_xlabel('Training Instances')
-        self.ax.set_ylabel('Score')
+        self.ax.set_xlabel("Training Instances")
+        self.ax.set_ylabel("Score")
 
 
 ##########################################################################
-## Quick Method
+# Quick Method
 ##########################################################################
 
-def cv_scores(model, X, y, ax=None, cv=None, scoring=None, **kwargs):
+
+def cv_scores(model, X, y, ax=None, cv=None, scoring=None, color=None, **kwargs):
     """
     Displays cross validation scores as a bar chart and the
     average of the scores as a horizontal line
@@ -221,21 +240,25 @@ def cv_scores(model, X, y, ax=None, cv=None, scoring=None, **kwargs):
         See scikit-learn `cross-validation guide <https://goo.gl/FS3VU6>`_
         for more information on the possible metrics that can be used.
 
+    color: string
+        Specify color for barchart
+
     kwargs : dict
         Keyword arguments that are passed to the base class and may influence
         the visualization as defined in other Visualizers.
 
     Returns
     -------
-    ax : matplotlib.Axes
-        The axes object that the validation curves were drawn on.
+    visualizer : CVScores
+        The fitted visualizer.
 
     """
 
     # Initialize the visualizer
-    visualizer = CVScores(model, ax=ax, cv=cv, scoring=scoring)
+    visualizer = CVScores(model, ax=ax, cv=cv, scoring=scoring, color=None)
 
     # Fit and poof the visualizer
     visualizer.fit(X, y)
     visualizer.poof(**kwargs)
-    return visualizer.ax
+
+    return visualizer

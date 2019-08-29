@@ -4,7 +4,7 @@
 # Author:   Benjamin Bengfort <bbengfort@districtdatalabs.com>
 # Created:  Thu Oct 06 09:30:49 2016 -0400
 #
-# Copyright (C) 2016 District Data Labs
+# Copyright (C) 2016 The scikit-yb developers
 # For license information, see LICENSE.txt
 #
 # ID: test_colors.py [c6aff34] benjamin@bengfort.com $
@@ -17,13 +17,18 @@ Tests for the color utilities and helper functions
 ## Imports
 ##########################################################################
 
+import sys
 import pytest
 
 from matplotlib import cm
 from cycler import Cycler
 
+from sklearn.cluster import KMeans
+from sklearn.datasets import make_blobs
+
 from yellowbrick.style.colors import *
 from yellowbrick.style.palettes import ColorPalette, PALETTES
+from yellowbrick.cluster.silhouette import SilhouetteVisualizer
 
 from tests.base import VisualTestCase
 
@@ -31,6 +36,7 @@ from tests.base import VisualTestCase
 ##########################################################################
 ## Color Tests
 ##########################################################################
+
 
 class TestGetColorCycle(VisualTestCase):
     """
@@ -44,7 +50,7 @@ class TestGetColorCycle(VisualTestCase):
         c = get_color_cycle()
         assert len(c) == 6
 
-        with ColorPalette('paired'):
+        with ColorPalette("paired"):
             c = get_color_cycle()
             assert len(c) == 12
 
@@ -58,7 +64,7 @@ class TestGetColorCycle(VisualTestCase):
         Test get color cycle with matplotlib 1.5 or later
         """
         colors = get_color_cycle()
-        cycle = mpl.rcParams['axes.prop_cycle']
+        cycle = mpl.rcParams["axes.prop_cycle"]
 
         # Ensure the cycle is in fact a cycle
         assert isinstance(cycle, Cycler)
@@ -72,8 +78,7 @@ class TestGetColorCycle(VisualTestCase):
 
         # Ensure the colors and cycle match
         for color, cycle_color in zip(colors, cycle):
-            assert color == cycle_color['color']
-
+            assert color == cycle_color["color"]
 
     @pytest.mark.filterwarnings()
     @pytest.mark.skipif(mpl_ge_150, reason="requires matplotlib ealier than 1.5")
@@ -81,7 +86,7 @@ class TestGetColorCycle(VisualTestCase):
         """
         Test get color cycle with matplotlib earlier than 1.5
         """
-        assert get_color_cycle() == mpl.rcParams['axes.color_cycle']
+        assert get_color_cycle() == mpl.rcParams["axes.color_cycle"]
 
 
 class TestResolveColors(VisualTestCase):
@@ -115,15 +120,15 @@ class TestResolveColors(VisualTestCase):
         Warns when both colormap and colors is used, colors is default
         """
         with pytest.warns(Warning, match="both colormap and colors specified"):
-            colors = resolve_colors(colormap='RdBu', colors=['r', 'g', 'b'])
-            assert colors == ['r', 'g', 'b']
+            colors = resolve_colors(colormap="RdBu", colors=["r", "g", "b"])
+            assert colors == ["r", "g", "b"]
 
     def test_colormap_invalid(self):
         """
         Exception raised when invalid colormap is supplied
         """
         with pytest.raises(YellowbrickValueError):
-            resolve_colors(12, colormap='foo')
+            resolve_colors(12, colormap="foo")
 
     def test_colormap_string(self):
         """
@@ -131,18 +136,18 @@ class TestResolveColors(VisualTestCase):
         """
         cases = (
             (
-                {'n_colors': 6, 'colormap': 'RdBu'},
+                {"n_colors": 6, "colormap": "RdBu"},
                 [
                     (0.403921568627451, 0.0, 0.12156862745098039, 1.0),
                     (0.8392156862745098, 0.3764705882352941, 0.30196078431372547, 1.0),
                     (0.9921568627450981, 0.8588235294117647, 0.7803921568627451, 1.0),
                     (0.8196078431372551, 0.8980392156862746, 0.9411764705882353, 1.0),
                     (0.2627450980392157, 0.5764705882352941, 0.7647058823529411, 1.0),
-                    (0.0196078431372549, 0.18823529411764706, 0.3803921568627451, 1.0)
+                    (0.0196078431372549, 0.18823529411764706, 0.3803921568627451, 1.0),
                 ],
             ),
             (
-                {'n_colors': 18, 'colormap': 'viridis'},
+                {"n_colors": 18, "colormap": "viridis"},
                 [
                     (0.267004, 0.004874, 0.329415, 1.0),
                     (0.281924, 0.089666, 0.412415, 1.0),
@@ -161,11 +166,11 @@ class TestResolveColors(VisualTestCase):
                     (0.535621, 0.835785, 0.281908, 1.0),
                     (0.688944, 0.865448, 0.182725, 1.0),
                     (0.845561, 0.887322, 0.099702, 1.0),
-                    (0.993248, 0.906157, 0.143936, 1.0)
+                    (0.993248, 0.906157, 0.143936, 1.0),
                 ],
             ),
             (
-                {'n_colors': 9, 'colormap': 'Set1'},
+                {"n_colors": 9, "colormap": "Set1"},
                 [
                     (0.8941176470588236, 0.10196078431372549, 0.10980392156862745, 1.0),
                     (0.21568627450980393, 0.49411764705882355, 0.7215686274509804, 1.0),
@@ -175,7 +180,7 @@ class TestResolveColors(VisualTestCase):
                     (1.0, 1.0, 0.2, 1.0),
                     (0.6509803921568628, 0.33725490196078434, 0.1568627450980392, 1.0),
                     (0.9686274509803922, 0.5058823529411764, 0.7490196078431373, 1.0),
-                    (0.6, 0.6, 0.6, 1.0)
+                    (0.6, 0.6, 0.6, 1.0),
                 ],
             ),
         )
@@ -190,33 +195,121 @@ class TestResolveColors(VisualTestCase):
         Check colormap when n_colors is not specified
         """
         n_colors = len(get_color_cycle())
-        assert len(resolve_colors(colormap='autumn')) == n_colors
+        assert len(resolve_colors(colormap="autumn")) == n_colors
 
     def test_colormap_cmap(self):
         """
         Assert that supplying a maptlotlib.cm as colormap works
         """
-        cmap = cm.get_cmap('nipy_spectral')
+        cmap = cm.get_cmap("nipy_spectral")
         colors = resolve_colors(4, colormap=cmap)
         assert colors == [
             (0.0, 0.0, 0.0, 1.0),
             (0.0, 0.6444666666666666, 0.7333666666666667, 1.0),
             (0.7999666666666666, 0.9777666666666667, 0.0, 1.0),
-            (0.8, 0.8, 0.8, 1.0)
+            (0.8, 0.8, 0.8, 1.0),
         ]
+
+    def test_colormap_palette_mpl(self):
+        """
+        Assert that supplying a maptlotlib palette as colormap works
+        """
+        colormap = cm.get_cmap("nipy_spectral")
+        colors = resolve_colors(colormap=colormap)
+        assert colors == [
+            (0.0, 0.0, 0.0, 1.0),
+            (0.0, 0.0, 0.8667, 1.0),
+            (0.0, 0.6667, 0.5333, 1.0),
+            (0.0, 1.0, 0.0, 1.0),
+            (1.0, 0.6, 0.0, 1.0),
+            (0.8, 0.8, 0.8, 1.0),
+        ]
+
+    def test_integrated_yb_colormap(self):
+        """
+        Assert silhouette plot colormap can be set with a yellowbrick palette
+        """
+        # Generate a blobs data set
+        X, y = make_blobs(
+            n_samples=1000, n_features=12, centers=8, shuffle=False, random_state=0
+        )
+        visualizer = SilhouetteVisualizer(
+            KMeans(random_state=0), colormap="neural_paint"
+        )
+        visualizer.fit(X)
+        visualizer.finalize()
+
+        tol = (
+            3.2 if sys.platform == "win32" else 0.01
+        )  # Fails on AppVeyor with RMS 3.143
+        self.assert_images_similar(visualizer, remove_legend=True, tol=tol)
+
+    def test_colormap_palette_yb(self):
+        """
+        Assert that supplying a yellowbrick palette as colormap works
+        """
+        colormap = ColorPalette("neural_paint")
+        assert resolve_colors(colormap=colormap) == [
+            (0.08627450980392157, 0.44313725490196076, 0.5725490196078431),
+            (0.43137254901960786, 0.4588235294117647, 0.2823529411764706),
+            (0.7725490196078432, 0.6352941176470588, 0.6705882352941176),
+            (0.0, 0.8, 1.0),
+            (0.8705882352941177, 0.47058823529411764, 0.6823529411764706),
+            (1.0, 0.8, 0.6),
+            (0.23921568627450981, 0.24705882352941178, 0.25882352941176473),
+            (1.0, 1.0, 0.8),
+        ]
+
+    def test_colormap_cmap_with_colors(self):
+        """
+        Assert that colors overrides a mpl colormap if both are provided
+        """
+        colormap = cm.get_cmap("nipy_spectral")
+        overriding_colors = [
+            (0.0, 0.0, 0.0, 1.0),
+            (0.0, 0.6444666666666666, 0.7333666666666667, 1.0),
+            (0.7999666666666666, 0.9777666666666667, 0.0, 1.0),
+            (0.8, 0.8, 0.8, 1.0),
+        ]
+        with pytest.warns(Warning, match="both colormap and colors specified"):
+            colors = resolve_colors(colormap=colormap, colors=overriding_colors)
+            assert colors == overriding_colors
+
+    def test_colormap_palette_yb_colors(self):
+        """
+        Assert that colors overrides a yellowbrick colormap if both are provided
+        """
+        colormap = ColorPalette("neural_paint")
+        overriding_colors = [
+            (0.0, 0.0, 0.0, 1.0),
+            (0.0, 0.6444666666666666, 0.7333666666666667, 1.0),
+            (0.7999666666666666, 0.9777666666666667, 0.0, 1.0),
+            (0.8, 0.8, 0.8, 1.0),
+        ]
+        with pytest.warns(Warning, match="both colormap and colors specified"):
+            colors = resolve_colors(colormap=colormap, colors=overriding_colors)
+            assert colors == overriding_colors
+
+    def test_colormap_invalid_type(self):
+        """
+        Exception raised when invalid colormap type is supplied
+        """
+        with pytest.raises(YellowbrickValueError):
+            a = lambda x: x + 1
+            resolve_colors(colormap=a)
 
     def test_colors(self):
         """
         Test passing in a list of colors
         """
-        c = PALETTES['flatui']
+        c = PALETTES["flatui"]
         assert resolve_colors(colors=c) == c
 
     def test_colors_truncate(self):
         """
         Test passing in a list of colors with n_colors truncate
         """
-        c = PALETTES['flatui']
+        c = PALETTES["flatui"]
 
         assert len(c) > 3
         assert len(resolve_colors(n_colors=3, colors=c)) == 3
@@ -225,7 +318,7 @@ class TestResolveColors(VisualTestCase):
         """
         Test passing in a list of colors with n_colors multiply
         """
-        c = PALETTES['flatui']
+        c = PALETTES["flatui"]
 
         assert len(c) < 12
         assert len(resolve_colors(n_colors=12, colors=c)) == 12

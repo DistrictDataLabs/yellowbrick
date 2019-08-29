@@ -1,11 +1,11 @@
 # tests.test_regressor.test_residuals
 # Ensure that the regressor residuals visualizations work.
 #
-# Author:   Rebecca Bilbro <rbilbro@districtdatalabs.com>
-# Author:   Benjamin Bengfort <bbengfort@districtdatalabs.com>
+# Author:   Rebecca Bilbro
+# Author:   Benjamin Bengfort
 # Created:  Sat Oct 8 16:30:39 2016 -0400
 #
-# Copyright (C) 2016 District Data Labs
+# Copyright (C) 2016 The scikit-yb developers
 # For license information, see LICENSE.txt
 #
 # ID: test_residuals.py [7d3f5e6] benjamin@bengfort.com $
@@ -23,17 +23,18 @@ import pytest
 import matplotlib as mpl
 import matplotlib.pyplot as plt
 
+from yellowbrick.datasets import load_energy
 from yellowbrick.regressor.residuals import *
 from yellowbrick.exceptions import YellowbrickValueError
 
-from tests.base import VisualTestCase
-from tests.dataset import DatasetMixin, Dataset, Split
-
-from sklearn.linear_model import Ridge, Lasso
-from sklearn.linear_model import LinearRegression
-from sklearn.neural_network import MLPRegressor
+from unittest import mock
+from tests.fixtures import Dataset, Split
+from tests.base import IS_WINDOWS_OR_CONDA, VisualTestCase
 
 from sklearn.datasets import make_regression
+from sklearn.linear_model import Ridge, Lasso
+from sklearn.neural_network import MLPRegressor
+from sklearn.linear_model import LinearRegression
 from sklearn.model_selection import train_test_split as tts
 
 
@@ -41,11 +42,6 @@ try:
     import pandas as pd
 except ImportError:
     pd = None
-
-try:
-    from unittest import mock
-except ImportError:
-    import mock
 
 # Determine version of matplotlib
 MPL_VERS_MAJ = int(mpl.__version__.split(".")[0])
@@ -55,25 +51,26 @@ MPL_VERS_MAJ = int(mpl.__version__.split(".")[0])
 ## Data
 ##########################################################################
 
-@pytest.fixture(scope='class')
+
+@pytest.fixture(scope="class")
 def data(request):
     """
     Creates a fixture of train and test splits for the sklearn digits dataset
     For ease of use returns a Dataset named tuple composed of two Split tuples.
     """
     X, y = make_regression(
-        n_samples=500, n_features=22, n_informative=8, random_state=42,
-        noise=0.2, bias=0.2,
+        n_samples=500,
+        n_features=22,
+        n_informative=8,
+        random_state=42,
+        noise=0.2,
+        bias=0.2,
     )
 
-    X_train, X_test, y_train, y_test = tts(
-        X, y, test_size=0.2, random_state=11
-    )
+    X_train, X_test, y_train, y_test = tts(X, y, test_size=0.2, random_state=11)
 
     # Set a class attribute for digits
-    request.cls.data = Dataset(
-        Split(X_train, X_test), Split(y_train, y_test)
-    )
+    request.cls.data = Dataset(Split(X_train, X_test), Split(y_train, y_test))
 
 
 ##########################################################################
@@ -82,7 +79,7 @@ def data(request):
 
 
 @pytest.mark.usefixtures("data")
-class TestPredictionError(VisualTestCase, DatasetMixin):
+class TestPredictionError(VisualTestCase):
     """
     Test the PredictionError visualizer
     """
@@ -112,17 +109,29 @@ class TestPredictionError(VisualTestCase, DatasetMixin):
         _, ax = plt.subplots()
 
         # Load the occupancy dataset from fixtures
-        data = self.load_data('energy')
-        target = 'cooling_load'
-        features = [
-            "relative_compactness", "surface_area", "wall_area", "roof_area",
-            "overall_height", "orientation", "glazing_area",
-            "glazing_area_distribution"
-        ]
+        data = load_energy(return_dataset=True)
+        X, y = data.to_pandas()
 
-        # Create instances and target
-        X = pd.DataFrame(data[features])
-        y = pd.Series(data[target].astype(float))
+        # Create train/test splits
+        splits = tts(X, y, test_size=0.2, random_state=8873)
+        X_train, X_test, y_train, y_test = splits
+
+        visualizer = PredictionError(Ridge(random_state=22), ax=ax)
+        visualizer.fit(X_train, y_train)
+        visualizer.score(X_test, y_test)
+        visualizer.finalize()
+
+        self.assert_images_similar(visualizer, tol=1, remove_legend=True)
+
+    def test_prediction_error_numpy(self):
+        """
+        Test NumPy real world dataset with image similarity on Ridge
+        """
+        _, ax = plt.subplots()
+
+        # Load the occupancy dataset from fixtures
+        data = load_energy(return_dataset=True)
+        X, y = data.to_numpy()
 
         # Create train/test splits
         splits = tts(X, y, test_size=0.2, random_state=8873)
@@ -199,9 +208,7 @@ class TestPredictionError(VisualTestCase, DatasetMixin):
         # Instantiate a sklearn regressor
         model = Lasso(random_state=23, alpha=10)
         # Instantiate a prediction error plot, provide custom alpha
-        visualizer = PredictionError(
-            model, bestfit=False, identity=False, alpha=0.7
-        )
+        visualizer = PredictionError(model, bestfit=False, identity=False, alpha=0.7)
 
         # Test param gets set correctly
         assert visualizer.alpha == 0.7
@@ -216,19 +223,48 @@ class TestPredictionError(VisualTestCase, DatasetMixin):
         assert "alpha" in scatter_kwargs
         assert scatter_kwargs["alpha"] == 0.7
 
+    @pytest.mark.xfail(
+        reason="""third test fails with AssertionError: Expected fit
+        to be called once. Called 0 times."""
+    )
+    def test_peplot_with_fitted(self):
+        """
+        Test that PredictionError properly handles an already-fitted model
+        """
+        X, y = load_energy(return_dataset=True).to_numpy()
+
+        model = Ridge().fit(X, y)
+
+        with mock.patch.object(model, "fit") as mockfit:
+            oz = PredictionError(model)
+            oz.fit(X, y)
+            mockfit.assert_not_called()
+
+        with mock.patch.object(model, "fit") as mockfit:
+            oz = PredictionError(model, is_fitted=True)
+            oz.fit(X, y)
+            mockfit.assert_not_called()
+
+        with mock.patch.object(model, "fit") as mockfit:
+            oz = PredictionError(model, is_fitted=False)
+            oz.fit(X, y)
+            mockfit.assert_called_once_with(X, y)
+
 
 ##########################################################################
 ## Residuals Plot Test Cases
 ##########################################################################
 
+
 @pytest.mark.usefixtures("data")
-class TestResidualsPlot(VisualTestCase, DatasetMixin):
+class TestResidualsPlot(VisualTestCase):
     """
     Test ResidualPlot visualizer
     """
 
     @pytest.mark.xfail(
-        sys.platform == 'win32', reason="images not close on windows (RMSE=32)"
+        IS_WINDOWS_OR_CONDA,
+        reason="font rendering different in OS and/or Python; see #892",
     )
     def test_residuals_plot(self):
         """
@@ -242,10 +278,10 @@ class TestResidualsPlot(VisualTestCase, DatasetMixin):
         visualizer.score(self.data.X.test, self.data.y.test)
         visualizer.finalize()
 
-        self.assert_images_similar(visualizer, tol=1, remove_legend=True)
+        self.assert_images_similar(visualizer)
 
     @pytest.mark.xfail(
-        sys.platform == 'win32', reason="images not close on windows (RMSE=32)"
+        sys.platform == "win32", reason="images not close on windows (RMSE=32)"
     )
     @pytest.mark.filterwarnings("ignore:Stochastic Optimizer")
     def test_residuals_plot_no_histogram(self):
@@ -263,25 +299,31 @@ class TestResidualsPlot(VisualTestCase, DatasetMixin):
 
         self.assert_images_similar(visualizer, tol=1, remove_legend=True)
 
-    @pytest.mark.skipif(MPL_VERS_MAJ >= 2, reason="test requires mpl earlier than 2.0.2")
+    @pytest.mark.skipif(
+        MPL_VERS_MAJ >= 2, reason="test requires mpl earlier than 2.0.2"
+    )
     def test_hist_matplotlib_version(self, mock_toolkit):
         """
         ValueError is raised when matplotlib version is incorrect and hist=True
         """
         with pytst.raises(ImportError):
             from mpl_toolkits.axes_grid1 import make_axes_locatable
+
             assert not make_axes_locatable
 
         with pytest.raises(YellowbrickValueError, match="requires matplotlib 2.0.2"):
             ResidualsPlot(LinearRegression(), hist=True)
 
-    @pytest.mark.skipif(MPL_VERS_MAJ >= 2, reason="test requires mpl earlier than 2.0.2")
+    @pytest.mark.skipif(
+        MPL_VERS_MAJ >= 2, reason="test requires mpl earlier than 2.0.2"
+    )
     def test_no_hist_matplotlib_version(self, mock_toolkit):
         """
         No error is raised when matplotlib version is incorrect and hist=False
         """
-        with pytst.raises(ImportError):
+        with pytest.raises(ImportError):
             from mpl_toolkits.axes_grid1 import make_axes_locatable
+
             assert not make_axes_locatable
 
         try:
@@ -290,7 +332,8 @@ class TestResidualsPlot(VisualTestCase, DatasetMixin):
             self.fail(e)
 
     @pytest.mark.xfail(
-        sys.platform == 'win32', reason="images not close on windows (RMSE=32)"
+        IS_WINDOWS_OR_CONDA,
+        reason="font rendering different in OS and/or Python; see #892",
     )
     def test_residuals_quick_method(self):
         """
@@ -299,14 +342,15 @@ class TestResidualsPlot(VisualTestCase, DatasetMixin):
         _, ax = plt.subplots()
 
         model = Lasso(random_state=19)
-        ax = residuals_plot(
+        oz = residuals_plot(
             model, self.data.X.train, self.data.y.train, ax=ax, random_state=23
         )
 
-        self.assert_images_similar(ax=ax, tol=1, remove_legend=True)
+        self.assert_images_similar(oz)
 
     @pytest.mark.xfail(
-        sys.platform == 'win32', reason="images not close on windows (RMSE=32)"
+        IS_WINDOWS_OR_CONDA,
+        reason="font rendering different in OS and/or Python; see #892",
     )
     @pytest.mark.skipif(pd is None, reason="pandas is required")
     def test_residuals_plot_pandas(self):
@@ -316,17 +360,8 @@ class TestResidualsPlot(VisualTestCase, DatasetMixin):
         _, ax = plt.subplots()
 
         # Load the occupancy dataset from fixtures
-        data = self.load_data('energy')
-        target = 'heating_load'
-        features = [
-            "relative_compactness", "surface_area", "wall_area", "roof_area",
-            "overall_height", "orientation", "glazing_area",
-            "glazing_area_distribution"
-        ]
-
-        # Create instances and target
-        X = pd.DataFrame(data[features])
-        y = pd.Series(data[target].astype(float))
+        data = load_energy(return_dataset=True)
+        X, y = data.to_pandas()
 
         # Create train/test splits
         splits = tts(X, y, test_size=0.2, random_state=231)
@@ -337,7 +372,28 @@ class TestResidualsPlot(VisualTestCase, DatasetMixin):
         visualizer.score(X_test, y_test)
         visualizer.finalize()
 
-        self.assert_images_similar(visualizer, tol=1, remove_legend=True)
+        self.assert_images_similar(visualizer)
+
+    def test_residuals_plot_numpy(self):
+        """
+        Test NumPy real world dataset with image similarity on Lasso
+        """
+        _, ax = plt.subplots()
+
+        # Load the occupancy dataset from fixtures
+        data = load_energy(return_dataset=True)
+        X, y = data.to_numpy()
+
+        # Create train/test splits
+        splits = tts(X, y, test_size=0.2, random_state=231)
+        X_train, X_test, y_train, y_test = splits
+
+        visualizer = ResidualsPlot(Lasso(random_state=44), ax=ax)
+        visualizer.fit(X_train, y_train)
+        visualizer.score(X_test, y_test)
+        visualizer.finalize()
+
+        self.assert_images_similar(visualizer, tol=1.5)
 
     def test_score(self):
         """
@@ -352,18 +408,18 @@ class TestResidualsPlot(VisualTestCase, DatasetMixin):
         assert visualizer.train_score_ == pytest.approx(0.9999906, rel=1e-4)
         assert visualizer.test_score_ == score
 
-    @mock.patch('yellowbrick.regressor.residuals.plt.sca', autospec=True)
+    @mock.patch("yellowbrick.regressor.residuals.plt.sca", autospec=True)
     def test_alpha_param(self, mock_sca):
         """
         Test that the user can supply an alpha param on instantiation
         """
         # Instantiate a prediction error plot, provide custom alpha
         visualizer = ResidualsPlot(
-            Ridge(random_state=8893), alpha=0.3, hist=False
+            Ridge(random_state=8893), train_alpha=0.3, test_alpha=0.75, hist=False
         )
-
+        alphas = {"train_point": 0.3, "test_point": 0.75}
         # Test param gets set correctly
-        assert visualizer.alpha == 0.3
+        assert visualizer.alphas == alphas
 
         visualizer.ax = mock.MagicMock()
         visualizer.fit(self.data.X.train, self.data.y.train)
@@ -372,4 +428,31 @@ class TestResidualsPlot(VisualTestCase, DatasetMixin):
         # Test that alpha was passed to internal matplotlib scatterplot
         _, scatter_kwargs = visualizer.ax.scatter.call_args
         assert "alpha" in scatter_kwargs
-        assert scatter_kwargs["alpha"] == 0.3
+        assert scatter_kwargs["alpha"] == 0.75
+
+    @pytest.mark.xfail(
+        reason="""third test fails with AssertionError: Expected fit
+        to be called once. Called 0 times."""
+    )
+    def test_residuals_with_fitted(self):
+        """
+        Test that ResidualsPlot properly handles an already-fitted model
+        """
+        X, y = load_energy(return_dataset=True).to_numpy()
+
+        model = Ridge().fit(X, y)
+
+        with mock.patch.object(model, "fit") as mockfit:
+            oz = ResidualsPlot(model)
+            oz.fit(X, y)
+            mockfit.assert_not_called()
+
+        with mock.patch.object(model, "fit") as mockfit:
+            oz = ResidualsPlot(model, is_fitted=True)
+            oz.fit(X, y)
+            mockfit.assert_not_called()
+
+        with mock.patch.object(model, "fit") as mockfit:
+            oz = ResidualsPlot(model, is_fitted=False)
+            oz.fit(X, y)
+            mockfit.assert_called_once_with(X, y)
