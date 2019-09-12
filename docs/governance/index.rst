@@ -216,3 +216,4 @@ Board of Advisors Minutes
     :maxdepth: 1
 
     minutes/2019-05-15.rst
+    minutes/2019-09-09.rst
