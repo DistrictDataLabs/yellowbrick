@@ -123,6 +123,9 @@ Stephanie R Miller     Core Contributor
 Coleen W Chen          Core Contributor
 Franco Bueno Mattera   Core Contributor
 Shawna Carey           Core Contributor
+George Krug            Core Contributor
+Aaron Margolis         Core Contributor
+Molly Morrison         Core Contributor
 =====================  =================
 
 Project Roadmap
