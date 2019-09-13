@@ -39,7 +39,7 @@ tl;dr we had a very productive summer!
 
 - Larry stepped into the new coordinator role, setting the tone for future coordinators
 - We had two new maintainers: Prema and Kristen
-- Aproximately 12 new contributors
+- Approximately 12 new contributors
 - 65 Pull Requests were merged
 - 35 tweets were tweeted
 - Only 95 issues remain open (down from over 125, not including new issues)
@@ -88,7 +88,7 @@ The fall semester will be dedicated to completing **Yellowbrick Version 1.1**. T
 
 The primary milestone objectives are as follows:
 
-1. Make quick methods prime time (and extend the onliners page)
+1. Make quick methods prime time (and extend the oneliners page)
 2. Add support for sklearn Pipelines and FeatureUnions
 
 The secondary objectives are at the discretion of the core contributors but should be along one of the following themes:
@@ -164,7 +164,7 @@ Naresh completed the following pull requests/tasks:
 
 We will work on sending Naresh a Yellowbrick T-shirt to thank him and have already encouraged him to continue to contribute to Yellowbrick (he is receptive to it). We will also follow up with him on his work on effect plots.
 
-If we decide to participate in GSoC again, we should resuse the idea list for the application, but potentially it's easiest to collaborate with matplotlib for GSoC 2020.
+If we decide to participate in GSoC again, we should reuse the idea list for the application, but potentially it's easiest to collaborate with matplotlib for GSoC 2020.
 
 API Audit Results
 ~~~~~~~~~~~~~~~~~
@@ -192,7 +192,7 @@ In the end, the audit should give us confidence that v1.0 is a production-ready 
 OpenTeams
 ~~~~~~~~~
 
-OpenTeams is a project designed to highlight the contributions and work of open source developers and to help support them by assisting them in winning contracts and finding funding. Although currently it is in its initial stages, they have a lot of big plans for helping open source teams grow.
+Eunice Chendjou, COO of OpenTeams, joined the meeting to observe Yellowbrick as a model for successful open source community governance, and to let the Advisory Board know about OpenTeams. OpenTeams is designed to highlight the contributions and work of open source developers and to help support them by assisting them in winning contracts and finding funding. Although currently it is in its initial stages, they have a lot of big plans for helping open source teams grow.
 
 Please add your contributions to Yellowbrick by joining `OpenTeams <https://openteams.com/projects/yellowbrick>`_. Invite others to join as well!
 
