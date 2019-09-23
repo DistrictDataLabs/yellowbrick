@@ -29,7 +29,7 @@ To show how this works in practice, we'll start with a contrived example using a
     visualizer = RFECV(SVC(kernel='linear', C=1))
 
     visualizer.fit(X, y)        # Fit the data to the visualizer
-    visualizer.poof()           # Draw/show/poof the data
+    visualizer.show()           # Finalize and render the figure
 
 .. image:: images/rfecv_sklearn_example.png
 
@@ -55,7 +55,7 @@ Exploring a real dataset, we can see the impact of RFECV on a credit default bin
     visualizer = RFECV(RandomForestClassifier(), cv=cv, scoring='f1_weighted')
 
     visualizer.fit(X, y)        # Fit the data to the visualizer
-    visualizer.poof()           # Draw/show/poof the data
+    visualizer.show()           # Finalize and render the figure
 
 .. image:: images/rfecv_credit.png
 

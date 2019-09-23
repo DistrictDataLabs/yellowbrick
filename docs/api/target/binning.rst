@@ -24,7 +24,7 @@ To help the user select the optimal number of bins, the ``BalancedBinningReferen
     visualizer = BalancedBinningReference()
 
     visualizer.fit(y)        # Fit the data to the visualizer
-    visualizer.poof()        # Draw/show/poof the data
+    visualizer.show()        # Finalize and render the figure
 
 
 .. seealso::

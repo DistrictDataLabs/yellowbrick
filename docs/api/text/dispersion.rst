@@ -24,7 +24,7 @@ A word's importance can be weighed by its dispersion in a corpus.  Lexical dispe
     # Create the visualizer and draw the plot
     visualizer = DispersionPlot(target_words)
     visualizer.fit(text)
-    visualizer.poof()
+    visualizer.show()
 
 
 API Reference

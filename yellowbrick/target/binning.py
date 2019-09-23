@@ -57,7 +57,7 @@ class BalancedBinningReference(TargetVisualizer):
     --------
     >>> visualizer = BalancedBinningReference()
     >>> visualizer.fit(y)
-    >>> visualizer.poof()
+    >>> visualizer.show()
 
 
     Notes
@@ -124,7 +124,7 @@ class BalancedBinningReference(TargetVisualizer):
     def finalize(self, **kwargs):
         """
         Finalize executes any subclass-specific axes finalization steps.
-        The user calls poof and poof calls finalize.
+        The user calls show and show calls finalize.
 
         Parameters
         ----------
@@ -177,8 +177,8 @@ def balanced_binning_reference(y, ax=None, target="y", bins=4, **kwargs):
     # Initialize the visualizer
     visualizer = BalancedBinningReference(ax=ax, bins=bins, target=target, **kwargs)
 
-    # Fit and poof the visualizer
+    # Fit and show the visualizer
     visualizer.fit(y)
-    visualizer.poof()
+    visualizer.show()
 
     return visualizer

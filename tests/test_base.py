@@ -113,9 +113,9 @@ class TestBaseClasses(VisualTestCase):
         assert viz.finalize() is viz.ax
 
     @patch("yellowbrick.base.plt")
-    def test_poof_show_interface(self, mock_plt):
+    def test_show_interface(self, mock_plt):
         """
-        Test poof calls plt.show and other figure finalization correctly
+        Test show calls plt.show and other figure finalization correctly
         """
 
         class CustomVisualizer(Visualizer):
@@ -124,16 +124,16 @@ class TestBaseClasses(VisualTestCase):
         _, ax = plt.subplots()
         viz = CustomVisualizer(ax=ax)
         viz.finalize = MagicMock()
-        assert viz.poof() is ax
+        assert viz.show() is ax
 
         viz.finalize.assert_called_once_with()
         mock_plt.show.assert_called_once_with()
         mock_plt.savefig.assert_not_called()
 
     @patch("yellowbrick.base.plt")
-    def test_poof_savefig_interface(self, mock_plt):
+    def test_show_savefig_interface(self, mock_plt):
         """
-        Test poof calls plt.savefig and other figure finalization correctly
+        Test show calls plt.savefig and other figure finalization correctly
         """
 
         class CustomVisualizer(Visualizer):
@@ -142,16 +142,16 @@ class TestBaseClasses(VisualTestCase):
         _, ax = plt.subplots()
         viz = CustomVisualizer(ax=ax)
         viz.finalize = MagicMock()
-        assert viz.poof(outpath="test.png") is ax
+        assert viz.show(outpath="test.png") is ax
 
         viz.finalize.assert_called_once_with()
         mock_plt.show.assert_not_called()
         mock_plt.savefig.assert_called_once_with("test.png")
 
     @patch("yellowbrick.base.plt")
-    def test_poof_warns(self, mock_plt):
+    def test_show_warns(self, mock_plt):
         """
-        Test poof issues a warning when no axes has been modified
+        Test show issues a warning when no axes has been modified
         """
 
         class CustomVisualizer(Visualizer):
@@ -159,7 +159,7 @@ class TestBaseClasses(VisualTestCase):
 
         with pytest.warns(YellowbrickWarning):
             viz = CustomVisualizer()
-            assert viz.poof() is not None
+            assert viz.show() is not None
 
 
 ##########################################################################
@@ -231,8 +231,8 @@ class TestVisualizerGrid(VisualTestCase):
         grid = VisualizerGrid(visualizers)
 
         grid.fit(X, y)
-        # poof is required here (do not replace with finalize)!
-        assert grid.poof() is not None
+        # show is required here (do not replace with finalize)!
+        assert grid.show() is not None
 
         self.assert_images_similar(grid)
 
@@ -253,8 +253,8 @@ class TestVisualizerGrid(VisualTestCase):
         grid = VisualizerGrid(visualizers, nrows=2)
 
         grid.fit(X, y)
-        # poof is required here (do not replace with finalize)!
-        assert grid.poof() is not None
+        # show is required here (do not replace with finalize)!
+        assert grid.show() is not None
 
         self.assert_images_similar(grid)
 
@@ -275,8 +275,8 @@ class TestVisualizerGrid(VisualTestCase):
         grid = VisualizerGrid(visualizers, ncols=2)
 
         grid.fit(X, y)
-        # poof is required here (do not replace with finalize)!
-        assert grid.poof() is not None
+        # show is required here (do not replace with finalize)!
+        assert grid.show() is not None
 
         self.assert_images_similar(grid)
 

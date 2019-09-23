@@ -168,7 +168,7 @@ class UMAPVisualizer(TextVisualizer):
 
     >>> model = MyVisualizer(metric='cosine')
     >>> model.fit(X)
-    >>> model.poof()
+    >>> model.show()
 
     """
 

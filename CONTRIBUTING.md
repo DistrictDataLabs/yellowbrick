@@ -165,11 +165,11 @@ These two basic types of visualizers map well to the two basic estimator objects
 
 The scikit-learn API is object oriented, and estimators are initialized with parameters by instantiating their class. Hyperparameters can also be set using the `set_attrs()` method and retrieved with the corresponding `get_attrs()` method. All scikit-learn estimators have a `fit(X, y=None)` method that accepts a two dimensional data array, `X`, and optionally a vector `y` of target values. The `fit()` method trains the estimator, making it ready to transform data or make predictions. Transformers have an associated `transform(X)` method that returns a new dataset, `Xprime` and models have a `predict(X)` method that returns a vector of predictions, `yhat`. Models may also have a `score(X, y)` method that evaluate the performance of the model.
 
-Visualizers interact with scikit-learn objects by intersecting with them at the methods defined above. Specifically, visualizers perform actions related to `fit()`, `transform()`, `predict()`, and `score()` then call a `draw()` method which initializes the underlying figure associated with the visualizer. The user calls the visualizer's `poof()` method, which in turn calls a `finalize()` method on the visualizer to draw legends, titles, etc. and then `poof()` renders the figure. The Visualizer API is therefore:
+Visualizers interact with scikit-learn objects by intersecting with them at the methods defined above. Specifically, visualizers perform actions related to `fit()`, `transform()`, `predict()`, and `score()` then call a `draw()` method which initializes the underlying figure associated with the visualizer. The user calls the visualizer's `show()` method, which in turn calls a `finalize()` method on the visualizer to draw legends, titles, etc. and then `show()` renders the figure. The Visualizer API is therefore:
 
 - `draw()`: add visual elements to the underlying axes object
 - `finalize()`: prepare the figure for rendering, adding final touches such as legends, titles, axis labels, etc.
-- `poof()`: render the figure for the user.
+- `show()`: render the figure for the user.
 
 Creating a visualizer means defining a class that extends `Visualizer` or one of its subclasses, then implementing several of the methods described above. A barebones implementation is as follows::
 
@@ -201,7 +201,7 @@ This simple visualizer simply draws a line graph for some input dataset X, inter
 ```python
 visualizer = MyVisualizer()
 visualizer.fit(X)
-visualizer.poof()
+visualizer.show()
 ```
 
 Score visualizers work on the same principle but accept an additional required `model` argument. Score visualizers wrap the model (which can be either instantiated or uninstantiated) and then pass through all attributes and methods through to the underlying model, drawing where necessary.
@@ -231,7 +231,7 @@ class MyVisualizerTests(VisualTestCase):
         try:
             visualizer = MyVisualizer()
             visualizer.fit(X)
-            visualizer.poof()
+            visualizer.show()
         except Exception as e:
             pytest.fail("my visualizer didn't work")
 ```
@@ -287,7 +287,7 @@ class MyVisualizer(Visualizer):
 
     >>> model = MyVisualizer()
     >>> model.fit(X)
-    >>> model.poof()
+    >>> model.show()
 
     Notes
     -----

@@ -25,7 +25,7 @@ The ``JointPlotVisualizer`` plots a feature against the target and shows the dis
     visualizer = JointPlotVisualizer(columns="cement")
 
     visualizer.fit_transform(X, y)        # Fit and transform the data
-    visualizer.poof()                     # Draw/show/poof the data
+    visualizer.show()                     # Finalize and render the figure
 
 
 The ``JointPlotVisualizer`` can also be used to compare two features.
@@ -44,7 +44,7 @@ The ``JointPlotVisualizer`` can also be used to compare two features.
     visualizer = JointPlotVisualizer(columns=["cement", "ash"])
 
     visualizer.fit_transform(X, y)        # Fit and transform the data
-    visualizer.poof()                     # Draw/show/poof the data
+    visualizer.show()                     # Finalize and render the figure
 
 
 In addition, the ``JointPlotVisualizer`` can be plotted with hexbins in the case
@@ -64,7 +64,7 @@ of many, many points.
     visualizer = JointPlotVisualizer(columns="cement", kind="hexbin")
 
     visualizer.fit_transform(X, y)        # Fit and transform the data
-    visualizer.poof()                     # Draw/show/poof the data
+    visualizer.show()                     # Finalize and render the figure
 
 
 API Reference

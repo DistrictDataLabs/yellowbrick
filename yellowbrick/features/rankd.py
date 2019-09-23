@@ -104,7 +104,7 @@ class RankDBase(MultiFeatureVisualizer):
     >>> visualizer = Rank2D()
     >>> visualizer.fit(X, y)
     >>> visualizer.transform(X)
-    >>> visualizer.poof()
+    >>> visualizer.show()
 
     Notes
     -----
@@ -197,7 +197,7 @@ class RankDBase(MultiFeatureVisualizer):
     def finalize(self, **kwargs):
         """
         Finalize executes any subclass-specific axes finalization steps.
-        The user calls poof and poof calls finalize.
+        The user calls show and show calls finalize.
 
         Parameters
         ----------
@@ -272,7 +272,7 @@ class Rank1D(RankDBase):
     >>> visualizer = Rank1D()
     >>> visualizer.fit(X, y)
     >>> visualizer.transform(X)
-    >>> visualizer.poof()
+    >>> visualizer.show()
     """
 
     ranking_methods = {"shapiro": lambda X: np.array([shapiro(x)[0] for x in X.T])}
@@ -391,7 +391,7 @@ class Rank2D(RankDBase):
     >>> visualizer = Rank2D()
     >>> visualizer.fit(X, y)
     >>> visualizer.transform(X)
-    >>> visualizer.poof()
+    >>> visualizer.show()
 
     Notes
     -----

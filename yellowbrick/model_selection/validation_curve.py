@@ -136,7 +136,7 @@ class ValidationCurve(ModelVisualizer):
     >>> pr = np.logspace(-6,-1,5)
     >>> model = ValidationCurve(SVC(), param_name="gamma", param_range=pr)
     >>> model.fit(X, y)
-    >>> model.poof()
+    >>> model.show()
 
     Notes
     -----
@@ -379,7 +379,7 @@ def validation_curve(
     kwargs : dict
         Keyword arguments that are passed to the base class and may influence
         the visualization as defined in other Visualizers. These arguments are
-        also passed to the `poof()` method, e.g. can pass a path to save the
+        also passed to the ``show()`` method, e.g. can pass a path to save the
         figure to.
 
     Returns
@@ -402,7 +402,7 @@ def validation_curve(
         pre_dispatch=pre_dispatch,
     )
 
-    # Fit and poof the visualizer
+    # Fit and show the visualizer
     oz.fit(X, y)
-    oz.poof(**kwargs)
+    oz.show(**kwargs)
     return oz

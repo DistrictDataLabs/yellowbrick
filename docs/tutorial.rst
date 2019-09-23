@@ -203,7 +203,7 @@ Now let's refactor our model evaluation function to use Yellowbrick's ``Classifi
         )
         visualizer.fit(X, y)
         visualizer.score(X, y)
-        visualizer.poof()
+        visualizer.show()
 
     for model in models:
         visualize_model(X, y, model)

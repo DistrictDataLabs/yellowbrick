@@ -74,7 +74,7 @@ this by assigning a color to each label and showing the labels in a legend.
     visualizer = Manifold(manifold="tsne")
 
     visualizer.fit(X, y)        # Fit the data
-    visualizer.poof()           # Draw/show/poof the data
+    visualizer.show()           # Finalize and render the figure
 
 
 .. image:: images/occupancy_tsne_manifold.png
@@ -111,7 +111,7 @@ the ``f_classif`` score to find the 3 best features in our occupancy dataset.
     ])
 
     model.fit(X, y)                    # Fit the data to the model
-    model.named_steps['viz'].poof()    # Draw/show/poof the data
+    model.named_steps['viz'].show()    # Finalize and render the figure
 
 .. image:: images/occupancy_select_k_best_isomap_manifold.png
 
@@ -138,7 +138,7 @@ continuous by counting the number of unique values in ``y``.
     visualizer = Manifold(manifold="isomap", n_neighbors=10)
 
     visualizer.fit(X, y)        # Fit the data
-    visualizer.poof()           # Draw/show/poof the data
+    visualizer.show()           # Finalize and render the figure
 
 .. image:: images/concrete_isomap_manifold.png
 

@@ -209,7 +209,7 @@ class ClassPredictionError(ClassificationScoreVisualizer):
     def finalize(self, **kwargs):
         """
         Finalize executes any subclass-specific axes finalization steps.
-        The user calls poof and poof calls finalize.
+        The user calls show and show calls finalize.
         """
 
         # Set the title

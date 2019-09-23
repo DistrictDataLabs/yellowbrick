@@ -7,7 +7,7 @@ A method for visualizing the frequency of tokens within and across corpora is fr
 
 .. NOTE:: The ``FreqDistVisualizer`` does not perform any normalization or vectorization, and it expects text that has already been count vectorized.
 
-We first instantiate a ``FreqDistVisualizer`` object, and then call ``fit()`` on that object with the count vectorized documents and the features (i.e. the words from the corpus), which computes the frequency distribution. The visualizer then plots a bar chart of the top 50 most frequent terms in the corpus, with the terms listed along the x-axis and frequency counts depicted at y-axis values. As with other Yellowbrick visualizers, when the user invokes ``poof()``, the finalized visualization is shown.  Note that in this plot and in the subsequent one, we can orient our plot vertically by passing in ``orient='v'`` on instantiation (the plot will orient horizontally by default):
+We first instantiate a ``FreqDistVisualizer`` object, and then call ``fit()`` on that object with the count vectorized documents and the features (i.e. the words from the corpus), which computes the frequency distribution. The visualizer then plots a bar chart of the top 50 most frequent terms in the corpus, with the terms listed along the x-axis and frequency counts depicted at y-axis values. As with other Yellowbrick visualizers, when the user invokes ``show()``, the finalized visualization is shown.  Note that in this plot and in the subsequent one, we can orient our plot vertically by passing in ``orient='v'`` on instantiation (the plot will orient horizontally by default):
 
 .. plot::
     :context: close-figs
@@ -27,7 +27,7 @@ We first instantiate a ``FreqDistVisualizer`` object, and then call ``fit()`` on
 
     visualizer = FreqDistVisualizer(features=features, orient='v')
     visualizer.fit(docs)
-    visualizer.poof()
+    visualizer.show()
 
 
 It is interesting to compare the results of the ``FreqDistVisualizer`` before and after stopwords have been removed from the corpus:
@@ -35,7 +35,7 @@ It is interesting to compare the results of the ``FreqDistVisualizer`` before an
 
 .. plot::
     :context: close-figs
-    :include-source: False 
+    :include-source: False
     :alt: Frequency Distribution Plot without Stopwords
 
     from sklearn.feature_extraction.text import CountVectorizer
@@ -52,7 +52,7 @@ It is interesting to compare the results of the ``FreqDistVisualizer`` before an
 
     visualizer = FreqDistVisualizer(features=features, orient='v')
     visualizer.fit(docs)
-    visualizer.poof()
+    visualizer.show()
 
 It is also interesting to explore the differences in tokens across a corpus. The hobbies corpus that comes with Yellowbrick has already been categorized (try ``corpus.target``), so let's visually compare the differences in the frequency distributions for two of the categories: *"cooking"* and *"gaming"*.
 
@@ -60,7 +60,7 @@ Here is the plot for the cooking corpus (oriented horizontally this time):
 
 .. plot::
     :context: close-figs
-    :include-source: False 
+    :include-source: False
     :alt: Frequency Distribution Plot for Cooking Corpus
 
     from collections import defaultdict
@@ -86,13 +86,13 @@ Here is the plot for the cooking corpus (oriented horizontally this time):
         features=features, size=(1080, 720)
     )
     visualizer.fit(docs)
-    visualizer.poof()
+    visualizer.show()
 
 And for the gaming corpus (again oriented horizontally):
 
 .. plot::
     :context: close-figs
-    :include-source: False 
+    :include-source: False
     :alt: Frequency Distribution Plot for Gaming Corpus
 
     from collections import defaultdict
@@ -118,7 +118,7 @@ And for the gaming corpus (again oriented horizontally):
         features=features, size=(1080, 720)
     )
     visualizer.fit(docs)
-    visualizer.poof()
+    visualizer.show()
 
 
 API Reference

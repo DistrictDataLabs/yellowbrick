@@ -89,14 +89,14 @@ class ClassBalance(TargetVisualizer):
     To simply observe the balance of classes in the target:
 
     >>> viz = ClassBalance().fit(y)
-    >>> viz.poof()
+    >>> viz.show()
 
     To compare the relationship between training and test data:
 
     >>> _, _, y_train, y_test = train_test_split(X, y, test_size=0.2)
     >>> viz = ClassBalance()
     >>> viz.fit(y_train, y_test)
-    >>> viz.poof()
+    >>> viz.show()
     """
 
     def __init__(self, ax=None, labels=None, colors=None, colormap=None, **kwargs):
@@ -210,7 +210,7 @@ class ClassBalance(TargetVisualizer):
     def finalize(self, **kwargs):
         """
         Finalize executes any subclass-specific axes finalization steps.
-        The user calls poof and poof calls finalize.
+        The user calls show and show calls finalize.
 
         Parameters
         ----------

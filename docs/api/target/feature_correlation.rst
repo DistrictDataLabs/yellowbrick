@@ -29,7 +29,7 @@ The default calculation is Pearson correlation, which is perform with ``scipy.st
     visualizer = FeatureCorrelation(labels=features)
 
     visualizer.fit(X, y)        # Fit the data to the visualizer
-    visualizer.poof()           # Draw/show/poof the data
+    visualizer.show()           # Finalize and render the figure
 
 Mutual Information - Regression
 -------------------------------
@@ -60,7 +60,7 @@ See `scikit-learn documentation <http://scikit-learn.org/stable/modules/generate
     visualizer = FeatureCorrelation(method='mutual_info-regression', labels=features)
 
     visualizer.fit(X, y, discrete_features=discrete, random_state=0)
-    visualizer.poof()
+    visualizer.show()
 
 
 Mutual Information - Classification
@@ -77,7 +77,7 @@ This visualizer also allows sorting of the bar plot according to the calculated 
 
     from sklearn import datasets
     from yellowbrick.target import FeatureCorrelation
-    
+
     # Load the regression dataset
     data = datasets.load_wine()
     X, y = data['data'], data['target']
@@ -92,7 +92,7 @@ This visualizer also allows sorting of the bar plot according to the calculated 
     )
 
     visualizer.fit(X_pd, y)        # Fit the data to the visualizer
-    visualizer.poof()              # Draw/show/poof the data
+    visualizer.show()              # Finalize and render the figure
 
 
 API Reference

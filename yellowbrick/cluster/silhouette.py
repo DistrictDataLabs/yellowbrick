@@ -109,7 +109,7 @@ class SilhouetteVisualizer(ClusteringScoreVisualizer):
     >>> from sklearn.cluster import KMeans
     >>> model = SilhouetteVisualizer(KMeans(10))
     >>> model.fit(X)
-    >>> model.poof()
+    >>> model.show()
     """
 
     def __init__(self, model, ax=None, colors=None, is_fitted="auto", **kwargs):

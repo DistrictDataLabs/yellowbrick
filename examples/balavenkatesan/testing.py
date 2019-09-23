@@ -114,4 +114,4 @@ if __name__ == "__main__":
     model.predict(X)
     # visualizer = KnnDecisionBoundariesVisualizer(model, classes=school.target_names, features=school.feature_names[:2])
     visualizer = KnnDecisionBoundariesVisualizer(model)
-    visualizer.fit_draw_poof(X, y)
+    visualizer.fit_draw_show(X, y)

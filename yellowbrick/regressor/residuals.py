@@ -119,7 +119,7 @@ class PredictionError(RegressionScoreVisualizer):
     >>> model = PredictionError(Lasso())
     >>> model.fit(X_train, y_train)
     >>> model.score(X_test, y_test)
-    >>> model.poof()
+    >>> model.show()
 
     Notes
     -----
@@ -230,7 +230,7 @@ class PredictionError(RegressionScoreVisualizer):
     def finalize(self, **kwargs):
         """
         Finalize executes any subclass-specific axes finalization steps.
-        The user calls poof and poof calls finalize.
+        The user calls show and show calls finalize.
 
         Parameters
         ----------
@@ -450,7 +450,7 @@ class ResidualsPlot(RegressionScoreVisualizer):
     >>> model = ResidualsPlot(Ridge())
     >>> model.fit(X_train, y_train)
     >>> model.score(X_test, y_test)
-    >>> model.poof()
+    >>> model.show()
 
     Notes
     -----
@@ -640,7 +640,7 @@ class ResidualsPlot(RegressionScoreVisualizer):
     def finalize(self, **kwargs):
         """
         Finalize executes any subclass-specific axes finalization steps.
-        The user calls poof and poof calls finalize.
+        The user calls show and show calls finalize.
 
         Parameters
         ----------

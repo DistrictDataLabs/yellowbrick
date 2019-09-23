@@ -40,7 +40,7 @@ In the following example, we show how to visualize cross-validated scores for a 
     visualizer = CVScores(model, cv=cv, scoring='f1_weighted')
 
     visualizer.fit(X, y)        # Fit the data to the visualizer
-    visualizer.poof()           # Draw/show/poof the data
+    visualizer.show()           # Finalize and render the figure
 
 Our resulting visualization shows that while our average cross-validation score is quite high, there are some splits for which our fitted ``MultinomialNB`` classifier performs significantly less well.
 
@@ -70,7 +70,7 @@ In this next example we show how to visualize cross-validated scores for a regre
     visualizer = CVScores(model, cv=cv, scoring='r2')
 
     visualizer.fit(X, y)        # Fit the data to the visualizer
-    visualizer.poof()           # Draw/show/poof the data
+    visualizer.show()           # Finalize and render the figure
 
 As with our classification ``CVScores`` visualization, our regression visualization suggests that our ``Ridge`` regressor performs very well (e.g. produces a high coefficient of determination) across nearly every fold, resulting in another fairly high overall R2 score.
 

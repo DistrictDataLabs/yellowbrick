@@ -164,7 +164,7 @@ class ROCAUC(ClassificationScoreVisualizer):
     >>> oz = ROCAUC(LogisticRegression())
     >>> oz.fit(X_train, y_train)
     >>> oz.score(X_test, y_test)
-    >>> oz.poof()
+    >>> oz.show()
     """
 
     def __init__(
@@ -349,7 +349,7 @@ class ROCAUC(ClassificationScoreVisualizer):
     def finalize(self, **kwargs):
         """
         Finalize executes any subclass-specific axes finalization steps.
-        The user calls poof and poof calls finalize.
+        The user calls show and show calls finalize.
 
         Parameters
         ----------

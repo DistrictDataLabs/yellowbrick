@@ -74,7 +74,7 @@ class MissingValuesBar(MissingDataVisualizer):
     >>> from yellowbrick.contrib.missing import MissingValuesBar
     >>> visualizer = MissingValuesBar()
     >>> visualizer.fit(X, y=y)
-    >>> visualizer.poof()
+    >>> visualizer.show()
     """
 
     def __init__(self, width=0.5, color=None, colors=None, classes=None, **kwargs):
@@ -184,7 +184,7 @@ class MissingValuesBar(MissingDataVisualizer):
     def finalize(self, **kwargs):
         """
         Finalize executes any subclass-specific axes finalization steps.
-        The user calls poof and poof calls finalize.
+        The user calls show and show calls finalize.
 
         Parameters
         ----------
@@ -262,7 +262,7 @@ def missing_bar(X, y=None, ax=None, classes=None, width=0.5, color="black", **kw
 
     # Fit and transform the visualizer (calls draw)
     visualizer.fit(X, y)
-    visualizer.poof()
+    visualizer.show()
 
     # Return the axes object on the visualizer
     return visualizer.ax

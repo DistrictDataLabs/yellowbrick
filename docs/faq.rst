@@ -95,7 +95,7 @@ Finally please note that you can manipulate the default colors that Yellowbrick 
 How can I save a Yellowbrick plot?
 ----------------------------------
 
-Save your Yellowbrick plot by passing an ``outpath`` into ``poof()``:
+Save your Yellowbrick plot by passing an ``outpath`` into ``show()``:
 
 .. code:: python
 
@@ -105,7 +105,7 @@ Save your Yellowbrick plot by passing an ``outpath`` into ``poof()``:
     visualizer = KElbowVisualizer(MiniBatchKMeans(), k=(4,12))
 
     visualizer.fit(X)
-    visualizer.poof(outpath="kelbow_minibatchkmeans.png")
+    visualizer.show(outpath="kelbow_minibatchkmeans.png")
 
     ...
 

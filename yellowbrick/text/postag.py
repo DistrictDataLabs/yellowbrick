@@ -136,7 +136,7 @@ class PosTagVisualizer(TextVisualizer):
     --------
     >>> viz = PosTagVisualizer()
     >>> viz.fit(X)
-    >>> viz.poof()
+    >>> viz.show()
     """
 
     def __init__(
@@ -419,10 +419,10 @@ class PosTagVisualizer(TextVisualizer):
             )
         )
 
-    def poof(self, outpath=None, **kwargs):
+    def show(self, outpath=None, **kwargs):
         if outpath is not None:
             kwargs["bbox_inches"] = kwargs.get("bbox_inches", "tight")
-        return super(PosTagVisualizer, self).poof(outpath, **kwargs)
+        return super(PosTagVisualizer, self).show(outpath, **kwargs)
 
 
 ##########################################################################

@@ -119,7 +119,7 @@ class ExplainedVariance(FeatureVisualizer):
     >>> visualizer = ExplainedVariance()
     >>> visualizer.fit(X)
     >>> visualizer.transform(X)
-    >>> visualizer.poof()
+    >>> visualizer.show()
 
     """
 

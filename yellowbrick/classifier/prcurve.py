@@ -175,7 +175,7 @@ class PrecisionRecallCurve(ClassificationScoreVisualizer):
     >>> viz = PrecisionRecallCurve(LinearSVC())
     >>> viz.fit(X_train, y_train)
     >>> viz.score(X_test, y_test)
-    >>> viz.poof()
+    >>> viz.show()
 
     Notes
     -----

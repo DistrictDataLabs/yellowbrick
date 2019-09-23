@@ -122,7 +122,7 @@ class JointPlot(FeatureVisualizer):
 
     >>> viz = JointPlot(columns=["temp", "humidity"])
     >>> viz.fit(X, y)
-    >>> viz.poof()
+    >>> viz.show()
     """
 
     # TODO: should we couple more closely with Rank2D?

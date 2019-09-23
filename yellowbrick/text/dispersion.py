@@ -248,7 +248,8 @@ class DispersionPlot(TextVisualizer):
     def finalize(self, **kwargs):
         """
         The finalize method executes any subclass-specific axes
-        finalization steps. The user calls poof & poof calls finalize.
+        finalization steps. The user calls show and show calls finalize.
+
         Parameters
         ----------
         kwargs: generic keyword arguments.

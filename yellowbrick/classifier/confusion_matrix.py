@@ -131,7 +131,7 @@ class ConfusionMatrix(ClassificationScoreVisualizer):
     >>> viz = ConfusionMatrix(LogisticRegression())
     >>> viz.fit(X_train, y_train)
     >>> viz.score(X_test, y_test)
-    >>> viz.poof()
+    >>> viz.show()
     """
 
     def __init__(
@@ -320,10 +320,10 @@ class ConfusionMatrix(ClassificationScoreVisualizer):
         # Return the axes being drawn on
         return self.ax
 
-    def poof(self, outpath=None, **kwargs):
+    def show(self, outpath=None, **kwargs):
         if outpath is not None:
             kwargs["bbox_inches"] = kwargs.get("bbox_inches", "tight")
-        return super(ConfusionMatrix, self).poof(outpath, **kwargs)
+        return super(ConfusionMatrix, self).show(outpath, **kwargs)
 
     def finalize(self, **kwargs):
         self.set_title("{} Confusion Matrix".format(self.name))

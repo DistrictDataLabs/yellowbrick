@@ -29,7 +29,7 @@ After importing the required tools, we can use the :doc:`hobbies corpus <../data
     # Create the visualizer and draw the vectors
     tsne = TSNEVisualizer()
     tsne.fit(X, y)
-    tsne.poof()
+    tsne.show()
 
 Note that you can pass the class labels or document categories directly to the ``TSNEVisualizer`` as follows:
 
@@ -38,13 +38,13 @@ Note that you can pass the class labels or document categories directly to the `
     labels = corpus.labels
     tsne = TSNEVisualizer(labels=labels)
     tsne.fit(X, y)
-    tsne.poof()
+    tsne.show()
 
 If we omit the target during fit, we can visualize the whole dataset to see if any meaningful patterns are observed.
 
 .. plot::
     :context: close-figs
-    :include-source: False 
+    :include-source: False
     :alt: TSNE Plot without Class Coloring
 
     from sklearn.feature_extraction.text import TfidfVectorizer
@@ -59,13 +59,13 @@ If we omit the target during fit, we can visualize the whole dataset to see if a
     X = tfidf.fit_transform(corpus.data)
     tsne = TSNEVisualizer(labels=["documents"])
     tsne.fit(X)
-    tsne.poof()
+    tsne.show()
 
 This means we don't have to use class labels at all. Instead we can use cluster membership from K-Means to label each document. This will allow us to look for clusters of related text by their contents:
 
 .. plot::
     :context: close-figs
-    :include-source: False 
+    :include-source: False
     :alt: TSNE Plot without Clustering
 
     from sklearn.cluster import KMeans
@@ -85,7 +85,7 @@ This means we don't have to use class labels at all. Instead we can use cluster 
 
     tsne = TSNEVisualizer()
     tsne.fit(X, ["c{}".format(c) for c in clusters.labels_])
-    tsne.poof()
+    tsne.show()
 
 
 API Reference

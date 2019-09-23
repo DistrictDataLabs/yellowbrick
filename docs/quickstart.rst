@@ -44,7 +44,7 @@ Once installed, you should be able to import Yellowbrick without an error, both 
 Using Yellowbrick
 -----------------
 
-The Yellowbrick API is specifically designed to play nicely with scikit-learn. The primary interface is therefore a ``Visualizer`` -- an object that learns from data to produce a visualization. Visualizers are scikit-learn `Estimator <http://scikit-learn.org/stable/developers/contributing.html#apis-of-scikit-learn-objects>`_ objects and have a similar interface along with methods for drawing. In order to use visualizers, you simply use the same workflow as with a scikit-learn model, import the visualizer, instantiate it, call the visualizer's ``fit()`` method, then in order to render the visualization, call the visualizer's ``poof()`` method, which does the magic!
+The Yellowbrick API is specifically designed to play nicely with scikit-learn. The primary interface is therefore a ``Visualizer`` -- an object that learns from data to produce a visualization. Visualizers are scikit-learn `Estimator <http://scikit-learn.org/stable/developers/contributing.html#apis-of-scikit-learn-objects>`_ objects and have a similar interface along with methods for drawing. In order to use visualizers, you simply use the same workflow as with a scikit-learn model, import the visualizer, instantiate it, call the visualizer's ``fit()`` method, then in order to render the visualization, call the visualizer's ``show()`` method.
 
 For example, there are several visualizers that act as transformers, used to perform feature analysis prior to fitting a model. The following example visualizes a high-dimensional data set with parallel coordinates:
 
@@ -54,15 +54,15 @@ For example, there are several visualizers that act as transformers, used to per
 
     visualizer = ParallelCoordinates()
     visualizer.fit_transform(X, y)
-    visualizer.poof()
+    visualizer.poshowof()
 
 As you can see, the workflow is very similar to using a scikit-learn transformer, and visualizers are intended to be integrated along with scikit-learn utilities. Arguments that change how the visualization is drawn can be passed into the visualizer upon instantiation, similarly to how hyperparameters are included with scikit-learn models.
 
-The ``poof()`` method finalizes the drawing (adding titles, axes labels, etc) and then renders the image on your behalf. If you're in a Jupyter notebook, the image should just appear. If you're in a Python script, a GUI window should open with the visualization in interactive form. However, you can also save the image to disk by passing in a file path as follows:
+The ``show()`` method finalizes the drawing (adding titles, axes labels, etc) and then renders the image on your behalf. If you're in a Jupyter notebook, the image should just appear in the notebook output. If you're in a Python script, a GUI window should open with the visualization in interactive form. However, you can also save the image to disk by passing in a file path as follows:
 
 .. code-block:: python
 
-    visualizer.poof(outpath="pcoords.png")
+    visualizer.show(outpath="pcoords.png")
 
 The extension of the filename will determine how the image is rendered. In addition to the ``.png`` extension, ``.pdf`` is also commonly used for high-quality publication ready images.
 
@@ -85,9 +85,9 @@ Visualizers can also wrap scikit-learn models for evaluation, hyperparameter tun
 
     visualizer.fit(X_train, y_train)
     visualizer.score(X_test, y_test)
-    visualizer.poof()
+    visualizer.show()
 
-Only two additional lines of code are required to add visual evaluation of the classifier model, the instantiation of a ``ClassificationReport`` visualizer that wraps the classification estimator and a call to its ``poof()`` method. In this way, Visualizers *enhance* the machine learning workflow without interrupting it.
+Only two additional lines of code are required to add visual evaluation of the classifier model, the instantiation of a ``ClassificationReport`` visualizer that wraps the classification estimator and a call to its ``show()`` method. In this way, Visualizers *enhance* the machine learning workflow without interrupting it.
 
 .. TODO:: Walkthrough visual pipelines and text analysis.
 
@@ -149,7 +149,7 @@ The machine learning workflow is the art of creating *model selection triples*, 
 
    visualizer = Rank2D(algorithm="pearson")
    visualizer.fit_transform(X)
-   visualizer.poof()
+   visualizer.show()
 
 .. plot::
     :include-source: False
@@ -163,7 +163,7 @@ The machine learning workflow is the art of creating *model selection triples*, 
     X, y = load_bikeshare()
     visualizer = Rank2D(algorithm="pearson")
     visualizer.fit_transform(X)
-    visualizer.poof()
+    visualizer.show()
     plt.tight_layout()
 
 This figure shows us the Pearson correlation between pairs of features such that each cell in the grid represents two features identified in order on the x and y axes and whose color displays the magnitude of the correlation. A Pearson correlation of 1.0 means that there is a strong positive, linear relationship between the pairs of variables and a value of -1.0 indicates a strong negative, linear relationship (a value of zero indicates no relationship). Therefore we are looking for dark red and dark blue boxes to identify further.
@@ -176,7 +176,7 @@ In this chart, we see that the features ``temp`` and ``feelslike`` have a strong
 
     visualizer = JointPlotVisualizer(columns=['temp', 'feelslike'])
     visualizer.fit_transform(X, y)
-    visualizer.poof()
+    visualizer.show()
 
 .. plot::
     :include-source: False
@@ -189,7 +189,7 @@ In this chart, we see that the features ``temp`` and ``feelslike`` have a strong
     X, y = load_bikeshare()
     visualizer = JointPlotVisualizer(columns=['temp', 'feelslike'])
     visualizer.fit_transform(X, y)
-    visualizer.poof()
+    visualizer.show()
 
 This visualizer plots a scatter diagram of the apparent temperature on the y axis and the actual measured temperature on the x axis and draws a line of best fit using a simple linear regression. Additionally, univariate distributions are shown as histograms above the x axis for temp and next to the y axis for feelslike.  The ``JointPlotVisualizer`` gives an at-a-glance view of the very strong positive correlation of the features, as well as the range and distribution of each feature. Note that the axes are normalized to the space between zero and one, a common technique in machine learning to reduce the impact of one feature over another.
 
@@ -215,7 +215,7 @@ At this point, we can train our model; let's fit a linear regression to our mode
     visualizer = ResidualsPlot(LinearRegression())
     visualizer.fit(X_train, y_train)
     visualizer.score(X_test, y_test)
-    visualizer.poof()
+    visualizer.show()
 
 .. plot::
     :include-source: False
@@ -237,7 +237,7 @@ At this point, we can train our model; let's fit a linear regression to our mode
     visualizer = ResidualsPlot(LinearRegression())
     visualizer.fit(X_train, y_train)
     visualizer.score(X_test, y_test)
-    visualizer.poof()
+    visualizer.show()
 
 The residuals plot shows the error against the predicted value (the number of riders), and allows us to look for heteroskedasticity in the model; e.g. regions in the target where the error is greatest. The shape of the residuals can strongly inform us where OLS (ordinary least squares) is being most strongly affected by the components of our model (the features). In this case, we can see that the lower predicted number of riders results in lower model error, and conversely that the the higher predicted number of riders results in higher model error. This indicates that our model has more noise in certain regions of the target or that two variables are colinear, meaning that they are injecting error as the noise in their relationship changes.
 
@@ -257,7 +257,7 @@ Along with generating the residuals plot, we also measured the performance by "s
     alphas = np.logspace(-10, 1, 200)
     visualizer = AlphaSelection(RidgeCV(alphas=alphas))
     visualizer.fit(X, y)
-    visualizer.poof()
+    visualizer.show()
 
 .. plot::
     :include-source: False
@@ -274,7 +274,7 @@ Along with generating the residuals plot, we also measured the performance by "s
     alphas = np.logspace(-10, 1, 200)
     visualizer = AlphaSelection(RidgeCV(alphas=alphas))
     visualizer.fit(X, y)
-    visualizer.poof()
+    visualizer.show()
 
 When exploring model families, the primary thing to consider is how the model becomes more *complex*. As the model increases in complexity, the error due to variance increases because the model is becoming more overfit and cannot generalize to unseen data. However, the simpler the model is the more error there is likely to be due to bias; the model is underfit and therefore misses its target more frequently. The goal therefore of most machine learning is to create a model that is *just complex enough*, finding a middle ground between bias and variance.
 
@@ -292,7 +292,7 @@ We can now train our final model and visualize it with the ``PredictionError`` v
     visualizer = PredictionError(Ridge(alpha=3.181))
     visualizer.fit(X_train, y_train)
     visualizer.score(X_test, y_test)
-    visualizer.poof()
+    visualizer.show()
 
 .. plot::
     :include-source: False
@@ -314,7 +314,7 @@ We can now train our final model and visualize it with the ``PredictionError`` v
     visualizer = PredictionError(Ridge(alpha=3.181))
     visualizer.fit(X_train, y_train)
     visualizer.score(X_test, y_test)
-    visualizer.poof()
+    visualizer.show()
 
 The prediction error visualizer plots the actual (measured) vs. expected (predicted) values against each other. The dotted black line is the 45 degree line that indicates zero error. Like the residuals plot, this allows us to see where error is occurring and in what magnitude.
 

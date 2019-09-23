@@ -98,12 +98,12 @@ class TextVisualizer(Visualizer, TransformerMixin):
         """
         return X
 
-    def fit_transform_poof(self, X, y=None, **kwargs):
+    def fit_transform_show(self, X, y=None, **kwargs):
         """
         Fit to data, transform it, then visualize it.
 
         Fits the text visualizer to X and y with optional parameters by
-        passing in all of kwargs, then calls poof with the same kwargs.
+        passing in all of kwargs, then calls show with the same kwargs.
         This method must return the result of the transform method.
 
         Parameters
@@ -115,13 +115,13 @@ class TextVisualizer(Visualizer, TransformerMixin):
             An array or series of target or class values
 
         kwargs : dict
-            Pass generic arguments to the drawing method
+            Pass generic arguments to the show method
 
         Returns
         -------
         X : numpy array
             This method must return a numpy array with the same shape as X.
         """
-        Xp = self.fit_transform(X, y, **kwargs)
-        self.poof(**kwargs)
+        Xp = self.fit(X, y, **kwargs).transform(X)
+        self.show(**kwargs)
         return Xp

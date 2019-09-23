@@ -159,7 +159,7 @@ def decisionviz(
         **kwargs
     )
 
-    # Fit, draw and poof the visualizer
+    # Fit, draw and finalize the visualizer
     visualizer.fit(X, y)
     visualizer.finalize()
 
@@ -488,7 +488,7 @@ class DecisionBoundariesVisualizer(ClassificationScoreVisualizer):
     def finalize(self, **kwargs):
         """
         Finalize executes any subclass-specific axes finalization steps.
-        The user calls poof and poof calls finalize.
+        The user calls show and show calls finalize.
 
         Parameters
         ----------
@@ -512,14 +512,14 @@ class DecisionBoundariesVisualizer(ClassificationScoreVisualizer):
         self.fit(X, y, **kwargs)
         self.draw(X, y, **kwargs)
 
-    def fit_draw_poof(self, X, y=None, **kwargs):
+    def fit_draw_show(self, X, y=None, **kwargs):
         """
         Fits a transformer to X and y then returns
         visualization of features or fitted model.
-        Then calls poof to finalize.
+        Then calls show to finalize.
         """
         self.fit_draw(X, y, **kwargs)
-        self.poof(**kwargs)
+        return self.show(**kwargs)
 
 
 DecisionViz = DecisionBoundariesVisualizer

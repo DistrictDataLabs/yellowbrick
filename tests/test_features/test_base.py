@@ -100,9 +100,9 @@ class TestFeatureVisualizer(object):
         visualizer = FeatureVisualizer().fit(X, y)
         assert visualizer.transform(X, y) is X
 
-    def test_fit_transform_poof(self):
+    def test_fit_transform_show(self):
         """
-        Test the fit/transform/poof quick method
+        Test the fit/transform/show quick method
         """
 
         class MockFeatureVisaulizer(FeatureVisualizer):
@@ -111,13 +111,13 @@ class TestFeatureVisualizer(object):
         viz = MockFeatureVisaulizer()
         viz.fit = Mock(return_value=viz)
         viz.transform = Mock(return_value="a")
-        viz.poof = Mock()
+        viz.show = Mock()
 
         X, y = self.discrete
-        assert viz.fit_transform_poof(X, y, outpath="a.png", clear_figure=True) == "a"
+        assert viz.fit_transform_show(X, y, outpath="a.png", clear_figure=True) == "a"
         assert viz.fit.called_once_with(X, y)
         assert viz.transform.called_once_with(X, y)
-        assert viz.poof.called_once_with(outpath="a.png", clear_figure=True)
+        assert viz.show.called_once_with(outpath="a.png", clear_figure=True)
 
 
 ##########################################################################

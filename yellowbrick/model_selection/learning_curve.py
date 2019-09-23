@@ -154,7 +154,7 @@ class LearningCurve(ModelVisualizer):
     >>> from sklearn.naive_bayes import GaussianNB
     >>> model = LearningCurve(GaussianNB())
     >>> model.fit(X, y)
-    >>> model.poof()
+    >>> model.show()
 
     Notes
     -----
@@ -411,7 +411,7 @@ def learning_curve(
     kwargs : dict
         Keyword arguments that are passed to the base class and may influence
         the visualization as defined in other Visualizers. These arguments are
-        also passed to the `poof()` method, e.g. can pass a path to save the
+        also passed to the `show()` method, e.g. can pass a path to save the
         figure to.
 
     Returns
@@ -434,7 +434,7 @@ def learning_curve(
         exploit_incremental_learning=exploit_incremental_learning,
     )
 
-    # Fit and poof the visualizer
+    # Fit and show the visualizer
     oz.fit(X, y)
-    oz.poof(**kwargs)
+    oz.show(**kwargs)
     return oz

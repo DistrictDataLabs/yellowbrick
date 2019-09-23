@@ -27,7 +27,7 @@ The DecisionBoundariesVisualizer is a bivariate data visualization algorithm tha
     )
     viz.fit(X_train, y_train)
     viz.draw(X_test, y_test)
-    viz.poof()
+    viz.show()
 
 
 .. plot::
@@ -54,7 +54,7 @@ The DecisionBoundariesVisualizer is a bivariate data visualization algorithm tha
     )
     viz.fit(X_train, y_train)
     viz.draw(X_test, y_test)
-    viz.poof()
+    viz.show()
 
 
 API Reference
