@@ -229,12 +229,17 @@ class PredictionError(RegressionScoreVisualizer):
 
     def finalize(self, **kwargs):
         """
-        Finalize executes any subclass-specific axes finalization steps.
-        The user calls show and show calls finalize.
+        Finalizes the figure by ensuring the aspect ratio is correct and adding
+        the identity line for comparison. Also adds a title, axis labels, and
+        the legend.
 
         Parameters
         ----------
         kwargs: generic keyword arguments.
+
+        Notes
+        -----
+        Generally this method is called from show and not directly by the user.
         """
         # Set the title on the plot
         self.set_title("Prediction Error for {}".format(self.name))
@@ -639,12 +644,16 @@ class ResidualsPlot(RegressionScoreVisualizer):
 
     def finalize(self, **kwargs):
         """
-        Finalize executes any subclass-specific axes finalization steps.
-        The user calls show and show calls finalize.
+        Prepares the plot for renderig by adding a title, legend, and axis labels.
+        Also draws a line at the zero residuals to show the baseline.
 
         Parameters
         ----------
         kwargs: generic keyword arguments.
+
+        Notes
+        -----
+        Generally this method is called from show and not directly by the user.
         """
         # Add the title to the plot
         self.set_title("Residuals for {} Model".format(self.name))

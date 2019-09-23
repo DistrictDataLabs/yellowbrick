@@ -183,13 +183,16 @@ class MissingValuesBar(MissingDataVisualizer):
 
     def finalize(self, **kwargs):
         """
-        Finalize executes any subclass-specific axes finalization steps.
-        The user calls show and show calls finalize.
+        Sets a title and x-axis labels and adds a legend. Also ensures that the
+        y tick values are correctly set to feature names.
 
         Parameters
         ----------
         kwargs: generic keyword arguments.
 
+        Notes
+        -----
+        Generally this method is called from show and not directly by the user.
         """
         # Set the title
         self.set_title("Count of Missing Values by Column")

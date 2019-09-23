@@ -123,13 +123,15 @@ class BalancedBinningReference(TargetVisualizer):
 
     def finalize(self, **kwargs):
         """
-        Finalize executes any subclass-specific axes finalization steps.
-        The user calls show and show calls finalize.
+        Adds the x-axis label and manages the tick labels to ensure they're visible.
 
         Parameters
         ----------
         kwargs: generic keyword arguments.
 
+        Notes
+        -----
+        Generally this method is called from show and not directly by the user.
         """
         self.ax.set_xlabel(self.target)
         for tk in self.ax.get_xticklabels():

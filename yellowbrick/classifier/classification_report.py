@@ -263,12 +263,16 @@ class ClassificationReport(ClassificationScoreVisualizer):
 
     def finalize(self, **kwargs):
         """
-        Finalize executes any subclass-specific axes finalization steps.
-        The user calls show and show calls finalize.
+        Adds a title and sets the axis labels correctly. Also calls tight layout
+        to ensure that no parts of the figure are cut off in the final visualization.
 
         Parameters
         ----------
         kwargs: generic keyword arguments.
+
+        Notes
+        -----
+        Generally this method is called from show and not directly by the user.
         """
         # Set the title of the classifiation report
         self.set_title("{} Classification Report".format(self.name))

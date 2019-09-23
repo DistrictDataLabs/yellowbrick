@@ -420,12 +420,16 @@ class DiscriminationThreshold(ModelVisualizer):
 
     def finalize(self, **kwargs):
         """
-        Finalize executes any subclass-specific axes finalization steps.
-        The user calls show and show calls finalize.
+        Sets a title and axis labels on the visualizer and ensures that the
+        axis limits are scaled to valid threshold values.
 
         Parameters
         ----------
         kwargs: generic keyword arguments.
+
+        Notes
+        -----
+        Generally this method is called from show and not directly by the user.
         """
         super(DiscriminationThreshold, self).finalize(**kwargs)
 

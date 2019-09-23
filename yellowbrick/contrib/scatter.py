@@ -331,13 +331,16 @@ class ScatterVisualizer(DataVisualizer):
 
     def finalize(self, **kwargs):
         """
-        Finalize executes any subclass-specific axes finalization steps.
-        The user calls show and show calls finalize.
+        Adds a title and a legend and ensures that the axis labels are set as
+        the feature names being visualized.
 
         Parameters
         ----------
         kwargs: generic keyword arguments.
 
+        Notes
+        -----
+        Generally this method is called from show and not directly by the user.
         """
         # Divide out the two features
         feature_one, feature_two = self.features_

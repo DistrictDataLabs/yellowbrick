@@ -209,13 +209,17 @@ class ClassBalance(TargetVisualizer):
 
     def finalize(self, **kwargs):
         """
-        Finalize executes any subclass-specific axes finalization steps.
-        The user calls show and show calls finalize.
+        Finalizes the figure for drawing by setting a title, the legend, and axis
+        labels, removing the grid, and making sure the figure is correctly zoomed
+        into the bar chart.
 
         Parameters
         ----------
         kwargs: generic keyword arguments.
 
+        Notes
+        -----
+        Generally this method is called from show and not directly by the user.
         """
         # Set the title
         self.set_title("Class Balance for {:,} Instances".format(self.support_.sum()))
