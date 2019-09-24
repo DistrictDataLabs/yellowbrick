@@ -54,7 +54,7 @@ For example, there are several visualizers that act as transformers, used to per
 
     visualizer = ParallelCoordinates()
     visualizer.fit_transform(X, y)
-    visualizer.poshowof()
+    visualizer.show()
 
 As you can see, the workflow is very similar to using a scikit-learn transformer, and visualizers are intended to be integrated along with scikit-learn utilities. Arguments that change how the visualization is drawn can be passed into the visualizer upon instantiation, similarly to how hyperparameters are included with scikit-learn models.
 
