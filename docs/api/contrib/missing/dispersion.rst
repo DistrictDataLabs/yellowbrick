@@ -30,7 +30,7 @@ Without Targets Supplied
     visualizer = MissingValuesDispersion(features=features)
 
     visualizer.fit(X)
-    visualizer.poof()
+    visualizer.show()
 
 
 With Targets (y) Supplied
@@ -58,7 +58,7 @@ With Targets (y) Supplied
     visualizer = MissingValuesDispersion(features=features)
 
     visualizer.fit(X, y=y) # supply the targets via y
-    visualizer.poof()
+    visualizer.show()
 
 
 API Reference

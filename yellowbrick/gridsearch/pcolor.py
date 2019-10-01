@@ -125,7 +125,7 @@ class GridSearchColorPlot(GridSearchVisualizer):
                                   {'kernel': ['rbf', 'linear'], 'C': [1, 10]})
     >>> model = GridSearchColorPlot(gridsearch, x_param='kernel', y_param='C')
     >>> model.fit(X)
-    >>> model.poof()
+    >>> model.show()
     """
 
     def __init__(

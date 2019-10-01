@@ -109,7 +109,7 @@ class FeatureCorrelation(TargetVisualizer):
 
     >>> viz = FeatureCorrelation()
     >>> viz.fit(X, y)
-    >>> viz.poof()
+    >>> viz.show()
     """
 
     def __init__(

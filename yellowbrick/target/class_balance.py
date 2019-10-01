@@ -62,7 +62,7 @@ class ClassBalance(TargetVisualizer):
         A list of class names for the x-axis if the target is already encoded.
         Ensure that the labels are ordered lexicographically with respect to
         the values in the target. A common use case is to pass
-        LabelEncoder.classes\_ as this parameter. If not specified, the labels
+        ``LabelEncoder.classes_`` as this parameter. If not specified, the labels
         in the data will be used.
 
     colors: list of strings
@@ -89,14 +89,14 @@ class ClassBalance(TargetVisualizer):
     To simply observe the balance of classes in the target:
 
     >>> viz = ClassBalance().fit(y)
-    >>> viz.poof()
+    >>> viz.show()
 
     To compare the relationship between training and test data:
 
     >>> _, _, y_train, y_test = train_test_split(X, y, test_size=0.2)
     >>> viz = ClassBalance()
     >>> viz.fit(y_train, y_test)
-    >>> viz.poof()
+    >>> viz.show()
     """
 
     def __init__(self, ax=None, labels=None, colors=None, colormap=None, **kwargs):
@@ -209,13 +209,17 @@ class ClassBalance(TargetVisualizer):
 
     def finalize(self, **kwargs):
         """
-        Finalize executes any subclass-specific axes finalization steps.
-        The user calls poof and poof calls finalize.
+        Finalizes the figure for drawing by setting a title, the legend, and axis
+        labels, removing the grid, and making sure the figure is correctly zoomed
+        into the bar chart.
 
         Parameters
         ----------
         kwargs: generic keyword arguments.
 
+        Notes
+        -----
+        Generally this method is called from show and not directly by the user.
         """
         # Set the title
         self.set_title("Class Balance for {:,} Instances".format(self.support_.sum()))
@@ -298,7 +302,7 @@ def class_balance(
         A list of class names for the x-axis if the target is already encoded.
         Ensure that the labels are ordered lexicographically with respect to
         the values in the target. A common use case is to pass
-        LabelEncoder.classes\_ as this parameter. If not specified, the labels
+        ``LabelEncoder.classes_`` as this parameter. If not specified, the labels
         in the data will be used.
 
     colors: list of strings

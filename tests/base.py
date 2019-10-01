@@ -105,7 +105,7 @@ class VisualTestCase(object):
 
         visualizer : yellowbrick visualizer, default: None
             An instantiated yellowbrick visualizer that has been fitted,
-            transformed and had all operations except for poof called on it.
+            transformed and had all operations except for show called on it.
 
         ax : matplotlib Axes, default: None
             The axis to plot the figure on.

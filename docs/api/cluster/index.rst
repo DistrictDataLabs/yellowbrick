@@ -9,7 +9,7 @@ Clustering models are unsupervised methods that attempt to detect patterns in un
 -  :doc:`silhouette`: visualize the silhouette scores of each cluster in a single model.
 - :doc:`icdm`: visualize the relative distance and size of clusters.
 
-Because it is very difficult to ``score`` a clustering model, Yellowbrick visualizers wrap scikit-learn clusterer estimators via their ``fit()`` method. Once the clustering model is trained, then the visualizer can call ``poof()`` to display the clustering evaluation metric.
+Because it is very difficult to ``score`` a clustering model, Yellowbrick visualizers wrap scikit-learn clusterer estimators via their ``fit()`` method. Once the clustering model is trained, then the visualizer can call ``show()`` to display the clustering evaluation metric.
 
 .. toctree::
    :maxdepth: 2

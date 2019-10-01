@@ -26,8 +26,8 @@ Feature analysis visualizers implement the ``Transformer`` API from
 scikit-learn, meaning they can be used as intermediate transform steps
 in a ``Pipeline`` (particularly a ``VisualPipeline``). They are
 instantiated in the same way, and then fit and transform are called on
-them, which draws the instances correctly. Finally ``poof`` or ``show``
-is called which displays the image.
+them, which draws the instances correctly. Finally ``show`` is called which
+finalizes and displays the image.
 
 .. code:: python
 

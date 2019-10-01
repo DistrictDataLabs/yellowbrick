@@ -25,7 +25,7 @@ A scatter visualizer simply plots two features against each other and colors the
 
     visualizer.fit(X, y)           # Fit the data to the visualizer
     visualizer.transform(X)        # Transform the data
-    visualizer.poof()              # Draw/show/poof the data
+    visualizer.show()              # Finalize and render the figure
 
 
 API Reference

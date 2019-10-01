@@ -138,7 +138,7 @@ class TestRadViz(VisualTestCase):
 
         # Test the visualizer
         visualizer = RadViz()
-        visualizer.fit_transform_poof(X, y)
+        visualizer.fit_transform_show(X, y)
         self.assert_images_similar(visualizer, tol=0.1)
 
     @pytest.mark.xfail(sys.platform == "win32", reason="images not close on windows")
@@ -154,7 +154,7 @@ class TestRadViz(VisualTestCase):
 
         # Test the visualizer
         visualizer = RadViz()
-        visualizer.fit_transform_poof(X, y)
+        visualizer.fit_transform_show(X, y)
         self.assert_images_similar(visualizer, tol=0.1)
 
     @pytest.mark.xfail(sys.platform == "win32", reason="images not close on windows")
@@ -181,7 +181,7 @@ class TestRadViz(VisualTestCase):
 
         # Test the visualizer
         visualizer = RadViz(features=features, classes=classes)
-        visualizer.fit_transform_poof(X, y)
+        visualizer.fit_transform_show(X, y)
         self.assert_images_similar(visualizer, tol=0.1)
 
     @pytest.mark.xfail(sys.platform == "win32", reason="images not close on windows")
@@ -207,5 +207,5 @@ class TestRadViz(VisualTestCase):
 
         # Test the visualizer
         visualizer = RadViz(features=features, classes=classes)
-        visualizer.fit_transform_poof(X, y)
+        visualizer.fit_transform_show(X, y)
         self.assert_images_similar(visualizer, tol=0.1)

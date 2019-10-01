@@ -88,7 +88,7 @@ class TestScatterViz(VisualTestCase):
         """
         X_two_cols = self.X[:, :2]
         visualizer = ScatterViz()
-        visualizer.fit_transform_poof(X_two_cols, self.y)
+        visualizer.fit_transform_show(X_two_cols, self.y)
         assert visualizer.features_ == ["Feature One", "Feature Two"]
 
     def test_scatter_only_two_features_allowed_init(self):
@@ -134,7 +134,7 @@ class TestScatterViz(VisualTestCase):
         # Test the visualizer
         features = ["temperature", "relative humidity"]
         visualizer = ScatterViz(features=features)
-        visualizer.fit_transform_poof(X[:, :2], y)
+        visualizer.fit_transform_show(X[:, :2], y)
 
     def test_alpha_param(self):
         """
@@ -181,7 +181,7 @@ class TestScatterViz(VisualTestCase):
         # Test the visualizer
         features = ["temperature", "relative humidity"]
         visualizer = ScatterViz(features=features)
-        visualizer.fit_transform_poof(X, y)
+        visualizer.fit_transform_show(X, y)
 
     @pytest.mark.xfail(reason="numpy structured arrays have changed since v1.14")
     def test_integrated_scatter_numpy_named_arrays(self):
@@ -197,7 +197,7 @@ class TestScatterViz(VisualTestCase):
 
         X_named = self.X.astype(dt, casting="unsafe")
         visualizer = ScatterViz(features=["one", "two"])
-        visualizer.fit_transform_poof(X_named, self.y)
+        visualizer.fit_transform_show(X_named, self.y)
         assert visualizer.features_ == ["one", "two"]
 
     def test_integrated_scatter_numpy_arrays_no_names(self):
@@ -205,7 +205,7 @@ class TestScatterViz(VisualTestCase):
         Test scaterviz on regular numpy arrays
         """
         visualizer = ScatterViz(features=[1, 2])
-        visualizer.fit_transform_poof(self.X, self.y)
+        visualizer.fit_transform_show(self.X, self.y)
         assert visualizer.features_ == [1, 2]
 
     def test_scatter_image(self):

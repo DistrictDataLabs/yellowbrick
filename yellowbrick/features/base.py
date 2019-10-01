@@ -93,7 +93,7 @@ class FeatureVisualizer(Visualizer, TransformerMixin):
         """
         return X
 
-    def fit_transform_poof(self, X, y=None, **kwargs):
+    def fit_transform_show(self, X, y=None, **kwargs):
         """Fit, transform, then visualize data in one step.
 
         A helper method similar to ``fit_transform`` that allows you to fit,
@@ -109,7 +109,7 @@ class FeatureVisualizer(Visualizer, TransformerMixin):
             Dependent target dataset optionally used for training.
 
         kwargs : dict, optional
-            Keyword arguments to pass to the ``poof()`` method.
+            Keyword arguments to pass to the ``show()`` method.
 
         Returns
         -------
@@ -117,7 +117,7 @@ class FeatureVisualizer(Visualizer, TransformerMixin):
             The transformed dataset X prime.
         """
         Xp = self.fit_transform(X, y)
-        self.poof(**kwargs)
+        self.show(**kwargs)
         return Xp
 
 

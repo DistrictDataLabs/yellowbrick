@@ -104,7 +104,7 @@ class RankDBase(MultiFeatureVisualizer):
     >>> visualizer = Rank2D()
     >>> visualizer.fit(X, y)
     >>> visualizer.transform(X)
-    >>> visualizer.poof()
+    >>> visualizer.show()
 
     Notes
     -----
@@ -196,14 +196,15 @@ class RankDBase(MultiFeatureVisualizer):
 
     def finalize(self, **kwargs):
         """
-        Finalize executes any subclass-specific axes finalization steps.
-        The user calls poof and poof calls finalize.
+        Sets a title on the RankD plot.
 
         Parameters
         ----------
-        kwargs: dict
-            generic keyword arguments
+        kwargs: generic keyword arguments.
 
+        Notes
+        -----
+        Generally this method is called from show and not directly by the user.
         """
         # There is a known bug in matplotlib 3.1.1 that affects RankD plots
         # See #912 and #914 for details.
@@ -272,7 +273,7 @@ class Rank1D(RankDBase):
     >>> visualizer = Rank1D()
     >>> visualizer.fit(X, y)
     >>> visualizer.transform(X)
-    >>> visualizer.poof()
+    >>> visualizer.show()
     """
 
     ranking_methods = {"shapiro": lambda X: np.array([shapiro(x)[0] for x in X.T])}
@@ -391,7 +392,7 @@ class Rank2D(RankDBase):
     >>> visualizer = Rank2D()
     >>> visualizer.fit(X, y)
     >>> visualizer.transform(X)
-    >>> visualizer.poof()
+    >>> visualizer.show()
 
     Notes
     -----

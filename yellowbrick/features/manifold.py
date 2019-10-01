@@ -199,7 +199,7 @@ class Manifold(ProjectionVisualizer):
 
     >>> viz = Manifold(manifold='isomap', target='discrete')
     >>> viz.fit_transform(X, y)
-    >>> viz.poof()
+    >>> viz.show()
 
     Notes
     -----

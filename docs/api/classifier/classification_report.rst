@@ -33,7 +33,7 @@ The classification report visualizer displays the precision, recall, F1, and sup
 
     visualizer.fit(X_train, y_train)        # Fit the visualizer and the model
     visualizer.score(X_test, y_test)        # Evaluate the model on the test data
-    visualizer.poof()                       # Draw/show/poof the data
+    visualizer.show()                       # Finalize and show the figure
 
 
 The classification report shows a representation of the main classification metrics on a per-class basis. This gives a deeper intuition of the classifier behavior over global accuracy which can mask functional weaknesses in one class of a multiclass problem. Visual classification reports are used to compare classification models to select models that are "redder", e.g. have stronger classification metrics or that are more balanced.

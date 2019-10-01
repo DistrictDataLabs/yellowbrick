@@ -32,7 +32,7 @@ Without Targets Supplied
     visualizer = MissingValuesBar(features=features)
 
     visualizer.fit(X)        # Fit the data to the visualizer
-    visualizer.poof()        # Draw/show/poof the data
+    visualizer.show()        # Finalize and render the figure
 
 
 With Targets (``y``) Supplied
@@ -61,7 +61,7 @@ With Targets (``y``) Supplied
     visualizer = MissingValuesBar(features=features)
 
     visualizer.fit(X, y=y)        # Supply the targets via y
-    visualizer.poof()             # Draw/show/poof the data
+    visualizer.show()             # Finalize and render the figure
 
 
 API Reference

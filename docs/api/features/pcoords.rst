@@ -34,7 +34,7 @@ Data scientists use this method to detect clusters of instances that have simila
     visualizer.fit_transform(X, y)
 
     # Finalize the title and axes then display the visualization
-    visualizer.poof()
+    visualizer.show()
 
 
 By inspecting the visualization closely, we can see that the combination of transparency and overlap gives us the sense of groups of similar instances, sometimes referred to as "braids". If there are distinct braids of different classes, it suggests that there is enough separability that a classification algorithm might be able to discern between each class.
@@ -67,7 +67,7 @@ Normalization techniques can be directly applied to the visualizer without pre-t
 
     # Fit the visualizer and display it
     visualizer.fit_transform(X, y)
-    visualizer.poof()
+    visualizer.show()
 
 
 Now we can see that each feature is in the range ``[-3, 3]`` where the mean of the feature is set to zero and each feature has a unit variance applied between ``[-1, 1]`` (because we're using the ``StandardScaler`` via the ``standard`` normalize parameter). This version of parallel coordinates gives us a much better sense of the distribution of the features and if any features are highly variable with respect to any one class.

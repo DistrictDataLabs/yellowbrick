@@ -67,7 +67,7 @@ class MissingValuesDispersion(MissingDataVisualizer):
     >>> from yellowbrick.contrib.missing import MissingValuesDispersion
     >>> visualizer = MissingValuesDispersion()
     >>> visualizer.fit(X, y=y)
-    >>> visualizer.poof()
+    >>> visualizer.show()
     """
 
     def __init__(self, alpha=0.5, marker="|", classes=None, **kwargs):
@@ -153,13 +153,16 @@ class MissingValuesDispersion(MissingDataVisualizer):
 
     def finalize(self, **kwargs):
         """
-        Finalize executes any subclass-specific axes finalization steps.
-        The user calls poof and poof calls finalize.
+        Sets the title and x-axis label and adds a legend. Also ensures that
+        the y tick labels are set to the feature names.
 
         Parameters
         ----------
         kwargs: generic keyword arguments.
 
+        Notes
+        -----
+        Generally this method is called from show and not directly by the user.
         """
         # Set the title
         self.set_title("Dispersion of Missing Values by Feature")
@@ -226,7 +229,7 @@ def missing_dispersion(
 
     # Fit and transform the visualizer (calls draw)
     visualizer.fit(X, y)
-    visualizer.poof()
+    visualizer.show()
 
     # Return the axes object on the visualizer
     return visualizer.ax

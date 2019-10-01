@@ -40,7 +40,7 @@ The class prediction error chart provides a way to quickly understand how good y
     visualizer.score(X_test, y_test)
 
     # Draw visualization
-    visualizer.poof()
+    visualizer.show()
 
 In the above example, while the ``RandomForestClassifier`` appears to be fairly good at correctly predicting apples based on the features of the fruit, it often incorrectly labels pears as kiwis and mistakes kiwis for bananas.
 
@@ -56,13 +56,13 @@ By contrast, in the following example, the ``RandomForestClassifier`` does a gre
     from yellowbrick.datasets import load_credit
 
     X, y = load_credit()
-    
+
     classes = ['account in default', 'current with bills']
 
     # Perform 80/20 training/test split
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.20,
                                                         random_state=42)
-    
+
     # Instantiate the classification model and visualizer
     visualizer = ClassPredictionError(
         RandomForestClassifier(n_estimators=10), classes=classes
@@ -75,10 +75,10 @@ By contrast, in the following example, the ``RandomForestClassifier`` does a gre
     visualizer.score(X_test, y_test)
 
     # Draw visualization
-    visualizer.poof()
+    visualizer.show()
 
-   
-    
+
+
 API Reference
 -------------
 

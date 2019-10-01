@@ -157,9 +157,9 @@ class TestVisualPipeline(object):
         assert "d" in pipeline.visual_steps
         assert "e" not in pipeline.visual_steps
 
-    def test_pipeline_poof(self):
+    def test_pipeline_show(self):
         """
-        Test the poof call against the VisualPipeline
+        Test the show call against the VisualPipeline
         """
 
         pipeline = VisualPipeline(
@@ -172,13 +172,13 @@ class TestVisualPipeline(object):
             ]
         )
 
-        pipeline.poof()
-        pipeline.steps[1][1].poof.assert_called_once_with(outpath=None)
-        pipeline.steps[3][1].poof.assert_called_once_with(outpath=None)
+        pipeline.show()
+        pipeline.steps[1][1].show.assert_called_once_with(outpath=None)
+        pipeline.steps[3][1].show.assert_called_once_with(outpath=None)
 
-    def test_pipeline_savefig_poof(self):
+    def test_pipeline_savefig_show(self):
         """
-        Test the poof call with an outdir to save all the figures
+        Test the show call with an outdir to save all the figures
         """
         pipeline = VisualPipeline(
             [
@@ -193,21 +193,21 @@ class TestVisualPipeline(object):
         # Must use path joining for Windows compatibility
         tmpdir = os.path.join("tmp", "figures")
 
-        pipeline.poof(outdir=tmpdir)
-        pipeline.steps[1][1].poof.assert_called_once_with(
+        pipeline.show(outdir=tmpdir)
+        pipeline.steps[1][1].show.assert_called_once_with(
             outpath=os.path.join(tmpdir, "b.pdf")
         )
-        pipeline.steps[3][1].poof.assert_called_once_with(
+        pipeline.steps[3][1].show.assert_called_once_with(
             outpath=os.path.join(tmpdir, "d.pdf")
         )
-        pipeline.steps[4][1].poof.assert_called_once_with(
+        pipeline.steps[4][1].show.assert_called_once_with(
             outpath=os.path.join(tmpdir, "e.pdf")
         )
 
     @pytest.mark.skip(reason="need to find a way for fit to return self in mocks")
-    def test_fit_transform_poof_and_draw_calls(self):
+    def test_fit_transform_show_and_draw_calls(self):
         """
-        Test calling fit, transform, and poof on the pipeline
+        Test calling fit, transform, and show on the pipeline
         """
 
         pipeline = VisualPipeline(
@@ -234,8 +234,8 @@ class TestVisualPipeline(object):
                 continue
             step.transform.assert_called_once_with(X)
 
-        pipeline.poof()
+        pipeline.show()
         for name, step in pipeline.named_steps.items():
             if name in {"a", "c", "e"}:
                 continue
-            step.poof.assert_called_once_with(outpath=None)
+            step.show.assert_called_once_with(outpath=None)

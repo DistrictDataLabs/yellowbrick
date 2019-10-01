@@ -39,7 +39,7 @@ def rfecv_sklearn_example(image="rfecv_sklearn_example.png"):
 
     oz = RFECV(SVC(kernel="linear", C=1), ax=ax)
     oz.fit(X, y)
-    oz.poof(outpath=os.path.join(IMAGES, image))
+    oz.show(outpath=os.path.join(IMAGES, image))
 
 
 def rfecv_credit_example(image="rfecv_credit.png"):
@@ -49,7 +49,7 @@ def rfecv_credit_example(image="rfecv_credit.png"):
     cv = StratifiedKFold(5)
     oz = RFECV(RandomForestClassifier(), ax=ax, cv=cv, scoring="f1_weighted")
     oz.fit(X, y)
-    oz.poof(outpath=os.path.join(IMAGES, image))
+    oz.show(outpath=os.path.join(IMAGES, image))
 
 
 if __name__ == "__main__":

@@ -161,7 +161,7 @@ class RadialVisualizer(DataVisualizer):
     >>> visualizer = RadViz()
     >>> visualizer.fit(X, y)
     >>> visualizer.transform(X)
-    >>> visualizer.poof()
+    >>> visualizer.show()
 
     Attributes
     ----------
@@ -351,13 +351,16 @@ class RadialVisualizer(DataVisualizer):
 
     def finalize(self, **kwargs):
         """
-        Finalize executes any subclass-specific axes finalization steps.
-        The user calls poof and poof calls finalize.
+        Sets the title and adds a legend. Removes the ticks from the graph to
+        make a cleaner visualization.
 
         Parameters
         ----------
         kwargs: generic keyword arguments.
 
+        Notes
+        -----
+        Generally this method is called from show and not directly by the user.
         """
         # Set the title
         self.set_title("RadViz for {} Features".format(len(self.features_)))

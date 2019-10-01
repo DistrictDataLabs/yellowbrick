@@ -29,7 +29,7 @@ def umap(docs, target, outpath, **kwargs):
     # Visualize the frequency distribution
     visualizer = UMAPVisualizer(ax=ax, **kwargs)
     visualizer.fit(docs, target)
-    visualizer.poof(outpath=outpath)
+    visualizer.show(outpath=outpath)
 
 
 if __name__ == "__main__":
