@@ -251,6 +251,15 @@ class Visualizer(BaseEstimator):
         # Return ax to ensure display in notebooks
         return self.ax
 
+    def poof(self, *args, **kwargs):
+        """
+        This method is deprecated, please use ``show()`` instead.
+        """
+        warnings.warn(
+            "this method is deprecated, please use show() instead", DeprecationWarning
+        )
+        return self.show(*args, **kwargs)
+
     ## ////////////////////////////////////////////////////////////////////
     ## Helper Functions
     ## ////////////////////////////////////////////////////////////////////

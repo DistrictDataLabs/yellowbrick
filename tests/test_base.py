@@ -161,6 +161,22 @@ class TestBaseClasses(VisualTestCase):
             viz = CustomVisualizer()
             assert viz.show() is not None
 
+    def test_poof_deprecated(self):
+        """
+        Test that poof issues a deprecation warning
+        """
+
+        class CustomVisualizer(Visualizer):
+            pass
+
+        viz = CustomVisualizer()
+        viz.show = MagicMock()
+
+        with pytest.warns(DeprecationWarning, match="please use show"):
+            viz.poof()
+
+        viz.show.assert_called_once()
+
 
 ##########################################################################
 ## ScoreVisualizer Cases

@@ -62,7 +62,7 @@ class ClassBalance(TargetVisualizer):
         A list of class names for the x-axis if the target is already encoded.
         Ensure that the labels are ordered lexicographically with respect to
         the values in the target. A common use case is to pass
-        LabelEncoder.classes\_ as this parameter. If not specified, the labels
+        ``LabelEncoder.classes_`` as this parameter. If not specified, the labels
         in the data will be used.
 
     colors: list of strings
@@ -302,7 +302,7 @@ def class_balance(
         A list of class names for the x-axis if the target is already encoded.
         Ensure that the labels are ordered lexicographically with respect to
         the values in the target. A common use case is to pass
-        LabelEncoder.classes\_ as this parameter. If not specified, the labels
+        ``LabelEncoder.classes_`` as this parameter. If not specified, the labels
         in the data will be used.
 
     colors: list of strings
