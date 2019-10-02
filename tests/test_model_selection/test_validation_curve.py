@@ -7,7 +7,7 @@
 # Copyright (C) 2018 The scikit-yb developers
 # For license information, see LICENSE.txt
 #
-# ID: test_validation_curve.py [] benjamin@bengfort.com $
+# ID: test_validation_curve.py [c5355ee] benjamin@bengfort.com $
 
 """
 Tests for the ValidationCurve visualizer

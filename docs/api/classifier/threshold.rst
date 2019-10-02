@@ -24,7 +24,7 @@ A visualization of precision, recall, f1 score, and queue rate with respect to t
     visualizer = DiscriminationThreshold(model)
 
     visualizer.fit(X, y)        # Fit the data to the visualizer
-    visualizer.poof()           # Draw/show/poof the data
+    visualizer.show()           # Finalize and render the figure
 
 One common use of binary classification algorithms is to use the score or probability they produce to determine cases that require special treatment. For example, a fraud prevention application might use a classification algorithm to determine if a transaction is likely fraudulent and needs to be investigated in detail. In the figure above, we present an example where a binary classifier determines if an email is "spam" (the positive case) or "not spam" (the negative case). Emails that are detected as spam are moved to a hidden folder and eventually deleted.
 
@@ -40,7 +40,7 @@ Generally speaking, the threshold is balanced between cases and set to 0.5 or 50
 
 - **Queue Rate**: The "queue" is the spam folder or the inbox of the fraud investigation desk. This metric describes the percentage of instances that must be reviewed. If review has a high cost (e.g. fraud prevention) then this must be minimized with respect to business requirements; if it doesn't (e.g. spam filter), this could be optimized to ensure the inbox stays clean.
 
-In the figure above we see the visualizer tuned to look for the optimal F1 score, which is annotated as a threshold of 0.43. The model is run multiple times over multiple train/test splits in order to account for the variability of the model with respect to the metrics (shown as the fill area around the median curve). 
+In the figure above we see the visualizer tuned to look for the optimal F1 score, which is annotated as a threshold of 0.43. The model is run multiple times over multiple train/test splits in order to account for the variability of the model with respect to the metrics (shown as the fill area around the median curve).
 
 
 API Reference

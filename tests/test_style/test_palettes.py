@@ -4,7 +4,7 @@
 # Author:   Benjamin Bengfort <bbengfort@districtdatalabs.com>
 # Created:  Tue Oct 04 16:21:58 2016 -0400
 #
-# Copyright (C) 2016 District Data Labs
+# Copyright (C) 2016 The scikit-yb developers
 # For license information, see LICENSE.txt
 #
 # ID: test_palettes.py [c6aff34] benjamin@bengfort.com $
@@ -35,6 +35,7 @@ from tests.base import VisualTestCase
 ## Color Palette Tests
 ##########################################################################
 
+
 class TestColorPaletteObject(VisualTestCase):
     """
     Tests the ColorPalette object
@@ -50,16 +51,16 @@ class TestColorPaletteObject(VisualTestCase):
             try:
                 palette = ColorPalette(name)
             except YellowbrickValueError:
-                self.fail(
-                    "Could not instantiate {} color palette by name".format(name)
-                )
+                self.fail("Could not instantiate {} color palette by name".format(name))
 
             assert value == palette
 
         # Try a name not in PALETTES
         with pytest.raises(YellowbrickValueError):
-            assert 'foo' not in PALETTES, "Cannot test bad name 'foo' it is in PALETTES!"
-            palette = ColorPalette('foo')
+            assert (
+                "foo" not in PALETTES
+            ), "Cannot test bad name 'foo' it is in PALETTES!"
+            palette = ColorPalette("foo")
 
     def test_init_palette_by_list(self):
         """
@@ -81,9 +82,9 @@ class TestColorPaletteObject(VisualTestCase):
         Test ColorPalette context management
         """
         default = color_palette()
-        context = color_palette('dark')
+        context = color_palette("dark")
 
-        with ColorPalette('dark') as palette:
+        with ColorPalette("dark") as palette:
             assert isinstance(palette, ColorPalette)
             assert get_color_cycle() == context
 
@@ -93,8 +94,8 @@ class TestColorPaletteObject(VisualTestCase):
         """
         Test the conversion of a ColorPalette to hex values and back to rgb
         """
-        palette   = color_palette('flatui')
-        expected  = PALETTES['flatui']
+        palette = color_palette("flatui")
+        expected = PALETTES["flatui"]
         morgified = palette.as_hex()
 
         assert morgified is not palette
@@ -111,9 +112,7 @@ class TestColorPaletteObject(VisualTestCase):
         """
         Test the plotting of a color palette for color visualization
         """
-        raise NotImplementedError(
-            "Not quite sure how to implement this yet"
-        )
+        raise NotImplementedError("Not quite sure how to implement this yet")
 
 
 class TestColorPaletteFunction(VisualTestCase):
@@ -175,8 +174,14 @@ class TestColorPaletteFunction(VisualTestCase):
         """
         Test the seaborn palettes have length 6 (bgrmyck)
         """
-        pals = ["sns_deep", "sns_muted", "sns_pastel",
-                "sns_bright", "sns_dark", "sns_colorblind"]
+        pals = [
+            "sns_deep",
+            "sns_muted",
+            "sns_pastel",
+            "sns_bright",
+            "sns_dark",
+            "sns_colorblind",
+        ]
         for name in pals:
             pal_out = color_palette(name)
             assert len(pal_out) == 6
@@ -190,7 +195,6 @@ class TestColorPaletteFunction(VisualTestCase):
             pal_out = color_palette(name)
             assert pal_out is not None
             assert len(pal_out) > 0
-
 
     def test_bad_palette_name(self):
         """
@@ -303,14 +307,14 @@ class TestColorPaletteFunction(VisualTestCase):
         Test value errors for unrecognized sequences
         """
         with pytest.raises(YellowbrickValueError):
-            color_sequence('PepperBucks', 3)
+            color_sequence("PepperBucks", 3)
 
     def test_color_sequence_bounds(self):
         """
         Test color sequence out of bounds value error
         """
         with pytest.raises(YellowbrickValueError):
-            color_sequence('RdBu', 18)
+            color_sequence("RdBu", 18)
 
         with pytest.raises(YellowbrickValueError):
-            color_sequence('RdBu', 2)
+            color_sequence("RdBu", 2)

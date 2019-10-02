@@ -197,18 +197,18 @@ class Visualizer(BaseEstimator):
 
         Notes
         -----
-        The user calls poof and poof calls finalize. Developers should
+        The user calls show and show calls finalize. Developers should
         implement visualizer-specific finalization methods like setting titles
         or axes labels, etc.
         """
         return self.ax
 
-    def poof(self, outpath=None, clear_figure=False, **kwargs):
+    def show(self, outpath=None, clear_figure=False, **kwargs):
         """
-        Poof makes the magic happen and a visualizer appear! You can pass in
-        a path to save the figure to disk with various backends, or you can
-        call it with no arguments to show the figure either in a notebook or
-        in a GUI window that pops up on screen.
+        Makes the magic happen and a visualizer appear! You can pass in a path to
+        save the figure to disk with various backends, or you can call it with no
+        arguments to show the figure either in a notebook or in a GUI window that
+        pops up on screen.
 
         Parameters
         ----------
@@ -224,7 +224,7 @@ class Visualizer(BaseEstimator):
 
         Notes
         -----
-        Developers of visualizers don't usually override poof, as it is
+        Developers of visualizers don't usually override show, as it is
         primarily called by the user to render the visualization.
         """
         # Ensure that draw has been called
@@ -250,6 +250,15 @@ class Visualizer(BaseEstimator):
 
         # Return ax to ensure display in notebooks
         return self.ax
+
+    def poof(self, *args, **kwargs):
+        """
+        This method is deprecated, please use ``show()`` instead.
+        """
+        warnings.warn(
+            "this method is deprecated, please use show() instead", DeprecationWarning
+        )
+        return self.show(*args, **kwargs)
 
     ## ////////////////////////////////////////////////////////////////////
     ## Helper Functions
@@ -454,7 +463,7 @@ class VisualizerGrid(Visualizer):
     >>> mv = VisualizerGrid(visualizers, ncols=2)
     >>> mv.fit(X_train, y_train)
     >>> mv.score(X_test, y_test)
-    >>> mv.poof()
+    >>> mv.show()
     """
 
     def __init__(self, visualizers=[], nrows=None, ncols=None, axarr=None, **kwargs):
@@ -538,7 +547,7 @@ class VisualizerGrid(Visualizer):
 
         return self
 
-    def poof(self, outpath=None, clear_figure=False, **kwargs):
+    def show(self, outpath=None, clear_figure=False, **kwargs):
 
         if self.axarr is None:
             return
@@ -562,5 +571,5 @@ class VisualizerGrid(Visualizer):
         if clear_figure:
             plt.gcf().clear()
 
-        # Return Axes array to ensure poof works in notebooks
+        # Return Axes array to ensure show works in notebooks
         return self.axarr

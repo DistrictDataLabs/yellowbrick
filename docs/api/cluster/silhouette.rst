@@ -28,7 +28,7 @@ The Silhouette Visualizer displays the silhouette coefficient for each sample on
     visualizer = SilhouetteVisualizer(model, colors='yellowbrick')
 
     visualizer.fit(X)        # Fit the data to the visualizer
-    visualizer.poof()        # Draw/show/poof the data
+    visualizer.show()        # Finalize and render the figure
 
 
 API Reference

@@ -7,7 +7,7 @@
 # Copyright (C) 2018 The scikit-yb developers
 # For license information, see LICENSE.txt
 #
-# ID: bar.py [] nathan.danielsen@gmail.com.com $
+# ID: bar.py [1443e16] ndanielsen@users.noreply.github.com $
 
 """
 Bar visualizer of missing values by column.
@@ -74,7 +74,7 @@ class MissingValuesBar(MissingDataVisualizer):
     >>> from yellowbrick.contrib.missing import MissingValuesBar
     >>> visualizer = MissingValuesBar()
     >>> visualizer.fit(X, y=y)
-    >>> visualizer.poof()
+    >>> visualizer.show()
     """
 
     def __init__(self, width=0.5, color=None, colors=None, classes=None, **kwargs):
@@ -97,12 +97,14 @@ class MissingValuesBar(MissingDataVisualizer):
         else:
             n_colors = None
 
-        self.colors = color_palette(kwargs.pop('colors', None), n_colors)
+        self.colors = color_palette(kwargs.pop("colors", None), n_colors)
 
     def get_nan_col_counts(self, **kwargs):
         # where matrix contains strings, handle them
-        if np.issubdtype(self.X.dtype, np.string_) or np.issubdtype(self.X.dtype, np.unicode_):
-            mask = np.where(self.X == '')
+        if np.issubdtype(self.X.dtype, np.string_) or np.issubdtype(
+            self.X.dtype, np.unicode_
+        ):
+            mask = np.where(self.X == "")
             nan_matrix = np.zeros(self.X.shape)
             nan_matrix[mask] = np.nan
 
@@ -120,9 +122,9 @@ class MissingValuesBar(MissingDataVisualizer):
 
                 indices = np.argwhere(self.y == target_value)
                 target_matrix = nan_matrix[indices.flatten()]
-                nan_col_counts = np.array([
-                    np.count_nonzero(np.isnan(col)) for col in target_matrix.T
-                ])
+                nan_col_counts = np.array(
+                    [np.count_nonzero(np.isnan(col)) for col in target_matrix.T]
+                )
                 nan_counts.append((target_value, nan_col_counts))
 
             return nan_counts
@@ -141,8 +143,11 @@ class MissingValuesBar(MissingDataVisualizer):
 
         if y is None:
             self.ax.barh(
-                self.ind - self.width / 2, nan_col_counts, self.width,
-                color=self.color, label=None
+                self.ind - self.width / 2,
+                nan_col_counts,
+                self.width,
+                color=self.color,
+                label=None,
             )
         else:
             self.draw_stacked_bar(nan_col_counts)
@@ -164,39 +169,50 @@ class MissingValuesBar(MissingDataVisualizer):
 
             color = self.colors[index]
 
-            self.ax.barh(self.ind - self.width / 2, nan_col_counts, self.width,
-                        color=color, label=label, left=bottom_chart)
+            self.ax.barh(
+                self.ind - self.width / 2,
+                nan_col_counts,
+                self.width,
+                color=color,
+                label=label,
+                left=bottom_chart,
+            )
 
             # keep track of counts to build on stacked
             bottom_chart = nan_col_counts
 
     def finalize(self, **kwargs):
         """
-        Finalize executes any subclass-specific axes finalization steps.
-        The user calls poof and poof calls finalize.
+        Sets a title and x-axis labels and adds a legend. Also ensures that the
+        y tick values are correctly set to feature names.
 
         Parameters
         ----------
         kwargs: generic keyword arguments.
 
+        Notes
+        -----
+        Generally this method is called from show and not directly by the user.
         """
         # Set the title
-        self.set_title(
-            'Count of Missing Values by Column'
-        )
-        tick_locations = np.arange(len(self.features_))  # the x locations for the groups
+        self.set_title("Count of Missing Values by Column")
+        tick_locations = np.arange(
+            len(self.features_)
+        )  # the x locations for the groups
         self.ax.set_yticks(tick_locations)
         self.ax.set_yticklabels(self.get_feature_names())
         # Remove the ticks from the graph
-        self.ax.set_xlabel('Count')
+        self.ax.set_xlabel("Count")
 
-        self.ax.legend(loc='best')
+        self.ax.legend(loc="best")
+
 
 ##########################################################################
 ## Quick Method
 ##########################################################################
 
-def missing_bar(X, y=None, ax=None, classes=None, width=0.5, color='black', **kwargs):
+
+def missing_bar(X, y=None, ax=None, classes=None, width=0.5, color="black", **kwargs):
     """The MissingValues Bar visualizer creates a bar graph that lists the total
     count of missing values for each selected feature column.
 
@@ -249,7 +265,7 @@ def missing_bar(X, y=None, ax=None, classes=None, width=0.5, color='black', **kw
 
     # Fit and transform the visualizer (calls draw)
     visualizer.fit(X, y)
-    visualizer.poof()
+    visualizer.show()
 
     # Return the axes object on the visualizer
     return visualizer.ax

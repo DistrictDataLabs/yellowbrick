@@ -28,11 +28,11 @@ Binary Classification
 
     X_train, X_test, y_train, y_test = tts(X, y, test_size=0.2, shuffle=True)
 
-    # Create the visualizer, fit, score, and poof it
+    # Create the visualizer, fit, score, and show it
     viz = PrecisionRecallCurve(RidgeClassifier())
     viz.fit(X_train, y_train)
     viz.score(X_test, y_test)
-    viz.poof()
+    viz.show()
 
 
 The base case for precision-recall curves is the binary classification case, and this case is also the most visually interpretable. In the figure above we can see the precision plotted on the y-axis against the recall on the x-axis. The larger the filled in area, the stronger the classifier is. The red line annotates the *average precision*, a summary of the entire plot computed as the weighted average of precision achieved at each threshold such that the weight is the difference in recall from the previous threshold.
@@ -59,11 +59,11 @@ To support multi-label classification, the estimator is wrapped in a `OneVsRestC
 
     X_train, X_test, y_train, y_test = tts(X, y, test_size=0.2, shuffle=True)
 
-    # Create the visualizer, fit, score, and poof it
+    # Create the visualizer, fit, score, and show it
     viz = PrecisionRecallCurve(RandomForestClassifier(n_estimators=10))
     viz.fit(X_train, y_train)
     viz.score(X_test, y_test)
-    viz.poof()
+    viz.show()
 
 
 A more complex Precision-Recall curve can be computed, however, displaying the each curve individually, along with F1-score ISO curves (e.g. that show the relationship between precision and recall for various F1 scores).
@@ -86,14 +86,14 @@ A more complex Precision-Recall curve can be computed, however, displaying the e
 
     X_train, X_test, y_train, y_test = tts(X, y, test_size=0.2, shuffle=True)
 
-    # Create the visualizer, fit, score, and poof it
+    # Create the visualizer, fit, score, and show it
     viz = PrecisionRecallCurve(
         MultinomialNB(), per_class=True, iso_f1_curves=True,
         fill_area=False, micro=False, classes=encoder.classes_
     )
     viz.fit(X_train, y_train)
     viz.score(X_test, y_test)
-    viz.poof()
+    viz.show()
 
 
 .. seealso:: `Scikit-Learn: Model Selection with Precision Recall Curves <http://scikit-learn.org/stable/auto_examples/model_selection/plot_precision_recall.html>`_

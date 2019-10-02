@@ -114,7 +114,7 @@ class FeatureImportances(ModelVisualizer):
     >>> from sklearn.ensemble import GradientBoostingClassifier
     >>> visualizer = FeatureImportances(GradientBoostingClassifier())
     >>> visualizer.fit(X, y)
-    >>> visualizer.poof()
+    >>> visualizer.show()
     """
 
     def __init__(

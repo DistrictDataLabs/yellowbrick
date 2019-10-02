@@ -23,7 +23,7 @@ what percent of the dataset may be impacting OLS regression models.
     # Instantiate and fit the visualizer
     visualizer = CooksDistance()
     visualizer.fit(X, y)
-    visualizer.poof()
+    visualizer.show()
 
 
 API Reference

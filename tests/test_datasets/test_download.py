@@ -6,7 +6,7 @@
 #
 # For license information, see LICENSE.txt
 #
-# ID: test_download.py [] benjamin@bengfort.com $
+# ID: test_download.py [57aab02] ndanielsen@users.noreply.github.com $
 
 """
 Tests the download from S3 to ensure data is accessible.
@@ -23,16 +23,28 @@ from yellowbrick.datasets.loaders import DATASETS
 from yellowbrick.datasets.path import dataset_exists, dataset_archive
 
 
-@pytest.mark.parametrize("loader", [
-        load_bikeshare, load_concrete, load_credit, load_energy, load_game,
-        load_mushroom, load_occupancy, load_spam, load_walking, load_hobbies,
+@pytest.mark.parametrize(
+    "loader",
+    [
+        load_bikeshare,
+        load_concrete,
+        load_credit,
+        load_energy,
+        load_game,
+        load_mushroom,
+        load_occupancy,
+        load_spam,
+        load_walking,
+        load_hobbies,
         load_nfl,
-    ], ids=lambda l: l.__name__)
+    ],
+    ids=lambda l: l.__name__,
+)
 def test_loader_download(tmpdir, loader):
     """
     Test download of dataset when it does not exist (requires Internet connection!)
     """
-    name = loader.__name__[len("load_"):]
+    name = loader.__name__[len("load_") :]
     data_home = str(tmpdir.mkdir("datasets"))
 
     # The dataset should not exist

@@ -87,7 +87,7 @@ def savefig(viz, name, gallery=GALLERY):
         raise ValueError("name should not specify extension")
 
     outpath = path.join(gallery, name + ".png")
-    viz.poof(outpath=outpath)
+    viz.show(outpath=outpath)
     print("created {}".format(outpath))
 
 

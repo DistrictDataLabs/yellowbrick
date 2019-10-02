@@ -7,7 +7,7 @@
 # Copyright (C) 2018 The scikit-yb developers
 # For license information, see LICENSE.txt
 #
-# ID: test_cross_validation.py [] bilbro@gmail.com $
+# ID: test_cross_validation.py [962c8bb] rebeccabilbro@users.noreply.github.com $
 
 """
 Tests for the CVScores visualizer

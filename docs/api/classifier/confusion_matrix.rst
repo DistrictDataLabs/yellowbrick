@@ -47,7 +47,7 @@ scikit-learn documentation on `confusion matrices <http://scikit-learn.org/stabl
     cm.score(X_test, y_test)
 
     # How did we do?
-    cm.poof()
+    cm.show()
 
 
 Plotting with Class Names
@@ -55,7 +55,7 @@ Plotting with Class Names
 
 Class names can be added to a ``ConfusionMatrix`` plot using the ``label_encoder`` argument. The ``label_encoder`` can be a `sklearn.preprocessing.LabelEncoder <http://scikit-learn.org/stable/modules/generated/sklearn.preprocessing.LabelEncoder.html>`_ (or anything with an ``inverse_transform`` method that performs the mapping), or a ``dict`` with the encoding-to-string mapping as in the example below:
 
-.. plot:: 
+.. plot::
     :context: close-figs
     :alt: ConfusionMatrix plot with class names
 
@@ -63,7 +63,7 @@ Class names can be added to a ``ConfusionMatrix`` plot using the ``label_encoder
     from sklearn.model_selection import train_test_split as tts
     from sklearn.linear_model import LogisticRegression
     from yellowbrick.classifier import ConfusionMatrix
-    
+
     iris = load_iris()
     X = iris.data
     y = iris.target
@@ -81,7 +81,7 @@ Class names can be added to a ``ConfusionMatrix`` plot using the ``label_encoder
     iris_cm.fit(X_train, y_train)
     iris_cm.score(X_test, y_test)
 
-    iris_cm.poof()
+    iris_cm.show()
 
 
 API Reference

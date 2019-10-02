@@ -7,7 +7,7 @@
 # Copyright (C) 2018 The sckit-yb developers
 # For license information, see LICENSE.txt
 #
-# ID: draw.py [] benjamin@bengfort.com $
+# ID: draw.py [dd915ad] benjamin@bengfort.com $
 
 """
 Utilities for common matplotlib drawing procedures.

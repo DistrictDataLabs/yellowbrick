@@ -7,7 +7,7 @@
 # Copyright (C) 2018 The scikit-yb developers
 # For license information, see LICENSE.txt
 #
-# ID: dispersion.py [] lwgray@gmail.com $
+# ID: dispersion.py [3822dd6] lwgray@gmail.com $
 
 """
 Implementation of lexical dispersion for text visualization
@@ -247,11 +247,16 @@ class DispersionPlot(TextVisualizer):
 
     def finalize(self, **kwargs):
         """
-        The finalize method executes any subclass-specific axes
-        finalization steps. The user calls poof & poof calls finalize.
+        Prepares the figure for rendering by adding a title, axis labels, and
+        managing the limits of the text labels. Adds a legend outside of the plot.
+
         Parameters
         ----------
         kwargs: generic keyword arguments.
+
+        Notes
+        -----
+        Generally this method is called from show and not directly by the user.
         """
 
         self.ax.set_ylim(-1, len(self.indexed_words_))

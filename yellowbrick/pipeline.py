@@ -37,10 +37,10 @@ class VisualPipeline(Pipeline):
     must implement fit and transform methods.
     The final estimator only needs to implement fit.
 
-    Any step that implements draw or poof methods can be called sequentially
+    Any step that implements draw or show methods can be called sequentially
     directly from the VisualPipeline, allowing multiple visual diagnostics to
     be generated, displayed, and saved on demand.
-    If draw or poof is not called, the visual pipeline should be equivalent to
+    If draw or show is not called, the visual pipeline should be equivalent to
     the simple pipeline to ensure no reduction in performance.
 
     The purpose of the pipeline is to assemble several steps that can be
@@ -71,7 +71,7 @@ class VisualPipeline(Pipeline):
     def visual_steps(self):
         return dict(step for step in self.steps if isinstance(step[1], Visualizer))
 
-    def poof(self, outdir=None, ext=".pdf", **kwargs):
+    def show(self, outdir=None, ext=".pdf", **kwargs):
         """
         A single entry point to rendering all visualizations in the visual
         pipeline. The rendering for the output depends on the backend context,
@@ -88,7 +88,7 @@ class VisualPipeline(Pipeline):
             The extension of the file to save the visualization to.
 
         kwargs : dict
-            Keyword arguments to pass to the ``poof()`` method of all steps.
+            Keyword arguments to pass to the ``show()`` method of all steps.
         """
         axes = []
         for name, step in self.visual_steps.items():
@@ -97,15 +97,16 @@ class VisualPipeline(Pipeline):
             else:
                 outpath = None
 
-            ax = step.poof(outpath=outpath, **kwargs)
+            ax = step.show(outpath=outpath, **kwargs)
             axes.append(ax)
 
         # Return axes array to ensure figures are shown in notebook
         return axes
 
-    def fit_transform_poof(self, X, y=None, outpath=None, **kwargs):
+    def fit_transform_show(self, X, y=None, outpath=None, **kwargs):
         """
-        Fit the model and transforms and then call poof.
+        Fit the model and transforms and then call show.
         """
-        self.fit_transform(X, y, **kwargs)
-        self.poof(outpath, **kwargs)
+        Xp = self.fit_transform(X, y, **kwargs)
+        self.show(outpath, **kwargs)
+        return Xp

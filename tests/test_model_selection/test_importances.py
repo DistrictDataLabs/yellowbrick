@@ -456,5 +456,5 @@ class MockClassifier(BaseEstimator, ClassifierMixin):
     """
     Creates empty classifier.
     """
-    pass
 
+    pass

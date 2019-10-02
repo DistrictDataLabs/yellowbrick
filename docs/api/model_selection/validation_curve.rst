@@ -28,9 +28,9 @@ In our first example, we'll explore using the ``ValidationCurve`` visualizer wit
         param_range=np.arange(1, 11), cv=10, scoring="r2"
     )
 
-    # Fit and poof the visualizer
+    # Fit and show the visualizer
     viz.fit(X, y)
-    viz.poof()
+    viz.show()
 
 After loading and wrangling the data, we initialize the ``ValidationCurve`` with a ``DecisionTreeRegressor``. Decision trees become more overfit the deeper they are because at each level of the tree the partitions are dealing with a smaller subset of data. One way to deal with this overfitting process is to limit the depth of the tree. The validation curve explores the relationship of the ``"max_depth"`` parameter to the R2 score with 10 shuffle split cross-validation. The ``param_range`` argument specifies the values of ``max_depth``, here from 1 to 10 inclusive.
 
@@ -63,7 +63,7 @@ In the next visualizer, we will see an example that more dramatically visualizes
     )
 
     viz.fit(X, y)
-    viz.poof()
+    viz.show()
 
 
 .. image:: images/validation_curve_classifier_svc.png
@@ -93,7 +93,7 @@ Validation curves can be performance intensive since they are training ``n_param
 
     # Using the same game dataset as in the SVC example
     oz.fit(X, y)
-    oz.poof()
+    oz.show()
 
 .. image:: images/validation_curve_classifier_knn.png
 

@@ -39,7 +39,7 @@ with a ``GradientBoostingClassifier`` to visualize the ranked features.
     model = RandomForestClassifier(n_estimators=10)
     viz = FeatureImportances(model)
     viz.fit(X, y)
-    viz.poof()
+    viz.show()
 
 
 The above figure shows the features ranked according to the explained variance
@@ -76,7 +76,7 @@ title case our features for better readability:
 
     # Fit and show the feature importances
     viz.fit(X, y)
-    viz.poof()
+    viz.show()
 
 .. NOTE:: The interpretation of the importance of coeficients depends on the model; see the discussion below for more details.
 
@@ -101,7 +101,7 @@ Taking the mean of the importances may be undesirable for several reasons. For e
     model = LogisticRegression(multi_class="auto", solver="liblinear")
     viz = FeatureImportances(model, stack=True, relative=False)
     viz.fit(X, y)
-    viz.poof()
+    viz.show()
 
 
 Discussion

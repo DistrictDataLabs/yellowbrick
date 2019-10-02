@@ -7,7 +7,7 @@
 # Copyright (C) 2019 The sckit-yb developers
 # For license information, see LICENSE.txt
 #
-# ID: umap_vis.py [] jchealy@gmail.com $
+# ID: umap_vis.py [73a44e5] jchealy@gmail.com $
 
 """
 Implements UMAP visualizations of documents in 2D space.
@@ -168,7 +168,7 @@ class UMAPVisualizer(TextVisualizer):
 
     >>> model = MyVisualizer(metric='cosine')
     >>> model.fit(X)
-    >>> model.poof()
+    >>> model.show()
 
     """
 

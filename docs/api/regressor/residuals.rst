@@ -26,7 +26,7 @@ Residuals, in the context of regression models, are the difference between the o
 
     visualizer.fit(X_train, y_train)  # Fit the training data to the visualizer
     visualizer.score(X_test, y_test)  # Evaluate the model on the test data
-    visualizer.poof()                 # Draw/show/poof the data
+    visualizer.show()                 # Finalize and render the figure
 
 
 A common use of the residuals plot is to analyze the variance of the error of the regressor. If the points are randomly dispersed around the horizontal axis, a linear regression model is usually appropriate for the data; otherwise, a non-linear model is more appropriate. In the case above, we see a fairly random, uniform distribution of the residuals against the target in two dimensions. This seems to indicate that our linear model is performing well. We can also see from the histogram that our error is normally distributed around zero, which also generally indicates a well fitted model.
@@ -40,7 +40,7 @@ Note that if the histogram is not desired, it can be turned off with the ``hist=
     visualizer = ResidualsPlot(model, hist=False)
     visualizer.fit(X_train, y_train)
     visualizer.score(X_test, y_test)
-    visualizer.poof()
+    visualizer.show()
 
 .. warning:: The histogram on the residuals plot requires matplotlib 2.0.2 or greater. If you are using an earlier version of matplotlib, simply set the ``hist=False`` flag so that the histogram is not drawn.
 

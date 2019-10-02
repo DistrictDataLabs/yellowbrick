@@ -6,7 +6,7 @@
 # Copyright (C) 2016 The scikit-yb developers
 # For license information, see LICENSE.txt
 #
-# ID: decomposition.py [] g.raymond.richardson@gmail.com $
+# ID: decomposition.py [0ed6e8a] g.raymond.richardson@gmail.com $
 
 ##########################################################################
 ## Imports
@@ -119,7 +119,7 @@ class ExplainedVariance(FeatureVisualizer):
     >>> visualizer = ExplainedVariance()
     >>> visualizer.fit(X)
     >>> visualizer.transform(X)
-    >>> visualizer.poof()
+    >>> visualizer.show()
 
     """
 

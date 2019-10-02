@@ -4,10 +4,10 @@
 # Author:   Author:   Nathan Danielsen <nathan.danielsen@gmail.com>
 # Created:  Sun Mar 19 13:01:29 2017 -0400
 #
-# Copyright (C) 2017 District Data Labs
+# Copyright (C) 2017 The scikit-yb developers
 # For license information, see LICENSE.txt
 #
-# ID: test_boundaries.py [] nathan.danielsen@gmail.com $
+# ID: test_boundaries.py [a60bc41] nathan.danielsen@gmail.com $
 """
 Ensure that the Decision Boundary visualizations work.
 """
@@ -79,25 +79,7 @@ class TestDecisionBoundariesVisualizer(VisualTestCase):
         """
         model = neighbors.KNeighborsClassifier(3)
         viz = DecisionViz(model)
-        viz.fit_draw_poof(X_two_cols, y=y)
-
-    def test_deprecated(self):
-        """
-        Assert the DecisionViz class issues deprecation warning
-        """
-        with pytest.deprecated_call():
-            model = neighbors.KNeighborsClassifier(3)
-            DecisionViz(model)
-
-    def test_deprecated_message(self):
-        """
-        Test the deprecation warning message
-        """
-        with pytest.warns(
-            DeprecationWarning, match="Will be moved to yellowbrick.contrib in v0.8"
-        ):
-            model = neighbors.KNeighborsClassifier(3)
-            DecisionViz(model)
+        viz.fit_draw_show(X_two_cols, y=y)
 
     def test_init(self):
         """
@@ -316,9 +298,9 @@ class TestDecisionBoundariesVisualizer(VisualTestCase):
         viz.fit.assert_called_once_with(X_two_cols, y)
         viz.draw.assert_called_once_with(X_two_cols, y)
 
-    def test_fit_draw_poof(self):
+    def test_fit_draw_show(self):
         """
-        Test fit draw poof shortcut
+        Test fit draw show shortcut
         """
         model = neighbors.KNeighborsClassifier(3)
         viz = DecisionBoundariesVisualizer(
@@ -327,13 +309,13 @@ class TestDecisionBoundariesVisualizer(VisualTestCase):
 
         viz.fit = mock.Mock()
         viz.draw = mock.Mock()
-        viz.poof = mock.Mock()
+        viz.show = mock.Mock()
 
-        viz.fit_draw_poof(X_two_cols, y=y)
+        viz.fit_draw_show(X_two_cols, y=y)
 
         viz.fit.assert_called_once_with(X_two_cols, y)
         viz.draw.assert_called_once_with(X_two_cols, y)
-        viz.poof.assert_called_once_with()
+        viz.show.assert_called_once_with()
 
     @pytest.mark.xfail(reason="numpy structured arrays have changed since v1.14")
     def test_integrated_plot_numpy_named_arrays(self):
@@ -366,7 +348,7 @@ class TestDecisionBoundariesVisualizer(VisualTestCase):
         y = np.array([1, 1, 0, 1, 0, 0, 1, 0])
 
         visualizer = DecisionBoundariesVisualizer(model, features=["a", "f"])
-        visualizer.fit_draw_poof(X, y=y)
+        visualizer.fit_draw_show(X, y=y)
         self.assertEquals(visualizer.features_, ["a", "f"])
         self.assert_images_similar(visualizer)
 
@@ -377,7 +359,7 @@ class TestDecisionBoundariesVisualizer(VisualTestCase):
         model = neighbors.KNeighborsClassifier(3)
 
         visualizer = DecisionBoundariesVisualizer(model, features=[1, 2])
-        visualizer.fit_draw_poof(X, y)
+        visualizer.fit_draw_show(X, y)
         assert visualizer.features_ == [1, 2]
 
     @pytest.mark.xfail(sys.platform == "win32", reason="images not close on windows")
@@ -395,7 +377,7 @@ class TestDecisionBoundariesVisualizer(VisualTestCase):
         y = data.target
 
         visualizer = DecisionBoundariesVisualizer(model)
-        visualizer.fit_draw_poof(X, y)
+        visualizer.fit_draw_show(X, y)
         self.assert_images_similar(visualizer)
 
     @pytest.mark.skipif(pd is None, reason="test requires pandas")

@@ -26,7 +26,7 @@ A prediction error plot shows the actual targets from the dataset against the pr
 
     visualizer.fit(X_train, y_train)  # Fit the training data to the visualizer
     visualizer.score(X_test, y_test)  # Evaluate the model on the test data
-    visualizer.poof()                 # Draw/show/poof the data
+    visualizer.show()                 # Finalize and render the figure
 
 API Reference
 -------------

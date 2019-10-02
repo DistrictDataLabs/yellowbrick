@@ -7,14 +7,12 @@
 # Copyright (C) 2017 The scikit-yb developers
 # For license information, see LICENSE.txt
 #
-# ID: boundaries.py [] nathan.danielsen@gmail.com $
+# ID: boundaries.py [a60bc41] nathan.danielsen@gmail.com $
 
 import itertools
 import numpy as np
 
 from collections import OrderedDict
-
-from sklearn.utils.deprecation import deprecated
 
 from matplotlib.patches import Patch
 from matplotlib.colors import ListedColormap
@@ -32,7 +30,6 @@ from yellowbrick.utils import has_ndarray_int_columns
 ##########################################################################
 
 
-@deprecated("Will be moved to yellowbrick.contrib in v0.8")
 def decisionviz(
     model,
     X,
@@ -159,7 +156,7 @@ def decisionviz(
         **kwargs
     )
 
-    # Fit, draw and poof the visualizer
+    # Fit, draw and finalize the visualizer
     visualizer.fit(X, y)
     visualizer.finalize()
 
@@ -172,7 +169,6 @@ def decisionviz(
 ##########################################################################
 
 
-@deprecated("Will be moved to yellowbrick.contrib in v0.8")
 class DecisionBoundariesVisualizer(ClassificationScoreVisualizer):
     """
     DecisionBoundariesVisualizer is a bivariate data visualization algorithm
@@ -487,13 +483,15 @@ class DecisionBoundariesVisualizer(ClassificationScoreVisualizer):
 
     def finalize(self, **kwargs):
         """
-        Finalize executes any subclass-specific axes finalization steps.
-        The user calls poof and poof calls finalize.
+        Sets the title and axis labels and adds a legend.
 
         Parameters
         ----------
         kwargs: generic keyword arguments.
 
+        Notes
+        -----
+        Generally this method is called from show and not directly by the user.
         """
         # Divide out the two features
         feature_one, feature_two = self.features_
@@ -512,14 +510,14 @@ class DecisionBoundariesVisualizer(ClassificationScoreVisualizer):
         self.fit(X, y, **kwargs)
         self.draw(X, y, **kwargs)
 
-    def fit_draw_poof(self, X, y=None, **kwargs):
+    def fit_draw_show(self, X, y=None, **kwargs):
         """
         Fits a transformer to X and y then returns
         visualization of features or fitted model.
-        Then calls poof to finalize.
+        Then calls show to finalize.
         """
         self.fit_draw(X, y, **kwargs)
-        self.poof(**kwargs)
+        return self.show(**kwargs)
 
 
 DecisionViz = DecisionBoundariesVisualizer

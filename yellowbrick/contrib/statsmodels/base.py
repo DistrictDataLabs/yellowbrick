@@ -4,7 +4,7 @@
 # Author:  Ian Ozsvald
 # Created: Wed Jan 10 12:47:00 2018 -0500
 #
-# ID: base.py [] benjamin@bengfort.com $
+# ID: base.py [d6ebc39] benjamin@bengfort.com $
 
 """
 A basic wrapper for statsmodels that emulates a scikit-learn estimator.
@@ -21,6 +21,7 @@ from sklearn.base import BaseEstimator
 ##########################################################################
 ## statsmodels Estimator
 ##########################################################################
+
 
 class StatsModelsWrapper(BaseEstimator):
     """
@@ -53,8 +54,8 @@ class StatsModelsWrapper(BaseEstimator):
     .. note:: This wrapper is trivial, options and extra things like weights
         are not currently handled.
     """
-    def __init__(self, glm_partial, stated_estimator_type="regressor",
-                 scorer=r2_score):
+
+    def __init__(self, glm_partial, stated_estimator_type="regressor", scorer=r2_score):
 
         # YellowBrick checks the attribute to see if it is a
         # regressor/clusterer/classifier

@@ -7,7 +7,7 @@
 # Copyright (C) 2018 The scikit-yb developers
 # For license information, see LICENSE.txt
 #
-# ID: feature_correlation.py [] poh.zijie@gmail.com $
+# ID: feature_correlation.py [33aec16] 8103276+zjpoh@users.noreply.github.com $
 
 """
 Feature Correlation to Dependent Variable Visualizer.
@@ -109,7 +109,7 @@ class FeatureCorrelation(TargetVisualizer):
 
     >>> viz = FeatureCorrelation()
     >>> viz.fit(X, y)
-    >>> viz.poof()
+    >>> viz.show()
     """
 
     def __init__(

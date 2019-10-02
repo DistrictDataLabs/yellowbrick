@@ -7,6 +7,6 @@
 # Copyright (C) 2016 The scikit-yb developers
 # For license information, see LICENSE.txt
 #
-# ID: __init__.py [5eee25b] nathan.danielsen@gmail.com $
+# ID: __init__.py [a60bc41] nathan.danielsen@gmail.com $
 
 from .boundaries import decisionviz, DecisionBoundariesVisualizer, DecisionViz

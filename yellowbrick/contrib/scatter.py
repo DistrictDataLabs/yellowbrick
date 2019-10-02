@@ -7,7 +7,7 @@
 # Copyright (C) 2017 The scikit-yb developers
 # For license information, see LICENSE.txt
 #
-# ID: scatter.py [fc94ec4] ndanielsen@users.noreply.github.com $
+# ID: scatter.py [a89633e] benjamin@bengfort.com $
 """
 Implements a 2D scatter plot for feature analysis.
 """
@@ -331,13 +331,16 @@ class ScatterVisualizer(DataVisualizer):
 
     def finalize(self, **kwargs):
         """
-        Finalize executes any subclass-specific axes finalization steps.
-        The user calls poof and poof calls finalize.
+        Adds a title and a legend and ensures that the axis labels are set as
+        the feature names being visualized.
 
         Parameters
         ----------
         kwargs: generic keyword arguments.
 
+        Notes
+        -----
+        Generally this method is called from show and not directly by the user.
         """
         # Divide out the two features
         feature_one, feature_two = self.features_

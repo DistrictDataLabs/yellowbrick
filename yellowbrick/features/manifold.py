@@ -7,7 +7,7 @@
 # Copyright (C) 2018 The scikit-yb developers
 # For license information, see LICENSE.txt
 #
-# ID: manifold.py [] benjamin@bengfort.com $
+# ID: manifold.py [02f8c27] benjamin@bengfort.com $
 
 """
 Use manifold algorithms for high dimensional visualization.
@@ -199,7 +199,7 @@ class Manifold(ProjectionVisualizer):
 
     >>> viz = Manifold(manifold='isomap', target='discrete')
     >>> viz.fit_transform(X, y)
-    >>> viz.poof()
+    >>> viz.show()
 
     Notes
     -----

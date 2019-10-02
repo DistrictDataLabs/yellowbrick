@@ -7,7 +7,7 @@
 # Copyright (C) 2018 The scikit-yb developers
 # For license information, see LICENSE.txt
 #
-# ID: rfecv.py [] benjamin@bengfort.com $
+# ID: rfecv.py [a4599db] rebeccabilbro@users.noreply.github.com $
 
 """
 Visualize the number of features selected using recursive feature elimination
@@ -321,7 +321,7 @@ def rfecv(model, X, y, ax=None, step=1, groups=None, cv=None, scoring=None, **kw
     kwargs : dict
         Keyword arguments that are passed to the base class and may influence
         the visualization as defined in other Visualizers. These arguments are
-        also passed to the `poof()` method, e.g. can pass a path to save the
+        also passed to the `show()` method, e.g. can pass a path to save the
         figure to.
 
     Returns
@@ -332,8 +332,8 @@ def rfecv(model, X, y, ax=None, step=1, groups=None, cv=None, scoring=None, **kw
     # Initialize the visualizer
     oz = RFECV(model, ax=ax, step=step, groups=groups, cv=cv, scoring=scoring)
 
-    # Fit and poof the visualizer
+    # Fit and show the visualizer
     oz.fit(X, y)
-    oz.poof(**kwargs)
+    oz.show(**kwargs)
 
     return oz

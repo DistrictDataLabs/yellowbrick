@@ -93,7 +93,7 @@ class CVScores(ModelVisualizer):
     >>> y = iris.target
     >>> visualizer = CVScores(model=clf, cv=5, scoring='f1_macro')
     >>> visualizer.fit(X,y)
-    >>> visualizer.poof()
+    >>> visualizer.show()
 
     Notes
     -----
@@ -257,8 +257,8 @@ def cv_scores(model, X, y, ax=None, cv=None, scoring=None, color=None, **kwargs)
     # Initialize the visualizer
     visualizer = CVScores(model, ax=ax, cv=cv, scoring=scoring, color=None)
 
-    # Fit and poof the visualizer
+    # Fit and show the visualizer
     visualizer.fit(X, y)
-    visualizer.poof(**kwargs)
+    visualizer.show(**kwargs)
 
     return visualizer

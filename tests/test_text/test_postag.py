@@ -7,7 +7,7 @@
 # Copyright (C) 2019 The scikit-yb developers
 # For license information, see LICENSE.txt
 #
-# ID: test_postag.py [bd9cbb9] bilbro@gmail.com $
+# ID: test_postag.py [bd9cbb9] rebecca.bilbro@bytecubed.com $
 
 """
 Tests for the part-of-speech tagging visualization

@@ -27,7 +27,7 @@ A one-dimensional ranking of features utilizes a ranking algorithm that takes in
 
     visualizer.fit(X, y)           # Fit the data to the visualizer
     visualizer.transform(X)        # Transform the data
-    visualizer.poof()              # Draw/show/poof the data
+    visualizer.show()              # Finalize and render the figure
 
 
 Rank 2D
@@ -35,7 +35,7 @@ Rank 2D
 
 A two-dimensional ranking of features utilizes a ranking algorithm that takes into account pairs of features at a time (e.g. joint plot analysis). The pairs of features are then ranked by score and visualized using the lower left triangle of a feature co-occurence matrix.
 
-By default, the ``Rank2D`` visualizer utilizes the Pearson correlation score to detect colinear relationships. 
+By default, the ``Rank2D`` visualizer utilizes the Pearson correlation score to detect colinear relationships.
 
 .. plot::
     :context: close-figs
@@ -46,13 +46,13 @@ By default, the ``Rank2D`` visualizer utilizes the Pearson correlation score to 
 
     # Load the credit dataset
     X, y = load_credit()
-    
+
     # Instantiate the visualizer with the Pearson ranking algorithm
     visualizer = Rank2D(algorithm='pearson')
 
     visualizer.fit(X, y)           # Fit the data to the visualizer
     visualizer.transform(X)        # Transform the data
-    visualizer.poof()              # Draw/show/poof the data
+    visualizer.show()              # Finalize and render the figure
 
 
 Alternatively, we can utilize the covariance ranking algorithm, which attempts to compute the mean value of the product of deviations of variates from their respective means. Covariance loosely attempts to detect a colinear relationship between features. Compare the output from Pearson above to the covariance ranking below.
@@ -72,7 +72,7 @@ Alternatively, we can utilize the covariance ranking algorithm, which attempts t
 
     visualizer.fit(X, y)           # Fit the data to the visualizer
     visualizer.transform(X)        # Transform the data
-    visualizer.poof()              # Draw/show/poof the data
+    visualizer.show()              # Finalize and render the figure
 
 
 API Reference

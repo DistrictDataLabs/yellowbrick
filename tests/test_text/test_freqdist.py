@@ -7,7 +7,7 @@
 # Copyright (C) 2018 The scikit-yb developers
 # For license information, see LICENSE.txt
 #
-# ID: test_freqdist.py [bd9cbb9] bilbro@gmail.com $
+# ID: test_freqdist.py [bd9cbb9] rebecca.bilbro@bytecubed.com $
 
 """
 Tests for the frequency distribution text visualization

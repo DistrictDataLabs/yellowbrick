@@ -24,7 +24,7 @@ To demonstrate, in the following example the ``KElbowVisualizer`` fits the ``KMe
     visualizer = KElbowVisualizer(model, k=(4,12))
 
     visualizer.fit(X)        # Fit the data to the visualizer
-    visualizer.poof()        # Draw/show/poof the data
+    visualizer.show()        # Finalize and render the figure
 
 By default, the scoring parameter ``metric`` is set to ``distortion``, which
 computes the sum of squared distances from each point to its assigned center.
@@ -51,9 +51,9 @@ The ``KElbowVisualizer`` also displays the amount of time to train the clusterin
     )
 
     visualizer.fit(X)        # Fit the data to the visualizer
-    visualizer.poof()        # Draw/show/poof the data
+    visualizer.show()        # Finalize and render the figure
 
-By default, the parameter ``locate_elbow`` is set to ``True``, which automatically find the "elbow" which likely corresponds to the optimal value of k using the "knee point detection algorithm". However, users can turn off the feature by setting ``locate_elbow=False``. You can read about the implementation of this algorithm at "`Knee point detection in Python <https://github.com/arvkevi/kneed>`_" by Kevin Arvai. 
+By default, the parameter ``locate_elbow`` is set to ``True``, which automatically find the "elbow" which likely corresponds to the optimal value of k using the "knee point detection algorithm". However, users can turn off the feature by setting ``locate_elbow=False``. You can read about the implementation of this algorithm at "`Knee point detection in Python <https://github.com/arvkevi/kneed>`_" by Kevin Arvai.
 
 In the following example, we'll use the ``calinski_harabasz`` score and turn off ``locate_elbow`` feature.
 
@@ -76,7 +76,7 @@ In the following example, we'll use the ``calinski_harabasz`` score and turn off
     )
 
     visualizer.fit(X)        # Fit the data to the visualizer
-    visualizer.poof()        # Draw/show/poof the data
+    visualizer.show()        # Finalize and render the figure
 
 It is important to remember that the "elbow" method does not work well if the data
 is not very clustered. In this case, you might see a smooth curve and the optimal value of :math:`K` will be unclear.

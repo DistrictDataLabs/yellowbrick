@@ -2,7 +2,7 @@
 
 *Welcome to the Yellowbrick docs!*
 
-If you're looking for information about how to use Yellowbrick, for our contributor's guide, for examples and teaching resources, for answers to frequently asked questions, and more, please visit the latest version of our documentation at [www.scikit-yb.org](https://www.scikit-yb.org/). 
+If you're looking for information about how to use Yellowbrick, for our contributor's guide, for examples and teaching resources, for answers to frequently asked questions, and more, please visit the latest version of our documentation at [www.scikit-yb.org](https://www.scikit-yb.org/).
 
 ## Building the Docs
 
@@ -16,9 +16,9 @@ You will then be able to build the documentation from inside the `docs` director
 
 ## reStructuredText
 
-Yellowbrick uses [Sphinx](http://www.sphinx-doc.org/en/master/index.html) to build our documentation. The advantages of using Sphinx are many; we can more directly link to the documentation and source code of other projects like Matplotlib and scikit-learn using [intersphinx](http://www.sphinx-doc.org/en/master/usage/extensions/intersphinx.html). In addition, docstrings used to describe Yellowbrick visualizers can be automatically included when the documentation is built via [autodoc](http://www.sphinx-doc.org/en/master/usage/extensions/autodoc.html#sphinx.ext.autodoc). 
+Yellowbrick uses [Sphinx](http://www.sphinx-doc.org/en/master/index.html) to build our documentation. The advantages of using Sphinx are many; we can more directly link to the documentation and source code of other projects like Matplotlib and scikit-learn using [intersphinx](http://www.sphinx-doc.org/en/master/usage/extensions/intersphinx.html). In addition, docstrings used to describe Yellowbrick visualizers can be automatically included when the documentation is built via [autodoc](http://www.sphinx-doc.org/en/master/usage/extensions/autodoc.html#sphinx.ext.autodoc).
 
-To take advantage of these features, our documentation must be written in reStructuredText (or "rst"). reStructuredText is similar to markdown, but not identical, and does take some getting used to. For instance, styling for things like codeblocks, external hyperlinks, internal cross references, notes, and fixed-width text are all unique in rst.  
+To take advantage of these features, our documentation must be written in reStructuredText (or "rst"). reStructuredText is similar to markdown, but not identical, and does take some getting used to. For instance, styling for things like codeblocks, external hyperlinks, internal cross references, notes, and fixed-width text are all unique in rst.
 
 If you would like to contribute to our documentation and do not have prior experience with rst, we recommend you make use of these resources:
 
@@ -28,7 +28,7 @@ If you would like to contribute to our documentation and do not have prior exper
 
 ## Adding New Visualizers to the Docs
 
-If you are adding a new visualizer to the docs, there are quite a few examples in the documentation on which you can base your files of similar types. 
+If you are adding a new visualizer to the docs, there are quite a few examples in the documentation on which you can base your files of similar types.
 
 The primary format for the API section is as follows:
 
@@ -48,7 +48,7 @@ A brief introduction to my visualizer and how it is useful in the machine learni
     visualizer = MyVisualizer(LinearRegression())
 
     visualizer.fit(X, y)
-    g = visualizer.poof()
+    g = visualizer.show()
 
 Discussion about my visualizer and some interpretation of the above plot.
 
@@ -62,7 +62,7 @@ API Reference
     :show-inheritance:
 ```
 
-This is a pretty good structure for a documentation page; a brief introduction followed by a code example with a visualization included using [the plot directive](https://matplotlib.org/devel/plot_directive.html). This will render the `MyVisualizer` image in the document along with links for the complete source code, the png, and the pdf versions of the image. It will also have the "alt-text" (for screen-readers) and will not display the source because of the `:include-source:` option. If `:include-source:` is omitted, the source will also be included. 
+This is a pretty good structure for a documentation page; a brief introduction followed by a code example with a visualization included using [the plot directive](https://matplotlib.org/devel/plot_directive.html). This will render the `MyVisualizer` image in the document along with links for the complete source code, the png, and the pdf versions of the image. It will also have the "alt-text" (for screen-readers) and will not display the source because of the `:include-source:` option. If `:include-source:` is omitted, the source will also be included.
 
 The primary section is wrapped up with a discussion about how to interpret the visualizer and use it in practice. Finally the `API Reference` section will use `automodule` to include the documentation from your docstring.
 
