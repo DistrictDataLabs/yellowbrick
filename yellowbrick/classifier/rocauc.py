@@ -24,7 +24,6 @@ import numpy as np
 from scipy import interp
 from sklearn.metrics import auc, roc_curve
 from sklearn.preprocessing import label_binarize
-from sklearn.model_selection import train_test_split
 
 from yellowbrick.exceptions import ModelError
 from yellowbrick.style.palettes import LINE_COLOR
@@ -452,11 +451,11 @@ class ROCAUC(ClassificationScoreVisualizer):
 
 def roc_auc(
     model,
-    X,
-    y,
+    X_train,
+    y_train,
+    X_test=None,
+    y_test=None,
     ax=None,
-    test_size=0.2,
-    random_state=None,
     micro=True,
     macro=True,
     per_class=True,
@@ -464,6 +463,7 @@ def roc_auc(
     encoder=None,
     is_fitted="auto",
     force_model=False,
+    show=True,
     **kwargs
 ):
     """ROCAUC
@@ -492,11 +492,22 @@ def roc_auc(
         fitted, it is fit when the visualizer is fitted, unless otherwise specified
         by ``is_fitted``.
 
-    X : ndarray or DataFrame of shape n x m
-        A matrix of n instances with m features
+    X_train : array-like, 2D
+        The table of instance data or independent variables that describe the outcome of
+        the dependent variable, y. Used to fit the visualizer and also to score the 
+        visualizer if test splits are not specified.
 
-    y : ndarray or Series of length n
-        An array or series of target or class values
+    y_train : array-like, 2D
+        The vector of target data or the dependent variable predicted by X. Used to fit
+        the visualizer and also to score the visualizer if test splits are not specified.
+
+    X_test: array-like, 2D, default: None
+        The table of instance data or independent variables that describe the outcome of
+        the dependent variable, y. Used to score the visualizer if specified.
+    
+    y_test: array-like, 1D, default: None
+        The vector of target data or the dependent variable predicted by X. Wil be split
+        into train and test splits. Used to score the visualizer if specified.
 
     ax : matplotlib Axes, default: None
         The axes to plot the figure on. If not specified the current axes will be
@@ -551,6 +562,11 @@ def roc_auc(
         will prevent an exception when the visualizer is initialized but may result
         in unexpected or unintended behavior.
 
+    show: bool, default: True
+        If True, calls ``show()``, which in turn calls ``plt.show()`` however you cannot
+        call ``plt.savefig`` from this signature, nor ``clear_figure``. If False, simply
+        calls ``finalize()``
+
     kwargs : dict
         Keyword arguments passed to the visualizer base classes.
 
@@ -602,15 +618,19 @@ def roc_auc(
         **kwargs
     )
 
-    # Create the train and test splits
-    X_train, X_test, y_train, y_test = train_test_split(
-        X, y, test_size=test_size, random_state=random_state
-    )
-
     # Fit and transform the visualizer (calls draw)
     visualizer.fit(X_train, y_train, **kwargs)
-    visualizer.score(X_test, y_test)
-    visualizer.finalize()
+
+    #Scores the visualizer with X_test and y_test if provided, X_train, y_train if not provided
+    if X_test is not None and y_test is not None:
+        visualizer.score(X_test, y_test)
+    else:
+        visualizer.score(X_train,  y_train)
+    
+    if show:
+        visualizer.show()
+    else:
+        visualizer.finalize()
 
     # Return the visualizer
     return visualizer
