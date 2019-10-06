@@ -115,7 +115,7 @@ class ClassificationScoreVisualizer(ScoreVisualizer):
         encoder=None,
         is_fitted="auto",
         force_model=False,
-        **kwargs,
+        **kwargs
     ):
         # A bit of type checking
         if not force_model and not isclassifier(model):
