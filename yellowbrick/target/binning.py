@@ -57,7 +57,7 @@ class BalancedBinningReference(TargetVisualizer):
     --------
     >>> visualizer = BalancedBinningReference()
     >>> visualizer.fit(y)
-    >>> visualizer.poof()
+    >>> visualizer.show()
 
 
     Notes
@@ -123,13 +123,15 @@ class BalancedBinningReference(TargetVisualizer):
 
     def finalize(self, **kwargs):
         """
-        Finalize executes any subclass-specific axes finalization steps.
-        The user calls poof and poof calls finalize.
+        Adds the x-axis label and manages the tick labels to ensure they're visible.
 
         Parameters
         ----------
         kwargs: generic keyword arguments.
 
+        Notes
+        -----
+        Generally this method is called from show and not directly by the user.
         """
         self.ax.set_xlabel(self.target)
         for tk in self.ax.get_xticklabels():
@@ -177,8 +179,8 @@ def balanced_binning_reference(y, ax=None, target="y", bins=4, **kwargs):
     # Initialize the visualizer
     visualizer = BalancedBinningReference(ax=ax, bins=bins, target=target, **kwargs)
 
-    # Fit and poof the visualizer
+    # Fit and show the visualizer
     visualizer.fit(y)
-    visualizer.poof()
+    visualizer.show()
 
     return visualizer

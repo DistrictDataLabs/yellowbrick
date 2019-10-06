@@ -264,7 +264,7 @@ class FrequencyVisualizer(TextVisualizer):
     def finalize(self, **kwargs):
         """
         The finalize method executes any subclass-specific axes
-        finalization steps. The user calls poof & poof calls finalize.
+        finalization steps. The user calls show & show calls finalize.
 
         Parameters
         ----------

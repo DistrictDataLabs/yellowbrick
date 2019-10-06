@@ -3,7 +3,7 @@
 PosTag Visualization
 ====================
 
-Parts of speech (e.g. verbs, nouns, prepositions, adjectives) indicate how a word is functioning within the context of a sentence. In English as in many other languages, a single word can function in multiple ways. Part-of-speech tagging lets us encode information not only about a word’s definition, but also its use in context (for example the words “ship” and “shop” can be either a verb or a noun, depending on the context). 
+Parts of speech (e.g. verbs, nouns, prepositions, adjectives) indicate how a word is functioning within the context of a sentence. In English as in many other languages, a single word can function in multiple ways. Part-of-speech tagging lets us encode information not only about a word’s definition, but also its use in context (for example the words “ship” and “shop” can be either a verb or a noun, depending on the context).
 
 The ``PosTagVisualizer`` is intended to support grammar-based feature extraction techniques for machine learning workflows that require natural language processing. The visualizer reads in a corpus that has already been sentence- and word-segmented, and tagged, creating a bar chart to visualize the relative proportions of different parts-of-speech in a corpus.
 
@@ -48,7 +48,7 @@ Penn Treebank Tags
                 ]
             ],
         [
-            [  
+            [
                 ('He', 'PRP'),('gives', 'VBZ'),('his', 'PRP$'),('harness', 'NN'),
                 ('bells', 'VBZ'),('a', 'DT'),('shake', 'NN'),('To', 'TO'),
                 ('ask', 'VB'),('if', 'IN'),('there', 'EX'),('is', 'VBZ'),
@@ -56,7 +56,7 @@ Penn Treebank Tags
                 ],
             [
                 ('The', 'DT'),('only', 'JJ'),('other', 'JJ'),('sound', 'NN'),
-                ('’', 'NNP'),('s', 'VBZ'),('the', 'DT'),('sweep', 'NN'), 
+                ('’', 'NNP'),('s', 'VBZ'),('the', 'DT'),('sweep', 'NN'),
                 ('Of', 'IN'),('easy', 'JJ'),('wind', 'NN'),('and', 'CC'),
                 ('downy', 'JJ'),('flake', 'NN'),('.', '.')
                 ]
@@ -75,10 +75,10 @@ Penn Treebank Tags
         ]
     ]
 
-    # Create the visualizer, fit, score, and poof it
+    # Create the visualizer, fit, score, and show it
     viz = PosTagVisualizer()
     viz.fit(tagged_stanzas)
-    viz.poof()
+    viz.show()
 
 Universal Dependencies Tags
 ---------------------------
@@ -141,10 +141,10 @@ Libraries like SpaCy use tags from the Universal Dependencies (UD) framework. Th
         ]
     ]
 
-    # Create the visualizer, fit, score, and poof it
+    # Create the visualizer, fit, score, and show it
     viz = PosTagVisualizer(tagset="universal")
     viz.fit(tagged_speech)
-    viz.poof()
+    viz.show()
 
 
 +-------------------+------------------------------------------+----------------------+--------------------------+

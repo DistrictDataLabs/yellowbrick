@@ -104,4 +104,4 @@ class RandomVisualizer(Visualizer):
 if __name__ == "__main__":
     r = RandomVisualizer()
     r.fit()
-    r.poof(outpath="test.png")
+    r.show(outpath="test.png")

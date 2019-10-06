@@ -35,7 +35,7 @@ class MockVisualizer(Visualizer):
         self.ax = ax
         self.fit = mock.MagicMock()
         self.finalize = mock.MagicMock()
-        self.poof = mock.MagicMock()
+        self.show = mock.MagicMock()
         self.set_title = mock.MagicMock()
 
     @property
@@ -92,13 +92,13 @@ class TestWrapper(object):
         # Assert that visualizer methods are called
         obj.fit()
         obj.finalize()
-        obj.poof()
+        obj.show()
         obj.set_title()
 
         assert obj.ax is None
         obj.fit.assert_called_once_with()
         obj.finalize.assert_called_once_with()
-        obj.poof.assert_called_once_with()
+        obj.show.assert_called_once_with()
         obj.set_title.assert_called_once_with()
 
     def test_wrapped_methods(self):

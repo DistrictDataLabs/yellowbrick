@@ -22,7 +22,7 @@ Intercluster distance maps display an embedding of the cluster centers in 2 dime
     visualizer = InterclusterDistance(model)
 
     visualizer.fit(X)        # Fit the data to the visualizer
-    visualizer.poof()        # Draw/show/poof the data
+    visualizer.show()        # Finalize and render the figure
 
 API Reference
 -------------

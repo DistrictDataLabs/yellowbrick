@@ -3,12 +3,33 @@
 Changelog
 =========
 
+Hotfix 1.0.1
+------------
+
+* Tag: v1.0.1_
+* Deployed
+* Contributors: Benjamin Bengfort, Rebecca Bilbro, Kristen McIntyre
+
+.. warning:: **Major API change**: the ``poof()`` method is now deprecated, please use ``show()`` instead. After a significant discussion with community members we have deprecated our original "make the magic happen" method due to concerns about the usage of the word. We've renamed the original method to and created a stub method with the original name that issues a deprecation warning and calls ``show()``.
+
+Changes:
+   - Changes ``poof()`` to ``show()``.
+   - Updated clustering and regression example notebooks.
+   - Fixes a syntax error in Python 3.5 and earlier.
+   - Updated Manifold documentation to fix example bug.
+   - Added advisors names to the release changelog.
+   - Adds advisory board minutes for Fall 2019.
+   - Updates our Travis-CI semi-secure token for Slack integration.
+
+
+.. _v1.0.1: https://github.com/DistrictDataLabs/yellowbrick/releases/tag/v1.0.1
+
 Version 1.0
 -----------
 
 * Tag: v1.0_
-* Deployed: Not yet deployed
-* Contributors: Benjamin Bengfort, Rebecca Bilbro, Nathan Danielsen, Kristen McIntyre, Larry Gray, Prema Roman, Carl Dawson, Daniel Navarrete, Francois Dion, Halee Mason, Jeff Hale, Jiayi Zhang, Jimmy Shah, John Healy, Justin Ormont, Kevin Arvai, Michael Garod, Mike Curry, Nabanita Dash, Naresh Bachwani, Nicholas A. Brown, Piyush Gautam, Pradeep Singh, Rohit Ganapathy, Ry Whittington, Sangarshanan, Sourav Singh, Thomas J Fan, Zijie (ZJ) Poh, Zonghan, Xie
+* Deployed
+* Contributors: Benjamin Bengfort, Rebecca Bilbro, Nathan Danielsen, Kristen McIntyre, Larry Gray, Prema Roman, Adam Morris, Tony Ojeda, Edwin Schmier, Carl Dawson, Daniel Navarrete, Francois Dion, Halee Mason, Jeff Hale, Jiayi Zhang, Jimmy Shah, John Healy, Justin Ormont, Kevin Arvai, Michael Garod, Mike Curry, Nabanita Dash, Naresh Bachwani, Nicholas A. Brown, Piyush Gautam, Pradeep Singh, Rohit Ganapathy, Ry Whittington, Sangarshanan, Sourav Singh, Thomas J Fan, Zijie (ZJ) Poh, Zonghan, Xie
 
 .. warning:: **Python 2 Deprecation**: Please note that this release deprecates Yellowbrick's support for Python 2.7. After careful consideration and following the lead of our primary dependencies (NumPy, scikit-learn, and Matplolib), we have chosen to move forward with the community and support Python 3.4 and later.
 

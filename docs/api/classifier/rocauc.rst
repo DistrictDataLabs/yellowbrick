@@ -31,14 +31,14 @@ This leads to another metric, area under the curve (AUC), which is a computation
 
     visualizer.fit(X_train, y_train)        # Fit the training data to the visualizer
     visualizer.score(X_test, y_test)        # Evaluate the model on the test data
-    visualizer.poof()                       # Draw/show/poof the data
+    visualizer.show()                       # Finalize and show the figure
 
 
 .. warning::
-    Versions of Yellowbrick =< v0.8 had a `bug <https://github.com/DistrictDataLabs/yellowbrick/blob/develop/examples/rebeccabilbro/rocauc_bug_research.ipynb>`_ 
-    that triggered an ``IndexError`` when attempting binary classification using 
+    Versions of Yellowbrick =< v0.8 had a `bug <https://github.com/DistrictDataLabs/yellowbrick/blob/develop/examples/rebeccabilbro/rocauc_bug_research.ipynb>`_
+    that triggered an ``IndexError`` when attempting binary classification using
     a Scikit-learn-style estimator with only a ``decision_function``. This has been
-    fixed as of v0.9, where the ``micro``, ``macro``, and ``per-class`` parameters of 
+    fixed as of v0.9, where the ``micro``, ``macro``, and ``per-class`` parameters of
     ``ROCAUC`` are set to ``False`` for such classifiers.
 
 
@@ -75,7 +75,7 @@ ROC curves are typically used in binary classification, and in fact the Scikit-L
 
     visualizer.fit(X_train, y_train)        # Fit the training data to the visualizer
     visualizer.score(X_test, y_test)        # Evaluate the model on the test data
-    visualizer.poof()                       # Draw/show/poof the data
+    visualizer.show()                       # Finalize and render the figure
 
 .. warning::
     The target ``y`` must be numeric for this figure to work, or update to the latest version of sklearn.

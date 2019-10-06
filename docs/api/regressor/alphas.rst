@@ -27,7 +27,7 @@ The AlphaSelection Visualizer demonstrates how different values of alpha influen
     model = LassoCV(alphas=alphas)
     visualizer = AlphaSelection(model)
     visualizer.fit(X, y)
-    visualizer.poof()
+    visualizer.show()
 
 
 

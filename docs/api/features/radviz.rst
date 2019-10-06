@@ -40,7 +40,7 @@ A good starting place is the `scikit-learn Imputer. <http://scikit-learn.org/sta
 
     visualizer.fit(X, y)           # Fit the data to the visualizer
     visualizer.transform(X)        # Transform the data
-    visualizer.poof()              # Draw/show/poof the data
+    visualizer.show()              # Finalize and render the figure
 
 For regression, the ``RadViz`` visualizer should use a color sequence to
 display the target information, as opposed to discrete colors.

@@ -1,0 +1,208 @@
+.. -*- mode: rst -*-
+
+September 9, 2019
+=================
+
+Yellowbrick Advisory Board Meeting Held on September 9, 2019 from 2030-2230 EST via Video Conference Call. Rebecca Bilbro presiding as Chair, Benjamin Bengfort serving as Secretary and Edwin Schmierer as Treasurer. Minutes taken by Benjamin Bengfort.
+
+Attendees: Benjamin Bengfort, Larry Gray, Rebecca Bilbro, Tony Ojeda, Kristen McIntyre, Prema Roman, Edwin Schmierer, Adam Morris, Eunice Chendjou
+
+Agenda
+------
+
+A broad overview of the topics for discussion in the order they were presented:
+
+1. Welcome (Rebecca Bilbro)
+2. Summer 2019 Retrospective (Rebecca Bilbro)
+3. GSoC Report (Adam Morris)
+4. YB API Audit Results (Benjamin Bengfort)
+5. OpenTeams Participation (Eunice Chendjou)
+6. Fall 2019 Contributors and Roles
+7. Yellowbrick v1.1 Milestone Planning
+8. Project Roadmap through 2020
+9. Other business
+
+Votes and Resolutions
+---------------------
+
+*There were no votes or resolutions during this board meeting*.
+
+Summer 2019 Retrospective
+-------------------------
+
+In traditional agile development, sprints are concluded with a retrospective to discuss what went well, what didn't go well, what were unexpected challenges, and how we can adapt to those challenges in the future. Generally these meetings exclude the major stakeholders so that the contributors to the sprint can speak freely. Because the Board of Advisors are the major stakeholders of the Yellowbrick project, there was an intermediate retrospective with just the maintainers of the Summer 2019 semester so they could communicate anonymously and frankly with the Board. Their feedback as well as additions by the advisors follow.
+
+Accomplishments
+~~~~~~~~~~~~~~~
+
+tl;dr we had a very productive summer!
+
+- Larry stepped into the new coordinator role, setting the tone for future coordinators
+- We had two new maintainers: Prema and Kristen
+- Approximately 12 new contributors
+- 65 Pull Requests were merged
+- 35 tweets were tweeted
+- Only 95 issues remain open (down from over 125, not including new issues)
+- 3 Yellowbrick talks in DC, Texas, and Spain
+- We completed our first Google Summer of Code successfully
+
+Perhaps most importantly, Version 1.0 was released. This release included some big things from new visualizers to important bug/API fixes, a new datasets module, plot directives and more. We are very proud of the result!
+
+Shoutouts
+~~~~~~~~~
+
+- To Larry for being the first coordinator!
+- To Prema for shepherding in a new contributor from the PyCon sprints who enhanced our SilhouetteScores visualizer!
+- To Kristen for working with a new contributor to introduce a brand new NFL receivers dataset!
+- To Nathan for working with a new contributor on the cross-operating system tests!
+- To Benjamin for shoring up the classifier API and the audit!
+- To Adam and Prema for spearheading the GSoC application review and to Adam for serving as guide and mentor to Naresh, our GSoC student!
+- To Rebecca for mentoring the maintainers!
+
+Challenges
+~~~~~~~~~~
+
+- It was difficult to adjust to new contributors/GSoC
+- "Contagious issues" made it tough to parallelize some work
+- Maintainer vacation/work schedules caused communication interruptions
+- Balancing between external contributor PRs and internal milestone goals
+- This milestone may have been a bit over-ambitious
+
+Moving Forward
+~~~~~~~~~~~~~~
+
+These are some of the things that worked well for us and that we should keep doing:
+
+- Make sure the "definition of done" is well defined/understood in issues
+- Balancing PR assignments so that no one gets too many
+- Using the "assignee" feature in GitHub to assign PRs so that it's easier to see who is working on what tasks
+- Use the maintainer's Slack channel to unify communications
+- Communication in general -- make sure people know what's expected of them and what to expect of us
+- Getting together to celebrate releases!
+- Pair reviews of PRs (especially for larger PRs)
+
+Semester and Roadmap
+--------------------
+
+The fall semester will be dedicated to completing **Yellowbrick Version 1.1**. The issues associated with this release can be found in the `v1.1 Milestone on GitHub <https://github.com/DistrictDataLabs/yellowbrick/milestone/14>`_.
+
+The primary milestone objectives are as follows:
+
+1. Make quick methods prime time (and extend the oneliners page)
+2. Add support for sklearn Pipelines and FeatureUnions
+
+The secondary objectives are at the discretion of the core contributors but should be along one of the following themes:
+
+1. A neural-network specific package for deep learning visualization
+2. Adding support for visual pipelines and other multi-image reports
+3. Creating interactive or animated visualizers
+
+The maintainers will create a Slack channel and discuss with the Fall contributors what direction they would like to go in, to be decided no later than September 20, 2019.
+
+Fall 2019 Contributors
+~~~~~~~~~~~~~~~~~~~~~~~~
+
+=====================  =================
+Name                   Role
+=====================  =================
+Adam Morris            Coordinator
+Prema Roman            Maintainer
+Kristen McIntyre       Maintainer
+Benjamin Bengfort      Maintainer
+Nathan Danielsen       Maintainer
+Lawrence Gray          Core Contributor
+Michael Chestnut       Core Contributor
+Prashi Doval           Core Contributor
+Saurabh Daalia         Core Contributor
+Bashar Jaan Khan       Core Contributor
+Rohan Panda            Core Contributor
+Pradeep Singh          Core Contributor
+Mahkah Wu              Core Contributor
+Thom Lappas            Core Contributor
+Stephanie R Miller     Core Contributor
+Coleen W Chen          Core Contributor
+Franco Bueno Mattera   Core Contributor
+Shawna Carey           Core Contributor
+George Krug            Core Contributor
+Aaron Margolis         Core Contributor
+Molly Morrison         Core Contributor
+=====================  =================
+
+Project Roadmap
+~~~~~~~~~~~~~~~
+
+With the release of v1.0, Yellowbrick has become a stable project that we would like to see increased usage of. The only urgent remaining task is that of the quick methods - which will happen in v1.1. Beyond v1.1 we have concluded that it would be wise to understand who is really using the software and to get feature ideas from them. We do have a few themes we are considering.
+
+- *Add a neural package for ANN specific modeling*. We already have a text package for natural language processing, as deep learning is becoming more important, Yellowbrick should help with the interpretability of these models as well.
+- *Reporting and data engineering focused content*. We could consider a text output format (like .ipynb) that allows easy saving of multiple visualizers to disk in a compact format that can be committed to GitHub, stored in a database, and redrawn on demand. This theme would also include model management and maintenance tasks including detecting changes in models and tracking performance over time.
+- *Visual optimization*. This tasks employs optimization and learning to enhance the quality of the visualizers, for example by maximizing white space in ``RadViz`` or ``ParallelCoordinates``, detecting inflection points as with the ``kneed`` port in ``KElbow``, or adding layout algorithms for better clustering visualization in ``ICDM`` or the inclusion of word maps or trees.
+- *Interactive and Animated visualizers*. Adding racing bar charts or animated TSNE to provide better interpetibility to visualizations or adding an Altair backend to create interactive Javascript plots or other model visualization tools like pyldaviz.
+- *Publication and conferences*. We would like to continue to participate in PyCon and other conferences. We might also submit proposals to O'Reilly to do Yellowbrick/Machine Learning related books or videos.
+
+These goals are all very high level but we also want to ensure that the package makes progress. Lower level goals such as adding 16 new visualizers in 2020 should be discussed at the January board meeting. To that end, advisors should look at how they're using Yellowbrick in their own work to consider more detailed roadmap goals.
+
+Minutes
+-------
+
+In her welcome, Rebecca described the goal of our conversation for the second governance meeting was first to talk about how things went over the summer, to celebrate our successes with the v1.0 launch and to highlight specific activities such as GSoC and the audit. The second half of the meeting is to be used to discuss our plans for the fall, which should be more than half the conversation. In so doing she set a technical tone for the mid-year meetings that will hopefully serve as a good guideline for future advisory meetings.
+
+Google Summer of Code
+~~~~~~~~~~~~~~~~~~~~~
+
+Adam reports that Naresh successfully completed the GSoC period and that he wrote a positive review for him and shared the feedback we discussed during the v1.0 launch. You can read more about his summer at his `blog, which documents his journey <https://naresh-bachwani.github.io>`_.
+
+Naresh completed the following pull requests/tasks:
+
+1. Added train alpha and test alpha to residuals
+2. Added an alpha parameter to ``PCA``
+3. Added a stacked barchart helper and stacking to ``PoSVisualizer``
+4. Updated several visualizers to use the stacked barchart helper function
+5. Updated the ``DataVisualizer`` to handle target type identification
+6. Added a ``ProjectionVisualizer`` base class.
+7. Updated Manifold and PCA to extend the ``ProjectionVisualizer``
+8. Added final tweaks to unify the functionality of ``PCA``, ``Manifold``, and other projections.
+
+We will work on sending Naresh a Yellowbrick T-shirt to thank him and have already encouraged him to continue to contribute to Yellowbrick (he is receptive to it). We will also follow up with him on his work on effect plots.
+
+If we decide to participate in GSoC again, we should reuse the idea list for the application, but potentially it's easiest to collaborate with matplotlib for GSoC 2020.
+
+API Audit Results
+~~~~~~~~~~~~~~~~~
+
+We conducted a full audit of all visualizers and their bases in Yellowbrick and categorized each as red (needs serious work), yellow (has accumulated technical debt), and green (production-ready). A summary of these categorizations is as follows:
+
+- There are 14 base classes, 1 red, 3 yellow, and 10 green
+- There are 36 visualizers (7 aliases), 4 red, 7 yellow, 25 green
+- There are 3 other visualizer utilities, 2 red, 1 green
+- There are 35 quick methods, 1 for each visualizer (except manual alpha selection)
+
+Through the audit process, we clarified our API and ensured that the visualizers conformed to it:
+
+- ``fit()`` returns ``self``, ``transform()`` returns ``Xp``, ``score()`` returns [0,1], ``draw()`` returns ``ax``, and ``finalize()`` returns ``None`` (we also updated ``poof()`` to return ``ax``).
+- No ``_`` suffixed properties should be set in ``__init__()``
+- Calls to ``plt`` should be minimized (and we added ``fig`` to the visualizer)
+- Quick methods should return the fitted/scored visualizer
+
+Additionally, we took into account the number/quality of tests for each visualizer, the documentation, and the robustness of the visualization implementation to rank the visualizers.
+
+Along the way, a lot of technical debt was cleaned up; including unifying formatting with black and flake8 style checkers, updating headers, unifying scattered functionality into base classes, and more.
+
+In the end, the audit should give us confidence that v1.0 is a production-ready implementation and that it is a stable foundation to grow the project on.
+
+OpenTeams
+~~~~~~~~~
+
+Eunice Chendjou, COO of OpenTeams, joined the meeting to observe Yellowbrick as a model for successful open source community governance, and to let the Advisory Board know about OpenTeams. OpenTeams is designed to highlight the contributions and work of open source developers and to help support them by assisting them in winning contracts and finding funding. Although currently it is in its initial stages, they have a lot of big plans for helping open source teams grow.
+
+Please add your contributions to Yellowbrick by joining `OpenTeams <https://openteams.com/projects/yellowbrick>`_. Invite others to join as well!
+
+Action Items
+------------
+
+- Add your contributions to the Yellowbrick OpenTeams projection
+- Send invitations to those interested in joining the 2020 board (all)
+- Begin considering who to nominate for January election of board members (all)
+- Send Naresh a Yellowbrick T-shirt or thank you (Adam)
+- Create the Fall 2019 contributors Slack channel (Benjamin)
+- Start thinking about how to guide the 2020 roadmap (all)
+- Publications task group for O'Reilly content (Kristen, Larry)

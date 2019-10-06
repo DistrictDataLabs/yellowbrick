@@ -28,8 +28,8 @@ required.
 
 After importing the required tools, we can use the :doc:`the hobbies corpus <../datasets/hobbies>` and vectorize the text using TF-IDF. Once the corpus is vectorized we can visualize it, showing the distribution of classes.
 
-.. note to contributors: the below code requires an additional dependency on umap-learn 
-    that is not part of the core requirements, so has not been modified with a plot 
+.. note to contributors: the below code requires an additional dependency on umap-learn
+    that is not part of the core requirements, so has not been modified with a plot
     directive. See umap_vis.py to regenerate images.
 
 .. code:: python
@@ -49,7 +49,7 @@ After importing the required tools, we can use the :doc:`the hobbies corpus <../
     # Instantiate the text visualizer
     umap = UMAPVisualizer()
     umap.fit(docs, labels)
-    umap.poof()
+    umap.show()
 
 
 .. image:: images/umap.png
@@ -63,7 +63,7 @@ the ``UMAPVisualizer``.
 
     umap = UMAPVisualizer(metric='cosine')
     umap.fit(docs, labels)
-    umap.poof()
+    umap.show()
 
 
 .. image:: images/umap_cosine.png
@@ -76,7 +76,7 @@ see if any meaningful patterns are observed.
     # Don't color points with their classes
     umap = UMAPVisualizer(labels=["documents"], metric='cosine')
     umap.fit(docs)
-    umap.poof()
+    umap.show()
 
 
 .. image:: images/umap_no_labels.png
@@ -105,7 +105,7 @@ us to look for clusters of related text by their contents:
 
     umap = UMAPVisualizer()
     umap.fit(docs, ["c{}".format(c) for c in clusters.labels_])
-    umap.poof()
+    umap.show()
 
 .. image:: images/umap_kmeans.png
 

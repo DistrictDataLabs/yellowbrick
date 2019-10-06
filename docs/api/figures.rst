@@ -22,11 +22,11 @@ Based on these definitions and and the advice to "try to use the object-oriented
     # Object oriented approach
     viz = Visualizer(ax=ax)
     viz.fit(X, y)
-    viz.poof()
+    viz.show()
 
     # Quick method approach
     viz = quick_visualizer(X, y, ax=ax)
-    viz.poof()
+    viz.show()
 
 This design allows users to more directly control the size, style, and interaction with the plot (though YB does provide some helpers for these as well). For example, if a user wanted to generate a report with multiple visualizers for a classification problem, it may looks something like:
 

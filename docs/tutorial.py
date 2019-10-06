@@ -79,7 +79,7 @@ def visualize_model(X, y, estimator, path, **kwargs):
     )
     visualizer.fit(X, y)
     visualizer.score(X, y)
-    visualizer.poof(outpath=path)
+    visualizer.show(outpath=path)
 
 
 if __name__ == "__main__":

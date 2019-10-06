@@ -208,7 +208,7 @@ class KElbowVisualizer(ClusteringScoreVisualizer):
     >>> from sklearn.cluster import KMeans
     >>> model = KElbowVisualizer(KMeans(), k=10)
     >>> model.fit(X)
-    >>> model.poof()
+    >>> model.show()
 
     Notes
     -----

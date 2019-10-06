@@ -93,7 +93,7 @@ class AlphaSelection(RegressionScoreVisualizer):
     >>> from sklearn.linear_model import LassoCV
     >>> model = AlphaSelection(LassoCV())
     >>> model.fit(X, y)
-    >>> model.poof()
+    >>> model.show()
 
     Notes
     -----
@@ -289,7 +289,7 @@ class ManualAlphaSelection(AlphaSelection):
     ... )
     ...
     >>> model.fit(X, y)
-    >>> model.poof()
+    >>> model.show()
 
     Notes
     -----

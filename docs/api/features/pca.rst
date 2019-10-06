@@ -20,7 +20,7 @@ The PCA Decomposition visualizer utilizes principal component analysis to decomp
 
     visualizer = PCADecomposition(scale=True, color=colors)
     visualizer.fit_transform(X, y)
-    visualizer.poof()
+    visualizer.show()
 
 
 The PCA projection can also be plotted in three dimensions to attempt to visualize more principal components and get a better sense of the distribution in high dimensions.
@@ -38,7 +38,7 @@ The PCA projection can also be plotted in three dimensions to attempt to visuali
 
     visualizer = PCADecomposition(scale=True, color=colors, proj_dim=3)
     visualizer.fit_transform(X, y)
-    visualizer.poof()
+    visualizer.show()
 
 
 Biplot
@@ -58,7 +58,7 @@ The PCA projection can be enhanced to a biplot whose points are the projected in
 
     visualizer = PCADecomposition(scale=True, proj_features=True)
     visualizer.fit_transform(X, y)
-    visualizer.poof()
+    visualizer.show()
 
 
 .. plot::
@@ -72,7 +72,7 @@ The PCA projection can be enhanced to a biplot whose points are the projected in
 
     visualizer = PCADecomposition(scale=True, proj_features=True, proj_dim=3)
     visualizer.fit_transform(X, y)
-    visualizer.poof()
+    visualizer.show()
 
 API Reference
 -------------

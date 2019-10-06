@@ -208,8 +208,14 @@ class ClassPredictionError(ClassificationScoreVisualizer):
 
     def finalize(self, **kwargs):
         """
-        Finalize executes any subclass-specific axes finalization steps.
-        The user calls poof and poof calls finalize.
+        Adds a title and axis labels to the visualizer, ensuring that the
+        y limits zoom the visualization in to the area of interest. Finalize
+        also calls tight layout to ensure that no parts of the figure are
+        cut off.
+
+        Notes
+        -----
+        Generally this method is called from show and not directly by the user.
         """
 
         # Set the title

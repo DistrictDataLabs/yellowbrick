@@ -47,7 +47,7 @@ def validation_curve_sklearn_example(
         n_jobs=4,
     )
     oz.fit(X, y)
-    oz.poof(outpath=path)
+    oz.show(outpath=path)
 
 
 def validation_curve_classifier_svc(path="images/validation_curve_classifier_svc.png"):
@@ -71,7 +71,7 @@ def validation_curve_classifier_svc(path="images/validation_curve_classifier_svc
         n_jobs=8,
     )
     oz.fit(X, y)
-    oz.poof(outpath=path)
+    oz.show(outpath=path)
 
 
 def validation_curve_classifier_knn(path="images/validation_curve_classifier_knn.png"):
@@ -94,7 +94,7 @@ def validation_curve_classifier_knn(path="images/validation_curve_classifier_knn
         n_jobs=8,
     )
     oz.fit(X, y)
-    oz.poof(outpath=path)
+    oz.show(outpath=path)
 
 
 ##########################################################################

@@ -76,8 +76,8 @@ def dataset_example(dataset="occupancy", manifold="all", path="images/", **kwarg
     else:
         raise Exception("unknown dataset '{}'".format(dataset))
 
-    oz.fit(X, y)
-    oz.poof(outpath=path)
+    oz.fit_transform(X, y)
+    oz.show(outpath=path)
 
 
 def select_features_example(
@@ -95,8 +95,8 @@ def select_features_example(
     )
 
     X, y = load_occupancy()
-    model.fit(X, y)
-    model.named_steps["viz"].poof(outpath=path)
+    model.fit_transform(X, y)
+    model.named_steps["viz"].show(outpath=path)
 
 
 class SCurveExample(object):
@@ -136,8 +136,8 @@ class SCurveExample(object):
 
         oz = Manifold(ax=ax, manifold=algorithm, colors="nipy_spectral")
 
-        oz.fit(self.X, self.y)
-        oz.poof(outpath=path)
+        oz.fit_transform(self.X, self.y)
+        oz.show(outpath=path)
 
     def plot_all_manifolds(self, path="images"):
         """

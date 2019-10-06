@@ -54,7 +54,7 @@ visualizer = Rank2D(
 )
 visualizer.fit(X, y)                # Fit the data to the visualizer
 visualizer.transform(X)             # Transform the data
-visualizer.poof()                   # Show the data
+visualizer.show()                   # Finalize and render the figure
 ```
 
 ### Model Visualization
@@ -69,7 +69,7 @@ model = LinearSVC()
 model.fit(X,y)
 visualizer = ROCAUC(model)
 visualizer.score(X,y)
-visualizer.poof()
+visualizer.show()
 ```
 
 For additional information on getting started with Yellowbrick, view the quickstart guide in the [documentation](https://www.scikit-yb.org/en/latest/) and check out our [examples notebook](https://github.com/DistrictDataLabs/yellowbrick/blob/develop/examples/examples.ipynb).

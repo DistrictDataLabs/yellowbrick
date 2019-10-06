@@ -144,7 +144,7 @@ class PCA(ProjectionVisualizer):
     >>> y = iris.target
     >>> visualizer = PCA()
     >>> visualizer.fit_transform(X, y)
-    >>> visualizer.poof()
+    >>> visualizer.show()
 
     """
 
