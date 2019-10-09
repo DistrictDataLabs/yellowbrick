@@ -425,14 +425,16 @@ def kelbow_visualizer(
     timings=True,
     locate_elbow=True,
     metric="distortion",
+    show=True,
     **kwargs
 ):
     """
     Quick Method:
 
     model : a Scikit-Learn clusterer
-        Should be an instance of an unfitted clusterer, specifically ``KMeans`` or
-        ``MiniBatchKMeans``. If it is not a clusterer, an exception is raised.
+        Should be an instance of an unfitted clusterer, specifically
+        ``KMeans`` or ``MiniBatchKMeans``. If it is not a clusterer, an
+        exception is raised.
 
     ax : matplotlib Axes, default: None
         The axes to plot the figure on. If None is passed in the current axes
@@ -458,11 +460,12 @@ def kelbow_visualizer(
         to train the clustering model.
 
     locate_elbow : bool, default: True
-        Automatically find the "elbow" or "knee" which likely corresponds to the optimal
-        value of k using the "knee point detection algorithm". The knee point detection
-        algorithm finds the point of maximum curvature, which in a well-behaved
-        clustering problem also represents the pivot of the elbow curve. The point is
-        labeled with a dashed line and annotated with the score and k values.
+        Automatically find the "elbow" or "knee" which likely corresponds to
+        the optimal value of k using the "knee point detection algorithm". The
+        knee point detection algorithm finds the point of maximum curvature,
+        which in a well-behaved clustering problem also represents the pivot
+        of the elbow curve. The point is labeled with a dashed line and
+        annotated with the score and k values.
 
     kwargs : dict
         Keyword arguments that are passed to the base class and may influence
@@ -482,7 +485,11 @@ def kelbow_visualizer(
         locate_elbow=locate_elbow,
         **kwargs
     )
-
     oz.fit(X, y)
-    oz.finalize()
+
+    if show:
+        oz.show
+    else:
+        oz.finalize()
+
     return oz
