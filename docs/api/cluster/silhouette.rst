@@ -30,11 +30,31 @@ The Silhouette Visualizer displays the silhouette coefficient for each sample on
     visualizer.fit(X)        # Fit the data to the visualizer
     visualizer.show()        # Finalize and render the figure
 
+The same functionality above can be achieved with the associated quick method `silhouette_visualizer`. This method will build the Silhouette Visualizer object with the associated arguments, fit it, then (optionally) immediately show it.
+
+.. plot::
+    :context: close-figs
+    :alt: silhouette_visualizer on the nfl dataset with 4 clusters
+
+    from sklearn.cluster import KMeans
+
+    from yellowbrick.cluster import silhouette_visualizer
+    from yellowbrick.datasets import load_nfl
+
+    # Load a clustering dataset
+    X, y = load_nfl()
+
+    # Specify the features to use for clustering
+    features = ['Rec', 'Yds', 'TD', 'Fmb', 'Ctch_Rate']
+    X = X.query('Tgt >= 20')[features]
+
+    # Use the quick method and immediately show the figure
+    silhouette_visualizer(KMeans(5, random_state=42), X, colors='yellowbrick', show=False)
 
 API Reference
 -------------
 
 .. automodule:: yellowbrick.cluster.silhouette
-    :members: SilhouetteVisualizer
+    :members: SilhouetteVisualizer, silhouette_visualizer
     :undoc-members:
     :show-inheritance:
