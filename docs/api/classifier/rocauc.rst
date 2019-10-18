@@ -9,6 +9,13 @@ The Receiver Operating Characteristic (ROC) is a measure of a classifier's predi
 
 This leads to another metric, area under the curve (AUC), which is a computation of the relationship between false positives and true positives. The higher the AUC, the better the model generally is. However, it is also important to inspect the "steepness" of the curve, as this describes the maximization of the true positive rate while minimizing the false positive rate.
 
+=================   =================
+Visualizer           `ROCAUC <https://www.scikit-yb.org/en/latest/api/classifier/rocauc.html#yellowbrick.classifier.rocauc.ROCAUC>`_
+Quick Method         `roc_auc() <https://www.scikit-yb.org/en/latest/api/classifier/rocauc.html#yellowbrick.classifier.rocauc.roc_auc>`_
+Models               Classification
+Workflow             Model evaluation
+=================   =================
+
 .. plot::
     :context: close-figs
     :alt: ROCAUC Binary Classification
@@ -82,11 +89,33 @@ ROC curves are typically used in binary classification, and in fact the Scikit-L
 
 By default with multi-class ROCAUC visualizations, a curve for each class is plotted, in addition to the micro- and macro-average curves for each class. This enables the user to inspect the tradeoff between sensitivity and specificity on a per-class basis. Note that for multi-class ``ROCAUC``, at least one of the ``micro``, ``macro``, or ``per_class`` parameters must be set to ``True`` (by default, all are set to ``True``).
 
+Quick Method
+-------------------------
+The same functionality above can be achieved with the associated quick method ``roc_auc``. This method will build the ``ROCAUC`` object with the associated arguments, fit it, then (optionally) immediately show it
+
+.. plot::
+    :context: close-figs
+    :alt: roc_auc on the occupancy dataset
+
+    from yellowbrick.classifier.rocauc import roc_auc
+    from yellowbrick.datasets import load_credit
+    from sklearn.linear_model import LogisticRegression
+    from sklearn.model_selection import train_test_split 
+
+    #Load the classification dataset
+    X, y = load_credit()
+
+    #Create the train and test data
+    X_train, X_test, y_train, y_test = train_test_split(X,y)
+
+    # Instantiate the visualizer with the classification model
+    model = LogisticRegression()
+    roc_auc(model, X_train, y_train, X_test=X_test, y_test=y_test, classes=['not_defaulted', 'defaulted'])
 
 API Reference
 -------------
 
 .. automodule:: yellowbrick.classifier.rocauc
-    :members: ROCAUC
+    :members: ROCAUC, roc_auc
     :undoc-members:
     :show-inheritance:

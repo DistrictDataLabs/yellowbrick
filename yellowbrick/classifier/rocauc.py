@@ -506,8 +506,8 @@ def roc_auc(
         the dependent variable, y. Used to score the visualizer if specified.
     
     y_test: array-like, 1D, default: None
-        The vector of target data or the dependent variable predicted by X. Wil be split
-        into train and test splits. Used to score the visualizer if specified.
+        The vector of target data or the dependent variable predicted by X. 
+        Used to score the visualizer if specified.
 
     ax : matplotlib Axes, default: None
         The axes to plot the figure on. If not specified the current axes will be

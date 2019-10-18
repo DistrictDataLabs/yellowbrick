@@ -215,7 +215,7 @@ class TestROCAUC(VisualTestCase):
         model = LogisticRegression()
 
         #compare the images
-        visualizer = roc_auc(model, X, y)
+        visualizer = roc_auc(model, X, y, show=False)
         self.assert_images_similar(visualizer)
 
     @pytest.mark.skipif(pd is None, reason="test requires pandas")
