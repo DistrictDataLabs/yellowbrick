@@ -31,7 +31,6 @@ from yellowbrick.exceptions import ModelError, YellowbrickValueError
 
 from sklearn.svm import LinearSVC
 from sklearn.naive_bayes import GaussianNB
-from sklearn.tree import DecisionTreeClassifier
 from sklearn.linear_model import LogisticRegression
 from sklearn.base import BaseEstimator, ClassifierMixin
 from sklearn.model_selection import train_test_split as tts
@@ -213,10 +212,11 @@ class TestROCAUC(VisualTestCase):
         Test the ROCAUC quick method
         """
         X, y = load_occupancy(return_dataset=True).to_numpy()
-        model = DecisionTreeClassifier()
+        model = LogisticRegression()
 
-        # TODO: image comparison of the quick method
-        roc_auc(model, X, y)
+        #compare the images
+        visualizer = roc_auc(model, X, y, show=False)
+        self.assert_images_similar(visualizer)
 
     @pytest.mark.skipif(pd is None, reason="test requires pandas")
     def test_pandas_integration(self):
