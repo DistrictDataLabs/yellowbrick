@@ -100,7 +100,7 @@ def decisionviz(
         Determines the step size for creating the numpy meshgrid that will
         later become the foundation of the decision boundary graph. The
         default value of 0.0025 means that the step size for constructing
-        the meshgrid will be 0.25%% of differenes of the max and min of x
+        the meshgrid will be 0.25‰ of differenes of the max and min of x
         and y for each feature.
 
     markers : iterable of strings, default: ,od*vh+
@@ -213,7 +213,7 @@ class DecisionBoundariesVisualizer(ClassificationScoreVisualizer):
         Determines the step size for creating the numpy meshgrid that will
         later become the foundation of the decision boundary graph. The
         default value of 0.0025 means that the step size for constructing
-        the meshgrid will be 0.25%% of differenes of the max and min of x
+        the meshgrid will be 0.25‰ of differenes of the max and min of x
         and y for each feature.
 
     markers : iterable of strings, default: ,od*vh+
