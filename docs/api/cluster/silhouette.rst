@@ -7,11 +7,6 @@ The Silhouette Coefficient is used when the ground-truth about the dataset is un
 
 The Silhouette Visualizer displays the silhouette coefficient for each sample on a per-cluster basis, visualizing which clusters are dense and which are not. This is particularly useful for determining cluster imbalance, or for selecting a value for :math:`K` by comparing multiple visualizers.
 
-MyVisualizer
-=========
-
-This is the intro text of the visualizer.
-
 =================   ==============================
 Visualizer           `SilhouetteVisualizer <https://www.scikit-yb.org/en/latest/api/cluster/silhouette.html#yellowbrick.cluster.silhouette.SilhouetteVisualizer>`_
 Quick Method         `silhouette_visualizer() <https://www.scikit-yb.org/en/latest/api/cluster/silhouette.html#yellowbrick.cluster.silhouette.silhouette_visualizer>`_
