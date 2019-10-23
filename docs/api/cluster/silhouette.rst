@@ -13,8 +13,8 @@ MyVisualizer
 This is the intro text of the visualizer.
 
 =================   ==============================
-Visualizer           SilhouetteVisualizer (SilhouetteVisualizer <https://www.scikit-yb.org/en/latest/api/cluster/silhouette.html#yellowbrick.cluster.silhouette.SilhouetteVisualizer>)
-Quick Method         silhouette_visualizer() (silhouette_visualizer() <https://www.scikit-yb.org/en/latest/api/cluster/silhouette.html#yellowbrick.cluster.silhouette.silhouette_visualizer>)
+Visualizer           `SilhouetteVisualizer <https://www.scikit-yb.org/en/latest/api/cluster/silhouette.html#yellowbrick.cluster.silhouette.SilhouetteVisualizer>`_
+Quick Method         `silhouette_visualizer() <https://www.scikit-yb.org/en/latest/api/cluster/silhouette.html#yellowbrick.cluster.silhouette.silhouette_visualizer>`_
 Models               Clustering
 Workflow             Model evaluation
 =================   ==============================
