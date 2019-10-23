@@ -7,6 +7,13 @@ The ``KElbowVisualizer`` implements the "elbow" method to help data scientists s
 
 To demonstrate, in the following example the ``KElbowVisualizer`` fits the ``KMeans`` model for a range of :math:`K` values from 4 to 11 on a sample two-dimensional dataset with 8 random clusters of points. When the model is fit with 8 clusters, we can see a line annotating the "elbow" in the graph, which in this case we know to be the optimal number.
 
+=================   ==============================
+Visualizer           `KElbowVisualizer <https://www.scikit-yb.org/en/latest/api/cluster/elbow.html#yellowbrick.cluster.elbow.KElbowVisualizer>`_
+Quick Method         `kelbow_visualizer() <https://www.scikit-yb.org/en/latest/api/cluster/elbow.html#yellowbrick.cluster.elbow.kelbow_visualizer>`_
+Models               Clustering
+Workflow             Model evaluation
+=================   ==============================
+
 .. plot::
     :context: close-figs
     :alt: KElbowVisualizer on synthetic dataset with 8 random clusters
@@ -85,6 +92,6 @@ API Reference
 -------------
 
 .. automodule:: yellowbrick.cluster.elbow
-    :members: KElbowVisualizer
+    :members: KElbowVisualizer, kelbow_visualizer
     :undoc-members:
     :show-inheritance:
