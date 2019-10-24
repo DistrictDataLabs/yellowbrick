@@ -183,7 +183,7 @@ class TestSilhouetteVisualizer(VisualTestCase):
         )
 
         model = MiniBatchKMeans(3, random_state=343)
-        oz = silhouette_visualizer(model, X, random_state=93, legend=False)
+        oz = silhouette_visualizer(model, X, show=False)
         assert isinstance(oz, SilhouetteVisualizer)
 
         self.assert_images_similar(oz)
