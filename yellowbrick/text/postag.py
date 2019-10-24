@@ -20,6 +20,7 @@ small subset of documents.
 ##########################################################################
 
 import numpy as np
+import importlib
 
 from yellowbrick.draw import bar_stack
 from yellowbrick.text.base import TextVisualizer
@@ -147,6 +148,7 @@ class PosTagVisualizer(TextVisualizer):
         colors=None,
         frequency=False,
         stack=False,
+        parse=None,
         **kwargs
     ):
         super(PosTagVisualizer, self).__init__(ax=ax, **kwargs)
@@ -167,21 +169,45 @@ class PosTagVisualizer(TextVisualizer):
         self.colormap = colormap
         self.colors = colors
         self.stack = stack
+        self.parse = parse
+
+    @property
+    def parse(self):
+        return self.__parse
+
+    @parse.setter
+    def parse(self, parse):
+        accepted_parsers = ['nltk', 'spacy']
+        if not parse:
+            self.__parse = None
+        elif parse in accepted_parsers:
+            try:
+                importlib.import_module(parse)
+            except ModuleNotFoundError:
+                raise ModuleNotFoundError("Can't find module '{}' in this environment.".format(parse))
+            self.__parse = parse
+        else:
+            raise ValueError("{} is an invalid parser. Currently the supported parsers are 'nltk' and "
+                             "'spacy'".format(parse))
 
     def fit(self, X, y=None, **kwargs):
         """
         Fits the corpus to the appropriate tag map.
-        Text documents must be tokenized & tagged before passing to fit.
+        Text documents must be tokenized & tagged before passing to fit
+        if the 'parse' argument has not been specified at initialization.
+        Otherwise X can be a raw text ready to be parsed.
 
         Parameters
         ----------
-        X : list or generator
+        X : list or generator or str (raw text)
             Should be provided as a list of documents or a generator
             that yields a list of documents that contain a list of
-            sentences that contain (token, tag) tuples.
+            sentences that contain (token, tag) tuples. If X is a
+            string, the 'parse' argument should be specified as 'nltk'
+            or 'spacy' in order to parse the raw documents.
 
         y : ndarray or Series of length n
-            An optional array of target values that are ignored by the
+            An optional array of target values that are  ignored by the
             visualizer.
 
         kwargs : dict
@@ -193,6 +219,16 @@ class PosTagVisualizer(TextVisualizer):
             Returns the instance of the transformer/visualizer
         """
         self.labels_ = ["documents"]
+
+        if self.parse:
+            if self.parse == 'nltk':
+                X = self._parse_nltk(X)
+            elif self.parse == 'spacy':
+                X = self._parse_spacy(X)
+            else:
+                raise ValueError("{} is an invalid parser. Currently the supported parsers are 'nltk' and "
+                                 "'spacy'.".format(self.parse))
+
         if self.stack:
             if y is None:
                 raise YellowbrickValueError("Specify y for stack=True")
@@ -209,6 +245,25 @@ class PosTagVisualizer(TextVisualizer):
         self.draw()
 
         return self
+
+    def _parse_nltk(self, X):
+        nltk = importlib.import_module('nltk')
+        for doc in X:
+            yield [
+                nltk.pos_tag(nltk.word_tokenize(sent)) for sent in nltk.sent_tokenize(doc)
+            ]
+
+    def _parse_spacy(self, X):
+        spacy = importlib.import_module('spacy')
+        try:
+            nlp = spacy.load("en_core_web_sm")
+        except OSError:
+            raise OSError("Spacy model 'en_core_web_sm' has not been downloaded into this environment.")
+        for doc in X:
+            tagged = nlp(doc)
+            yield [
+                list((token.text.token.pos_) for token in sent) for sent in tagged.sents
+            ]
 
     def _penn_tag_map(self):
         """
