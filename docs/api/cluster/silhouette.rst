@@ -57,7 +57,7 @@ The same functionality above can be achieved with the associated quick method `s
     X = X[(X['age'] <= 40) & (X['edu'].isin([1,2]))]
 
     # Use the quick method and immediately show the figure
-    silhouette_visualizer(KMeans(5, random_state=42), X, colors='yellowbrick', show=False)
+    silhouette_visualizer(KMeans(5, random_state=42), X, colors='yellowbrick')
 
 API Reference
 -------------
