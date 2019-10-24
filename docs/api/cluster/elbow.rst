@@ -88,6 +88,30 @@ In the following example, we'll use the ``calinski_harabasz`` score and turn off
 It is important to remember that the "elbow" method does not work well if the data
 is not very clustered. In this case, you might see a smooth curve and the optimal value of :math:`K` will be unclear.
 
+Quick Method
+-------------------------
+The same functionality above can be achieved with the associated quick method ``kelbow_visualizer``. This method will build the ``KElbowVisualizer`` object with the associated arguments, fit it, then (optionally) immediately show it
+
+.. plot::
+    :context: close-figs
+    :alt: KElbowVisualizer
+
+    from sklearn.cluster import KMeans
+    from yellowbrick.cluster.elbow import kelbow_visualizer
+    from yellowbrick.datasets.loaders import load_mushroom
+    from sklearn.preprocessing import LabelEncoder
+
+    X, y = load_mushroom()
+
+    # Convert string labels to ordinal numubers
+    X['shape'] = LabelEncoder().fit_transform(X['shape'])
+    X['surface'] = LabelEncoder().fit_transform(X['surface'])
+    X['color'] = LabelEncoder().fit_transform(X['color'])
+
+    # Use the quick method and immediately show the figure
+    kelbow_visualizer(KMeans(random_state=4), X, k=(2,10))
+
+
 API Reference
 -------------
 
