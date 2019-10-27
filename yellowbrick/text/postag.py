@@ -247,6 +247,16 @@ class PosTagVisualizer(TextVisualizer):
         return self
 
     def _parse_nltk(self, X):
+        """
+        Tag a corpora using NLTK tagging (Penn-Treebank).
+
+        Parameters
+        ----------
+        X : str (raw text) or list of paragraphs (containing str)
+
+        :return: Generator of tagged documents in the form of a a list of (document) lists of (sentence)
+        lists of (token, tag) tuples.
+        """
         nltk = importlib.import_module('nltk')
         for doc in X:
             yield [
@@ -254,16 +264,28 @@ class PosTagVisualizer(TextVisualizer):
             ]
 
     def _parse_spacy(self, X):
+        """
+        Tag a corpora using SpaCy tagging (Universal Dependencies).
+
+        Parameters
+        ----------
+        X : str (raw text) or list of paragraphs (containing str)
+
+        :return: Generator of tagged documents in the form of a a list of (document) lists of (sentence)
+        lists of (token, tag) tuples.
+        """
         spacy = importlib.import_module('spacy')
         try:
             nlp = spacy.load("en_core_web_sm")
         except OSError:
             raise OSError("Spacy model 'en_core_web_sm' has not been downloaded into this environment.")
-        for doc in X:
-            tagged = nlp(doc)
-            yield [
-                list((token.text.token.pos_) for token in sent) for sent in tagged.sents
-            ]
+        if isinstance(X, list):
+            for doc in X:
+                tagged = nlp(doc)
+                yield [[(token.text, token.pos_) for token in sents] for sents in tagged.sents]
+        elif isinstance(X, str):
+            tagged = nlp(X)
+            yield [[(token.text, token.pos_) for token in sents] for sents in tagged.sents]
 
     def _penn_tag_map(self):
         """
@@ -343,8 +365,11 @@ class PosTagVisualizer(TextVisualizer):
             that yields a list of documents that contain a list of
             sentences that contain (token, tag) tuples.
         """
+        print(X)
         for idx, tagged_doc in enumerate(X):
+            print(tagged_doc)
             for tagged_sent in tagged_doc:
+                print(tagged_sent)
                 for _, tag in tagged_sent:
                     if self.stack:
                         counter = self.pos_tag_counts_[y[idx]]
