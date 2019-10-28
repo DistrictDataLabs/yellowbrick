@@ -162,7 +162,7 @@ class TestDiscriminationThreshold(VisualTestCase):
 
         _, ax = plt.subplots()
 
-        discrimination_threshold(BernoulliNB(3), X, y, ax=ax, random_state=5)
+        discrimination_threshold(BernoulliNB(3), X, y, ax=ax, random_state=5, show=False)
         self.assert_images_similar(ax=ax, tol=10)
 
     @patch.object(DiscriminationThreshold, "draw", autospec=True)

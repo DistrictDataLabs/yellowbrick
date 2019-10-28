@@ -495,7 +495,6 @@ class DiscriminationThreshold(ModelVisualizer):
 # Quick Methods
 ##########################################################################
 
-
 def discrimination_threshold(
     model,
     X,
@@ -510,9 +509,10 @@ def discrimination_threshold(
     random_state=None,
     is_fitted="auto",
     force_model=False,
+    show=True,
     **kwargs
 ):
-    """Discrimination Threshold:
+    """Discrimination Threshold
 
     Visualizes how precision, recall, f1 score, and queue rate change as the
     discrimination threshold increases. For probabilistic, binary classifiers,
@@ -603,8 +603,39 @@ def discrimination_threshold(
         will prevent an exception when the visualizer is initialized but may result
         in unexpected or unintended behavior.
 
+    show : bool, default: True
+        If True, calls ``show()``, which in turn calls ``plt.show()`` however you cannot
+        call ``plt.savefig`` from this signature, nor ``clear_figure``. If False, simply
+        calls ``finalize()``
+
     kwargs : dict
         Keyword arguments passed to the visualizer base classes.
+
+    Notes
+    -----
+    The term "discrimination threshold" is rare in the literature. Here, we
+    use it to mean the probability at which the positive class is selected
+    over the negative class in binary classification.
+
+    Classification models must implement either a ``decision_function`` or
+    ``predict_proba`` method in order to be used with this class. A
+    ``YellowbrickTypeError`` is raised otherwise.
+
+    .. seealso::
+        For a thorough explanation of discrimination thresholds, see:
+        `Visualizing Machine Learning Thresholds to Make Better Business
+        Decisions
+        <http://blog.insightdatalabs.com/visualizing-classifier-thresholds/>`_
+        by Insight Data.
+
+    Examples
+    --------
+    >>> from yellowbrick.classifier.threshold import discrimination_threshold
+    >>> from sklearn.linear_model import LogisticRegression
+    >>> from yellowbrick.datasets import load_occupancy
+    >>> X, y = load_occupancy()
+    >>> model = LogisticRegression(multi_class="auto", solver="liblinear")
+    >>> discrimination_threshold(model, X, y)
 
     Returns
     -------
@@ -629,7 +660,11 @@ def discrimination_threshold(
 
     # Fit and transform the visualizer (calls draw)
     visualizer.fit(X, y)
-    visualizer.finalize()
+
+    if show:
+        visualizer.show()
+    else:
+        visualizer.finalize()
 
     # Return the visualizer
     return visualizer
