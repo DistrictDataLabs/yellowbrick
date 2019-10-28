@@ -258,10 +258,20 @@ class PosTagVisualizer(TextVisualizer):
         lists of (token, tag) tuples.
         """
         nltk = importlib.import_module('nltk')
-        for doc in X:
-            yield [
-                nltk.pos_tag(nltk.word_tokenize(sent)) for sent in nltk.sent_tokenize(doc)
-            ]
+        nltk.download('punkt')
+        nltk.download('averaged_perceptron_tagger')
+        if isinstance(X, str):
+            for doc in X.split():
+                yield [
+                    nltk.pos_tag(nltk.word_tokenize(sent)) for sent in nltk.sent_tokenize(doc)
+                ]
+        elif isinstance(X, list):
+            for doc in X:
+                doc = doc.split()
+                for split_doc in doc:
+                    yield [
+                        nltk.pos_tag(nltk.word_tokenize(sent)) for sent in nltk.sent_tokenize(split_doc)
+                    ]
 
     def _parse_spacy(self, X):
         """
@@ -365,11 +375,8 @@ class PosTagVisualizer(TextVisualizer):
             that yields a list of documents that contain a list of
             sentences that contain (token, tag) tuples.
         """
-        print(X)
         for idx, tagged_doc in enumerate(X):
-            print(tagged_doc)
             for tagged_sent in tagged_doc:
-                print(tagged_sent)
                 for _, tag in tagged_sent:
                     if self.stack:
                         counter = self.pos_tag_counts_[y[idx]]
