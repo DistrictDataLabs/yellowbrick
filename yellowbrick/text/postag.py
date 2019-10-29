@@ -222,9 +222,9 @@ class PosTagVisualizer(TextVisualizer):
 
         if self.parse:
             if self.parse == 'nltk':
-                X = self._parse_nltk(X)
+                X = self.parse_nltk(X)
             elif self.parse == 'spacy':
-                X = self._parse_spacy(X)
+                X = self.parse_spacy(X)
             else:
                 raise ValueError("{} is an invalid parser. Currently the supported parsers are 'nltk' and "
                                  "'spacy'.".format(self.parse))
@@ -246,7 +246,7 @@ class PosTagVisualizer(TextVisualizer):
 
         return self
 
-    def _parse_nltk(self, X):
+    def parse_nltk(self, X):
         """
         Tag a corpora using NLTK tagging (Penn-Treebank).
 
@@ -273,7 +273,7 @@ class PosTagVisualizer(TextVisualizer):
                         nltk.pos_tag(nltk.word_tokenize(sent)) for sent in nltk.sent_tokenize(split_doc)
                     ]
 
-    def _parse_spacy(self, X):
+    def parse_spacy(self, X):
         """
         Tag a corpora using SpaCy tagging (Universal Dependencies).
 
