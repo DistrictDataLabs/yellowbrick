@@ -293,7 +293,7 @@ class TestPosTag(VisualTestCase):
         Assert no errors occur during PosTagVisualizer integration
         with raw corpus to be parsed using spacy
         """
-        visualizer = PosTagVisualizer(parse='spacy')
+        visualizer = PosTagVisualizer(parse='spacy', tagset='universal')
         visualizer.fit(sonnets)
         visualizer.ax.grid(False)
 
