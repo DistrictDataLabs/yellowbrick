@@ -258,20 +258,15 @@ class PosTagVisualizer(TextVisualizer):
         lists of (token, tag) tuples.
         """
         nltk = importlib.import_module('nltk')
-        nltk.download('punkt')
-        nltk.download('averaged_perceptron_tagger')
-        if isinstance(X, str):
-            for doc in X.split():
-                yield [
-                    nltk.pos_tag(nltk.word_tokenize(sent)) for sent in nltk.sent_tokenize(doc)
-                ]
-        elif isinstance(X, list):
-            for doc in X:
-                doc = doc.split()
-                for split_doc in doc:
-                    yield [
-                        nltk.pos_tag(nltk.word_tokenize(sent)) for sent in nltk.sent_tokenize(split_doc)
-                    ]
+        try:
+            nltk.data.find("corpora/treebank")
+        except LookupError:
+            raise LookupError("Error occured because nltk postag data is not available")
+
+        for doc in X:
+            yield [
+                nltk.pos_tag(nltk.word_tokenize(sent)) for sent in nltk.sent_tokenize(doc)
+            ]
 
     def parse_spacy(self, X):
         """

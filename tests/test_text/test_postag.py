@@ -305,7 +305,7 @@ class TestPosTag(VisualTestCase):
         Assert no errors occur during PosTagVisualizer integration
         with raw corpus to be parsed using nltk
         """
-        visualizer = PosTagVisualizer(parse='nltk')
+        visualizer = PosTagVisualizer(parse='nltk', tagset="penn_treebank")
         visualizer.fit(sonnets)
         visualizer.ax.grid(False)
 
