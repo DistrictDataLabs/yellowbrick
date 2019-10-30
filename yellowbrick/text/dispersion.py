@@ -344,7 +344,7 @@ def dispersion(
 
     # Instantiate the visualizer
     visualizer = DispersionPlot(
-        words,
+        target_words,
         ax=ax,
         colors=colors,
         colormap=colormap,
