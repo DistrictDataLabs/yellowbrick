@@ -40,7 +40,7 @@ corpus = load_hobbies()
 class TestDispersionPlot(VisualTestCase):
     def test_quick_method(self):
         """
-        Assert no errors occur when using the qucik method
+        Assert no errors occur when using the quick method
         """
         _, ax = plt.subplots()
 
