@@ -300,12 +300,24 @@ class TestPosTag(VisualTestCase):
         self.assert_images_similar(visualizer)
 
     @pytest.mark.skipif(nltk is None, reason="test requires nltk")
-    def test_nltk_raw(self):
+    def test_nltk_word_raw(self):
         """
         Assert no errors occur during PosTagVisualizer integration
         with raw corpus to be parsed using nltk
         """
         visualizer = PosTagVisualizer(parse='nltk', tagset="penn_treebank")
+        visualizer.fit(sonnets)
+        visualizer.ax.grid(False)
+
+        self.assert_images_similar(visualizer)
+
+    @pytest.mark.skipif(nltk is None, reason="test requires nltk")
+    def test_nltk_wordpunct_raw(self):
+        """
+        Assert no errors occur during PosTagVisualizer integration
+        with raw corpus to be parsed using nltk
+        """
+        visualizer = PosTagVisualizer(parse='nltk', tagset="penn_treebank", tagger="wordpunct")
         visualizer.fit(sonnets)
         visualizer.ax.grid(False)
 

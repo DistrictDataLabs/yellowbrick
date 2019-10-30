@@ -141,15 +141,16 @@ class PosTagVisualizer(TextVisualizer):
     """
 
     def __init__(
-        self,
-        ax=None,
-        tagset="penn_treebank",
-        colormap=None,
-        colors=None,
-        frequency=False,
-        stack=False,
-        parse=None,
-        **kwargs
+            self,
+            ax=None,
+            tagset="penn_treebank",
+            colormap=None,
+            colors=None,
+            frequency=False,
+            stack=False,
+            parse=None,
+            tagger=None,
+            **kwargs
     ):
         super(PosTagVisualizer, self).__init__(ax=ax, **kwargs)
 
@@ -170,6 +171,7 @@ class PosTagVisualizer(TextVisualizer):
         self.colors = colors
         self.stack = stack
         self.parse = parse
+        self.tagger = tagger
 
     @property
     def parse(self):
@@ -263,10 +265,19 @@ class PosTagVisualizer(TextVisualizer):
         except LookupError:
             raise LookupError("Error occured because nltk postag data is not available")
 
-        for doc in X:
-            yield [
-                nltk.pos_tag(nltk.word_tokenize(sent)) for sent in nltk.sent_tokenize(doc)
-            ]
+        if not self.tagger or self.tagger == 'word':
+            #  use word tagger as default
+            for doc in X:
+                yield [
+                    nltk.pos_tag(nltk.word_tokenize(sent)) for sent in nltk.sent_tokenize(doc)
+                ]
+        elif self.tagger == 'wordpunct':
+            for doc in X:
+                yield [
+                    nltk.pos_tag(nltk.wordpunct_tokenize(sent)) for sent in nltk.sent_tokenize(doc)
+                ]
+        else:
+            raise ValueError("tagger must be either 'word' or 'wordpunct'")
 
     def parse_spacy(self, X):
         """
@@ -281,9 +292,12 @@ class PosTagVisualizer(TextVisualizer):
         """
         spacy = importlib.import_module('spacy')
         try:
-            nlp = spacy.load("en_core_web_sm")
+            if not self.tagger or self.tagger == "en_core_web_sm":
+                nlp = spacy.load("en_core_web_sm")
+            else:
+                nlp = spacy.load(self.tagger)
         except OSError:
-            raise OSError("Spacy model 'en_core_web_sm' has not been downloaded into this environment.")
+            raise OSError(f"Spacy model '{self.tagger}' has not been downloaded into this environment.")
         if isinstance(X, list):
             for doc in X:
                 tagged = nlp(doc)
@@ -513,17 +527,16 @@ class PosTagVisualizer(TextVisualizer):
 
 
 def postag(
-    X,
-    y=None,
-    ax=None,
-    tagset="penn_treebank",
-    colormap=None,
-    colors=None,
-    frequency=False,
-    stack=False,
-    **kwargs
+        X,
+        y=None,
+        ax=None,
+        tagset="penn_treebank",
+        colormap=None,
+        colors=None,
+        frequency=False,
+        stack=False,
+        **kwargs
 ):
-
     """
     Display a barchart with the counts of different parts of speech
     in X, which consists of a part-of-speech-tagged corpus, which the
