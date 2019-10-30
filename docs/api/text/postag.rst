@@ -251,7 +251,30 @@ Or, using the ``nltk`` parser.
     viz.fit(untagged_speech)
     viz.show()
 
-**Note:**To use either of these parsers, either `nltk` or `spacy` must already be installed in your environment.
+.. note::
+    To use either of these parsers, either `nltk` or `spacy` must already be installed in your environment.
+
+You can also change the tagger used. For example, using `nltk` you can select either `word` (default):
+
+.. code:: python
+
+    untagged_speech = u'Whose woods these are I think I know'
+
+    # Create the visualizer, fit, score, and show it
+    viz = PosTagVisualizer(parse='nltk', tagger='word')
+    viz.fit(untagged_speech)
+    viz.show()
+
+Or using `wordpunct`.
+
+.. code:: python
+
+    untagged_speech = u'Whose woods these are I think I know'
+
+    # Create the visualizer, fit, score, and show it
+    viz = PosTagVisualizer(parse='nltk', tagger='wordpunct')
+    viz.fit(untagged_speech)
+    viz.show()
 
 API Reference
 -------------
