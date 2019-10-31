@@ -46,6 +46,7 @@ def tsne(
     colors=None,
     colormap=None,
     alpha=0.7,
+    show=True,
     **kwargs
 ):
     """
@@ -94,8 +95,24 @@ def tsne(
         Specify a transparency where 1 is completely opaque and 0 is completely
         transparent. This property makes densely clustered points more visible.
 
+    show : bool, default: True
+        If True, calls ``show()``, which in turn calls ``plt.show()`` however you cannot
+        call ``plt.savefig`` from this signature, nor ``clear_figure``. If False, simply
+        calls ``finalize()``
+
     kwargs : dict
         Pass any additional keyword arguments to the TSNE transformer.
+
+    Example
+    --------
+    >>> from yellowbrick.text.tsne import tsne
+    >>> from sklearn.feature_extraction.text import TfidfVectorizer
+    >>> from yellowbrick.datasets import load_hobbies
+    >>> corpus = load_hobbies()
+    >>> tfidf = TfidfVectorizer()
+    >>> X = tfidf.fit_transform(corpus.data)
+    >>> y = corpus.target
+    >>> tsne(X, y)
 
     Returns
     -------
@@ -117,11 +134,14 @@ def tsne(
     # Fit and transform the visualizer (calls draw)
     visualizer.fit(X, y, **kwargs)
     visualizer.transform(X)
-    visualizer.finalize()
+
+    if show:
+        visualizer.show()
+    else:
+        visualizer.finalize()
 
     # Return the visualizer object
     return visualizer
-
 
 ##########################################################################
 ## TSNEVisualizer
