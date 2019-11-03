@@ -293,7 +293,7 @@ class TestPosTag(VisualTestCase):
         Assert no errors occur during PosTagVisualizer integration
         with raw corpus to be parsed using spacy
         """
-        visualizer = PosTagVisualizer(parse='spacy', tagset='universal')
+        visualizer = PosTagVisualizer(parser='spacy', tagset='universal')
         visualizer.fit(sonnets)
         visualizer.ax.grid(False)
 
@@ -305,7 +305,7 @@ class TestPosTag(VisualTestCase):
         Assert no errors occur during PosTagVisualizer integration
         with raw corpus to be parsed using nltk
         """
-        visualizer = PosTagVisualizer(parse='nltk', tagset="penn_treebank")
+        visualizer = PosTagVisualizer(parser='nltk', tagset="penn_treebank")
         visualizer.fit(sonnets)
         visualizer.ax.grid(False)
 
@@ -317,7 +317,7 @@ class TestPosTag(VisualTestCase):
         Assert no errors occur during PosTagVisualizer integration
         with raw corpus to be parsed using nltk
         """
-        visualizer = PosTagVisualizer(parse='nltk', tagset="penn_treebank", tagger="wordpunct")
+        visualizer = PosTagVisualizer(parser='nltk', tagset="penn_treebank", tagger="wordpunct")
         visualizer.fit(sonnets)
         visualizer.ax.grid(False)
 

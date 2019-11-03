@@ -235,7 +235,7 @@ to parse indicates which natural language processing library to use. To use ``sp
     untagged_speech = u'Whose woods these are I think I know'
 
     # Create the visualizer, fit, score, and show it
-    viz = PosTagVisualizer(parse='spacy')
+    viz = PosTagVisualizer(parser='spacy')
     viz.fit(untagged_speech)
     viz.show()
 
@@ -247,7 +247,7 @@ Or, using the ``nltk`` parser.
     untagged_speech = u'Whose woods these are I think I know'
 
     # Create the visualizer, fit, score, and show it
-    viz = PosTagVisualizer(parse='nltk')
+    viz = PosTagVisualizer(parser='nltk')
     viz.fit(untagged_speech)
     viz.show()
 
@@ -261,7 +261,7 @@ You can also change the tagger used. For example, using `nltk` you can select ei
     untagged_speech = u'Whose woods these are I think I know'
 
     # Create the visualizer, fit, score, and show it
-    viz = PosTagVisualizer(parse='nltk', tagger='word')
+    viz = PosTagVisualizer(parser='nltk', tagger='word')
     viz.fit(untagged_speech)
     viz.show()
 
@@ -272,7 +272,7 @@ Or using `wordpunct`.
     untagged_speech = u'Whose woods these are I think I know'
 
     # Create the visualizer, fit, score, and show it
-    viz = PosTagVisualizer(parse='nltk', tagger='wordpunct')
+    viz = PosTagVisualizer(parser='nltk', tagger='wordpunct')
     viz.fit(untagged_speech)
     viz.show()
 

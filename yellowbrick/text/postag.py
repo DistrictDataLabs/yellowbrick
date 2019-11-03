@@ -148,7 +148,7 @@ class PosTagVisualizer(TextVisualizer):
             colors=None,
             frequency=False,
             stack=False,
-            parse=None,
+            parser=None,
             tagger=None,
             **kwargs
     ):
@@ -170,27 +170,27 @@ class PosTagVisualizer(TextVisualizer):
         self.colormap = colormap
         self.colors = colors
         self.stack = stack
-        self.parse = parse
+        self.parser = parser
         self.tagger = tagger
 
     @property
-    def parse(self):
-        return self.__parse
+    def parser(self):
+        return self.__parser
 
-    @parse.setter
-    def parse(self, parse):
+    @parser.setter
+    def parser(self, parser):
         accepted_parsers = ['nltk', 'spacy']
-        if not parse:
-            self.__parse = None
-        elif parse in accepted_parsers:
+        if not parser:
+            self.__parser = None
+        elif parser in accepted_parsers:
             try:
-                importlib.import_module(parse)
+                importlib.import_module(parser)
             except ModuleNotFoundError:
-                raise ModuleNotFoundError("Can't find module '{}' in this environment.".format(parse))
-            self.__parse = parse
+                raise ModuleNotFoundError("Can't find module '{}' in this environment.".format(parser))
+            self.__parser = parser
         else:
             raise ValueError("{} is an invalid parser. Currently the supported parsers are 'nltk' and "
-                             "'spacy'".format(parse))
+                             "'spacy'".format(parser))
 
     def fit(self, X, y=None, **kwargs):
         """
@@ -222,14 +222,9 @@ class PosTagVisualizer(TextVisualizer):
         """
         self.labels_ = ["documents"]
 
-        if self.parse:
-            if self.parse == 'nltk':
-                X = self.parse_nltk(X)
-            elif self.parse == 'spacy':
-                X = self.parse_spacy(X)
-            else:
-                raise ValueError("{} is an invalid parser. Currently the supported parsers are 'nltk' and "
-                                 "'spacy'.".format(self.parse))
+        if self.parser:
+            parse_func = getattr(self, 'parse_{}'.format(self.parser))
+            X = parse_func(X)
 
         if self.stack:
             if y is None:
