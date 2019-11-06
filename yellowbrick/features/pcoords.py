@@ -49,6 +49,7 @@ def parallel_coordinates(
     fast=False,
     vlines=True,
     vlines_kwds=None,
+    show=True,
     **kwargs
 ):
     """Displays each feature as a vertical axis and each instance as a line.
@@ -116,6 +117,11 @@ def parallel_coordinates(
     vlines_kwds : dict, default: None
         options to style or display the vertical lines, default: None
 
+    show : bool, default: True
+        If True, calls ``show()``, which in turn calls ``plt.show()`` however you cannot
+        call ``plt.savefig`` from this signature, nor ``clear_figure``. If False, simply
+        calls ``finalize()``
+
     kwargs : dict
         Keyword arguments that are passed to the base class and may influence
         the visualization as defined in other Visualizers.
@@ -144,6 +150,11 @@ def parallel_coordinates(
     # Fit and transform the visualizer (calls draw)
     visualizer.fit(X, y, **kwargs)
     visualizer.transform(X)
+
+    if show:
+        visualizer.show()
+    else:
+        visualizer.finalize()
 
     # Return the visualizer object
     return visualizer
