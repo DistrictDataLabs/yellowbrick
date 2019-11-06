@@ -47,7 +47,7 @@ class TestDispersionPlot(VisualTestCase):
         text = [doc.split() for doc in corpus.data]
         target_words = ["Game", "player", "score", "oil", "Man"]
 
-        viz = dispersion(words=target_words, corpus=text, ax=ax)
+        viz = dispersion(target_words=target_words, corpus=text, ax=ax)
         viz.ax.grid(False)
 
         self.assert_images_similar(viz, tol=25)
