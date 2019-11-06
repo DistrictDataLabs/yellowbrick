@@ -129,7 +129,15 @@ show it.
 
     # Load the classification data set
     X, y = load_occupancy()
-    visualizer = parallel_coordinates(X, y)
+
+    # Specify the features of interest and the classes of the target
+    features = [
+        "temperature", "relative humidity", "light", "CO2", "humidity"
+    ]
+    classes = ["unoccupied", "occupied"]
+
+    # Instantiate the visualizer
+    visualizer = parallel_coordinates(X, y, classes=classes, features=features)
 
 API Reference
 -------------
