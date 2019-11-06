@@ -9,7 +9,7 @@ A word's importance can be weighed by its dispersion in a corpus.  Lexical dispe
 Visualizer           `DispersionPlot <https://www.scikit-yb.org/en/latest/api/text/dispersion.html#yellowbrick.text.dispersion.DispersionPlot>`_
 Quick Method         `dispersion() <https://www.scikit-yb.org/en/latest/api/text/dispersion.html#yellowbrick.text.dispersion.dispersion>`_
 Models               Text Modeling
-Workflow             Model evaluation
+Workflow             Feature Engineering
 =================   ==============================
 
 .. plot::
