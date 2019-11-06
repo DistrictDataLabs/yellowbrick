@@ -33,6 +33,8 @@ Workflow             Feature Engineering
     visualizer.fit(text)
     visualizer.show()
 
+Quick Method
+-------------------------
 The same functionality above can be achieved with the associated quick method `dispersion`. This method will build the Dispersion Plot object with the associated arguments, fit it, then (optionally) immediately show it.
 
 .. plot::
