@@ -52,6 +52,28 @@ Workflow             Feature Analysis
 For regression, the ``RadViz`` visualizer should use a color sequence to
 display the target information, as opposed to discrete colors.
 
+
+Quick Method
+-------------------------
+The same functionality above can be achieved with the associated quick method ``radviz``. This method will build the ``RadViz`` object with the associated arguments, fit it, then (optionally) immediately show it
+
+.. plot::
+    :context: close-figs
+    :alt: radviz on the occupancy dataset
+
+    from yellowbrick.features.radviz import radviz
+    from yellowbrick.datasets import load_occupancy
+    
+    #Load the classification dataset
+    X, y = load_occupancy()
+
+    # Specify the target classes
+    classes = ["unoccupied", "occupied"]
+
+    # Instantiate the visualizer
+    radviz(X, y, classes=classes)
+
+
 API Reference
 -------------
 
