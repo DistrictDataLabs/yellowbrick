@@ -1,0 +1,35 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+body {
+    margin: 0;            /* Reset default margin */
+}
+iframe {
+    display: block;       /* iframes are inline by default */
+    background: #fff;
+    border: none;         /* Reset default border */
+    height: 100vh;        /* Viewport-relative units */
+    width: 100vw;
+}
+</style>
+<meta charset="UTF-8">
+</head>
+<body>
+  <iframe id="rst" src="http://localhost:62498/static/_iframe.html"></iframe>
+   
+  <script type="text/javascript">
+    var ws = new WebSocket("ws://localhost:62497/ws")
+        
+    ws.onmessage = function(event) {
+        console.log('updating');
+        document.getElementById("rst").contentWindow.location.reload();
+    };
+     
+    ws.onerror = function(event){
+        console.log("Error ", event)
+    }
+</script>
+</body>
+</html>

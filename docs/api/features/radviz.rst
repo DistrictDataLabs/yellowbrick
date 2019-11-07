@@ -22,6 +22,13 @@ percent missing.
 If you do receive this warning, you may want to look at imputation strategies.
 A good starting place is the `scikit-learn Imputer. <http://scikit-learn.org/stable/modules/generated/sklearn.impute.SimpleImputer.html>`_
 
+=================   =================
+Visualizer           `RadViz <https://www.scikit-yb.org/en/latest/api/features/radviz.html#yellowbrick.features.radviz.RadialVisualizer>`_
+Quick Method         `radviz() <https://www.scikit-yb.org/en/latest/api/features/radviz.html#yellowbrick.features.radviz.radviz>`_
+Models               Classification, Regression
+Workflow             Feature Analysis
+=================   =================
+
 .. plot::
     :context: close-figs
     :alt: RadViz on the Occupancy Dataset
@@ -49,6 +56,6 @@ API Reference
 -------------
 
 .. automodule:: yellowbrick.features.radviz
-    :members: RadialVisualizer, RadViz
+    :members: RadialVisualizer, RadViz, radviz
     :undoc-members:
     :show-inheritance:

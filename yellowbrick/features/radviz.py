@@ -40,6 +40,7 @@ def radviz(
     colors=None,
     colormap=None,
     alpha=1.0,
+    show=True,
     **kwargs
 ):
     """
@@ -55,7 +56,7 @@ def radviz(
     X : ndarray or DataFrame of shape n x m
         A matrix of n instances with m features
 
-    y : ndarray or Series of length n
+    y : ndarray or Series of length n, default:None
         An array or series of target or class values
 
     ax : matplotlib Axes, default: None
@@ -77,6 +78,11 @@ def radviz(
         Specify a transparency where 1 is completely opaque and 0 is completely
         transparent. This property makes densely clustered points more visible.
 
+    show: bool, default: True
+        If True, calls ``show()``, which in turn calls ``plt.show()`` however you cannot
+        call ``plt.savefig`` from this signature, nor ``clear_figure``. If False, simply
+        calls ``finalize()``
+
     Returns
     -------
     viz : RadViz
@@ -96,6 +102,11 @@ def radviz(
     # Fit and transform the visualizer (calls draw)
     visualizer.fit(X, y, **kwargs)
     visualizer.transform(X)
+
+    if show:
+        visualizer.show()
+    else:
+        visualizer.finalize()
 
     # Return the visualizer object
     return visualizer
