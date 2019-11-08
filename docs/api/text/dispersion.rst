@@ -35,7 +35,7 @@ Workflow             Feature Engineering
 
 Quick Method
 -------------------------
-The same functionality above can be achieved with the associated quick method `dispersion`. This method will build the Dispersion Plot object with the associated arguments, fit it, then (optionally) immediately show it.
+The same functionality above can be achieved with the associated quick method `dispersion`. This method will build the Dispersion Plot object with the associated arguments, fit it, then (optionally) immediately show the visualization.
 
 .. plot::
     :context: close-figs
