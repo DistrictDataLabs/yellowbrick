@@ -143,8 +143,8 @@ class PosTagVisualizer(TextVisualizer):
         self,
         ax=None,
         tagset="penn_treebank",
-        colormap=None,
         colors=None,
+        colormap=None,
         frequency=False,
         stack=False,
         **kwargs
@@ -435,10 +435,11 @@ def postag(
     y=None,
     ax=None,
     tagset="penn_treebank",
-    colormap=None,
     colors=None,
+    colormap=None,
     frequency=False,
     stack=False,
+    show=False,
     **kwargs
 ):
 
@@ -455,6 +456,10 @@ def postag(
         that yields a list of documents that contain a list of
         sentences that contain (token, tag) tuples.
 
+    y : ndarray or Series of length n
+        An optional array of target values that are ignored by the
+        visualizer.
+        
     ax : matplotlib axes
         The axes to plot the figure on.
 
@@ -472,6 +477,15 @@ def postag(
     frequency: bool {True, False}, default: False
         If set to True, part-of-speech tags will be plotted according to frequency,
         from most to least frequent.
+
+    stack : bool {True, False}, default : False
+        Plot the PosTag frequency chart as a per-class stacked bar chart.
+        Note that fit() requires y for this visualization.
+    
+    show: bool, default: True
+        If True, calls ``show()``, which in turn calls ``plt.show()`` however you cannot
+        call ``plt.savefig`` from this signature, nor ``clear_figure``. If False, simply
+        calls ``finalize()``    
 
     kwargs : dict
         Pass any additional keyword arguments to the PosTagVisualizer.
@@ -494,7 +508,11 @@ def postag(
 
     # Fit and transform the visualizer (calls draw)
     visualizer.fit(X, y=y, **kwargs)
-    visualizer.finalize()
+    
+    if show:
+        visualizer.show()
+    else:
+        visualizer.finalize()
 
     # Return the visualizer object
     return visualizer

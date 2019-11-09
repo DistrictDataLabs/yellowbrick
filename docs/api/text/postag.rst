@@ -7,6 +7,13 @@ Parts of speech (e.g. verbs, nouns, prepositions, adjectives) indicate how a wor
 
 The ``PosTagVisualizer`` is intended to support grammar-based feature extraction techniques for machine learning workflows that require natural language processing. The visualizer reads in a corpus that has already been sentence- and word-segmented, and tagged, creating a bar chart to visualize the relative proportions of different parts-of-speech in a corpus.
 
+=================   =================
+Visualizer           `PosTagVisualizer <https://www.scikit-yb.org/en/latest/api/text/postag.html#yellowbrick.text.postag.PosTagVisualizer>`_
+Quick Method         `postag() <https://www.scikit-yb.org/en/latest/api/text/postag.html#yellowbrick.text.postag.postag>`_
+Models               Classification, Regression
+Workflow             Feature Engineering
+=================   =================
+
 .. note::
     The ``PosTagVisualizer`` currently works with both Penn-Treebank (e.g. via NLTK) and Universal Dependencies (e.g. via SpaCy)-tagged corpora, but expects corpora that have already been tagged, and which take the form of a list of (document) lists of (sentence) lists of ``(token, tag)`` tuples, as in the example below.
 
@@ -146,6 +153,75 @@ Libraries like SpaCy use tags from the Universal Dependencies (UD) framework. Th
     viz.fit(tagged_speech)
     viz.show()
 
+Quick Method
+-------------------------
+The same functionality above can be achieved with the associated quick method ``postag``. This method will build the ``PosTagVisualizer`` object with the associated arguments, fit it, then (optionally) immediately show the visualization.
+
+.. plot::
+    :context: close-figs
+    :alt: PosTag plot with Penn Treebank tags
+
+    from yellowbrick.text import PosTagVisualizer
+
+
+    tagged_stanzas = [
+        [
+            [
+                ('Whose', 'JJ'),('woods', 'NNS'),('these', 'DT'),
+                ('are', 'VBP'),('I', 'PRP'),('think', 'VBP'),('I', 'PRP'),
+                ('know', 'VBP'),('.', '.')
+                ],
+            [
+                ('His', 'PRP$'),('house', 'NN'),('is', 'VBZ'),('in', 'IN'),
+                ('the', 'DT'),('village', 'NN'),('though', 'IN'),(';', ':'),
+                ('He', 'PRP'),('will', 'MD'),('not', 'RB'),('see', 'VB'),
+                ('me', 'PRP'),('stopping', 'VBG'), ('here', 'RB'),('To', 'TO'),
+                ('watch', 'VB'),('his', 'PRP$'),('woods', 'NNS'),('fill', 'VB'),
+                ('up', 'RP'),('with', 'IN'),('snow', 'NNS'),('.', '.')
+                ]
+            ],
+        [
+            [
+                ('My', 'PRP$'),('little', 'JJ'),('horse', 'NN'),('must', 'MD'),
+                ('think', 'VB'),('it', 'PRP'),('queer', 'JJR'),('To', 'TO'),
+                ('stop', 'VB'),('without', 'IN'),('a', 'DT'),('farmhouse', 'NN'),
+                ('near', 'IN'),('Between', 'NNP'),('the', 'DT'),('woods', 'NNS'),
+                ('and', 'CC'),('frozen', 'JJ'),('lake', 'VB'),('The', 'DT'),
+                ('darkest', 'JJS'),('evening', 'NN'),('of', 'IN'),('the', 'DT'),
+                ('year', 'NN'),('.', '.')
+                ]
+            ],
+        [
+            [
+                ('He', 'PRP'),('gives', 'VBZ'),('his', 'PRP$'),('harness', 'NN'),
+                ('bells', 'VBZ'),('a', 'DT'),('shake', 'NN'),('To', 'TO'),
+                ('ask', 'VB'),('if', 'IN'),('there', 'EX'),('is', 'VBZ'),
+                ('some', 'DT'),('mistake', 'NN'),('.', '.')
+                ],
+            [
+                ('The', 'DT'),('only', 'JJ'),('other', 'JJ'),('sound', 'NN'),
+                ('’', 'NNP'),('s', 'VBZ'),('the', 'DT'),('sweep', 'NN'),
+                ('Of', 'IN'),('easy', 'JJ'),('wind', 'NN'),('and', 'CC'),
+                ('downy', 'JJ'),('flake', 'NN'),('.', '.')
+                ]
+            ],
+        [
+            [
+                ('The', 'DT'),('woods', 'NNS'),('are', 'VBP'),('lovely', 'RB'),
+                (',', ','),('dark', 'JJ'),('and', 'CC'),('deep', 'JJ'),(',', ','),
+                ('But', 'CC'),('I', 'PRP'),('have', 'VBP'),('promises', 'NNS'),
+                ('to', 'TO'),('keep', 'VB'),(',', ','),('And', 'CC'),('miles', 'NNS'),
+                ('to', 'TO'),('go', 'VB'),('before', 'IN'),('I', 'PRP'),
+                ('sleep', 'VBP'),(',', ','),('And', 'CC'),('miles', 'NNS'),
+                ('to', 'TO'),('go', 'VB'),('before', 'IN'),('I', 'PRP'),
+                ('sleep', 'VBP'),('.', '.')
+                ]
+        ]
+    ]
+
+    # Create the visualizer, fit, score, and show it
+    viz = postag(tagged_stanzas)
+    viz.show()
 
 +-------------------+------------------------------------------+----------------------+--------------------------+
 | Penn-Treebank Tag | Description                              | Universal Tag        | Description              |
@@ -228,6 +304,6 @@ API Reference
 -------------
 
 .. automodule:: yellowbrick.text.postag
-    :members: PosTagVisualizer
+    :members: PosTagVisualizer, postag
     :undoc-members:
     :show-inheritance:

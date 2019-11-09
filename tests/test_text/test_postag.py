@@ -173,7 +173,7 @@ class TestPosTag(VisualTestCase):
         _, ax = plt.subplots()
         tagged_docs = list(get_tagged_docs(sonnets))
 
-        viz = postag(tagged_docs, ax=ax)
+        viz = postag(tagged_docs, ax=ax, show=False)
         viz.ax.grid(False)
 
         self.assert_images_similar(viz)
