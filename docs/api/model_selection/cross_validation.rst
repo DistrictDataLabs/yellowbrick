@@ -19,6 +19,13 @@ Classification
 
 In the following example, we show how to visualize cross-validated scores for a classification model. After loading our occupancy data as a ``DataFrame``, we created a ``StratifiedKFold`` cross-validation strategy to ensure all of our classes in each split are represented with the same proportion. We then fit the ``CVScores`` visualizer using the ``f1_weighted`` scoring metric as opposed to the default metric, accuracy, to get a better sense of the relationship of precision and recall in our classifier across all of our folds.
 
+=================   =================
+ Visualizer           `CVScores <https://www.scikit-yb.org/en/latest/api/model_selection/cross_validation.html#yellowbrick.model_selection.cross_validation.CVScores>`_
+ Quick Method         `cv_scores() <https://www.scikit-yb.org/en/latest/api/model_selection/cross_validation.html#yellowbrick.model_selection.cross_validation.cv_scores>`_
+ Models               Classification, Regression
+ Workflow             Model Selection
+ =================   =================
+
 .. plot::
     :context: close-figs
     :alt: Cross validation on the occupancy data set using StratifiedKFold
@@ -74,10 +81,34 @@ In this next example we show how to visualize cross-validated scores for a regre
 
 As with our classification ``CVScores`` visualization, our regression visualization suggests that our ``Ridge`` regressor performs very well (e.g. produces a high coefficient of determination) across nearly every fold, resulting in another fairly high overall R2 score.
 
+Quick Method
+ -------------------------
+ The same functionality above can be achieved with the associated quick method ``cv_scores``. This method will build the ``CVScores`` object with the associated arguments, fit it, then (optionally) immediately show the visualization.
+
+.. plot::
+    :context: close-figs
+    :alt: Cross validation on the energy data set using KFold
+
+    from sklearn.linear_model import Ridge
+    from sklearn.model_selection import KFold
+
+    from yellowbrick.datasets import load_energy
+    from yellowbrick.model_selection import cv_scores
+
+    # Load the regression dataset
+    X, y = load_energy()
+
+    # Instantiate the regression model and visualizer
+    cv = KFold(n_splits=12, random_state=42)
+
+    model = Ridge()
+    visualizer = cv_scores(model, X=X, y=y, cv=cv, scoring='r2')
+
+
 API Reference
 -------------
 
 .. automodule:: yellowbrick.model_selection.cross_validation
-    :members: CVScores
+    :members: CVScores, cv_scores
     :undoc-members:
     :show-inheritance:
