@@ -192,7 +192,9 @@ class CVScores(ModelVisualizer):
 ##########################################################################
 
 
-def cv_scores(model, X, y, ax=None, cv=None, scoring=None, color=None, show=True, **kwargs):
+def cv_scores(
+    model, X, y, ax=None, cv=None, scoring=None, color=None, show=True, **kwargs
+):
     """
     Displays cross validation scores as a bar chart and the
     average of the scores as a horizontal line
