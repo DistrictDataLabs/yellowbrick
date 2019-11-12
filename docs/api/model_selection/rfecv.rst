@@ -9,6 +9,13 @@ RFE requires a specified number of features to keep, however it is often not kno
 
 To show how this works in practice, we'll start with a contrived example using a dataset that has only 3 informative features out of 25.
 
+=================   =================
+ Visualizer           `RFECV <https://www.scikit-yb.org/en/latest/api/model_selection/rfecv.html#yellowbrick.model_selection.rfecv.RFECV>`_
+ Quick Method         `rfecv() <https://www.scikit-yb.org/en/latest/api/model_selection/rfecv.html#yellowbrick.model_selection.rfecv.rfecv>`_
+ Models               Classification, Regression
+ Workflow             Model Selection
+ =================   =================
+
 .. note to contributors: the below code takes a long time to run so has not been
    modified with a plot directive. See rfecv.py to regenerate images.
 
@@ -63,10 +70,29 @@ In this example we can see that 19 features were selected, though there doesn't 
 
 .. seealso:: This visualizer is is based off of the visualization in the scikit-learn documentation: `recursive feature elimination with cross-validation <http://scikit-learn.org/stable/auto_examples/feature_selection/plot_rfe_with_cross_validation.html>`_. However, the Yellowbrick version does not use ``sklearn.feature_selection.RFECV`` but instead wraps ``sklearn.feature_selection.RFE`` models. The fitted model can be accessed on the visualizer using the ``viz.rfe_estimator_`` attribute, and in fact the visualizer acts as the fitted model when using ``predict()`` or ``score()``.
 
+Quick Method
+-------------------------
+The same functionality above can be achieved with the associated quick method ``rfecv``. This method will build the ``RFECV`` object with the associated arguments, fit it, then (optionally) immediately show the visualization.
+
+.. code:: python
+
+    from sklearn.ensemble import RandomForestClassifier
+    from sklearn.model_selection import StratifiedKFold
+
+    from yellowbrick.model_selection import rfecv
+    from yellowbrick.datasets import load_credit
+
+    # Load classification dataset
+    X, y = load_credit()
+
+    cv = StratifiedKFold(5)
+    visualizer = rfecv(RandomForestClassifier(), X=X, y=y, cv=cv, scoring='f1_weighted')
+
+
 API Reference
 -------------
 
 .. automodule:: yellowbrick.model_selection.rfecv
-    :members: RFECV
+    :members: RFECV, rfecv
     :undoc-members:
     :show-inheritance:
