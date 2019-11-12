@@ -318,6 +318,11 @@ def rfecv(model, X, y, ax=None, step=1, groups=None, cv=None, scoring=None, **kw
         ``scorer(estimator, X, y)``. See scikit-learn model evaluation
         documentation for names of possible metrics.
 
+    show: bool, default: True
+        If True, calls ``show()``, which in turn calls ``plt.show()`` however you cannot
+        call ``plt.savefig`` from this signature, nor ``clear_figure``. If False, simply
+        calls ``finalize()``
+
     kwargs : dict
         Keyword arguments that are passed to the base class and may influence
         the visualization as defined in other Visualizers. These arguments are
