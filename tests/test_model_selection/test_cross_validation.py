@@ -147,7 +147,7 @@ class TestCrossValidation(VisualTestCase):
         X, y = self.classification
 
         cv = ShuffleSplit(n_splits=5, test_size=0.2, random_state=321)
-        viz = cv_scores(SVC(), X, y, cv=cv)
+        viz = cv_scores(SVC(), X, y, cv=cv, show=False)
 
         self.assert_images_similar(viz, tol=2.0)
 
