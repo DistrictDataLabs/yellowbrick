@@ -334,6 +334,11 @@ def rfecv(model, X, y, ax=None, step=1, groups=None, cv=None, scoring=None, **kw
 
     # Fit and show the visualizer
     oz.fit(X, y)
-    oz.show(**kwargs)
 
+    if show:
+        oz.show()
+    else:
+        oz.finalize()
+
+    # Return the visualizer object
     return oz
