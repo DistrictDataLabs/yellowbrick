@@ -262,7 +262,7 @@ class RFECV(ModelVisualizer):
 ##########################################################################
 
 
-def rfecv(model, X, y, ax=None, step=1, groups=None, cv=None, scoring=None, **kwargs):
+def rfecv(model, X, y, ax=None, step=1, groups=None, cv=None, scoring=None, show=True, **kwargs):
     """
     Performs recursive feature elimination with cross-validation to determine
     an optimal number of features for a model. Visualizes the feature subsets
