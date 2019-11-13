@@ -3,6 +3,13 @@
 Cross Validation Scores
 =======================
 
+=================   =====================
+ Visualizer           `CVScores <https://www.scikit-yb.org/en/latest/api/model_selection/cross_validation.html#yellowbrick.model_selection.cross_validation.CVScores>`_
+ Quick Method         `cv_scores() <https://www.scikit-yb.org/en/latest/api/model_selection/cross_validation.html#yellowbrick.model_selection.cross_validation.cv_scores>`_
+ Models               Classification, Regression
+ Workflow             Model Selection
+=================   =====================
+
 Generally we determine whether a given model is optimal by looking at it's F1, precision, recall, and accuracy (for classification), or it's coefficient of determination (R2) and error (for regression). However, real world data is often distributed somewhat unevenly, meaning that the fitted model is likely to perform better on some sections of the data than on others. Yellowbrick's ``CVScores`` visualizer enables us to visually explore these variations in performance using different cross validation strategies.
 
 Cross Validation
@@ -14,17 +21,11 @@ Cross-validation starts by shuffling the data (to prevent any unintentional orde
 
 In Yellowbrick, the ``CVScores`` visualizer displays cross-validated scores as a bar chart (one bar for each fold) with the average score across all folds plotted as a horizontal dotted line.
 
+
 Classification
 --------------
 
 In the following example, we show how to visualize cross-validated scores for a classification model. After loading our occupancy data as a ``DataFrame``, we created a ``StratifiedKFold`` cross-validation strategy to ensure all of our classes in each split are represented with the same proportion. We then fit the ``CVScores`` visualizer using the ``f1_weighted`` scoring metric as opposed to the default metric, accuracy, to get a better sense of the relationship of precision and recall in our classifier across all of our folds.
-
-=================   =================
- Visualizer           `CVScores <https://www.scikit-yb.org/en/latest/api/model_selection/cross_validation.html#yellowbrick.model_selection.cross_validation.CVScores>`_
- Quick Method         `cv_scores() <https://www.scikit-yb.org/en/latest/api/model_selection/cross_validation.html#yellowbrick.model_selection.cross_validation.cv_scores>`_
- Models               Classification, Regression
- Workflow             Model Selection
- =================   =================
 
 .. plot::
     :context: close-figs
@@ -81,8 +82,9 @@ In this next example we show how to visualize cross-validated scores for a regre
 
 As with our classification ``CVScores`` visualization, our regression visualization suggests that our ``Ridge`` regressor performs very well (e.g. produces a high coefficient of determination) across nearly every fold, resulting in another fairly high overall R2 score.
 
+
 Quick Method
- -------------------------
+------------
  The same functionality above can be achieved with the associated quick method ``cv_scores``. This method will build the ``CVScores`` object with the associated arguments, fit it, then (optionally) immediately show the visualization.
 
 .. plot::
@@ -102,7 +104,7 @@ Quick Method
     cv = KFold(n_splits=12, random_state=42)
 
     model = Ridge()
-    visualizer = cv_scores(model, X=X, y=y, cv=cv, scoring='r2')
+    visualizer = cv_scores(model, X, y, cv=cv, scoring='r2')
 
 
 API Reference
