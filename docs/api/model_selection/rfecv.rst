@@ -3,18 +3,18 @@
 Recursive Feature Elimination
 =============================
 
+ =================   =====================
+ Visualizer           `RFECV <https://www.scikit-yb.org/en/latest/api/model_selection/rfecv.html#yellowbrick.model_selection.rfecv.RFECV>`_
+ Quick Method         `rfecv() <https://www.scikit-yb.org/en/latest/api/model_selection/rfecv.html#yellowbrick.model_selection.rfecv.rfecv>`_
+ Models               Classification, Regression
+ Workflow             Model Selection
+ =================   =====================
+
 Recursive feature elimination (RFE) is a feature selection method that fits a model and removes the weakest feature (or features) until the specified number of features is reached. Features are ranked by the model's ``coef_`` or ``feature_importances_`` attributes, and by recursively eliminating a small number of features per loop, RFE attempts to eliminate dependencies and collinearity that may exist in the model.
 
 RFE requires a specified number of features to keep, however it is often not known in advance how many features are valid. To find the optimal number of features cross-validation is used with RFE to score different feature subsets and select the best scoring collection of features. The ``RFECV`` visualizer plots the number of features in the model along with their cross-validated test score and variability and visualizes the selected number of features.
 
 To show how this works in practice, we'll start with a contrived example using a dataset that has only 3 informative features out of 25.
-
-=================   =================
- Visualizer           `RFECV <https://www.scikit-yb.org/en/latest/api/model_selection/rfecv.html#yellowbrick.model_selection.rfecv.RFECV>`_
- Quick Method         `rfecv() <https://www.scikit-yb.org/en/latest/api/model_selection/rfecv.html#yellowbrick.model_selection.rfecv.rfecv>`_
- Models               Classification, Regression
- Workflow             Model Selection
- =================   =================
 
 .. note to contributors: the below code takes a long time to run so has not been
    modified with a plot directive. See rfecv.py to regenerate images.
