@@ -90,7 +90,7 @@ is not very clustered. In this case, you might see a smooth curve and the optima
 
 Quick Method
 -------------------------
-The same functionality above can be achieved with the associated quick method ``kelbow_visualizer``. This method will build the ``KElbowVisualizer`` object with the associated arguments, fit it, then (optionally) immediately show it
+The same functionality above can be achieved with the associated quick method ``kelbow_visualizer``. This method will build the ``KElbowVisualizer`` object with the associated arguments, fit it, then (optionally) immediately show the visualization.
 
 .. plot::
     :context: close-figs
