@@ -98,15 +98,9 @@ The same functionality above can be achieved with the associated quick method ``
 
     from sklearn.cluster import KMeans
     from yellowbrick.cluster.elbow import kelbow_visualizer
-    from yellowbrick.datasets.loaders import load_mushroom
-    from sklearn.preprocessing import LabelEncoder
+    from yellowbrick.datasets.loaders import load_nfl
 
-    X, y = load_mushroom()
-
-    # Convert string labels to ordinal numubers
-    X['shape'] = LabelEncoder().fit_transform(X['shape'])
-    X['surface'] = LabelEncoder().fit_transform(X['surface'])
-    X['color'] = LabelEncoder().fit_transform(X['color'])
+    X, y = load_nfl()
 
     # Use the quick method and immediately show the figure
     kelbow_visualizer(KMeans(random_state=4), X, k=(2,10))
