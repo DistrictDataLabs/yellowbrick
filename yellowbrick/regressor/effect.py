@@ -110,11 +110,18 @@ class EffectPlot(RegressionScoreVisualizer):
         plt.tight_layout()
         
         
-def effectplot(model, X, y, **kwargs):
-    visualizer = EffectPlot(model=model, **kwargs)
-    visualizer.fit(X, y, **kwargs)
-    visualizer.finalize()
-    return visualizer.ax
+def effectplot(model, X, y, ax=None, colors=None, colormap=None, marker='D', 
+               show=True, **kwargs):
+    visualizer = EffectPlot(model=model, ax=ax, colors=colors, colormap=colormap, 
+                            marker=marker, **kwargs)
+    visualizer.fit(X, y)
+       
+    if show:
+        visualizer.show()
+    else:
+        visualizer.finalize()
+    
+    return visualizer
 
 #Alias for Effectplot
 EffectViz = EffectPlot
