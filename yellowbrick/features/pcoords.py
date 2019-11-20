@@ -43,6 +43,8 @@ def parallel_coordinates(
     classes=None,
     normalize=None,
     sample=1.0,
+    random_state=None,
+    shuffle=False,
     colors=None,
     colormap=None,
     alpha=None,
@@ -89,6 +91,15 @@ def parallel_coordinates(
         specifies how many examples to display from the data
         If int, specifies the maximum number of samples to display.
         If float, specifies a fraction between 0 and 1 to display.
+
+    random_state : int, RandomState instance or None
+        If int, random_state is the seed used by the random number generator;
+        If RandomState instance, random_state is the random number generator;
+        If None, the random number generator is the RandomState instance used
+        by np.random; only used if shuffle is True and sample < 1.0
+
+    shuffle : boolean, default: True
+        specifies whether sample is drawn randomly
 
     colors : list or tuple, default: None
         optional list or tuple of colors to colorize lines
