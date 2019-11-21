@@ -9,6 +9,12 @@ Unfortunately, ``TSNE`` is very expensive, so typically a simpler decomposition 
 
 After importing the required tools, we can use the :doc:`hobbies corpus <../datasets/hobbies>` and vectorize the text using TF-IDF. Once the corpus is vectorized we can visualize it, showing the distribution of classes.
 
+=================   =================
+Visualizer           `TSNEVisualizer <https://www.scikit-yb.org/en/latest/api/text/tsne.html#yellowbrick.text.tsne.TSNEVisualizer>`_
+Quick Method         `tsne() <https://www.scikit-yb.org/en/latest/api/text/tsne.html#yellowbrick.text.tsne.tsne>`_
+Models               Decomposition
+Workflow             Model evaluation
+=================   =================
 
 .. plot::
     :context: close-figs
@@ -87,11 +93,31 @@ This means we don't have to use class labels at all. Instead we can use cluster 
     tsne.fit(X, ["c{}".format(c) for c in clusters.labels_])
     tsne.show()
 
+Quick Method
+-------------------------
+The same functionality above can be achieved with the associated quick method ``tsne``. This method will build the ``TSNEVisualizer`` object with the associated arguments, fit it, then (optionally) immediately show it
+
+.. plot::
+    :context: close-figs
+    :alt: tsne quick method on the hobbies dataset
+
+    from yellowbrick.text.tsne import tsne
+    from sklearn.feature_extraction.text import TfidfVectorizer
+    from yellowbrick.datasets import load_hobbies
+
+    # Load the data and create document vectors
+    corpus = load_hobbies()
+    tfidf = TfidfVectorizer()
+
+    X = tfidf.fit_transform(corpus.data)
+    y = corpus.target
+
+    tsne(X, y)
 
 API Reference
 -------------
 
 .. automodule:: yellowbrick.text.tsne
-    :members: TSNEVisualizer
+    :members: TSNEVisualizer, tsne
     :undoc-members:
     :show-inheritance:
