@@ -72,7 +72,7 @@ visualizer.score(X,y)
 visualizer.show()
 ```
 
-For additional information on getting started with Yellowbrick, view the [Quick Start](https://www.scikit-yb.org/en/latest/quickstart.html) guide in the [documentation](https://www.scikit-yb.org/en/latest/) and check out our [examples notebook](https://github.com/DistrictDataLabs/yellowbrick/blob/develop/examples/examples.ipynb).
+For additional information on getting started with Yellowbrick, view the [Quick Start Guide](https://www.scikit-yb.org/en/latest/quickstart.html) in the [documentation](https://www.scikit-yb.org/en/latest/) and check out our [examples notebook](https://github.com/DistrictDataLabs/yellowbrick/blob/develop/examples/examples.ipynb).
 
 ## Contributing to Yellowbrick
 
