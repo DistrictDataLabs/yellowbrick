@@ -3,18 +3,18 @@
 t-SNE Corpus Visualization
 ==========================
 
+=================   =================
+Visualizer           `TSNEVisualizer <https://www.scikit-yb.org/en/latest/api/text/tsne.html#yellowbrick.text.tsne.TSNEVisualizer>`_
+Quick Method         `tsne() <https://www.scikit-yb.org/en/latest/api/text/tsne.html#yellowbrick.text.tsne.tsne>`_
+Models               Decomposition
+Workflow             Feature Engineering/Selection
+=================   =================
+
 One very popular method for visualizing document similarity is to use t-distributed stochastic neighbor embedding, t-SNE. Scikit-learn implements this decomposition method as the ``sklearn.manifold.TSNE`` transformer. By decomposing high-dimensional document vectors into 2 dimensions using probability distributions from both the original dimensionality and the decomposed dimensionality, t-SNE is able to effectively cluster similar documents. By decomposing to 2 or 3 dimensions, the documents can be visualized with a scatter plot.
 
 Unfortunately, ``TSNE`` is very expensive, so typically a simpler decomposition method such as SVD or PCA is applied ahead of time. The ``TSNEVisualizer`` creates an inner transformer pipeline that applies such a decomposition first (SVD with 50 components by default), then performs the t-SNE embedding. The visualizer then plots the scatter plot, coloring by cluster or by class, or neither if a structural analysis is required.
 
 After importing the required tools, we can use the :doc:`hobbies corpus <../datasets/hobbies>` and vectorize the text using TF-IDF. Once the corpus is vectorized we can visualize it, showing the distribution of classes.
-
-=================   =================
-Visualizer           `TSNEVisualizer <https://www.scikit-yb.org/en/latest/api/text/tsne.html#yellowbrick.text.tsne.TSNEVisualizer>`_
-Quick Method         `tsne() <https://www.scikit-yb.org/en/latest/api/text/tsne.html#yellowbrick.text.tsne.tsne>`_
-Models               Decomposition
-Workflow             Model evaluation
-=================   =================
 
 .. plot::
     :context: close-figs

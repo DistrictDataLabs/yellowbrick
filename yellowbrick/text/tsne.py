@@ -42,7 +42,7 @@ def tsne(
     ax=None,
     decompose="svd",
     decompose_by=50,
-    classes=None,
+    labels=None,
     colors=None,
     colormap=None,
     alpha=0.7,
@@ -82,7 +82,7 @@ def tsne(
         Specify the number of components for preliminary decomposition, by
         default this is 50; the more components, the slower TSNE will be.
 
-    classes : list of strings
+    labels : list of strings
         The names of the classes in the target, used to create a legend.
 
     colors : list or tuple of colors
@@ -124,7 +124,7 @@ def tsne(
         ax=ax,
         decompose=decompose,
         decompose_by=decompose_by,
-        classes=classes,
+        labels=labels,
         colors=colors,
         colormap=colormap,
         alpha=alpha,
@@ -133,7 +133,6 @@ def tsne(
 
     # Fit and transform the visualizer (calls draw)
     visualizer.fit(X, y, **kwargs)
-    visualizer.transform(X)
 
     if show:
         visualizer.show()
