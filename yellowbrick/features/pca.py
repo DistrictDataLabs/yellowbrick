@@ -468,6 +468,7 @@ def pca_decomposition(
     random_state=None,
     colorbar=True,
     heatmap=False,
+    show=True,
     **kwargs
 ):
 
@@ -547,6 +548,11 @@ def pca_decomposition(
         Also draws a colorbar for readability purpose. The heatmap is accessible
         using lax property and colorbar using uax property.
 
+    show : bool, default: True
+        If True, calls ``show()``, which in turn calls ``plt.show()`` however you cannot
+        call ``plt.savefig`` from this signature, nor ``clear_figure``. If False, simply
+        calls ``finalize()``
+
     kwargs : dict
         Keyword arguments that are passed to the base class and may influence
         the visualization as defined in other Visualizers.
@@ -600,7 +606,11 @@ def pca_decomposition(
     # Fit and transform the visualizer (calls draw)
     visualizer.fit(X, y)
     visualizer.transform(X, y)
-    visualizer.finalize()
+
+    if show:
+        visualizer.show()
+    else:
+        visualizer.finalize()
 
     # Returns the visualizer object.
     return visualizer
