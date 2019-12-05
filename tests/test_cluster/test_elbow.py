@@ -235,7 +235,14 @@ class TestKElbowVisualizer(VisualTestCase):
         )
         visualizer.fit(self.clusters.X)
 
-        expected = np.array([69.100065, 54.081571, 43.146921, 34.978487])
+        expected = np.array(
+            [
+                69.10006514142941,
+                54.081571290449936,
+                44.491830981793605,
+                33.99887993254433,
+            ]
+        )
         assert len(visualizer.k_scores_) == 4
 
         visualizer.finalize()
@@ -256,7 +263,14 @@ class TestKElbowVisualizer(VisualTestCase):
         )
         visualizer.fit(self.clusters.X)
 
-        expected = np.array([0.691636, 0.456646, 0.255174, 0.239842])
+        expected = np.array(
+            [
+                0.6916363804000003,
+                0.456645663683503,
+                0.26918583373704463,
+                0.25523298106687914,
+            ]
+        )
         assert len(visualizer.k_scores_) == 4
 
         visualizer.finalize()
@@ -280,7 +294,12 @@ class TestKElbowVisualizer(VisualTestCase):
         assert visualizer.elbow_value_ is None
 
         expected = np.array(
-            [81.662726256035683, 50.992378259195554, 40.952179227847012, 35.939494]
+            [
+                81.66272625603568,
+                50.992378259195554,
+                39.573201061900455,
+                37.06865804955547,
+            ]
         )
 
         visualizer.finalize()
@@ -306,11 +325,18 @@ class TestKElbowVisualizer(VisualTestCase):
         assert len(visualizer.k_scores_) == 5
         assert visualizer.elbow_value_ == 3
         expected = np.array(
-            [4286.479848, 12463.383743, 8766.999551, 6950.08391, 5865.79722]
+            [
+                4286.4798481306625,
+                12463.383743070379,
+                8763.75791732466,
+                6942.167328461612,
+                5859.608884917707,
+            ]
         )
 
         visualizer.finalize()
         self.assert_images_similar(visualizer, windows_tol=2.2)
+        print(visualizer.k_scores_)
         assert_array_almost_equal(visualizer.k_scores_, expected)
 
     def test_no_knee(self):
