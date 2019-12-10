@@ -63,8 +63,7 @@ Visualizers are estimators &mdash; objects that learn from data &mdash; whose pr
 - **t-SNE Corpus Visualization**: uses stochastic neighbor embedding to project documents
 - **UMAP Corpus Visualization**: plot similar documents closer together to discover clusters
 
-... and more! Yellowbrick is adding new visualizers all the time so be sure to check out our [examples gallary](https://www.scikit-yb.org/en/latest/api/index.html) &mdash; or even the [develop](https://github.com/districtdatalabs/yellowbrick/tree/develop) branch &mdash; and feel free to contribute your ideas for new Visualizers!
+... and more! Yellowbrick is adding new visualizers all the time so be sure to check out our [examples gallery]https://github.com/DistrictDataLabs/yellowbrick/tree/develop/examples) &mdash; or even the [develop](https://github.com/districtdatalabs/yellowbrick/tree/develop) branch &mdash; and feel free to contribute your ideas for new Visualizers!
 
 ## Affiliations
 [![District Data Labs](https://github.com/DistrictDataLabs/yellowbrick/raw/develop/docs/images/readme/affiliates_ddl.png)](https://www.districtdatalabs.com/) [![NumFOCUS Affiliated Project](https://github.com/DistrictDataLabs/yellowbrick/raw/develop/docs/images/readme/affiliates_numfocus.png)](https://numfocus.org/)
-
