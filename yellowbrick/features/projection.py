@@ -286,6 +286,8 @@ class ProjectionVisualizer(DataVisualizer):
             if self.colorbar:
                 if self.projection == 3:
                     sm = plt.cm.ScalarMappable(cmap=self._colors, norm=self._norm)
+                    # Avoid MPL TypeError: "You must first set_array for mappable"
+                    sm.set_array([])
                     self.cbar = plt.colorbar(sm, ax=self.ax)
 
                 else:

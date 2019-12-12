@@ -7,6 +7,15 @@ The Silhouette Coefficient is used when the ground-truth about the dataset is un
 
 The Silhouette Visualizer displays the silhouette coefficient for each sample on a per-cluster basis, visualizing which clusters are dense and which are not. This is particularly useful for determining cluster imbalance, or for selecting a value for :math:`K` by comparing multiple visualizers.
 
+=================   ==============================
+Visualizer           `SilhouetteVisualizer <https://www.scikit-yb.org/en/latest/api/cluster/silhouette.html#yellowbrick.cluster.silhouette.SilhouetteVisualizer>`_
+Quick Method         `silhouette_visualizer() <https://www.scikit-yb.org/en/latest/api/cluster/silhouette.html#yellowbrick.cluster.silhouette.silhouette_visualizer>`_
+Models               Clustering
+Workflow             Model evaluation
+=================   ==============================
+
+Examples and demo
+
 .. plot::
     :context: close-figs
     :alt: SilhouetteVisualizer on the nfl dataset with 4 clusters
@@ -30,11 +39,30 @@ The Silhouette Visualizer displays the silhouette coefficient for each sample on
     visualizer.fit(X)        # Fit the data to the visualizer
     visualizer.show()        # Finalize and render the figure
 
+The same functionality above can be achieved with the associated quick method `silhouette_visualizer`. This method will build the Silhouette Visualizer object with the associated arguments, fit it, then (optionally) immediately show it.
+
+.. plot::
+    :context: close-figs
+    :alt: silhouette_visualizer on the nfl dataset with 4 clusters
+
+    from sklearn.cluster import KMeans
+
+    from yellowbrick.cluster import silhouette_visualizer
+    from yellowbrick.datasets import load_credit
+
+    # Load a clustering dataset
+    X, y = load_credit()
+
+    # Specify rows to cluster: under 40 y/o and have either graduate or university education
+    X = X[(X['age'] <= 40) & (X['edu'].isin([1,2]))]
+
+    # Use the quick method and immediately show the figure
+    silhouette_visualizer(KMeans(5, random_state=42), X, colors='yellowbrick')
 
 API Reference
 -------------
 
 .. automodule:: yellowbrick.cluster.silhouette
-    :members: SilhouetteVisualizer
+    :members: SilhouetteVisualizer, silhouette_visualizer
     :undoc-members:
     :show-inheritance:

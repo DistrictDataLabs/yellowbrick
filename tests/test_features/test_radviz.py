@@ -209,3 +209,12 @@ class TestRadViz(VisualTestCase):
         visualizer = RadViz(features=features, classes=classes)
         visualizer.fit_transform_show(X, y)
         self.assert_images_similar(visualizer, tol=0.1)
+
+    def test_radviz_quick_method(self):
+        """
+        Test RadViz quick method with colors being set.
+        """
+        visualizer = radviz(
+            *self.dataset, colors=["cyan", "magenta", "yellow"], show=False
+        )
+        self.assert_images_similar(visualizer)

@@ -1,6 +1,6 @@
 # Contributing to Yellowbrick
 
-**NOTE: This document is a "getting started" summary for contributing to the Yellowbrick project.** To read the full contributor's guide, please visit the [contributing page](http://www.scikit-yb.org/en/latest/about.html#contributing) in the documentation. Please make sure to read this page carefully to ensure the review process is as smooth as possible and to ensure the greatest likelihood of having your contribution be merged.
+**NOTE: This document is a "getting started" summary for contributing to the Yellowbrick project.** To read the full contributor's guide, please visit the [contributing page](http://www.scikit-yb.org/en/latest/contributing/index.html) in the documentation. Please make sure to read this page carefully to ensure the review process is as smooth as possible and to ensure the greatest likelihood of having your contribution be merged.
 
 For more on the development path, goals, and motivations behind Yellowbrick, check out our developer presentation: [Visualizing Model Selection with Scikit-Yellowbrick: An Introduction to Developing Visualizers](http://www.slideshare.net/BenjaminBengfort/visualizing-model-selection-with-scikityellowbrick-an-introduction-to-developing-visualizers).
 
@@ -16,11 +16,11 @@ Beyond creating visualizers, there are many ways to contribute:
 - Contribute a Jupyter notebook to our examples[ gallery](https://github.com/DistrictDataLabs/yellowbrick/tree/develop/examples).
 - Assist us with [user testing](http://www.scikit-yb.org/en/latest/evaluation.html).
 - Add to the documentation or help with our website, [scikit-yb.org](http://www.scikit-yb.org).
-- Write unit or integration tests for our project.
+- Write [unit or integration tests](https://www.scikit-yb.org/en/latest/contributing/developing_visualizers.html#integration-tests) for our project.
 - Answer questions on our issues, mailing list, Stack Overflow, and elsewhere.
 - Translate our documentation into another language.
 - Write a blog post, tweet, or share our project with others.
-- Teach someone how to use Yellowbrick.
+- [Teach](https://www.scikit-yb.org/en/latest/teaching.html) someone how to use Yellowbrick.
 
 As you can see, there are lots of ways to get involved and we would be very happy for you to join us! The only thing we ask is that you abide by the principles of openness, respect, and consideration of others as described in the [Python Software Foundation Code of Conduct](https://www.python.org/psf/codeofconduct/).
 
@@ -250,7 +250,7 @@ $ pytest tests/test_your_visualizer.py
 
 The Makefile uses the pytest runner and testing suite as well as the coverage library, so make sure you have those dependencies installed!
 
-**Note**: Advanced developers can use our _image comparison tests_ to assert that an image generated matches a baseline image. Read more about this in our [testing documentation](http://www.scikit-yb.org/en/latest/contributing.html#testing)
+**Note**: Advanced developers can use our _image comparison tests_ to assert that an image generated matches a baseline image. Read more about this in our [testing documentation](https://www.scikit-yb.org/en/latest/contributing/developing_visualizers.html#image-comparison-tests).
 
 ### Documentation
 
@@ -296,4 +296,4 @@ class MyVisualizer(Visualizer):
     """
 ```
 
-This is a very good start to producing a high quality visualizer, but unless it is part of the documentation on our website, it will not be visible. For details on including documentation in the `docs` directory see the [Contributing Documentation](http://www.scikit-yb.org/en/latest/contributing.html#documentation) section in the larger contributing guide.
+This is a very good start to producing a high quality visualizer, but unless it is part of the documentation on our website, it will not be visible. For details on including documentation in the `docs` directory see the [Contributing Documentation](https://www.scikit-yb.org/en/latest/contributing/index.html) section in the larger contributing guide.

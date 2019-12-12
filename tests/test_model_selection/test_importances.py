@@ -230,7 +230,9 @@ class TestFeatureImportancesVisualizer(VisualTestCase):
         """
         X, y = load_iris(True)
 
-        viz = FeatureImportances(LogisticRegression(random_state=222), stack=True)
+        viz = FeatureImportances(
+            LogisticRegression(solver="liblinear", random_state=222), stack=True
+        )
         viz.fit(X, y)
         viz.finalize()
 
