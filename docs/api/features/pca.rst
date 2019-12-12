@@ -6,10 +6,10 @@ PCA Projection
 The PCA Decomposition visualizer utilizes principal component analysis to decompose high dimensional data into two or three dimensions so that each instance can be plotted in a scatter plot. The use of PCA means that the projected dataset can be analyzed along axes of principal variation and can be interpreted to determine if spherical distance metrics can be utilized.
 
 =================   =================
-Visualizer            `PCA Decomposition <https://www.scikit-yb.org/en/latest/api/features/pca.html#yellowbrick.features.pca.PCA>`_
-Quick Method          `pca_decomposition <https://www.scikit-yb.org/en/latest/api/features/pca.html#yellowbrick.features.pca.pca_decomposition>`_
-Models               Classification
-Workflow             Feature extraction
+Visualizer           `PCA Decomposition <https://www.scikit-yb.org/en/latest/api/features/pca.html#yellowbrick.features.pca.PCA>`_
+Quick Method         `pca_decomposition <https://www.scikit-yb.org/en/latest/api/features/pca.html#yellowbrick.features.pca.pca_decomposition>`_
+Models               Classification/Regression
+Workflow             Feature Engineering/Selection
 =================   =================
 
 .. plot::
@@ -43,7 +43,7 @@ The PCA projection can also be plotted in three dimensions to attempt to visuali
 
     colors = np.array(['r' if yi else 'b' for yi in y])
 
-    visualizer = PCADecomposition(scale=True, color=colors, proj_dim=3)
+    visualizer = PCADecomposition(scale=True, color=colors, projection=3)
     visualizer.fit_transform(X, y)
     visualizer.show()
 
@@ -77,7 +77,7 @@ The PCA projection can be enhanced to a biplot whose points are the projected in
 
     X, y = load_concrete()
 
-    visualizer = PCADecomposition(scale=True, proj_features=True, proj_dim=3)
+    visualizer = PCADecomposition(scale=True, proj_features=True, projection=3)
     visualizer.fit_transform(X, y)
     visualizer.show()
 

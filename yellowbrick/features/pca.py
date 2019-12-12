@@ -292,7 +292,7 @@ class PCA(ProjectionVisualizer):
         Calls the internal `transform` method of the scikit-learn PCA transformer, which
         performs a dimensionality reduction on the input features ``X``. Next calls the
         ``draw`` method of the Yellowbrick visualizer, finally returning a new array of
-        transformed features of shape ``(len(X), proj_dim)``.
+        transformed features of shape ``(len(X), projection)``.
 
         Parameters
         ----------
@@ -306,7 +306,7 @@ class PCA(ProjectionVisualizer):
         -------
         Xp : ndarray or DataFrame of shape n x m
             Returns a new array-like object of transformed features of shape
-            ``(len(X), proj_dim)``.
+            ``(len(X), projection)``.
         """
         try:
             Xp = self.pca_transformer.transform(X)
