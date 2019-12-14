@@ -88,6 +88,7 @@ The same functionality above can be achieved with the associated quick method ``
     cv = StratifiedKFold(5)
     visualizer = rfecv(RandomForestClassifier(), X=X, y=y, cv=cv, scoring='f1_weighted')
 
+.. image:: images/rfecv_quick_method.png
 
 API Reference
 -------------
