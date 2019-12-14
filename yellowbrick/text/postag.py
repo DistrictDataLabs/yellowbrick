@@ -185,19 +185,19 @@ class PosTagVisualizer(TextVisualizer):
 
     @property
     def parser(self):
-        return self.__parser
+        return self._parser
 
     @parser.setter
     def parser(self, parser):
         accepted_parsers = ['nltk', 'spacy']
         if not parser:
-            self.__parser = None
+            self._parser = None
         elif parser in accepted_parsers:
             try:
                 importlib.import_module(parser)
             except ModuleNotFoundError:
                 raise ModuleNotFoundError("Can't find module '{}' in this environment.".format(parser))
-            self.__parser = parser
+            self._parser = parser
         else:
             raise ValueError("{} is an invalid parser. Currently the supported parsers are 'nltk' and "
                              "'spacy'".format(parser))
