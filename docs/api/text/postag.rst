@@ -261,7 +261,7 @@ You can also change the tagger used. For example, using `nltk` you can select ei
     untagged_speech = u'Whose woods these are I think I know'
 
     # Create the visualizer, fit, score, and show it
-    viz = PosTagVisualizer(parser='nltk', tagger='word')
+    viz = PosTagVisualizer(parser='nltk_word')
     viz.fit(untagged_speech)
     viz.show()
 
@@ -272,7 +272,7 @@ Or using `wordpunct`.
     untagged_speech = u'Whose woods these are I think I know'
 
     # Create the visualizer, fit, score, and show it
-    viz = PosTagVisualizer(parser='nltk', tagger='wordpunct')
+    viz = PosTagVisualizer(parser='nltk_wordpunct')
     viz.fit(untagged_speech)
     viz.show()
 
