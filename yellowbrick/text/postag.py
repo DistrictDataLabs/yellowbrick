@@ -540,6 +540,8 @@ def postag(
         colors=None,
         frequency=False,
         stack=False,
+        parser=None,
+        tagger=None,
         **kwargs
 ):
     """
@@ -573,6 +575,20 @@ def postag(
         If set to True, part-of-speech tags will be plotted according to frequency,
         from most to least frequent.
 
+    stack : bool {True, False}, default : False
+        Plot the PosTag frequency chart as a per-class stacked bar chart.
+        Note that fit() requires y for this visualization.
+
+    parser : string or None, default: None
+        If set to a string, string must be one of the accepted parsing libraries.
+        Currently 'nltk' and 'spacy' are the only accepted libraries. If setting this
+        argument, NLTK of SpaCy must be installed into your environment.
+
+    tagger : string or None, default: None
+        If set to a string, string must be set to the tagset you want to use for either NLTK
+        or SpaCy (depending on which parser has been selected). For NLTK, this will default to
+        'word' if no argument is given. For SpaCy, this defaults to 'en_core_web_sm'.
+
     kwargs : dict
         Pass any additional keyword arguments to the PosTagVisualizer.
 
@@ -589,6 +605,8 @@ def postag(
         colormap=colormap,
         frequency=frequency,
         stack=stack,
+        parser=parser,
+        tagger=tagger,
         **kwargs
     )
 
