@@ -54,12 +54,11 @@ def dataset(request):
     Creates a multiclass classification dataset fixture for RFECV
     """
     X, y = make_classification(
-        n_samples=600,
-        n_features=15,
-        n_informative=7,
-        n_redundant=4,
+        n_samples=300,
+        n_features=5,
+        n_informative=3,
         n_repeated=0,
-        n_classes=8,
+        n_classes=4,
         n_clusters_per_class=1,
         random_state=0,
     )
@@ -128,7 +127,7 @@ class TestRFECV(VisualTestCase):
     @pytest.mark.filterwarnings("ignore:F-score is ill-defined")
     def test_quick_method(self):
         """
-        Test the recv quick method works with LogisticRegression
+        Test the rfecv quick method works with LogisticRegression
         """
         cv = ShuffleSplit(2, random_state=14)
         model = LogisticRegression()
@@ -147,12 +146,16 @@ class TestRFECV(VisualTestCase):
         data = load_occupancy(return_dataset=True)
         X, y = data.to_pandas()
 
-        assert isinstance(X, pd.DataFrame)
-        assert isinstance(y, pd.Series)
+        # Use only the first 100 samples so the test will run faster
+        X_t = X[:100]
+        y_t = y[:100]
+
+        assert isinstance(X_t, pd.DataFrame)
+        assert isinstance(y_t, pd.Series)
 
         cv = StratifiedKFold(n_splits=4, random_state=32)
         oz = RFECV(RandomForestClassifier(random_state=83), cv=cv)
-        oz.fit(X, y)
+        oz.fit(X_t, y_t)
         oz.finalize()
 
         self.assert_images_similar(oz, remove_legend=True)
@@ -165,12 +168,16 @@ class TestRFECV(VisualTestCase):
         data = load_occupancy(return_dataset=True)
         X, y = data.to_numpy()
 
-        assert isinstance(X, np.ndarray)
-        assert isinstance(y, np.ndarray)
+        # Use only the first 100 samples so the test will run faster
+        X_t = X[:100]
+        y_t = y[:100]
+
+        assert isinstance(X_t, np.ndarray)
+        assert isinstance(y_t, np.ndarray)
 
         cv = StratifiedKFold(n_splits=4, random_state=32)
         oz = RFECV(RandomForestClassifier(random_state=83), cv=cv)
-        oz.fit(X, y)
+        oz.fit(X_t, y_t)
         oz.finalize()
 
         self.assert_images_similar(oz, remove_legend=True)
