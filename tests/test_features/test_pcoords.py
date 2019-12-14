@@ -173,8 +173,9 @@ class TestParallelCoordinates(VisualTestCase):
         """
         X, y = load_occupancy(return_dataset=True).to_numpy()
 
-        #compare the images
-        visualizer = parallel_coordinates(X, y, show=False)
+        # Compare the images
+        # Use only the first 100 samples so the test will run faster
+        visualizer = parallel_coordinates(X, y, sample=100, show=False)
         self.assert_images_similar(visualizer)
 
     @pytest.mark.skipif(pd is None, reason="test requires pandas")

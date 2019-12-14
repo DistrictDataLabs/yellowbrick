@@ -149,6 +149,8 @@ def parallel_coordinates(
         classes=classes,
         normalize=normalize,
         sample=sample,
+        random_state=random_state,
+        shuffle=shuffle,
         colors=colors,
         colormap=colormap,
         alpha=alpha,
