@@ -17,7 +17,7 @@ Workflow             Feature Engineering/Selection
     :alt: PCA Projection, 2D
 
     from yellowbrick.datasets import load_credit
-    from yellowbrick.features.pca import PCADecomposition
+    from yellowbrick.features import PCADecomposition
 
     # Specify the features of interest and the target
     X, y = load_credit()
@@ -37,7 +37,7 @@ The PCA projection can also be plotted in three dimensions to attempt to visuali
     :alt: PCA Projection, 3D
 
     from yellowbrick.datasets import load_credit
-    from yellowbrick.features.pca import PCADecomposition
+    from yellowbrick.features import PCADecomposition
 
     X, y = load_credit()
 
@@ -58,7 +58,7 @@ The PCA projection can be enhanced to a biplot whose points are the projected in
     :alt: PCA biplot projection, 2D
 
     from yellowbrick.datasets import load_concrete
-    from yellowbrick.features.pca import PCADecomposition
+    from yellowbrick.features import PCADecomposition
 
     # Load the concrete dataset
     X, y = load_concrete()
@@ -73,7 +73,7 @@ The PCA projection can be enhanced to a biplot whose points are the projected in
     :alt: PCA biplot projection, 3D
 
     from yellowbrick.datasets import load_concrete
-    from yellowbrick.features.pca import PCADecomposition
+    from yellowbrick.features import PCADecomposition
 
     X, y = load_concrete()
 
@@ -92,7 +92,7 @@ show it.
     :alt: pca_decomposition on the credit dataset
 
     from yellowbrick.datasets import load_credit
-    from yellowbrick.features.pca import pca_decomposition
+    from yellowbrick.features import pca_decomposition
 
     # Specify the features of interest and the target
     X, y = load_credit()
