@@ -15,7 +15,7 @@ from sklearn.datasets import make_classification
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.model_selection import StratifiedKFold
 
-from yellowbrick.model_selection import RFECV
+from yellowbrick.model_selection import RFECV, rfecv
 from yellowbrick.datasets import load_credit
 
 
