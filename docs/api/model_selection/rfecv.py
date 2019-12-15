@@ -52,6 +52,20 @@ def rfecv_credit_example(image="rfecv_credit.png"):
     oz.show(outpath=os.path.join(IMAGES, image))
 
 
+def rfecv_quick_method(image="rfecv_quick_method.png"):
+    X, y = load_credit()
+
+    _, ax = plt.subplots()
+    cv = StratifiedKFold(5)
+    visualizer = rfecv(RandomForestClassifier(), X=X, y=y, ax=ax, cv=cv, scoring='f1_weighted')
+    visualizer.show(outpath=os.path.join(IMAGES, image))
+
+
+##########################################################################
+## Main Method
+##########################################################################
+
 if __name__ == "__main__":
     rfecv_sklearn_example()
     rfecv_credit_example()
+    rfecv_quick_method()
