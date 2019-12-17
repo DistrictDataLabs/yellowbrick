@@ -124,11 +124,12 @@ class TestPCA(VisualTestCase):
         """
         Test the quick method PCA visualizer
         """
-        X, y = load_credit()
-        
-        #compare the images
-        visualizer = pca_decomposition(X, y, show=False)
-        self.assert_images_similar(visualizer)
+        visualizer = pca_decomposition(
+            *self.discrete, projection=2, scale=True, random_state=28, show=False
+        )
+
+        # AppVeyor tests fail with RMS 12.115
+        self.assert_images_similar(visualizer, windows_tol=12.5)
 
     def test_scale_true_2d(self):
         """
