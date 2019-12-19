@@ -48,10 +48,6 @@ class DispersionPlot(TextVisualizer):
     ax : matplotlib axes, default: None
         The axes to plot the figure on.
 
-    labels : list of strings
-        The names of the classes in the target, used to create a legend.
-        Labels must match names of classes in sorted order.
-
     colors : list or tuple of colors
         Specify the colors for each individual class
 
@@ -64,6 +60,10 @@ class DispersionPlot(TextVisualizer):
     annotate_docs : boolean, default: False
         Specify whether document boundaries will be displayed.  Vertical lines
         are positioned at the end of each document.
+
+    labels : list of strings
+        The names of the classes in the target, used to create a legend.
+        Labels must match names of classes in sorted order.
 
     kwargs : dict
         Pass any additional keyword arguments to the super class.
@@ -80,10 +80,10 @@ class DispersionPlot(TextVisualizer):
         target_words,
         ax=None,
         colors=None,
+        colormap=None,
         ignore_case=False,
         annotate_docs=False,
         labels=None,
-        colormap=None,
         **kwargs
     ):
         super(DispersionPlot, self).__init__(ax=ax, **kwargs)
@@ -275,17 +275,17 @@ class DispersionPlot(TextVisualizer):
 ## Quick Method
 ##########################################################################
 
-
 def dispersion(
-    words,
+    target_words,
     corpus,
     y=None,
     ax=None,
     colors=None,
     colormap=None,
-    labels=None,
     annotate_docs=False,
     ignore_case=False,
+    labels=None,
+    show=True,
     **kwargs
 ):
     """ Displays lexical dispersion plot for words in a corpus
@@ -296,24 +296,20 @@ def dispersion(
     Parameters
     ----------
 
-    words : list
+    target_words : list
         A list of words whose dispersion will be examined within a corpus
+
+    corpus : list
+        Should be provided as a list of documents that contain
+        a list of words in the order they appear in the document.
 
     y : ndarray or Series of length n
         An optional array or series of target or class values for
         instances. If this is specified, then the points will be colored
         according to their class.
 
-    corpus : list
-        Should be provided as a list of documents that contain
-        a list of words in the order they appear in the document.
-
     ax : matplotlib axes, default: None
         The axes to plot the figure on.
-
-    labels : list of strings
-        The names of the classes in the target, used to create a legend.
-        Labels must match names of classes in sorted order.
 
     colors : list or tuple of colors
         Specify the colors for each individual class
@@ -328,6 +324,15 @@ def dispersion(
     ignore_case : boolean, default: False
         Specify whether input  will be case-sensitive.
 
+    labels : list of strings
+        The names of the classes in the target, used to create a legend.
+        Labels must match names of classes in sorted order.
+
+    show : bool, default: True
+        If True, calls ``show()``, which in turn calls ``plt.show()`` however
+        you cannot call ``plt.savefig`` from this signature, nor
+        ``clear_figure``. If False, simply calls ``finalize()``
+
     kwargs : dict
         Pass any additional keyword arguments to the super class.
 
@@ -339,7 +344,7 @@ def dispersion(
 
     # Instantiate the visualizer
     visualizer = DispersionPlot(
-        words,
+        target_words,
         ax=ax,
         colors=colors,
         colormap=colormap,
@@ -349,9 +354,11 @@ def dispersion(
         **kwargs
     )
 
-    # Fit and transform the visualizer (calls draw)
     visualizer.fit(corpus, y, **kwargs)
-    visualizer.finalize()
 
-    # Return the visualizer object
+    if show:
+        visualizer.show()
+    else:
+        visualizer.finalize()
+
     return visualizer
