@@ -314,3 +314,12 @@ class TestManifold(VisualTestCase):
         oz.cbar.set_ticks([])
         # TODO: find a way to decrease this tolerance
         self.assert_images_similar(oz, tol=40)
+
+    def test_manifold_quick_method(self):
+        """
+        Test Manifold quick method with colors being set.
+        """
+        visualizer = manifold_embedding(
+            *self.discrete, show=False,  random_state=108
+        )
+        self.assert_images_similar(visualizer)

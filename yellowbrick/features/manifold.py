@@ -483,6 +483,7 @@ def manifold_embedding(
     alpha=0.75,
     random_state=None,
     colorbar=True,
+    show=True,
     **kwargs
 ):
     """Quick method for Manifold visualizer.
@@ -606,6 +607,11 @@ def manifold_embedding(
         can be used as an index to access or modify data in X. If a user passes
         feature names in, those features are used. Otherwise the columns of a
         DataFrame are used or just simply the indices of the data array.
+        
+     show: bool, default: True
+        If True, calls ``show()``, which in turn calls ``plt.show()`` however you cannot
+        call ``plt.savefig`` from this signature, nor ``clear_figure``. If False, simply
+        calls ``finalize()`
 
     range_ : (min y, max y)
         A tuple that describes the minimum and maximum values in the target.
@@ -636,7 +642,12 @@ def manifold_embedding(
 
     # Fit and finalize (calls draw)
     viz.fit_transform(X, y)
-    viz.finalize()
+    
+    if show:
+        viz.show()
+    else:
+        viz.finalize()
 
     # Return the visualizer object
     return viz
+

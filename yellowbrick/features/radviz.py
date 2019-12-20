@@ -343,7 +343,7 @@ def radviz(
 
     colors : list or tuple of colors, default: None
         Specify the colors for each individual class
-
+2
     colormap : string or matplotlib cmap, default: None
         Sequential colormap for continuous target
 

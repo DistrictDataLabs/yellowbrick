@@ -13,6 +13,14 @@ structures that would be otherwise lost. The projections that are produced
 can then be analyzed for noise or separability to determine if it is possible
 to create a decision space in the data.
 
+
+=================   =================
+Visualizer           `Manifold <https://www.scikit-yb.org/en/latest/api/features/manifold.html#yellowbrick.features.manifold.Manifold>`_
+Quick Method         `manifold_embedding() <https://www.scikit-yb.org/en/latest/api/features/manifold.html#yellowbrick.features.manifold.manifold_embedding>`_
+Models               Classification, Regression
+Workflow             Feature Engineering
+=================   =================
+
 .. image:: images/concrete_tsne_manifold.png
 
 The ``Manifold`` visualizer allows access to all currently available
@@ -142,11 +150,32 @@ continuous by counting the number of unique values in ``y``.
 
 .. image:: images/concrete_isomap_manifold.png
 
+
+Quick Method
+-----------------
+The same functionality above can be achieved with the associated quick method ``manifold_embedding``. This method will build the ``Manifold`` object with the associated arguments, fit it, then (optionally) immediately show the visualization.
+
+.. note to contributors: the below code takes a long time to run so has not been
+   modified with a plot directive. See manifold.py to regenerate images.
+
+.. code:: python
+
+    from yellowbrick.features.Manifold import manifold_embedding
+    from yellowbrick.datasets import load_concrete
+
+    # Load the regression dataset
+    X, y = load_concrete()
+
+    # Instantiate the visualizer
+    manifold_embedding(X, y, manifold="isomap", n_neighbors=10)
+
+.. image:: images/concrete_quick_manifold.png
+
 API Reference
 -------------
 
 .. automodule:: yellowbrick.features.manifold
-    :members: Manifold
+    :members: Manifold, manifold_embedding
     :undoc-members:
     :show-inheritance:
 
