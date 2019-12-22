@@ -650,4 +650,3 @@ def manifold_embedding(
 
     # Return the visualizer object
     return viz
-

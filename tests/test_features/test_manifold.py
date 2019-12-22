@@ -319,7 +319,8 @@ class TestManifold(VisualTestCase):
         """
         Test Manifold quick method with colors being set.
         """
+        X, _ = make_blobs(n_samples=300, n_features=7, centers=3, random_state=1112)
         visualizer = manifold_embedding(
-            *self.discrete, show=False,  random_state=108
+            X, manifold="mds", random_state=139973, show=False
         )
         self.assert_images_similar(visualizer)
