@@ -8,6 +8,9 @@ from yellowbrick.utils.target import TargetType
 
 import matplotlib.pyplot as plt
 
+##########################################################################
+## Effect Plots
+##########################################################################
 
 class EffectPlot(RegressionScoreVisualizer):
     """
@@ -53,6 +56,24 @@ class EffectPlot(RegressionScoreVisualizer):
         self.target_type = 'auto'
     
     def fit(self, X, y, **kwargs):
+        """
+        Fits the estimator to dataset and then multiply weights of a feature
+        with each feature values to generate new dataset.
+        Parameters
+        ----------
+        X : ndarray or DataFrame of shape n x m
+            A matrix of n instances with m features
+
+        y : ndarray or Series of length n
+            An array or series of target values
+
+        kwargs: keyword arguments passed to Scikit-Learn API.
+
+        Returns
+        -------
+        self : EffectPlot
+            The visualizer instance
+        """
         categorical = self._get_categorical_columns(X)
 
         #Encoding
@@ -70,8 +91,13 @@ class EffectPlot(RegressionScoreVisualizer):
               
         self.draw(dummy_df)
         self.columns = dummy_df.columns 
+        return self
         
     def _get_categorical_columns(self, X):
+        """
+        Finds the categorical features among the given features. Uses
+        _determine_targer_color_type from `DataVisualizer` for this purpose.
+        """
         categorical=[]
         cols = X.columns
         for col in cols:
@@ -82,6 +108,9 @@ class EffectPlot(RegressionScoreVisualizer):
         
         
     def draw(self, X, **kwargs):
+        """
+        Draws a box plot. Provide control over almost anything in the plot.
+        """
         colors = resolve_colors(
                     n_colors=len(X.columns.values), 
                     colormap=self.colormap, 
@@ -101,6 +130,7 @@ class EffectPlot(RegressionScoreVisualizer):
         for flier in bp['fliers']:
             # TODO: Set color of flier here
             flier.set(marker=self.marker)
+        return self.ax
 
         
     def finalize(self):
@@ -110,18 +140,25 @@ class EffectPlot(RegressionScoreVisualizer):
         plt.tight_layout()
         
         
+##########################################################################
+## Quick Method
+##########################################################################
+        
 def effectplot(model, X, y, ax=None, colors=None, colormap=None, marker='D', 
                show=True, **kwargs):
-    visualizer = EffectPlot(model=model, ax=ax, colors=colors, colormap=colormap, 
+    """
+    Quick Method.
+    """
+    viz = EffectPlot(model=model, ax=ax, colors=colors, colormap=colormap, 
                             marker=marker, **kwargs)
-    visualizer.fit(X, y)
+    viz.fit(X, y)
        
     if show:
-        visualizer.show()
+        viz.show()
     else:
-        visualizer.finalize()
+        viz.finalize()
     
-    return visualizer
+    return viz
 
 #Alias for Effectplot
 EffectViz = EffectPlot
