@@ -27,7 +27,7 @@ from sklearn.feature_selection import f_classif
 from sklearn.feature_selection import SelectKBest
 
 from yellowbrick.datasets import load_occupancy, load_concrete
-from yellowbrick.features.manifold import Manifold, MANIFOLD_ALGORITHMS, plot_manifold_embedding
+from yellowbrick.features.manifold import Manifold, MANIFOLD_ALGORITHMS, manifold_embedding
 
 
 SKIP = (
