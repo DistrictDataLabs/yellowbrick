@@ -169,7 +169,7 @@ The same functionality above can be achieved with the associated quick method ``
     # Instantiate the visualizer
     manifold_embedding(X, y, manifold="isomap", n_neighbors=10)
 
-.. image:: images/concrete_quick_manifold.png
+.. image:: images/manifold_quick_method.png
 
 API Reference
 -------------

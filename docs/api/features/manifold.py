@@ -27,7 +27,7 @@ from sklearn.feature_selection import f_classif
 from sklearn.feature_selection import SelectKBest
 
 from yellowbrick.datasets import load_occupancy, load_concrete
-from yellowbrick.features.manifold import Manifold, MANIFOLD_ALGORITHMS
+from yellowbrick.features.manifold import Manifold, MANIFOLD_ALGORITHMS, plot_manifold_embedding
 
 
 SKIP = (
@@ -146,6 +146,19 @@ class SCurveExample(object):
         for algorithm in MANIFOLD_ALGORITHMS:
             self.plot_manifold_embedding(algorithm)
 
+    def manifold_quick_method(image="manifold_quick_method.png"):
+
+        X, y = load_concrete()
+
+        _, ax = plt.subplots()
+
+        # Instantiate the visualizer
+        visualizer = manifold_embedding(X, y, manifold="isomap", n_neighbors=10)
+        visualizer.show(outpath=os.path.join(IMAGES, image))
+
+##########################################################################
+## Main Method
+##########################################################################
 
 if __name__ == "__main__":
     # curve = SCurveExample()
@@ -156,3 +169,4 @@ if __name__ == "__main__":
         "concrete", "isomap", path="images/concrete_isomap_manifold.png", n_neighbors=10
     )
     select_features_example(algorithm="isomap", n_neighbors=10)
+    manifold_quick_method()

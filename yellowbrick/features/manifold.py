@@ -588,6 +588,11 @@ def manifold_embedding(
         If the target_type is "continous" draw a colorbar to the right of the
         scatter plot. The colobar axes is accessible using the cax property.
 
+    show: bool, default: True
+        If True, calls ``show()``, which in turn calls ``plt.show()`` however you cannot
+        call ``plt.savefig`` from this signature, nor ``clear_figure``. If False, simply
+        calls ``finalize()`
+
     kwargs : dict
         Keyword arguments passed to the base class and may influence the
         feature visualization properties.
@@ -607,11 +612,6 @@ def manifold_embedding(
         can be used as an index to access or modify data in X. If a user passes
         feature names in, those features are used. Otherwise the columns of a
         DataFrame are used or just simply the indices of the data array.
-        
-     show: bool, default: True
-        If True, calls ``show()``, which in turn calls ``plt.show()`` however you cannot
-        call ``plt.savefig`` from this signature, nor ``clear_figure``. If False, simply
-        calls ``finalize()`
 
     range_ : (min y, max y)
         A tuple that describes the minimum and maximum values in the target.
@@ -637,6 +637,7 @@ def manifold_embedding(
         alpha=alpha,
         random_state=random_state,
         colorbar=colorbar,
+        show=show,
         **kwargs
     )
 

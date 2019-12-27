@@ -317,7 +317,7 @@ class TestManifold(VisualTestCase):
 
     def test_manifold_quick_method(self):
         """
-        Test Manifold quick method with colors being set.
+        Test Manifold quick method with single target.
         """
         X, _ = make_blobs(n_samples=300, n_features=7, centers=3, random_state=1112)
         visualizer = manifold_embedding(
