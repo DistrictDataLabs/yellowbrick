@@ -29,7 +29,6 @@ from sklearn.feature_selection import SelectKBest
 from yellowbrick.datasets import load_occupancy, load_concrete
 from yellowbrick.features.manifold import Manifold, MANIFOLD_ALGORITHMS, manifold_embedding
 
-
 SKIP = (
     "ltsa",  # produces no result
     "hessian",  # errors because of matrix
@@ -39,6 +38,10 @@ SKIP = (
 FIXTURES = os.path.normpath(
     os.path.join(os.path.dirname(__file__), "..", "..", "..", "examples", "data")
 )
+
+
+CWD = os.path.dirname(__file__)
+IMAGES = os.path.join(CWD, "images")
 
 
 def dataset_example(dataset="occupancy", manifold="all", path="images/", **kwargs):
