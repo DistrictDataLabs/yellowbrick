@@ -164,7 +164,7 @@ class SCurveExample(object):
 ##########################################################################
 
 if __name__ == "__main__":
-    # curve = SCurveExample()
+    curve = SCurveExample()
     # curve.plot_all_manifolds()
     dataset_example("concrete", "tsne", path="images/concrete_tsne_manifold.png")
     dataset_example("occupancy", "tsne", path="images/occupancy_tsne_manifold.png")
@@ -172,4 +172,4 @@ if __name__ == "__main__":
         "concrete", "isomap", path="images/concrete_isomap_manifold.png", n_neighbors=10
     )
     select_features_example(algorithm="isomap", n_neighbors=10)
-    manifold_quick_method()
+    curve.manifold_quick_method()
