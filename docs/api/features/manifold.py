@@ -67,7 +67,7 @@ def dataset_example(dataset="occupancy", manifold="all", path="images/", quick=F
 
     _, ax = plt.subplots(figsize=(9, 6))
     if dataset == "occupancy":
-    X, y = load_occupancy()
+        X, y = load_occupancy()
     elif dataset == "concrete":
         X, y = load_concrete()
     else:
