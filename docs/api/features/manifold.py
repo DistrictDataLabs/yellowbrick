@@ -39,12 +39,7 @@ FIXTURES = os.path.normpath(
     os.path.join(os.path.dirname(__file__), "..", "..", "..", "examples", "data")
 )
 
-
-CWD = os.path.dirname(__file__)
-IMAGES = os.path.join(CWD, "images")
-
-
-def dataset_example(dataset="occupancy", manifold="all", path="images/", **kwargs, quick=False):
+def dataset_example(dataset="occupancy", manifold="all", path="images/", quick=False, **kwargs):
     if manifold == "all":
         if path is not None and not os.path.isdir(path):
             "please specify a directory to save examples to"
@@ -156,12 +151,12 @@ class SCurveExample(object):
 ##########################################################################
 
 if __name__ == "__main__":
-    curve = SCurveExample()
+    # curve = SCurveExample()
     # curve.plot_all_manifolds()
     dataset_example("concrete", "tsne", path="images/concrete_tsne_manifold.png")
     dataset_example("occupancy", "tsne", path="images/occupancy_tsne_manifold.png")
     dataset_example(
         "concrete", "isomap", path="images/concrete_isomap_manifold.png", n_neighbors=10
     )
-    dataset_example("concrete", "tsne", path="images/manifold_quick_method.png",quick=True)
+    dataset_example("concrete", "tsne", path="images/manifold_quick_method.png", quick=True)
     select_features_example(algorithm="isomap", n_neighbors=10)
