@@ -44,7 +44,7 @@ CWD = os.path.dirname(__file__)
 IMAGES = os.path.join(CWD, "images")
 
 
-def dataset_example(dataset="occupancy", manifold="all", path="images/", **kwargs):
+def dataset_example(dataset="occupancy", manifold="all", path="images/", **kwargs, quick=False):
     if manifold == "all":
         if path is not None and not os.path.isdir(path):
             "please specify a directory to save examples to"
@@ -69,19 +69,21 @@ def dataset_example(dataset="occupancy", manifold="all", path="images/", **kwarg
         return
 
     # Create single example
-    _, ax = plt.subplots(figsize=(9, 6))
-    oz = Manifold(ax=ax, manifold=manifold, **kwargs)
 
+    _, ax = plt.subplots(figsize=(9, 6))
     if dataset == "occupancy":
-        X, y = load_occupancy()
+    X, y = load_occupancy()
     elif dataset == "concrete":
         X, y = load_concrete()
     else:
         raise Exception("unknown dataset '{}'".format(dataset))
-
-    oz.fit_transform(X, y)
-    oz.show(outpath=path)
-
+    if(quick==True):
+        oz = manifold_embedding(X, y, manifold="isomap", n_neighbors=10)
+        oz.show(outpath=path)
+    else:
+        oz = Manifold(ax=ax, manifold=manifold, **kwargs)
+        oz.fit_transform(X, y)
+        oz.show(outpath=path)
 
 def select_features_example(
     algorithm="isomap",
@@ -100,7 +102,6 @@ def select_features_example(
     X, y = load_occupancy()
     model.fit_transform(X, y)
     model.named_steps["viz"].show(outpath=path)
-
 
 class SCurveExample(object):
     """
@@ -149,15 +150,6 @@ class SCurveExample(object):
         for algorithm in MANIFOLD_ALGORITHMS:
             self.plot_manifold_embedding(algorithm)
 
-    def manifold_quick_method(image="manifold_quick_method.png"):
-
-        X, y = load_concrete()
-
-        _, ax = plt.subplots()
-
-        # Instantiate the visualizer
-        visualizer = manifold_embedding(X, y, manifold="isomap", n_neighbors=10)
-        visualizer.show(outpath=os.path.join(IMAGES, image))
 
 ##########################################################################
 ## Main Method
@@ -171,5 +163,5 @@ if __name__ == "__main__":
     dataset_example(
         "concrete", "isomap", path="images/concrete_isomap_manifold.png", n_neighbors=10
     )
+    dataset_example("concrete", "tsne", path="images/manifold_quick_method.png",quick=True)
     select_features_example(algorithm="isomap", n_neighbors=10)
-    curve.manifold_quick_method()
