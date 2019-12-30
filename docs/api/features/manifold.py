@@ -66,14 +66,18 @@ def dataset_example(dataset="occupancy", manifold="all", path="images/", quick=F
     # Create single example
 
     _, ax = plt.subplots(figsize=(9, 6))
+
+    # Checks for the dataset which user wants to use
     if dataset == "occupancy":
         X, y = load_occupancy()
     elif dataset == "concrete":
         X, y = load_concrete()
     else:
         raise Exception("unknown dataset '{}'".format(dataset))
-    if(quick==True):
-        oz = manifold_embedding(X, y, manifold="isomap", n_neighbors=10)
+
+    # Check if the quick method is called
+    if quick:
+        oz = manifold_embedding(ax=ax, manifold=manifold, **kwargs)
         oz.show(outpath=path)
     else:
         oz = Manifold(ax=ax, manifold=manifold, **kwargs)
@@ -158,5 +162,5 @@ if __name__ == "__main__":
     dataset_example(
         "concrete", "isomap", path="images/concrete_isomap_manifold.png", n_neighbors=10
     )
-    dataset_example("concrete", "tsne", path="images/manifold_quick_method.png", quick=True)
+    dataset_example("concrete", "isomap", path="images/manifold_quick_method.png", quick=True)
     select_features_example(algorithm="isomap", n_neighbors=10)
