@@ -7,7 +7,12 @@ Parallel coordinates is multi-dimensional feature visualization technique  where
 
 Data scientists use this method to detect clusters of instances that have similar classes, and to note features that have high variance or different distributions. We can see this in action after first loading our occupancy classification dataset.
 
-.. note:: These visualizations can be produced with either the ``ParallelCoordinates`` visualizer or by using the ``parallel_coordinates`` quick method.
+=================   =================
+Visualizer            `Parallel Coordinates <https://www.scikit-yb.org/en/latest/api/features/pcoords.html#yellowbrick.features.pcoords.ParallelCoordinates>`_
+Quick Method          `parallel_coordinates <https://www.scikit-yb.org/en/latest/api/features/pcoords.html#yellowbrick.features.pcoords.parallel_coordinates>`_
+Models               Classification
+Workflow             Feature analysis
+=================   =================
 
 .. plot::
     :context: close-figs
@@ -109,11 +114,35 @@ As you can see the "fast" drawing algorithm does not have the same build up of c
 
 .. image:: images/fast_parallel_coordinates_speedup.png
 
+Quick Method
+----------------------
+The same functionality above can be achieved with the associated quick method ``parallel_coordinates``. This method
+will build the ``ParallelCoordinates`` object with the associated arguments, fit it, then (optionally) immediately
+show it.
+
+.. plot::
+    :context: close-figs
+    :alt: parallel_coordinates on the occupancy dataset
+
+    from yellowbrick.features.pcoords import parallel_coordinates
+    from yellowbrick.datasets import load_occupancy
+
+    # Load the classification data set
+    X, y = load_occupancy()
+
+    # Specify the features of interest and the classes of the target
+    features = [
+        "temperature", "relative humidity", "light", "CO2", "humidity"
+    ]
+    classes = ["unoccupied", "occupied"]
+
+    # Instantiate the visualizer
+    visualizer = parallel_coordinates(X, y, classes=classes, features=features)
 
 API Reference
 -------------
 
 .. automodule:: yellowbrick.features.pcoords
-    :members: ParallelCoordinates
+    :members: ParallelCoordinates, parallel_coordinates
     :undoc-members:
     :show-inheritance:

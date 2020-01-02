@@ -4,7 +4,7 @@ This file describes how the Yellowbrick project is maintained and provides conta
 
 When creating a pull request, your contribution will be reviewed by one or probably two maintainers who will give you the :+1: when your extension is ready to be merged. Maintainers work hard to ensure that Yellowbrick is a high quality project and that contributors are successful.
 
-For more about how to develop visualizers and contribute features to Yellowbrick, see our [contributor's guide](CONTRIBUTING.md) and the documentation.
+For more about how to develop visualizers and contribute features to Yellowbrick, see our [contributor's guide](CONTRIBUTING.md) and the [documentation](https://www.scikit-yb.org/en/latest/contributing/index.html).
 
 For everyone who has [contributed](https://github.com/DistrictDataLabs/yellowbrick/graphs/contributors) in big and in small ways, **thank you!**. Yellowbrick is intended to be a community project, welcoming to new and experienced developers alike. If you would like to become a core contributor you must simply submit a pull request that shows core knowledge of the Yellowbrick library. Usually new Visualizers meet this standard; let the maintainers know you'd like to join the team, and they'll help you work toward it!
 
