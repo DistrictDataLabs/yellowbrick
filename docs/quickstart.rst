@@ -44,7 +44,7 @@ Once installed, you should be able to import Yellowbrick without an error, both 
 Using Yellowbrick
 -----------------
 
-The Yellowbrick API is specifically designed to play nicely with scikit-learn. The primary interface is therefore a ``Visualizer`` -- an object that learns from data to produce a visualization. Visualizers are scikit-learn `Estimator <http://scikit-learn.org/stable/developers/contributing.html#apis-of-scikit-learn-objects>`_ objects and have a similar interface along with methods for drawing. In order to use visualizers, you simply use the same workflow as with a scikit-learn model, import the visualizer, instantiate it, call the visualizer's ``fit()`` method, then in order to render the visualization, call the visualizer's ``show()`` method.
+The Yellowbrick API is specifically designed to play nicely with scikit-learn. The primary interface is therefore a ``Visualizer`` -- an object that learns from data to produce a visualization. Visualizers are scikit-learn `Estimator <https://scikit-learn.org/stable/developers/develop.html#apis-of-scikit-learn-objects>`_ objects and have a similar interface along with methods for drawing. In order to use visualizers, you simply use the same workflow as with a scikit-learn model, import the visualizer, instantiate it, call the visualizer's ``fit()`` method, then in order to render the visualization, call the visualizer's ``show()`` method.
 
 For example, there are several visualizers that act as transformers, used to perform feature analysis prior to fitting a model. The following example visualizes a high-dimensional data set with parallel coordinates:
 
