@@ -335,7 +335,7 @@ def rfecv(model, X, y, ax=None, step=1, groups=None, cv=None, scoring=None, show
         Returns the fitted, finalized visualizer.
     """
     # Initialize the visualizer
-    oz = RFECV(model, ax=ax, step=step, groups=groups, cv=cv, scoring=scoring)
+    oz = RFECV(model, ax=ax, step=step, groups=groups, cv=cv, scoring=scoring, show=show)
 
     # Fit and show the visualizer
     oz.fit(X, y)

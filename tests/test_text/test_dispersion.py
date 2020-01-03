@@ -22,7 +22,7 @@ import matplotlib.pyplot as plt
 
 from yellowbrick.exceptions import YellowbrickValueError
 from yellowbrick.datasets import load_hobbies
-from yellowbrick.text.dispersion import *
+from yellowbrick.text.dispersion import DispersionPlot, dispersion
 from tests.base import VisualTestCase
 
 
@@ -40,14 +40,14 @@ corpus = load_hobbies()
 class TestDispersionPlot(VisualTestCase):
     def test_quick_method(self):
         """
-        Assert no errors occur when using the qucik method
+        Assert no errors occur when using the quick method
         """
         _, ax = plt.subplots()
 
         text = [doc.split() for doc in corpus.data]
         target_words = ["Game", "player", "score", "oil", "Man"]
 
-        viz = dispersion(words=target_words, corpus=text, ax=ax)
+        viz = dispersion(target_words=target_words, corpus=text, ax=ax, show=False)
         viz.ax.grid(False)
 
         self.assert_images_similar(viz, tol=25)
