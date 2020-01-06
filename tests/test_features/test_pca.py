@@ -122,10 +122,10 @@ class TestPCA(VisualTestCase):
     @pytest.mark.xfail(IS_WINDOWS_OR_CONDA, reason="RMS of 12.115 on miniconda")
     def test_pca_decomposition_quick_method(self):
         """
-        Test the quick method PCA visualizer 2 dimensions scaled.
+        Test the quick method PCA visualizer
         """
         visualizer = pca_decomposition(
-            *self.discrete, projection=2, scale=True, random_state=28
+            *self.discrete, projection=2, scale=True, random_state=28, show=False
         )
 
         # AppVeyor tests fail with RMS 12.115
