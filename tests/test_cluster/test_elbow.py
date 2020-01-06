@@ -326,11 +326,11 @@ class TestKElbowVisualizer(VisualTestCase):
         assert visualizer.elbow_value_ == 3
         expected = np.array(
             [
-                4286.4798481306625,
-                12463.383743070379,
-                8763.75791732466,
-                6942.167328461612,
-                5859.608884917707,
+                4286.5,
+                12463.4,
+                8763.8,
+                6939.3,
+                5858.8,
             ]
         )
 
