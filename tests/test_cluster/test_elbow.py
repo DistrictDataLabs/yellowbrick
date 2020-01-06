@@ -336,7 +336,7 @@ class TestKElbowVisualizer(VisualTestCase):
 
         visualizer.finalize()
         self.assert_images_similar(visualizer, windows_tol=2.2)
-        assert_array_almost_equal(visualizer.k_scores_, expected)
+        assert_array_almost_equal(visualizer.k_scores_, expected, decimal=1)
 
     def test_no_knee(self):
         """
