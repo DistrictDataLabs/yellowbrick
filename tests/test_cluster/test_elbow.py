@@ -306,6 +306,7 @@ class TestKElbowVisualizer(VisualTestCase):
         self.assert_images_similar(visualizer)
         assert_array_almost_equal(visualizer.k_scores_, expected)
 
+    @pytest.mark.xfail(IS_WINDOWS_OR_CONDA, reason="computation of k_scores_ varies by 2.867 max absolute difference")
     def test_locate_elbow(self):
         """
         Test the addition of locate_elbow to an image
