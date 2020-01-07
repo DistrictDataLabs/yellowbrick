@@ -77,14 +77,14 @@ PKG_DESCRIBE = "DESCRIPTION.md"
 
 ## Directories to ignore in find_packages
 EXCLUDES = (
-    "tests",
+    "tests", "tests.*",
     "bin",
-    "docs",
+    "docs", "docs.*",
     "fixtures",
     "register",
-    "notebooks",
-    "examples",
-    "binder",
+    "notebooks", "notebooks.*",
+    "examples", "examples.*",
+    "binder", "binder.*",
     "paper",
 )
 
