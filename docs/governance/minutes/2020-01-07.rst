@@ -1,0 +1,124 @@
+.. -*- mode: rst -*-
+
+January 7, 2020
+===============
+
+Yellowbrick Advisory Board Meeting Held on January 7, 2020 from 2030-2230 EST via Video Conference Call. Rebecca Bilbro presiding as Chair, Benjamin Bengfort serving as Secretary and Edwin Schmierer as Treasurer. Minutes taken by Benjamin Bengfort.
+
+Attendees: Rebecca Bilbro, Benjamin Bengfort, Kristen McIntyre, Tony Ojeda, Larry Gray, Prema Roman, Edwin Schmierer, Nathan Danielsen, and Adam Morris.
+
+Agenda
+------
+
+A broad overview of the topics for discussion in the order they were presented:
+
+1. Welcome (Rebecca Bilbro)
+2. Fall 2019 retrospective (Rebecca Bilbro)
+3. Yellowbrick v1.2 milestone planning (Benjamin Bengfort)
+4. Advisor dues and Yellowbrick Budget (Edwin Schmierer)
+5. Officer nominations and election
+6. Spring 2020 contributors and roles
+
+Votes and Resolutions
+---------------------
+
+Operating Budget
+~~~~~~~~~~~~~~~~
+
+The following operating budget is proposed for 2020.
+
+The board discussed a minor increase in operating costs from the previous year and acknowledged a 2020 budget of **$271.48** and **$30.17** advisor member dues per person. Because of the minimal change, the board is leaving the final budget open to any additional proposed expenses until the end of January.
+
+Budget breakdown:
+
+=============================================  ================  =========
+                  Description                      Frequency       Total
+=============================================  ================  =========
+Name.com domain registration (scikit-yb.org)         annually      $17.98
+Read the Docs Gold Membership                     $10 monthly     $120.00
+Stickers (StickerMule.com)                           annually     $133.50
+Datasets hosting on S3                          monthly (DDL)      $10-15
+Cheatsheets                                     annually (DDL)        $70
+=============================================  ================  =========
+
+Dues should be submitted to the treasurer via Venmo or PayPal no later than Feb 20, 2020. The treasurer will reimburse the payees of our expenses directly.
+
+A special thank you to District Data Labs for covering travel costs to PyCon, the printing of cheatsheets, and hosting our datasets on S3.
+
+Motion: any opposed to the current budget and leaving the budget open until the end of January. Moved by Edwin Shmierer, seconded by Benjamin Bengfort.
+
+*No opposition to the motion*.
+
+Officer Elections
+~~~~~~~~~~~~~~~~~
+
+During the first advisory board meeting of the year, officers are nominated and elected to manage Yellowbrick for the year. The following nominations were proposed:
+
+Nominations for Chair:
+
+- Kristen McIntyre by Benjamin Bengfort
+
+Motion: a vote to elect Kristen McIntyre as 2020 Chair. Moved by Rebecca Bilbro, seconded by Larry Gray.
+
+*The motion was adopted unanimously*.
+
+Nominations for Secretary:
+
+- Larry Gray by Rebecca Bilbro
+
+Motion: a vote to elect Larry Gray as 2020 Secretary. Moved by Rebecca Bilbro, seconded by Prema Roman.
+
+*The motion was adopted unanimously*.
+
+Nominations for Treasurer:
+
+- Edwin Schmierer by Rebecca Bilbro
+
+Motion: a vote to elect Edwin Shmierer as 2020 Treasurer. Moved by Rebecca Bilbro, seconded by Kristen McIntyre.
+
+*The motion was adopted unanimously*.
+
+Fall 2019 Retrospective
+-----------------------
+
+In traditional agile development, sprints are concluded with a retrospective to discuss what went well, what didn't go well, what were unexpected challenges, and how we can adapt to those challenges in the future. Generally these meetings exclude the major stakeholders so that the contributors to the sprint can speak freely. Because the Board of Advisors are the major stakeholders of the Yellowbrick project, there was an intermediate retrospective with just the maintainers of the Summer 2019 semester so they could communicate anonymously and frankly with the Board. Their feedback as well as additions by the advisors follow.
+
+Accomplishments
+~~~~~~~~~~~~~~~
+
+
+
+Shoutouts
+~~~~~~~~~
+
+
+Challenges
+~~~~~~~~~~
+
+
+
+Semester and Roadmap
+--------------------
+
+
+Spring 2020 Contributors
+~~~~~~~~~~~~~~~~~~~~~~~~
+
+=====================  =================
+Name                   Role
+=====================  =================
+
+=====================  =================
+
+Minutes
+-------
+
+Action Items
+------------
+
+- Sign up for contributor roles and specify implement or review a visualizer (all)
+- Review the 2020 budget and add any additional budget requests (all)
+- Coordinate quick methods hackathon to finalize v1.1 (Kristen McIntyre)
+- Assign visualizers and reviewers (Benjamin Bengfort)
+- Update v1.1, v1.2, and v1.3 milestones on GitHub (Benjamin Bengfort & Larry Gray)
+- Coordinate PyCon sprints with maintainers (Larry Gray and Prema Roman)
