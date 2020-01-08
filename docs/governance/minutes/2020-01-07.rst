@@ -27,7 +27,7 @@ Operating Budget
 
 The following operating budget is proposed for 2020.
 
-The board discussed a minor increase in operating costs from the previous year and acknowledged a 2020 budget of **$271.48** and **$30.17** advisor member dues per person. Because of the minimal change, the board is leaving the final budget open to any additional proposed expenses until the end of January.
+The board discussed a minor increase in operating costs from the previous year and acknowledged a 2020 budget of **$271.48** and **$30.17** advisor member dues per person. Because of the minimal change, the board is leaving the final budget open to any additional proposed expenses by January 14.
 
 Budget breakdown:
 
@@ -41,9 +41,10 @@ Datasets hosting on S3                          monthly (DDL)      $10-15
 Cheatsheets                                     annually (DDL)        $70
 =============================================  ================  =========
 
-Dues should be submitted to the treasurer via Venmo or PayPal no later than Feb 20, 2020. The treasurer will reimburse the payees of our expenses directly.
 
-A special thank you to District Data Labs for covering travel costs to PyCon, the printing of cheatsheets, and hosting our datasets on S3.
+Advisors to pay dues to Edwin via Venmo. Edwin will send his Venmo handle and QR code via YB Slack channel. Dues are payable by Feb 14, 2020. If any advisors would like to make changes or add to the budget, please contact Edwin by January 14 via email or Slack. Edwin will take suggestions to the board for discussion and vote by the end of January.
+
+A special thank you to District Data Labs for covering travel costs to PyCon, the printing of cheatsheets, and hosting our datasets on S3 for another year!
 
 Motion: any opposed to the current budget and leaving the budget open until the end of January. Moved by Edwin Shmierer, seconded by Benjamin Bengfort.
 
@@ -81,37 +82,86 @@ Motion: a vote to elect Edwin Shmierer as 2020 Treasurer. Moved by Rebecca Bilbr
 Fall 2019 Retrospective
 -----------------------
 
-In traditional agile development, sprints are concluded with a retrospective to discuss what went well, what didn't go well, what were unexpected challenges, and how we can adapt to those challenges in the future. Generally these meetings exclude the major stakeholders so that the contributors to the sprint can speak freely. Because the Board of Advisors are the major stakeholders of the Yellowbrick project, there was an intermediate retrospective with just the maintainers of the Summer 2019 semester so they could communicate anonymously and frankly with the Board. Their feedback as well as additions by the advisors follow.
+In traditional agile development, sprints are concluded with a retrospective to discuss what went well, what didn't go well, what were unexpected challenges, and how we can adapt to those challenges in the future.
 
 Accomplishments
 ~~~~~~~~~~~~~~~
 
+- Semester has been a lot lighter than previous semesters, focused on quick methods.
+- Fixing a bug with PCA visualizer (regression made with projection argument).
+- Decision to move from ``poof()`` to ``show()`` -- we made a decision and executed on it (even in the face of a difficult situation).
+- Test coverage has been catching things well in advance of problems (and before users experience them).
+- Dependency set is small, which limits the number of problems we can have from them.
+- Had a lot of contributors in the fall group (at least on the roster).
+- 6 new contributors who opened PRs.
+- 12 participants in the “burrito poll” made the API decision of the quick method signature.
 
 
 Shoutouts
 ~~~~~~~~~
 
+- Matt Harrison featured Yellowbrick in his machine learning book.
+- Molly Morrison, Michael Chestnut, Michael Garod, Rohan Panda, George Krug, and Stephanie Miller all contributed to the quick methods development.
+- Prema Roman has done a wonderful job this semester, stepped up and responding on GitHub, helping with new contributors, responding to questions.
+- Guidance document made it easier and clearer about how to take a break for a semester.
 
 Challenges
 ~~~~~~~~~~
 
+Potentially the biggest challenge Yellowbrick had this semester was a note from a user that the name of one of our methods was potentially a homophobic slur. Although the board considered the name to be one of the unique and charming features of Yellowbrick, we quickly decided to make a change to the method name, particularly as we were in the process of incrementing a major version number, which meant support for backward compatibility was not required.
 
+- Updated dependencies breaking CI (numba, umap-learn, sklearn, scipy) -- happened 2x
+- Inconsistent behavior between miniconda and vanilla Python
+- Jobs and other priorities have been swamping our ability to contribute to YB as much as we’d like to; the roles are still a bit new and we wish we could do more than we are
+- There wasn’t a lot of activity from all of the contributors; perhaps we didn’t engage enough?  Or  maybe we want to have a range of issues available  for different skill/experience levels?
+- 7 quick methods are completed, 3 or 4 in review, 35 were assigned - most people who were assigned quick methods didn’t show up after the start of the semester.
+- 10 new contributors who signed up but didn’t open a PR or participate much
 
 Semester and Roadmap
 --------------------
 
+v1.1 Status
+~~~~~~~~~~~
+
+The v1.1 release has not yet been finalized because the goal of updating all of the quick methods has not been completed. Because we've done the hard work of figuring out the API signature and documentation mechanism, the board feels that we should finish all the quick methods before releasing v1.1 *before the end of February*.
+
+In order to complete v1.1 the board will hold one or two hackathons (either in person or virtual) to complete the quick methods together and with food and drink.
+
+Spring 2020: v1.2
+~~~~~~~~~~~~~~~~~
+
+The Spring 2020 goal is to have everyone implement and review one new visualizer. Implementing visualizers from scratch is much more fun than trying to improve current visualizers or fix bugs - so the focus of this semester is fun! We'll be looking at Probability Curves, Missing Values, Multimodal Visualizers and more, trying to have a flashy semester!
+
+Visualizer implementation and review assignments will be handed out at the beginning of the semester depending on preference.
+
+Additionally, the board will prepare for PyCon sprints by implementing cheatsheets and preparing blog posts and other materials for people to quickly get started with Yellowbrick, scikit-learn, and matplotlib.
+
+Summer 2020: v1.3
+~~~~~~~~~~~~~~~~~
+
+It is likely that the Summer 2020 goal will be to implement visual pipelines. This is a research oriented task that doesn't have a clear path forward, so some planning before the semester is required. This is a major new feature to the libary.
 
 Spring 2020 Contributors
 ~~~~~~~~~~~~~~~~~~~~~~~~
 
-=====================  =================
-Name                   Role
-=====================  =================
+Note: those wishing to sign up as core contributors must have previously successfully contributed to Yellowbrick by closing a PR. Yellowbrick is open to unassigned, non-core submissions from anyone at any time.
 
-=====================  =================
+=====================  =================  ==========  ========
+Name                   Role               Visualizer  Reviewer
+=====================  =================  ==========  ========
+Rebecca Bilbro         Maintainer         yes         yes
+Benjamin Bengfort      Core Contributor   yes         yes
+Nathan Danielsen       Maintainer         yes         yes
+Kristen McIntyre       Core Contributor   yes         yes
+Larry Gray             Core Contributor   yes         yes
+Adam Morris            Coordinator        pair        yes
+Prema Roman            Maintainer         yes         yes
+=====================  =================  ==========  ========
 
 Minutes
 -------
+
+This meeting was primarily focused on electing the new board members and doing some initial planning for the year ahead. No additional topics were discussed.
 
 Action Items
 ------------
