@@ -184,7 +184,7 @@ API Reference
 .. _`manifold comparisons`: http://scikit-learn.org/stable/auto_examples/manifold/plot_compare_methods.html
 .. _`Locally Linear Embedding`: http://scikit-learn.org/stable/modules/manifold.html#locally-linear-embedding
 .. _`LTSA LLE`: http://scikit-learn.org/stable/modules/manifold.html#local-tangent-space-alignment
-.. _`Hessian LLE`: http://scikit-learn.org/stable/modules/manifold.html#hessian-eigenmapping>
+.. _`Hessian LLE`: http://scikit-learn.org/stable/modules/manifold.html#hessian-eigenmapping
 .. _`Modified LLE`: http://scikit-learn.org/stable/modules/manifold.html#modified-locally-linear-embedding
 .. _`Isomap`: http://scikit-learn.org/stable/modules/manifold.html#isomap
 .. _`MDS`: http://scikit-learn.org/stable/modules/manifold.html#multi-dimensional-scaling-mds

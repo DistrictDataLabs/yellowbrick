@@ -222,7 +222,7 @@ class Manifold(ProjectionVisualizer):
 
     .. _`Locally Linear Embedding`: http://scikit-learn.org/stable/modules/manifold.html#locally-linear-embedding
     .. _`LTSA LLE`: http://scikit-learn.org/stable/modules/manifold.html#local-tangent-space-alignment
-    .. _`Hessian LLE`: http://scikit-learn.org/stable/modules/manifold.html#hessian-eigenmapping>
+    .. _`Hessian LLE`: http://scikit-learn.org/stable/modules/manifold.html#hessian-eigenmapping
     .. _`Modified LLE`: http://scikit-learn.org/stable/modules/manifold.html#modified-locally-linear-embedding
     .. _`Isomap`: http://scikit-learn.org/stable/modules/manifold.html#isomap
     .. _`Multi-Dimensional Scaling`: http://scikit-learn.org/stable/modules/manifold.html#multi-dimensional-scaling-mds
@@ -591,7 +591,7 @@ def manifold_embedding(
     show: bool, default: True
         If True, calls ``show()``, which in turn calls ``plt.show()`` however you cannot
         call ``plt.savefig`` from this signature, nor ``clear_figure``. If False, simply
-        calls ``finalize()`
+        calls ``finalize()``
 
     kwargs : dict
         Keyword arguments passed to the base class and may influence the
@@ -642,7 +642,7 @@ def manifold_embedding(
 
     # Fit and finalize (calls draw)
     viz.fit_transform(X, y)
-    
+
     if show:
         viz.show()
     else:
