@@ -214,7 +214,7 @@ class TestROCAUC(VisualTestCase):
         X, y = load_occupancy(return_dataset=True).to_numpy()
         model = LogisticRegression()
 
-        #compare the images
+        # compare the images
         visualizer = roc_auc(model, X, y, show=False)
         self.assert_images_similar(visualizer)
 
