@@ -171,6 +171,8 @@ class FrequencyVisualizer(TextVisualizer):
         y : ndarray or DataFrame of shape n
             Labels for the documents for conditional frequency distribution.
 
+        Notes
+        -----
         .. note:: Text documents must be vectorized before ``fit()``.
         """
 

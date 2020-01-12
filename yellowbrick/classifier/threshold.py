@@ -69,8 +69,6 @@ class DiscriminationThreshold(ModelVisualizer):
     review the data), given a tolerance for precision and recall or limiting
     the number of records to check (the queue rate).
 
-    .. caution:: This method only works for binary, probabilistic classifiers.
-
     Parameters
     ----------
     model : estimator
@@ -164,6 +162,8 @@ class DiscriminationThreshold(ModelVisualizer):
     Classification models must implement either a ``decision_function`` or
     ``predict_proba`` method in order to be used with this class. A
     ``YellowbrickTypeError`` is raised otherwise.
+
+    .. caution:: This method only works for binary, probabilistic classifiers.
 
     .. seealso::
         For a thorough explanation of discrimination thresholds, see:
