@@ -77,7 +77,7 @@ def dataset_example(dataset="occupancy", manifold="all", path="images/", quick=F
 
     # Check if the quick method is called
     if quick:
-        oz = manifold_embedding(ax=ax, manifold=manifold, **kwargs)
+        oz = manifold_embedding(X, manifold=manifold, **kwargs)
         oz.show(outpath=path)
     else:
         oz = Manifold(ax=ax, manifold=manifold, **kwargs)
