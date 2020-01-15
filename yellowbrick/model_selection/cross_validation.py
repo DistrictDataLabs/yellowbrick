@@ -192,7 +192,9 @@ class CVScores(ModelVisualizer):
 ##########################################################################
 
 
-def cv_scores(model, X, y, ax=None, cv=None, scoring=None, color=None, **kwargs):
+def cv_scores(
+    model, X, y, ax=None, cv=None, scoring=None, color=None, show=True, **kwargs
+):
     """
     Displays cross validation scores as a bar chart and the
     average of the scores as a horizontal line
@@ -243,6 +245,11 @@ def cv_scores(model, X, y, ax=None, cv=None, scoring=None, color=None, **kwargs)
     color: string
         Specify color for barchart
 
+    show: bool, default: True
+         If True, calls ``show()``, which in turn calls ``plt.show()`` however you cannot
+         call ``plt.savefig`` from this signature, nor ``clear_figure``. If False, simply
+         calls ``finalize()``
+
     kwargs : dict
         Keyword arguments that are passed to the base class and may influence
         the visualization as defined in other Visualizers.
@@ -259,6 +266,11 @@ def cv_scores(model, X, y, ax=None, cv=None, scoring=None, color=None, **kwargs)
 
     # Fit and show the visualizer
     visualizer.fit(X, y)
-    visualizer.show(**kwargs)
 
+    if show:
+        visualizer.show()
+    else:
+        visualizer.finalize()
+
+    # Return the visualizer object
     return visualizer

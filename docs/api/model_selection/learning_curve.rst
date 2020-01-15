@@ -3,7 +3,7 @@
 Learning Curve
 ==============
 
-A learning curve shows the relationship of the training score versus the cross validated test score for an estimator with a varying number of training samples. This visualization is typically used two show two things:
+A learning curve shows the relationship of the training score versus the cross validated test score for an estimator with a varying number of training samples. This visualization is typically used to show two things:
 
 1. How much the estimator benefits from more data (e.g. do we have "enough data" or will the estimator get better if used in an online fashion).
 2. If the estimator is more sensitive to error due to variance vs. error due to bias.

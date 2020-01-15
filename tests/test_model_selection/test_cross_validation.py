@@ -93,12 +93,9 @@ class TestCrossValidation(VisualTestCase):
         """
         X, y = self.classification
 
-        cv = ShuffleSplit(3, random_state=288)
-
+        cv = StratifiedKFold(5, random_state=288)
         oz_external_cv = CVScores(LogisticRegressionCV(), cv=cv)
-
         oz_internal_cv = CVScores(LogisticRegressionCV(cv=cv))
-
         oz_external_cv.fit(X, y)
         oz_internal_cv.fit(X, y)
 
@@ -112,10 +109,8 @@ class TestCrossValidation(VisualTestCase):
         """
         X, y = self.regression
 
-        cv = ShuffleSplit(3, random_state=938)
-
+        cv = ShuffleSplit(5, random_state=938)
         oz = CVScores(DecisionTreeRegressor(random_state=23), cv=cv, scoring="r2")
-
         oz.fit(X, y)
         oz.finalize()
 
@@ -127,12 +122,9 @@ class TestCrossValidation(VisualTestCase):
         """
         X, y = self.regression
 
-        cv = ShuffleSplit(3, random_state=288)
-
+        cv = ShuffleSplit(5, random_state=288)
         oz_external_cv = CVScores(RidgeCV(), cv=cv)
-
         oz_internal_cv = CVScores(RidgeCV(cv=cv))
-
         oz_external_cv.fit(X, y)
         oz_internal_cv.fit(X, y)
 
@@ -147,7 +139,7 @@ class TestCrossValidation(VisualTestCase):
         X, y = self.classification
 
         cv = ShuffleSplit(n_splits=5, test_size=0.2, random_state=321)
-        viz = cv_scores(SVC(), X, y, cv=cv)
+        viz = cv_scores(SVC(), X, y, cv=cv, show=False)
 
         self.assert_images_similar(viz, tol=2.0)
 
