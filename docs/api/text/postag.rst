@@ -224,7 +224,7 @@ Libraries like SpaCy use tags from the Universal Dependencies (UD) framework. Th
 +-------------------+------------------------------------------+----------------------+--------------------------+
 
 Parsing raw text automatically
----------------------------
+------------------------------
 
 The ``PosTagVisualizer`` can also be used with untagged text by using the ``parse`` keyword on instantiation. The keyword
 to parse indicates which natural language processing library to use. To use ``spacy``:

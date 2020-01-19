@@ -77,9 +77,10 @@ this by assigning a color to each label and showing the labels in a legend.
 
     # Load the classification dataset
     X, y = load_occupancy()
+    classes = ["unoccupied", "occupied"]
 
     # Instantiate the visualizer
-    viz = Manifold(manifold="tsne")
+    viz = Manifold(manifold="tsne", classes=classes)
 
     viz.fit_transform(X, y)  # Fit the data to the visualizer
     viz.show()               # Finalize and render the figure
@@ -111,15 +112,16 @@ the ``f_classif`` score to find the 3 best features in our occupancy dataset.
 
     # Load the classification dataset
     X, y = load_occupancy()
+    classes = ["unoccupied", "occupied"]
 
     # Create a pipeline
     model = Pipeline([
         ("selectk", SelectKBest(k=3, score_func=f_classif)),
-        ("viz", Manifold(manifold="isomap", n_neighbors=10)),
+        ("viz", Manifold(manifold="isomap", n_neighbors=10, classes=classes)),
     ])
 
     model.fit_transform(X, y)          # Fit the data to the model
-    model.named_steps['viz'].show()    # Finalize and render the figure
+    model.named_steps['viz'].show()   # Finalize and render the figure
 
 .. image:: images/occupancy_select_k_best_isomap_manifold.png
 
