@@ -637,6 +637,7 @@ def manifold_embedding(
         alpha=alpha,
         random_state=random_state,
         colorbar=colorbar,
+        show=True,
         **kwargs
     )
 

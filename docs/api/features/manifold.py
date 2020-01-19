@@ -85,7 +85,7 @@ def dataset_example(
 
     # Check if the quick method is called
     if quick:
-        oz = manifold_embedding(X, manifold=manifold, colorbar=True, **kwargs)
+        oz = manifold_embedding(X, manifold=manifold, **kwargs)
         oz.show(outpath=path)
     else:
         oz = Manifold(ax=ax, manifold=manifold, **kwargs)
@@ -169,7 +169,7 @@ class SCurveExample(object):
 if __name__ == "__main__":
     # curve = SCurveExample()
     # curve.plot_all_manifolds()
-    # dataset_example("concrete", "tsne", path="images/concrete_tsne_manifold.png")
+    dataset_example("concrete", "tsne", path="images/concrete_tsne_manifold.png")
     dataset_example(
         "occupancy", "tsne", classes=["unoccupied", "occupied"],
         path="images/occupancy_tsne_manifold.png"
