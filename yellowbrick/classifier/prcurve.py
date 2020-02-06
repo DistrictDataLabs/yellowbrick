@@ -434,14 +434,10 @@ PRCurve = PrecisionRecallCurve
 
 def precision_recall_curve(
     model,
-    X,
-    y,
+    X_train,
+    y_train,
     X_test=None,
     y_test=None,
-    train_size=0.8,
-    random_state=None,
-    shuffle=True,
-    ax=None,
     classes=None,
     encoder=None,
     fill_area=True,
@@ -454,6 +450,7 @@ def precision_recall_curve(
     line_opacity=0.8,
     is_fitted="auto",
     force_model=False,
+    show=True,
     **kwargs
 ):
     """Precision-Recall Curve
@@ -474,40 +471,26 @@ def precision_recall_curve(
         fitted, it is fit when the visualizer is fitted, unless otherwise specified
         by ``is_fitted``.
 
-    X : ndarray or DataFrame of shape n x m
+    X_train : ndarray or DataFrame of shape n x m
         A feature array of n instances with m features the model is trained on.
-        This array will be split into train and test splits if X_test is not specified.
+        Used to fit the visualizer and also to score the visualizer if test splits are
+        not directly specified.
 
-    y : ndarray or Series of length n
-        An array or series of target or class values. This vector will be split
-        into train and test splits if y_test is not specified.
+    y_train : ndarray or Series of length n
+        An array or series of target or class values. Used to fit the visualizer and
+        also to score the visualizer if test splits are not specified.
 
-    X_test : ndarray or DataFrame of shape n x m
+    X_test : ndarray or DataFrame of shape n x m, default: None
         An optional feature array of n instances with m features that the model
-        is tested on if specified, using X as the training data. Otherwise
-        X will be split into train and test splits.
+        is scored on if specified, using X_train as the training data.
 
-    y_test : ndarray or Series of length n
-        An array or series of target or class values that serve as actual labels for
-        X_test. If not specified, y will be split into test and train along with X.
+    y_test : ndarray or Series of length n, default: None
+        An optional array or series of target or class values that serve as actual
+        labels for X_test for scoring purposes.
 
     ax : matplotlib Axes, default: None
         The axes to plot the figure on. If not specified the current axes will be
         used (or generated if required).
-
-    train_size : float or int, default=0.8
-        If float, should be between 0.0 and 1.0 and represent the proportion
-        of the dataset to include in the train split. If int, represents the
-        absolute number of train samples. Used if X_test and y_test not specified.
-
-    random_state : int, RandomState, or None, optional
-        If int, random_state is the seed used by the random number generator;
-        If RandomState instance, random_state is the random number generator;
-        If None, the random number generator is the RandomState instance used
-        by np.random.
-
-    shuffle : bool, default=True
-        Whether or not to shuffle the data before splitting.
 
     classes : list of str, defult: None
         The class labels to use for the legend ordered by the index of the sorted
@@ -569,6 +552,11 @@ def precision_recall_curve(
         will prevent an exception when the visualizer is initialized but may result
         in unexpected or unintended behavior.
 
+    show: bool, default: True
+        If True, calls ``show()``, which in turn calls ``plt.show()`` however you cannot
+        call ``plt.savefig`` from this signature, nor ``clear_figure``. If False, simply
+        calls ``finalize()``
+
     kwargs : dict
         Keyword arguments passed to the visualizer base classes.
 
@@ -576,34 +564,7 @@ def precision_recall_curve(
     -------
     viz : PrecisionRecallCurve
         Returns the visualizer that generates the curve visualization.
-
-    Notes
-    -----
-    Data is split using ``sklearn.model_selection.train_test_split`` before
-    computing the Precision-Recall curve. Splitting options such as train_size,
-    random_state, and shuffle are specified. Note that splits are not stratified,
-    if required, it is recommended to use the base class.
     """
-
-    if (X_test is None) and (y_test is None):
-        # Create train and test splits to validate the model
-        X_train, X_test, y_train, y_test = tts(
-            X, y, train_size=train_size, random_state=random_state, shuffle=shuffle
-        )
-    elif any(
-        [
-            ((X_test is not None) and (y_test is None)),
-            ((X_test is None) and (y_test is not None)),
-        ]
-    ):
-        # exception handling in case of missing X_test or y_test
-        raise YellowbrickValueError(
-            "both X_test and y_test are required if one is specified"
-        )
-
-    else:
-        X_train, y_train = X, y
-
     # Instantiate the visualizer
     viz = PRCurve(
         model,
@@ -623,10 +584,22 @@ def precision_recall_curve(
         **kwargs
     )
 
-    # Fit and transform the visualizer
+    # Fit the visualizer
     viz.fit(X_train, y_train)
-    viz.score(X_test, y_test)
-    viz.finalize()
+
+    # Score the visualizer
+    if X_test and y_test:
+        viz.score(X_test, y_test)
+    elif X_test or y_test:
+        raise YellowbrickValueError("must specify both X_test and y_test or neither")
+    else:
+        viz.score(X_train, y_train)
+
+    # Draw the final visualization
+    if show:
+        viz.show()
+    else:
+        viz.finalize()
 
     # Return the visualizer
     return viz
