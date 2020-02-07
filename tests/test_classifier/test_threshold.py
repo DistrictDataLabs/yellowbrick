@@ -31,10 +31,10 @@ from unittest.mock import patch
 from tests.base import VisualTestCase
 from numpy.testing.utils import assert_array_equal
 
+from sklearn.base import ClassifierMixin
 from sklearn.svm import LinearSVC, NuSVC
 from sklearn.datasets import make_classification
 from sklearn.ensemble import RandomForestClassifier
-from sklearn.neighbors import RadiusNeighborsClassifier
 from sklearn.naive_bayes import BernoulliNB, GaussianNB
 from sklearn.linear_model import Ridge, LogisticRegression
 from sklearn.model_selection import StratifiedShuffleSplit
@@ -43,7 +43,6 @@ try:
     import pandas as pd
 except ImportError:
     pd = None
-
 
 ##########################################################################
 ## DiscriminationThreshold Test Cases
@@ -162,7 +161,7 @@ class TestDiscriminationThreshold(VisualTestCase):
 
         _, ax = plt.subplots()
 
-        discrimination_threshold(BernoulliNB(3), X, y, ax=ax, random_state=5)
+        discrimination_threshold(BernoulliNB(3), X, y, ax=ax, random_state=5, show=False)
         self.assert_images_similar(ax=ax, tol=10)
 
     @patch.object(DiscriminationThreshold, "draw", autospec=True)
@@ -257,11 +256,21 @@ class TestDiscriminationThreshold(VisualTestCase):
         Assert requires probabilistic classifier
         """
         message = "requires a probabilistic binary classifier"
-        assert is_classifier(RadiusNeighborsClassifier)
-        assert not is_probabilistic(RadiusNeighborsClassifier)
+
+        class RoboClassifier(ClassifierMixin):
+            """
+            Dummy Non-Probabilistic Classifier
+            """
+
+            def fit(self, X, y):
+                self.classes_ = [0, 1]
+                return self
+
+        assert is_classifier(RoboClassifier)
+        assert not is_probabilistic(RoboClassifier)
 
         with pytest.raises(yb.exceptions.YellowbrickError, match=message):
-            DiscriminationThreshold(RadiusNeighborsClassifier())
+            DiscriminationThreshold(RoboClassifier())
 
     def test_accepts_predict_proba(self):
         """

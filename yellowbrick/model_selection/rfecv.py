@@ -262,7 +262,7 @@ class RFECV(ModelVisualizer):
 ##########################################################################
 
 
-def rfecv(model, X, y, ax=None, step=1, groups=None, cv=None, scoring=None, **kwargs):
+def rfecv(model, X, y, ax=None, step=1, groups=None, cv=None, scoring=None, show=True, **kwargs):
     """
     Performs recursive feature elimination with cross-validation to determine
     an optimal number of features for a model. Visualizes the feature subsets
@@ -318,6 +318,11 @@ def rfecv(model, X, y, ax=None, step=1, groups=None, cv=None, scoring=None, **kw
         ``scorer(estimator, X, y)``. See scikit-learn model evaluation
         documentation for names of possible metrics.
 
+    show: bool, default: True
+        If True, calls ``show()``, which in turn calls ``plt.show()`` however you cannot
+        call ``plt.savefig`` from this signature, nor ``clear_figure``. If False, simply
+        calls ``finalize()``
+
     kwargs : dict
         Keyword arguments that are passed to the base class and may influence
         the visualization as defined in other Visualizers. These arguments are
@@ -330,10 +335,15 @@ def rfecv(model, X, y, ax=None, step=1, groups=None, cv=None, scoring=None, **kw
         Returns the fitted, finalized visualizer.
     """
     # Initialize the visualizer
-    oz = RFECV(model, ax=ax, step=step, groups=groups, cv=cv, scoring=scoring)
+    oz = RFECV(model, ax=ax, step=step, groups=groups, cv=cv, scoring=scoring, show=show)
 
     # Fit and show the visualizer
     oz.fit(X, y)
-    oz.show(**kwargs)
 
+    if show:
+        oz.show()
+    else:
+        oz.finalize()
+
+    # Return the visualizer object
     return oz
