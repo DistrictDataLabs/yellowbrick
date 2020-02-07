@@ -240,15 +240,16 @@ class ClassPredictionError(ClassificationScoreVisualizer):
 
 def class_prediction_error(
     model,
-    X,
-    y,
+    X_train,
+    y_train,
+    X_test=None,
+    y_test=None,
     ax=None,
-    test_size=0.2,
-    random_state=None,
     classes=None,
     encoder=None,
     is_fitted="auto",
     force_model=False,
+    show=True,
     **kwargs
 ):
     """Class Prediction Error
@@ -266,21 +267,26 @@ def class_prediction_error(
         fitted, it is fit when the visualizer is fitted, unless otherwise specified
         by ``is_fitted``.
 
-    X  : ndarray or DataFrame of shape n x m
-        A matrix of n instances with m features.
+    X_train : ndarray or DataFrame of shape n x m
+        A feature array of n instances with m features the model is trained on.
+        Used to fit the visualizer and also to score the visualizer if test splits are
+        not directly specified.
 
-    y  : ndarray or Series of length n
-        An array or series of target or class values.
+    y_train : ndarray or Series of length n
+        An array or series of target or class values. Used to fit the visualizer and
+        also to score the visualizer if test splits are not specified.
+
+    X_test : ndarray or DataFrame of shape n x m, default: None
+        An optional feature array of n instances with m features that the model
+        is scored on if specified, using X_train as the training data.
+
+    y_test : ndarray or Series of length n, default: None
+        An optional array or series of target or class values that serve as actual
+        labels for X_test for scoring purposes.
 
     ax : matplotlib Axes, default: None
         The axes to plot the figure on. If not specified the current axes will be
         used (or generated if required).
-
-    test_size : float, default=0.2
-        The percentage of the data to reserve as test data.
-
-    random_state : int or None, default=None
-        The value to seed the random number generator for shuffling data.
 
     classes : list of str, defult: None
         The class labels to use for the legend ordered by the index of the sorted
@@ -307,6 +313,11 @@ def class_prediction_error(
         will prevent an exception when the visualizer is initialized but may result
         in unexpected or unintended behavior.
 
+    show: bool, default: True
+        If True, calls ``show()``, which in turn calls ``plt.show()`` however
+        you cannot call ``plt.savefig`` from this signature, nor
+        ``clear_figure``. If False, simply calls ``finalize()``
+
     kwargs: dict
         Keyword arguments passed to the visualizer base classes.
 
@@ -316,7 +327,7 @@ def class_prediction_error(
         Returns the fitted, finalized visualizer
     """
     # Instantiate the visualizer
-    visualizer = ClassPredictionError(
+    viz = ClassPredictionError(
         model=model,
         ax=ax,
         classes=classes,
@@ -326,15 +337,22 @@ def class_prediction_error(
         **kwargs
     )
 
-    # Create the train and test splits
-    X_train, X_test, y_train, y_test = tts(
-        X, y, test_size=test_size, random_state=random_state
-    )
+    # Fit the visualizer (calls draw)
+    viz.fit(X_train, y_train, **kwargs)
 
-    # Fit and transform the visualizer (calls draw)
-    visualizer.fit(X_train, y_train, **kwargs)
-    visualizer.score(X_test, y_test)
-    visualizer.finalize()
+    # Score the visualizer
+    if X_test is not None and y_test is not None:
+        viz.score(X_test, y_test)
+    elif X_test is not None or y_test is not None:
+        raise YellowbrickValueError("must specify both X_test and y_test or neither")
+    else:
+        viz.score(X_train, y_train)
+
+    # Draw the final visualization
+    if show:
+        viz.show()
+    else:
+        viz.finalize()
 
     # Return the visualizer
-    return visualizer
+    return viz
