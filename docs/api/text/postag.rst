@@ -300,7 +300,7 @@ The same functionality above can be achieved with the associated quick method ``
 +-------------------+------------------------------------------+----------------------+--------------------------+
 
 Parsing raw text automatically
----------------------------
+------------------------------
 
 The ``PosTagVisualizer`` can also be used with untagged text by using the ``parse`` keyword on instantiation. The keyword
 to parse indicates which natural language processing library to use. To use ``spacy``:
