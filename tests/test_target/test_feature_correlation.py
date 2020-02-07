@@ -198,8 +198,6 @@ class TestFeatureCorrelationVisualizer(VisualTestCase):
         """
         Test sorting of correlation
         """
-        # fig = plt.figure()
-        # ax = fig.add_subplot()
         g = feature_correlation.feature_correlation(self.X, self.y, labels=self.labels, show=False)
 
         self.assert_images_similar(g)
