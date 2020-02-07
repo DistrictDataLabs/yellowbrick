@@ -348,9 +348,10 @@ class TestConfusionMatrix(VisualTestCase):
 
         _, ax = plt.subplots()
         model = DecisionTreeClassifier(random_state=25)
-        confusion_matrix(model, X, y, ax=ax, random_state=23)
 
-        self.assert_images_similar(ax=ax, tol=0.1)
+        #compare the images
+        visualizer = confusion_matrix(model, X, y, ax=ax, show=False)
+        self.assert_images_similar(visualizer)
 
     def test_isclassifier(self):
         """
