@@ -471,5 +471,5 @@ class TestResidualsPlot(VisualTestCase):
         oz = prediction_error(
             model, self.data.X.train, self.data.y.train, ax=ax, show=False
         )
-
+        assert isinstance(oz, PredictionError)
         self.assert_images_similar(oz)

@@ -151,7 +151,7 @@ class PredictionError(RegressionScoreVisualizer):
         self.identity = identity
         self.alpha = alpha
 
-    def score(self, X, y=None, **kwargs):
+    def score(self, X, y, **kwargs):
         """
         The score function is the hook for visual interaction. Pass in test
         data and the visualizer will create predictions on the data and
@@ -282,7 +282,7 @@ class PredictionError(RegressionScoreVisualizer):
 def prediction_error(
         model,
         X_train,
-        y_train=None,
+        y_train,
         X_test=None,
         y_test=None,
         ax=None,
@@ -357,6 +357,11 @@ def prediction_error(
         will be fit when the visualizer is fit, otherwise, the estimator will not be
         modified. If 'auto' (default), a helper method will check if the estimator
         is fitted before fitting it again.
+
+    show: bool, default: True
+        If True, calls ``show()``, which in turn calls ``plt.show()`` however you cannot
+        call ``plt.savefig`` from this signature, nor ``clear_figure``. If False, simply
+        calls ``finalize()``
 
     kwargs : dict
         Keyword arguments that are passed to the base class and may influence
