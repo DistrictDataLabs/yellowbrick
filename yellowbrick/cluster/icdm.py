@@ -480,6 +480,7 @@ def intercluster_distance(
     legend_size=1.5,
     random_state=None,
     is_fitted="auto",
+    show=True,
     **kwargs
 ):
     """Quick Method:
@@ -559,6 +560,11 @@ def intercluster_distance(
         modified. If 'auto' (default), a helper method will check if the estimator
         is fitted before fitting it again.
 
+    show : bool, default: True
+        If True, calls ``show()``, which in turn calls ``plt.show()`` however
+        you cannot call ``plt.savefig`` from this signature, nor
+        ``clear_figure``. If False, simply calls ``finalize()``
+
     kwargs : dict
         Keyword arguments passed to the base class and may influence the
         feature visualization properties.
@@ -584,5 +590,10 @@ def intercluster_distance(
     )
 
     oz.fit(X, y)
-    oz.finalize()
+
+    if show:
+        oz.show()
+    else:
+        oz.finalize()
+
     return oz
