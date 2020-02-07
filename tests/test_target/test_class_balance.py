@@ -231,9 +231,11 @@ class TestClassBalance(VisualTestCase):
 
     def test_quick_method(self):
         """
-        Test the quick method with
+        Test the quick method producing a valid visualization
         """
         dataset = make_fixture(binary=False, split=False)
 
         viz = class_balance(dataset.y)
+
+        assert isinstance(viz, ClassBalance)
         self.assert_images_similar(viz, tol=0.5)
