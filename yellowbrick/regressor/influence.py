@@ -216,7 +216,7 @@ class CooksDistance(Visualizer):
 
 
 def cooks_distance(
-    X, y, ax=None, draw_threshold=True, linefmt="C0-", markerfmt=",", **kwargs
+    X, y, ax=None, draw_threshold=True, linefmt="C0-", markerfmt=",", show=True, **kwargs
 ):
     """
     Cook's Distance is a measure of how influential an instance is to the computation of
@@ -278,5 +278,12 @@ def cooks_distance(
         **kwargs
     )
     viz.fit(X, y)
-    viz.finalize()
+
+    # Draw the final visualization
+    if show:
+        viz.show()
+    else:
+        viz.finalize()
+
+    # Return the visualizer
     return viz
