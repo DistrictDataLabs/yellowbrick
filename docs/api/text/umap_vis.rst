@@ -132,6 +132,10 @@ it disagrees with a non-manifold based clustering technique. A detailed
 explanation of this phenomenon can be found in this `UMAP
 documentation <https://umap-learn.readthedocs.io/en/latest/clustering.html>`__.
 
+
+Quick Method
+------------
+
 The same functionality above can be achieved with the associated quick method ``umap``. This method will build the ``UMAPVisualizer`` object with the associated arguments, fit it, then (optionally) immediately show it
 
 .. code:: python
