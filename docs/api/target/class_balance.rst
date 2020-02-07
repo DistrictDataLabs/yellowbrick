@@ -70,6 +70,9 @@ This visualization allows us to do a quick check to ensure that the proportion o
 .. note:: This example uses ``TimeSeriesSplit`` to split the data into the training and test sets. For more information on this cross-validation method, please refer to the scikit-learn `documentation <https://scikit-learn.org/stable/modules/generated/sklearn.model_selection.TimeSeriesSplit.html>`_.
 
 
+Quick Method
+------------
+
 The same functionalities above can be achieved with the associated quick method `class_balance`. This method will build the ``ClassBalance`` object with the associated arguments, fit it, then (optionally) immediately show it.
 
 .. plot::
