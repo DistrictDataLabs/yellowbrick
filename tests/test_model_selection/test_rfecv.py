@@ -133,7 +133,7 @@ class TestRFECV(VisualTestCase):
         model = LogisticRegression()
         X, y = self.dataset
 
-        viz = rfecv(model, X, y, step=2, cv=cv, scoring="f1_weighted")
+        viz = rfecv(model, X, y, step=2, cv=cv, scoring="f1_weighted", show=False)
 
         self.assert_images_similar(viz, remove_legend=True)
 
