@@ -343,10 +343,49 @@ class TestResidualsPlot(VisualTestCase):
 
         model = Lasso(random_state=19)
         oz = residuals_plot(
-            model, self.data.X.train, self.data.y.train, ax=ax, random_state=23
+            model,
+            self.data.X.train,
+            self.data.y.train,
+            self.data.X.test,
+            self.data.y.test,
+            ax=ax,
+            line_color="#cccccc",
+            test_color="r",
+            train_color="y",
         )
 
+        assert isinstance(oz, ResidualsPlot)
         self.assert_images_similar(oz)
+
+    @pytest.mark.xfail(
+        IS_WINDOWS_OR_CONDA,
+        reason="font rendering different in OS and/or Python; see #892",
+    )
+    def test_residuals_quick_method_train_only(self):
+        """
+        Test the quick method with only train data (simplest args)
+        """
+        oz = residuals_plot(
+            Ridge(random_state=19),
+            self.data.X.train,
+            self.data.y.train,
+        )
+
+        assert isinstance(oz, ResidualsPlot)
+        self.assert_images_similar(oz)
+
+    def test_residuals_quick_method_missing_data(self):
+        """
+        Ensure the quick method requires both X_test and y_test if one specified
+        """
+        msg = "both X_test and y_test are required if one is specified"
+        with pytest.raises(YellowbrickValueError, match=msg):
+            residuals_plot(
+                Lasso(),
+                self.data.X.train,
+                self.data.y.train,
+                self.data.X.test,
+            )
 
     @pytest.mark.xfail(
         IS_WINDOWS_OR_CONDA,

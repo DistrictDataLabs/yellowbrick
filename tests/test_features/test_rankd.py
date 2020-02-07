@@ -776,3 +776,17 @@ class TestRank2D(VisualTestCase):
 
         # Image similarity testing
         self.assert_images_similar(oz, tol=0.1)
+
+    @pytest.mark.xfail(
+        IS_WINDOWS_OR_CONDA,
+        reason="font rendering different in OS and/or Python; see #892",
+    )
+    def test_rank2d_quick_method(self):
+        """
+        Test Rank2D quick method
+        """
+        X, y = load_occupancy()
+        oz = rank2d(X, y, algorithm="spearman", colormap="RdYlGn_r")
+
+        assert isinstance(oz, Rank2D)
+        self.assert_images_similar(oz, tol=0.1)
