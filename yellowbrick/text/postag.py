@@ -158,7 +158,6 @@ class PosTagVisualizer(TextVisualizer):
             stack=False,
             parser=None,
             **kwargs
-    develop
     ):
         super(PosTagVisualizer, self).__init__(ax=ax, **kwargs)
 
@@ -568,7 +567,6 @@ def postag(
         stack=False,
         parser=None,
         **kwargs
-  develop
 ):
     """
     Display a barchart with the counts of different parts of speech
@@ -623,7 +621,6 @@ postag
         NLTK or SpaCy must be installed into your environment. 'tagger' is the tagset to use. For example
         'nltk_wordpunct' would use the NLTK library with 'wordpunct' tagset. Or 'spacy_en_core_web_sm' would
         use SpaCy with the 'en_core_web_sm' tagset.
-develop
 
     kwargs : dict
         Pass any additional keyword arguments to the PosTagVisualizer.
