@@ -1,0 +1,176 @@
+.. -*- mode: rst -*-
+
+January 7, 2020
+===============
+
+Yellowbrick Advisory Board Meeting Held on January 7, 2020 from 2030-2230 EST via Video Conference Call. Rebecca Bilbro presiding as Chair, Benjamin Bengfort serving as Secretary and Edwin Schmierer as Treasurer. Minutes taken by Benjamin Bengfort.
+
+Attendees: Rebecca Bilbro, Benjamin Bengfort, Kristen McIntyre, Tony Ojeda, Larry Gray, Prema Roman, Edwin Schmierer, Nathan Danielsen, and Adam Morris.
+
+Agenda
+------
+
+A broad overview of the topics for discussion in the order they were presented:
+
+1. Welcome (Rebecca Bilbro)
+2. Fall 2019 retrospective (Rebecca Bilbro)
+3. Yellowbrick v1.2 milestone planning (Benjamin Bengfort)
+4. Advisor dues and Yellowbrick Budget (Edwin Schmierer)
+5. Officer nominations and election
+6. Spring 2020 contributors and roles
+
+Votes and Resolutions
+---------------------
+
+Operating Budget
+~~~~~~~~~~~~~~~~
+
+The following operating budget is proposed for 2020.
+
+The board discussed a minor increase in operating costs from the previous year and acknowledged a 2020 budget of **$271.48** and **$30.17** advisor member dues per person. Because of the minimal change, the board is leaving the final budget open to any additional proposed expenses by January 14.
+
+Budget breakdown:
+
+=============================================  ================  =========
+                  Description                      Frequency       Total
+=============================================  ================  =========
+Name.com domain registration (scikit-yb.org)         annually      $17.98
+Read the Docs Gold Membership                     $10 monthly     $120.00
+Stickers (StickerMule.com)                           annually     $133.50
+Datasets hosting on S3                          monthly (DDL)      $10-15
+Cheatsheets                                     annually (DDL)        $70
+=============================================  ================  =========
+
+
+Advisors to pay dues to Edwin via Venmo. Edwin will send his Venmo handle and QR code via YB Slack channel. Dues are payable by Feb 14, 2020. If any advisors would like to make changes or add to the budget, please contact Edwin by January 14 via email or Slack. Edwin will take suggestions to the board for discussion and vote by the end of January.
+
+A special thank you to District Data Labs for covering travel costs to PyCon, the printing of cheatsheets, and hosting our datasets on S3 for another year!
+
+Motion: any opposed to the current budget and leaving the budget open until the end of January. Moved by Edwin Shmierer, seconded by Benjamin Bengfort.
+
+*No opposition to the motion*.
+
+Officer Elections
+~~~~~~~~~~~~~~~~~
+
+During the first advisory board meeting of the year, officers are nominated and elected to manage Yellowbrick for the year. Current officers gave an overview of the role and responsibilities for Chair, Secretary, and Treasurer, respectively. The following nominations were proposed:
+
+Nominations for Chair:
+
+- Kristen McIntyre by Benjamin Bengfort
+
+Motion: a vote to elect Kristen McIntyre as 2020 Chair. Moved by Rebecca Bilbro, seconded by Larry Gray.
+
+*The motion was adopted unanimously*.
+
+Nominations for Secretary:
+
+- Larry Gray by Rebecca Bilbro
+
+Motion: a vote to elect Larry Gray as 2020 Secretary. Moved by Rebecca Bilbro, seconded by Prema Roman.
+
+*The motion was adopted unanimously*.
+
+Nominations for Treasurer:
+
+- Edwin Schmierer by Rebecca Bilbro
+
+Motion: a vote to elect Edwin Shmierer as 2020 Treasurer. Moved by Rebecca Bilbro, seconded by Kristen McIntyre.
+
+*The motion was adopted unanimously*.
+
+Kristen McIntyre and Larry Gray addressed the board expressing gratitude for the opportunity to serve and voicing their commitment to fulfilling the responsibilities to the best of their abilities.
+
+Fall 2019 Retrospective
+-----------------------
+
+In traditional agile development, sprints are concluded with a retrospective to discuss what went well, what didn't go well, what were unexpected challenges, and how we can adapt to those challenges in the future.
+
+Accomplishments
+~~~~~~~~~~~~~~~
+
+- Semester has been a lot lighter than previous semesters, focused on quick methods.
+- Fixing a bug with PCA visualizer (regression made with projection argument).
+- Decision to move from ``poof()`` to ``show()`` -- we made a decision and executed on it (even in the face of a difficult situation).
+- Test coverage has been catching things well in advance of problems (and before users experience them).
+- Dependency set is small, which limits the number of problems we can have from them.
+- Had a lot of contributors in the fall group (at least on the roster).
+- 6 new contributors who opened PRs.
+- 12 participants in the “burrito poll” made the API decision of the quick method signature.
+
+
+Shoutouts
+~~~~~~~~~
+
+- Matt Harrison featured Yellowbrick in his machine learning book.
+- Molly Morrison, Michael Chestnut, Michael Garod, Rohan Panda, George Krug, and Stephanie Miller all contributed to the quick methods development.
+- Prema Roman has done a wonderful job this semester, stepped up and responding on GitHub, helping with new contributors, responding to questions.
+- Guidance document made it easier and clearer about how to take a break for a semester.
+
+Challenges
+~~~~~~~~~~
+
+Potentially the biggest challenge Yellowbrick had this semester was a note from a user that the name of one of our methods was potentially a homophobic slur. Although the board considered the name to be one of the unique and charming features of Yellowbrick, we quickly decided to make a change to the method name, particularly as we were in the process of incrementing a major version number, which meant support for backward compatibility was not required.
+
+- Updated dependencies breaking CI (numba, umap-learn, sklearn, scipy) -- happened 2x
+- Inconsistent behavior between miniconda and vanilla Python
+- Jobs and other priorities have been swamping our ability to contribute to YB as much as we’d like to; the roles are still a bit new and we wish we could do more than we are
+- There wasn’t a lot of activity from all of the contributors; perhaps we didn’t engage enough?  Or  maybe we want to have a range of issues available  for different skill/experience levels?
+- 7 quick methods are completed, 3 or 4 in review, 35 were assigned - most people who were assigned quick methods didn’t show up after the start of the semester.
+- 10 new contributors who signed up but didn’t open a PR or participate much
+
+Semester and Roadmap
+--------------------
+
+v1.1 Status
+~~~~~~~~~~~
+
+The v1.1 release has not yet been finalized because the goal of updating all of the quick methods has not been completed. Because we've done the hard work of figuring out the API signature and documentation mechanism, the board feels that we should finish all the quick methods before releasing v1.1 *before the end of February*.
+
+In order to complete v1.1 the board will hold one or two hackathons (either in person or virtual) to complete the quick methods together and with food and drink.
+
+Spring 2020: v1.2
+~~~~~~~~~~~~~~~~~
+
+The Spring 2020 goal is to have everyone implement and review one new visualizer. Implementing visualizers from scratch is much more fun than trying to improve current visualizers or fix bugs - so the focus of this semester is fun! We'll be looking at Probability Curves, Missing Values, Multimodal Visualizers and more, trying to have a flashy semester!
+
+Visualizer implementation and review assignments will be handed out at the beginning of the semester depending on preference.
+
+Additionally, the board will prepare for PyCon sprints by implementing cheatsheets and preparing blog posts and other materials for people to quickly get started with Yellowbrick, scikit-learn, and matplotlib.
+
+Summer 2020: v1.3
+~~~~~~~~~~~~~~~~~
+
+It is likely that the Summer 2020 goal will be to implement visual pipelines. This is a research oriented task that doesn't have a clear path forward, so some planning before the semester is required. This is a major new feature to the libary.
+
+Spring 2020 Contributors
+~~~~~~~~~~~~~~~~~~~~~~~~
+
+Note: those wishing to sign up as core contributors must have previously successfully contributed to Yellowbrick by closing a PR. Yellowbrick is open to unassigned, non-core submissions from anyone at any time.
+
+=====================  =================  ==========  ========
+Name                   Role               Visualizer  Reviewer
+=====================  =================  ==========  ========
+Rebecca Bilbro         Maintainer         yes         yes
+Benjamin Bengfort      Core Contributor   yes         yes
+Nathan Danielsen       Maintainer         yes         yes
+Kristen McIntyre       Core Contributor   yes         yes
+Larry Gray             Core Contributor   yes         yes
+Adam Morris            Coordinator        pair        yes
+Prema Roman            Maintainer         yes         yes
+=====================  =================  ==========  ========
+
+Minutes
+-------
+
+This meeting was primarily focused on electing the new board members and doing some initial planning for the year ahead. No additional topics were discussed.
+
+Action Items
+------------
+
+- Sign up for contributor roles and specify implement or review a visualizer (all)
+- Review the 2020 budget and add any additional budget requests (all)
+- Coordinate quick methods hackathon to finalize v1.1 (Kristen McIntyre)
+- Assign visualizers and reviewers (Benjamin Bengfort)
+- Update v1.1, v1.2, and v1.3 milestones on GitHub (Benjamin Bengfort & Larry Gray)
+- Coordinate PyCon sprints with maintainers (Larry Gray and Prema Roman)
