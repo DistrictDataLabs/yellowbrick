@@ -340,18 +340,17 @@ class TestPrecisionRecallCurve(VisualTestCase):
         Test the precision_recall_curve quick method with numpy arrays.
         """
         X, y = load_occupancy(return_dataset=True).to_numpy()
-        model = DecisionTreeClassifier(random_state=14)
+        model = DecisionTreeClassifier(random_state=23, max_depth=2)
 
         oz = precision_recall_curve(
             model,
             X,
             y,
-            per_class=True,
+            per_class=False,
             micro=True,
             fill_area=False,
             iso_f1_curves=True,
             ap_score=False,
-            random_state=2,
             show=False
         )
 

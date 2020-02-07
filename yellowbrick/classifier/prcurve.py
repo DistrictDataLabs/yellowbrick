@@ -23,7 +23,6 @@ from sklearn.preprocessing import label_binarize
 from sklearn.multiclass import OneVsRestClassifier
 from sklearn.utils.multiclass import type_of_target
 from sklearn.metrics import average_precision_score
-from sklearn.model_selection import train_test_split as tts
 from sklearn.metrics import precision_recall_curve as sk_precision_recall_curve
 
 from yellowbrick.exceptions import ModelError, NotFitted
