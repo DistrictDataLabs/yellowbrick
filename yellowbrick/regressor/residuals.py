@@ -84,12 +84,6 @@ class PredictionError(RegressionScoreVisualizer):
         model is over- or under- estimating the given values. The color of the
         identity line is a muted version of the ``line_color`` argument.
 
-    point_color : color
-        Defines the color of the error points; can be any matplotlib color.
-
-    line_color : color
-        Defines the color of the best fit line; can be any matplotlib color.
-
     alpha : float, default: 0.75
         Specify a transparency where 1 is completely opaque and 0 is completely
         transparent. This property makes densely clustered points more visible.
@@ -285,7 +279,20 @@ class PredictionError(RegressionScoreVisualizer):
         self.ax.legend(loc="best", frameon=True)
 
 
-def prediction_error(model, X, y=None, ax=None, alpha=0.75, is_fitted="auto", **kwargs):
+def prediction_error(
+        model,
+        X_train,
+        y_train=None,
+        X_test=None,
+        y_test=None,
+        ax=None,
+        shared_limits=True,
+        bestfit=True,
+        identity=True,
+        alpha=0.75,
+        is_fitted="auto",
+        show=True,
+        **kwargs):
     """Quickly plot a prediction error visualizer
 
     Plot the actual targets from the dataset against the
@@ -302,11 +309,22 @@ def prediction_error(model, X, y=None, ax=None, alpha=0.75, is_fitted="auto", **
         If the estimator is not fitted, it is fit when the visualizer is fitted,
         unless otherwise specified by ``is_fitted``.
 
-    X  : ndarray or DataFrame of shape n x m
-        A matrix of n instances with m features.
+    X_train : ndarray or DataFrame of shape n x m
+        A feature array of n instances with m features the model is trained on.
+        Used to fit the visualizer and also to score the visualizer if test splits are
+        not directly specified.
 
-    y  : ndarray or Series of length n
-        An array or series of target or class values.
+    y_train : ndarray or Series of length n
+        An array or series of target or class values. Used to fit the visualizer and
+        also to score the visualizer if test splits are not specified.
+
+    X_test : ndarray or DataFrame of shape n x m, default: None
+        An optional feature array of n instances with m features that the model
+        is scored on if specified, using X_train as the training data.
+
+    y_test : ndarray or Series of length n, default: None
+        An optional array or series of target or class values that serve as actual
+        labels for X_test for scoring purposes.
 
     ax : matplotlib Axes
         The axes to plot the figure on.
@@ -330,12 +348,6 @@ def prediction_error(model, X, y=None, ax=None, alpha=0.75, is_fitted="auto", **
         model is over- or under- estimating the given values. The color of the
         identity line is a muted version of the ``line_color`` argument.
 
-    point_color : color
-        Defines the color of the error points; can be any matplotlib color.
-
-    line_color : color
-        Defines the color of the best fit line; can be any matplotlib color.
-
     alpha : float, default: 0.75
         Specify a transparency where 1 is completely opaque and 0 is completely
         transparent. This property makes densely clustered points more visible.
@@ -356,15 +368,32 @@ def prediction_error(model, X, y=None, ax=None, alpha=0.75, is_fitted="auto", **
         Returns the axes that the prediction error plot was drawn on.
     """
     # Instantiate the visualizer
-    visualizer = PredictionError(model, ax, alpha=alpha, is_fitted=is_fitted, **kwargs)
+    visualizer = PredictionError(
+        model,
+        ax,
+        shared_limits=shared_limits,
+        bestfit=bestfit,
+        identity=identity,
+        alpha=alpha,
+        is_fitted=is_fitted,
+        **kwargs)
 
-    # Create the train and test splits
-    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2)
+    visualizer.fit(X_train, y_train)
 
-    # Fit and transform the visualizer (calls draw)
-    visualizer.fit(X_train, y_train, **kwargs)
-    visualizer.score(X_test, y_test)
-    visualizer.finalize()
+    # Scores the visualizer with X_test and y_test if provided, X_train, y_train if not provided
+    if X_test is not None and y_test is not None:
+        visualizer.score(X_test, y_test)
+    elif X_test is not None or y_test is not None:
+        raise YellowbrickValueError(
+            "both X_test and y_test are required if one is specified"
+        )
+    else:
+        visualizer.score(X_train, y_train)
+
+    if show:
+        visualizer.show()
+    else:
+        visualizer.finalize()
 
     # Return the axes object on the visualizer
     return visualizer

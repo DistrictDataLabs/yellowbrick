@@ -456,3 +456,20 @@ class TestResidualsPlot(VisualTestCase):
             oz = ResidualsPlot(model, is_fitted=False)
             oz.fit(X, y)
             mockfit.assert_called_once_with(X, y)
+
+    @pytest.mark.xfail(
+        IS_WINDOWS_OR_CONDA,
+        reason="font rendering different in OS and/or Python; see #892",
+    )
+    def test_prediction_error_quick_method(self):
+        """
+        Image similarity test using the residuals plot quick method
+        """
+        _, ax = plt.subplots()
+
+        model = Lasso(random_state=19)
+        oz = prediction_error(
+            model, self.data.X.train, self.data.y.train, ax=ax, show=False
+        )
+
+        self.assert_images_similar(oz)
