@@ -276,6 +276,7 @@ def feature_correlation(
     feature_index=None,
     feature_names=None,
     color=None,
+    show=True,
     **kwargs
 ):
     """
@@ -328,6 +329,11 @@ def feature_correlation(
     color: string
         Specify color for barchart
 
+    show: bool, default: True
+        If True, calls ``show()``, which in turn calls ``plt.show()`` however you cannot
+        call ``plt.savefig`` from this signature, nor ``clear_figure``. If False, simply
+        calls ``finalize()``
+
     kwargs : dict
         Keyword arguments that are passed to the base class and may influence
         the visualization as defined in other Visualizers.
@@ -339,7 +345,7 @@ def feature_correlation(
     """
 
     # Instantiate the visualizer
-    viz = FeatureCorrelation(
+    visualizer = FeatureCorrelation(
         ax=ax,
         method=method,
         labels=labels,
@@ -351,8 +357,11 @@ def feature_correlation(
     )
 
     # Fit and transform the visualizer (calls draw)
-    viz.fit(X, y, **kwargs)
-    viz.finalize()
+    visualizer.fit(X, y, **kwargs)
+    if show:
+        visualizer.show()
+    else:
+        visualizer.finalize()
 
     # Return the visualizer
-    return viz
+    return visualizer
