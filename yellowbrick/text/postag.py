@@ -556,7 +556,6 @@ class PosTagVisualizer(TextVisualizer):
 
 
 def postag(
- postag
         X,
         y=None,
         ax=None,
