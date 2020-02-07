@@ -23,7 +23,6 @@ import matplotlib.pyplot as plt
 
 from sklearn.utils.multiclass import unique_labels
 from sklearn.metrics.classification import _check_targets
-from sklearn.model_selection import train_test_split as tts
 
 from yellowbrick.draw import bar_stack
 from yellowbrick.classifier.base import ClassificationScoreVisualizer
