@@ -134,6 +134,10 @@ In both cases, because the coefficient may be negative (indicating a strong nega
 
 This method may also be used for instances; but generally there are very many instances relative to the number models being compared. Instead a heatmap grid is a better choice to inspect the influence of features on individual instances. Here the grid is constructed such that the x-axis represents individual features, and the y-axis represents individual instances. The color of each cell (an instance, feature pair) represents the magnitude of the product of the instance value with the feature's coefficient for a single model. Visual inspection of this diagnostic may reveal a set of instances for which one feature is more predictive than another; or other types of regions of information in the model itself.
 
+
+Quick Method
+------------
+
 The same functionality above can be achieved with the associated quick method `feature_importances`. This method will build the ``FeatureImportances`` object with the associated arguments, fit it, then (optionally) immediately show it.
 
 .. plot::
