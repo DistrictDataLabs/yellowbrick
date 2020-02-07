@@ -37,6 +37,10 @@ Workflow             Model selection, Hyperparameter tuning
     visualizer.fit(X, y)
     visualizer.show()
 
+
+Quick Method
+------------
+
 The same functionality above can be achieved with the associated quick method `alphas`. This method will build the ``AlphaSelection`` Visualizer object with the associated arguments, fit it, then (optionally) immediately show it.
 
 
