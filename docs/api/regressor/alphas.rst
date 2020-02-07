@@ -8,8 +8,8 @@ Regularization is designed to penalize model complexity, therefore the higher th
 The AlphaSelection Visualizer demonstrates how different values of alpha influence model selection during the regularization of linear models. Generally speaking, alpha increases the affect of regularization, e.g. if alpha is zero there is no regularization and the higher the alpha, the more the regularization parameter influences the final model.
 
 =================   ==============================
-Visualizer           `AlphaSelection <http://www.scikit-yb.org/en/develop/api/regressor/alphas.html#yellowbrick.regressor.alphas.AlphaSelection>`_
-Quick Method         `alphas() <http://www.scikit-yb.org/en/develop/api/regressor/alphas.html#yellowbrick.regressor.alphas.alphas>`_
+Visualizer           :class:`~yellowbrick.regressor.alphas.AlphaSelection`
+Quick Method         :func:`~yellowbrick.regressor.alphas.alphas`
 Models               Regression
 Workflow             Model selection, Hyperparameter tuning
 =================   ==============================
