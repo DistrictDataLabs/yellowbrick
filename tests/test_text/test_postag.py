@@ -287,6 +287,42 @@ class TestPosTag(VisualTestCase):
 
         self.assert_images_similar(visualizer)
 
+    @pytest.mark.skipif(spacy is None, reason="test requires spacy")
+    def test_spacy_raw(self):
+        """
+        Assert no errors occur during PosTagVisualizer integration
+        with raw corpus to be parsed using spacy
+        """
+        visualizer = PosTagVisualizer(parser='spacy', tagset='universal')
+        visualizer.fit(sonnets)
+        visualizer.ax.grid(False)
+
+        self.assert_images_similar(visualizer)
+
+    @pytest.mark.skipif(nltk is None, reason="test requires nltk")
+    def test_nltk_word_raw(self):
+        """
+        Assert no errors occur during PosTagVisualizer integration
+        with raw corpus to be parsed using nltk
+        """
+        visualizer = PosTagVisualizer(parser='nltk', tagset="penn_treebank")
+        visualizer.fit(sonnets)
+        visualizer.ax.grid(False)
+
+        self.assert_images_similar(visualizer)
+
+    @pytest.mark.skipif(nltk is None, reason="test requires nltk")
+    def test_nltk_wordpunct_raw(self):
+        """
+        Assert no errors occur during PosTagVisualizer integration
+        with raw corpus to be parsed using nltk
+        """
+        visualizer = PosTagVisualizer(parser='nltk_wordpunct', tagset="penn_treebank")
+        visualizer.fit(sonnets)
+        visualizer.ax.grid(False)
+
+        self.assert_images_similar(visualizer)
+
     def test_stack_mode(self):
         """
         Assert no errors occur when the visualizer is run on stack mode

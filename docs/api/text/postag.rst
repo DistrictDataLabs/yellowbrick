@@ -5,7 +5,7 @@ PosTag Visualization
 
 Parts of speech (e.g. verbs, nouns, prepositions, adjectives) indicate how a word is functioning within the context of a sentence. In English as in many other languages, a single word can function in multiple ways. Part-of-speech tagging lets us encode information not only about a word’s definition, but also its use in context (for example the words “ship” and “shop” can be either a verb or a noun, depending on the context).
 
-The ``PosTagVisualizer`` is intended to support grammar-based feature extraction techniques for machine learning workflows that require natural language processing. The visualizer reads in a corpus that has already been sentence- and word-segmented, and tagged, creating a bar chart to visualize the relative proportions of different parts-of-speech in a corpus.
+The ``PosTagVisualizer`` is intended to support grammar-based feature extraction techniques for machine learning workflows that require natural language processing. The visualizer can either read in a corpus that has already been sentence- and word-segmented, and tagged, or perform this tagging automatically by specifying the parser to use (nltk or spacy). The visualizer creates a bar chart to visualize the relative proportions of different parts-of-speech in a corpus.
 
 =================   =================
 Visualizer           `PosTagVisualizer <https://www.scikit-yb.org/en/latest/api/text/postag.html#yellowbrick.text.postag.PosTagVisualizer>`_
@@ -15,7 +15,7 @@ Workflow             Feature Engineering
 =================   =================
 
 .. note::
-    The ``PosTagVisualizer`` currently works with both Penn-Treebank (e.g. via NLTK) and Universal Dependencies (e.g. via SpaCy)-tagged corpora, but expects corpora that have already been tagged, and which take the form of a list of (document) lists of (sentence) lists of ``(token, tag)`` tuples, as in the example below.
+    The ``PosTagVisualizer`` currently works with both Penn-Treebank (e.g. via NLTK) and Universal Dependencies (e.g. via SpaCy)-tagged corpora. This expects either raw text, or corpora that have already been tagged which take the form of a list of (document) lists of (sentence) lists of ``(token, tag)`` tuples, as in the example below.
 
 Penn Treebank Tags
 ------------------
@@ -299,6 +299,58 @@ The same functionality above can be achieved with the associated quick method ``
 | WRB               | Wh-adverb                                |                      |                          |
 +-------------------+------------------------------------------+----------------------+--------------------------+
 
+Parsing raw text automatically
+---------------------------
+
+The ``PosTagVisualizer`` can also be used with untagged text by using the ``parse`` keyword on instantiation. The keyword
+to parse indicates which natural language processing library to use. To use ``spacy``:
+
+
+.. code:: python
+
+    untagged_speech = u'Whose woods these are I think I know'
+
+    # Create the visualizer, fit, score, and show it
+    viz = PosTagVisualizer(parser='spacy')
+    viz.fit(untagged_speech)
+    viz.show()
+
+
+Or, using the ``nltk`` parser.
+
+.. code:: python
+
+    untagged_speech = u'Whose woods these are I think I know'
+
+    # Create the visualizer, fit, score, and show it
+    viz = PosTagVisualizer(parser='nltk')
+    viz.fit(untagged_speech)
+    viz.show()
+
+.. note::
+    To use either of these parsers, either `nltk` or `spacy` must already be installed in your environment.
+
+You can also change the tagger used. For example, using `nltk` you can select either `word` (default):
+
+.. code:: python
+
+    untagged_speech = u'Whose woods these are I think I know'
+
+    # Create the visualizer, fit, score, and show it
+    viz = PosTagVisualizer(parser='nltk_word')
+    viz.fit(untagged_speech)
+    viz.show()
+
+Or using `wordpunct`.
+
+.. code:: python
+
+    untagged_speech = u'Whose woods these are I think I know'
+
+    # Create the visualizer, fit, score, and show it
+    viz = PosTagVisualizer(parser='nltk_wordpunct')
+    viz.fit(untagged_speech)
+    viz.show()
 
 API Reference
 -------------

@@ -3,12 +3,18 @@
 t-SNE Corpus Visualization
 ==========================
 
+=================   =================
+Visualizer           `TSNEVisualizer <https://www.scikit-yb.org/en/latest/api/text/tsne.html#yellowbrick.text.tsne.TSNEVisualizer>`_
+Quick Method         `tsne() <https://www.scikit-yb.org/en/latest/api/text/tsne.html#yellowbrick.text.tsne.tsne>`_
+Models               Decomposition
+Workflow             Feature Engineering/Selection
+=================   =================
+
 One very popular method for visualizing document similarity is to use t-distributed stochastic neighbor embedding, t-SNE. Scikit-learn implements this decomposition method as the ``sklearn.manifold.TSNE`` transformer. By decomposing high-dimensional document vectors into 2 dimensions using probability distributions from both the original dimensionality and the decomposed dimensionality, t-SNE is able to effectively cluster similar documents. By decomposing to 2 or 3 dimensions, the documents can be visualized with a scatter plot.
 
 Unfortunately, ``TSNE`` is very expensive, so typically a simpler decomposition method such as SVD or PCA is applied ahead of time. The ``TSNEVisualizer`` creates an inner transformer pipeline that applies such a decomposition first (SVD with 50 components by default), then performs the t-SNE embedding. The visualizer then plots the scatter plot, coloring by cluster or by class, or neither if a structural analysis is required.
 
 After importing the required tools, we can use the :doc:`hobbies corpus <../datasets/hobbies>` and vectorize the text using TF-IDF. Once the corpus is vectorized we can visualize it, showing the distribution of classes.
-
 
 .. plot::
     :context: close-figs
@@ -87,11 +93,31 @@ This means we don't have to use class labels at all. Instead we can use cluster 
     tsne.fit(X, ["c{}".format(c) for c in clusters.labels_])
     tsne.show()
 
+Quick Method
+-------------------------
+The same functionality above can be achieved with the associated quick method ``tsne``. This method will build the ``TSNEVisualizer`` object with the associated arguments, fit it, then (optionally) immediately show it
+
+.. plot::
+    :context: close-figs
+    :alt: tsne quick method on the hobbies dataset
+
+    from yellowbrick.text.tsne import tsne
+    from sklearn.feature_extraction.text import TfidfVectorizer
+    from yellowbrick.datasets import load_hobbies
+
+    # Load the data and create document vectors
+    corpus = load_hobbies()
+    tfidf = TfidfVectorizer()
+
+    X = tfidf.fit_transform(corpus.data)
+    y = corpus.target
+
+    tsne(X, y)
 
 API Reference
 -------------
 
 .. automodule:: yellowbrick.text.tsne
-    :members: TSNEVisualizer
+    :members: TSNEVisualizer, tsne
     :undoc-members:
     :show-inheritance:

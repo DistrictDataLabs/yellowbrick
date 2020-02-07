@@ -304,3 +304,18 @@ class TestTSNE(VisualTestCase):
         _, scatter_kwargs = tsne.ax.scatter.call_args
         assert "alpha" in scatter_kwargs
         assert scatter_kwargs["alpha"] == 0.5
+
+    def test_quick_method(self):
+        """
+        Test for tsne quick  method with hobbies dataset
+        """
+        corpus = load_hobbies()
+        tfidf = TfidfVectorizer()
+
+        X = tfidf.fit_transform(corpus.data)
+        y = corpus.target
+
+        viz = tsne(X, y, show=False)
+
+        self.assert_images_similar(viz, tol=50)
+
