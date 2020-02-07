@@ -19,8 +19,8 @@ Random Forest, Gradient Boosting, and Ada Boost provide a
 relative importances.
 
 =================   ==============================
-Visualizer           `FeatureImportances <https://www.scikit-yb.org/en/latest/api/model_selection/importances.html#module-yellowbrick.model_selection.importances>`_
-Quick Method         `feature_importances() <https://www.scikit-yb.org/en/latest/api/model_selection/importances.html#yellowbrick.model_selection.importances.feature_importances>`_
+Visualizer           :class:`~yellowbrick.model_selection.importances.FeatureImportances`
+Quick Method         :func:`~yellowbrick.model_selection.importances.feature_importances`
 Models               Classification, Regression
 Workflow             Model selection, feature selection
 =================   ==============================
