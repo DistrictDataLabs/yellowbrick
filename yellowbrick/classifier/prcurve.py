@@ -438,6 +438,7 @@ def precision_recall_curve(
     y_train,
     X_test=None,
     y_test=None,
+    ax=None,
     classes=None,
     encoder=None,
     fill_area=True,
@@ -588,10 +589,12 @@ def precision_recall_curve(
     viz.fit(X_train, y_train)
 
     # Score the visualizer
-    if X_test and y_test:
+    if X_test is not None and y_test is not None:
         viz.score(X_test, y_test)
-    elif X_test or y_test:
-        raise YellowbrickValueError("must specify both X_test and y_test or neither")
+    elif X_test is not None or y_test is not None:
+        raise YellowbrickValueError(
+            "both X_test and y_test are required if one is specified"
+        )
     else:
         viz.score(X_train, y_train)
 
