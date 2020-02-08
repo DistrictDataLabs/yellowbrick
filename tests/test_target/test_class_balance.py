@@ -213,6 +213,9 @@ class TestClassBalance(VisualTestCase):
         # oz.finalize()
         self.assert_images_similar(oz, tol=0.5)  # w/o tol fails with RMS 0.433
 
+    @pytest.mark.xfail(
+        IS_WINDOWS_OR_CONDA,
+        reason="test stopped working on Miniconda, hangs indefinitely. See #1024")
     def test_numpy_occupancy_compare(self):
         """
         Test NumPy arrays with string target in compare mode
@@ -229,9 +232,6 @@ class TestClassBalance(VisualTestCase):
         # oz.finalize()
         self.assert_images_similar(oz, tol=0.5)  # w/o tol fails with RMS 0.433
 
-    @pytest.mark.xfail(
-        IS_WINDOWS_OR_CONDA,
-        reason="test stopped working on miniconda, hangs indefinitely. See #1024")
     def test_quick_method(self):
         """
         Test the quick method producing a valid visualization
