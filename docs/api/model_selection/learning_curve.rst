@@ -133,9 +133,7 @@ The same functionality can be achieved with the associated quick method ``learni
     # Load a regression dataset
     X, y = load_energy()
 
-    # Instantiate the regression model and visualizer
-    model = RidgeCV()
-    visualizer = learning_curve(model, X, y, scoring='r2')
+    learning_curve(RidgeCV(), X, y, scoring='r2')
 
 .. seealso::
     This visualizer is based on the validation curve described in the scikit-learn documentation: `Learning Curves <http://scikit-learn.org/stable/modules/learning_curve.html#learning-curve>`_. The visualizer wraps the `learning_curve <http://scikit-learn.org/stable/modules/generated/sklearn.model_selection.learning_curve.html#sklearn.model_selection.learning_curve>`_ function and most of the arguments are passed directly to it.
