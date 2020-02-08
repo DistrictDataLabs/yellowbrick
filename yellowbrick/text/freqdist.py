@@ -30,8 +30,9 @@ from yellowbrick.exceptions import YellowbrickValueError
 ##########################################################################
 
 
-def freqdist(features, X, y=None, ax=None, n=50, orient="h",
-             color=None, show=True, **kwargs):
+def freqdist(
+    features, X, y=None, ax=None, n=50, orient="h", color=None, show=True, **kwargs
+):
     """Displays frequency distribution plot for text.
 
     This helper function is a quick wrapper to utilize the FreqDist

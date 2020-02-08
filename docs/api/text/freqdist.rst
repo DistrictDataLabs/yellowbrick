@@ -152,10 +152,10 @@ Similar functionality as above can be achieved in one line using the associated 
         hobbies[label].append(text)
 
     vectorizer = CountVectorizer(stop_words='english')
-    docs       = vectorizer.fit_transform(text for text in hobbies['gaming'])
+    docs       = vectorizer.fit_transform(text for text in hobbies['cinema'])
     features   = vectorizer.get_feature_names()
 
-    visualizer = freqdist(features, docs)
+    freqdist(features, docs, orient='v')
 
 
 API Reference
