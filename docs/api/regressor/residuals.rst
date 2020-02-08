@@ -5,6 +5,14 @@ Residuals Plot
 
 Residuals, in the context of regression models, are the difference between the observed value of the target variable (y) and the predicted value (ŷ), i.e. the error of the prediction. The residuals plot shows the difference between residuals on the vertical axis and the dependent variable on the horizontal axis, allowing you to detect regions within the target that may be susceptible to more or less error.
 
+=================   ==============================
+Visualizer           :class:`~yellowbrick.regressor.residuals.ResidualsPlot`
+Quick Method         :func:`~yellowbrick.regressor.residuals.residuals_plot`
+Models               Regression
+Workflow             Model evaluation
+=================   ==============================
+
+
 .. plot::
     :context: close-figs
     :alt: Residuals Plot on the Concrete dataset using a linear model
@@ -44,10 +52,33 @@ Note that if the histogram is not desired, it can be turned off with the ``hist=
 
 .. warning:: The histogram on the residuals plot requires matplotlib 2.0.2 or greater. If you are using an earlier version of matplotlib, simply set the ``hist=False`` flag so that the histogram is not drawn.
 
+Quick Method
+------------
+
+Similar functionality as above can be achieved in one line using the associated quick method, ``residuals_plot``. This method will instantiate and fit a ``ResidualsPlot`` visualizer on the training data, then will score it on the optionally provided test data (or the training data if it is not provided).
+
+.. plot::
+    :context: close-figs
+    :alt: residuals_plot on concrete dataset using non-linear model
+
+    from sklearn.ensemble import RandomForestRegressor
+    from sklearn.model_selection import train_test_split as tts
+    from yellowbrick.regressor import residuals_plot
+    from yellowbrick.datasets import load_concrete
+
+    # Load the dataset and split into train/test splits
+    X, y = load_concrete()
+
+    X_train, X_test, y_train, y_test = tts(X, y, test_size=0.2, shuffle=True)
+
+    # Create the visualizer, fit, score, and show it
+    viz = residuals_plot(RandomForestRegressor(), X_train, y_train, X_test, y_test)
+
+
 API Reference
 -------------
 
 .. automodule:: yellowbrick.regressor.residuals
-    :members: ResidualsPlot
+    :members: ResidualsPlot, residuals_plot
     :undoc-members:
     :show-inheritance:
