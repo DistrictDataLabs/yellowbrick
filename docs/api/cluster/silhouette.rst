@@ -39,6 +39,10 @@ Examples and demo
     visualizer.fit(X)        # Fit the data to the visualizer
     visualizer.show()        # Finalize and render the figure
 
+
+Quick Method
+------------
+
 The same functionality above can be achieved with the associated quick method `silhouette_visualizer`. This method will build the Silhouette Visualizer object with the associated arguments, fit it, then (optionally) immediately show it.
 
 .. plot::
