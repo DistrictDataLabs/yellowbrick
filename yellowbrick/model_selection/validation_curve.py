@@ -306,6 +306,7 @@ def validation_curve(
     scoring=None,
     n_jobs=1,
     pre_dispatch="all",
+    show=True,
     **kwargs
 ):
     """
@@ -376,6 +377,11 @@ def validation_curve(
         all). The option can reduce the allocated memory. The string can
         be an expression like '2*n_jobs'.
 
+     show: bool, default: True
+        If True, calls ``show()``, which in turn calls ``plt.show()`` however
+        you cannot call ``plt.savefig`` from this signature, nor
+        ``clear_figure``. If False, simply calls ``finalize()``
+
     kwargs : dict
         Keyword arguments that are passed to the base class and may influence
         the visualization as defined in other Visualizers. These arguments are
@@ -402,7 +408,14 @@ def validation_curve(
         pre_dispatch=pre_dispatch,
     )
 
-    # Fit and show the visualizer
+    # Fit the visualizer
     oz.fit(X, y)
-    oz.show(**kwargs)
+
+    # Draw final visualization
+    if show:
+        oz.show(**kwargs)
+    else:
+        oz.finalize()
+
+    # Return the visualizer object
     return oz

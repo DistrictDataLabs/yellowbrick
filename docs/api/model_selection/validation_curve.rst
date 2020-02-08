@@ -7,6 +7,14 @@ Model validation is used to determine how effective an estimator is on data that
 
 In order to maximize the score, the hyperparameters of the model must be selected which best allow the model to operate in the specified feature space. Most models have multiple hyperparameters and the best way to choose a combination of those parameters is with a grid search. However, it is sometimes useful to plot the influence of a single hyperparameter on the training and test data to determine if the estimator is underfitting or overfitting for some hyperparameter values.
 
+=================   ==============================
+Visualizer           :class:`~yellowbrick.model_selction.validation_curve.ValidationCurve`
+Quick Method         :func:`~yellowbrick.model_selection.validation_curve.validation_curve`
+Models               Classification and Regression
+Workflow             Model Selection
+=================   ==============================
+
+
 In our first example, we'll explore using the ``ValidationCurve`` visualizer with a regression dataset and in the second, a classification dataset. Note that any estimator that implements ``fit()`` and ``predict()`` and has an appropriate scoring mechanism can be used with this visualizer.
 
 .. plot::
@@ -104,10 +112,35 @@ This validation curve poses two possibilities: first, that we do not have the co
 .. seealso::
     This visualizer is based on the validation curve described in the scikit-learn documentation: `Validation Curves <http://scikit-learn.org/stable/modules/learning_curve.html#validation-curve>`_. The visualizer wraps the `validation_curve <http://scikit-learn.org/stable/modules/generated/sklearn.model_selection.validation_curve.html#sklearn.model_selection.validation_curve>`_ function and most of the arguments are passed directly to it.
 
+Quick Method
+------------
+
+Similar functionality as above can be achieved in one line using the associated quick method, ``validation_curve``. This method will instantiate and fit a ``ValidationCurve`` visualizer.
+
+.. plot::
+    :context: close-figs
+    :alt: Validation Curve quickmethod for Max Depth of Decision Tree regressor
+
+    import numpy as np
+
+    from yellowbrick.datasets import load_energy
+    from yellowbrick.model_selection import validation_curve
+
+    from sklearn.tree import DecisionTreeRegressor
+
+    # Load a regression dataset
+    X, y = load_energy()
+
+    viz = validation_curve(
+        DecisionTreeRegressor(), param_name="max_depth",
+        param_range=np.arange(1, 11), cv=10, scoring="r2",
+    )
+
+
 API Reference
 -------------
 
 .. automodule:: yellowbrick.model_selection.validation_curve
-    :members: ValidationCurve
+    :members: ValidationCurve, validation_curve
     :undoc-members:
     :show-inheritance:
