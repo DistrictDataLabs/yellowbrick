@@ -308,7 +308,6 @@ def feature_correlation(
               from ``sklearn.feature_selection``
             - 'mutual_info-classification', which uses ``mutual_info_classif``
               from ``sklearn.feature_selection``
-            'mutual_info-classification'], default: 'pearson'
 
     labels : list, default: None
         A list of feature names to use. If a DataFrame is passed to fit and
