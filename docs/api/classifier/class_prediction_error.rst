@@ -107,7 +107,7 @@ Similar functionality as above can be achieved in one line using the associated 
     ax = fig.add_subplot()
 
     clf = LinearSVC(random_state=42)
-    viz = class_prediction_error(clf, X_train, y_train, X_test, y_test, ax=ax, show=False)
+    viz = class_prediction_error(clf, X_train, y_train, X_test, y_test, ax=ax)
 
 
 API Reference
