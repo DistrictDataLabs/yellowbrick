@@ -27,8 +27,6 @@ try:
 except ImportError:
     make_axes_locatable = None
 
-from sklearn.model_selection import train_test_split
-
 from yellowbrick.draw import manual_legend
 from yellowbrick.utils.decorators import memoized
 from yellowbrick.style.palettes import LINE_COLOR
@@ -385,7 +383,7 @@ def prediction_error(
 
     visualizer.fit(X_train, y_train)
 
-    # Scores the visualizer with X_test and y_test if provided, X_train, y_train if not provided
+    # Scores the visualizer with X and y test if provided, X and y train if not
     if X_test is not None and y_test is not None:
         visualizer.score(X_test, y_test)
     elif X_test is not None or y_test is not None:
