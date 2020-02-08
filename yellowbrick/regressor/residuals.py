@@ -681,28 +681,29 @@ class ResidualsPlot(RegressionScoreVisualizer):
 
 def residuals_plot(
     model,
-    X,
-    y,
+    X_train,
+    y_train,
+    X_test=None,
+    y_test=None,
     ax=None,
     hist=True,
-    test_size=0.25,
     train_color="b",
     test_color="g",
     line_color=LINE_COLOR,
-    random_state=None,
     train_alpha=0.75,
     test_alpha=0.75,
     is_fitted="auto",
+    show=True,
     **kwargs
 ):
-    """Quick method:
+    """ResidualsPlot quick method:
 
-    Divides the dataset X, y into a train and test split (the size of the
-    splits determined by test_size) then plots the training and test residuals
-    agains the predicted value for the given model.
+    A residual plot shows the residuals on the vertical axis and the
+    independent variable on the horizontal axis.
 
-    This helper function is a quick wrapper to utilize the ResidualsPlot
-    ScoreVisualizer for one-off analysis.
+    If the points are randomly dispersed around the horizontal axis, a linear
+    regression model is appropriate for the data; otherwise, a non-linear
+    model is more appropriate.
 
     Parameters
     ----------
@@ -712,11 +713,22 @@ def residuals_plot(
         If the estimator is not fitted, it is fit when the visualizer is fitted,
         unless otherwise specified by ``is_fitted``.
 
-    X  : ndarray or DataFrame of shape n x m
-        A matrix of n instances with m features.
+    X_train : ndarray or DataFrame of shape n x m
+        A feature array of n instances with m features the model is trained on.
+        Used to fit the visualizer and also to score the visualizer if test splits are
+        not directly specified.
 
-    y  : ndarray or Series of length n
-        An array or series of target or class values.
+    y_train : ndarray or Series of length n
+        An array or series of target or class values. Used to fit the visualizer and
+        also to score the visualizer if test splits are not specified.
+
+    X_test : ndarray or DataFrame of shape n x m, default: None
+        An optional feature array of n instances with m features that the model
+        is scored on if specified, using X_train as the training data.
+
+    y_test : ndarray or Series of length n, default: None
+        An optional array or series of target or class values that serve as actual
+        labels for X_test for scoring purposes.
 
     ax : matplotlib Axes, default: None
         The axes to plot the figure on. If None is passed in the current axes
@@ -727,11 +739,6 @@ def residuals_plot(
         right side of the figure. Requires Matplotlib >= 2.0.2.
         If set to 'density', the probability density function will be plotted.
         If set to True or 'frequency' then the frequency will be plotted.
-
-    test_size : float, int default: 0.25
-        If float, should be between 0.0 and 1.0 and represent the proportion
-        of the dataset to include in the test split. If int, represents the
-        absolute number of test samples.
 
     train_color : color, default: 'b'
         Residuals for training data are ploted with this color but also
@@ -747,24 +754,26 @@ def residuals_plot(
     line_color : color, default: dark grey
         Defines the color of the zero error line, can be any matplotlib color.
 
-    random_state : int, RandomState instance or None, optional
-        Passed to the train_test_split function.
-
     train_alpha : float, default: 0.75
         Specify a transparency for traininig data, where 1 is completely opaque
         and 0 is completely transparent. This property makes densely clustered
         points more visible.
 
     test_alpha : float, default: 0.75
-        Specify a transparency for test data, where 1 is completely opaque and
-        0 is completely transparent. This property makes densely clustered
+        Specify a transparency for test data, where 1 is completely opaque
+        and 0 is completely transparent. This property makes densely clustered
         points more visible.
 
-    is_fitted : bool or str, default="auto"
+    is_fitted : bool or str, default='auto'
         Specify if the wrapped estimator is already fitted. If False, the estimator
         will be fit when the visualizer is fit, otherwise, the estimator will not be
-        modified. If "auto" (default), a helper method will check if the estimator
+        modified. If 'auto' (default), a helper method will check if the estimator
         is fitted before fitting it again.
+
+    show: bool, default: True
+        If True, calls ``show()``, which in turn calls ``plt.show()`` however you cannot
+        call ``plt.savefig`` from this signature, nor ``clear_figure``. If False, simply
+        calls ``finalize()``
 
     kwargs : dict
         Keyword arguments that are passed to the base class and may influence
@@ -772,12 +781,12 @@ def residuals_plot(
 
     Returns
     -------
-    visualizer : ResidualsPlot
-        Returns the residuals plot visualizer
+    viz : ResidualsPlot
+        Returns the fitted ResidualsPlot that created the figure.
     """
-    # Instantiate the visualizer
 
-    visualizer = ResidualsPlot(
+    # Instantiate the visualizer
+    viz = ResidualsPlot(
         model=model,
         ax=ax,
         hist=hist,
@@ -790,15 +799,24 @@ def residuals_plot(
         **kwargs
     )
 
-    # Create the train and test splits
-    X_train, X_test, y_train, y_test = train_test_split(
-        X, y, test_size=test_size, random_state=random_state
-    )
+    # Fit the visualizer
+    viz.fit(X_train, y_train)
 
-    # Fit and transform the visualizer (calls draw)
-    visualizer.fit(X_train, y_train, **kwargs)
-    visualizer.score(X_test, y_test)
-    visualizer.finalize()
+    # Score the visualizer
+    if X_test is not None and y_test is not None:
+        viz.score(X_test, y_test)
+    elif X_test is not None or y_test is not None:
+        raise YellowbrickValueError(
+            "both X_test and y_test are required if one is specified"
+        )
+    else:
+        viz.score(X_train, y_train)
+
+    # Draw the final visualization
+    if show:
+        viz.show()
+    else:
+        viz.finalize()
 
     # Return the visualizer
-    return visualizer
+    return viz
