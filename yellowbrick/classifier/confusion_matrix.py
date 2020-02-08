@@ -381,14 +381,16 @@ def confusion_matrix(
 
     y_train : array-like, 2D
         The vector of target data or the dependent variable predicted by X. Used to fit
-        the visualizer and also to score the visualizer if test splits are not specified.
+        the visualizer and also to score the visualizer if test splits are not
+        specified.
 
     X_test: array-like, 2D, default: None
         The table of instance data or independent variables that describe the outcome of
         the dependent variable, y. Used to score the visualizer if specified.
 
     y_test: array-like, 1D, default: None
-        The vector of target data or the dependent variable predicted by X. Used to score the visualizer if specified.
+        The vector of target data or the dependent variable predicted by X. Used to
+        score the visualizer if specified.
 
     ax : matplotlib Axes, default: None
         The axes to plot the figure on. If not specified the current axes will be
@@ -467,11 +469,12 @@ def confusion_matrix(
     # Fit and transform the visualizer (calls draw)
     visualizer.fit(X_train, y_train, **kwargs)
 
-    #Scores the visualizer with X_test and y_test if provided, X_train, y_train if not provided
+    # Scores the visualizer with X_test and y_test if provided,
+    # X_train, y_train if not provided
     if X_test is not None and y_test is not None:
         visualizer.score(X_test, y_test)
     else:
-        visualizer.score(X_train,  y_train)
+        visualizer.score(X_train, y_train)
 
     if show:
         visualizer.show()
