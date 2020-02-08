@@ -249,3 +249,4 @@ class TestClassBalance(VisualTestCase):
         viz = class_balance(dataset.y.train, dataset.y.test)
 
         assert isinstance(viz, ClassBalance)
+        self.assert_images_similar(viz)
