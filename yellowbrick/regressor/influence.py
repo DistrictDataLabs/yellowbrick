@@ -266,6 +266,11 @@ def cooks_distance(
         A string defining the properties of the markers at the stem plot heads. The
         default is "pixel", e.g. basically no marker head at the top of the stem plot.
 
+    show: bool, default: True
+        If True, calls ``show()``, which in turn calls ``plt.show()`` however
+        you cannot call ``plt.savefig`` from this signature, nor
+        ``clear_figure``. If False, simply calls ``finalize()``
+
     kwargs : dict
         Keyword arguments that are passed to the base class and may influence the final
         visualization (e.g. size or title parameters).
