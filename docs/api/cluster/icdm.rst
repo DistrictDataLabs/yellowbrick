@@ -36,7 +36,7 @@ Workflow             Model evaluation
 Quick Method
 ------------
 
-The same functionality above can be achieved with the associated quick method `silhouette_visualizer`. This method will build the Silhouette Visualizer object with the associated arguments, fit it, then (optionally) immediately show it.
+The same functionality above can be achieved with the associated quick method `intercluster_distance`. This method will build the ``InterclusterDistance`` object with the associated arguments, fit it, then (optionally) immediately show it.
 
 .. plot::
     :context: close-figs
@@ -47,8 +47,8 @@ The same functionality above can be achieved with the associated quick method `s
     from yellowbrick.cluster import intercluster_distance
 
 
-    X, y = load_nfl()
-    visualizer = intercluster_distance(MiniBatchKMeans(5, random_state=777), X)
+    X, _ = load_nfl()
+    intercluster_distance(MiniBatchKMeans(5, random_state=777), X)
 
 
 API Reference
