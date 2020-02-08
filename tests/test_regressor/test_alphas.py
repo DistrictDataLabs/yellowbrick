@@ -24,9 +24,10 @@ import numpy as np
 from tests.base import VisualTestCase
 from numpy.testing.utils import assert_array_equal
 
-from yellowbrick.regressor.alphas import *
+from yellowbrick.datasets import load_energy
 from yellowbrick.exceptions import YellowbrickTypeError
 from yellowbrick.exceptions import YellowbrickValueError
+from yellowbrick.regressor.alphas import AlphaSelection, alphas
 
 from sklearn.svm import SVR, SVC
 from sklearn.cluster import KMeans
@@ -51,7 +52,7 @@ class TestAlphaSelection(VisualTestCase):
     @pytest.mark.xfail(sys.platform == "win32", reason="images not close on windows")
     def test_similar_image(self):
         """
-        Integration test with image simiarlity comparison
+        Integration test with image similarity comparison
         """
 
         visualizer = AlphaSelection(LassoCV(random_state=0))
@@ -154,3 +155,15 @@ class TestAlphaSelection(VisualTestCase):
         X, y = make_regression(random_state=352)
         visualizer.fit(X, y)
         assert visualizer.score(X, y) == pytest.approx(0.9999780266590336)
+
+    def test_quick_method(self):
+        """
+        Test the quick method producing a valid visualization
+        """
+        X, y = load_energy(return_dataset=True).to_numpy()
+
+        visualizer = alphas(
+            LassoCV(random_state=0), X, y, is_fitted=False, show=False
+        )
+        assert isinstance(visualizer, AlphaSelection)
+        self.assert_images_similar(visualizer)
