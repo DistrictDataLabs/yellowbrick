@@ -7,6 +7,13 @@ The Yellowbrick ``ClassPredictionError`` plot is a twist on other and sometimes 
 
 The class prediction error chart provides a way to quickly understand how good your classifier is at predicting the right classes.
 
+=================   ==============================
+Visualizer           :class:`~yellowbrick.classifier.class_prediction_error.ClassPredictionError`
+Quick Method         :func:`~yellowbrick.classifier.class_prediction_error.class_prediction_error`
+Models               Classification
+Workflow             Model evaluation
+=================   ==============================
+
 .. plot::
     :context: close-figs
     :alt:  Class Prediction Error plot on Fruit
@@ -77,12 +84,37 @@ By contrast, in the following example, the ``RandomForestClassifier`` does a gre
     # Draw visualization
     visualizer.show()
 
+Quick Method
+------------
+
+Similar functionality as above can be achieved in one line using the associated quick method, ``class_prediction_error``. This method will instantiate and fit a ``ClassPredictionError`` visualizer on the training data, then will score it on the optionally provided test data (or the training data if it is not provided).
+
+.. plot::
+    :context: close-figs
+    :alt: class_prediction_error quick method
+
+    from sklearn.svm import LinearSVC
+    from sklearn.model_selection import train_test_split as tts
+    from yellowbrick.classifier import class_prediction_error
+    from yellowbrick.datasets import load_occupancy
+
+    # Load the dataset and split into train/test splits
+    X, y = load_occupancy()
+    X_train, X_test, y_train, y_test = tts(
+        X, y, test_size=0.2, shuffle=True
+    )
+
+    class_prediction_error(
+        LinearSVC(random_state=42),
+        X_train, y_train, X_test, y_test,
+        classes=["vacant", "occupied"]
+    )
 
 
 API Reference
 -------------
 
 .. automodule:: yellowbrick.classifier.class_prediction_error
-    :members: ClassPredictionError
+    :members: ClassPredictionError, class_prediction_error
     :undoc-members:
     :show-inheritance:
