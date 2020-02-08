@@ -99,12 +99,12 @@ class TestClassPredictionError(VisualTestCase):
         ax = fig.add_subplot()
 
         clf = LinearSVC(random_state=42)
-        viz = class_prediction_error(clf, X_train=X, y_train=y, ax=ax, show=False)
+        viz = class_prediction_error(clf, X, y, ax=ax, show=False)
 
         # Not sure why the tolerance must be so high for this
         # Failing on travis with RMS 9.544
         # AppVeyor and Linux conda fail due to non-text-based differences: RMS 12.961
-        # yellowbrick.exceptions.ImageComparisonFailure: images not close (RMS 15.538
+        # yellowbrick.exceptions.ImageComparisonFailure: images not close (RMS 15.538)
         self.assert_images_similar(viz, tol=16, windows_tol=16)
 
     def test_class_prediction_error_quickmethod_X_test_only(self):

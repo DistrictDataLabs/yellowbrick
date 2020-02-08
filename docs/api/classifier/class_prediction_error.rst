@@ -99,15 +99,16 @@ Similar functionality as above can be achieved in one line using the associated 
     from yellowbrick.datasets import load_occupancy
 
     # Load the dataset and split into train/test splits
-    X, y = load_occupancy(return_dataset=True).to_numpy()
+    X, y = load_occupancy()
+    X_train, X_test, y_train, y_test = tts(
+        X, y, test_size=0.2, shuffle=True
+    )
 
-    X_train, X_test, y_train, y_test = tts(X, y, test_size=0.2, shuffle=True)
-
-    fig = plt.figure()
-    ax = fig.add_subplot()
-
-    clf = LinearSVC(random_state=42)
-    viz = class_prediction_error(clf, X_train, y_train, X_test, y_test, ax=ax)
+    class_prediction_error(
+        LinearSVC(random_state=42),
+        X_train, y_train, X_test, y_test,
+        classes=["vacant", "occupied"]
+    )
 
 
 API Reference
