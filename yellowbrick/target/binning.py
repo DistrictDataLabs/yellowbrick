@@ -146,7 +146,7 @@ class BalancedBinningReference(TargetVisualizer):
 ##########################################################################
 
 
-def balanced_binning_reference(y, ax=None, target="y", bins=4, **kwargs):
+def balanced_binning_reference(y, ax=None, target="y", bins=4, show=True, **kwargs):
 
     """
     BalancedBinningReference generates a histogram with vertical lines
@@ -165,6 +165,11 @@ def balanced_binning_reference(y, ax=None, target="y", bins=4, **kwargs):
         The name of the ``y`` variable
 
     bins : number of bins to generate the histogram, default: 4
+
+    show : bool, default: True
+        If True, calls ``show()``, which in turn calls ``plt.show()``. However, you
+        cannot call ``plt.savefig`` from this signature, nor ``clear_figure``. If False,
+        simply calls ``finalize()``.
 
     kwargs : dict
         Keyword arguments that are passed to the base class and may influence
