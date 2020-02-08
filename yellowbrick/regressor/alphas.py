@@ -365,7 +365,7 @@ class ManualAlphaSelection(AlphaSelection):
 ##########################################################################
 
 
-def alphas(model, X, y=None, ax=None, is_fitted="auto", **kwargs):
+def alphas(model, X, y=None, ax=None, is_fitted="auto", show=True, **kwargs):
     """Quick Method:
     The Alpha Selection Visualizer demonstrates how different values of alpha
     influence model selection during the regularization of linear models.
@@ -399,6 +399,11 @@ def alphas(model, X, y=None, ax=None, is_fitted="auto", **kwargs):
         modified. If 'auto' (default), a helper method will check if the estimator
         is fitted before fitting it again.
 
+    show : bool, default: True
+        If True, calls ``show()``, which in turn calls ``plt.show()`` however
+        you cannot call ``plt.savefig`` from this signature, nor
+        ``clear_figure``. If False, simply calls ``finalize()``
+
     kwargs : dict
         Keyword arguments that are passed to the base class and may influence
         the visualization as defined in other Visualizers.
@@ -411,8 +416,13 @@ def alphas(model, X, y=None, ax=None, is_fitted="auto", **kwargs):
     # Instantiate the visualizer
     visualizer = AlphaSelection(model, ax, is_fitted=is_fitted, **kwargs)
 
+    visualizer.fit(X, y)
     visualizer.score(X, y)
-    visualizer.finalize()
+
+    if show:
+        visualizer.show()
+    else:
+        visualizer.finalize()
 
     # Return the visualizer
     return visualizer
