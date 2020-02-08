@@ -55,3 +55,19 @@ class TestFreqDist(VisualTestCase):
 
         visualizer.finalize()
         self.assert_images_similar(visualizer, tol=0.5)  # w/o tol fails with RMS 0.121
+
+    def test_freqdist_quickmethod(self):
+        """
+        Assert no errors occur during freqdist quickmethod
+        """
+        vectorizer = CountVectorizer()
+
+        docs = vectorizer.fit_transform(corpus.data)
+        features = vectorizer.get_feature_names()
+
+        viz = freqdist(features, docs, show=False)
+
+        assert isinstance(viz, FreqDistVisualizer)
+
+        # yellowbrick.exceptions.ImageComparisonFailure: images not close (RMS 1.401)
+        self.assert_images_similar(viz, tol=1.5)
