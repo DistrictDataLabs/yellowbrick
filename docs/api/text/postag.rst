@@ -159,69 +159,32 @@ The same functionality above can be achieved with the associated quick method ``
 
 .. plot::
     :context: close-figs
-    :alt: PosTag plot with Penn Treebank tags
+    :alt: postag quick method with Penn Treebank tags
 
-    from yellowbrick.text import PosTagVisualizer
+    from yellowbrick.text.postag import postag
 
-
-    tagged_stanzas = [
+    machado = [
         [
             [
-                ('Whose', 'JJ'),('woods', 'NNS'),('these', 'DT'),
-                ('are', 'VBP'),('I', 'PRP'),('think', 'VBP'),('I', 'PRP'),
-                ('know', 'VBP'),('.', '.')
+                ('Last', 'JJ'), ('night', 'NN'), ('as', 'IN'), ('I', 'PRP'),
+                ('was', 'VBD'), ('sleeping', 'VBG'), (',', ','), ('I', 'PRP'),
+                ('dreamt', 'VBP'), ('—', 'RB'), ('marvelous', 'JJ'), ('error', 'NN'),
+                ('!—', 'IN'), ('that', 'DT'), ('I', 'PRP'), ('had', 'VBD'), ('a', 'DT'),
+                ('beehive', 'NN'), ('here', 'RB'), ('inside', 'IN'), ('my', 'PRP$'),
+                ('heart', 'NN'), ('.', '.')
                 ],
             [
-                ('His', 'PRP$'),('house', 'NN'),('is', 'VBZ'),('in', 'IN'),
-                ('the', 'DT'),('village', 'NN'),('though', 'IN'),(';', ':'),
-                ('He', 'PRP'),('will', 'MD'),('not', 'RB'),('see', 'VB'),
-                ('me', 'PRP'),('stopping', 'VBG'), ('here', 'RB'),('To', 'TO'),
-                ('watch', 'VB'),('his', 'PRP$'),('woods', 'NNS'),('fill', 'VB'),
-                ('up', 'RP'),('with', 'IN'),('snow', 'NNS'),('.', '.')
-                ]
-            ],
-        [
-            [
-                ('My', 'PRP$'),('little', 'JJ'),('horse', 'NN'),('must', 'MD'),
-                ('think', 'VB'),('it', 'PRP'),('queer', 'JJR'),('To', 'TO'),
-                ('stop', 'VB'),('without', 'IN'),('a', 'DT'),('farmhouse', 'NN'),
-                ('near', 'IN'),('Between', 'NNP'),('the', 'DT'),('woods', 'NNS'),
-                ('and', 'CC'),('frozen', 'JJ'),('lake', 'VB'),('The', 'DT'),
-                ('darkest', 'JJS'),('evening', 'NN'),('of', 'IN'),('the', 'DT'),
-                ('year', 'NN'),('.', '.')
-                ]
-            ],
-        [
-            [
-                ('He', 'PRP'),('gives', 'VBZ'),('his', 'PRP$'),('harness', 'NN'),
-                ('bells', 'VBZ'),('a', 'DT'),('shake', 'NN'),('To', 'TO'),
-                ('ask', 'VB'),('if', 'IN'),('there', 'EX'),('is', 'VBZ'),
-                ('some', 'DT'),('mistake', 'NN'),('.', '.')
-                ],
-            [
-                ('The', 'DT'),('only', 'JJ'),('other', 'JJ'),('sound', 'NN'),
-                ('’', 'NNP'),('s', 'VBZ'),('the', 'DT'),('sweep', 'NN'),
-                ('Of', 'IN'),('easy', 'JJ'),('wind', 'NN'),('and', 'CC'),
-                ('downy', 'JJ'),('flake', 'NN'),('.', '.')
-                ]
-            ],
-        [
-            [
-                ('The', 'DT'),('woods', 'NNS'),('are', 'VBP'),('lovely', 'RB'),
-                (',', ','),('dark', 'JJ'),('and', 'CC'),('deep', 'JJ'),(',', ','),
-                ('But', 'CC'),('I', 'PRP'),('have', 'VBP'),('promises', 'NNS'),
-                ('to', 'TO'),('keep', 'VB'),(',', ','),('And', 'CC'),('miles', 'NNS'),
-                ('to', 'TO'),('go', 'VB'),('before', 'IN'),('I', 'PRP'),
-                ('sleep', 'VBP'),(',', ','),('And', 'CC'),('miles', 'NNS'),
-                ('to', 'TO'),('go', 'VB'),('before', 'IN'),('I', 'PRP'),
-                ('sleep', 'VBP'),('.', '.')
+                ('And', 'CC'), ('the', 'DT'), ('golden', 'JJ'), ('bees', 'NNS'),
+                ('were', 'VBD'), ('making', 'VBG'), ('white', 'JJ'), ('combs', 'NNS'),
+                ('and', 'CC'), ('sweet', 'JJ'), ('honey', 'NN'), ('from', 'IN'),
+                ('my', 'PRP$'), ('old', 'JJ'), ('failures', 'NNS'), ('.', '.')
                 ]
         ]
     ]
 
     # Create the visualizer, fit, score, and show it
-    viz = postag(tagged_stanzas)
-    viz.show()
+    postag(machado)
+
 
 +-------------------+------------------------------------------+----------------------+--------------------------+
 | Penn-Treebank Tag | Description                              | Universal Tag        | Description              |

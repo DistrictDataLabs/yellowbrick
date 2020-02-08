@@ -126,12 +126,13 @@ class PosTagVisualizer(TextVisualizer):
         Note that fit() requires y for this visualization.
 
     parser : string or None, default: None
-        If set to a string, string must be in the form of 'parser_tagger' or 'parser' to use defaults
-        (for spacy this is 'en_core_web_sm', for nltk this is 'word'). The 'parser' argument is
-        one of the accepted parsing libraries. Currently 'nltk' and 'spacy' are the only accepted libraries.
-        NLTK or SpaCy must be installed into your environment. 'tagger' is the tagset to use. For example
-        'nltk_wordpunct' would use the NLTK library with 'wordpunct' tagset. Or 'spacy_en_core_web_sm' would
-        use SpaCy with the 'en_core_web_sm' tagset.
+        If set to a string, string must be in the form of 'parser_tagger' or 'parser'
+        to use defaults (for spacy this is 'en_core_web_sm', for nltk this is 'word').
+        The 'parser' argument is one of the accepted parsing libraries. Currently
+        'nltk' and 'spacy' are the only accepted libraries. NLTK or SpaCy must be
+        installed into your environment. 'tagger' is the tagset to use. For example
+        'nltk_wordpunct' would use the NLTK library with 'wordpunct' tagset. Or
+        'spacy_en_core_web_sm' would use SpaCy with the 'en_core_web_sm' tagset.
 
     kwargs : dict
         Pass any additional keyword arguments to the PosTagVisualizer.
@@ -149,15 +150,15 @@ class PosTagVisualizer(TextVisualizer):
     """
 
     def __init__(
-            self,
-            ax=None,
-            tagset="penn_treebank",
-            colormap=None,
-            colors=None,
-            frequency=False,
-            stack=False,
-            parser=None,
-            **kwargs
+        self,
+        ax=None,
+        tagset="penn_treebank",
+        colormap=None,
+        colors=None,
+        frequency=False,
+        stack=False,
+        parser=None,
+        **kwargs,
     ):
         super(PosTagVisualizer, self).__init__(ax=ax, **kwargs)
 
@@ -185,11 +186,11 @@ class PosTagVisualizer(TextVisualizer):
 
     @parser.setter
     def parser(self, parser):
-        accepted_parsers = ('nltk', 'spacy')
+        accepted_parsers = ("nltk", "spacy")
         if not parser:
             self._parser = None
         elif parser.startswith(accepted_parsers):
-            parser_tagger = parser.split('_', 1)  # split on the first occurrence of _
+            parser_tagger = parser.split("_", 1)  # split on the first occurrence of _
 
             parser_name = None
             tagger_name = None
@@ -203,36 +204,48 @@ class PosTagVisualizer(TextVisualizer):
             try:
                 importlib.import_module(parser_name)
             except ModuleNotFoundError:
-                raise ModuleNotFoundError("Can't find module '{}' in this environment.".format(parser))
+                raise ModuleNotFoundError(
+                    "Can't find module '{}' in this environment.".format(parser)
+                )
 
-            if parser_name == 'nltk':
-                nltk = importlib.import_module('nltk')
+            if parser_name == "nltk":
+                nltk = importlib.import_module("nltk")
                 try:
                     nltk.data.find("corpora/treebank")
                 except LookupError:
-                    raise LookupError("Error occured because nltk postag data is not available")
+                    raise LookupError(
+                        "Error occured because nltk postag data is not available"
+                    )
 
-                nltk_taggers = ['word', 'wordpunct']
+                nltk_taggers = ["word", "wordpunct"]
 
                 if not tagger_name:
-                    tagger_name = 'word'
-                    parser = parser_name + '_' + tagger_name
+                    tagger_name = "word"
+                    parser = parser_name + "_" + tagger_name
                 if tagger_name not in nltk_taggers:
-                    raise ValueError("If using NLTK, tagger should either be 'word' (default) or 'wordpunct'.")
+                    raise ValueError(
+                        "If using NLTK, tagger should either be 'word' (default) or"
+                        " 'wordpunct'."
+                    )
 
-            elif parser_name == 'spacy':
+            elif parser_name == "spacy":
                 if not tagger_name:
-                    tagger_name = 'en_core_web_sm'
-                    parser = parser_name + '_' + tagger_name
+                    tagger_name = "en_core_web_sm"
+                    parser = parser_name + "_" + tagger_name
                 try:
-                    spacy = importlib.import_module('spacy')
+                    spacy = importlib.import_module("spacy")
                     spacy.load(tagger_name)
                 except OSError:
-                    raise OSError(f"Spacy model '{tagger_name}' has not been downloaded into this environment.")
+                    raise OSError(
+                        "Spacy model '{}' has not been downloaded into this"
+                        " environment.".format(tagger_name)
+                    )
             self._parser = parser
         else:
-            raise ValueError("{} is an invalid parser. Currently the supported parsers are 'nltk' and "
-                             "'spacy'".format(parser))
+            raise ValueError(
+                "{} is an invalid parser. Currently the supported parsers are 'nltk'"
+                "and 'spacy'".format(parser)
+            )
 
     def fit(self, X, y=None, **kwargs):
         """
@@ -265,8 +278,8 @@ class PosTagVisualizer(TextVisualizer):
         self.labels_ = ["documents"]
 
         if self.parser:
-            parser_name = self.parser.split('_', 1)[0]
-            parse_func = getattr(self, 'parse_{}'.format(parser_name))
+            parser_name = self.parser.split("_", 1)[0]
+            parse_func = getattr(self, "parse_{}".format(parser_name))
             X = parse_func(X)
 
         if self.stack:
@@ -288,52 +301,59 @@ class PosTagVisualizer(TextVisualizer):
 
     def parse_nltk(self, X):
         """
-        Tag a corpora using NLTK tagging (Penn-Treebank).
+        Tag a corpora using NLTK tagging (Penn-Treebank) to produce a generator of
+        tagged documents in the form of a list of (document) lists of (sentence)
+        lists of (token, tag) tuples.
 
         Parameters
         ----------
         X : str (raw text) or list of paragraphs (containing str)
 
-        :return: Generator of tagged documents in the form of a a list of (document) lists of (sentence)
-        lists of (token, tag) tuples.
         """
-        nltk = importlib.import_module('nltk')
+        nltk = importlib.import_module("nltk")
         nltk.data.find("corpora/treebank")
-        tagger = self.parser.split('_', 1)[1]
+        tagger = self.parser.split("_", 1)[1]
 
-        if tagger == 'word':
+        if tagger == "word":
             for doc in X:
                 yield [
-                    nltk.pos_tag(nltk.word_tokenize(sent)) for sent in nltk.sent_tokenize(doc)
+                    nltk.pos_tag(nltk.word_tokenize(sent))
+                    for sent in nltk.sent_tokenize(doc)
                 ]
-        elif tagger == 'wordpunct':
+        elif tagger == "wordpunct":
             for doc in X:
                 yield [
-                    nltk.pos_tag(nltk.wordpunct_tokenize(sent)) for sent in nltk.sent_tokenize(doc)
+                    nltk.pos_tag(nltk.wordpunct_tokenize(sent))
+                    for sent in nltk.sent_tokenize(doc)
                 ]
 
     def parse_spacy(self, X):
         """
-        Tag a corpora using SpaCy tagging (Universal Dependencies).
+        Tag a corpora using SpaCy tagging (Universal Dependencies) to produce a
+        generator of tagged documents in the form of a list of (document)
+        lists of (sentence) lists of (token, tag) tuples.
 
         Parameters
         ----------
         X : str (raw text) or list of paragraphs (containing str)
 
-        :return: Generator of tagged documents in the form of a a list of (document) lists of (sentence)
-        lists of (token, tag) tuples.
         """
-        spacy = importlib.import_module('spacy')
-        tagger = self.parser.split('_', 1)[1]
+        spacy = importlib.import_module("spacy")
+        tagger = self.parser.split("_", 1)[1]
         nlp = spacy.load(tagger)
 
         if isinstance(X, list):
             for doc in X:
                 tagged = nlp(doc)
-                yield [[(token.text, token.pos_) for token in sents] for sents in tagged.sents]
+                yield [
+                    [(token.text, token.pos_) for token in sents]
+                    for sents in tagged.sents
+                ]
         elif isinstance(X, str):
             tagged = nlp(X)
-            yield [[(token.text, token.pos_) for token in sents] for sents in tagged.sents]
+            yield [
+                [(token.text, token.pos_) for token in sents] for sents in tagged.sents
+            ]
 
     def _penn_tag_map(self):
         """
@@ -556,16 +576,17 @@ class PosTagVisualizer(TextVisualizer):
 
 
 def postag(
-        X,
-        y=None,
-        ax=None,
-        tagset="penn_treebank",
-        colormap=None,
-        colors=None,
-        frequency=False,
-        stack=False,
-        parser=None,
-        **kwargs
+    X,
+    y=None,
+    ax=None,
+    tagset="penn_treebank",
+    colormap=None,
+    colors=None,
+    frequency=False,
+    stack=False,
+    parser=None,
+    show=True,
+    **kwargs,
 ):
     """
     Display a barchart with the counts of different parts of speech
@@ -583,7 +604,7 @@ def postag(
     y : ndarray or Series of length n
         An optional array of target values that are ignored by the
         visualizer.
-        
+
     ax : matplotlib axes
         The axes to plot the figure on.
 
@@ -605,21 +626,20 @@ def postag(
     stack : bool {True, False}, default : False
         Plot the PosTag frequency chart as a per-class stacked bar chart.
         Note that fit() requires y for this visualization.
-postag
-    
+
+    parser : string or None, default: None
+        If set to a string, string must be in the form of 'parser_tagger' or 'parser'
+        to use defaults (for spacy this is 'en_core_web_sm', for nltk this is 'word').
+        The 'parser' argument is one of the accepted parsing libraries. Currently
+        'nltk' and 'spacy' are the only accepted libraries. NLTK or SpaCy must be
+        installed into your environment. 'tagger' is the tagset to use. For example
+        'nltk_wordpunct' would use the NLTK library with 'wordpunct' tagset. Or
+        'spacy_en_core_web_sm' would use SpaCy with the 'en_core_web_sm' tagset.
+
     show: bool, default: True
         If True, calls ``show()``, which in turn calls ``plt.show()`` however you cannot
         call ``plt.savefig`` from this signature, nor ``clear_figure``. If False, simply
-        calls ``finalize()``    
-
-
-    parser : string or None, default: None
-        If set to a string, string must be in the form of 'parser_tagger' or 'parser' to use defaults
-        (for spacy this is 'en_core_web_sm', for nltk this is 'word'). The 'parser' argument is
-        one of the accepted parsing libraries. Currently 'nltk' and 'spacy' are the only accepted libraries.
-        NLTK or SpaCy must be installed into your environment. 'tagger' is the tagset to use. For example
-        'nltk_wordpunct' would use the NLTK library with 'wordpunct' tagset. Or 'spacy_en_core_web_sm' would
-        use SpaCy with the 'en_core_web_sm' tagset.
+        calls ``finalize()``
 
     kwargs : dict
         Pass any additional keyword arguments to the PosTagVisualizer.
@@ -638,12 +658,12 @@ postag
         frequency=frequency,
         stack=stack,
         parser=parser,
-        **kwargs
+        **kwargs,
     )
 
     # Fit and transform the visualizer (calls draw)
     visualizer.fit(X, y=y, **kwargs)
-    
+
     if show:
         visualizer.show()
     else:
