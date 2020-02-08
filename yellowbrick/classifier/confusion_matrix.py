@@ -19,7 +19,6 @@ Visual confusion matrix for classifier scoring.
 
 import numpy as np
 
-from sklearn.model_selection import train_test_split
 from sklearn.metrics import confusion_matrix as confusion_matrix_metric
 
 from yellowbrick.utils import div_safe
@@ -338,11 +337,11 @@ class ConfusionMatrix(ClassificationScoreVisualizer):
 
 def confusion_matrix(
     model,
-    X,
-    y,
+    X_train,
+    y_train,
+    X_test=None,
+    y_test=None,
     ax=None,
-    test_size=0.2,
-    random_state=None,
     sample_weight=None,
     percent=False,
     classes=None,
@@ -351,6 +350,7 @@ def confusion_matrix(
     fontsize=None,
     is_fitted="auto",
     force_model=False,
+    show=True,
     **kwargs
 ):
     """Confusion Matrix
@@ -374,21 +374,27 @@ def confusion_matrix(
         fitted, it is fit when the visualizer is fitted, unless otherwise specified
         by ``is_fitted``.
 
-    X  : ndarray or DataFrame of shape n x m
-        A matrix of n instances with m features.
+    X_train : array-like, 2D
+        The table of instance data or independent variables that describe the outcome of
+        the dependent variable, y. Used to fit the visualizer and also to score the
+        visualizer if test splits are not specified.
 
-    y  : ndarray or Series of length n
-        An array or series of target or class values.
+    y_train : array-like, 2D
+        The vector of target data or the dependent variable predicted by X. Used to fit
+        the visualizer and also to score the visualizer if test splits are not
+        specified.
+
+    X_test: array-like, 2D, default: None
+        The table of instance data or independent variables that describe the outcome of
+        the dependent variable, y. Used to score the visualizer if specified.
+
+    y_test: array-like, 1D, default: None
+        The vector of target data or the dependent variable predicted by X. Used to
+        score the visualizer if specified.
 
     ax : matplotlib Axes, default: None
         The axes to plot the figure on. If not specified the current axes will be
         used (or generated if required).
-
-    test_size : float, default=0.2
-        The percentage of the data to reserve as test data.
-
-    random_state : int or None, default=None
-        The value to seed the random number generator for shuffling data.
 
     sample_weight: array-like of shape = [n_samples], optional
         Passed to ``confusion_matrix`` to weight the samples.
@@ -432,6 +438,11 @@ def confusion_matrix(
         will prevent an exception when the visualizer is initialized but may result
         in unexpected or unintended behavior.
 
+    show: bool, default: True
+        If True, calls ``show()``, which in turn calls ``plt.show()`` however you cannot
+        call ``plt.savefig`` from this signature, nor ``clear_figure``. If False, simply
+        calls ``finalize()``
+
     kwargs : dict
         Keyword arguments passed to the visualizer base classes.
 
@@ -455,16 +466,20 @@ def confusion_matrix(
         **kwargs
     )
 
-    # Create the train and test splits
-    # TODO: determine how to use quick methods that require train and test data.
-    X_train, X_test, y_train, y_test = train_test_split(
-        X, y, test_size=test_size, random_state=random_state
-    )
-
     # Fit and transform the visualizer (calls draw)
     visualizer.fit(X_train, y_train, **kwargs)
-    visualizer.score(X_test, y_test)
-    visualizer.finalize()
+
+    # Scores the visualizer with X_test and y_test if provided,
+    # X_train, y_train if not provided
+    if X_test is not None and y_test is not None:
+        visualizer.score(X_test, y_test)
+    else:
+        visualizer.score(X_train, y_train)
+
+    if show:
+        visualizer.show()
+    else:
+        visualizer.finalize()
 
     # Return the visualizer
     return visualizer
