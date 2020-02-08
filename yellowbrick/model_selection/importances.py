@@ -366,6 +366,7 @@ def feature_importances(
     colors=None,
     colormap=None,
     is_fitted="auto",
+    show=True,
     **kwargs
 ):
     """Quick Method:
@@ -426,6 +427,11 @@ def feature_importances(
         modified. If 'auto' (default), a helper method will check if the estimator
         is fitted before fitting it again.
 
+    show: bool, default: True
+        If True, calls ``show()``, which in turn calls ``plt.show()`` however you cannot
+        call ``plt.savefig`` from this signature, nor ``clear_figure``. If False, simply
+        calls ``finalize()``
+
     kwargs : dict
         Keyword arguments that are passed to the base class and may influence
         the visualization as defined in other Visualizers.
@@ -452,7 +458,11 @@ def feature_importances(
 
     # Fit and transform the visualizer (calls draw)
     visualizer.fit(X, y)
-    visualizer.finalize()
+
+    if show:
+        visualizer.show()
+    else:
+        visualizer.finalize()
 
     # Return the visualizer
     return visualizer
