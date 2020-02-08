@@ -16,6 +16,14 @@ Below are a few examples of using the ``ConfusionMatrix`` visualizer; more
 information can be found by looking at the
 scikit-learn documentation on `confusion matrices <http://scikit-learn.org/stable/modules/generated/sklearn.metrics.confusion_matrix.html>`_.
 
+=================   =================
+Visualizer           `ConfusionMatrix <https://www.scikit-yb.org/en/develop/api/classifier/confusion_matrix.html#yellowbrick.classifier.confusion_matrix.ConfusionMatrix>`_
+Quick Method         `confusion_matrix() <https://www.scikit-yb.org/en/develop/api/classifier/confusion_matrix.html#yellowbrick.classifier.confusion_matrix.confusion_matrix>`_
+Models               Classification
+Workflow             Model evaluation
+=================   =================
+
+
 .. plot::
     :context: close-figs
     :alt: ConfusionMatrix plot of sklearn Digits dataset
@@ -83,11 +91,36 @@ Class names can be added to a ``ConfusionMatrix`` plot using the ``label_encoder
 
     iris_cm.show()
 
+Quick Method
+-------------------------
+The same functionality above can be achieved with the associated quick method ``confusion_matrix``. This method will build the ``ConfusionMatrix`` object with the associated arguments, fit it, then (optionally) immediately show it. In the below example we can see how a ``LogisticRegression`` struggles to effectively model the credit dataset (hint: check out :class:`~yellowbrick.features.rankd.Rank2D` to examine for multicollinearity!).
+
+.. plot::
+    :context: close-figs
+    :alt: confusion_matrix on the credit dataset
+
+    from yellowbrick.datasets import load_credit
+    from yellowbrick.classifier import confusion_matrix
+    from sklearn.linear_model import LogisticRegression
+    from sklearn.model_selection import train_test_split as tts
+
+    #Load the classification dataset
+    X, y = load_credit()
+
+    #Create the train and test data
+    X_train, X_test, y_train, y_test = tts(X, y, test_size=0.2)
+
+    # Instantiate the visualizer with the classification model
+    confusion_matrix(
+        LogisticRegression(),
+        X_train, y_train, X_test, y_test,
+        classes=['not_defaulted', 'defaulted']
+    )
 
 API Reference
 -------------
 
 .. automodule:: yellowbrick.classifier.confusion_matrix
-    :members: ConfusionMatrix
+    :members: ConfusionMatrix, confusion_matrix
     :undoc-members:
     :show-inheritance:
