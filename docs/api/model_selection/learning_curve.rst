@@ -4,8 +4,8 @@ Learning Curve
 ==============
 
 =================   =====================
- Visualizer           `LearningCurve <https://www.scikit-yb.org/en/latest/api/model_selection/learning_curve.html#yellowbrick.model_selection.learning_curve.LearningCurve>`_
- Quick Method         `learning_curve() <https://www.scikit-yb.org/en/latest/api/model_selection/learning_curve.html#yellowbrick.model_selection.learning_curve.learning_curve>`_
+ Visualizer           :class:`~yellowbrick.model_selection.learning_curve.LearningCurve`
+ Quick Method         :func:`~yellowbrick.model_selection.learning_curve.learning_curve`
  Models               Classification, Regression, Clustering
  Workflow             Model Selection
 =================   =====================
