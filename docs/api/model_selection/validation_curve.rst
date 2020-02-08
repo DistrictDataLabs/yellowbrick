@@ -8,7 +8,7 @@ Model validation is used to determine how effective an estimator is on data that
 In order to maximize the score, the hyperparameters of the model must be selected which best allow the model to operate in the specified feature space. Most models have multiple hyperparameters and the best way to choose a combination of those parameters is with a grid search. However, it is sometimes useful to plot the influence of a single hyperparameter on the training and test data to determine if the estimator is underfitting or overfitting for some hyperparameter values.
 
 =================   ==============================
-Visualizer           :class:`~yellowbrick.model_selction.validation_curve.ValidationCurve`
+Visualizer           :class:`~yellowbrick.model_selection.validation_curve.ValidationCurve`
 Quick Method         :func:`~yellowbrick.model_selection.validation_curve.validation_curve`
 Models               Classification and Regression
 Workflow             Model Selection
@@ -132,7 +132,7 @@ Similar functionality as above can be achieved in one line using the associated 
     X, y = load_energy()
 
     viz = validation_curve(
-        DecisionTreeRegressor(), param_name="max_depth",
+        DecisionTreeRegressor(), X, y, param_name="max_depth",
         param_range=np.arange(1, 11), cv=10, scoring="r2",
     )
 

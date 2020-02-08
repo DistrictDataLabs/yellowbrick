@@ -377,7 +377,7 @@ def validation_curve(
         all). The option can reduce the allocated memory. The string can
         be an expression like '2*n_jobs'.
 
-     show: bool, default: True
+    show: bool, default: True
         If True, calls ``show()``, which in turn calls ``plt.show()`` however
         you cannot call ``plt.savefig`` from this signature, nor
         ``clear_figure``. If False, simply calls ``finalize()``
