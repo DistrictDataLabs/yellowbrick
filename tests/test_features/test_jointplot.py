@@ -492,3 +492,18 @@ class TestJointPlotHistogram(VisualTestCase):
         oz.finalize()
         # Appveyor and Linux conda failed due to non-text-based differences
         self.assert_images_similar(oz, tol=4.0)
+
+    @pytest.mark.xfail(
+        IS_WINDOWS_OR_CONDA,
+        reason="font rendering different in OS and/or Python; see #892",
+    )
+    def test_quick_method(self):
+        """
+        Test the joint_plot quick method
+        """
+        oz = joint_plot(self.continuous.X, self.continuous.y, columns=1, show=False)
+        assert isinstance(oz, JointPlot)
+        assert hasattr(oz, "corr_")
+
+        oz.finalize()
+        self.assert_images_similar(oz)

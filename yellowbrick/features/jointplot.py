@@ -458,6 +458,7 @@ def joint_plot(
         alpha=0.65,
         joint_kws=None,
         hist_kws=None,
+        show=True,
         **kwargs
 ):
     """
@@ -529,6 +530,11 @@ def joint_plot(
         {joint, hist}_kws : dict, default: None
             Additional keyword arguments for the plot components.
 
+        show : bool, default: True
+        If True, calls ``show()``, which in turn calls ``plt.show()`` however
+        you cannot call ``plt.savefig`` from this signature, nor
+        ``clear_figure``. If False, simply calls ``finalize()``
+
         kwargs : dict
             Keyword arguments that are passed to the base class and may influence
             the visualization as defined in other Visualizers.
@@ -539,5 +545,22 @@ def joint_plot(
             The correlation or relationship of the data in the joint plot, specified by the
             correlation algorithm.
         """
-    # visualizer =
-    raise NotImplementedError("quick method still needs to be implemented")
+    visualizer = JointPlot(
+        ax=ax,
+        columns=columns,
+        correlation=correlation,
+        kind=kind,
+        hist=hist,
+        alpha=alpha,
+        joint_kws=joint_kws,
+        hist_kws=hist_kws,
+        **kwargs
+    )
+
+    # Fit and show the visualizer
+    visualizer.fit(X, y)
+    if show:
+        visualizer.show()
+    else:
+        visualizer.finalize()
+    return visualizer
