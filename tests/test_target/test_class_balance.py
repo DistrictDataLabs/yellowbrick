@@ -23,8 +23,8 @@ from yellowbrick.target.class_balance import *
 from yellowbrick.datasets import load_occupancy
 from yellowbrick.exceptions import YellowbrickValueError
 
-from tests.base import VisualTestCase
 from tests.fixtures import Dataset, Split
+from tests.base import IS_WINDOWS_OR_CONDA, VisualTestCase
 
 from sklearn.datasets import make_classification
 from sklearn.model_selection import train_test_split as tts
@@ -229,6 +229,9 @@ class TestClassBalance(VisualTestCase):
         # oz.finalize()
         self.assert_images_similar(oz, tol=0.5)  # w/o tol fails with RMS 0.433
 
+    @pytest.mark.xfail(
+        IS_WINDOWS_OR_CONDA,
+        reason="test stopped working on miniconda, hangs indefinitely. See #1024")
     def test_quick_method(self):
         """
         Test the quick method producing a valid visualization
