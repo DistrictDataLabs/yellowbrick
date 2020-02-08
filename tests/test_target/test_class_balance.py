@@ -239,3 +239,13 @@ class TestClassBalance(VisualTestCase):
 
         assert isinstance(viz, ClassBalance)
         self.assert_images_similar(viz, tol=0.5)
+
+    def test_quick_method_with_splits(self):
+        """
+        Test the quick method works with train and test splits
+        """
+        dataset = make_fixture(binary=False, split=True)
+
+        viz = class_balance(dataset.y.train, dataset.y.test)
+
+        assert isinstance(viz, ClassBalance)
