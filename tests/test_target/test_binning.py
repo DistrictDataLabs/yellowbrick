@@ -66,6 +66,7 @@ class TestBalancedBinningReference(VisualTestCase):
         """
         Test the quick method with producing a valid visualization
         """
+        @pytest.mark.skipif(pd is None, reason="pandas is required")
         data = load_occupancy(return_dataset=True)
         _, y = data.to_pandas()
         
