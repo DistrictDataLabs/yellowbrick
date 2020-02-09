@@ -410,7 +410,7 @@ class TestKElbowVisualizer(VisualTestCase):
         )
 
         model = MiniBatchKMeans(3, random_state=43)
-        oz = kelbow_visualizer(model, X, random_state=13, legend=False)
+        oz = kelbow_visualizer(model, X, show=False)
         assert isinstance(oz, KElbowVisualizer)
 
         self.assert_images_similar(oz)
