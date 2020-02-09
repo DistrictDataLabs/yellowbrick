@@ -97,8 +97,8 @@ Alternatively, we can utilize the covariance ranking algorithm, which attempts t
     visualizer.transform(X)        # Transform the data
     visualizer.show()              # Finalize and render the figure
 
-Quick Methods
--------------
+Quick Method
+------------
 
 Similar functionality as above can be achieved in one line using the associated quick method, ``rank2d``. This method will instantiate and fit a ``Rank2D`` visualizer on the dataset and immediately show it.
 

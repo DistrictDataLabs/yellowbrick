@@ -542,7 +542,7 @@ def rank1d(
     )
 
     # Fit and transform the visualizer (calls draw)
-    visualizer.fit(X, y, **kwargs)
+    visualizer.fit(X, y)
     visualizer.transform(X)
 
     if show:
