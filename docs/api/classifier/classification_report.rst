@@ -5,6 +5,13 @@ Classification Report
 
 The classification report visualizer displays the precision, recall, F1, and support scores for the model. In order to support easier interpretation and problem detection, the report integrates numerical scores with a color-coded heatmap. All heatmaps are in the range ``(0.0, 1.0)`` to facilitate easy comparison of classification models across different classification reports.
 
+=================   =================
+Visualizer           :class:`~yellowbrick.classifier.ClassificationReport`
+Quick Method         :func:`~yellowbrick.classifier.classification_report`
+Models               Classification
+Workflow             Model evaluation
+=================   =================
+
 .. plot::
     :context: close-figs
     :alt:  Classification Report
@@ -55,10 +62,44 @@ The metrics are defined in terms of true and false positives, and true and false
 
 .. note:: This example uses ``TimeSeriesSplit`` to split the data into the training and test sets. For more information on this cross-validation method, please refer to the scikit-learn `documentation <https://scikit-learn.org/stable/modules/generated/sklearn.model_selection.TimeSeriesSplit.html>`_.
 
+Quick Method
+------------
+The same functionality above can be achieved with the associated quick method ``classification_report``. This method
+will build the ``ClassificationReport`` object with the associated arguments, fit it, then (optionally) immediately
+show it.
+
+.. plot::
+    :context: close-figs
+    :alt: classification_report on the occupancy dataset
+
+    from sklearn.model_selection import TimeSeriesSplit
+    from sklearn.naive_bayes import GaussianNB
+    
+    from yellowbrick.datasets import load_occupancy
+    from yellowbrick.classifier import classification_report
+
+    # Load the classification data set
+    X, y = load_occupancy()
+    
+    # Specify the target classes
+    classes = ["unoccupied", "occupied"]
+
+    # Create the training and test data
+    tscv = TimeSeriesSplit()
+    for train_index, test_index in tscv.split(X):
+        X_train, X_test = X.iloc[train_index], X.iloc[test_index]
+        y_train, y_test = y.iloc[train_index], y.iloc[test_index]
+
+    # Instantiate the visualizer
+    visualizer = classification_report(
+        GaussianNB(), X_train, y_train, X_test, y_test, classes=classes, support=True
+    )
+
+
 API Reference
 -------------
 
 .. automodule:: yellowbrick.classifier.classification_report
-    :members: ClassificationReport
+    :members: ClassificationReport, classification_report
     :undoc-members:
     :show-inheritance:
