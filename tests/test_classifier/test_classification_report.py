@@ -189,7 +189,6 @@ class TestClassificationReport(VisualTestCase):
             "f1": {"unoccupied": 0.9800031994880819, "occupied": 0.9366447034972124},
         }
 
-    @pytest.mark.xfail(sys.platform == "win32", reason="images not close on windows")
     def test_quick_method(self):
         """
         Test the quick method with a random dataset
@@ -215,7 +214,7 @@ class TestClassificationReport(VisualTestCase):
         )
 
         assert isinstance(visualizer, ClassificationReport)
-        self.assert_images_similar(visualizer, tol=5.0)
+        self.assert_images_similar(visualizer)
 
     def test_isclassifier(self):
         """
