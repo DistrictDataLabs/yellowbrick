@@ -61,14 +61,14 @@ class TestBalancedBinningReference(VisualTestCase):
         visualizer.fit(y)
         visualizer.finalize()
         self.assert_images_similar(visualizer, tol=0.5)
-    
+
     def test_quick_method(self):
         """
         Test the quick method with producing a valid visualization
-        """     
+        """
         data = load_occupancy(return_dataset=True)
         _, y = data.to_numpy()
-        
+
         visualizer = balanced_binning_reference(y, show=False)
 
         assert isinstance(visualizer, BalancedBinningReference)

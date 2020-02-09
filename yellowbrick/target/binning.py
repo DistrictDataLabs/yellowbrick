@@ -186,6 +186,10 @@ def balanced_binning_reference(y, ax=None, target="y", bins=4, show=True, **kwar
 
     # Fit and show the visualizer
     visualizer.fit(y)
-    visualizer.show()
+
+    if show:
+        visualizer.show()
+    else:
+        visualizer.finalize()
 
     return visualizer
