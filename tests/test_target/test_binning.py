@@ -65,10 +65,9 @@ class TestBalancedBinningReference(VisualTestCase):
     def test_quick_method(self):
         """
         Test the quick method with producing a valid visualization
-        """
-        @pytest.mark.skipif(pd is None, reason="pandas is required")
+        """     
         data = load_occupancy(return_dataset=True)
-        _, y = data.to_pandas()
+        _, y = data.to_numpy()
         
         visualizer = balanced_binning_reference(y, show=False)
 
