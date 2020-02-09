@@ -85,7 +85,7 @@ def dataset_example(
 
     # Check if the quick method is called
     if quick:
-        oz = manifold_embedding(X, manifold=manifold, **kwargs)
+        oz = manifold_embedding(X, y, manifold=manifold, show=False, **kwargs)
         oz.show(outpath=path)
     else:
         oz = Manifold(ax=ax, manifold=manifold, **kwargs)
@@ -171,14 +171,20 @@ if __name__ == "__main__":
     # curve.plot_all_manifolds()
     dataset_example("concrete", "tsne", path="images/concrete_tsne_manifold.png")
     dataset_example(
-        "occupancy", "tsne", classes=["unoccupied", "occupied"],
-        path="images/occupancy_tsne_manifold.png"
+        "occupancy",
+        "tsne",
+        classes=["unoccupied", "occupied"],
+        path="images/occupancy_tsne_manifold.png",
     )
     dataset_example(
         "concrete", "isomap", path="images/concrete_isomap_manifold.png", n_neighbors=10
     )
     dataset_example(
-        "concrete", "isomap", path="images/manifold_quick_method.png", n_neighbors=10,
-        quick=True
+        "concrete",
+        "isomap",
+        target="continuous",
+        path="images/manifold_quick_method.png",
+        n_neighbors=10,
+        quick=True,
     )
     select_features_example(algorithm="isomap", n_neighbors=10)
