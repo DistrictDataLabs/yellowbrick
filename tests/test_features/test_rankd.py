@@ -295,11 +295,7 @@ class TestRank1D(VisualTestCase):
         # Image similarity testing
         oz.finalize()
         self.assert_images_similar(oz)
-    
-    @pytest.mark.xfail(
-        IS_WINDOWS_OR_CONDA,
-        reason="font rendering different in OS and/or Python; see #892",
-    )
+
     def test_rank1d_quick_method(self):
         """
         Test Rank1d quick method
