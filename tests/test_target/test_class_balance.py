@@ -23,8 +23,8 @@ from yellowbrick.target.class_balance import *
 from yellowbrick.datasets import load_occupancy
 from yellowbrick.exceptions import YellowbrickValueError
 
-from tests.base import VisualTestCase
 from tests.fixtures import Dataset, Split
+from tests.base import VisualTestCase
 
 from sklearn.datasets import make_classification
 from sklearn.model_selection import train_test_split as tts
@@ -231,9 +231,22 @@ class TestClassBalance(VisualTestCase):
 
     def test_quick_method(self):
         """
-        Test the quick method with
+        Test the quick method producing a valid visualization
         """
         dataset = make_fixture(binary=False, split=False)
 
-        viz = class_balance(dataset.y)
+        viz = class_balance(dataset.y, show=False)
+
+        assert isinstance(viz, ClassBalance)
         self.assert_images_similar(viz, tol=0.5)
+
+    def test_quick_method_with_splits(self):
+        """
+        Test the quick method works with train and test splits
+        """
+        dataset = make_fixture(binary=False, split=True)
+
+        viz = class_balance(dataset.y.train, dataset.y.test, show=False)
+
+        assert isinstance(viz, ClassBalance)
+        self.assert_images_similar(viz)
