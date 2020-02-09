@@ -24,7 +24,7 @@ from yellowbrick.datasets import load_occupancy
 from yellowbrick.exceptions import YellowbrickValueError
 
 from tests.fixtures import Dataset, Split
-from tests.base import IS_WINDOWS_OR_CONDA, VisualTestCase
+from tests.base import VisualTestCase
 
 from sklearn.datasets import make_classification
 from sklearn.model_selection import train_test_split as tts
@@ -213,9 +213,6 @@ class TestClassBalance(VisualTestCase):
         # oz.finalize()
         self.assert_images_similar(oz, tol=0.5)  # w/o tol fails with RMS 0.433
 
-    @pytest.mark.xfail(
-        IS_WINDOWS_OR_CONDA,
-        reason="test stopped working on Miniconda, hangs indefinitely. See #1024")
     def test_numpy_occupancy_compare(self):
         """
         Test NumPy arrays with string target in compare mode
@@ -238,7 +235,7 @@ class TestClassBalance(VisualTestCase):
         """
         dataset = make_fixture(binary=False, split=False)
 
-        viz = class_balance(dataset.y)
+        viz = class_balance(dataset.y, show=False)
 
         assert isinstance(viz, ClassBalance)
         self.assert_images_similar(viz, tol=0.5)
@@ -249,7 +246,7 @@ class TestClassBalance(VisualTestCase):
         """
         dataset = make_fixture(binary=False, split=True)
 
-        viz = class_balance(dataset.y.train, dataset.y.test)
+        viz = class_balance(dataset.y.train, dataset.y.test, show=False)
 
         assert isinstance(viz, ClassBalance)
         self.assert_images_similar(viz)
