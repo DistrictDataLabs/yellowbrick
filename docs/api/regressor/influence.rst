@@ -41,14 +41,18 @@ Similar functionality as above can be achieved in one line using the associated 
     :context: close-figs
     :alt: cooks_distance quick method
 
-    from yellowbrick.regressor import cooks_distance
     from yellowbrick.datasets import load_concrete
+    from yellowbrick.regressor import cooks_distance
 
     # Load the regression dataset
     X, y = load_concrete()
 
     # Instantiate and fit the visualizer
-    viz = cooks_distance(X, y, ax=None, draw_threshold=True, linefmt="C0-", markerfmt=",")
+    cooks_distance(
+        X, y,
+        draw_threshold=True,
+        linefmt="C0-", markerfmt=","
+    )
 
 
 API Reference
