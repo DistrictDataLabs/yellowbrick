@@ -9,7 +9,14 @@ This visualization can be used in feature selection to identify features with hi
 Pearson Correlation
 -------------------
 
-The default calculation is Pearson correlation, which is perform with ``scipy.stats.pearsonr``.
+The default calculation is Pearson correlation, which is performed with ``scipy.stats.pearsonr``.
+
+=================   =================
+Visualizer           `FeatureCorrelation <https://www.scikit-yb.org/en/latest/api/target/feature_correlation.html#yellowbrick.target.feature_correlation.FeatureCorrelation>`_
+Quick Method         `feature_correlation() <https://www.scikit-yb.org/en/latest/api/target/feature_correlation.html#yellowbrick.target.feature_correlation.feature_correlation>`_
+Models               Regression/Classification/Clustering
+Workflow             Feature Engineering/Model Selection
+=================   =================
 
 .. plot::
     :context: close-figs
@@ -94,11 +101,31 @@ This visualizer also allows sorting of the bar plot according to the calculated 
     visualizer.fit(X_pd, y)        # Fit the data to the visualizer
     visualizer.show()              # Finalize and render the figure
 
+Quick Method
+-------------------------
+The same functionality above can be achieved with the associated quick method ``feature_correlation``. This method will build the ``FeatureCorrelation`` object with the associated arguments, fit it, then (optionally) immediately show it
+
+.. plot::
+    :context: close-figs
+    :alt: feature_correlation on the diabetes dataset
+
+    import numpy as np
+    from sklearn import datasets
+    import matplotlib.pyplot as plt
+    from yellowbrick.target.feature_correlation import feature_correlation
+
+    #Load the diabetes dataset
+    data = datasets.load_iris()
+    X, y = data['data'], data['target']
+
+    features = np.array(data['feature_names'])
+    visualizer = feature_correlation(X, y, labels=features)
+    plt.tight_layout()
 
 API Reference
 -------------
 
 .. automodule:: yellowbrick.target.feature_correlation
-    :members: FeatureCorrelation
+    :members: FeatureCorrelation, feature_correlation
     :undoc-members:
     :show-inheritance:

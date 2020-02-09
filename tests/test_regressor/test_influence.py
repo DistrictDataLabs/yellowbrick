@@ -122,6 +122,7 @@ class TestCooksDistance(VisualTestCase):
             draw_threshold=False,
             linefmt="r-",
             markerfmt="ro",
+            show=False
         )
 
         assert_fitted(viz)
