@@ -21,7 +21,7 @@ import sys
 import pytest
 import numpy as np
 import numpy.testing as npt
-import matplotlib.pyplot as plt
+
 
 from yellowbrick.target import FeatureCorrelation, feature_correlation
 from yellowbrick.exceptions import YellowbrickValueError, YellowbrickWarning
@@ -198,8 +198,6 @@ class TestFeatureCorrelationVisualizer(VisualTestCase):
         """
         Test sorting of correlation
         """
-        fig = plt.figure()
-        ax = fig.add_subplot()
-        g = feature_correlation.feature_correlation(self.X, self.y, ax)
+        g = feature_correlation.feature_correlation(self.X, self.y, labels=self.labels, show=False)
 
         self.assert_images_similar(g)

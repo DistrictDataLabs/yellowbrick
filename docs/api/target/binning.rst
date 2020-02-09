@@ -9,6 +9,12 @@ Sometimes when the your target variable is continuously-valued, there simply are
 
 To help the user select the optimal number of bins, the ``BalancedBinningReference`` visualizer takes the target variable ``y`` as input and generates a histogram with vertical lines indicating the recommended value points to ensure that the data is evenly distributed into each bin.
 
+=================   ==============================
+Visualizer           `BalancedBinningReference <https://www.scikit-yb.org/en/latest/api/target/binning.html#module-yellowbrick.target.binning.BalancedBinningReference>`_
+Quick Method         `balanced_binning_reference <https://www.scikit-yb.org/en/latest/api/target/binning.html#module-yellowbrick.target.binning.balanced_binning_reference>`_
+Models               Classification
+Workflow             Feature analysis, Target analysis, Model selection
+=================   ==============================
 
 .. plot::
     :context: close-figs
@@ -27,6 +33,25 @@ To help the user select the optimal number of bins, the ``BalancedBinningReferen
     visualizer.show()        # Finalize and render the figure
 
 
+Quick Method
+------------
+
+The same functionality above can be achieved with the associated quick method ``balanced_binning_reference``. This method will build the ``BalancedBinningReference`` object with the associated arguments, fit it, then (optionally) immediately show it.
+
+.. plot::
+    :context: close-figs
+    :alt: balanced_binning_reference on the concrete dataset
+
+    from yellowbrick.datasets import load_concrete
+    from yellowbrick.target import balanced_binning_reference
+
+    # Load the dataset
+    X, y = load_concrete()
+
+    # Use the quick method and immediately show the figure
+    balanced_binning_reference(y)
+
+
 .. seealso::
 
     To learn more, please read Rebecca Bilbro's article `"Creating Categorical Variables from Continuous Data." <https://rebeccabilbro.github.io/better-binning>`_
@@ -36,6 +61,6 @@ API Reference
 -------------
 
 .. automodule:: yellowbrick.target.binning
-    :members: BalancedBinningReference
+    :members: BalancedBinningReference, balanced_binning_reference
     :undoc-members:
     :show-inheritance:

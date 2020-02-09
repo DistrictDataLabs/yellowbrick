@@ -256,7 +256,9 @@ class TestInterclusterDistance(VisualTestCase):
         Test the quick method producing a valid visualization
         """
         model = MiniBatchKMeans(3, random_state=343)
-        oz = intercluster_distance(model, self.blobs4.X, random_state=93, legend=False)
+        oz = intercluster_distance(
+            model, self.blobs4.X, random_state=93, legend=False, show=False
+        )
         assert isinstance(oz, InterclusterDistance)
 
         self.assert_images_similar(oz)

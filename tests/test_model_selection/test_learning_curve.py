@@ -133,6 +133,7 @@ class TestLearningCurve(VisualTestCase):
             cv=ShuffleSplit(n_splits=10, test_size=0.2, random_state=34),
             scoring="f1_macro",
             random_state=43,
+            show=False
         )
 
         self.assert_images_similar(viz)
