@@ -10,8 +10,8 @@ Sometimes when the your target variable is continuously-valued, there simply are
 To help the user select the optimal number of bins, the ``BalancedBinningReference`` visualizer takes the target variable ``y`` as input and generates a histogram with vertical lines indicating the recommended value points to ensure that the data is evenly distributed into each bin.
 
 =================   ==============================
-Visualizer           :class:`~yellowbrick.target.balanced_binning_reference.BalancedBinningReference`
-Quick Method         :func:`~yellowbrick.target.balanced_binning_reference.balanced_binning_reference`
+Visualizer           `BalancedBinningReference <https://www.scikit-yb.org/en/latest/api/target/binning.html#module-yellowbrick.target.binning.BalancedBinningReference>`_
+Quick Method         `balanced_binning_reference <https://www.scikit-yb.org/en/latest/api/target/binning.html#module-yellowbrick.target.binning.balanced_binning_reference>`_
 Models               Classification
 Workflow             Feature analysis, Target analysis, Model selection
 =================   ==============================
