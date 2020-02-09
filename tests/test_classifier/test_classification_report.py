@@ -189,6 +189,7 @@ class TestClassificationReport(VisualTestCase):
             "f1": {"unoccupied": 0.9800031994880819, "occupied": 0.9366447034972124},
         }
 
+    @pytest.mark.xfail(sys.platform == "win32", reason="images not close on windows")
     def test_quick_method(self):
         """
         Test the quick method with a random dataset
@@ -203,11 +204,18 @@ class TestClassificationReport(VisualTestCase):
             random_state=27,
         )
 
+        # Create train/test splits
+        splits = tts(X, y, test_size=0.2, random_state=42)
+        X_train, X_test, y_train, y_test = splits
+        
         _, ax = plt.subplots()
         model = DecisionTreeClassifier(random_state=19)
-        classification_report(model, X, y, ax=ax, random_state=42)
+        visualizer = classification_report(
+            model, X_train, y_train, X_test, y_test, ax=ax, show=False
+        )
 
-        self.assert_images_similar(ax=ax, tol=25.0)
+        assert isinstance(visualizer, ClassificationReport)
+        self.assert_images_similar(visualizer, tol=5.0)
 
     def test_isclassifier(self):
         """
