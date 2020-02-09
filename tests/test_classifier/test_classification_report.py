@@ -214,7 +214,7 @@ class TestClassificationReport(VisualTestCase):
         )
 
         assert isinstance(visualizer, ClassificationReport)
-        self.assert_images_similar(visualizer)
+        self.assert_images_similar(visualizer, tol=12)
 
     def test_isclassifier(self):
         """
