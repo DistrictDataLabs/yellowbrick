@@ -6,8 +6,8 @@ Classification Report
 The classification report visualizer displays the precision, recall, F1, and support scores for the model. In order to support easier interpretation and problem detection, the report integrates numerical scores with a color-coded heatmap. All heatmaps are in the range ``(0.0, 1.0)`` to facilitate easy comparison of classification models across different classification reports.
 
 =================   =================
-Visualizer           :class:`~yellowbrick.classifier.ClassificationReport`
-Quick Method         :func:`~yellowbrick.classifier.classification_report`
+Visualizer           :class:`~yellowbrick.classifier.classification_report.ClassificationReport`
+Quick Method         :func:`~yellowbrick.classifier.classification_report.classification_report`
 Models               Classification
 Workflow             Model evaluation
 =================   =================
