@@ -222,7 +222,7 @@ class Manifold(ProjectionVisualizer):
 
     .. _`Locally Linear Embedding`: http://scikit-learn.org/stable/modules/manifold.html#locally-linear-embedding
     .. _`LTSA LLE`: http://scikit-learn.org/stable/modules/manifold.html#local-tangent-space-alignment
-    .. _`Hessian LLE`: http://scikit-learn.org/stable/modules/manifold.html#hessian-eigenmapping>
+    .. _`Hessian LLE`: http://scikit-learn.org/stable/modules/manifold.html#hessian-eigenmapping
     .. _`Modified LLE`: http://scikit-learn.org/stable/modules/manifold.html#modified-locally-linear-embedding
     .. _`Isomap`: http://scikit-learn.org/stable/modules/manifold.html#isomap
     .. _`Multi-Dimensional Scaling`: http://scikit-learn.org/stable/modules/manifold.html#multi-dimensional-scaling-mds
@@ -311,7 +311,8 @@ class Manifold(ProjectionVisualizer):
 
                 # Issue a warning that the n_neighbors was set to a default.
                 warnmsg = (
-                    "using n_neighbors={}; please explicitly specify for the '{}' manifold"
+                    "using n_neighbors={};"
+                    " please explicitly specify for the '{}' manifold"
                 ).format(self.n_neighbors, str(transformer))
                 warnings.warn(warnmsg, YellowbrickWarning)
 
@@ -483,6 +484,7 @@ def manifold_embedding(
     alpha=0.75,
     random_state=None,
     colorbar=True,
+    show=True,
     **kwargs
 ):
     """Quick method for Manifold visualizer.
@@ -510,22 +512,9 @@ def manifold_embedding(
 
     manifold : str or Transformer, default: "lle"
         Specify the manifold algorithm to perform the embedding. Either one of
-        the strings listed in the table below, or an actual scikit-learn
+        the strings listed in the table above, or an actual scikit-learn
         transformer. The constructed manifold is accessible with the manifold
         property, so as to modify hyperparameters before fit.
-
-        ============== ==========================
-        Manifold       Description
-        -------------- --------------------------
-        ``"lle"``      `Locally Linear Embedding <http://scikit-learn.org/stable/modules/manifold.html#locally-linear-embedding>`_
-        ``"ltsa"``     `LTSA LLE <http://scikit-learn.org/stable/modules/manifold.html#local-tangent-space-alignment>`_
-        ``"hessian"``  `Hessian LLE <http://scikit-learn.org/stable/modules/manifold.html#hessian-eigenmapping>`_
-        ``"modified"`` `Modified LLE <http://scikit-learn.org/stable/modules/manifold.html#modified-locally-linear-embedding>`_
-        ``"isomap"``   `Isomap <http://scikit-learn.org/stable/modules/manifold.html#isomap>`_
-        ``"mds"``      `Multi-Dimensional Scaling <http://scikit-learn.org/stable/modules/manifold.html#multi-dimensional-scaling-mds>`_
-        ``"spectral"`` `Spectral Embedding <http://scikit-learn.org/stable/modules/manifold.html#spectral-embedding>`_
-        ``"tsne"``     `t-SNE <http://scikit-learn.org/stable/modules/manifold.html#t-distributed-stochastic-neighbor-embedding-t-sne>`_
-        ============== ==========================
 
     n_neighbors : int, default: None
         Many manifold algorithms are nearest neighbors based, for those that
@@ -587,30 +576,14 @@ def manifold_embedding(
         If the target_type is "continous" draw a colorbar to the right of the
         scatter plot. The colobar axes is accessible using the cax property.
 
+    show: bool, default: True
+        If True, calls ``show()``, which in turn calls ``plt.show()`` however you cannot
+        call ``plt.savefig`` from this signature, nor ``clear_figure``. If False, simply
+        calls ``finalize()``
+
     kwargs : dict
         Keyword arguments passed to the base class and may influence the
         feature visualization properties.
-
-    Attributes
-    ----------
-    fit_time_ : yellowbrick.utils.timer.Timer
-        The amount of time in seconds it took to fit the Manifold.
-
-    classes_ : ndarray, shape (n_classes,)
-        The class labels that define the discrete values in the target. Only
-        available if the target type is discrete. This is guaranteed to be
-        strings even if the classes are a different type.
-
-    features_ : ndarray, shape (n_features,)
-        The names of the features discovered or used in the visualizer that
-        can be used as an index to access or modify data in X. If a user passes
-        feature names in, those features are used. Otherwise the columns of a
-        DataFrame are used or just simply the indices of the data array.
-
-    range_ : (min y, max y)
-        A tuple that describes the minimum and maximum values in the target.
-        Only available if the target type is continuous.
-
 
     Returns
     -------
@@ -634,9 +607,13 @@ def manifold_embedding(
         **kwargs
     )
 
-    # Fit and finalize (calls draw)
+    # Fit and transform the visualizer (calls draw)
     viz.fit_transform(X, y)
-    viz.finalize()
+
+    if show:
+        viz.show()
+    else:
+        viz.finalize()
 
     # Return the visualizer object
     return viz
