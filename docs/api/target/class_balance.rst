@@ -7,6 +7,14 @@ One of the biggest challenges for classification models is an imbalance of class
 
 There are several techniques for dealing with class imbalance such as stratified sampling, down sampling the majority class, weighting, etc. But before these actions can be taken, it is important to understand what the class balance is in the training data. The ``ClassBalance`` visualizer supports this by creating a bar chart of the *support* for each class, that is the frequency of the classes' representation in the dataset.
 
+=================   ==============================
+Visualizer           :class:`~yellowbrick.target.class_balance.ClassBalance`
+Quick Method         :func:`~yellowbrick.target.class_balance.class_balance`
+Models               Classification
+Workflow             Feature analysis, Target analysis, Model selection
+=================   ==============================
+
+
 .. plot::
     :context: close-figs
     :alt: ClassBalance Visualizer on the game dataset
@@ -61,10 +69,30 @@ This visualization allows us to do a quick check to ensure that the proportion o
 
 .. note:: This example uses ``TimeSeriesSplit`` to split the data into the training and test sets. For more information on this cross-validation method, please refer to the scikit-learn `documentation <https://scikit-learn.org/stable/modules/generated/sklearn.model_selection.TimeSeriesSplit.html>`_.
 
+
+Quick Method
+------------
+
+The same functionalities above can be achieved with the associated quick method `class_balance`. This method will build the ``ClassBalance`` object with the associated arguments, fit it, then (optionally) immediately show it.
+
+.. plot::
+    :context: close-figs
+    :alt: class_balance on the game dataset
+
+    from yellowbrick.datasets import load_game
+    from yellowbrick.target import class_balance
+
+    # Load the dataset
+    X, y = load_game()
+
+    # Use the quick method and immediately show the figure
+    class_balance(y)
+
+
 API Reference
 -------------
 
 .. automodule:: yellowbrick.target.class_balance
-    :members: ClassBalance
+    :members: ClassBalance, class_balance
     :undoc-members:
     :show-inheritance:

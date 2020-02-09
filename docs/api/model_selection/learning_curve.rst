@@ -3,6 +3,13 @@
 Learning Curve
 ==============
 
+=================   =====================
+ Visualizer           :class:`~yellowbrick.model_selection.learning_curve.LearningCurve`
+ Quick Method         :func:`~yellowbrick.model_selection.learning_curve.learning_curve`
+ Models               Classification, Regression, Clustering
+ Workflow             Model Selection
+=================   =====================
+
 A learning curve shows the relationship of the training score versus the cross validated test score for an estimator with a varying number of training samples. This visualization is typically used to show two things:
 
 1. How much the estimator benefits from more data (e.g. do we have "enough data" or will the estimator get better if used in an online fashion).
@@ -110,14 +117,31 @@ Learning curves also work for clustering models and can use metrics that specify
 
 Unfortunately, with random data these curves are highly variable, but serve to point out some clustering-specific items. First, note the y-axis is very narrow, roughly speaking these curves are converged and actually the clustering algorithm is performing very well. Second, for clustering, convergence for data points is not necessarily a bad thing; in fact we want to ensure as more data is added, the training and cross-validation scores do not diverge.
 
+Quick Method
+------------
+The same functionality can be achieved with the associated quick method ``learning_curve``. This method will build the ``LearningCurve`` object with the associated arguments, fit it, then (optionally) immediately show the visualization.
+
+.. plot::
+    :context: close-figs
+    :alt: Learning Curve Quick Method on the Energy dataset using RidgeCV
+
+    from sklearn.linear_model import RidgeCV
+
+    from yellowbrick.datasets import load_energy
+    from yellowbrick.model_selection import learning_curve
+
+    # Load a regression dataset
+    X, y = load_energy()
+
+    learning_curve(RidgeCV(), X, y, scoring='r2')
+
 .. seealso::
     This visualizer is based on the validation curve described in the scikit-learn documentation: `Learning Curves <http://scikit-learn.org/stable/modules/learning_curve.html#learning-curve>`_. The visualizer wraps the `learning_curve <http://scikit-learn.org/stable/modules/generated/sklearn.model_selection.learning_curve.html#sklearn.model_selection.learning_curve>`_ function and most of the arguments are passed directly to it.
-
 
 API Reference
 -------------
 
 .. automodule:: yellowbrick.model_selection.learning_curve
-    :members: LearningCurve
+    :members: LearningCurve, learning_curve
     :undoc-members:
     :show-inheritance:

@@ -308,7 +308,7 @@ class LearningCurve(ModelVisualizer):
 
 
 ##########################################################################
-# Quick Methods
+# Quick Method
 ##########################################################################
 
 
@@ -326,6 +326,7 @@ def learning_curve(
     pre_dispatch="all",
     shuffle=False,
     random_state=None,
+    show=True,
     **kwargs
 ):
     """
@@ -408,6 +409,11 @@ def learning_curve(
         If None, the random number generator is the RandomState instance used
         by `np.random`. Used when ``shuffle`` is True.
 
+    show : bool, default: True
+        If True, calls ``show()``, which in turn calls ``plt.show()`` however
+        you cannot call ``plt.savefig`` from this signature, nor
+        ``clear_figure``. If False, simply calls ``finalize()``
+
     kwargs : dict
         Keyword arguments that are passed to the base class and may influence
         the visualization as defined in other Visualizers. These arguments are
@@ -432,9 +438,13 @@ def learning_curve(
         shuffle=shuffle,
         random_state=random_state,
         exploit_incremental_learning=exploit_incremental_learning,
+        **kwargs
     )
 
     # Fit and show the visualizer
     oz.fit(X, y)
-    oz.show(**kwargs)
+    if show:
+        oz.show()
+    else:
+        oz.finalize()
     return oz
