@@ -505,5 +505,4 @@ class TestJointPlotHistogram(VisualTestCase):
         assert isinstance(oz, JointPlot)
         assert hasattr(oz, "corr_")
 
-        oz.finalize()
         self.assert_images_similar(oz)
