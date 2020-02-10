@@ -17,8 +17,8 @@ information can be found by looking at the
 scikit-learn documentation on `confusion matrices <http://scikit-learn.org/stable/modules/generated/sklearn.metrics.confusion_matrix.html>`_.
 
 =================   =================
-Visualizer           `ConfusionMatrix <https://www.scikit-yb.org/en/develop/api/classifier/confusion_matrix.html#yellowbrick.classifier.confusion_matrix.ConfusionMatrix>`_
-Quick Method         `confusion_matrix() <https://www.scikit-yb.org/en/develop/api/classifier/confusion_matrix.html#yellowbrick.classifier.confusion_matrix.confusion_matrix>`_
+Visualizer           :class:`~yellowbrick.classifier.confusion_matrix.ConfusionMatrix`
+Quick Method         :func:`~yellowbrick.classifier.confusion_matrix.confusion_matrix`
 Models               Classification
 Workflow             Model evaluation
 =================   =================
@@ -92,7 +92,8 @@ Class names can be added to a ``ConfusionMatrix`` plot using the ``label_encoder
     iris_cm.show()
 
 Quick Method
--------------------------
+------------
+
 The same functionality above can be achieved with the associated quick method ``confusion_matrix``. This method will build the ``ConfusionMatrix`` object with the associated arguments, fit it, then (optionally) immediately show it. In the below example we can see how a ``LogisticRegression`` struggles to effectively model the credit dataset (hint: check out :class:`~yellowbrick.features.rankd.Rank2D` to examine for multicollinearity!).
 
 .. plot::

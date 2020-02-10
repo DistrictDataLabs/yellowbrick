@@ -15,8 +15,8 @@ to create a decision space in the data.
 
 
 =================   =================
-Visualizer           `Manifold <https://www.scikit-yb.org/en/latest/api/features/manifold.html#yellowbrick.features.manifold.Manifold>`_
-Quick Method         `manifold_embedding() <https://www.scikit-yb.org/en/latest/api/features/manifold.html#yellowbrick.features.manifold.manifold_embedding>`_
+Visualizer           :class:`~yellowbrick.features.manifold.Manifold`
+Quick Method         :func:`~yellowbrick.features.manifold.manifold_embedding`
 Models               Classification, Regression
 Workflow             Feature Engineering
 =================   =================
@@ -154,7 +154,8 @@ continuous by counting the number of unique values in ``y``.
 
 
 Quick Method
------------------
+------------
+
 The same functionality above can be achieved with the associated quick method ``manifold_embedding``. This method will build the ``Manifold`` object with the associated arguments, fit it, then (optionally) immediately show the visualization.
 
 .. note to contributors: the below code takes a long time to run so has not been

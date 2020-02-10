@@ -23,8 +23,8 @@ If you do receive this warning, you may want to look at imputation strategies.
 A good starting place is the `scikit-learn Imputer. <http://scikit-learn.org/stable/modules/generated/sklearn.impute.SimpleImputer.html>`_
 
 =================   =================
-Visualizer           `RadViz <https://www.scikit-yb.org/en/latest/api/features/radviz.html#yellowbrick.features.radviz.RadialVisualizer>`_
-Quick Method         `radviz() <https://www.scikit-yb.org/en/latest/api/features/radviz.html#yellowbrick.features.radviz.radviz>`_
+Visualizer           :class:`~yellowbrick.features.radviz.RadViz`
+Quick Method         :func:`~yellowbrick.features.radviz.radviz`
 Models               Classification, Regression
 Workflow             Feature Engineering
 =================   =================
@@ -54,7 +54,8 @@ display the target information, as opposed to discrete colors.
 
 
 Quick Method
--------------------------
+------------
+
 The same functionality above can be achieved with the associated quick method ``radviz``. This method will build the ``RadViz`` object with the associated arguments, fit it, then (optionally) immediately show the visualization.
 
 .. plot::
@@ -63,7 +64,7 @@ The same functionality above can be achieved with the associated quick method ``
 
     from yellowbrick.features.radviz import radviz
     from yellowbrick.datasets import load_occupancy
-    
+
     #Load the classification dataset
     X, y = load_occupancy()
 

@@ -34,7 +34,6 @@ from yellowbrick.exceptions import YellowbrickTypeError, YellowbrickValueError
 ## Quick Methods
 ##########################################################################
 
-
 def parallel_coordinates(
     X,
     y,
@@ -61,7 +60,6 @@ def parallel_coordinates(
 
     Parameters
     ----------
-
     X : ndarray or DataFrame of shape n x m
         A matrix of n instances with m features
 
@@ -256,7 +254,7 @@ class ParallelCoordinates(DataVisualizer):
         the visualization as defined in other Visualizers.
 
     Attributes
-    --------
+    ----------
     n_samples_ : int
         number of samples included in the visualization object
 
@@ -278,12 +276,6 @@ class ParallelCoordinates(DataVisualizer):
     >>> visualizer.fit(X, y)
     >>> visualizer.transform(X)
     >>> visualizer.show()
-
-    Notes
-    -----
-
-    These parameters can be influenced later on in the visualization
-    process, but can and should be set as early as possible.
     """
 
     NORMALIZERS = {
