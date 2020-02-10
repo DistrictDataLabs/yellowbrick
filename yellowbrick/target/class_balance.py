@@ -268,7 +268,14 @@ class ClassBalance(TargetVisualizer):
 
 
 def class_balance(
-    y_train, y_test=None, ax=None, labels=None, color=None, colormap=None, **kwargs
+    y_train,
+    y_test=None,
+    ax=None,
+    labels=None,
+    color=None,
+    colormap=None,
+    show=True,
+    **kwargs
 ):
     """Quick method:
 
@@ -311,6 +318,11 @@ def class_balance(
     colormap : string or matplotlib cmap
         Specify a colormap to color the classes.
 
+    show : bool, default: True
+        If True, calls ``show()``, which in turn calls ``plt.show()`` however
+        you cannot call ``plt.savefig`` from this signature, nor
+        ``clear_figure``. If False, simply calls ``finalize()``
+
     kwargs: dict, optional
         Keyword arguments passed to the super class. Here, used
         to colorize the bars in the histogram.
@@ -325,7 +337,11 @@ def class_balance(
 
     # Fit and transform the visualizer (calls draw)
     visualizer.fit(y_train, y_test)
-    visualizer.finalize()
+
+    if show:
+        visualizer.show()
+    else:
+        visualizer.finalize()
 
     # Return the visualizer
     return visualizer

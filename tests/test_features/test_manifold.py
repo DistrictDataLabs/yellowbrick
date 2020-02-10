@@ -314,3 +314,52 @@ class TestManifold(VisualTestCase):
         oz.cbar.set_ticks([])
         # TODO: find a way to decrease this tolerance
         self.assert_images_similar(oz, tol=40)
+
+    def test_manifold_quick_method_no_target(self):
+        """
+        Test Manifold quick method with no target.
+        """
+        X, _ = make_blobs(n_samples=300, n_features=7, centers=3, random_state=1112)
+        visualizer = manifold_embedding(
+            X, manifold="mds", random_state=139973, show=False
+        )
+
+        assert isinstance(visualizer, Manifold)
+        self.assert_images_similar(visualizer)
+
+    def test_manifold_quick_method_discrete_target(self):
+        """
+        Test Manifold quick method with a discrete target.
+        """
+        X, y = self.discrete
+
+        visualizer = manifold_embedding(
+            X,
+            y,
+            manifold="mds",
+            target="discrete",
+            n_neighbors=5,
+            random_state=37,
+            show=False
+        )
+        assert isinstance(visualizer, Manifold)
+        self.assert_images_similar(visualizer)
+
+    def test_manifold_quick_method_continuous_target(self):
+        """
+        Test Manifold quick method with a continuous target.
+        """
+        X, y = self.continuous
+
+        visualizer = manifold_embedding(
+            X,
+            y,
+            manifold="tsne",
+            target="continuous",
+            random_state=37,
+            show=False
+        )
+        assert isinstance(visualizer, Manifold)
+
+        # ImageComparisonFailure: images not close (RMS 1.124) on Miniconda
+        self.assert_images_similar(visualizer, tol=1.5)

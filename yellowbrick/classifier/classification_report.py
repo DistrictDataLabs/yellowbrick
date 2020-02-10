@@ -24,7 +24,6 @@ Visual classification report for classifier scoring.
 import numpy as np
 import matplotlib.pyplot as plt
 
-from sklearn.model_selection import train_test_split
 from sklearn.metrics import precision_recall_fscore_support
 
 from yellowbrick.style import find_text_color
@@ -289,17 +288,18 @@ class ClassificationReport(ClassificationScoreVisualizer):
 
 def classification_report(
     model,
-    X,
-    y,
+    X_train,
+    y_train,
+    X_test=None,
+    y_test=None,
     ax=None,
-    test_size=0.2,
-    random_state=None,
     classes=None,
     cmap="YlOrRd",
     support=None,
     encoder=None,
     is_fitted="auto",
     force_model=False,
+    show=True,
     **kwargs
 ):
     """Classification Report
@@ -314,22 +314,27 @@ def classification_report(
         not a classifier, an exception is raised. If the internal model is not
         fitted, it is fit when the visualizer is fitted, unless otherwise specified
         by ``is_fitted``.
-
-    X  : ndarray or DataFrame of shape n x m
-        A matrix of n instances with m features.
-
-    y  : ndarray or Series of length n
-        An array or series of target or class values.
-
+    
+    X_train : ndarray or DataFrame of shape n x m
+        A feature array of n instances with m features the model is trained on.
+        Used to fit the visualizer and also to score the visualizer if test splits are
+        not directly specified.
+    
+    y_train : ndarray or Series of length n
+        An array or series of target or class values. Used to fit the visualizer and
+        also to score the visualizer if test splits are not specified.
+    
+    X_test : ndarray or DataFrame of shape n x m, default: None
+        An optional feature array of n instances with m features that the model
+        is scored on if specified, using X_train as the training data.
+    
+    y_test : ndarray or Series of length n, default: None
+        An optional array or series of target or class values that serve as actual
+        labels for X_test for scoring purposes.
+    
     ax : matplotlib Axes, default: None
         The axes to plot the figure on. If not specified the current axes will be
         used (or generated if required).
-
-    test_size : float, default=0.2
-        The percentage of the data to reserve as test data.
-
-    random_state : int or None, default=None
-        The value to seed the random number generator for shuffling data.
 
     classes : list of str, defult: None
         The class labels to use for the legend ordered by the index of the sorted
@@ -353,16 +358,21 @@ def classification_report(
         passed to ``fit()`` or ``score()``. The encoder disambiguates this mismatch
         ensuring that classes are labeled correctly in the visualization.
 
-    is_fitted : bool or str, default="auto"
+    is_fitted : bool or str, default='auto'
         Specify if the wrapped estimator is already fitted. If False, the estimator
         will be fit when the visualizer is fit, otherwise, the estimator will not be
-        modified. If "auto" (default), a helper method will check if the estimator
+        modified. If 'auto' (default), a helper method will check if the estimator
         is fitted before fitting it again.
 
     force_model : bool, default: False
         Do not check to ensure that the underlying estimator is a classifier. This
         will prevent an exception when the visualizer is initialized but may result
         in unexpected or unintended behavior.
+
+    show: bool, default: True
+        If True, calls ``show()``, which in turn calls ``plt.show()`` however you cannot
+        call ``plt.savefig`` from this signature, nor ``clear_figure``. If False, simply
+        calls ``finalize()``
 
     kwargs : dict
         Keyword arguments passed to the visualizer base classes.
@@ -385,15 +395,24 @@ def classification_report(
         **kwargs
     )
 
-    # Create the train and test splits
-    X_train, X_test, y_train, y_test = train_test_split(
-        X, y, test_size=test_size, random_state=random_state
-    )
-
     # Fit and transform the visualizer (calls draw)
-    visualizer.fit(X_train, y_train, **kwargs)
-    visualizer.score(X_test, y_test)
-    visualizer.finalize()
+    visualizer.fit(X_train, y_train)
+
+    # Score the visualizer
+    if X_test is not None and y_test is not None:
+        visualizer.score(X_test, y_test)
+    elif X_test is not None or y_test is not None:
+        raise YellowbrickValueError(
+            "both X_test and y_test are required if one is specified"
+        )
+    else:
+        visualizer.score(X_train, y_train)
+    
+    # Draw the final visualization
+    if show:
+        visualizer.show()
+    else:
+        visualizer.finalize()
 
     # Return the visualizer
     return visualizer
