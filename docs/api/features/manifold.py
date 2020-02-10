@@ -15,7 +15,7 @@ Produce images for manifold documentation.
 """
 
 ##########################################################################
-## Imports
+# Imports
 ##########################################################################
 
 import os
@@ -27,8 +27,11 @@ from sklearn.feature_selection import f_classif
 from sklearn.feature_selection import SelectKBest
 
 from yellowbrick.datasets import load_occupancy, load_concrete
-from yellowbrick.features.manifold import Manifold, MANIFOLD_ALGORITHMS
-
+from yellowbrick.features.manifold import (
+    Manifold,
+    MANIFOLD_ALGORITHMS,
+    manifold_embedding,
+)
 
 SKIP = (
     "ltsa",  # produces no result
@@ -36,12 +39,15 @@ SKIP = (
     "mds",  # uses way too much memory
 )
 
+
 FIXTURES = os.path.normpath(
     os.path.join(os.path.dirname(__file__), "..", "..", "..", "examples", "data")
 )
 
 
-def dataset_example(dataset="occupancy", manifold="all", path="images/", **kwargs):
+def dataset_example(
+    dataset="occupancy", manifold="all", path="images/", quick=False, **kwargs
+):
     if manifold == "all":
         if path is not None and not os.path.isdir(path):
             "please specify a directory to save examples to"
@@ -66,9 +72,10 @@ def dataset_example(dataset="occupancy", manifold="all", path="images/", **kwarg
         return
 
     # Create single example
-    _, ax = plt.subplots(figsize=(9, 6))
-    oz = Manifold(ax=ax, manifold=manifold, **kwargs)
 
+    _, ax = plt.subplots(figsize=(9, 6))
+
+    # Checks for the dataset which user wants to use
     if dataset == "occupancy":
         X, y = load_occupancy()
     elif dataset == "concrete":
@@ -76,8 +83,14 @@ def dataset_example(dataset="occupancy", manifold="all", path="images/", **kwarg
     else:
         raise Exception("unknown dataset '{}'".format(dataset))
 
-    oz.fit_transform(X, y)
-    oz.show(outpath=path)
+    # Check if the quick method is called
+    if quick:
+        oz = manifold_embedding(X, y, manifold=manifold, show=False, **kwargs)
+        oz.show(outpath=path)
+    else:
+        oz = Manifold(ax=ax, manifold=manifold, **kwargs)
+        oz.fit_transform(X, y)
+        oz.show(outpath=path)
 
 
 def select_features_example(
@@ -87,14 +100,16 @@ def select_features_example(
 ):
     _, ax = plt.subplots(figsize=(9, 6))
 
+    X, y = load_occupancy()
+    classes = ["unoccupied", "occupied"]
+
     model = Pipeline(
         [
             ("selectk", SelectKBest(k=3, score_func=f_classif)),
-            ("viz", Manifold(ax=ax, manifold=algorithm, **kwargs)),
+            ("viz", Manifold(ax=ax, manifold=algorithm, classes=classes, **kwargs)),
         ]
     )
 
-    X, y = load_occupancy()
     model.fit_transform(X, y)
     model.named_steps["viz"].show(outpath=path)
 
@@ -147,12 +162,29 @@ class SCurveExample(object):
             self.plot_manifold_embedding(algorithm)
 
 
+##########################################################################
+# Main Method
+##########################################################################
+
 if __name__ == "__main__":
     # curve = SCurveExample()
     # curve.plot_all_manifolds()
     dataset_example("concrete", "tsne", path="images/concrete_tsne_manifold.png")
-    dataset_example("occupancy", "tsne", path="images/occupancy_tsne_manifold.png")
+    dataset_example(
+        "occupancy",
+        "tsne",
+        classes=["unoccupied", "occupied"],
+        path="images/occupancy_tsne_manifold.png",
+    )
     dataset_example(
         "concrete", "isomap", path="images/concrete_isomap_manifold.png", n_neighbors=10
+    )
+    dataset_example(
+        "concrete",
+        "isomap",
+        target="continuous",
+        path="images/manifold_quick_method.png",
+        n_neighbors=10,
+        quick=True,
     )
     select_features_example(algorithm="isomap", n_neighbors=10)

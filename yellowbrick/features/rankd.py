@@ -469,7 +469,6 @@ class Rank2D(RankDBase):
 ## Quick Methods
 ##########################################################################
 
-
 def rank1d(
     X,
     y=None,
@@ -479,6 +478,7 @@ def rank1d(
     orient="h",
     show_feature_names=True,
     color=None,
+    show=True,
     **kwargs
 ):
     """Scores each feature with the algorithm and ranks them in a bar plot.
@@ -514,6 +514,15 @@ def rank1d(
 
     color: string
         Specify color for barchart
+    
+    show: bool, default: True
+        If True, calls ``show()``, which in turn calls ``plt.show()`` however you cannot
+        call ``plt.savefig`` from this signature, nor ``clear_figure``. If False, simply
+        calls ``finalize()``
+    
+     kwargs : dict
+        Keyword arguments that are passed to the base class and may influence
+        the visualization as defined in other Visualizers.
 
     Returns
     -------
@@ -533,12 +542,16 @@ def rank1d(
     )
 
     # Fit and transform the visualizer (calls draw)
-    visualizer.fit(X, y, **kwargs)
+    visualizer.fit(X, y)
     visualizer.transform(X)
+
+    if show:
+        visualizer.show()
+    else:
+        visualizer.finalize()
 
     # Return the visualizer object
     return visualizer
-
 
 def rank2d(
     X,

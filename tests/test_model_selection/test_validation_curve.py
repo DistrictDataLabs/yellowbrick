@@ -136,7 +136,8 @@ class TestValidationCurve(VisualTestCase):
         pr = np.logspace(-6, -1, 3)
         cv = ShuffleSplit(n_splits=5, test_size=0.2, random_state=321)
         viz = validation_curve(
-            SVC(), X, y, logx=True, param_name="gamma", param_range=pr, cv=cv
+            SVC(), X, y, logx=True, param_name="gamma",
+            param_range=pr, cv=cv, show=False
         )
 
         self.assert_images_similar(viz)

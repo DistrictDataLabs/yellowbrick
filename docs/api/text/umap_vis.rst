@@ -18,6 +18,13 @@ Additionally, it supports a wide variety of distance measures allowing
 for easy exploration of your data. For a more detailed explanation of the algorithm
 the paper can be found `here <https://arxiv.org/abs/1802.03426>`__.
 
+=================   ==============================
+Visualizer           :class:`~yellowbrick.text.umap_vis.UMAPVisualizer`
+Quick Method         :func:`~yellowbrick.text.umap_vis.umap`
+Models               Decomposition
+Workflow             Feature Engineering/Selection
+=================   ==============================
+
 In this example, we represent documents via a `term frequency inverse
 document
 frequency <https://scikit-learn.org/stable/modules/feature_extraction.html#text-feature-extraction>`__ (TF-IDF)
@@ -125,10 +132,37 @@ it disagrees with a non-manifold based clustering technique. A detailed
 explanation of this phenomenon can be found in this `UMAP
 documentation <https://umap-learn.readthedocs.io/en/latest/clustering.html>`__.
 
+
+Quick Method
+------------
+
+The same functionality above can be achieved with the associated quick method ``umap``. This method will build the ``UMAPVisualizer`` object with the associated arguments, fit it, then (optionally) immediately show it
+
+.. code:: python
+
+    from sklearn.cluster import KMeans
+    from sklearn.feature_extraction.text import TfidfVectorizer
+
+    from yellowbrick.datasets import load_hobbies
+    from yellowbrick.text import UMAPVisualizer
+
+    # Load the text data
+    corpus = load_hobbies()
+
+    tfidf = TfidfVectorizer()
+    docs = tfidf.fit_transform(corpus.data)
+
+    # Instantiate the clustering model
+    clusters = KMeans(n_clusters=5)
+    clusters.fit(docs)
+
+    umap(docs, ["c{}".format(c) for c in clusters.labels_])
+
+
 API Reference
 -------------
 
 .. automodule:: yellowbrick.text.umap_vis
-    :members: UMAPVisualizer
+    :members: UMAPVisualizer, umap
     :undoc-members:
     :show-inheritance:
