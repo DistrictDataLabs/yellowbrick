@@ -531,9 +531,9 @@ def joint_plot(
         Additional keyword arguments for the plot components.
 
     show : bool, default: True
-    If True, calls ``show()``, which in turn calls ``plt.show()`` however
-    you cannot call ``plt.savefig`` from this signature, nor
-    ``clear_figure``. If False, simply calls ``finalize()``
+        If True, calls ``show()``, which in turn calls ``plt.show()`` however you cannot
+        call ``plt.savefig`` from this signature, nor ``clear_figure``. If False, simply
+        calls ``finalize()``
 
     kwargs : dict
         Keyword arguments that are passed to the base class and may influence
