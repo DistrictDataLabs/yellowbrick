@@ -24,6 +24,7 @@ from .rankd import Rank1D, rank1d, Rank2D, rank2d
 from .jointplot import JointPlot, JointPlotVisualizer, joint_plot
 from .pca import PCA, PCADecomposition, pca_decomposition
 from .manifold import Manifold, manifold_embedding
+from .explained_variance import ExplainedVariance, explained_variance
 
 # Alias the TargetType defined in yellowbrick.utils.target
 from yellowbrick.utils.target import TargetType

@@ -56,8 +56,9 @@ Feature Visualization
 - :doc:`api/features/rankd`: pairwise ranking of features to detect relationships
 - :doc:`api/features/pcoords`: horizontal visualization of instances
 - :doc:`Radial Visualization <api/features/radviz>`: separation of instances around a circular plot
-- :doc:`api/features/pca`: projection of instances based on principal components
 - :doc:`api/features/manifold`: high dimensional visualization with manifold learning
+- :doc:`api/features/pca`: projection of instances based on principal components
+- :doc:`api/features/explained_variance`: select number of components for PCA
 - :doc:`Joint Plots <api/features/jointplot>`: direct data visualization with feature selection
 
 Classification Visualization

@@ -1,12 +1,13 @@
-# yellowbrick.features.decomposition
+# yellowbrick.features.explained_variance
 #
 # Author:   George Richardson
+# Author:   Benjamin Bengfort
 # Created:  Fri Mar 2 16:16:00 2018 +0000
 #
 # Copyright (C) 2016 The scikit-yb developers
 # For license information, see LICENSE.txt
 #
-# ID: decomposition.py [0ed6e8a] g.raymond.richardson@gmail.com $
+# ID: explained_variance.py [0ed6e8a] g.raymond.richardson@gmail.com $
 
 ##########################################################################
 ## Imports
@@ -18,73 +19,6 @@ from yellowbrick.features.base import FeatureVisualizer
 from sklearn.pipeline import Pipeline
 from sklearn.decomposition import PCA
 from sklearn.preprocessing import StandardScaler
-
-##########################################################################
-## Quick Methods
-##########################################################################
-
-
-def explained_variance_visualizer(
-    X,
-    y=None,
-    ax=None,
-    scale=True,
-    center=True,
-    colormap=palettes.DEFAULT_SEQUENCE,
-    **kwargs
-):
-    """Produce a plot of the explained variance produced by a dimensionality
-        reduction algorithm using n=1 to n=n_components dimensions. This is a single
-        plot to help identify the best trade off between number of dimensions
-        and amount of information retained within the data.
-
-        Parameters
-        ----------
-        X : ndarray or DataFrame of shape n x m
-            A matrix of n rows with m features
-
-        y : ndarray or Series of length n
-            An array or Series of target or class values
-
-        ax : matplotlib Axes, default: None
-            The aces to plot the figure on
-
-        scale : bool, default: True
-            Boolean that indicates if the values of X should be scaled.
-
-        colormap : string or cmap, default: None
-            optional string or matplotlib cmap to colorize lines
-            Use either color to colorize the lines on a per class basis or
-            colormap to color them on a continuous scale.
-
-        kwargs : dict
-            Keyword arguments that are passed to the base class and may influence
-            the visualization as defined in other Visualizers.
-
-        Returns
-        -------
-        viz : ExplainedVariance
-            Returns the fitted, finalized visualizer
-
-        Examples
-        --------
-        >>> from sklearn import datasets
-        >>> bc = datasets.load_breast_cancer()
-        >>> X = bc = bc.data
-        >>> explained_variance_visualizer(X, scale=True, center=True, colormap='RdBu_r')
-
-        """
-
-    # Instantiate the visualizer
-    visualizer = ExplainedVariance(X=X)
-
-    # Fit and transform the visualizer (calls draw)
-    visualizer.fit(X, y, **kwargs)
-    visualizer.transform(X)
-    visualizer.finalize()
-
-    # Return the visualizer object
-    return visualizer
 
 
 ##########################################################################
@@ -172,3 +106,60 @@ class ExplainedVariance(FeatureVisualizer):
         # Set the axes labels
         self.ax.set_ylabel("Explained Variance")
         self.ax.set_xlabel("Number of Components")
+
+
+##########################################################################
+## Quick Method
+##########################################################################
+
+def explained_variance(
+    X,
+    y=None,
+    ax=None,
+    show=True,
+    **kwargs
+):
+    """ExplainedVariance quick method.
+
+    Parameters
+    ----------
+    X : ndarray or DataFrame of shape n x m
+        A matrix of n instances with m features to determine principle components for.
+
+    y : ndarray or Series of length n, default: None
+        An array or series of target or class values. This argument is not used but is
+        enabled for pipeline purposes.
+
+    ax : matplotlib Axes, default: None
+        The axes to plot the figure on. If None is passed in, the current axes
+        will be used (or generated if required).
+
+    show : bool, default: True
+        If True, calls ``show()``, which in turn calls ``plt.show()`` however you cannot
+        call ``plt.savefig`` from this signature, nor ``clear_figure``. If False, simply
+        calls ``finalize()``
+
+    kwargs : dict
+        Keyword arguments that are passed to the base class and may influence
+        the visualization as defined in other Visualizers.
+
+    Returns
+    -------
+    viz : ExplainedVariance
+        Returns the fitted, finalized visualizer
+    """
+
+    # Instantiate the visualizer
+    oz = ExplainedVariance()
+
+    # Fit and transform the visualizer (calls draw)
+    oz.fit(X, y)
+    oz.transform(X)
+
+    if show:
+        oz.show()
+    else:
+        oz.finalize()
+
+    # Return the visualizer object
+    return oz
