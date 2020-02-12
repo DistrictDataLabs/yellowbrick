@@ -8,8 +8,8 @@ Rank Features
 In this example, we'll use the credit default data set from the UCI Machine Learning repository to rank features. The code below creates our instance matrix and target vector.
 
 =================   ==============================
-Visualizers          `Rank1D <https://www.scikit-yb.org/en/latest/api/features/rankd.html#yellowbrick.features.rankd.Rank1D>`_, `Rank2D <https://www.scikit-yb.org/en/latest/api/features/rankd.html#yellowbrick.features.rankd.Rank2D>`_
-Quick Methods        `rank1d() <https://www.scikit-yb.org/en/latest/api/features/rankd.html#yellowbrick.features.rankd.rank1d>`_, `rank2d() <https://www.scikit-yb.org/en/latest/api/features/rankd.html#yellowbrick.features.rankd.rank2d>`_
+Visualizers          :class:`~yellowbrick.features.rankd.Rank1D`, :class:`~yellowbrick.features.rankd.Rank2D`
+Quick Methods        :func:`~yellowbrick.features.rankd.rank1d`, :func:`~yellowbrick.features.rankd.rank2d`
 Models               General Linear Models
 Workflow             Feature engineering and model selection
 =================   ==============================
@@ -36,23 +36,6 @@ A one-dimensional ranking of features utilizes a ranking algorithm that takes in
     visualizer.transform(X)        # Transform the data
     visualizer.show()              # Finalize and render the figure
 
-Quick Method
--------------------------
-The same functionality above can be achieved with the associated quick method ``rank1d``. This method will build the ``Rank1D`` object with the associated arguments, fit it, then (optionally) immediately show it
-
-.. plot::
-    :context: close-figs
-    :alt: rank1d on the credit dataset
-
-    from yellowbrick.features.rankd import rank1d
-    from yellowbrick.datasets import load_credit
-    from yellowbrick.features.rankd import rank1d
-
-    #Load the credit dataset
-    X, y = load_credit()
-
-    fig = rank1d(X, y)
-    
 Rank 2D
 -------
 
@@ -97,22 +80,27 @@ Alternatively, we can utilize the covariance ranking algorithm, which attempts t
     visualizer.transform(X)        # Transform the data
     visualizer.show()              # Finalize and render the figure
 
-Quick Method
-------------
+Quick Methods
+-------------
 
-Similar functionality as above can be achieved in one line using the associated quick method, ``rank2d``. This method will instantiate and fit a ``Rank2D`` visualizer on the dataset and immediately show it.
+Similar functionality can be achieved using the one line quick methods, ``rank1d`` and ``rank2d``. These functions instantiate and fit their respective visualizer on the data and immediately show it without having to use the class-based API.
 
 .. plot::
     :context: close-figs
     :alt: rank2d quick method on credit dataset with pearson algorithm
 
-    from yellowbrick.datasets import load_credit
-    from yellowbrick.features import rank2d
+    from yellowbrick.datasets import load_concrete
+    from yellowbrick.features import rank1d, rank2d
 
-    # Load the credit dataset
-    X, _ = load_credit()
+    # Load the concrete dataset
+    X, _ = load_concrete()
 
-    oz = rank2d(X)
+    _, axes = plt.subplots(ncols=2, figsize=(8,4))
+
+    rank1d(X, ax=axes[0], show=False)
+    rank2d(X, ax=axes[1], show=False)
+    plt.show()
+
 
 API Reference
 -------------

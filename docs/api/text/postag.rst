@@ -8,8 +8,8 @@ Parts of speech (e.g. verbs, nouns, prepositions, adjectives) indicate how a wor
 The ``PosTagVisualizer`` is intended to support grammar-based feature extraction techniques for machine learning workflows that require natural language processing. The visualizer can either read in a corpus that has already been sentence- and word-segmented, and tagged, or perform this tagging automatically by specifying the parser to use (nltk or spacy). The visualizer creates a bar chart to visualize the relative proportions of different parts-of-speech in a corpus.
 
 =================   =================
-Visualizer           `PosTagVisualizer <https://www.scikit-yb.org/en/latest/api/text/postag.html#yellowbrick.text.postag.PosTagVisualizer>`_
-Quick Method         `postag() <https://www.scikit-yb.org/en/latest/api/text/postag.html#yellowbrick.text.postag.postag>`_
+Visualizer           :class:`~yellowbrick.text.postag.PosTagVisualizer`
+Quick Method         :func:`~yellowbrick.text.postag.postag`
 Models               Classification, Regression
 Workflow             Feature Engineering
 =================   =================
@@ -92,7 +92,9 @@ Universal Dependencies Tags
 
 Libraries like SpaCy use tags from the Universal Dependencies (UD) framework. The ``PosTagVisualizer`` can also be used with text tagged using this framework by specifying the ``tagset`` keyword as "universal" on instantiation.
 
-.. code:: python
+.. plot::
+
+    from yellowbrick.text import PosTagVisualizer
 
     tagged_speech = [
         [
@@ -153,8 +155,10 @@ Libraries like SpaCy use tags from the Universal Dependencies (UD) framework. Th
     viz.fit(tagged_speech)
     viz.show()
 
+
 Quick Method
--------------------------
+------------
+
 The same functionality above can be achieved with the associated quick method ``postag``. This method will build the ``PosTagVisualizer`` object with the associated arguments, fit it, then (optionally) immediately show the visualization.
 
 .. plot::
@@ -184,7 +188,11 @@ The same functionality above can be achieved with the associated quick method ``
 
     # Create the visualizer, fit, score, and show it
     postag(machado)
+    plt.tight_layout()
 
+
+Part of Speech Tags
+-------------------
 
 +-------------------+------------------------------------------+----------------------+--------------------------+
 | Penn-Treebank Tag | Description                              | Universal Tag        | Description              |
@@ -314,6 +322,7 @@ Or using `wordpunct`.
     viz = PosTagVisualizer(parser='nltk_wordpunct')
     viz.fit(untagged_speech)
     viz.show()
+
 
 API Reference
 -------------
