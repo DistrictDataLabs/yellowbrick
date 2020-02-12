@@ -591,6 +591,7 @@ def pca_decomposition(
     visualizer = PCA(
         ax=ax,
         features=features,
+        classes=classes,
         scale=scale,
         projection=projection,
         proj_features=proj_features,

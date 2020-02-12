@@ -117,6 +117,8 @@ The same functionality above can be achieved with the associated quick method ``
         X_train, y_train, X_test, y_test,
         classes=['not_defaulted', 'defaulted']
     )
+    plt.tight_layout()
+
 
 API Reference
 -------------

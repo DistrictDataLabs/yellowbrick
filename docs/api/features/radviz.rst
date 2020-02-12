@@ -23,7 +23,7 @@ If you do receive this warning, you may want to look at imputation strategies.
 A good starting place is the `scikit-learn Imputer. <http://scikit-learn.org/stable/modules/generated/sklearn.impute.SimpleImputer.html>`_
 
 =================   =================
-Visualizer           :class:`~yellowbrick.features.radviz.RadViz`
+Visualizer           :class:`~yellowbrick.features.radviz.RadialVisualizer`
 Quick Method         :func:`~yellowbrick.features.radviz.radviz`
 Models               Classification, Regression
 Workflow             Feature Engineering

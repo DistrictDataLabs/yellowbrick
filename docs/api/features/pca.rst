@@ -21,11 +21,9 @@ Workflow             Feature Engineering/Selection
 
     # Specify the features of interest and the target
     X, y = load_credit()
+    classes = ['account in default', 'current with bills']
 
-    # Create a list of colors to assign to points in the plot
-    colors = np.array(['r' if yi else 'b' for yi in y])
-
-    visualizer = PCA(scale=True, color=colors)
+    visualizer = PCA(scale=True, classes=classes)
     visualizer.fit_transform(X, y)
     visualizer.show()
 
@@ -40,10 +38,11 @@ The PCA projection can also be plotted in three dimensions to attempt to visuali
     from yellowbrick.features import PCA
 
     X, y = load_credit()
+    classes = ['account in default', 'current with bills']
 
-    colors = np.array(['r' if yi else 'b' for yi in y])
-
-    visualizer = PCA(scale=True, color=colors, projection=3)
+    visualizer = PCA(
+        scale=True, projection=3, classes=classes
+    )
     visualizer.fit_transform(X, y)
     visualizer.show()
 
@@ -97,12 +96,12 @@ show it.
 
     # Specify the features of interest and the target
     X, y = load_credit()
+    classes = ['account in default', 'current with bills']
 
-    # Create a list of colors to assign to points in the plot
-    colors = np.array(['r' if yi else 'b' for yi in y])
-
-    # Instantiate the visualizer
-    visualizer = pca_decomposition(X, y, scale=True, color=colors)
+    # Create, fit, and show the visualizer
+    pca_decomposition(
+        X, y, scale=True, classes=classes
+    )
 
 
 API Reference
