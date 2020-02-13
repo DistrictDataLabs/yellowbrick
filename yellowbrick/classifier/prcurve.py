@@ -28,6 +28,7 @@ from sklearn.metrics import precision_recall_curve as sk_precision_recall_curve
 from yellowbrick.exceptions import ModelError, NotFitted
 from yellowbrick.exceptions import YellowbrickValueError
 from yellowbrick.classifier.base import ClassificationScoreVisualizer
+from yellowbrick.style.colors import resolve_colors
 
 
 # Target Type Constants
@@ -78,6 +79,14 @@ class PrecisionRecallCurve(ClassificationScoreVisualizer):
         to label encoded integer classes. Some visualizers may also use this
         field to filter the visualization for specific classes. For more advanced
         usage specify an encoder rather than class labels.
+
+    color : optional list or tuple of colors to colorize the curves when
+        `per_class=True`, default: None. Use either color to colorize the curves
+        on a per class basis or colormap to color them on a continuous scale.
+
+    colormap : optional string or matplotlib cmap to colorize curves, default: None
+        Use either color to colorize the curves on a per class basis or
+        colormap to color them on a continuous scale.
 
     encoder : dict or LabelEncoder, default: None
         A mapping of classes to human readable labels. Often there is a mismatch
@@ -187,6 +196,8 @@ class PrecisionRecallCurve(ClassificationScoreVisualizer):
         model,
         ax=None,
         classes=None,
+        color=None,
+        colormap=None,
         encoder=None,
         fill_area=True,
         ap_score=True,
@@ -217,6 +228,8 @@ class PrecisionRecallCurve(ClassificationScoreVisualizer):
             micro=micro,
             iso_f1_curves=iso_f1_curves,
             iso_f1_values=set(iso_f1_values),
+            color=color,
+            colormap=colormap,
             per_class=per_class,
             fill_opacity=fill_opacity,
             line_opacity=line_opacity,
@@ -336,12 +349,22 @@ class PrecisionRecallCurve(ClassificationScoreVisualizer):
         """
         # TODO: handle colors better with a mapping and user input
         if self.per_class:
+
+            # set the colors
+            color_values = resolve_colors(
+                n_colors=len(self.classes_),
+                colormap=self.colormap,
+                colors=self.color
+            )
+
+            colors = dict(zip(self.classes_, color_values))
+
             for cls in self.classes_:
                 precision = self.precision_[cls]
                 recall = self.recall_[cls]
 
                 label = "PR for class {} (area={:0.2f})".format(cls, self.score_[cls])
-                self._draw_pr_curve(recall, precision, label=label)
+                self._draw_pr_curve(recall, precision, label=label, color=colors[cls])
 
         if self.micro:
             precision = self.precision_[MICRO]
@@ -350,16 +373,18 @@ class PrecisionRecallCurve(ClassificationScoreVisualizer):
 
         self._draw_ap_score(self.score_[MICRO])
 
-    def _draw_pr_curve(self, recall, precision, label=None):
+    def _draw_pr_curve(self, recall, precision, label=None, color=None):
         """
         Helper function to draw a precision-recall curve with specified settings
         """
         self.ax.step(
-            recall, precision, alpha=self.line_opacity, where="post", label=label
+            recall, precision, alpha=self.line_opacity, where="post",
+            label=label, color=color
         )
         if self.fill_area:
             self.ax.fill_between(
-                recall, precision, step="post", alpha=self.fill_opacity
+                recall, precision, step="post", alpha=self.fill_opacity,
+                color=color
             )
 
     def _draw_ap_score(self, score, label=None):
