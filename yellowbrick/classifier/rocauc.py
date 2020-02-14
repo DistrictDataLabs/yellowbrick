@@ -25,6 +25,8 @@ from scipy import interp
 from sklearn.metrics import auc, roc_curve
 from sklearn.preprocessing import label_binarize
 
+import warnings
+
 from yellowbrick.exceptions import ModelError
 from yellowbrick.style.palettes import LINE_COLOR
 from yellowbrick.exceptions import YellowbrickValueError
@@ -229,11 +231,9 @@ class ROCAUC(ClassificationScoreVisualizer):
             # Raise an error if it's a binary decision and user has set micro,
             # macro, or per_class to True
             if self.micro or self.macro or self.per_class:
-                raise ModelError(
-                    "Micro, macro, and per-class scores are not defined for "
-                    "binary classification for estimators with only "
-                    "decision_function methods; set micro, macro, and "
-                    "per-class params to False."
+                warnings.warn(
+                    "micro, macro, and per_class are ignored for "
+                    "binary classification."
                 )
         else:
             self._binary_decision = False
@@ -265,22 +265,22 @@ class ROCAUC(ClassificationScoreVisualizer):
                 self.roc_auc[i] = auc(self.fpr[i], self.tpr[i])
 
         # Compute micro average
-        if self.micro:
+        if self.micro and not self._binary_decision:
             self._score_micro_average(y, y_pred, classes, n_classes)
 
         # Compute macro average
-        if self.macro:
+        if self.macro and not self._binary_decision:
             self._score_macro_average(n_classes)
 
         # Draw the Curves
         self.draw()
 
         # Set score to micro average if specified
-        if self.micro:
+        if self.micro and not self._binary_decision:
             self.score_ = self.roc_auc[MICRO]
 
         # Set score to macro average if not micro
-        if self.macro:
+        if self.macro and not self._binary_decision:
             self.score_ = self.roc_auc[MACRO]
 
         return self.score_
@@ -306,7 +306,7 @@ class ROCAUC(ClassificationScoreVisualizer):
             )
 
         # If per-class plotting is requested, plot ROC curves for each class
-        if self.per_class:
+        if self.per_class and not self._binary_decision:
             for i, color in zip(range(n_classes), colors):
                 self.ax.plot(
                     self.fpr[i],
@@ -318,7 +318,7 @@ class ROCAUC(ClassificationScoreVisualizer):
                 )
 
         # If requested, plot the ROC curve for the micro average
-        if self.micro:
+        if self.micro and not self._binary_decision:
             self.ax.plot(
                 self.fpr[MICRO],
                 self.tpr[MICRO],
@@ -330,7 +330,7 @@ class ROCAUC(ClassificationScoreVisualizer):
             )
 
         # If requested, plot the ROC curve for the macro average
-        if self.macro:
+        if self.macro and not self._binary_decision:
             self.ax.plot(
                 self.fpr[MACRO],
                 self.tpr[MACRO],
@@ -395,7 +395,10 @@ class ROCAUC(ClassificationScoreVisualizer):
             try:
                 method = getattr(self.estimator, attr, None)
                 if method:
-                    return method(X)
+                    y_scores = method(X)
+                    if y_scores.ndim == 2 and y_scores.shape[1] == 2:
+                        y_scores = y_scores[:,1]
+                    return y_scores
             except AttributeError:
                 # Some Scikit-Learn estimators have both probability and
                 # decision functions but override __getattr__ and raise an
