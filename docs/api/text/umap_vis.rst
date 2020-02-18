@@ -138,13 +138,15 @@ Quick Method
 
 The same functionality above can be achieved with the associated quick method ``umap``. This method will build the ``UMAPVisualizer`` object with the associated arguments, fit it, then (optionally) immediately show it
 
-.. code:: python
+.. plot::
+    :context: close-figs
+    :alt: Quick method umap plot of the clustered hobbies corpus
 
     from sklearn.cluster import KMeans
     from sklearn.feature_extraction.text import TfidfVectorizer
 
+    from yellowbrick.text import umap
     from yellowbrick.datasets import load_hobbies
-    from yellowbrick.text import UMAPVisualizer
 
     # Load the text data
     corpus = load_hobbies()
@@ -156,7 +158,7 @@ The same functionality above can be achieved with the associated quick method ``
     clusters = KMeans(n_clusters=5)
     clusters.fit(docs)
 
-    umap(docs, ["c{}".format(c) for c in clusters.labels_])
+    viz = umap(docs, ["c{}".format(c) for c in clusters.labels_])
 
 
 API Reference

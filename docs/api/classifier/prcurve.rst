@@ -12,8 +12,8 @@ scenario for a classifier, showing a model that returns accurate results
 for the majority of classes it selects.
 
 =================   ==============================
-Visualizer           `PrecisionRecallCurve <https://www.scikit-yb.org/en/latest/api/classifier/prcurve.html#yellowbrick.classifier.prcurve.PrecisionRecallCurve>`_
-Quick Method         `precision_recall_curve() <https://www.scikit-yb.org/en/latest/api/classifier/prcurve.html#yellowbrick.classifier.prcurve.precision_recall_curve>`_
+Visualizer           :class:`~yellowbrick.classifier.prcurve.PrecisionRecallCurve`
+Quick Method         :func:`~yellowbrick.classifier.prcurve.precision_recall_curve`
 Models               Classification
 Workflow             Model evaluation
 =================   ==============================
