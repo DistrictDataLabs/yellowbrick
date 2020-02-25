@@ -4,8 +4,8 @@ Recursive Feature Elimination
 =============================
 
  =================   =====================
- Visualizer           `RFECV <https://www.scikit-yb.org/en/latest/api/model_selection/rfecv.html#yellowbrick.model_selection.rfecv.RFECV>`_
- Quick Method         `rfecv() <https://www.scikit-yb.org/en/latest/api/model_selection/rfecv.html#yellowbrick.model_selection.rfecv.rfecv>`_
+ Visualizer           :class:`~yellowbrick.model_selection.rfecv.RFECV`
+ Quick Method         :func:`~yellowbrick.model_selection.rfecv.rfecv`
  Models               Classification, Regression
  Workflow             Model Selection
  =================   =====================
@@ -71,7 +71,8 @@ In this example we can see that 19 features were selected, though there doesn't 
 .. seealso:: This visualizer is is based off of the visualization in the scikit-learn documentation: `recursive feature elimination with cross-validation <http://scikit-learn.org/stable/auto_examples/feature_selection/plot_rfe_with_cross_validation.html>`_. However, the Yellowbrick version does not use ``sklearn.feature_selection.RFECV`` but instead wraps ``sklearn.feature_selection.RFE`` models. The fitted model can be accessed on the visualizer using the ``viz.rfe_estimator_`` attribute, and in fact the visualizer acts as the fitted model when using ``predict()`` or ``score()``.
 
 Quick Method
--------------------------
+------------
+
 The same functionality above can be achieved with the associated quick method ``rfecv``. This method will build the ``RFECV`` object with the associated arguments, fit it, then (optionally) immediately show the visualization.
 
 .. code:: python

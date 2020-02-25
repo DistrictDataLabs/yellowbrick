@@ -8,8 +8,8 @@ Discrimination Threshold
 A visualization of precision, recall, f1 score, and queue rate with respect to the discrimination threshold of a binary classifier. The *discrimination threshold* is the probability or score at which the positive class is chosen over the negative class. Generally, this is set to 50% but the threshold can be adjusted to increase or decrease the sensitivity to false positives or to other application factors.
 
 =================   =================
-Visualizer           `DiscriminationThreshold <https://www.scikit-yb.org/en/latest/api/classifier/threshold.html#yellowbrick.classifier.threshold.DiscriminationThreshold>`_
-Quick Method         `discrimination_threshold() <https://www.scikit-yb.org/en/latest/api/classifier/threshold.html#yellowbrick.classifier.threshold.discrimination_threshold>`_
+Visualizer           :class:`~yellowbrick.classifier.threshold.DiscriminationThreshold`
+Quick Method         :func:`~yellowbrick.classifier.threshold.discrimination_threshold`
 Models               Classification
 Workflow             Model evaluation
 =================   =================
@@ -50,7 +50,8 @@ Generally speaking, the threshold is balanced between cases and set to 0.5 or 50
 In the figure above we see the visualizer tuned to look for the optimal F1 score, which is annotated as a threshold of 0.43. The model is run multiple times over multiple train/test splits in order to account for the variability of the model with respect to the metrics (shown as the fill area around the median curve).
 
 Quick Method
--------------------------
+------------
+
 The same functionality above can be achieved with the associated quick method ``discrimination_threshold``. This method will build the ``DiscriminationThreshold`` object with the associated arguments, fit it, then (optionally) immediately show it
 
 .. plot::
@@ -66,8 +67,9 @@ The same functionality above can be achieved with the associated quick method ``
 
     # Instantiate the visualizer with the classification model
     model = KNeighborsClassifier(3)
-    
+
     discrimination_threshold(model, X, y)
+
 
 API Reference
 -------------

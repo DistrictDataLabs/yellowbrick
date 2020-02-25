@@ -8,8 +8,8 @@ Parallel coordinates is multi-dimensional feature visualization technique  where
 Data scientists use this method to detect clusters of instances that have similar classes, and to note features that have high variance or different distributions. We can see this in action after first loading our occupancy classification dataset.
 
 =================   =================
-Visualizer            `Parallel Coordinates <https://www.scikit-yb.org/en/latest/api/features/pcoords.html#yellowbrick.features.pcoords.ParallelCoordinates>`_
-Quick Method          `parallel_coordinates <https://www.scikit-yb.org/en/latest/api/features/pcoords.html#yellowbrick.features.pcoords.parallel_coordinates>`_
+Visualizer           :class:`~yellowbrick.features.pcoords.ParallelCoordinates`
+Quick Method         :func:`~yellowbrick.features.pcoords.parallel_coordinates`
 Models               Classification
 Workflow             Feature analysis
 =================   =================
@@ -115,7 +115,8 @@ As you can see the "fast" drawing algorithm does not have the same build up of c
 .. image:: images/fast_parallel_coordinates_speedup.png
 
 Quick Method
-----------------------
+------------
+
 The same functionality above can be achieved with the associated quick method ``parallel_coordinates``. This method
 will build the ``ParallelCoordinates`` object with the associated arguments, fit it, then (optionally) immediately
 show it.
@@ -138,6 +139,7 @@ show it.
 
     # Instantiate the visualizer
     visualizer = parallel_coordinates(X, y, classes=classes, features=features)
+
 
 API Reference
 -------------
