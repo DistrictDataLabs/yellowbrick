@@ -8,14 +8,16 @@ Version 1.1
 
 * Tag: v1.1_
 * Deployed Wednesday, February 12, 2020
-* Contributors: Benjamin Bengfort, Rebecca Bilbro,Kristen McIntyre, Larry Gray, Prema Roman, Adam Morris, Shivendra Sharma, Michael Chestnut, Michael Garod, Naresh Bachwani, Piyush Gautam, Daniel Navarrete, Molly Morrison, Emma Kwiecinska, Sarthak Jain, Tony Ojeda, Edwin Schmier,  Nathan Danielsen
+* Contributors: Benjamin Bengfort, Rebecca Bilbro, Kristen McIntyre, Larry Gray, Prema Roman, Adam Morris, Shivendra Sharma, Michael Chestnut, Michael Garod, Naresh Bachwani, Piyush Gautam, Daniel Navarrete, Molly Morrison, Emma Kwiecinska, Sarthak Jain, Tony Ojeda, Edwin Schmier,  Nathan Danielsen
 
 Major Changes:
    - Quick methods (aka Oneliners), which return a fully fitted finalized visualizer object in only a single line, are now implemented for all Yellowbrick Visualizers. Test coverage has been added for all quick methods. The documentation has been updated to document and demonstrate the usage of the quick methods.
-
+   - Added Part of Speech tagging for raw text using spaCy and NLTK to POSTagVisualizer.
+   
 Minor Changes:
    - Adds Board of Directors minutes for Spring meeting.
    - Miscellaneous documentation corrections and fixes.
+   - Miscellaneous CI and testing corrections and fixes.
 
 .. _v1.1: https://github.com/DistrictDataLabs/yellowbrick/releases/tag/v1.1
 
