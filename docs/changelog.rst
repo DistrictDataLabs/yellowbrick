@@ -13,7 +13,7 @@ Version 1.1
 Major Changes:
    - Quick methods (aka Oneliners), which return a fully fitted finalized visualizer object in only a single line, are now implemented for all Yellowbrick Visualizers. Test coverage has been added for all quick methods. The documentation has been updated to document and demonstrate the usage of the quick methods.
    - Added Part of Speech tagging for raw text using spaCy and NLTK to POSTagVisualizer.
-   
+
 Minor Changes:
    - Adds Board of Directors minutes for Spring meeting.
    - Miscellaneous documentation corrections and fixes.
