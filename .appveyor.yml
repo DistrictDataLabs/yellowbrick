@@ -62,6 +62,7 @@ install:
           ) ELSE (
             conda update -n base conda --yes &&
             conda config --add channels conda-forge &&
+            conda config --show-sources &&
             conda env create -f tests/requirements.txt -n yellowbrick &&
             call activate yellowbrick
           )"
