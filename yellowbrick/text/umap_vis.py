@@ -45,7 +45,15 @@ except (RuntimeError, AttributeError):
 
 
 def umap(
-    X, y=None, ax=None, classes=None, colors=None, colormap=None, alpha=0.7, **kwargs
+    X,
+    y=None,
+    ax=None,
+    classes=None,
+    colors=None,
+    colormap=None,
+    alpha=0.7,
+    show=True,
+    **kwargs
 ):
     """
     Display a projection of a vectorized corpus in two dimensions using UMAP (Uniform
@@ -92,6 +100,11 @@ def umap(
         Specify a transparency where 1 is completely opaque and 0 is completely
         transparent. This property makes densely clustered points more visible.
 
+    show : bool, default: True
+        If True, calls ``show()``, which in turn calls ``plt.show()`` however
+        you cannot call ``plt.savefig`` from this signature, nor
+        ``clear_figure``. If False, simply calls ``finalize()``
+
     kwargs : dict
         Pass any additional keyword arguments to the UMAP transformer.
 
@@ -100,11 +113,17 @@ def umap(
         Returns the fitted, finalized visualizer
     """
     # Instantiate the visualizer
-    visualizer = UMAPVisualizer(ax, classes, colors, colormap, alpha, **kwargs)
+    visualizer = UMAPVisualizer(
+        ax=ax, classes=classes, colors=colors, colormap=colormap, alpha=alpha, **kwargs
+    )
 
-    # Fit and transform the visualizer (calls draw)
-    visualizer.fit_transform(X, y, **kwargs)
-    visualizer.finalize()
+    # Fit the visualizer (calls draw)
+    visualizer.fit(X, y, **kwargs)
+
+    if show:
+        visualizer.show()
+    else:
+        visualizer.finalize()
 
     # Return the visualizer object
     return visualizer

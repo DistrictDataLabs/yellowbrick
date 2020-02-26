@@ -27,81 +27,6 @@ from yellowbrick.features.base import DataVisualizer
 
 
 ##########################################################################
-## Quick Methods
-##########################################################################
-
-
-def radviz(
-    X,
-    y=None,
-    ax=None,
-    features=None,
-    classes=None,
-    colors=None,
-    colormap=None,
-    alpha=1.0,
-    **kwargs
-):
-    """
-    Displays each feature as an axis around a circle surrounding a scatter
-    plot whose points are each individual instance.
-
-    This helper function is a quick wrapper to utilize the RadialVisualizer
-    (Transformer) for one-off analysis.
-
-    Parameters
-    ----------
-
-    X : ndarray or DataFrame of shape n x m
-        A matrix of n instances with m features
-
-    y : ndarray or Series of length n
-        An array or series of target or class values
-
-    ax : matplotlib Axes, default: None
-        The axes to plot the figure on.
-
-    features : list of strings, default: None
-        The names of the features or columns
-
-    classes : list of strings, default: None
-        The names of the classes in the target
-
-    colors : list or tuple of colors, default: None
-        Specify the colors for each individual class
-
-    colormap : string or matplotlib cmap, default: None
-        Sequential colormap for continuous target
-
-    alpha : float, default: 1.0
-        Specify a transparency where 1 is completely opaque and 0 is completely
-        transparent. This property makes densely clustered points more visible.
-
-    Returns
-    -------
-    viz : RadViz
-        Returns the fitted, finalized visualizer
-    """
-    # Instantiate the visualizer
-    visualizer = RadialVisualizer(
-        ax=ax,
-        features=features,
-        classes=classes,
-        colors=colors,
-        colormap=colormap,
-        alpha=alpha,
-        **kwargs
-    )
-
-    # Fit and transform the visualizer (calls draw)
-    visualizer.fit(X, y, **kwargs)
-    visualizer.transform(X)
-
-    # Return the visualizer object
-    return visualizer
-
-
-##########################################################################
 ## Static RadViz Visualizer
 ##########################################################################
 
@@ -372,6 +297,95 @@ class RadialVisualizer(DataVisualizer):
         # Add the legend
         colors = self.get_colors(self.classes_)
         manual_legend(self, self.classes_, colors, loc="best")
+
+
+##########################################################################
+## Quick Method
+##########################################################################
+
+
+def radviz(
+    X,
+    y=None,
+    ax=None,
+    features=None,
+    classes=None,
+    colors=None,
+    colormap=None,
+    alpha=1.0,
+    show=True,
+    **kwargs
+):
+    """
+    Displays each feature as an axis around a circle surrounding a scatter
+    plot whose points are each individual instance.
+
+    This helper function is a quick wrapper to utilize the RadialVisualizer
+    (Transformer) for one-off analysis.
+
+    Parameters
+    ----------
+
+    X : ndarray or DataFrame of shape n x m
+        A matrix of n instances with m features
+
+    y : ndarray or Series of length n, default:None
+        An array or series of target or class values
+
+    ax : matplotlib Axes, default: None
+        The axes to plot the figure on.
+
+    features : list of strings, default: None
+        The names of the features or columns
+
+    classes : list of strings, default: None
+        The names of the classes in the target
+
+    colors : list or tuple of colors, default: None
+        Specify the colors for each individual class
+
+    colormap : string or matplotlib cmap, default: None
+        Sequential colormap for continuous target
+
+    alpha : float, default: 1.0
+        Specify a transparency where 1 is completely opaque and 0 is completely
+        transparent. This property makes densely clustered points more visible.
+
+    show: bool, default: True
+        If True, calls ``show()``, which in turn calls ``plt.show()`` however you cannot
+        call ``plt.savefig`` from this signature, nor ``clear_figure``. If False, simply
+        calls ``finalize()``
+        
+    kwargs : dict
+        Keyword arguments passed to the visualizer base classes.
+
+    Returns
+    -------
+    viz : RadViz
+        Returns the fitted, finalized visualizer
+    """
+    # Instantiate the visualizer
+    visualizer = RadialVisualizer(
+        ax=ax,
+        features=features,
+        classes=classes,
+        colors=colors,
+        colormap=colormap,
+        alpha=alpha,
+        **kwargs
+    )
+
+    # Fit and transform the visualizer (calls draw)
+    visualizer.fit(X, y, **kwargs)
+    visualizer.transform(X)
+
+    if show:
+        visualizer.show()
+    else:
+        visualizer.finalize()
+
+    # Return the visualizer object
+    return visualizer
 
 
 # Alias for RadViz

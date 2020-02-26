@@ -173,7 +173,7 @@ class TestPosTag(VisualTestCase):
         _, ax = plt.subplots()
         tagged_docs = list(get_tagged_docs(sonnets))
 
-        viz = postag(tagged_docs, ax=ax)
+        viz = postag(tagged_docs, ax=ax, show=False)
         viz.ax.grid(False)
 
         self.assert_images_similar(viz)
@@ -283,6 +283,42 @@ class TestPosTag(VisualTestCase):
         visualizer = PosTagVisualizer(tagset="universal")
 
         visualizer.fit(spacy_tagged_docs)
+        visualizer.ax.grid(False)
+
+        self.assert_images_similar(visualizer)
+
+    @pytest.mark.skipif(spacy is None, reason="test requires spacy")
+    def test_spacy_raw(self):
+        """
+        Assert no errors occur during PosTagVisualizer integration
+        with raw corpus to be parsed using spacy
+        """
+        visualizer = PosTagVisualizer(parser='spacy', tagset='universal')
+        visualizer.fit(sonnets)
+        visualizer.ax.grid(False)
+
+        self.assert_images_similar(visualizer)
+
+    @pytest.mark.skipif(nltk is None, reason="test requires nltk")
+    def test_nltk_word_raw(self):
+        """
+        Assert no errors occur during PosTagVisualizer integration
+        with raw corpus to be parsed using nltk
+        """
+        visualizer = PosTagVisualizer(parser='nltk', tagset="penn_treebank")
+        visualizer.fit(sonnets)
+        visualizer.ax.grid(False)
+
+        self.assert_images_similar(visualizer)
+
+    @pytest.mark.skipif(nltk is None, reason="test requires nltk")
+    def test_nltk_wordpunct_raw(self):
+        """
+        Assert no errors occur during PosTagVisualizer integration
+        with raw corpus to be parsed using nltk
+        """
+        visualizer = PosTagVisualizer(parser='nltk_wordpunct', tagset="penn_treebank")
+        visualizer.fit(sonnets)
         visualizer.ax.grid(False)
 
         self.assert_images_similar(visualizer)

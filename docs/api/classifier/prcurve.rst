@@ -11,6 +11,14 @@ under the curve represents both high recall and precision, the best case
 scenario for a classifier, showing a model that returns accurate results
 for the majority of classes it selects.
 
+=================   ==============================
+Visualizer           :class:`~yellowbrick.classifier.prcurve.PrecisionRecallCurve`
+Quick Method         :func:`~yellowbrick.classifier.prcurve.precision_recall_curve`
+Models               Classification
+Workflow             Model evaluation
+=================   ==============================
+
+
 Binary Classification
 ---------------------
 
@@ -98,10 +106,34 @@ A more complex Precision-Recall curve can be computed, however, displaying the e
 
 .. seealso:: `Scikit-Learn: Model Selection with Precision Recall Curves <http://scikit-learn.org/stable/auto_examples/model_selection/plot_precision_recall.html>`_
 
+
+Quick Method
+------------
+
+Similar functionality as above can be achieved in one line using the associated quick method, ``precision_recall_curve``. This method will instantiate and fit a ``PrecisionRecallCurve`` visualizer on the training data, then will score it on the optionally provided test data (or the training data if it is not provided).
+
+.. plot::
+    :context: close-figs
+    :alt: precision_recall_curve quick method with binary classification
+
+    from sklearn.naive_bayes import BernoulliNB
+    from sklearn.model_selection import train_test_split as tts
+    from yellowbrick.classifier import precision_recall_curve
+    from yellowbrick.datasets import load_spam
+
+    # Load the dataset and split into train/test splits
+    X, y = load_spam()
+
+    X_train, X_test, y_train, y_test = tts(X, y, test_size=0.2, shuffle=True)
+
+    # Create the visualizer, fit, score, and show it
+    viz = precision_recall_curve(BernoulliNB(), X_train, y_train, X_test, y_test)
+
+
 API Reference
 -------------
 
 .. automodule:: yellowbrick.classifier.prcurve
-    :members: PrecisionRecallCurve
+    :members: PrecisionRecallCurve, precision_recall_curve
     :undoc-members:
     :show-inheritance:

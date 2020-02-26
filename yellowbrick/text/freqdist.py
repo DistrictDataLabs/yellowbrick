@@ -30,7 +30,9 @@ from yellowbrick.exceptions import YellowbrickValueError
 ##########################################################################
 
 
-def freqdist(X, y=None, ax=None, n=50, orient="h", color=None, **kwargs):
+def freqdist(
+    features, X, y=None, ax=None, n=50, orient="h", color=None, show=True, **kwargs
+):
     """Displays frequency distribution plot for text.
 
     This helper function is a quick wrapper to utilize the FreqDist
@@ -38,6 +40,12 @@ def freqdist(X, y=None, ax=None, n=50, orient="h", color=None, **kwargs):
 
     Parameters
     ----------
+
+    features : list, default: None
+        The list of feature names from the vectorizer, ordered by index. E.g.
+        a lexicon that specifies the unique vocabulary of the corpus. This
+        can be typically fetched using the ``get_feature_names()`` method of
+        the transformer in Scikit-Learn.
 
     X: ndarray or DataFrame of shape n x m
         A matrix of n instances with m features. In the case of text,
@@ -58,6 +66,11 @@ def freqdist(X, y=None, ax=None, n=50, orient="h", color=None, **kwargs):
     color : string
         Specify color for bars
 
+    show: bool, default: True
+        If True, calls ``show()``, which in turn calls ``plt.show()`` however
+        you cannot call ``plt.savefig`` from this signature, nor
+        ``clear_figure``. If False, simply calls ``finalize()``
+
     kwargs: dict
         Keyword arguments passed to the super class.
 
@@ -67,15 +80,20 @@ def freqdist(X, y=None, ax=None, n=50, orient="h", color=None, **kwargs):
         Returns the fitted, finalized visualizer
     """
     # Instantiate the visualizer
-    visualizer = FreqDistVisualizer(ax=ax, n=n, orient=orient, color=color, **kwargs)
+    viz = FreqDistVisualizer(features, ax=ax, n=n, orient=orient, color=color, **kwargs)
 
     # Fit and transform the visualizer (calls draw)
-    visualizer.fit(X, y, **kwargs)
-    visualizer.transform(X)
-    visualizer.finalize()
+    viz.fit(X, y, **kwargs)
+    viz.transform(X)
+
+    # Draw the final visualization
+    if show:
+        viz.show()
+    else:
+        viz.finalize()
 
     # Return the visualizer object
-    return visualizer
+    return viz
 
 
 class FrequencyVisualizer(TextVisualizer):
@@ -171,6 +189,8 @@ class FrequencyVisualizer(TextVisualizer):
         y : ndarray or DataFrame of shape n
             Labels for the documents for conditional frequency distribution.
 
+        Notes
+        -----
         .. note:: Text documents must be vectorized before ``fit()``.
         """
 

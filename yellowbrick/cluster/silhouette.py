@@ -73,10 +73,10 @@ class SilhouetteVisualizer(ClusteringScoreVisualizer):
         Yellowbrick or matplotlib colormap string.
 
     is_fitted : bool or str, default='auto'
-        Specify if the wrapped estimator is already fitted. If False, the estimator
-        will be fit when the visualizer is fit, otherwise, the estimator will not be
-        modified. If 'auto' (default), a helper method will check if the estimator
-        is fitted before fitting it again.
+        Specify if the wrapped estimator is already fitted. If False, the
+        estimator will be fit when the visualizer is fit, otherwise, the
+        estimator will not be modified. If 'auto' (default), a helper method 
+        will check if the estimator is fitted before fitting it again.
 
     kwargs : dict
         Keyword arguments that are passed to the base class and may influence
@@ -265,7 +265,7 @@ class SilhouetteVisualizer(ClusteringScoreVisualizer):
 
 
 def silhouette_visualizer(
-    model, X, y=None, ax=None, colors=None, is_fitted="auto", **kwargs
+    model, X, y=None, ax=None, colors=None, is_fitted="auto", show=True, **kwargs
 ):
     """Quick Method:
     The Silhouette Visualizer displays the silhouette coefficient for each
@@ -285,15 +285,15 @@ def silhouette_visualizer(
         or ``MiniBatchKMeans``). If the estimator is not fitted, it is fit when
         the visualizer is fitted, unless otherwise specified by ``is_fitted``.
 
-    ax : matplotlib Axes, default: None
-        The axes to plot the figure on. If None is passed in the current axes
-        will be used (or generated if required).
-
     X : array-like of shape (n, m)
         A matrix or data frame with n instances and m features
 
     y : array-like of shape (n,), optional
         A vector or series representing the target for each instance
+
+    ax : matplotlib Axes, default: None
+        The axis to plot the figure on. If None is passed in the current axes
+        will be used (or generated if required).
 
     colors : iterable or string, default: None
         A collection of colors to use for each cluster group. If there are
@@ -301,10 +301,15 @@ def silhouette_visualizer(
         Yellowbrick or matplotlib colormap string.
 
     is_fitted : bool or str, default='auto'
-        Specify if the wrapped estimator is already fitted. If False, the estimator
-        will be fit when the visualizer is fit, otherwise, the estimator will not be
-        modified. If 'auto' (default), a helper method will check if the estimator
-        is fitted before fitting it again.
+        Specify if the wrapped estimator is already fitted. If False, the
+        estimator will be fit when the visualizer is fit, otherwise, the
+        estimator will not be modified. If 'auto' (default), a helper method
+        will check if the estimator is fitted before fitting it again.
+
+    show : bool, default: True
+        If True, calls ``show()``, which in turn calls ``plt.show()`` however
+        you cannot call ``plt.savefig`` from this signature, nor
+        ``clear_figure``. If False, simply calls ``finalize()``
 
     kwargs : dict
         Keyword arguments that are passed to the base class and may influence
@@ -315,10 +320,15 @@ def silhouette_visualizer(
     viz : SilhouetteVisualizer
         The silhouette visualizer, fitted and finalized.
     """
+
     oz = SilhouetteVisualizer(
         model, ax=ax, colors=colors, is_fitted=is_fitted, **kwargs
     )
-
     oz.fit(X, y)
-    oz.finalize()
+
+    if show:
+        oz.show()
+    else:
+        oz.finalize()
+
     return oz

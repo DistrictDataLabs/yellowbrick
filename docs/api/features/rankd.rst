@@ -7,6 +7,13 @@ Rank Features
 
 In this example, we'll use the credit default data set from the UCI Machine Learning repository to rank features. The code below creates our instance matrix and target vector.
 
+=================   ==============================
+Visualizers          :class:`~yellowbrick.features.rankd.Rank1D`, :class:`~yellowbrick.features.rankd.Rank2D`
+Quick Methods        :func:`~yellowbrick.features.rankd.rank1d`, :func:`~yellowbrick.features.rankd.rank2d`
+Models               General Linear Models
+Workflow             Feature engineering and model selection
+=================   ==============================
+
 Rank 1D
 -------
 
@@ -28,7 +35,6 @@ A one-dimensional ranking of features utilizes a ranking algorithm that takes in
     visualizer.fit(X, y)           # Fit the data to the visualizer
     visualizer.transform(X)        # Transform the data
     visualizer.show()              # Finalize and render the figure
-
 
 Rank 2D
 -------
@@ -74,11 +80,32 @@ Alternatively, we can utilize the covariance ranking algorithm, which attempts t
     visualizer.transform(X)        # Transform the data
     visualizer.show()              # Finalize and render the figure
 
+Quick Methods
+-------------
+
+Similar functionality can be achieved using the one line quick methods, ``rank1d`` and ``rank2d``. These functions instantiate and fit their respective visualizer on the data and immediately show it without having to use the class-based API.
+
+.. plot::
+    :context: close-figs
+    :alt: rank2d quick method on credit dataset with pearson algorithm
+
+    from yellowbrick.datasets import load_concrete
+    from yellowbrick.features import rank1d, rank2d
+
+    # Load the concrete dataset
+    X, _ = load_concrete()
+
+    _, axes = plt.subplots(ncols=2, figsize=(8,4))
+
+    rank1d(X, ax=axes[0], show=False)
+    rank2d(X, ax=axes[1], show=False)
+    plt.show()
+
 
 API Reference
 -------------
 
 .. automodule:: yellowbrick.features.rankd
-    :members: Rank1D, Rank2D
+    :members: Rank1D, Rank2D, rank1d, rank2d
     :undoc-members:
     :show-inheritance:

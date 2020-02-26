@@ -359,8 +359,8 @@ class Rank2D(RankDBase):
         will be used (or generated if required).
 
     algorithm : str, default: 'pearson'
-        The ranking algorithm to use, one of:
-        'pearson', 'covariance', 'spearman', 'kendalltau'.
+        The ranking algorithm to use, one of: 'pearson', 'covariance', 'spearman',
+        or 'kendalltau'.
 
     features : list
         A list of feature names to use.
@@ -369,12 +369,11 @@ class Rank2D(RankDBase):
 
     colormap : string or cmap, default: 'RdBu_r'
         optional string or matplotlib cmap to colorize lines
-        Use either color to colorize the lines on a per class basis or
-        colormap to color them on a continuous scale.
+        Use either color to colorize the lines on a per class basis or colormap to
+        color them on a continuous scale.
 
     show_feature_names : boolean, default: True
-        If True, the feature names are used to label the axis ticks in the
-        plot.
+        If True, the feature names are used to label the axis ticks in the plot.
 
     kwargs : dict
         Keyword arguments that are passed to the base class and may influence
@@ -470,7 +469,6 @@ class Rank2D(RankDBase):
 ## Quick Methods
 ##########################################################################
 
-
 def rank1d(
     X,
     y=None,
@@ -480,6 +478,7 @@ def rank1d(
     orient="h",
     show_feature_names=True,
     color=None,
+    show=True,
     **kwargs
 ):
     """Scores each feature with the algorithm and ranks them in a bar plot.
@@ -515,6 +514,15 @@ def rank1d(
 
     color: string
         Specify color for barchart
+    
+    show: bool, default: True
+        If True, calls ``show()``, which in turn calls ``plt.show()`` however you cannot
+        call ``plt.savefig`` from this signature, nor ``clear_figure``. If False, simply
+        calls ``finalize()``
+    
+     kwargs : dict
+        Keyword arguments that are passed to the base class and may influence
+        the visualization as defined in other Visualizers.
 
     Returns
     -------
@@ -534,12 +542,16 @@ def rank1d(
     )
 
     # Fit and transform the visualizer (calls draw)
-    visualizer.fit(X, y, **kwargs)
+    visualizer.fit(X, y)
     visualizer.transform(X)
+
+    if show:
+        visualizer.show()
+    else:
+        visualizer.finalize()
 
     # Return the visualizer object
     return visualizer
-
 
 def rank2d(
     X,
@@ -547,52 +559,62 @@ def rank2d(
     ax=None,
     algorithm="pearson",
     features=None,
-    show_feature_names=True,
     colormap="RdBu_r",
+    show_feature_names=True,
+    show=True,
     **kwargs
 ):
-    """Displays pairwise comparisons of features with the algorithm and ranks
-    them in a lower-left triangle heatmap plot.
+    """Rank2D quick method
 
-    This helper function is a quick wrapper to utilize the Rank2D Visualizer
-    (Transformer) for one-off analysis.
+    Rank2D performs pairwise comparisons of each feature in the data set with
+    a specific metric or algorithm (e.g. Pearson correlation) then returns
+    them ranked as a lower left triangle diagram.
 
     Parameters
     ----------
     X : ndarray or DataFrame of shape n x m
-        A matrix of n instances with m features
+        A matrix of n instances with m features to perform the pairwise compairsons on.
 
-    y : ndarray or Series of length n
-        An array or series of target or class values
+    y : ndarray or Series of length n, default: None
+        An array or series of target or class values, optional (not used).
 
-    ax : matplotlib axes
-        the axis to plot the figure on.
+    ax : matplotlib Axes, default: None
+        The axis to plot the figure on. If None is passed in the current axes
+        will be used (or generated if required).
 
-    algorithm : one of {pearson, covariance, spearman, kendalltau}
-        the ranking algorithm to use, default is Pearson correlation.
+    algorithm : str, default: 'pearson'
+        The ranking algorithm to use, one of: 'pearson', 'covariance', 'spearman',
+        or 'kendalltau'.
 
     features : list
         A list of feature names to use.
-        If a DataFrame is passed to fit and features is None, feature
-        names are selected as the columns of the DataFrame.
+        If a DataFrame is passed to fit and features is None, feature names are
+        selected as the columns of the DataFrame.
+
+    colormap : string or cmap, default: 'RdBu_r'
+        optional string or matplotlib cmap to colorize lines
+        Use either color to colorize the lines on a per class basis or colormap to
+        color them on a continuous scale.
 
     show_feature_names : boolean, default: True
-        If True, the feature names are used to label the axis ticks in the
-        plot.
+        If True, the feature names are used to label the axis ticks in the plot.
 
-    colormap : string or cmap
-        optional string or matplotlib cmap to colorize lines
-        Use either color to colorize the lines on a per class basis or
-        colormap to color them on a continuous scale.
+    show: bool, default: True
+        If True, calls ``show()``, which in turn calls ``plt.show()`` however you cannot
+        call ``plt.savefig`` from this signature, nor ``clear_figure``. If False, simply
+        calls ``finalize()``
+
+    kwargs : dict
+        Keyword arguments that are passed to the base class and may influence
+        the visualization as defined in other Visualizers.
 
     Returns
     -------
     viz : Rank2D
-        Returns the fitted, finalized visualizer
-
+        Returns the fitted, finalized visualizer that created the Rank2D heatmap.
     """
     # Instantiate the visualizer
-    visualizer = Rank2D(
+    viz = Rank2D(
         ax=ax,
         algorithm=algorithm,
         features=features,
@@ -602,8 +624,14 @@ def rank2d(
     )
 
     # Fit and transform the visualizer (calls draw)
-    visualizer.fit(X, y, **kwargs)
-    visualizer.transform(X)
+    viz.fit(X, y)
+    viz.transform(X)
+
+    # Show or finalize
+    if show:
+        viz.show()
+    else:
+        viz.finalize()
 
     # Return the visualizer object
-    return visualizer
+    return viz

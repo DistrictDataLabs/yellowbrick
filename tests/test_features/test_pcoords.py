@@ -167,6 +167,17 @@ class TestParallelCoordinates(VisualTestCase):
         visualizer.finalize()
         self.assert_images_similar(visualizer, tol=0.25)
 
+    def test_parallel_coordinates_quickmethod(self):
+        """
+        Test the quick method producing a valid visualization
+        """
+        X, y = load_occupancy(return_dataset=True).to_numpy()
+
+        # Compare the images
+        # Use only the first 100 samples so the test will run faster
+        visualizer = parallel_coordinates(X, y, sample=100, show=False)
+        self.assert_images_similar(visualizer)
+
     @pytest.mark.skipif(pd is None, reason="test requires pandas")
     def test_pandas_integration_sampled(self):
         """

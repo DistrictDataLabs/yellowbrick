@@ -105,7 +105,7 @@ class TestFeatureImportancesVisualizer(VisualTestCase):
         ax = fig.add_subplot()
 
         clf = RandomForestClassifier(random_state=42)
-        g = feature_importances(clf, X, y, ax=ax)
+        g = feature_importances(clf, X, y, ax=ax, show=False)
 
         # Appveyor and Linux conda non-text-based differences
         self.assert_images_similar(g, tol=15.0)
@@ -230,7 +230,9 @@ class TestFeatureImportancesVisualizer(VisualTestCase):
         """
         X, y = load_iris(True)
 
-        viz = FeatureImportances(LogisticRegression(random_state=222), stack=True)
+        viz = FeatureImportances(
+            LogisticRegression(solver="liblinear", random_state=222), stack=True
+        )
         viz.fit(X, y)
         viz.finalize()
 

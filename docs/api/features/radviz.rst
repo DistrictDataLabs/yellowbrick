@@ -22,6 +22,13 @@ percent missing.
 If you do receive this warning, you may want to look at imputation strategies.
 A good starting place is the `scikit-learn Imputer. <http://scikit-learn.org/stable/modules/generated/sklearn.impute.SimpleImputer.html>`_
 
+=================   =================
+Visualizer           :class:`~yellowbrick.features.radviz.RadialVisualizer`
+Quick Method         :func:`~yellowbrick.features.radviz.radviz`
+Models               Classification, Regression
+Workflow             Feature Engineering
+=================   =================
+
 .. plot::
     :context: close-figs
     :alt: RadViz on the Occupancy Dataset
@@ -45,10 +52,33 @@ A good starting place is the `scikit-learn Imputer. <http://scikit-learn.org/sta
 For regression, the ``RadViz`` visualizer should use a color sequence to
 display the target information, as opposed to discrete colors.
 
+
+Quick Method
+------------
+
+The same functionality above can be achieved with the associated quick method ``radviz``. This method will build the ``RadViz`` object with the associated arguments, fit it, then (optionally) immediately show the visualization.
+
+.. plot::
+    :context: close-figs
+    :alt: radviz on the occupancy dataset
+
+    from yellowbrick.features.radviz import radviz
+    from yellowbrick.datasets import load_occupancy
+
+    #Load the classification dataset
+    X, y = load_occupancy()
+
+    # Specify the target classes
+    classes = ["unoccupied", "occupied"]
+
+    # Instantiate the visualizer
+    radviz(X, y, classes=classes)
+
+
 API Reference
 -------------
 
 .. automodule:: yellowbrick.features.radviz
-    :members: RadialVisualizer, RadViz
+    :members: RadialVisualizer, RadViz, radviz
     :undoc-members:
     :show-inheritance:

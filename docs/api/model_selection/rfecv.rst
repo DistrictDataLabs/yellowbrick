@@ -3,6 +3,13 @@
 Recursive Feature Elimination
 =============================
 
+ =================   =====================
+ Visualizer           :class:`~yellowbrick.model_selection.rfecv.RFECV`
+ Quick Method         :func:`~yellowbrick.model_selection.rfecv.rfecv`
+ Models               Classification, Regression
+ Workflow             Model Selection
+ =================   =====================
+
 Recursive feature elimination (RFE) is a feature selection method that fits a model and removes the weakest feature (or features) until the specified number of features is reached. Features are ranked by the model's ``coef_`` or ``feature_importances_`` attributes, and by recursively eliminating a small number of features per loop, RFE attempts to eliminate dependencies and collinearity that may exist in the model.
 
 RFE requires a specified number of features to keep, however it is often not known in advance how many features are valid. To find the optimal number of features cross-validation is used with RFE to score different feature subsets and select the best scoring collection of features. The ``RFECV`` visualizer plots the number of features in the model along with their cross-validated test score and variability and visualizes the selected number of features.
@@ -63,10 +70,31 @@ In this example we can see that 19 features were selected, though there doesn't 
 
 .. seealso:: This visualizer is is based off of the visualization in the scikit-learn documentation: `recursive feature elimination with cross-validation <http://scikit-learn.org/stable/auto_examples/feature_selection/plot_rfe_with_cross_validation.html>`_. However, the Yellowbrick version does not use ``sklearn.feature_selection.RFECV`` but instead wraps ``sklearn.feature_selection.RFE`` models. The fitted model can be accessed on the visualizer using the ``viz.rfe_estimator_`` attribute, and in fact the visualizer acts as the fitted model when using ``predict()`` or ``score()``.
 
+Quick Method
+------------
+
+The same functionality above can be achieved with the associated quick method ``rfecv``. This method will build the ``RFECV`` object with the associated arguments, fit it, then (optionally) immediately show the visualization.
+
+.. code:: python
+
+    from sklearn.ensemble import RandomForestClassifier
+    from sklearn.model_selection import StratifiedKFold
+
+    from yellowbrick.model_selection import rfecv
+    from yellowbrick.datasets import load_credit
+
+    # Load classification dataset
+    X, y = load_credit()
+
+    cv = StratifiedKFold(5)
+    visualizer = rfecv(RandomForestClassifier(), X=X, y=y, cv=cv, scoring='f1_weighted')
+
+.. image:: images/rfecv_quick_method.png
+
 API Reference
 -------------
 
 .. automodule:: yellowbrick.model_selection.rfecv
-    :members: RFECV
+    :members: RFECV, rfecv
     :undoc-members:
     :show-inheritance:
