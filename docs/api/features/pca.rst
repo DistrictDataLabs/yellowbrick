@@ -6,8 +6,8 @@ PCA Projection
 The PCA Decomposition visualizer utilizes principal component analysis to decompose high dimensional data into two or three dimensions so that each instance can be plotted in a scatter plot. The use of PCA means that the projected dataset can be analyzed along axes of principal variation and can be interpreted to determine if spherical distance metrics can be utilized.
 
 =================   =================
-Visualizer           `PCA Decomposition <https://www.scikit-yb.org/en/latest/api/features/pca.html#yellowbrick.features.pca.PCA>`_
-Quick Method         `pca_decomposition <https://www.scikit-yb.org/en/latest/api/features/pca.html#yellowbrick.features.pca.pca_decomposition>`_
+Visualizer           :class:`~yellowbrick.features.pca.PCA`
+Quick Method         :func:`~yellowbrick.features.pca.pca_decomposition`
 Models               Classification/Regression
 Workflow             Feature Engineering/Selection
 =================   =================
@@ -17,15 +17,13 @@ Workflow             Feature Engineering/Selection
     :alt: PCA Projection, 2D
 
     from yellowbrick.datasets import load_credit
-    from yellowbrick.features import PCADecomposition
+    from yellowbrick.features import PCA
 
     # Specify the features of interest and the target
     X, y = load_credit()
+    classes = ['account in default', 'current with bills']
 
-    # Create a list of colors to assign to points in the plot
-    colors = np.array(['r' if yi else 'b' for yi in y])
-
-    visualizer = PCADecomposition(scale=True, color=colors)
+    visualizer = PCA(scale=True, classes=classes)
     visualizer.fit_transform(X, y)
     visualizer.show()
 
@@ -37,13 +35,14 @@ The PCA projection can also be plotted in three dimensions to attempt to visuali
     :alt: PCA Projection, 3D
 
     from yellowbrick.datasets import load_credit
-    from yellowbrick.features import PCADecomposition
+    from yellowbrick.features import PCA
 
     X, y = load_credit()
+    classes = ['account in default', 'current with bills']
 
-    colors = np.array(['r' if yi else 'b' for yi in y])
-
-    visualizer = PCADecomposition(scale=True, color=colors, projection=3)
+    visualizer = PCA(
+        scale=True, projection=3, classes=classes
+    )
     visualizer.fit_transform(X, y)
     visualizer.show()
 
@@ -58,12 +57,12 @@ The PCA projection can be enhanced to a biplot whose points are the projected in
     :alt: PCA biplot projection, 2D
 
     from yellowbrick.datasets import load_concrete
-    from yellowbrick.features import PCADecomposition
+    from yellowbrick.features import PCA
 
     # Load the concrete dataset
     X, y = load_concrete()
 
-    visualizer = PCADecomposition(scale=True, proj_features=True)
+    visualizer = PCA(scale=True, proj_features=True)
     visualizer.fit_transform(X, y)
     visualizer.show()
 
@@ -73,18 +72,19 @@ The PCA projection can be enhanced to a biplot whose points are the projected in
     :alt: PCA biplot projection, 3D
 
     from yellowbrick.datasets import load_concrete
-    from yellowbrick.features import PCADecomposition
+    from yellowbrick.features import PCA
 
     X, y = load_concrete()
 
-    visualizer = PCADecomposition(scale=True, proj_features=True, projection=3)
+    visualizer = PCA(scale=True, proj_features=True, projection=3)
     visualizer.fit_transform(X, y)
     visualizer.show()
 
 Quick Method
-----------------------
+------------
+
 The same functionality above can be achieved with the associated quick method ``pca_decomposition``. This method
-will build the ``PCADecomposition`` object with the associated arguments, fit it, then (optionally) immediately
+will build the ``PCA`` object with the associated arguments, fit it, then (optionally) immediately
 show it.
 
 .. plot::
@@ -96,12 +96,13 @@ show it.
 
     # Specify the features of interest and the target
     X, y = load_credit()
+    classes = ['account in default', 'current with bills']
 
-    # Create a list of colors to assign to points in the plot
-    colors = np.array(['r' if yi else 'b' for yi in y])
+    # Create, fit, and show the visualizer
+    pca_decomposition(
+        X, y, scale=True, classes=classes
+    )
 
-    # Instantiate the visualizer
-    visualizer = pca_decomposition(X, y, scale=True, color=colors)
 
 API Reference
 -------------

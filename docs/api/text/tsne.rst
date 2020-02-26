@@ -4,8 +4,8 @@ t-SNE Corpus Visualization
 ==========================
 
 =================   =================
-Visualizer           `TSNEVisualizer <https://www.scikit-yb.org/en/latest/api/text/tsne.html#yellowbrick.text.tsne.TSNEVisualizer>`_
-Quick Method         `tsne() <https://www.scikit-yb.org/en/latest/api/text/tsne.html#yellowbrick.text.tsne.tsne>`_
+Visualizer           :class:`~yellowbrick.text.tsne.TSNEVisualizer`
+Quick Method         :func:`~yellowbrick.text.tsne.tsne`
 Models               Decomposition
 Workflow             Feature Engineering/Selection
 =================   =================
@@ -94,7 +94,8 @@ This means we don't have to use class labels at all. Instead we can use cluster 
     tsne.show()
 
 Quick Method
--------------------------
+------------
+
 The same functionality above can be achieved with the associated quick method ``tsne``. This method will build the ``TSNEVisualizer`` object with the associated arguments, fit it, then (optionally) immediately show it
 
 .. plot::
@@ -113,6 +114,7 @@ The same functionality above can be achieved with the associated quick method ``
     y = corpus.target
 
     tsne(X, y)
+
 
 API Reference
 -------------

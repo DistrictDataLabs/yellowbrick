@@ -117,8 +117,8 @@ def umap(
         ax=ax, classes=classes, colors=colors, colormap=colormap, alpha=alpha, **kwargs
     )
 
-    # Fit and transform the visualizer (calls draw)
-    visualizer.fit_transform(X, y, **kwargs)
+    # Fit the visualizer (calls draw)
+    visualizer.fit(X, y, **kwargs)
 
     if show:
         visualizer.show()

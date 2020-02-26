@@ -4,8 +4,8 @@ Cross Validation Scores
 =======================
 
 =================   =====================
- Visualizer           `CVScores <https://www.scikit-yb.org/en/latest/api/model_selection/cross_validation.html#yellowbrick.model_selection.cross_validation.CVScores>`_
- Quick Method         `cv_scores() <https://www.scikit-yb.org/en/latest/api/model_selection/cross_validation.html#yellowbrick.model_selection.cross_validation.cv_scores>`_
+ Visualizer          :class:`~yellowbrick.model_selection.cross_validation.CVScores`
+ Quick Method        :func:`~yellowbrick.model_selection.cross_validation.cv_scores`
  Models               Classification, Regression
  Workflow             Model Selection
 =================   =====================
@@ -85,6 +85,7 @@ As with our classification ``CVScores`` visualization, our regression visualizat
 
 Quick Method
 ------------
+
  The same functionality above can be achieved with the associated quick method ``cv_scores``. This method will build the ``CVScores`` object with the associated arguments, fit it, then (optionally) immediately show the visualization.
 
 .. plot::

@@ -12,8 +12,8 @@ Pearson Correlation
 The default calculation is Pearson correlation, which is performed with ``scipy.stats.pearsonr``.
 
 =================   =================
-Visualizer           `FeatureCorrelation <https://www.scikit-yb.org/en/latest/api/target/feature_correlation.html#yellowbrick.target.feature_correlation.FeatureCorrelation>`_
-Quick Method         `feature_correlation() <https://www.scikit-yb.org/en/latest/api/target/feature_correlation.html#yellowbrick.target.feature_correlation.feature_correlation>`_
+Visualizer           :class:`~yellowbrick.target.feature_correlation.FeatureCorrelation`
+Quick Method         :func:`~yellowbrick.target.feature_correlation.feature_correlation`
 Models               Regression/Classification/Clustering
 Workflow             Feature Engineering/Model Selection
 =================   =================
@@ -37,6 +37,7 @@ Workflow             Feature Engineering/Model Selection
 
     visualizer.fit(X, y)        # Fit the data to the visualizer
     visualizer.show()           # Finalize and render the figure
+
 
 Mutual Information - Regression
 -------------------------------
@@ -101,8 +102,10 @@ This visualizer also allows sorting of the bar plot according to the calculated 
     visualizer.fit(X_pd, y)        # Fit the data to the visualizer
     visualizer.show()              # Finalize and render the figure
 
+
 Quick Method
--------------------------
+------------
+
 The same functionality above can be achieved with the associated quick method ``feature_correlation``. This method will build the ``FeatureCorrelation`` object with the associated arguments, fit it, then (optionally) immediately show it
 
 .. plot::
@@ -121,6 +124,7 @@ The same functionality above can be achieved with the associated quick method ``
     features = np.array(data['feature_names'])
     visualizer = feature_correlation(X, y, labels=features)
     plt.tight_layout()
+
 
 API Reference
 -------------
