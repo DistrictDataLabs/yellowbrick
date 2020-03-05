@@ -471,7 +471,7 @@ def pca_decomposition(
     show=True,
     **kwargs
 ):
-    """PCA quick meethod.
+    """PCA quick method.
 
     Produce a two or three dimensional principal component plot of the data array ``X``
     projected onto its largest sequential principal components. It is common practice
