@@ -6,8 +6,8 @@ Dispersion Plot
 A word's importance can be weighed by its dispersion in a corpus.  Lexical dispersion is a measure of a word's homogeneity across the parts of a corpus.  This plot notes the occurrences of a word and how many words from the beginning of the corpus it appears.
 
 =================   ==============================
-Visualizer           `DispersionPlot <https://www.scikit-yb.org/en/latest/api/text/dispersion.html#yellowbrick.text.dispersion.DispersionPlot>`_
-Quick Method         `dispersion() <https://www.scikit-yb.org/en/latest/api/text/dispersion.html#yellowbrick.text.dispersion.dispersion>`_
+Visualizer           :class:`~yellowbrick.text.dispersion.DispersionPlot`
+Quick Method         :func:`~yellowbrick.text.dispersion.dispersion()`
 Models               Text Modeling
 Workflow             Feature Engineering
 =================   ==============================
@@ -34,7 +34,8 @@ Workflow             Feature Engineering
     visualizer.show()
 
 Quick Method
--------------------------
+------------
+
 The same functionality above can be achieved with the associated quick method `dispersion`. This method will build the Dispersion Plot object with the associated arguments, fit it, then (optionally) immediately show the visualization.
 
 .. plot::
@@ -55,6 +56,7 @@ The same functionality above can be achieved with the associated quick method `d
 
     # Create the visualizer and draw the plot
     dispersion(target_words, text)
+
 
 API Reference
 -------------

@@ -7,6 +7,13 @@ Parts of speech (e.g. verbs, nouns, prepositions, adjectives) indicate how a wor
 
 The ``PosTagVisualizer`` is intended to support grammar-based feature extraction techniques for machine learning workflows that require natural language processing. The visualizer can either read in a corpus that has already been sentence- and word-segmented, and tagged, or perform this tagging automatically by specifying the parser to use (nltk or spacy). The visualizer creates a bar chart to visualize the relative proportions of different parts-of-speech in a corpus.
 
+=================   =================
+Visualizer           :class:`~yellowbrick.text.postag.PosTagVisualizer`
+Quick Method         :func:`~yellowbrick.text.postag.postag`
+Models               Classification, Regression
+Workflow             Feature Engineering
+=================   =================
+
 .. note::
     The ``PosTagVisualizer`` currently works with both Penn-Treebank (e.g. via NLTK) and Universal Dependencies (e.g. via SpaCy)-tagged corpora. This expects either raw text, or corpora that have already been tagged which take the form of a list of (document) lists of (sentence) lists of ``(token, tag)`` tuples, as in the example below.
 
@@ -85,7 +92,9 @@ Universal Dependencies Tags
 
 Libraries like SpaCy use tags from the Universal Dependencies (UD) framework. The ``PosTagVisualizer`` can also be used with text tagged using this framework by specifying the ``tagset`` keyword as "universal" on instantiation.
 
-.. code:: python
+.. plot::
+
+    from yellowbrick.text import PosTagVisualizer
 
     tagged_speech = [
         [
@@ -146,6 +155,44 @@ Libraries like SpaCy use tags from the Universal Dependencies (UD) framework. Th
     viz.fit(tagged_speech)
     viz.show()
 
+
+Quick Method
+------------
+
+The same functionality above can be achieved with the associated quick method ``postag``. This method will build the ``PosTagVisualizer`` object with the associated arguments, fit it, then (optionally) immediately show the visualization.
+
+.. plot::
+    :context: close-figs
+    :alt: postag quick method with Penn Treebank tags
+
+    from yellowbrick.text.postag import postag
+
+    machado = [
+        [
+            [
+                ('Last', 'JJ'), ('night', 'NN'), ('as', 'IN'), ('I', 'PRP'),
+                ('was', 'VBD'), ('sleeping', 'VBG'), (',', ','), ('I', 'PRP'),
+                ('dreamt', 'VBP'), ('—', 'RB'), ('marvelous', 'JJ'), ('error', 'NN'),
+                ('!—', 'IN'), ('that', 'DT'), ('I', 'PRP'), ('had', 'VBD'), ('a', 'DT'),
+                ('beehive', 'NN'), ('here', 'RB'), ('inside', 'IN'), ('my', 'PRP$'),
+                ('heart', 'NN'), ('.', '.')
+                ],
+            [
+                ('And', 'CC'), ('the', 'DT'), ('golden', 'JJ'), ('bees', 'NNS'),
+                ('were', 'VBD'), ('making', 'VBG'), ('white', 'JJ'), ('combs', 'NNS'),
+                ('and', 'CC'), ('sweet', 'JJ'), ('honey', 'NN'), ('from', 'IN'),
+                ('my', 'PRP$'), ('old', 'JJ'), ('failures', 'NNS'), ('.', '.')
+                ]
+        ]
+    ]
+
+    # Create the visualizer, fit, score, and show it
+    postag(machado)
+    plt.tight_layout()
+
+
+Part of Speech Tags
+-------------------
 
 +-------------------+------------------------------------------+----------------------+--------------------------+
 | Penn-Treebank Tag | Description                              | Universal Tag        | Description              |
@@ -276,10 +323,11 @@ Or using `wordpunct`.
     viz.fit(untagged_speech)
     viz.show()
 
+
 API Reference
 -------------
 
 .. automodule:: yellowbrick.text.postag
-    :members: PosTagVisualizer
+    :members: PosTagVisualizer, postag
     :undoc-members:
     :show-inheritance:

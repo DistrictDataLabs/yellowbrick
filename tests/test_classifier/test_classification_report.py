@@ -203,11 +203,18 @@ class TestClassificationReport(VisualTestCase):
             random_state=27,
         )
 
+        # Create train/test splits
+        splits = tts(X, y, test_size=0.2, random_state=42)
+        X_train, X_test, y_train, y_test = splits
+        
         _, ax = plt.subplots()
         model = DecisionTreeClassifier(random_state=19)
-        classification_report(model, X, y, ax=ax, random_state=42)
+        visualizer = classification_report(
+            model, X_train, y_train, X_test, y_test, ax=ax, show=False
+        )
 
-        self.assert_images_similar(ax=ax, tol=25.0)
+        assert isinstance(visualizer, ClassificationReport)
+        self.assert_images_similar(visualizer, tol=12)
 
     def test_isclassifier(self):
         """
