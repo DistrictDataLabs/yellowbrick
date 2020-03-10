@@ -248,7 +248,6 @@ class ExplainedVariance(FeatureVisualizer):
             self.ax.plot(X, label=label)
 
             # TODO: allow the user to specify the cutoff amounts
-            prev = 0
             for cutoff in [0.0, .50, .85, .95, .999]:
                 components = bisect.bisect_left(X, cutoff)
                 self.ax.fill_between(np.arange(0, components), 0, X[:components], color='b', alpha=min(1-cutoff+.2, 1), label="{:0.0f}%".format(cutoff*100))
