@@ -436,6 +436,12 @@ class ResidualsPlot(RegressionScoreVisualizer):
         If set to 'density', the probability density function will be plotted.
         If set to True or 'frequency' then the frequency will be plotted.
 
+    qqplot : {True, False}, default: False
+        Draw a Q-Q plot on the right side of the figure, comparing the quantiles
+        of the residuals against quantiles of a standard normal distribution.
+        Q-Q plot and histogram of residuals can not be plotted simultaneously,
+        either `hist` or `qqplot` has to be set to False.
+
     train_color : color, default: 'b'
         Residuals for training data are ploted with this color but also
         given an opacity of 0.5 to ensure that the test data residuals
