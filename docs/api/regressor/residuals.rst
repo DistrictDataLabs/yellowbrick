@@ -52,6 +52,19 @@ Note that if the histogram is not desired, it can be turned off with the ``hist=
 
 .. warning:: The histogram on the residuals plot requires matplotlib 2.0.2 or greater. If you are using an earlier version of matplotlib, simply set the ``hist=False`` flag so that the histogram is not drawn.
 
+Histogram can be replaced with a Q-Q plot, which is a common way to check that residuals are normally distributed. If the residuals are normally distributed, then their quantiles when plotted against quantiles of normal distribution should form a straight line. The example below shows, how Q-Q plot can be drawn with a ``qqplot=True`` flag. Notice that ``hist`` has to be set to ``False`` in this case.
+
+.. plot::
+    :context: close-figs
+    :alt: Residuals Plot on the Concrete dataset with a Q-Q plot
+
+    visualizer = ResidualsPlot(model, hist=False, qqplot=True)
+    visualizer.fit(X_train, y_train)
+    visualizer.score(X_test, y_test)
+    visualizer.show()
+
+
+
 Quick Method
 ------------
 
