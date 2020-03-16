@@ -408,6 +408,10 @@ class PrecisionRecallCurve(ClassificationScoreVisualizer):
         self.ax.set_ylabel("Precision")
         self.ax.set_xlabel("Recall")
 
+        if self.per_class:
+            self.ax.grid(False)
+
+
     def _get_y_scores(self, X):
         """
         The ``precision_recall_curve`` metric requires target scores that
