@@ -249,7 +249,7 @@ class ScatterVisualizer(DataVisualizer):
 
         # Handle the feature names if they're None.
         elif self.features_ is not None and is_dataframe(X):
-            X_two_cols = X[self.features_].as_matrix()
+            X_two_cols = X[self.features_].values
 
         # handle numpy named/ structured array
         elif self.features_ is not None and is_structured_array(X):
