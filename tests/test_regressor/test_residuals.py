@@ -295,7 +295,6 @@ class TestResidualsPlot(VisualTestCase):
 
         visualizer.fit(self.data.X.train, self.data.y.train)
         visualizer.score(self.data.X.test, self.data.y.test)
-        visualizer.finalize()
 
         self.assert_images_similar(visualizer)
 
