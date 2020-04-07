@@ -287,9 +287,8 @@ class ImageComparison(object):
         imgdir = os.path.join(root, self.test_module_path)
 
         # Create directory if it doesn't exist
-        # TODO: remove dependency on mpl.cbook
         if not os.path.exists(imgdir):
-            mpl.cbook.mkdirs(imgdir)
+            os.makedirs(imgdir, mode=0o777, exist_ok=True)
 
         # Create the image path from the test name
         return os.path.join(imgdir, self.test_func_name + self.ext)
