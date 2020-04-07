@@ -373,7 +373,7 @@ class TestDecisionBoundariesVisualizer(VisualTestCase):
         data = datasets.load_iris()
         feature_names = [name.replace(" ", "_") for name in data.feature_names]
         df = pd.DataFrame(data.data, columns=feature_names)
-        X = df[["sepal_length_(cm)", "sepal_width_(cm)"]].as_matrix()
+        X = df[["sepal_length_(cm)", "sepal_width_(cm)"]].values
         y = data.target
 
         visualizer = DecisionBoundariesVisualizer(model)
@@ -390,7 +390,7 @@ class TestDecisionBoundariesVisualizer(VisualTestCase):
         data = datasets.load_iris()
         feature_names = [name.replace(" ", "_") for name in data.feature_names]
         df = pd.DataFrame(data.data, columns=feature_names)
-        X = df[["sepal_length_(cm)", "sepal_width_(cm)"]].as_matrix()
+        X = df[["sepal_length_(cm)", "sepal_width_(cm)"]].values
         y = data.target
 
         decisionviz(model, X, y)
