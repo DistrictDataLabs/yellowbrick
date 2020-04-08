@@ -176,7 +176,7 @@ class TestPosTag(VisualTestCase):
         viz = postag(tagged_docs, ax=ax, show=False)
         viz.ax.grid(False)
 
-        # Fails on Miniconda with images not close (RMS 5.157)
+        # Fails on Miniconda/Appveyor with images not close (RMS 5.157)
         self.assert_images_similar(viz, tol=5.5)
 
     def test_unknown_tagset(self):
@@ -230,7 +230,7 @@ class TestPosTag(VisualTestCase):
         # Assert that ticks are set properly
         assert ticks_ax == sorted_tags
 
-        # Fails on Miniconda with images not close (RMS 5.302)
+        # Fails on Miniconda/Appveyor with images not close (RMS 5.302)
         self.assert_images_similar(ax=ax, tol=5.5)
 
     @pytest.mark.skipif(nltk is None, reason="test requires nltk")
