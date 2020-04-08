@@ -19,7 +19,6 @@ Shows the balance of classes and their associated predictions.
 ##########################################################################
 
 import numpy as np
-import matplotlib.pyplot as plt
 
 from sklearn.utils.multiclass import unique_labels
 from sklearn.metrics.classification import _check_targets

@@ -22,7 +22,6 @@ is generally used for feature engineering.
 
 import warnings
 import numpy as np
-import matplotlib.pyplot as plt
 
 from yellowbrick.draw import bar_stack
 from yellowbrick.base import ModelVisualizer
