@@ -229,8 +229,7 @@ class ClassPredictionError(ClassificationScoreVisualizer):
         self.ax.set_ylim(0, cmax + cmax * 0.1)
 
         # Ensure the legend fits on the figure
-        plt.tight_layout(rect=[0, 0, 0.90, 1])  # TODO: Could use self.fig now
-
+        self.fig.tight_layout(rect=[0, 0, 0.90, 1])
 
 ##########################################################################
 ## Quick Method

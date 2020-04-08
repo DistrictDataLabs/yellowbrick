@@ -329,6 +329,9 @@ class ConfusionMatrix(ClassificationScoreVisualizer):
         self.ax.set_ylabel("True Class")
         self.ax.set_xlabel("Predicted Class")
 
+        # Call tight layout to maximize readability
+        self.fig.tight_layout()
+
 
 ##########################################################################
 ## Quick Method

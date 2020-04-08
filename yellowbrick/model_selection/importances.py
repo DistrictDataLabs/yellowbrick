@@ -288,7 +288,7 @@ class FeatureImportances(ModelVisualizer):
         self.ax.grid(False, axis="y")
 
         # Ensure we have a tight fit
-        plt.tight_layout()
+        self.fig.tight_layout()
 
     def _find_classes_param(self):
         """
