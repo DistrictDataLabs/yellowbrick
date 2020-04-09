@@ -188,7 +188,6 @@ The same functionality above can be achieved with the associated quick method ``
 
     # Create the visualizer, fit, score, and show it
     postag(machado)
-    plt.tight_layout()
 
 
 Part of Speech Tags

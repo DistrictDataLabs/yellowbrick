@@ -68,8 +68,9 @@ Class names can be added to a ``ConfusionMatrix`` plot using the ``label_encoder
     :alt: ConfusionMatrix plot with class names
 
     from sklearn.datasets import load_iris
-    from sklearn.model_selection import train_test_split as tts
     from sklearn.linear_model import LogisticRegression
+    from sklearn.model_selection import train_test_split as tts
+
     from yellowbrick.classifier import ConfusionMatrix
 
     iris = load_iris()
@@ -88,7 +89,6 @@ Class names can be added to a ``ConfusionMatrix`` plot using the ``label_encoder
 
     iris_cm.fit(X_train, y_train)
     iris_cm.score(X_test, y_test)
-
     iris_cm.show()
 
 Quick Method
