@@ -18,11 +18,13 @@ Tests for the part-of-speech tagging visualization
 ##########################################################################
 
 import pytest
-
-from yellowbrick.exceptions import YellowbrickValueError
-from yellowbrick.text.postag import *
-from tests.base import VisualTestCase
 import matplotlib.pyplot as plt
+
+from tests.base import VisualTestCase
+from tests.base import IS_WINDOWS_OR_CONDA
+
+from yellowbrick.text.postag import *
+from yellowbrick.exceptions import YellowbrickValueError
 
 try:
     import nltk
@@ -177,7 +179,8 @@ class TestPosTag(VisualTestCase):
         viz.ax.grid(False)
 
         # Fails on Miniconda/Appveyor with images not close (RMS 5.157)
-        self.assert_images_similar(viz, tol=5.5)
+        tol = 5.5 if IS_WINDOWS_OR_CONDA else 0.25
+        self.assert_images_similar(viz, tol=tol)
 
     def test_unknown_tagset(self):
         """
@@ -231,7 +234,8 @@ class TestPosTag(VisualTestCase):
         assert ticks_ax == sorted_tags
 
         # Fails on Miniconda/Appveyor with images not close (RMS 5.302)
-        self.assert_images_similar(ax=ax, tol=5.5)
+        tol = 5.5 if IS_WINDOWS_OR_CONDA else 0.5
+        self.assert_images_similar(ax=ax, tol=tol)
 
     @pytest.mark.skipif(nltk is None, reason="test requires nltk")
     def test_word_tagged(self):
