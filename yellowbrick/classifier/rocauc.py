@@ -24,6 +24,7 @@ import numpy as np
 from scipy import interp
 from sklearn.metrics import auc, roc_curve
 from sklearn.preprocessing import label_binarize
+from sklearn.utils.multiclass import type_of_target
 
 from yellowbrick.exceptions import ModelError
 from yellowbrick.style.palettes import LINE_COLOR
@@ -34,6 +35,10 @@ from yellowbrick.classifier.base import ClassificationScoreVisualizer
 # Dictionary keys for ROCAUC
 MACRO = "macro"
 MICRO = "micro"
+
+# Target Type Constants
+BINARY = "binary"
+MULTICLASS = "multiclass"
 
 
 ##########################################################################
@@ -192,6 +197,27 @@ class ROCAUC(ClassificationScoreVisualizer):
         # Set the visual parameters for ROCAUC
         self.set_params(micro=micro, macro=macro, per_class=per_class)
 
+    def fit(self, X, y=None):
+        """
+        Fit the classification model.
+        """
+        # The target determines what kind of estimator is fit
+        ttype = type_of_target(y)
+        if ttype.startswith(MULTICLASS):
+            self.target_type_ = MULTICLASS
+        elif ttype.startswith(BINARY):
+            self.target_type_ = BINARY
+        else:
+            raise YellowbrickValueError(
+                (
+                    "{} does not support target type '{}', "
+                    "please provide a binary or multiclass single-output target"
+                ).format(self.__class__.__name__, ttype)
+            )
+
+        # Fit the model and return self
+        return super(ROCAUC, self).fit(X, y)
+
     def score(self, X, y=None):
         """
         Generates the predicted target values using the Scikit-Learn
@@ -217,27 +243,14 @@ class ROCAUC(ClassificationScoreVisualizer):
         # Compute the predictions for the test data
         y_pred = self._get_y_scores(X)
 
-        # Note: In the above, _get_y_scores calls either a decision_function or
-        # predict_proba, which should return a 2D array. But in a binary
-        # classification using an estimator with only a decision_function, y_pred
-        # will instead be 1D, meaning only one curve can be plotted. In this case,
-        # we set the _binary_decision attribute to True to ensure only one curve is
-        # computed and plotted later on.
-        if y_pred.ndim == 1:
-            self._binary_decision = True
-
-            # Raise an error if it's a binary decision and user has set micro,
-            # macro, or per_class to True
-            if self.micro or self.macro or self.per_class:
+        if self.target_type_ == BINARY:
+            # If it's binary classification, to draw micro or macro curves per_class must be True
+            if (self.micro or self.macro) and not self.per_class:
                 raise ModelError(
-                    "Micro, macro, and per-class scores are not defined for "
-                    "binary classification for estimators with only "
-                    "decision_function methods; set micro, macro, and "
-                    "per-class params to False."
+                    "no curves will be drawn; set per_class=True or micro=False and macro=False."
                 )
-        else:
-            self._binary_decision = False
-            # If it's not a binary decision, at least one of micro, macro, or
+        if self.target_type_ == MULTICLASS:
+            # If it's multiclass classification, at least one of micro, macro, or
             # per_class must be True
             if not self.micro and not self.macro and not self.per_class:
                 raise YellowbrickValueError(
@@ -255,14 +268,45 @@ class ROCAUC(ClassificationScoreVisualizer):
         self.roc_auc = dict()
 
         # If the decision is binary, compute the ROC curve and ROC area
-        if self._binary_decision is True:
-            self.fpr[0], self.tpr[0], _ = roc_curve(y, y_pred)
+        if self.target_type_ is BINARY and not self.per_class:
+            if len(y_pred.shape) == 2 and y_pred.shape[1] == 2:
+                # predict_proba returns array of shape (n, 2), so use
+                # probability of class 1 to compute ROC
+                self.fpr[0], self.tpr[0], _ = roc_curve(y, y_pred[:,1])
+            else:
+                # decision_function returns array of shape (n,)
+                self.fpr[0], self.tpr[0], _ = roc_curve(y, y_pred)
             self.roc_auc[0] = auc(self.fpr[0], self.tpr[0])
+
+        elif self.target_type_ is BINARY and self.per_class:
+            # draw a curve for class 1
+            if len(y_pred.shape) == 2 and y_pred.shape[1] == 2:
+                # predict_proba returns array of shape (n, 2), so use
+                # probability of class 1 to compute ROC
+                self.fpr[1], self.tpr[1], _ = roc_curve(y, y_pred[:,1])
+            else:
+                # decision_function returns array of shape (n,)
+                self.fpr[1], self.tpr[1], _ = roc_curve(y, y_pred)
+            self.roc_auc[1] = auc(self.fpr[1], self.tpr[1])
+
+            # draw a curve for class 0
+            if len(y_pred.shape) == 2 and y_pred.shape[1] == 2:
+                # predict_proba returns array of shape (n, 2), so use
+                # probability of class 0 to compute ROC
+                self.fpr[0], self.tpr[0], _ = roc_curve(1-y, y_pred[:,0])
+            else:
+                # decision_function returns array of shape (n,).
+                # To draw a ROC curve for class 0 we swap the classes 0 and 1 in y
+                # and reverse classifiers predictions y_pred.
+                self.fpr[0], self.tpr[0], _ = roc_curve(1-y, -y_pred)
+            self.roc_auc[0] = auc(self.fpr[0], self.tpr[0])
+
         else:
             # Otherwise compute the ROC curve and ROC area for each class
             for i, c in enumerate(classes):
                 self.fpr[i], self.tpr[i], _ = roc_curve(y, y_pred[:, i], pos_label=c)
                 self.roc_auc[i] = auc(self.fpr[i], self.tpr[i])
+
 
         # Compute micro average
         if self.micro:
@@ -298,7 +342,7 @@ class ROCAUC(ClassificationScoreVisualizer):
         n_classes = len(colors)
 
         # If it's a binary decision, plot the single ROC curve
-        if self._binary_decision is True:
+        if self.target_type_ == BINARY and not self.per_class:
             self.ax.plot(
                 self.fpr[0],
                 self.tpr[0],
