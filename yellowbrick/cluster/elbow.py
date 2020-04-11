@@ -309,7 +309,7 @@ class KElbowVisualizer(ClusteringScoreVisualizer):
 
             # Set the k value and fit the model
             self.estimator.set_params(n_clusters=k)
-            self.estimator.fit(X)
+            self.estimator.fit(X, **kwargs)
 
             # Append the time and score to our plottable metrics
             self.k_timers_.append(time.time() - start)
