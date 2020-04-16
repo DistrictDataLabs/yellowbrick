@@ -281,6 +281,32 @@ class TestResidualsPlot(VisualTestCase):
         self.assert_images_similar(visualizer)
 
     @pytest.mark.xfail(
+        IS_WINDOWS_OR_CONDA,
+        reason="font rendering different in OS and/or Python; see #892",
+    )
+    def test_residuals_plot_QQ_plot(self):
+        """
+        Image similarity of residuals and Q-Q plot on random data with OLS
+        """
+        _, ax = plt.subplots()
+
+        visualizer = ResidualsPlot(LinearRegression(), hist=False,
+                                                        qqplot=True, ax=ax)
+
+        visualizer.fit(self.data.X.train, self.data.y.train)
+        visualizer.score(self.data.X.test, self.data.y.test)
+
+        self.assert_images_similar(visualizer)
+
+    def test_either_hist_or_QQ_plot(self):
+        """
+        Setting both hist=True and qqplot=True raises exception.
+        """
+        with pytest.raises(YellowbrickValueError,
+                match="Set either hist or qqplot to False"):
+            ResidualsPlot(LinearRegression(), hist=True, qqplot=True)
+
+    @pytest.mark.xfail(
         sys.platform == "win32", reason="images not close on windows (RMSE=32)"
     )
     @pytest.mark.filterwarnings("ignore:Stochastic Optimizer")

@@ -21,6 +21,8 @@ Regressor visualizers that score residuals: prediction vs. actual data.
 
 import matplotlib.pyplot as plt
 
+from scipy.stats import probplot
+
 try:
     # Only available in Matplotlib >= 2.0.2
     from mpl_toolkits.axes_grid1 import make_axes_locatable
@@ -434,6 +436,12 @@ class ResidualsPlot(RegressionScoreVisualizer):
         If set to 'density', the probability density function will be plotted.
         If set to True or 'frequency' then the frequency will be plotted.
 
+    qqplot : {True, False}, default: False
+        Draw a Q-Q plot on the right side of the figure, comparing the quantiles
+        of the residuals against quantiles of a standard normal distribution.
+        Q-Q plot and histogram of residuals can not be plotted simultaneously,
+        either `hist` or `qqplot` has to be set to False.
+
     train_color : color, default: 'b'
         Residuals for training data are ploted with this color but also
         given an opacity of 0.5 to ensure that the test data residuals
@@ -502,6 +510,7 @@ class ResidualsPlot(RegressionScoreVisualizer):
         model,
         ax=None,
         hist=True,
+        qqplot=False,
         train_color="b",
         test_color="g",
         line_color=LINE_COLOR,
@@ -531,8 +540,24 @@ class ResidualsPlot(RegressionScoreVisualizer):
                 "False, 'density', or 'frequency'".format(hist)
             )
 
+        self.qqplot = qqplot
+        if self.qqplot not in {True, False}:
+            raise YellowbrickValueError(
+                "'{}' is an invalid argument for qqplot, use True, "
+                " or False".format(hist)
+            )
+
+        if self.hist in {True, "density", "frequency"} and self.qqplot in {True}:
+            raise YellowbrickValueError(
+                "Set either hist or qqplot to False, can not plot "
+                "both of them simultaneously."
+            )
+
         if self.hist in {True, "density", "frequency"}:
             self.hax  # If hist is True, test the version availability
+
+        if self.qqplot in {True}:
+            self.qqax  # If qqplot is True, test the version availability
 
         # Store labels and colors for the legend ordered by call
         self._labels, self._colors = [], []
@@ -559,6 +584,26 @@ class ResidualsPlot(RegressionScoreVisualizer):
         hax.grid(False, axis="x")
 
         return hax
+
+    @memoized
+    def qqax(self):
+        """
+        Returns the Q-Q plot axes, creating it only on demand.
+        """
+        if make_axes_locatable is None:
+            raise YellowbrickValueError(
+                (
+                    "residuals histogram requires matplotlib 2.0.2 or greater "
+                    "please upgrade matplotlib or set qqplot=False on the visualizer"
+                )
+            )
+
+        divider = make_axes_locatable(self.ax)
+
+        qqax = divider.append_axes("right", size=2, pad=0.25, sharey=self.ax)
+        qqax.yaxis.tick_right()
+
+        return qqax
 
     def fit(self, X, y, **kwargs):
         """
@@ -670,6 +715,12 @@ class ResidualsPlot(RegressionScoreVisualizer):
                 residuals, bins=50, orientation="horizontal", density=True, color=color
             )
 
+        # Add residuals histogram
+        if self.qqplot in {True}:
+            osm, osr = probplot(residuals, dist='norm', fit=False)
+
+            self.qqax.scatter(osm, osr, c=color, alpha=alpha, label=label)
+
         # Ensure the current axes is always the main residuals axes
         plt.sca(self.ax)
         return self.ax
@@ -705,6 +756,12 @@ class ResidualsPlot(RegressionScoreVisualizer):
             self.hax.axhline(y=0, c=self.colors["line"])
             self.hax.set_xlabel("Distribution")
 
+        # Finalize the histogram axes
+        if self.qqplot:
+            self.qqax.set_title("Q-Q plot")
+            self.qqax.set_xlabel("Theoretical quantiles")
+            self.qqax.set_ylabel("Observed quantiles")
+
 
 ##########################################################################
 ## Quick Method
@@ -719,6 +776,7 @@ def residuals_plot(
     y_test=None,
     ax=None,
     hist=True,
+    qqplot=False,
     train_color="b",
     test_color="g",
     line_color=LINE_COLOR,
@@ -772,6 +830,12 @@ def residuals_plot(
         If set to 'density', the probability density function will be plotted.
         If set to True or 'frequency' then the frequency will be plotted.
 
+    qqplot : {True, False}, default: False
+        Draw a Q-Q plot on the right side of the figure, comparing the quantiles
+        of the residuals against quantiles of a standard normal distribution.
+        Q-Q plot and histogram of residuals can not be plotted simultaneously,
+        either `hist` or `qqplot` has to be set to False.
+
     train_color : color, default: 'b'
         Residuals for training data are ploted with this color but also
         given an opacity of 0.5 to ensure that the test data residuals
@@ -822,6 +886,7 @@ def residuals_plot(
         model=model,
         ax=ax,
         hist=hist,
+        qqplot=qqplot,
         train_color=train_color,
         test_color=test_color,
         line_color=line_color,
