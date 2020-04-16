@@ -90,9 +90,17 @@ class ROCAUC(ClassificationScoreVisualizer):
 
     per_class : bool, default: True
         Plot the ROC curves for each individual class. This should be set
-        to false if only the macro or micro average curves are required. Per-
-        class classification is not defined for binary classification problems
-        with estimators with only a decision_function method.
+        to false if only the macro or micro average curves are required. For true
+        binary classifiers, setting per_class=False will plot the positive class
+        ROC curve, and per_class=True will use ``1-P(1)`` to compute the curve of
+        the negative class if only a decision_function method exists on the estimator.
+
+    binary : bool, default: False
+        This argument quickly resets the visualizer for true binary classification
+        by updating the micro, macro, and per_class arguments to False (do not use
+        in conjunction with those other arguments). Note that this is not a true
+        hyperparameter to the visualizer, it just collects other parameters into
+        a single, simpler argument.
 
     classes : list of str, defult: None
         The class labels to use for the legend ordered by the index of the sorted
@@ -136,6 +144,9 @@ class ROCAUC(ClassificationScoreVisualizer):
         generally better. For classifiers, this score is usually accuracy, but
         if micro or macro is specified this returns an F1 score.
 
+    target_type_ : string
+        Specifies if the detected classification target was binary or multiclass.
+
     Notes
     -----
     ROC curves are typically used in binary classification, and in fact the
@@ -178,6 +189,7 @@ class ROCAUC(ClassificationScoreVisualizer):
         micro=True,
         macro=True,
         per_class=True,
+        binary=False,
         classes=None,
         encoder=None,
         is_fitted="auto",
@@ -195,7 +207,12 @@ class ROCAUC(ClassificationScoreVisualizer):
         )
 
         # Set the visual parameters for ROCAUC
-        self.set_params(micro=micro, macro=macro, per_class=per_class)
+        # NOTE: the binary flag breaks our API since it's really just a meta parameter
+        # for micro, macro, and per_class. We knew this going into it, but did it anyway.
+        if binary:
+            self.set_params(micro=False, macro=False, per_class=False)
+        else:
+            self.set_params(micro=micro, macro=macro, per_class=per_class)
 
     def fit(self, X, y=None):
         """
@@ -267,19 +284,20 @@ class ROCAUC(ClassificationScoreVisualizer):
         self.tpr = dict()
         self.roc_auc = dict()
 
-        # If the decision is binary, compute the ROC curve and ROC area
+        # If the decision is binary draw only ROC curve for the postitive class
         if self.target_type_ is BINARY and not self.per_class:
+            # In this case predict_proba returns an array of shape (n, 2) which
+            # specifies the probabilities of both the negative and positive classes.
             if len(y_pred.shape) == 2 and y_pred.shape[1] == 2:
-                # predict_proba returns array of shape (n, 2), so use
-                # probability of class 1 to compute ROC
-                self.fpr[0], self.tpr[0], _ = roc_curve(y, y_pred[:,1])
+                self.fpr[BINARY], self.tpr[BINARY], _ = roc_curve(y, y_pred[:,1])
             else:
-                # decision_function returns array of shape (n,)
-                self.fpr[0], self.tpr[0], _ = roc_curve(y, y_pred)
-            self.roc_auc[0] = auc(self.fpr[0], self.tpr[0])
+                # decision_function returns array of shape (n,), so plot it directly
+                self.fpr[BINARY], self.tpr[BINARY], _ = roc_curve(y, y_pred)
+            self.roc_auc[BINARY] = auc(self.fpr[BINARY], self.tpr[BINARY])
 
+        # Per-class binary decisions may have to have the negative class curve computed
         elif self.target_type_ is BINARY and self.per_class:
-            # draw a curve for class 1
+            # draw a curve for class 1 (the positive class)
             if len(y_pred.shape) == 2 and y_pred.shape[1] == 2:
                 # predict_proba returns array of shape (n, 2), so use
                 # probability of class 1 to compute ROC
@@ -289,7 +307,7 @@ class ROCAUC(ClassificationScoreVisualizer):
                 self.fpr[1], self.tpr[1], _ = roc_curve(y, y_pred)
             self.roc_auc[1] = auc(self.fpr[1], self.tpr[1])
 
-            # draw a curve for class 0
+            # draw a curve for class 0 (the negative class)
             if len(y_pred.shape) == 2 and y_pred.shape[1] == 2:
                 # predict_proba returns array of shape (n, 2), so use
                 # probability of class 0 to compute ROC
@@ -344,9 +362,9 @@ class ROCAUC(ClassificationScoreVisualizer):
         # If it's a binary decision, plot the single ROC curve
         if self.target_type_ == BINARY and not self.per_class:
             self.ax.plot(
-                self.fpr[0],
-                self.tpr[0],
-                label="ROC for binary decision, AUC = {:0.2f}".format(self.roc_auc[0]),
+                self.fpr[BINARY],
+                self.tpr[BINARY],
+                label="ROC for binary decision, AUC = {:0.2f}".format(self.roc_auc[BINARY]),
             )
 
         # If per-class plotting is requested, plot ROC curves for each class
@@ -503,6 +521,7 @@ def roc_auc(
     micro=True,
     macro=True,
     per_class=True,
+    binary=False,
     classes=None,
     encoder=None,
     is_fitted="auto",
@@ -538,7 +557,7 @@ def roc_auc(
 
     X_train : array-like, 2D
         The table of instance data or independent variables that describe the outcome of
-        the dependent variable, y. Used to fit the visualizer and also to score the 
+        the dependent variable, y. Used to fit the visualizer and also to score the
         visualizer if test splits are not specified.
 
     y_train : array-like, 2D
@@ -548,9 +567,9 @@ def roc_auc(
     X_test: array-like, 2D, default: None
         The table of instance data or independent variables that describe the outcome of
         the dependent variable, y. Used to score the visualizer if specified.
-    
+
     y_test: array-like, 1D, default: None
-        The vector of target data or the dependent variable predicted by X. 
+        The vector of target data or the dependent variable predicted by X.
         Used to score the visualizer if specified.
 
     ax : matplotlib Axes, default: None
@@ -577,9 +596,17 @@ def roc_auc(
 
     per_class : bool, default: True
         Plot the ROC curves for each individual class. This should be set
-        to false if only the macro or micro average curves are required. Per-
-        class classification is not defined for binary classification problems
-        with estimators with only a decision_function method.
+        to false if only the macro or micro average curves are required. For true
+        binary classifiers, setting per_class=False will plot the positive class
+        ROC curve, and per_class=True will use ``1-P(1)`` to compute the curve of
+        the negative class if only a decision_function method exists on the estimator.
+
+    binary : bool, default: False
+        This argument quickly resets the visualizer for true binary classification
+        by updating the micro, macro, and per_class arguments to False (do not use
+        in conjunction with those other arguments). Note that this is not a true
+        hyperparameter to the visualizer, it just collects other parameters into
+        a single, simpler argument.
 
     classes : list of str, defult: None
         The class labels to use for the legend ordered by the index of the sorted
@@ -655,6 +682,7 @@ def roc_auc(
         micro=micro,
         macro=macro,
         per_class=per_class,
+        binary=binary,
         classes=classes,
         encoder=encoder,
         is_fitted=is_fitted,
@@ -670,7 +698,7 @@ def roc_auc(
         visualizer.score(X_test, y_test)
     else:
         visualizer.score(X_train,  y_train)
-    
+
     if show:
         visualizer.show()
     else:

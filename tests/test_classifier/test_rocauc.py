@@ -26,8 +26,8 @@ from unittest.mock import patch
 from tests.base import VisualTestCase
 
 from yellowbrick.classifier.rocauc import *
-from yellowbrick.datasets import load_occupancy
 from yellowbrick.exceptions import ModelError
+from yellowbrick.datasets import load_occupancy
 
 from sklearn.svm import LinearSVC
 from sklearn.naive_bayes import GaussianNB
@@ -41,10 +41,10 @@ try:
 except ImportError:
     pd = None
 
+
 ##########################################################################
 ## Fixtures
 ##########################################################################
-
 
 class FakeClassifier(BaseEstimator, ClassifierMixin):
     """
@@ -124,9 +124,9 @@ class TestROCAUC(VisualTestCase):
         visualizer.finalize()
         self.assert_images_similar(visualizer, tol=0.1, windows_tol=10)
 
-    def test_binary_probability_decision_per_class_False(self):
+    def test_binary_probability_decision_single_curve(self):
         """
-        Test ROCAUC with a binary classifier with both decision & predict_proba with per_class=False
+        Test ROCAUC binary classifier with both decision & predict_proba with per_class=False
         """
         # Create and fit the visualizer
         visualizer = ROCAUC(AdaBoostClassifier(), micro=False, macro=False, per_class=False)
@@ -173,7 +173,7 @@ class TestROCAUC(VisualTestCase):
         visualizer.finalize()
         self.assert_images_similar(visualizer, tol=10)
 
-    def test_binary_decision_per_class_True(self):
+    def test_binary_decision_per_class(self):
         """
         Test ROCAUC with a binary classifier with a decision_function
         """
@@ -198,7 +198,6 @@ class TestROCAUC(VisualTestCase):
         # NOTE: increased tolerance for both AppVeyor and Travis CI tests
         visualizer.finalize()
         self.assert_images_similar(visualizer, tol=10)
-
 
     def test_binary_micro_error(self):
         """
@@ -244,6 +243,42 @@ class TestROCAUC(VisualTestCase):
         # Compare the images
         visualizer.finalize()
         self.assert_images_similar(visualizer, tol=0.1, windows_tol=10)
+
+    def test_rocauc_no_classes(self):
+        """
+        Test ROCAUC without per-class curves
+        """
+        # Create and fit the visualizer
+        visualizer = ROCAUC(GaussianNB(), per_class=False)
+        visualizer.fit(self.multiclass.X.train, self.multiclass.y.train)
+
+        # Score the visualizer (should be the micro average)
+        s = visualizer.score(self.multiclass.X.test, self.multiclass.y.test)
+        assert s == pytest.approx(0.77303, abs=1e-4)
+
+        # Assert that there still are per-class scores
+        for c in (0, 1):
+            assert c in visualizer.fpr
+            assert c in visualizer.tpr
+            assert c in visualizer.roc_auc
+
+        # Compare the images
+        visualizer.finalize()
+        self.assert_images_similar(visualizer, tol=0.1, windows_tol=10)
+
+    def test_rocauc_no_curves(self):
+        """
+        Test ROCAUC with no curves specified at all
+        """
+        # Create and fit the visualizer
+        visualizer = ROCAUC(
+            GaussianNB(), per_class=False, macro=False, micro=False
+        )
+        visualizer.fit(self.multiclass.X.train, self.multiclass.y.train)
+
+        # Attempt to score the visualizer
+        with pytest.raises(YellowbrickValueError, match="no curves will be drawn"):
+            visualizer.score(self.multiclass.X.test, self.multiclass.y.test)
 
     def test_rocauc_quickmethod(self):
         """
@@ -491,3 +526,17 @@ class TestROCAUC(VisualTestCase):
             oz = ROCAUC(model, classes=classes, is_fitted=False)
             oz.fit(X, y)
             mockfit.assert_called_once_with(X, y)
+
+    def test_binary_meta_param(self):
+        """
+        Test the binary meta param with ROCAUC
+        """
+        oz = ROCAUC(GaussianNB(), binary=False)
+        assert oz.micro is True
+        assert oz.macro is True
+        assert oz.per_class is True
+
+        oz = ROCAUC(GaussianNB(), binary=True)
+        assert oz.micro is False
+        assert oz.macro is False
+        assert oz.per_class is False
