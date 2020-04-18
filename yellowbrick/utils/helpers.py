@@ -19,6 +19,7 @@ Helper functions and generic utilities for use in Yellowbrick code.
 ##########################################################################
 
 import re
+import inspect
 import sklearn
 import numpy as np
 
@@ -183,6 +184,28 @@ def is_monotonic(a, increasing=True):
     if increasing:
         return np.all(a[1:] >= a[:-1], axis=0)
     return np.all(a[1:] <= a[:-1], axis=0)
+
+
+def get_param_names(method):
+    """
+    Returns a list of keyword-only parameter names that may be
+    passed into method.
+
+    Parameters
+    ----------
+    method : function
+        The method for which to return keyword-only parameters.
+
+    Returns
+    -------
+    parameters : list
+        A list of keyword-only parameter names for method.
+    """
+    signature = inspect.signature(method)
+    parameters = [p for p in signature.parameters.values()
+                    if p.name != 'self' and p.kind != p.VAR_KEYWORD]
+    
+    return sorted([p.name for p in parameters])
 
 
 ##########################################################################
