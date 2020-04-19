@@ -400,6 +400,34 @@ class TestKElbowVisualizer(VisualTestCase):
 
         self.assert_images_similar(visualizer)
 
+    def test_sample_weights(self):
+        """
+        Test that passing in sample weights correctly influences the clusterer's fit
+        """
+        seed = 1234
+
+        # original data has 5 clusters
+        X, y = make_blobs(n_samples=[5, 30, 30, 30, 30], n_features=5, random_state=seed, shuffle=False)
+
+        visualizer = KElbowVisualizer(
+            KMeans(random_state=seed), k=(2, 12), timings=False
+        )
+        visualizer.fit(X)
+        visualizer.finalize()
+        assert visualizer.elbow_value_ == 5
+
+        # weights should push elbow down to 4
+        weights = np.concatenate(
+           [
+                np.ones(5) * 0.0001,
+                np.ones(120),
+           ]
+        )
+        
+        visualizer.fit(X, sample_weight=weights)
+        visualizer.finalize()
+        assert visualizer.elbow_value_ == 4
+
     @pytest.mark.xfail(reason="images not close due to timing lines")
     def test_quick_method(self):
         """
@@ -414,3 +442,13 @@ class TestKElbowVisualizer(VisualTestCase):
         assert isinstance(oz, KElbowVisualizer)
 
         self.assert_images_similar(oz)
+
+    def test_quick_method_params(self):
+        """
+        Test the quick method correctly consumes the user-provided parameters
+        """
+        X, y = make_blobs(centers=3)
+        custom_title = "My custom title"
+        model = KMeans(3, random_state=13)
+        oz = kelbow_visualizer(model, X, sample_weight=np.ones(X.shape[0]), title=custom_title)
+        assert oz.title == custom_title
