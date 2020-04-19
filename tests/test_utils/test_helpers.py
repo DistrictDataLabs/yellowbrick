@@ -173,6 +173,24 @@ class TestHelpers(object):
         assert check_fitted(model, is_fitted_by=True) is True
         assert check_fitted(model, is_fitted_by=False) is False
 
+    @pytest.mark.parametrize(
+        "estimator",
+        [SVC, SVR, Ridge, KMeans, RidgeCV, GaussianNB, MiniBatchKMeans, LinearRegression],
+        ids=["SVC", "SVR", "Ridge", "KMeans", "RidgeCV", "GaussianNB", "MiniBatchKMeans", "LinearRegression"],
+    )
+    def test_get_param_names(self, estimator):
+        """
+        Assert we successfully extract the parameters from sklearn estimators
+        """
+        assert "sample_weight" in get_param_names(estimator.fit)
+
+    def test_get_param_names_type(self):
+        """
+        Assert a type error is raised when passing a non-method
+        """
+        with pytest.raises(TypeError):
+            get_param_names('test')
+
 
 ##########################################################################
 ## Numeric Function Tests

@@ -201,7 +201,11 @@ def get_param_names(method):
     parameters : list
         A list of keyword-only parameter names for method.
     """
-    signature = inspect.signature(method)
+    try:
+        signature = inspect.signature(method)
+    except (ValueError, TypeError) as e:
+        raise e
+
     parameters = [p for p in signature.parameters.values()
                     if p.name != 'self' and p.kind != p.VAR_KEYWORD]
     
