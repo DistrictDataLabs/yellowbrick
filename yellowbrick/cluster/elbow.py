@@ -28,7 +28,7 @@ from sklearn.metrics import silhouette_score
 from sklearn.preprocessing import LabelEncoder
 from sklearn.metrics.pairwise import pairwise_distances
 
-from yellowbrick.utils import KneeLocator
+from yellowbrick.utils import KneeLocator, get_param_names
 from yellowbrick.style.palettes import LINE_COLOR
 from yellowbrick.cluster.base import ClusteringScoreVisualizer
 from yellowbrick.exceptions import YellowbrickValueError, YellowbrickWarning
@@ -309,7 +309,7 @@ class KElbowVisualizer(ClusteringScoreVisualizer):
 
             # Set the k value and fit the model
             self.estimator.set_params(n_clusters=k)
-            self.estimator.fit(X)
+            self.estimator.fit(X, **kwargs)
 
             # Append the time and score to our plottable metrics
             self.k_timers_.append(time.time() - start)
@@ -415,6 +415,7 @@ KElbow = KElbowVisualizer
 ## Quick Method
 ##########################################################################
 
+
 def kelbow_visualizer(
     model,
     X,
@@ -487,6 +488,13 @@ def kelbow_visualizer(
     viz : KElbowVisualizer
         The kelbow visualizer, fitted and finalized.
     """
+    klass = type(model)
+
+    # figure out which kwargs correspond to fit method
+    fit_params = get_param_names(klass.fit)
+
+    fit_kwargs = {key: kwargs.pop(key) for key in fit_params if key in kwargs}
+
     oz = KElbow(
         model,
         ax=ax,
@@ -496,7 +504,7 @@ def kelbow_visualizer(
         locate_elbow=locate_elbow,
         **kwargs
     )
-    oz.fit(X, y)
+    oz.fit(X, y, **fit_kwargs)
 
     if show:
         oz.show()
