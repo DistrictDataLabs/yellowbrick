@@ -175,8 +175,26 @@ class TestHelpers(object):
 
     @pytest.mark.parametrize(
         "estimator",
-        [SVC, SVR, Ridge, KMeans, RidgeCV, GaussianNB, MiniBatchKMeans, LinearRegression],
-        ids=["SVC", "SVR", "Ridge", "KMeans", "RidgeCV", "GaussianNB", "MiniBatchKMeans", "LinearRegression"],
+        [
+            SVC,
+            SVR,
+            Ridge,
+            KMeans,
+            RidgeCV,
+            GaussianNB,
+            MiniBatchKMeans,
+            LinearRegression,
+        ],
+        ids=[
+            "SVC",
+            "SVR",
+            "Ridge",
+            "KMeans",
+            "RidgeCV",
+            "GaussianNB",
+            "MiniBatchKMeans",
+            "LinearRegression",
+        ],
     )
     def test_get_param_names(self, estimator):
         """
@@ -189,7 +207,7 @@ class TestHelpers(object):
         Assert a type error is raised when passing a non-method
         """
         with pytest.raises(TypeError):
-            get_param_names('test')
+            get_param_names("test")
 
 
 ##########################################################################

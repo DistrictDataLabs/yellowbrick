@@ -206,9 +206,12 @@ def get_param_names(method):
     except (ValueError, TypeError) as e:
         raise e
 
-    parameters = [p for p in signature.parameters.values()
-                    if p.name != 'self' and p.kind != p.VAR_KEYWORD]
-    
+    parameters = [
+        p
+        for p in signature.parameters.values()
+        if p.name != "self" and p.kind != p.VAR_KEYWORD
+    ]
+
     return sorted([p.name for p in parameters])
 
 

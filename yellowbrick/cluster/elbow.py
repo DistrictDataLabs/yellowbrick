@@ -415,6 +415,7 @@ KElbow = KElbowVisualizer
 ## Quick Method
 ##########################################################################
 
+
 def kelbow_visualizer(
     model,
     X,
@@ -492,9 +493,7 @@ def kelbow_visualizer(
     # figure out which kwargs correspond to fit method
     fit_params = get_param_names(klass.fit)
 
-    fit_kwargs = {
-        key: kwargs.pop(key) for key in fit_params if key in kwargs
-    }
+    fit_kwargs = {key: kwargs.pop(key) for key in fit_params if key in kwargs}
 
     oz = KElbow(
         model,
