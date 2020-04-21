@@ -358,7 +358,7 @@ class KElbowVisualizer(ClusteringScoreVisualizer):
         # Plot the silhouette score against k
         self.ax.plot(self.k_values_, self.k_scores_, marker="D")
         if self.locate_elbow is True and self.elbow_value_ is not None:
-            elbow_label = "$elbow at k={}, score={:0.3f}$".format(
+            elbow_label = "elbow at $k={}$, $score={:0.3f}$".format(
                 self.elbow_value_, self.elbow_score_
             )
             self.ax.axvline(
@@ -398,7 +398,7 @@ class KElbowVisualizer(ClusteringScoreVisualizer):
 
         # set the legend if locate_elbow=True
         if self.locate_elbow is True and self.elbow_value_ is not None:
-            self.ax.legend(loc="best", fontsize="medium")
+            self.ax.legend(loc="best", fontsize="medium", frameon=True)
 
         # Set the second y axis labels
         if self.timings:
