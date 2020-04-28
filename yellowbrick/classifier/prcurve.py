@@ -80,13 +80,17 @@ class PrecisionRecallCurve(ClassificationScoreVisualizer):
         field to filter the visualization for specific classes. For more advanced
         usage specify an encoder rather than class labels.
 
-    color : optional list or tuple of colors to colorize the curves when
-        `per_class=True`, default: None. Use either color to colorize the curves
-        on a per class basis or colormap to color them on a continuous scale.
+    color_names : list of strings,  default: None
+        An optional list or tuple of colors to colorize the curves when
+        ``per_class=True``. If ``per_class=False``, this parameter will
+        be ignored. If both ``color_names`` and ``colormap`` are provided,
+        ``colormap`` will be ignored.
 
-    colormap : optional string or matplotlib cmap to colorize curves, default: None
-        Use either color to colorize the curves on a per class basis or
-        colormap to color them on a continuous scale.
+    colormap : string or Matplotlib colormap, default: None
+        An optional string or Matplotlib colormap to colorize the curves
+        when ``per_class=True``. If ``per_class=False``, this parameter
+        will be ignored. If both ``color_names`` and ``colormap`` are provided,
+        ``colormap`` will be ignored.
 
     encoder : dict or LabelEncoder, default: None
         A mapping of classes to human readable labels. Often there is a mismatch
@@ -196,7 +200,7 @@ class PrecisionRecallCurve(ClassificationScoreVisualizer):
         model,
         ax=None,
         classes=None,
-        color=None,
+        color_names=None,
         colormap=None,
         encoder=None,
         fill_area=True,
@@ -228,7 +232,7 @@ class PrecisionRecallCurve(ClassificationScoreVisualizer):
             micro=micro,
             iso_f1_curves=iso_f1_curves,
             iso_f1_values=set(iso_f1_values),
-            color=color,
+            color_names=color_names,
             colormap=colormap,
             per_class=per_class,
             fill_opacity=fill_opacity,
@@ -347,14 +351,13 @@ class PrecisionRecallCurve(ClassificationScoreVisualizer):
         """
         Draw the precision-recall curves in the multiclass case
         """
-        # TODO: handle colors better with a mapping and user input
         if self.per_class:
 
             # set the colors
             color_values = resolve_colors(
                 n_colors=len(self.classes_),
                 colormap=self.colormap,
-                colors=self.color
+                colors=self.color_names
             )
 
             colors = dict(zip(self.classes_, color_values))
@@ -381,7 +384,7 @@ class PrecisionRecallCurve(ClassificationScoreVisualizer):
             recall, precision, alpha=self.line_opacity, where="post",
             label=label, color=color
         )
-        if self.fill_area:
+        if self.fill_area and not self.per_class:
             self.ax.fill_between(
                 recall, precision, step="post", alpha=self.fill_opacity,
                 color=color
@@ -408,8 +411,7 @@ class PrecisionRecallCurve(ClassificationScoreVisualizer):
         self.ax.set_ylabel("Precision")
         self.ax.set_xlabel("Recall")
 
-        if self.per_class:
-            self.ax.grid(False)
+        self.ax.grid(False)
 
 
     def _get_y_scores(self, X):
