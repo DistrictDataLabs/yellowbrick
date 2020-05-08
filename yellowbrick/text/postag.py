@@ -564,6 +564,9 @@ class PosTagVisualizer(TextVisualizer):
             )
         )
 
+        # Call tight layout to maximize readability
+        self.fig.tight_layout()
+
     def show(self, outpath=None, **kwargs):
         if outpath is not None:
             kwargs["bbox_inches"] = kwargs.get("bbox_inches", "tight")
