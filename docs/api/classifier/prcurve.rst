@@ -48,7 +48,7 @@ The base case for precision-recall curves is the binary classification case, and
 Multi-Label Classification
 --------------------------
 
-To support multi-label classification, the estimator is wrapped in a `OneVsRestClassifier <http://scikit-learn.org/stable/modules/generated/sklearn.multiclass.OneVsRestClassifier.html>`_ to produce binary comparisons for each class (e.g. the positive case is the class and the negative case is any other class). The precision-recall curve can then computed as the micro-average of the precision and recall for all classes, or individual curves can be plotted for each class (by setting ``per_class=True``:
+To support multi-label classification, the estimator is wrapped in a `OneVsRestClassifier <http://scikit-learn.org/stable/modules/generated/sklearn.multiclass.OneVsRestClassifier.html>`_ to produce binary comparisons for each class (e.g. the positive case is the class and the negative case is any other class). The precision-recall curve can then be computed as the micro-average of the precision and recall for all classes (by setting ``micro=True``), or individual curves can be plotted for each class (by setting ``per_class=True``):
 
 .. plot::
     :context: close-figs
