@@ -294,7 +294,7 @@ class ROCAUC(ClassificationScoreVisualizer):
         -------
         ax : the axis with the plotted figure
         """
-        colors = self.colors[0 : len(self.classes_)]
+        colors = self.class_colors_[0 : len(self.classes_)]
         n_classes = len(colors)
 
         # If it's a binary decision, plot the single ROC curve
@@ -323,7 +323,7 @@ class ROCAUC(ClassificationScoreVisualizer):
                 self.fpr[MICRO],
                 self.tpr[MICRO],
                 linestyle="--",
-                color=self.colors[len(self.classes_) - 1],
+                color=self.class_colors_[len(self.classes_) - 1],
                 label="micro-average ROC curve, AUC = {:0.2f}".format(
                     self.roc_auc["micro"]
                 ),
@@ -335,7 +335,7 @@ class ROCAUC(ClassificationScoreVisualizer):
                 self.fpr[MACRO],
                 self.tpr[MACRO],
                 linestyle="--",
-                color=self.colors[len(self.classes_) - 1],
+                color=self.class_colors_[len(self.classes_) - 1],
                 label="macro-average ROC curve, AUC = {:0.2f}".format(
                     self.roc_auc["macro"]
                 ),
@@ -494,7 +494,7 @@ def roc_auc(
 
     X_train : array-like, 2D
         The table of instance data or independent variables that describe the outcome of
-        the dependent variable, y. Used to fit the visualizer and also to score the 
+        the dependent variable, y. Used to fit the visualizer and also to score the
         visualizer if test splits are not specified.
 
     y_train : array-like, 2D
@@ -504,9 +504,9 @@ def roc_auc(
     X_test: array-like, 2D, default: None
         The table of instance data or independent variables that describe the outcome of
         the dependent variable, y. Used to score the visualizer if specified.
-    
+
     y_test: array-like, 1D, default: None
-        The vector of target data or the dependent variable predicted by X. 
+        The vector of target data or the dependent variable predicted by X.
         Used to score the visualizer if specified.
 
     ax : matplotlib Axes, default: None
@@ -626,7 +626,7 @@ def roc_auc(
         visualizer.score(X_test, y_test)
     else:
         visualizer.score(X_train,  y_train)
-    
+
     if show:
         visualizer.show()
     else:

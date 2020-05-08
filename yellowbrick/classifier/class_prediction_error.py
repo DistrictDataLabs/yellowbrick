@@ -200,7 +200,7 @@ class ClassPredictionError(ClassificationScoreVisualizer):
             self.ax,
             labels=list(self.classes_),
             ticks=self.classes_,
-            colors=self.colors,
+            colors=self.class_colors_,
             legend_kws=legend_kws,
         )
         return self.ax

@@ -48,7 +48,7 @@ The base case for precision-recall curves is the binary classification case, and
 Multi-Label Classification
 --------------------------
 
-To support multi-label classification, the estimator is wrapped in a `OneVsRestClassifier <http://scikit-learn.org/stable/modules/generated/sklearn.multiclass.OneVsRestClassifier.html>`_ to produce binary comparisons for each class (e.g. the positive case is the class and the negative case is any other class). The Precision-Recall curve is then computed as the micro-average of the precision and recall for all classes:
+To support multi-label classification, the estimator is wrapped in a `OneVsRestClassifier <http://scikit-learn.org/stable/modules/generated/sklearn.multiclass.OneVsRestClassifier.html>`_ to produce binary comparisons for each class (e.g. the positive case is the class and the negative case is any other class). The precision-recall curve can then computed as the micro-average of the precision and recall for all classes, or individual curves can be plotted for each class (by setting ``per_class=True``:
 
 .. plot::
     :context: close-figs
@@ -68,7 +68,11 @@ To support multi-label classification, the estimator is wrapped in a `OneVsRestC
     X_train, X_test, y_train, y_test = tts(X, y, test_size=0.2, shuffle=True)
 
     # Create the visualizer, fit, score, and show it
-    viz = PrecisionRecallCurve(RandomForestClassifier(n_estimators=10))
+    viz = PrecisionRecallCurve(
+        RandomForestClassifier(n_estimators=10),
+        per_class=True,
+        cmap="Set1"
+    )
     viz.fit(X_train, y_train)
     viz.score(X_test, y_test)
     viz.show()
@@ -89,6 +93,8 @@ A more complex Precision-Recall curve can be computed, however, displaying the e
     # Load dataset and encode categorical variables
     X, y = load_game()
     X = OrdinalEncoder().fit_transform(X)
+
+    # Encode the target (we'll use the encoder to retrieve the class labels)
     encoder = LabelEncoder()
     y = encoder.fit_transform(y)
 
@@ -96,8 +102,12 @@ A more complex Precision-Recall curve can be computed, however, displaying the e
 
     # Create the visualizer, fit, score, and show it
     viz = PrecisionRecallCurve(
-        MultinomialNB(), per_class=True, iso_f1_curves=True,
-        fill_area=False, micro=False, classes=encoder.classes_
+        MultinomialNB(),
+        classes=encoder.classes_,
+        colors=["purple", "cyan", "blue"],
+        iso_f1_curves=True,
+        per_class=True,
+        micro=False
     )
     viz.fit(X_train, y_train)
     viz.score(X_test, y_test)
