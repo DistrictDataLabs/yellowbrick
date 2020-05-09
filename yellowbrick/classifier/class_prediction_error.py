@@ -230,6 +230,7 @@ class ClassPredictionError(ClassificationScoreVisualizer):
         # Ensure the legend fits on the figure
         self.fig.tight_layout(rect=[0, 0, 0.90, 1])
 
+
 ##########################################################################
 ## Quick Method
 ##########################################################################

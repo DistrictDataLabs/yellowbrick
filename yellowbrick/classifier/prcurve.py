@@ -17,6 +17,7 @@ Implements Precision-Recall curves for classification models.
 ## Imports
 ##########################################################################
 
+import warnings
 import numpy as np
 
 from sklearn.preprocessing import label_binarize
@@ -25,12 +26,11 @@ from sklearn.utils.multiclass import type_of_target
 from sklearn.metrics import average_precision_score
 from sklearn.metrics import precision_recall_curve as sk_precision_recall_curve
 
+from yellowbrick.style.colors import resolve_colors
+from yellowbrick.exceptions import YellowbrickWarning
 from yellowbrick.exceptions import ModelError, NotFitted
 from yellowbrick.exceptions import YellowbrickValueError
 from yellowbrick.classifier.base import ClassificationScoreVisualizer
-from yellowbrick.style.colors import resolve_colors
-
-import warnings
 
 
 # Target Type Constants
@@ -242,9 +242,10 @@ class PrecisionRecallCurve(ClassificationScoreVisualizer):
         )
 
         if self.micro and self.per_class:
-            warnings.warn("micro=True is ignored;"
-                "to draw a PR-curve after micro averaging specify per_class=False",
-                UserWarning
+            warnings.warn(
+                "micro=True is ignored;"
+                "specify per_class=False to draw a PR curve after micro-averaging",
+                YellowbrickWarning,
             )
 
     def fit(self, X, y=None):
@@ -339,9 +340,7 @@ class PrecisionRecallCurve(ClassificationScoreVisualizer):
         """
         # set the colors
         self._colors = resolve_colors(
-            n_colors=len(self.classes_),
-            colormap=self.cmap,
-            colors=self.colors
+            n_colors=len(self.classes_), colormap=self.cmap, colors=self.colors
         )
 
         if self.iso_f1_curves:
@@ -390,13 +389,16 @@ class PrecisionRecallCurve(ClassificationScoreVisualizer):
         Helper function to draw a precision-recall curve with specified settings
         """
         self.ax.step(
-            recall, precision, alpha=self.line_opacity, where="post",
-            label=label, color=color
+            recall,
+            precision,
+            alpha=self.line_opacity,
+            where="post",
+            label=label,
+            color=color,
         )
         if self.fill_area and not self.per_class:
             self.ax.fill_between(
-                recall, precision, step="post", alpha=self.fill_opacity,
-                color=color
+                recall, precision, step="post", alpha=self.fill_opacity, color=color
             )
 
     def _draw_ap_score(self, score, label=None):
