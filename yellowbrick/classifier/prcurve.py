@@ -30,6 +30,8 @@ from yellowbrick.exceptions import YellowbrickValueError
 from yellowbrick.classifier.base import ClassificationScoreVisualizer
 from yellowbrick.style.colors import resolve_colors
 
+import warnings
+
 
 # Target Type Constants
 # TODO: These can now be imported from utils.target
@@ -238,6 +240,12 @@ class PrecisionRecallCurve(ClassificationScoreVisualizer):
             fill_opacity=fill_opacity,
             line_opacity=line_opacity,
         )
+
+        if self.micro and self.per_class:
+            warnings.warn("micro=True is ignored;"
+                "to draw a PR-curve after micro averaging specify per_class=False",
+                UserWarning
+            )
 
     def fit(self, X, y=None):
         """
