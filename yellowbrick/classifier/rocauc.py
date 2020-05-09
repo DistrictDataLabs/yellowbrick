@@ -289,7 +289,7 @@ class ROCAUC(ClassificationScoreVisualizer):
             # In this case predict_proba returns an array of shape (n, 2) which
             # specifies the probabilities of both the negative and positive classes.
             if len(y_pred.shape) == 2 and y_pred.shape[1] == 2:
-                self.fpr[BINARY], self.tpr[BINARY], _ = roc_curve(y, y_pred[:,1])
+                self.fpr[BINARY], self.tpr[BINARY], _ = roc_curve(y, y_pred[:, 1])
             else:
                 # decision_function returns array of shape (n,), so plot it directly
                 self.fpr[BINARY], self.tpr[BINARY], _ = roc_curve(y, y_pred)
@@ -301,7 +301,7 @@ class ROCAUC(ClassificationScoreVisualizer):
             if len(y_pred.shape) == 2 and y_pred.shape[1] == 2:
                 # predict_proba returns array of shape (n, 2), so use
                 # probability of class 1 to compute ROC
-                self.fpr[1], self.tpr[1], _ = roc_curve(y, y_pred[:,1])
+                self.fpr[1], self.tpr[1], _ = roc_curve(y, y_pred[:, 1])
             else:
                 # decision_function returns array of shape (n,)
                 self.fpr[1], self.tpr[1], _ = roc_curve(y, y_pred)
@@ -311,12 +311,12 @@ class ROCAUC(ClassificationScoreVisualizer):
             if len(y_pred.shape) == 2 and y_pred.shape[1] == 2:
                 # predict_proba returns array of shape (n, 2), so use
                 # probability of class 0 to compute ROC
-                self.fpr[0], self.tpr[0], _ = roc_curve(1-y, y_pred[:,0])
+                self.fpr[0], self.tpr[0], _ = roc_curve(1 - y, y_pred[:, 0])
             else:
                 # decision_function returns array of shape (n,).
                 # To draw a ROC curve for class 0 we swap the classes 0 and 1 in y
                 # and reverse classifiers predictions y_pred.
-                self.fpr[0], self.tpr[0], _ = roc_curve(1-y, -y_pred)
+                self.fpr[0], self.tpr[0], _ = roc_curve(1 - y, -y_pred)
             self.roc_auc[0] = auc(self.fpr[0], self.tpr[0])
 
         else:
@@ -324,7 +324,6 @@ class ROCAUC(ClassificationScoreVisualizer):
             for i, c in enumerate(classes):
                 self.fpr[i], self.tpr[i], _ = roc_curve(y, y_pred[:, i], pos_label=c)
                 self.roc_auc[i] = auc(self.fpr[i], self.tpr[i])
-
 
         # Compute micro average
         if self.micro:
@@ -356,7 +355,7 @@ class ROCAUC(ClassificationScoreVisualizer):
         -------
         ax : the axis with the plotted figure
         """
-        colors = self.colors[0 : len(self.classes_)]
+        colors = self.class_colors_[0 : len(self.classes_)]
         n_classes = len(colors)
 
         # If it's a binary decision, plot the single ROC curve
@@ -364,7 +363,9 @@ class ROCAUC(ClassificationScoreVisualizer):
             self.ax.plot(
                 self.fpr[BINARY],
                 self.tpr[BINARY],
-                label="ROC for binary decision, AUC = {:0.2f}".format(self.roc_auc[BINARY]),
+                label="ROC for binary decision, AUC = {:0.2f}".format(
+                    self.roc_auc[BINARY]
+                ),
             )
 
         # If per-class plotting is requested, plot ROC curves for each class
@@ -385,7 +386,7 @@ class ROCAUC(ClassificationScoreVisualizer):
                 self.fpr[MICRO],
                 self.tpr[MICRO],
                 linestyle="--",
-                color=self.colors[len(self.classes_) - 1],
+                color=self.class_colors_[len(self.classes_) - 1],
                 label="micro-average ROC curve, AUC = {:0.2f}".format(
                     self.roc_auc["micro"]
                 ),
@@ -397,7 +398,7 @@ class ROCAUC(ClassificationScoreVisualizer):
                 self.fpr[MACRO],
                 self.tpr[MACRO],
                 linestyle="--",
-                color=self.colors[len(self.classes_) - 1],
+                color=self.class_colors_[len(self.classes_) - 1],
                 label="macro-average ROC curve, AUC = {:0.2f}".format(
                     self.roc_auc["macro"]
                 ),
@@ -693,11 +694,11 @@ def roc_auc(
     # Fit and transform the visualizer (calls draw)
     visualizer.fit(X_train, y_train, **kwargs)
 
-    #Scores the visualizer with X_test and y_test if provided, X_train, y_train if not provided
+    # Scores the visualizer with X_test and y_test if provided, X_train, y_train if not provided
     if X_test is not None and y_test is not None:
         visualizer.score(X_test, y_test)
     else:
-        visualizer.score(X_train,  y_train)
+        visualizer.score(X_train, y_train)
 
     if show:
         visualizer.show()
