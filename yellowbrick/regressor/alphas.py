@@ -119,7 +119,7 @@ class AlphaSelection(RegressionScoreVisualizer):
 
         # Check to make sure this is a "RegressorCV"
         name = model.__class__.__name__
-        if not name.endswith("CV"):
+        if not name.endswith("CV") and not isinstance(self, ManualAlphaSelection):
             raise YellowbrickTypeError(
                 (
                     "'{}' is not a CV regularization model;"
@@ -314,7 +314,10 @@ class ManualAlphaSelection(AlphaSelection):
         super(ManualAlphaSelection, self).__init__(model, ax=ax, **kwargs)
 
         # Set manual alpha selection parameters
-        self.alphas = alphas or np.logspace(-10, -2, 200)
+        if alphas is not None:
+            self.alphas = alphas
+        else:
+            self.alphas = np.logspace(-10, -2, 200)
         self.errors = None
         self.score_method = partial(cross_val_score, cv=cv, scoring=scoring)
 
@@ -361,7 +364,7 @@ class ManualAlphaSelection(AlphaSelection):
 
 
 ##########################################################################
-## Quick Method
+## Quick Methods
 ##########################################################################
 
 
@@ -418,6 +421,87 @@ def alphas(model, X, y=None, ax=None, is_fitted="auto", show=True, **kwargs):
 
     visualizer.fit(X, y)
     visualizer.score(X, y)
+
+    if show:
+        visualizer.show()
+    else:
+        visualizer.finalize()
+
+    # Return the visualizer
+    return visualizer
+
+
+def manual_alphas(
+    model,
+    X,
+    y=None,
+    ax=None,
+    alphas=None,
+    cv=None,
+    scoring=None,
+    show=True,
+    **kwargs
+):
+    """Quick Method:
+    The Manual Alpha Selection Visualizer demonstrates how different values of alpha
+    influence model selection during the regularization of linear models.
+    Generally speaking, alpha increases the affect of regularization, e.g. if
+    alpha is zero there is no regularization and the higher the alpha, the
+    more the regularization parameter influences the final model.
+
+    Parameters
+    ----------
+
+    model : an unfitted Scikit-Learn regressor
+        Should be an instance of an unfitted regressor, and specifically one
+        whose name doesn't end with "CV". The regressor must support a call to
+        ``set_params(alpha=alpha)`` and be fit multiple times. If the
+        regressor name ends with "CV" a ``YellowbrickValueError`` is raised.
+
+    ax : matplotlib Axes, default: None
+        The axes to plot the figure on. If None is passed in the current axes
+        will be used (or generated if required).
+
+    alphas : ndarray or Series, default: np.logspace(-10, 2, 200)
+        An array of alphas to fit each model with
+
+    cv : int, cross-validation generator or an iterable, optional
+        Determines the cross-validation splitting strategy.
+        Possible inputs for cv are:
+
+        - None, to use the default 3-fold cross validation,
+        - integer, to specify the number of folds in a `(Stratified)KFold`,
+        - An object to be used as a cross-validation generator.
+        - An iterable yielding train, test splits.
+
+        This argument is passed to the
+        ``sklearn.model_selection.cross_val_score`` method to produce the
+        cross validated score for each alpha.
+
+    scoring : string, callable or None, optional, default: None
+        A string (see model evaluation documentation) or
+        a scorer callable object / function with signature
+        ``scorer(estimator, X, y)``.
+
+        This argument is passed to the
+        ``sklearn.model_selection.cross_val_score`` method to produce the
+        cross validated score for each alpha.
+
+    kwargs : dict
+        Keyword arguments that are passed to the base class and may influence
+        the visualization as defined in other Visualizers.
+
+    Returns
+    -------
+    visualizer : AlphaSelection
+        Returns the alpha selection visualizer
+    """
+    # Instantiate the visualizer
+    visualizer = ManualAlphaSelection(
+        model, ax, alphas=alphas, scoring=scoring, cv=cv, **kwargs
+    )
+
+    visualizer.fit(X, y)
 
     if show:
         visualizer.show()
