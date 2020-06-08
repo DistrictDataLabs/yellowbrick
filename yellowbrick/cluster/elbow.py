@@ -38,7 +38,8 @@ try:
 except ImportError:
     from sklearn.metrics import calinski_harabaz_score as chs
 
-
+# add tqdm for progress visualization
+from tqdm import tqdm
 ## Packages for export
 __all__ = ["KElbowVisualizer", "KElbow", "distortion_score", "kelbow_visualizer"]
 
@@ -303,7 +304,7 @@ class KElbowVisualizer(ClusteringScoreVisualizer):
             self.elbow_value_ = None
             self.elbow_score_ = None
 
-        for k in self.k_values_:
+        for k in tqdm(self.k_values_):
             # Compute the start time for each  model
             start = time.time()
 
