@@ -119,7 +119,7 @@ class AlphaSelection(RegressionScoreVisualizer):
 
         # Check to make sure this is a "RegressorCV"
         name = model.__class__.__name__
-        if not name.endswith("CV") and not isinstance(self, ManualAlphaSelection):
+        if not name.endswith("CV"):
             raise YellowbrickTypeError(
                 (
                     "'{}' is not a CV regularization model;"
@@ -311,7 +311,7 @@ class ManualAlphaSelection(AlphaSelection):
             )
 
         # Call super to initialize the class
-        super(ManualAlphaSelection, self).__init__(model, ax=ax, **kwargs)
+        super(AlphaSelection, self).__init__(model, ax=ax, **kwargs)
 
         # Set manual alpha selection parameters
         if alphas is not None:
