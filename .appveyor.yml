@@ -38,7 +38,7 @@ environment:
 
         - PYTHON: "C:\\Miniconda36-x64"
           PYTHON_VERSION: "3.6"
-          MINICONDA_VERSION: "4.5.4"
+          MINICONDA_VERSION: "4.8.2"
           PYTHON_ARCH: "64"
 
         # Failing Tests Due to TypeError: LoadLibrary()
