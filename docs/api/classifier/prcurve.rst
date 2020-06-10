@@ -88,7 +88,7 @@ One way to use ``PrecisionRecallCurves`` is for model comparison, by examining w
 
     plt.show()
 
-Precision-recall curves are one of the methods used to evaluate a classifier's quality, particularly when classes are very imbalanced. The below plot suggests that our classifier become better when we increase weight of the "spam" case (which is 1), and decrease the weight for the "not spam" case (which is 0).
+Precision-recall curves are one of the methods used to evaluate a classifier's quality, particularly when classes are very imbalanced. The below plot suggests that our classifier improves when we increase the weight of the "spam" case (which is 1), and decrease the weight for the "not spam" case (which is 0).
 
 .. plot::
     :context: close-figs
