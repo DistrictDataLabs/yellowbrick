@@ -22,7 +22,7 @@ import pytest
 import numpy as np
 
 from tests.base import VisualTestCase
-from numpy.testing.utils import assert_array_equal
+from numpy.testing import assert_array_equal
 
 from yellowbrick.datasets import load_energy
 from yellowbrick.exceptions import YellowbrickTypeError

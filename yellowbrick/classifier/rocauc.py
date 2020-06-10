@@ -21,7 +21,6 @@ Implements visual ROC/AUC curves for classification evaluation.
 
 import numpy as np
 
-from scipy import interp
 from sklearn.metrics import auc, roc_curve
 from sklearn.preprocessing import label_binarize
 from sklearn.utils.multiclass import type_of_target
@@ -497,7 +496,7 @@ class ROCAUC(ClassificationScoreVisualizer):
 
         # Compute the averages per class
         for i in range(n_classes):
-            avg_tpr += interp(all_fpr, self.fpr[i], self.tpr[i])
+            avg_tpr += np.interp(all_fpr, self.fpr[i], self.tpr[i])
 
         # Finalize the average
         avg_tpr /= n_classes
