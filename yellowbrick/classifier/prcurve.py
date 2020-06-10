@@ -55,12 +55,14 @@ class PrecisionRecallCurve(ClassificationScoreVisualizer):
     Precision-Recall curves are a metric used to evaluate a classifier's quality,
     particularly when classes are very imbalanced. The precision-recall curve
     shows the tradeoff between precision, a measure of result relevancy, and
-    recall, a measure of how many relevant results are returned. A large area
-    under the curve represents both high recall and precision, the best case
-    scenario for a classifier, showing a model that returns accurate results
-    for the majority of classes it selects.
+    recall, a measure of completeness. For each class, precision is defined as
+    the ratio of true positives to the sum of true and false positives, and
+    recall is the ratio of true positives to the sum of true positives and false
+    negatives.
 
-    .. todo:: extend docstring
+    A large area under the curve represents both high recall and precision, the
+    best case scenario for a classifier, showing a model that returns accurate
+    results for the majority of classes it selects.
 
     Parameters
     ----------
@@ -193,6 +195,15 @@ class PrecisionRecallCurve(ClassificationScoreVisualizer):
 
     Notes
     -----
+    To support multi-label classification, the estimator is wrapped in a
+    ``OneVsRestClassifier`` to produce binary comparisons for each class
+    (e.g. the positive case is the class and the negative case is any other
+    class). The precision-recall curve can then be computed as the micro-average
+    of the precision and recall for all classes (by setting micro=True), or individual
+    curves can be plotted for each class (by setting per_class=True).
+
+    Note also that some parameters of this visualizer are learned on the ``score``
+    method, not only on ``fit``.
 
     .. seealso:: https://bit.ly/2kOIeCC
     """
@@ -250,8 +261,8 @@ class PrecisionRecallCurve(ClassificationScoreVisualizer):
 
     def fit(self, X, y=None):
         """
-        Fit the classification model; if y is multi-class, then the estimator
-        is adapted with a OneVsRestClassifier strategy, otherwise the estimator
+        Fit the classification model; if ``y`` is multi-class, then the estimator
+        is adapted with a ``OneVsRestClassifier`` strategy, otherwise the estimator
         is fit directly.
         """
         # The target determines what kind of estimator is fit
@@ -288,6 +299,7 @@ class PrecisionRecallCurve(ClassificationScoreVisualizer):
             Average precision, a summary of the plot as a weighted mean of
             precision at each threshold, weighted by the increase in recall from
             the previous threshold.
+
         """
         # If we don't do this check, then it is possible that OneVsRestClassifier
         # has not correctly been fitted for multi-class targets.
@@ -501,10 +513,14 @@ def precision_recall_curve(
     Precision-Recall curves are a metric used to evaluate a classifier's quality,
     particularly when classes are very imbalanced. The precision-recall curve
     shows the tradeoff between precision, a measure of result relevancy, and
-    recall, a measure of how many relevant results are returned. A large area
-    under the curve represents both high recall and precision, the best case
-    scenario for a classifier, showing a model that returns accurate results
-    for the majority of classes it selects.
+    recall, a measure of completeness. For each class, precision is defined as
+    the ratio of true positives to the sum of true and false positives, and
+    recall is the ratio of true positives to the sum of true positives and false
+    negatives.
+
+    A large area under the curve represents both high recall and precision, the
+    best case scenario for a classifier, showing a model that returns accurate
+    results for the majority of classes it selects.
 
     Parameters
     ----------
