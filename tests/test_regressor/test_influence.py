@@ -108,8 +108,7 @@ class TestCooksDistance(VisualTestCase):
         assert 0.0 <= viz.influence_threshold_ <= 4.0
         assert 0.0 <= viz.outlier_percentage_ <= 100.0
 
-        # Image comparison fails on Appveyor with RMS 2.338
-        self.assert_images_similar(viz, windows_tol=2.4)
+        self.assert_images_similar(viz)
 
     def test_cooks_distance_quickmethod(self):
         """
@@ -127,8 +126,7 @@ class TestCooksDistance(VisualTestCase):
         )
 
         assert_fitted(viz)
-        # Image comparison fails on Appveyor with RMS 0.177
-        self.assert_images_similar(viz, windows_tol=0.2)
+        self.assert_images_similar(viz)
 
     @pytest.mark.skipif(pd is None, reason="test requires pandas")
     def test_pandas_integration(self):
@@ -151,8 +149,7 @@ class TestCooksDistance(VisualTestCase):
         assert viz.outlier_percentage_ == pytest.approx(7.3786407766990285)
 
         viz.finalize()
-        # Image comparison fails on Appveyor with RMS 3.761
-        self.assert_images_similar(viz, windows_tol=3.8)
+        self.assert_images_similar(viz)
 
     def test_numpy_integration(self):
         """
@@ -174,5 +171,4 @@ class TestCooksDistance(VisualTestCase):
         assert viz.outlier_percentage_ == pytest.approx(7.3786407766990285)
 
         viz.finalize()
-        # Image comparison fails on Appveyor with RMS 3.761
-        self.assert_images_similar(viz, windows_tol=3.8)
+        self.assert_images_similar(viz)
