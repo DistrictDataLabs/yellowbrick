@@ -46,7 +46,6 @@ def pytest_configure(config):
     # TODO: this is currently being reset before each test; needs fixing.
     mpl.rcParams["font.family"] = "DejaVu Sans"
 
-
 ##########################################################################
 ## PyTest Hooks
 ##########################################################################

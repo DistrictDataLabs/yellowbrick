@@ -132,7 +132,7 @@ class ClassificationScoreVisualizer(ScoreVisualizer):
         self.set_params(classes=classes, encoder=encoder, force_model=force_model)
 
     @property
-    def colors(self):
+    def class_colors_(self):
         """
         Returns ``_colors`` if it exists, otherwise computes a categorical color
         per class based on the matplotlib color cycle. If the visualizer is not
