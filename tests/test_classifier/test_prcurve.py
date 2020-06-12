@@ -351,7 +351,7 @@ class TestPrecisionRecallCurve(VisualTestCase):
             fill_area=False,
             iso_f1_curves=True,
             ap_score=False,
-            show=False
+            show=False,
         )
 
         assert isinstance(oz, PrecisionRecallCurve)
@@ -435,11 +435,7 @@ class TestPrecisionRecallCurve(VisualTestCase):
         )
 
         viz = precision_recall_curve(
-            RandomForestClassifier(random_state=72),
-            X_train,
-            y_train,
-            X_test,
-            y_test,
+            RandomForestClassifier(random_state=72), X_train, y_train, X_test, y_test
         )
         self.assert_images_similar(viz)
 
@@ -462,3 +458,16 @@ class TestPrecisionRecallCurve(VisualTestCase):
 
         with pytest.raises(YellowbrickValueError, match=emsg):
             precision_recall_curve(RandomForestClassifier(), X_train, y_train, X_test)
+
+    def test_per_class_and_micro(self):
+        """
+        Test if both per_class and micro set to True, user gets micro ignored warning
+        """
+        msg = (
+            "micro=True is ignored;"
+            "specify per_class=False to draw a PR curve after micro-averaging"
+        )
+        with pytest.warns(YellowbrickWarning, match=msg):
+            PrecisionRecallCurve(
+                RidgeClassifier(random_state=13), micro=True, per_class=True
+            )

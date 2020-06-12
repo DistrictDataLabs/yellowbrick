@@ -17,6 +17,7 @@ Implements Precision-Recall curves for classification models.
 ## Imports
 ##########################################################################
 
+import warnings
 import numpy as np
 
 from sklearn.preprocessing import label_binarize
@@ -25,6 +26,8 @@ from sklearn.utils.multiclass import type_of_target
 from sklearn.metrics import average_precision_score
 from sklearn.metrics import precision_recall_curve as sk_precision_recall_curve
 
+from yellowbrick.style.colors import resolve_colors
+from yellowbrick.exceptions import YellowbrickWarning
 from yellowbrick.exceptions import ModelError, NotFitted
 from yellowbrick.exceptions import YellowbrickValueError
 from yellowbrick.classifier.base import ClassificationScoreVisualizer
@@ -71,13 +74,25 @@ class PrecisionRecallCurve(ClassificationScoreVisualizer):
         The axes to plot the figure on. If not specified the current axes will be
         used (or generated if required).
 
-    classes : list of str, defult: None
+    classes : list of str, default: None
         The class labels to use for the legend ordered by the index of the sorted
         classes discovered in the ``fit()`` method. Specifying classes in this
         manner is used to change the class names to a more specific format or
         to label encoded integer classes. Some visualizers may also use this
         field to filter the visualization for specific classes. For more advanced
         usage specify an encoder rather than class labels.
+
+    colors : list of strings,  default: None
+        An optional list or tuple of colors to colorize the curves when
+        ``per_class=True``. If ``per_class=False``, this parameter will
+        be ignored. If both ``colors`` and ``cmap`` are provided,
+        ``cmap`` will be ignored.
+
+    cmap : string or Matplotlib colormap, default: None
+        An optional string or Matplotlib colormap to colorize the curves
+        when ``per_class=True``. If ``per_class=False``, this parameter
+        will be ignored. If both ``colors`` and ``cmap`` are provided,
+        ``cmap`` will be ignored.
 
     encoder : dict or LabelEncoder, default: None
         A mapping of classes to human readable labels. Often there is a mismatch
@@ -187,6 +202,8 @@ class PrecisionRecallCurve(ClassificationScoreVisualizer):
         model,
         ax=None,
         classes=None,
+        colors=None,
+        cmap=None,
         encoder=None,
         fill_area=True,
         ap_score=True,
@@ -214,6 +231,8 @@ class PrecisionRecallCurve(ClassificationScoreVisualizer):
         self.set_params(
             fill_area=fill_area,
             ap_score=ap_score,
+            colors=colors,
+            cmap=cmap,
             micro=micro,
             iso_f1_curves=iso_f1_curves,
             iso_f1_values=set(iso_f1_values),
@@ -221,6 +240,13 @@ class PrecisionRecallCurve(ClassificationScoreVisualizer):
             fill_opacity=fill_opacity,
             line_opacity=line_opacity,
         )
+
+        if self.micro and self.per_class:
+            warnings.warn(
+                "micro=True is ignored;"
+                "specify per_class=False to draw a PR curve after micro-averaging",
+                YellowbrickWarning,
+            )
 
     def fit(self, X, y=None):
         """
@@ -312,6 +338,11 @@ class PrecisionRecallCurve(ClassificationScoreVisualizer):
         """
         Draws the precision-recall curves computed in score on the axes.
         """
+        # set the colors
+        self._colors = resolve_colors(
+            n_colors=len(self.classes_), colormap=self.cmap, colors=self.colors
+        )
+
         if self.iso_f1_curves:
             for f1 in self.iso_f1_values:
                 x = np.linspace(0.01, 1)
@@ -327,46 +358,54 @@ class PrecisionRecallCurve(ClassificationScoreVisualizer):
         """
         Draw the precision-recall curves in the binary case
         """
-        self._draw_pr_curve(self.recall_, self.precision_, label="binary PR curve")
+        self._draw_pr_curve(self.recall_, self.precision_, label="Binary PR curve")
         self._draw_ap_score(self.score_)
 
     def _draw_multiclass(self):
         """
         Draw the precision-recall curves in the multiclass case
         """
-        # TODO: handle colors better with a mapping and user input
         if self.per_class:
+
+            colors = dict(zip(self.classes_, self._colors))
+
             for cls in self.classes_:
                 precision = self.precision_[cls]
                 recall = self.recall_[cls]
 
                 label = "PR for class {} (area={:0.2f})".format(cls, self.score_[cls])
-                self._draw_pr_curve(recall, precision, label=label)
+                self._draw_pr_curve(recall, precision, label=label, color=colors[cls])
 
-        if self.micro:
+        elif self.micro:
             precision = self.precision_[MICRO]
             recall = self.recall_[MICRO]
-            self._draw_pr_curve(recall, precision)
+            label = "Micro-average PR for all classes"
+            self._draw_pr_curve(recall, precision, label=label)
 
         self._draw_ap_score(self.score_[MICRO])
 
-    def _draw_pr_curve(self, recall, precision, label=None):
+    def _draw_pr_curve(self, recall, precision, label=None, color=None):
         """
         Helper function to draw a precision-recall curve with specified settings
         """
         self.ax.step(
-            recall, precision, alpha=self.line_opacity, where="post", label=label
+            recall,
+            precision,
+            alpha=self.line_opacity,
+            where="post",
+            label=label,
+            color=color,
         )
-        if self.fill_area:
+        if self.fill_area and not self.per_class:
             self.ax.fill_between(
-                recall, precision, step="post", alpha=self.fill_opacity
+                recall, precision, step="post", alpha=self.fill_opacity, color=color
             )
 
     def _draw_ap_score(self, score, label=None):
         """
         Helper function to draw the AP score annotation
         """
-        label = label or "Avg Precision={:0.2f}".format(score)
+        label = label or "Avg. precision={:0.2f}".format(score)
         if self.ap_score:
             self.ax.axhline(y=score, color="r", ls="--", label=label)
 
@@ -382,6 +421,8 @@ class PrecisionRecallCurve(ClassificationScoreVisualizer):
 
         self.ax.set_ylabel("Precision")
         self.ax.set_xlabel("Recall")
+
+        self.ax.grid(False)
 
     def _get_y_scores(self, X):
         """
@@ -439,6 +480,8 @@ def precision_recall_curve(
     y_test=None,
     ax=None,
     classes=None,
+    colors=None,
+    cmap=None,
     encoder=None,
     fill_area=True,
     ap_score=True,
@@ -492,13 +535,25 @@ def precision_recall_curve(
         The axes to plot the figure on. If not specified the current axes will be
         used (or generated if required).
 
-    classes : list of str, defult: None
+    classes : list of str, default: None
         The class labels to use for the legend ordered by the index of the sorted
         classes discovered in the ``fit()`` method. Specifying classes in this
         manner is used to change the class names to a more specific format or
         to label encoded integer classes. Some visualizers may also use this
         field to filter the visualization for specific classes. For more advanced
         usage specify an encoder rather than class labels.
+
+    colors : list of strings,  default: None
+        An optional list or tuple of colors to colorize the curves when
+        ``per_class=True``. If ``per_class=False``, this parameter will
+        be ignored. If both ``colors`` and ``cmap`` are provided,
+        ``cmap`` will be ignored.
+
+    cmap : string or Matplotlib colormap, default: None
+        An optional string or Matplotlib colormap to colorize the curves
+        when ``per_class=True``. If ``per_class=False``, this parameter
+        will be ignored. If both ``colors`` and ``cmap`` are provided,
+        ``cmap`` will be ignored.
 
     encoder : dict or LabelEncoder, default: None
         A mapping of classes to human readable labels. Often there is a mismatch
@@ -570,6 +625,8 @@ def precision_recall_curve(
         model,
         ax=ax,
         classes=classes,
+        colors=colors,
+        cmap=cmap,
         encoder=encoder,
         fill_area=fill_area,
         ap_score=ap_score,
