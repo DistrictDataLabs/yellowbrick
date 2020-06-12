@@ -180,7 +180,8 @@ class CooksDistance(Visualizer):
         """
         # Draw a stem plot with the influence for each instance
         _, _, baseline = self.ax.stem(
-            self.distance_, linefmt=self.linefmt, markerfmt=self.markerfmt
+            self.distance_, linefmt=self.linefmt, markerfmt=self.markerfmt,
+            use_line_collection=True
         )
 
         # No padding on either side of the instance index

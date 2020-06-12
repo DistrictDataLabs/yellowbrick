@@ -29,7 +29,7 @@ from yellowbrick.utils import is_probabilistic, is_classifier
 
 from unittest.mock import patch
 from tests.base import VisualTestCase
-from numpy.testing.utils import assert_array_equal
+from numpy.testing import assert_array_equal
 
 from sklearn.base import ClassifierMixin
 from sklearn.svm import LinearSVC, NuSVC
