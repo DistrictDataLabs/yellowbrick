@@ -23,7 +23,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 from scipy.sparse import csc_matrix, csr_matrix
-from numpy.testing.utils import assert_array_almost_equal
+from numpy.testing import assert_array_almost_equal
 
 from sklearn.datasets import make_blobs
 from sklearn.cluster import KMeans, MiniBatchKMeans
