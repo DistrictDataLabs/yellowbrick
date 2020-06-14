@@ -21,7 +21,7 @@ Shows the balance of classes and their associated predictions.
 import numpy as np
 
 from sklearn.utils.multiclass import unique_labels
-from sklearn.metrics.classification import _check_targets
+from sklearn.metrics._classification import _check_targets
 
 from yellowbrick.draw import bar_stack
 from yellowbrick.classifier.base import ClassificationScoreVisualizer

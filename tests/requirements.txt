@@ -15,6 +15,6 @@ coverage>=4.5.2
 # Optional Testing Dependencies
 nltk>=3.2
 # spacy>=2.0.18
-pandas>=0.20,<1
+pandas>=1.0.4
 umap-learn==0.3.9 # reminder to bump periodically!
 
