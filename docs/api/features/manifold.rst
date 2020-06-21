@@ -163,7 +163,7 @@ The same functionality above can be achieved with the associated quick method ``
 
 .. code:: python
 
-    from yellowbrick.features.Manifold import manifold_embedding
+    from yellowbrick.features.manifold import manifold_embedding
     from yellowbrick.datasets import load_concrete
 
     # Load the regression dataset
