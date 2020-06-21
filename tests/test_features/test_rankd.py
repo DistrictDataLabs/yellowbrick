@@ -21,15 +21,13 @@ import pytest
 import numpy as np
 import numpy.testing as npt
 
-from tests.base import IS_WINDOWS_OR_CONDA, VisualTestCase
-
-from yellowbrick.datasets import load_occupancy, load_credit
-from yellowbrick.features.rankd import *
-from yellowbrick.features.rankd import kendalltau
 from yellowbrick.features.rankd import RankDBase
-from sklearn.datasets import make_regression
-
+from yellowbrick.features.rankd import kendalltau
+from yellowbrick.features.rankd import Rank1D, rank1d
+from yellowbrick.features.rankd import Rank2D, rank2d
 from yellowbrick.exceptions import YellowbrickValueError
+from tests.base import IS_WINDOWS_OR_CONDA, VisualTestCase
+from yellowbrick.datasets import load_occupancy, load_credit, load_energy
 
 try:
     import pandas as pd
@@ -37,34 +35,11 @@ except ImportError:
     pd = None
 
 
-@pytest.fixture(scope="class")
-def dataset(request):
-    """
-    Creates a dataset with 6 gaussian features and 2 categorical features
-    for testing the RankD ranking algorithms. The gaussian features have
-    different correlations with respect to each other, including strong
-    positive and negative correlation and no correlation at all.
-    """
-    X, _ = make_regression(
-        n_samples=100,
-        n_features=6,
-        effective_rank=2,
-        tail_strength=0,
-        n_informative=2,
-        noise=0.45,
-        random_state=27,
-    )
-
-    rand = np.random.RandomState(seed=27)
-    request.cls.dataset = np.concatenate((X, rand.binomial(1, 0.6, (100, 2))), axis=1)
-
-
 ##########################################################################
 ## Kendall-Tau Tests
 ##########################################################################
 
 
-@pytest.mark.usefixtures("dataset")
 class TestKendallTau(object):
     """
     Test the Kendall-Tau correlation metric
@@ -74,97 +49,29 @@ class TestKendallTau(object):
         """
         Test results returned match expectations
         """
+        X, _ = load_energy(return_dataset=True).to_numpy()
+
         expected = np.array(
             [
-                [
-                    1.0,
-                    -0.68,
-                    -0.57454545,
-                    0.49858586,
-                    0.07555556,
-                    -0.05858586,
-                    0.02387848,
-                    0.11357219,
-                ],
-                [
-                    -0.68,
-                    1.0,
-                    0.58666667,
-                    -0.69090909,
-                    -0.22262626,
-                    -0.17171717,
-                    -0.05059964,
-                    -0.12397575,
-                ],
-                [
-                    -0.57454545,
-                    0.58666667,
-                    1.0,
-                    -0.61050505,
-                    0.18909091,
-                    0.07515152,
-                    0.00341121,
-                    -0.0638663,
-                ],
-                [
-                    0.49858586,
-                    -0.69090909,
-                    -0.61050505,
-                    1.0,
-                    0.11070707,
-                    0.3030303,
-                    0.03013237,
-                    0.07542581,
-                ],
-                [
-                    0.07555556,
-                    -0.22262626,
-                    0.18909091,
-                    0.11070707,
-                    1.0,
-                    0.4610101,
-                    0.01648752,
-                    0.05982047,
-                ],
-                [
-                    -0.05858586,
-                    -0.17171717,
-                    0.07515152,
-                    0.3030303,
-                    0.4610101,
-                    1.0,
-                    0.03695479,
-                    -0.02398599,
-                ],
-                [
-                    0.02387848,
-                    -0.05059964,
-                    0.00341121,
-                    0.03013237,
-                    0.01648752,
-                    0.03695479,
-                    1.0,
-                    0.18298883,
-                ],
-                [
-                    0.11357219,
-                    -0.12397575,
-                    -0.0638663,
-                    0.07542581,
-                    0.05982047,
-                    -0.02398599,
-                    0.18298883,
-                    1.0,
-                ],
+                [1.0, -1.0, -0.2724275, -0.7361443, 0.7385489, 0.0, 0.0, 0.0],
+                [-1.0, 1.0, 0.2724275, 0.7361443, -0.7385489, 0.0, 0.0, 0.0],
+                [-0.2724275, 0.2724275, 1.0, -0.15192004, 0.19528337, 0.0, 0.0, 0.0],
+                [-0.73614431, 0.73614431, -0.15192004, 1.0, -0.87518995, 0.0, 0.0, 0.0],
+                [0.73854895, -0.73854895, 0.19528337, -0.87518995, 1.0, 0.0, 0.0, 0.0],
+                [0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0],
+                [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.15430335],
+                [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.15430335, 1.0],
             ]
         )
-        npt.assert_almost_equal(expected, kendalltau(self.dataset))
+        actual = kendalltau(X)
+        npt.assert_almost_equal(expected, actual)
 
     def test_kendalltau_shape(self):
         """
         Assert that a square correlation matrix is returned
         """
-        corr = kendalltau(self.dataset)
+        X, _ = load_energy(return_dataset=True).to_numpy()
+        corr = kendalltau(X)
         assert corr.shape[0] == corr.shape[1]
 
         for (i, j), val in np.ndenumerate(corr):
@@ -184,7 +91,6 @@ class TestKendallTau(object):
 ##########################################################################
 
 
-@pytest.mark.usefixtures("dataset")
 class TestRankDBase(VisualTestCase):
     """
     Test the RankDBase Visualizer
@@ -194,11 +100,12 @@ class TestRankDBase(VisualTestCase):
         """
         Assert that unknown algorithms raise an exception
         """
+        X, _ = load_energy(return_dataset=True).to_numpy()
         with pytest.raises(
             YellowbrickValueError, match=".* is unrecognized ranking method"
         ) as e:
             oz = RankDBase(algorithm="unknown")
-            oz.fit_transform(self.dataset)
+            oz.fit_transform(X)
             assert str(e.value) == "'unknown' is unrecognized ranking method"
 
 
@@ -207,47 +114,69 @@ class TestRankDBase(VisualTestCase):
 ##########################################################################
 
 
-@pytest.mark.usefixtures("dataset")
 class TestRank1D(VisualTestCase):
     """
     Test the Rank1D visualizer
     """
 
+    def test_rank1d_unknown_algorithm(self):
+        """
+        Test that an error is raised for Rank1D with an unknown algorithm
+        """
+        X, _ = load_energy()
+        msg = "'oscar' is unrecognized ranking method"
+        with pytest.raises(YellowbrickValueError, match=msg):
+            Rank1D(algorithm="Oscar").transform(X)
+
     def test_rank1d_shapiro(self):
         """
         Test Rank1D using shapiro metric
         """
+        X, _ = load_energy(return_dataset=True).to_numpy()
         oz = Rank1D(algorithm="shapiro")
-        npt.assert_array_equal(oz.fit_transform(self.dataset), self.dataset)
+        npt.assert_array_equal(oz.fit_transform(X), X)
 
         # Check Ranking
         expected = np.array(
             [
-                0.985617,
-                0.992236,
-                0.982354,
-                0.984898,
-                0.978514,
-                0.990372,
-                0.636401,
-                0.624511,
+                0.93340671,
+                0.94967198,
+                0.92689574,
+                0.7459445,
+                0.63657606,
+                0.85603625,
+                0.84349269,
+                0.91551381,
             ]
         )
 
         assert hasattr(oz, "ranks_")
-        assert oz.ranks_.shape == (self.dataset.shape[1],)
+        assert oz.ranks_.shape == (X.shape[1],)
         npt.assert_array_almost_equal(oz.ranks_, expected)
 
         # Image similarity comparison
         oz.finalize()
         self.assert_images_similar(oz)
 
-    def test_rank1d_orientation(self):
+    def test_rank1d_vertical(self):
         """
         Test Rank1D using vertical orientation
         """
+        X, _ = load_energy(return_dataset=True).to_numpy()
         oz = Rank1D(orient="v")
-        npt.assert_array_equal(oz.fit_transform(self.dataset), self.dataset)
+        npt.assert_array_equal(oz.fit_transform(X), X)
+
+        # Image similarity comparison
+        oz.finalize()
+        self.assert_images_similar(oz)
+
+    def test_rank1d_horizontal(self):
+        """
+        Test Rank1D using horizontal orientation
+        """
+        X, _ = load_energy(return_dataset=True).to_numpy()
+        oz = Rank1D(orient="h")
+        npt.assert_array_equal(oz.fit_transform(X), X)
 
         # Image similarity comparison
         oz.finalize()
@@ -306,16 +235,24 @@ class TestRank1D(VisualTestCase):
         assert isinstance(viz, Rank1D)
         self.assert_images_similar(viz, tol=0.1)
 
+
 ##########################################################################
 ## Rank2D Test Cases
 ##########################################################################
 
 
-@pytest.mark.usefixtures("dataset")
 class TestRank2D(VisualTestCase):
     """
     Test the Rank2D visualizer
     """
+    def test_rank2d_unknown_algorithm(self):
+        """
+        Test that an error is raised for Rank2D with an unknown algorithm
+        """
+        X, _ = load_energy()
+        msg = "'oscar' is unrecognized ranking method"
+        with pytest.raises(YellowbrickValueError, match=msg):
+            Rank2D(algorithm="Oscar").transform(X)
 
     @pytest.mark.xfail(
         IS_WINDOWS_OR_CONDA,
@@ -325,97 +262,98 @@ class TestRank2D(VisualTestCase):
         """
         Test Rank2D using pearson metric
         """
+        X, _ = load_energy(return_dataset=True).to_numpy()
         oz = Rank2D(algorithm="pearson")
-        npt.assert_array_equal(oz.fit_transform(self.dataset), self.dataset)
+        npt.assert_array_equal(oz.fit_transform(X), X)
 
         # Check Ranking
         expected = np.array(
             [
                 [
-                    1.0,
-                    -0.86937243,
-                    -0.77884764,
-                    0.71424708,
-                    0.10836854,
-                    -0.11550965,
-                    0.04494811,
-                    0.1725682,
+                    1.00000000e00,
+                    -9.91901462e-01,
+                    -2.03781680e-01,
+                    -8.68823408e-01,
+                    8.27747317e-01,
+                    0.00000000e00,
+                    1.11706815e-16,
+                    -1.12935670e-16,
                 ],
                 [
-                    -0.86937243,
-                    1.0,
-                    0.80436327,
-                    -0.9086706,
-                    -0.31117192,
-                    -0.26313947,
-                    -0.0711807,
-                    -0.16924862,
+                    -9.91901462e-01,
+                    1.00000000e00,
+                    1.95501633e-01,
+                    8.80719517e-01,
+                    -8.58147673e-01,
+                    0.00000000e00,
+                    -2.26567708e-16,
+                    -3.55861251e-16,
                 ],
                 [
-                    -0.77884764,
-                    0.80436327,
-                    1.0,
-                    -0.85520468,
-                    0.30940711,
-                    0.10634903,
-                    -0.02485686,
-                    -0.10230028,
+                    -2.03781680e-01,
+                    1.95501633e-01,
+                    1.00000000e00,
+                    -2.92316466e-01,
+                    2.80975743e-01,
+                    0.00000000e00,
+                    7.87010445e-18,
+                    0.00000000e00,
                 ],
                 [
-                    0.71424708,
-                    -0.9086706,
-                    -0.85520468,
-                    1.0,
-                    0.12537213,
-                    0.41306822,
-                    0.04704408,
-                    0.1031842,
+                    -8.68823408e-01,
+                    8.80719517e-01,
+                    -2.92316466e-01,
+                    1.00000000e00,
+                    -9.72512237e-01,
+                    0.00000000e00,
+                    -3.27553310e-16,
+                    2.20057668e-16,
                 ],
                 [
-                    0.10836854,
-                    -0.31117192,
-                    0.30940711,
-                    0.12537213,
-                    1.0,
-                    0.671111,
-                    0.06777278,
-                    0.09513859,
+                    8.27747317e-01,
+                    -8.58147673e-01,
+                    2.80975743e-01,
+                    -9.72512237e-01,
+                    1.00000000e00,
+                    0.00000000e00,
+                    -1.24094525e-18,
+                    0.00000000e00,
                 ],
                 [
-                    -0.11550965,
-                    -0.26313947,
-                    0.10634903,
-                    0.41306822,
-                    0.671111,
-                    1.0,
-                    0.04684117,
-                    -0.01072631,
+                    0.00000000e00,
+                    0.00000000e00,
+                    0.00000000e00,
+                    0.00000000e00,
+                    0.00000000e00,
+                    1.00000000e00,
+                    -2.42798319e-19,
+                    0.00000000e00,
                 ],
                 [
-                    0.04494811,
-                    -0.0711807,
-                    -0.02485686,
-                    0.04704408,
-                    0.06777278,
-                    0.04684117,
-                    1.0,
-                    0.18298883,
+                    1.11706815e-16,
+                    -2.26567708e-16,
+                    7.87010445e-18,
+                    -3.27553310e-16,
+                    -1.24094525e-18,
+                    -2.42798319e-19,
+                    1.00000000e00,
+                    2.12964221e-01,
                 ],
                 [
-                    0.1725682,
-                    -0.16924862,
-                    -0.10230028,
-                    0.1031842,
-                    0.09513859,
-                    -0.01072631,
-                    0.18298883,
-                    1.0,
+                    -1.12935670e-16,
+                    -3.55861251e-16,
+                    0.00000000e00,
+                    2.20057668e-16,
+                    0.00000000e00,
+                    0.00000000e00,
+                    2.12964221e-01,
+                    1.00000000e00,
                 ],
             ]
         )
 
         assert hasattr(oz, "ranks_")
-        assert oz.ranks_.shape == (self.dataset.shape[1], self.dataset.shape[1])
+        assert oz.ranks_.shape == (X.shape[1], X.shape[1])
         npt.assert_array_almost_equal(oz.ranks_, expected)
 
         # Image similarity comparision
@@ -430,98 +368,99 @@ class TestRank2D(VisualTestCase):
         """
         Test Rank2D using covariance metric
         """
+        X, _ = load_energy(return_dataset=True).to_numpy()
         oz = Rank2D(algorithm="covariance")
-        npt.assert_array_equal(oz.fit_transform(self.dataset), self.dataset)
+        npt.assert_array_equal(oz.fit_transform(X), X)
 
         # Check Ranking
         expected = np.array(
             [
                 [
-                    4.09266931e-03,
-                    -1.41062431e-03,
-                    -2.26778429e-03,
-                    3.13507202e-03,
-                    2.21273274e-04,
-                    -5.05566875e-04,
-                    1.44499782e-03,
-                    5.45713163e-03,
+                    1.11888744e-02,
+                    -9.24206867e00,
+                    -9.40391134e-01,
+                    -4.15083877e00,
+                    1.53324641e-01,
+                    0.00000000e00,
+                    1.57414282e-18,
+                    -1.85278419e-17,
                 ],
                 [
-                    -1.41062431e-03,
-                    6.43286363e-04,
-                    9.28539346e-04,
-                    -1.58126396e-03,
-                    -2.51898163e-04,
-                    -4.56609749e-04,
-                    -9.07228811e-04,
-                    -2.12191333e-03,
+                    -9.24206867e00,
+                    7.75916384e03,
+                    7.51290743e02,
+                    3.50393655e03,
+                    -1.32370274e02,
+                    0.00000000e00,
+                    -2.65874531e-15,
+                    -4.86170571e-14,
                 ],
                 [
-                    -2.26778429e-03,
-                    9.28539346e-04,
-                    2.07153281e-03,
-                    -2.67061756e-03,
-                    4.49467833e-04,
-                    3.31158917e-04,
-                    -5.68518509e-04,
-                    -2.30156415e-03,
+                    -9.40391134e-01,
+                    7.51290743e02,
+                    1.90326988e03,
+                    -5.75989570e02,
+                    2.14654498e01,
+                    0.00000000e00,
+                    4.57406096e-17,
+                    0.00000000e00,
                 ],
                 [
-                    3.13507202e-03,
-                    -1.58126396e-03,
-                    -2.67061756e-03,
-                    4.70751209e-03,
-                    2.74548546e-04,
-                    1.93898526e-03,
-                    1.62200836e-03,
-                    3.49952628e-03,
+                    -4.15083877e00,
+                    3.50393655e03,
+                    -5.75989570e02,
+                    2.03996306e03,
+                    -7.69178618e01,
+                    0.00000000e00,
+                    -1.97089918e-15,
+                    1.54151644e-14,
                 ],
                 [
-                    2.21273274e-04,
-                    -2.51898163e-04,
-                    4.49467833e-04,
-                    2.74548546e-04,
-                    1.01869657e-03,
-                    1.46545939e-03,
-                    1.08700151e-03,
-                    1.50099581e-03,
+                    1.53324641e-01,
+                    -1.32370274e02,
+                    2.14654498e01,
+                    -7.69178618e01,
+                    3.06649283e00,
+                    0.00000000e00,
+                    -2.89497529e-19,
+                    0.00000000e00,
                 ],
                 [
-                    -5.05566875e-04,
-                    -4.56609749e-04,
-                    3.31158917e-04,
-                    1.93898526e-03,
-                    1.46545939e-03,
-                    4.68073451e-03,
-                    1.61041253e-03,
-                    -3.62750059e-04,
+                    0.00000000e00,
+                    0.00000000e00,
+                    0.00000000e00,
+                    0.00000000e00,
+                    0.00000000e00,
+                    1.25162973e00,
+                    -3.61871912e-20,
+                    0.00000000e00,
                 ],
                 [
-                    1.44499782e-03,
-                    -9.07228811e-04,
-                    -5.68518509e-04,
-                    1.62200836e-03,
-                    1.08700151e-03,
-                    1.61041253e-03,
-                    2.52525253e-01,
-                    4.54545455e-02,
+                    1.57414282e-18,
+                    -2.65874531e-15,
+                    4.57406096e-17,
+                    -1.97089918e-15,
+                    -2.89497529e-19,
+                    -3.61871912e-20,
+                    1.77477184e-02,
+                    4.40026076e-02,
                 ],
                 [
-                    5.45713163e-03,
-                    -2.12191333e-03,
-                    -2.30156415e-03,
-                    3.49952628e-03,
-                    1.50099581e-03,
-                    -3.62750059e-04,
-                    4.54545455e-02,
-                    2.44343434e-01,
+                    -1.85278419e-17,
+                    -4.86170571e-14,
+                    0.00000000e00,
+                    1.54151644e-14,
+                    0.00000000e00,
+                    0.00000000e00,
+                    4.40026076e-02,
+                    2.40547588e00,
                 ],
             ]
         )
 
         assert hasattr(oz, "ranks_")
-        assert oz.ranks_.shape == (self.dataset.shape[1], self.dataset.shape[1])
-        npt.assert_array_almost_equal(oz.ranks_, expected)
+        assert oz.ranks_.shape == (X.shape[1], X.shape[1])
+        npt.assert_array_almost_equal(oz.ranks_, expected, decimal=5)
 
         # Image similarity comparision
         oz.finalize()
@@ -535,97 +474,26 @@ class TestRank2D(VisualTestCase):
         """
         Test Rank2D using spearman metric
         """
+        X, _ = load_energy(return_dataset=True).to_numpy()
         oz = Rank2D(algorithm="spearman")
-        npt.assert_array_equal(oz.fit_transform(self.dataset), self.dataset)
+        npt.assert_array_equal(oz.fit_transform(X), X)
 
         # Check Ranking
         expected = np.array(
             [
-                [
-                    1.0,
-                    -0.86889889,
-                    -0.77551755,
-                    0.68520852,
-                    0.11369937,
-                    -0.09489349,
-                    0.02909991,
-                    0.13840665,
-                ],
-                [
-                    -0.86889889,
-                    1.0,
-                    0.78232223,
-                    -0.87065107,
-                    -0.33450945,
-                    -0.25244524,
-                    -0.06166409,
-                    -0.15108512,
-                ],
-                [
-                    -0.77551755,
-                    0.78232223,
-                    1.0,
-                    -0.81636964,
-                    0.26846685,
-                    0.10348635,
-                    0.00415713,
-                    -0.07783173,
-                ],
-                [
-                    0.68520852,
-                    -0.87065107,
-                    -0.81636964,
-                    1.0,
-                    0.16316832,
-                    0.45167717,
-                    0.03672131,
-                    0.09191892,
-                ],
-                [
-                    0.11369937,
-                    -0.33450945,
-                    0.26846685,
-                    0.16316832,
-                    1.0,
-                    0.63986799,
-                    0.02009279,
-                    0.07290121,
-                ],
-                [
-                    -0.09489349,
-                    -0.25244524,
-                    0.10348635,
-                    0.45167717,
-                    0.63986799,
-                    1.0,
-                    0.04503557,
-                    -0.02923092,
-                ],
-                [
-                    0.02909991,
-                    -0.06166409,
-                    0.00415713,
-                    0.03672131,
-                    0.02009279,
-                    0.04503557,
-                    1.0,
-                    0.18298883,
-                ],
-                [
-                    0.13840665,
-                    -0.15108512,
-                    -0.07783173,
-                    0.09191892,
-                    0.07290121,
-                    -0.02923092,
-                    0.18298883,
-                    1.0,
-                ],
+                [1.0, -1.0, -0.25580533, -0.8708862, 0.86904819, 0.0, 0.0, 0.0],
+                [-1.0, 1.0, 0.25580533, 0.8708862, -0.86904819, 0.0, 0.0, 0.0],
+                [-0.25580533, 0.25580533, 1.0, -0.19345677, 0.22076336, 0.0, 0.0, 0.0],
+                [-0.8708862, 0.8708862, -0.19345677, 1.0, -0.93704257, 0.0, 0.0, 0.0],
+                [0.86904819, -0.86904819, 0.22076336, -0.93704257, 1.0, 0.0, 0.0, 0.0],
+                [0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0],
+                [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.18759162],
+                [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.18759162, 1.0],
             ]
         )
 
         assert hasattr(oz, "ranks_")
-        assert oz.ranks_.shape == (self.dataset.shape[1], self.dataset.shape[1])
+        assert oz.ranks_.shape == (X.shape[1], X.shape[1])
         npt.assert_array_almost_equal(oz.ranks_, expected)
 
         # Image similarity comparision
@@ -640,97 +508,26 @@ class TestRank2D(VisualTestCase):
         """
         Test Rank2D using kendalltau metric
         """
+        X, _ = load_energy(return_dataset=True).to_numpy()
         oz = Rank2D(algorithm="kendalltau")
-        npt.assert_array_equal(oz.fit_transform(self.dataset), self.dataset)
+        npt.assert_array_equal(oz.fit_transform(X), X)
 
         # Check Ranking
         expected = np.array(
             [
-                [
-                    1.0,
-                    -0.68,
-                    -0.57454545,
-                    0.49858586,
-                    0.07555556,
-                    -0.05858586,
-                    0.02387848,
-                    0.11357219,
-                ],
-                [
-                    -0.68,
-                    1.0,
-                    0.58666667,
-                    -0.69090909,
-                    -0.22262626,
-                    -0.17171717,
-                    -0.05059964,
-                    -0.12397575,
-                ],
-                [
-                    -0.57454545,
-                    0.58666667,
-                    1.0,
-                    -0.61050505,
-                    0.18909091,
-                    0.07515152,
-                    0.00341121,
-                    -0.0638663,
-                ],
-                [
-                    0.49858586,
-                    -0.69090909,
-                    -0.61050505,
-                    1.0,
-                    0.11070707,
-                    0.3030303,
-                    0.03013237,
-                    0.07542581,
-                ],
-                [
-                    0.07555556,
-                    -0.22262626,
-                    0.18909091,
-                    0.11070707,
-                    1.0,
-                    0.4610101,
-                    0.01648752,
-                    0.05982047,
-                ],
-                [
-                    -0.05858586,
-                    -0.17171717,
-                    0.07515152,
-                    0.3030303,
-                    0.4610101,
-                    1.0,
-                    0.03695479,
-                    -0.02398599,
-                ],
-                [
-                    0.02387848,
-                    -0.05059964,
-                    0.00341121,
-                    0.03013237,
-                    0.01648752,
-                    0.03695479,
-                    1.0,
-                    0.18298883,
-                ],
-                [
-                    0.11357219,
-                    -0.12397575,
-                    -0.0638663,
-                    0.07542581,
-                    0.05982047,
-                    -0.02398599,
-                    0.18298883,
-                    1.0,
-                ],
+                [1.0, -1.0, -0.2724275, -0.73614431, 0.73854895, 0.0, 0.0, 0.0],
+                [-1.0, 1.0, 0.2724275, 0.73614431, -0.73854895, 0.0, 0.0, 0.0],
+                [-0.2724275, 0.2724275, 1.0, -0.15192004, 0.19528337, 0.0, 0.0, 0.0],
+                [-0.73614431, 0.73614431, -0.15192004, 1.0, -0.87518995, 0.0, 0.0, 0.0],
+                [0.73854895, -0.73854895, 0.19528337, -0.87518995, 1.0, 0.0, 0.0, 0.0],
+                [0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0],
+                [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.15430335],
+                [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.15430335, 1.0],
             ]
         )
 
         assert hasattr(oz, "ranks_")
-        assert oz.ranks_.shape == (self.dataset.shape[1], self.dataset.shape[1])
+        assert oz.ranks_.shape == (X.shape[1], X.shape[1])
         npt.assert_array_almost_equal(oz.ranks_, expected)
 
         # Image similarity comparision
