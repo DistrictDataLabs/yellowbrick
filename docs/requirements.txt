@@ -9,3 +9,5 @@ cycler>=0.10.0
 Sphinx>=2.1
 sphinx-rtd-theme>=0.4.3
 numpydoc>=0.9.0
+pandas>=0.20
+
