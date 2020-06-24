@@ -3,13 +3,7 @@
 Precision-Recall Curves
 =======================
 
-Precision-Recall curves are a metric used to evaluate a classifier's quality,
-particularly when classes are very imbalanced. The precision-recall curve
-shows the tradeoff between precision, a measure of result relevancy, and
-recall, a measure of how many relevant results are returned. A large area
-under the curve represents both high recall and precision, the best case
-scenario for a classifier, showing a model that returns accurate results
-for the majority of classes it selects.
+The ``PrecisionRecallCurve`` shows the tradeoff between a classifier's precision, a measure of result relevancy, and recall, a measure of completeness. For each class, precision is defined as the ratio of true positives to the sum of true and false positives, and recall is the ratio of true positives to the sum of true positives and false negatives.
 
 =================   ==============================
 Visualizer           :class:`~yellowbrick.classifier.prcurve.PrecisionRecallCurve`
@@ -18,32 +12,110 @@ Models               Classification
 Workflow             Model evaluation
 =================   ==============================
 
+**precision**
+    Precision can be seen as a measure of a classifier's exactness. For each class, it is defined as the ratio of true positives to the sum of true and false positives. Said another way, "for all instances classified positive, what percent was correct?"
+
+**recall**
+    Recall is a measure of the classifier's completeness; the ability of a classifier to correctly find all positive instances. For each class, it is defined as the ratio of true positives to the sum of true positives and false negatives. Said another way, "for all instances that were actually positive, what percent was classified correctly?"
+
+**average precision**
+    Average precision expresses the precision-recall curve in a single number, which
+    represents the area under the curve. It is computed as the weighted average of precision achieved at each threshold, where the weights are the differences in recall from the previous thresholds.
+
+Both precision and recall vary between 0 and 1, and in our efforts to select and tune machine learning models, our goal is often to try to maximize both precision and recall, i.e. a model that returns accurate results for the majority of classes it selects. This would result in a ``PrecisionRecallCurve`` visualization with a high area under the curve.
 
 Binary Classification
 ---------------------
+
+The base case for precision-recall curves is the binary classification case, and this case is also the most visually interpretable. In the figure below we can see the precision plotted on the y-axis against the recall on the x-axis. The larger the filled in area, the stronger the classifier. The red line annotates the average precision.
 
 .. plot::
     :context: close-figs
     :alt: PrecisionRecallCurve with Binary Classification
 
-    from sklearn.linear_model import RidgeClassifier
-    from sklearn.model_selection import train_test_split as tts
-    from yellowbrick.classifier import PrecisionRecallCurve
+    import matplotlib.pyplot as plt
+
     from yellowbrick.datasets import load_spam
+    from sklearn.linear_model import RidgeClassifier
+    from yellowbrick.classifier import PrecisionRecallCurve
+    from sklearn.model_selection import train_test_split as tts
 
     # Load the dataset and split into train/test splits
     X, y = load_spam()
 
-    X_train, X_test, y_train, y_test = tts(X, y, test_size=0.2, shuffle=True)
+    X_train, X_test, y_train, y_test = tts(
+        X, y, test_size=0.2, shuffle=True, random_state=0
+    )
 
     # Create the visualizer, fit, score, and show it
-    viz = PrecisionRecallCurve(RidgeClassifier())
+    viz = PrecisionRecallCurve(RidgeClassifier(random_state=0))
     viz.fit(X_train, y_train)
     viz.score(X_test, y_test)
     viz.show()
 
+One way to use ``PrecisionRecallCurves`` is for model comparison, by examining which have the highest average precision. For instance, the below visualization suggest that a ``LogisticRegression`` model might be better than a ``RidgeClassifier`` for this particular dataset:
 
-The base case for precision-recall curves is the binary classification case, and this case is also the most visually interpretable. In the figure above we can see the precision plotted on the y-axis against the recall on the x-axis. The larger the filled in area, the stronger the classifier is. The red line annotates the *average precision*, a summary of the entire plot computed as the weighted average of precision achieved at each threshold such that the weight is the difference in recall from the previous threshold.
+.. plot::
+    :context: close-figs
+    :include-source: False
+    :alt: Comparing PrecisionRecallCurves with Binary Classification
+
+    import matplotlib.pyplot as plt
+
+    from yellowbrick.datasets import load_spam
+    from yellowbrick.classifier import PrecisionRecallCurve
+    from sklearn.model_selection import train_test_split as tts
+    from sklearn.linear_model import RidgeClassifier, LogisticRegression
+
+    # Load the dataset and split into train/test splits
+    X, y = load_spam()
+
+    X_train, X_test, y_train, y_test = tts(
+        X, y, test_size=0.2, shuffle=True, random_state=0
+    )
+
+    # Create the visualizers, fit, score, and show them
+    models = [
+        RidgeClassifier(random_state=0), LogisticRegression(random_state=0)
+    ]
+    _, axes = plt.subplots(ncols=2, figsize=(8,4))
+
+    for idx, ax in enumerate(axes.flatten()):
+        viz = PrecisionRecallCurve(models[idx], ax=ax, show=False)
+        viz.fit(X_train, y_train)
+        viz.score(X_test, y_test)
+        viz.finalize()
+
+    plt.show()
+
+Precision-recall curves are one of the methods used to evaluate a classifier's quality, particularly when classes are very imbalanced. The below plot suggests that our classifier improves when we increase the weight of the "spam" case (which is 1), and decrease the weight for the "not spam" case (which is 0).
+
+.. plot::
+    :context: close-figs
+    :alt: Optimizing PrecisionRecallCurve with Binary Classification
+
+    from yellowbrick.datasets import load_spam
+    from sklearn.linear_model import LogisticRegression
+    from yellowbrick.classifier import PrecisionRecallCurve
+    from sklearn.model_selection import train_test_split as tts
+
+    # Load the dataset and split into train/test splits
+    X, y = load_spam()
+
+    X_train, X_test, y_train, y_test = tts(
+        X, y, test_size=0.2, shuffle=True, random_state=0
+    )
+
+    # Specify class weights to shift the threshold towards spam classification
+    weights = {0:0.2, 1:0.8}
+
+    # Create the visualizer, fit, score, and show it
+    viz = PrecisionRecallCurve(
+        LogisticRegression(class_weight=weights, random_state=0)
+    )
+    viz.fit(X_train, y_train)
+    viz.score(X_test, y_test)
+    viz.show()
 
 Multi-Label Classification
 --------------------------
