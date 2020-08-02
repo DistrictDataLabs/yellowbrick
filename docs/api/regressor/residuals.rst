@@ -17,8 +17,9 @@ Workflow             Model evaluation
     :context: close-figs
     :alt: Residuals Plot on the Concrete dataset using a linear model
 
-    from sklearn.model_selection import train_test_split
     from sklearn.linear_model import Ridge
+    from sklearn.model_selection import train_test_split
+
     from yellowbrick.datasets import load_concrete
     from yellowbrick.regressor import ResidualsPlot
 
@@ -76,8 +77,9 @@ Similar functionality as above can be achieved in one line using the associated 
 
     from sklearn.ensemble import RandomForestRegressor
     from sklearn.model_selection import train_test_split as tts
-    from yellowbrick.regressor import residuals_plot
+
     from yellowbrick.datasets import load_concrete
+    from yellowbrick.regressor import residuals_plot
 
     # Load the dataset and split into train/test splits
     X, y = load_concrete()

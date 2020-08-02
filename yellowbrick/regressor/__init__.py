@@ -21,5 +21,6 @@ visualizations related to evaluating Scikit-Learn regressor models.
 ## Hoist visualizers into the regressor namespace
 from .base import *
 from .residuals import *
+from .prediction_error import *
 from .alphas import *
 from .influence import *

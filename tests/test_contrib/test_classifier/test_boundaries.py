@@ -356,7 +356,7 @@ class TestDecisionBoundariesVisualizer(VisualTestCase):
         """
         Test integration of visualizer with numpy arrays
         """
-        model = neighbors.KNeighborsClassifier(3)
+        model = neighbors.KNeighborsClassifier(n_neighbors=3)
 
         visualizer = DecisionBoundariesVisualizer(model, features=[1, 2])
         visualizer.fit_draw_show(X, y)
