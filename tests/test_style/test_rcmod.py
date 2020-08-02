@@ -38,7 +38,8 @@ class RCParamTester(VisualTestCase):
     """
 
     excluded_params = {
-        "backend",  # This cannot be changed by manipulating rc
+        "backend",  # This cannot be changed by manipulating rc,
+        "backend_fallback",  # Or `test_reset_orig`, `test_rcmod.py` fail after MPL3.3
         "svg.embed_char_paths",  # This param causes test issues and is deprecated
         "font.family",  # breaks the visualtest case
     }
