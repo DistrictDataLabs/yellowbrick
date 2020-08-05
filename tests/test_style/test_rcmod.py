@@ -41,6 +41,22 @@ class RCParamTester(VisualTestCase):
         "backend",  # This cannot be changed by manipulating rc,
         "svg.embed_char_paths",  # This param causes test issues and is deprecated
         "font.family",  # breaks the visualtest case
+
+        # The following are not able to be set by a style in matplotlib 2.0
+        # See: https://bit.ly/39UWTCY
+        "interactive",
+        "backend.qt4",
+        "webagg.port",
+        "webagg.port_retries",
+        "webagg.open_in_browser",
+        "backend_fallback",
+        "toolbar",
+        "timezone",
+        "datapath",
+        "figure.max_open_warning",
+        "savefig.directory",
+        "tk.window_focus",
+        "docstring.hardcopy",
     }
 
     def flatten_list(self, orig_list):

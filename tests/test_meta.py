@@ -155,11 +155,13 @@ class TestMetaImageComparison(VisualTestCase):
         """
         Test that not close visualizers raise an assertion error.
         """
-        # Baseline image random_state=225
-        viz = RandomVisualizer(random_state=224).fit()
+        # Baseline image random_state=224
+        # NOTE: if regenerating baseline images, skip this one or change random state!
+        viz = RandomVisualizer(random_state=225).fit()
         viz.finalize()
 
         with pytest.raises(ImageComparisonFailure, match="images not close"):
+            # If failing, perhaps baseline images were regenerated? See note above.
             self.assert_images_similar(viz)
 
         # Assert there is a diff
