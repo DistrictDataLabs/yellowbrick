@@ -20,6 +20,7 @@ import matplotlib.pyplot as plt
 
 from yellowbrick.draw import *
 from .base import VisualTestCase
+from tests.base import IS_WINDOWS_OR_CONDA
 
 
 ##########################################################################
