@@ -9,6 +9,8 @@ include MANIFEST.in
 include examples/*.ipynb
 include examples/*.md
 
+include LICENSE.txt
+
 graft docs
 prune docs/_build
 
