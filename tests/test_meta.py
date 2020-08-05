@@ -21,7 +21,6 @@ import inspect
 import matplotlib as mpl
 
 from tests.rand import RandomVisualizer
-from tests.base import IS_WINDOWS_OR_CONDA
 from unittest.mock import MagicMock, patch
 from tests.base import ACTUAL_IMAGES, BASELINE_IMAGES
 from tests.base import VisualTestCase, ImageComparison
@@ -145,9 +144,7 @@ class TestMetaImageComparison(VisualTestCase):
 
         assert mpl.get_backend() == "agg"
 
-        # Fails on Miniconda/Appveyor with images not close (RMS 20.085)
-        tol = 21.0 if IS_WINDOWS_OR_CONDA else 1.0
-        compare = self.assert_images_similar(viz, tol=tol)
+        compare = self.assert_images_similar(viz, tol=1.0)
         assert_path_exists(compare.actual_image_path)
         assert_path_exists(compare.baseline_image_path)
 

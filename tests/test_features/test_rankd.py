@@ -358,8 +358,7 @@ class TestRank2D(VisualTestCase):
 
         # Image similarity comparision
         oz.finalize()
-        # Travis ImageComparisonFailure: images not close (RMS 0.112)
-        self.assert_images_similar(oz, tol=0.2)
+        self.assert_images_similar(oz, tol=0.1)
 
     @pytest.mark.xfail(
         IS_WINDOWS_OR_CONDA,

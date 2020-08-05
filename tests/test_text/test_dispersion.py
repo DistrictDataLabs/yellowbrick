@@ -120,8 +120,7 @@ class TestDispersionPlot(VisualTestCase):
         visualizer.fit(text, target)
         visualizer.ax.grid(False)
 
-        # Travis & Appveyor - images not close (RMS 26.792)
-        self.assert_images_similar(visualizer, tol=27)
+        self.assert_images_similar(visualizer, tol=25)
 
     def test_dispersion_plot_mismatched_labels(self):
         """
