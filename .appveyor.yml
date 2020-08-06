@@ -2,7 +2,7 @@
 # https://ci.appveyor.com/project/districtdatalabs/yellowbrick
 
 image:
-  - Visual Studio 2019
+  - Previous Visual Studio 2017
 
 version: 1.1.{build}
 pull_requests:
@@ -36,9 +36,9 @@ environment:
           PYTHON_VERSION: "3.7"
           PYTHON_ARCH: "64"
 
-        - PYTHON: "C:\\Miniconda38-x64"
-          PYTHON_VERSION: "3.7.6"
-          MINICONDA_VERSION: "4.8.2"
+        - PYTHON: "C:\\Miniconda37-x64"
+          PYTHON_VERSION: "3.7.4"
+          MINICONDA_VERSION: "4.7.12"
           PYTHON_ARCH: "64"
 
         # Failing Tests Due to TypeError: LoadLibrary()
