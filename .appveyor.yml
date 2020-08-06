@@ -4,7 +4,7 @@
 image:
   - Previous Visual Studio 2017
 
-version: 0.9.{build}
+version: 1.1.{build}
 pull_requests:
   do_not_increment_build_number: true
 
@@ -36,10 +36,11 @@ environment:
           PYTHON_VERSION: "3.7"
           PYTHON_ARCH: "64"
 
-        - PYTHON: "C:\\Miniconda36-x64"
-          PYTHON_VERSION: "3.6"
-          MINICONDA_VERSION: "4.8.2"
-          PYTHON_ARCH: "64"
+        # Tests hang indefinitely
+        # - PYTHON: "C:\\Miniconda36-x64"
+        #   PYTHON_VERSION: "3.6"
+        #   MINICONDA_VERSION: "4.8.2"
+        #   PYTHON_ARCH: "64"
 
         # Failing Tests Due to TypeError: LoadLibrary()
         # - PYTHON: "C:\\Miniconda37-x64"
