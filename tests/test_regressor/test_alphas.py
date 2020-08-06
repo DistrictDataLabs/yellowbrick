@@ -217,4 +217,5 @@ class TestManualAlphaSelection(VisualTestCase):
             ElasticNet(random_state=0), X, y, cv=3, is_fitted=False, show=False
         )
         assert isinstance(visualizer, ManualAlphaSelection)
-        self.assert_images_similar(visualizer)
+        # Python 3.6 Travis images not similar (RMS 0.024)
+        self.assert_images_similar(visualizer, tol=0.5)
