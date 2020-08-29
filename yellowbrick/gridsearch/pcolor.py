@@ -68,8 +68,8 @@ def gridsearch_color_plot(model, x_param, y_param, X=None, y=None, ax=None, **kw
 
     Returns
     -------
-    ax : matplotlib axes
-        Returns the axes that the classification report was drawn on.
+    visualizer : GridSearchColorPlot
+        Returns visualizer
     """
     # Instantiate the visualizer
     visualizer = GridSearchColorPlot(model, x_param, y_param, ax=ax, **kwargs)
@@ -80,8 +80,8 @@ def gridsearch_color_plot(model, x_param, y_param, X=None, y=None, ax=None, **kw
     else:
         visualizer.draw()
 
-    # Return the axes object on the visualizer
-    return visualizer.ax
+    # Return the visualizer
+    return visualizer
 
 
 class GridSearchColorPlot(GridSearchVisualizer):
