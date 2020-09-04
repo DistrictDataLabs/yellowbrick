@@ -3,12 +3,23 @@
 Changelog
 =========
 
+Under Development
+-----------------
+
+Major Changes:
+   - New ``ExplainedVariance`` visualizer that assists in the selection of the number of
+   components for principal component analysis. The visualizer plots both cumulative
+   and discrete explained variance against the number of components and shades in
+   percentiles of total explained variance for visual selection of the best fit.
+
+
+
 Version 1.1
 -----------
 
 * Tag: v1.1_
 * Deployed Wednesday, February 12, 2020
-* Contributors: Benjamin Bengfort, Rebecca Bilbro, Kristen McIntyre, Larry Gray, Prema Roman, Adam Morris, Shivendra Sharma, Michael Chestnut, Michael Garod, Naresh Bachwani, Piyush Gautam, Daniel Navarrete, Molly Morrison, Emma Kwiecinska, Sarthak Jain, Tony Ojeda, Edwin Schmier,  Nathan Danielsen
+* Contributors: Benjamin Bengfort, Rebecca Bilbro, Kristen McIntyre, Larry Gray, Prema Roman, Adam Morris, Shivendra Sharma, Michael Chestnut, Michael Garod, Naresh Bachwani, Piyush Gautam, Daniel Navarrete, Molly Morrison, Emma Kwiecinska, Sarthak Jain, Tony Ojeda, Edwin Schmierer, Nathan Danielsen
 
 Major Changes:
    - Quick methods (aka Oneliners), which return a fully fitted finalized visualizer object in only a single line, are now implemented for all Yellowbrick Visualizers. Test coverage has been added for all quick methods. The documentation has been updated to document and demonstrate the usage of the quick methods.

@@ -47,6 +47,7 @@ finalizes and displays the image.
    radviz
    rankd
    pcoords
-   pca
    manifold
+   pca
+   explained_variance
    jointplot

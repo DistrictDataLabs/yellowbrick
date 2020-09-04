@@ -471,8 +471,8 @@ def pca_decomposition(
     show=True,
     **kwargs
 ):
+    """PCA quick method.
 
-    """
     Produce a two or three dimensional principal component plot of the data array ``X``
     projected onto its largest sequential principal components. It is common practice
     to scale the data array ``X`` before applying a PC decomposition. Variable scaling
@@ -557,35 +557,10 @@ def pca_decomposition(
         Keyword arguments that are passed to the base class and may influence
         the visualization as defined in other Visualizers.
 
-    Attributes
-    ----------
-    pca_components_ : ndarray, shape (n_features, n_components)
-        This tells about the magnitude of each feature in the pricipal components.
-        This is primarily used to draw the biplots.
-
-    classes_ : ndarray, shape (n_classes,)
-        The class labels that define the discrete values in the target. Only
-        available if the target type is discrete. This is guaranteed to be
-        strings even if the classes are a different type.
-
-    features_ : ndarray, shape (n_features,)
-        The names of the features discovered or used in the visualizer that
-        can be used as an index to access or modify data in X. If a user passes
-        feature names in, those features are used. Otherwise the columns of a
-        DataFrame are used or just simply the indices of the data array.
-
-    range_ : (min y, max y)
-        A tuple that describes the minimum and maximum values in the target.
-        Only available if the target type is continuous.
-
-    Examples
-    --------
-    >>> from sklearn import datasets
-    >>> iris = datasets.load_iris()
-    >>> X = iris.data
-    >>> y = iris.target
-    >>> pca_decomposition(X, y, colors=['r', 'g', 'b'], projection=3)
-
+    Returns
+    -------
+    viz : PCA
+        Returns the fitted, finalized visualizer
     """
     # Instantiate the visualizer
     visualizer = PCA(
