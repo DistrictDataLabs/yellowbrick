@@ -20,8 +20,6 @@ Detection utilities for Scikit-Learn and Numpy types for flexibility
 import inspect
 import numpy as np
 
-from sklearn.base import BaseEstimator
-
 
 ##########################################################################
 ## Model Type checking utilities
@@ -38,10 +36,10 @@ def is_estimator(model):
         The object to test if it is a Scikit-Learn clusterer, especially a
         Scikit-Learn estimator or Yellowbrick visualizer
     """
-    if inspect.isclass(model):
-        return issubclass(model, BaseEstimator)
-
-    return isinstance(model, BaseEstimator)
+    try:
+        return callable(getattr(self, "fit")) and callable(getattr(self, "predict"))
+    except:
+        return False
 
 
 # Alias for closer name to isinstance and issubclass
