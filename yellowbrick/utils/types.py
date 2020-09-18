@@ -37,7 +37,7 @@ def is_estimator(model):
         Scikit-Learn estimator or Yellowbrick visualizer
     """
     try:
-        return callable(getattr(self, "fit")) and callable(getattr(self, "predict"))
+        return callable(getattr(model, "fit")) and callable(getattr(model, "predict"))
     except:
         return False
 
