@@ -27,7 +27,7 @@ from yellowbrick.draw import bar_stack
 from yellowbrick.base import ModelVisualizer
 from yellowbrick.style.colors import resolve_colors
 from yellowbrick.utils import is_dataframe, is_classifier
-from yellowbrick.exceptions import YellowbrickTypeError, NotFitted, YellowbrickWarning
+from yellowbrick.exceptions import YellowbrickTypeError, NotFitted, YellowbrickWarning, YellowbrickValueError
 
 ##########################################################################
 ## Feature Visualizer
@@ -96,6 +96,10 @@ class FeatureImportances(ModelVisualizer):
         Keyword arguments that are passed to the base class and may influence
         the visualization as defined in other Visualizers.
 
+    top_n : int, default=None
+        Display only the top N results with a positive integer, or the bottom N
+        results with a negative integer. If None or 0, all results are shown.
+
     Attributes
     ----------
     features_ : np.array
@@ -128,6 +132,7 @@ class FeatureImportances(ModelVisualizer):
         colors=None,
         colormap=None,
         is_fitted="auto",
+        top_n=None,
         **kwargs
     ):
         # Initialize the visualizer bases
@@ -144,6 +149,7 @@ class FeatureImportances(ModelVisualizer):
             stack=stack,
             colors=colors,
             colormap=colormap,
+            top_n=top_n
         )
 
     def fit(self, X, y=None, **kwargs):
@@ -218,6 +224,12 @@ class FeatureImportances(ModelVisualizer):
         else:
             self.features_ = np.array(self.labels)
 
+        if self.top_n and self.top_n > self.features_.shape[0]:
+            raise YellowbrickValueError(
+                "top_n '{}' cannot be greater than the number of "
+                "features '{}'".format(self.top_n, self.features_.shape[0])
+            )
+
         # Sort the features and their importances
         if self.stack:
             sort_idx = np.argsort(np.mean(self.feature_importances_, 0))
@@ -225,6 +237,11 @@ class FeatureImportances(ModelVisualizer):
             self.feature_importances_ = self.feature_importances_[:, sort_idx]
         else:
             sort_idx = np.argsort(self.feature_importances_)
+            if self.top_n:  # Keep only the top or bottom n examples
+                if self.top_n > 0:
+                    sort_idx = sort_idx[-self.top_n:]
+                else:
+                    sort_idx = sort_idx[:-self.top_n]
             self.features_ = self.features_[sort_idx]
             self.feature_importances_ = self.feature_importances_[sort_idx]
 
