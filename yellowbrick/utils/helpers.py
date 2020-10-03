@@ -28,11 +28,12 @@ from sklearn.utils.validation import check_is_fitted
 
 from yellowbrick.utils.types import is_estimator
 from yellowbrick.exceptions import YellowbrickTypeError
+from yellowbrick.contrib.wrapper import ContribEstimator
+
 
 ##########################################################################
 ## Model and Feature Information
 ##########################################################################
-
 
 def is_fitted(estimator):
     """
@@ -137,11 +138,12 @@ def get_model_name(model):
             "Cannot detect the model name for non estimator: '{}'".format(type(model))
         )
 
+    if isinstance(model, Pipeline):
+        return get_model_name(model.steps[-1][-1])
+    elif isinstance(model, ContribEstimator):
+        return model.estimator.__class__.__name__
     else:
-        if isinstance(model, Pipeline):
-            return get_model_name(model.steps[-1][-1])
-        else:
-            return model.__class__.__name__
+        return model.__class__.__name__
 
 
 def has_ndarray_int_columns(features, X):
