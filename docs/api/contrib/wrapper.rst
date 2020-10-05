@@ -30,7 +30,7 @@ The ``wrap`` function initializes the third party model as a ``ContribEstimator`
     attribute, which is required for this visualizer - please see the third party
     estimators documentation.
 
-Some estimators are required to pass type checking, for example the estimator must be a classifier, regressor, clusterer, density estimator, or outlier detector. A second argument can be passed to the ``wrap`` function declarying the type of estimator:
+Some estimators are required to pass type checking, for example the estimator must be a classifier, regressor, clusterer, density estimator, or outlier detector. A second argument can be passed to the ``wrap`` function declaring the type of estimator:
 
 .. code:: python
 
@@ -93,7 +93,7 @@ The following libraries have been partially tested and will likely work without 
 - `cuML <https://github.com/rapidsai/cuml>`_: it is likely that clustering, classification, and regression cuML estimators will work with Yellowbrick visualizers. However, the cuDF datasets have not been tested with Yellowbrick.
 - `Spark MLlib <https://spark.apache.org/docs/latest/ml-guide.html>`_: The Spark DataFrame API and estimators should work with Yellowbrick visualizers in a local notebook context after collection.
 
-.. note:: If you have used a Python machine learning library not listed here with Yellowbrick, please let us know - we'd love to add it to the list! Also if you're using a library that is not wholley compatible, please open an issue so that we can explore how to integrate it with the ``yellowbrick.contrib`` module!
+.. note:: If you have used a Python machine learning library not listed here with Yellowbrick, please let us know - we'd love to add it to the list! Also if you're using a library that is not wholly compatible, please open an issue so that we can explore how to integrate it with the ``yellowbrick.contrib`` module!
 
 API Reference
 -------------
