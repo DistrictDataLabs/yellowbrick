@@ -21,6 +21,7 @@ import inspect
 import numpy as np
 
 from sklearn.base import BaseEstimator
+from yellowbrick.contrib.wrapper import ContribEstimator
 
 
 ##########################################################################
@@ -39,9 +40,9 @@ def is_estimator(model):
         Scikit-Learn estimator or Yellowbrick visualizer
     """
     if inspect.isclass(model):
-        return issubclass(model, BaseEstimator)
+        return issubclass(model, (BaseEstimator, ContribEstimator))
 
-    return isinstance(model, BaseEstimator)
+    return isinstance(model, (BaseEstimator, ContribEstimator))
 
 
 # Alias for closer name to isinstance and issubclass
