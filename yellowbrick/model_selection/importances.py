@@ -92,13 +92,13 @@ class FeatureImportances(ModelVisualizer):
         modified. If 'auto' (default), a helper method will check if the estimator
         is fitted before fitting it again.
 
-    kwargs : dict
-        Keyword arguments that are passed to the base class and may influence
-        the visualization as defined in other Visualizers.
-
     top_n : int, default=None
         Display only the top N results with a positive integer, or the bottom N
         results with a negative integer. If None or 0, all results are shown.
+
+    kwargs : dict
+        Keyword arguments that are passed to the base class and may influence
+        the visualization as defined in other Visualizers.
 
     Attributes
     ----------
@@ -236,12 +236,19 @@ class FeatureImportances(ModelVisualizer):
             self.features_ = self.features_[sort_idx]
             self.feature_importances_ = self.feature_importances_[:, sort_idx]
         else:
-            sort_idx = np.argsort(self.feature_importances_)
-            if self.top_n:  # Keep only the top or bottom n examples
+            if self.top_n:  # Keep only the top/bottom N examples by magnitude
+                abs_sort_idx = np.argsort(np.absolute(self.feature_importances_))
                 if self.top_n > 0:
-                    sort_idx = sort_idx[-self.top_n:]
+                    abs_sort_idx = abs_sort_idx[-self.top_n:]
                 else:
-                    sort_idx = sort_idx[:-self.top_n]
+                    abs_sort_idx = abs_sort_idx[:-self.top_n]
+
+                # Filter features to only those top N
+                self.features_ = self.features_[abs_sort_idx]
+                self.feature_importances_ = self.feature_importances_[abs_sort_idx]
+
+            # Sort features once more to respect position for negative numbers
+            sort_idx = np.argsort(self.feature_importances_)
             self.features_ = self.features_[sort_idx]
             self.feature_importances_ = self.feature_importances_[sort_idx]
 
@@ -382,6 +389,7 @@ def feature_importances(
     colors=None,
     colormap=None,
     is_fitted="auto",
+    top_n=None,
     show=True,
     **kwargs
 ):
@@ -448,6 +456,10 @@ def feature_importances(
         call ``plt.savefig`` from this signature, nor ``clear_figure``. If False, simply
         calls ``finalize()``
 
+    top_n : int, default=None
+        Display only the top N results with a positive integer, or the bottom N
+        results with a negative integer. If None or 0, all results are shown.
+
     kwargs : dict
         Keyword arguments that are passed to the base class and may influence
         the visualization as defined in other Visualizers.
@@ -469,6 +481,7 @@ def feature_importances(
         colors=colors,
         colormap=colormap,
         is_fitted=is_fitted,
+        top_n=top_n,
         **kwargs
     )
 
