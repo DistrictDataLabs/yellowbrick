@@ -92,7 +92,7 @@ class FeatureImportances(ModelVisualizer):
         modified. If 'auto' (default), a helper method will check if the estimator
         is fitted before fitting it again.
 
-    top_n : int, default=None
+    topn : int, default=None
         Display only the top N results with a positive integer, or the bottom N
         results with a negative integer. If None or 0, all results are shown.
 
@@ -132,7 +132,7 @@ class FeatureImportances(ModelVisualizer):
         colors=None,
         colormap=None,
         is_fitted="auto",
-        top_n=None,
+        topn=None,
         **kwargs
     ):
         # Initialize the visualizer bases
@@ -149,7 +149,7 @@ class FeatureImportances(ModelVisualizer):
             stack=stack,
             colors=colors,
             colormap=colormap,
-            top_n=top_n
+            topn=topn
         )
 
     def fit(self, X, y=None, **kwargs):
@@ -224,10 +224,10 @@ class FeatureImportances(ModelVisualizer):
         else:
             self.features_ = np.array(self.labels)
 
-        if self.top_n and self.top_n > self.features_.shape[0]:
+        if self.topn and self.topn > self.features_.shape[0]:
             raise YellowbrickValueError(
-                "top_n '{}' cannot be greater than the number of "
-                "features '{}'".format(self.top_n, self.features_.shape[0])
+                "topn '{}' cannot be greater than the number of "
+                "features '{}'".format(self.topn, self.features_.shape[0])
             )
 
         # Sort the features and their importances
@@ -236,12 +236,12 @@ class FeatureImportances(ModelVisualizer):
             self.features_ = self.features_[sort_idx]
             self.feature_importances_ = self.feature_importances_[:, sort_idx]
         else:
-            if self.top_n:  # Keep only the top/bottom N examples by magnitude
+            if self.topn:  # Keep only the top/bottom N examples by magnitude
                 abs_sort_idx = np.argsort(np.absolute(self.feature_importances_))
-                if self.top_n > 0:
-                    abs_sort_idx = abs_sort_idx[-self.top_n:]
+                if self.topn > 0:
+                    abs_sort_idx = abs_sort_idx[-self.topn:]
                 else:
-                    abs_sort_idx = abs_sort_idx[:-self.top_n]
+                    abs_sort_idx = abs_sort_idx[:-self.topn]
 
                 # Filter features to only those top N
                 self.features_ = self.features_[abs_sort_idx]
@@ -389,7 +389,7 @@ def feature_importances(
     colors=None,
     colormap=None,
     is_fitted="auto",
-    top_n=None,
+    topn=None,
     show=True,
     **kwargs
 ):
@@ -456,7 +456,7 @@ def feature_importances(
         call ``plt.savefig`` from this signature, nor ``clear_figure``. If False, simply
         calls ``finalize()``
 
-    top_n : int, default=None
+    topn : int, default=None
         Display only the top N results with a positive integer, or the bottom N
         results with a negative integer. If None or 0, all results are shown.
 
@@ -481,7 +481,7 @@ def feature_importances(
         colors=colors,
         colormap=colormap,
         is_fitted=is_fitted,
-        top_n=top_n,
+        topn=topn,
         **kwargs
     )
 
