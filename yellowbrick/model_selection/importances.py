@@ -232,22 +232,25 @@ class FeatureImportances(ModelVisualizer):
 
         # Sort the features and their importances
         if self.stack:
-            sort_idx = np.argsort(np.mean(self.feature_importances_, 0))
+            if self.topn:
+                abs_sort_idx = np.argsort(
+                    np.sum(np.absolute(self.feature_importances_), 0)
+                )
+                sort_idx = self._reduce_topn(abs_sort_idx)
+            else:
+                sort_idx = np.argsort(np.mean(self.feature_importances_, 0))
+
             self.features_ = self.features_[sort_idx]
             self.feature_importances_ = self.feature_importances_[:, sort_idx]
         else:
-            if self.topn:  # Keep only the top/bottom N examples by magnitude
+            if self.topn:
                 abs_sort_idx = np.argsort(np.absolute(self.feature_importances_))
-                if self.topn > 0:
-                    abs_sort_idx = abs_sort_idx[-self.topn:]
-                else:
-                    abs_sort_idx = abs_sort_idx[:-self.topn]
+                abs_sort_idx = self._reduce_topn(abs_sort_idx)
 
-                # Filter features to only those top N
                 self.features_ = self.features_[abs_sort_idx]
                 self.feature_importances_ = self.feature_importances_[abs_sort_idx]
 
-            # Sort features once more to respect position for negative numbers
+            # Sort features by value (sorting a second time if topn)
             sort_idx = np.argsort(self.feature_importances_)
             self.features_ = self.features_[sort_idx]
             self.feature_importances_ = self.feature_importances_[sort_idx]
@@ -370,6 +373,15 @@ class FeatureImportances(ModelVisualizer):
         """
         return hasattr(self, "feature_importances_") and hasattr(self, "features_")
 
+    def _reduce_topn(self, arr):
+        """
+        Return only the top or bottom N items within a sliceable array/list
+        """
+        if self.topn > 0:
+            arr = arr[-self.topn:]
+        elif self.topn < 0:
+            arr = arr[:-self.topn]
+        return arr
 
 ##########################################################################
 ## Quick Method
