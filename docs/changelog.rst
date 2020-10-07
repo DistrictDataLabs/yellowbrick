@@ -3,6 +3,39 @@
 Changelog
 =========
 
+Development
+-----------
+
+* Under Development
+* Current Contributors: Rebecca Bilbro, Larry Gray, Vladislav Skripniuk, David Landsman, Prema Roman, @aldermartinez, Tan Tran, Benjamin Bengfort,
+Kellen Donohue
+
+Major Changes:
+   - Added Q-Q plot as side-by-side option to the ``ResidualsPlot`` visualizer.
+   - More robust handling of binary classification in ``ROCAUC`` visualization, standardizing the way that classifiers with ``predict_proba`` and ``decision_function`` methods are handling. A ``binary`` hyperparameter was added to the visualizer to ensure correct interpretation of binary ROCAUC plots.
+   - Fixes to ``ManualAlphaSelection`` to move it from prototype to prime time including documentation, tests, and quick method. This method allows users to perform alpha selection visualization on non-CV estimators.
+   - Removal of AppVeyor from the CI matrix after too many out-of-core (non-Yellowbrick) failures with setup and installation on the VisualStudio images. Yellowbrick CI currently omits Windows and Miniconda from the test matrix and we are actively looking for new solutions.
+   - Third party estimator wrapper in contrib to provide enhanced support for non-scikit-learn estimators such as those in Keras, CatBoost, and cuML.
+
+Minor Changes:
+   - Allow users to specify colors for the ``PrecisionRecallCurve``.
+   - Update ``ClassificationScoreVisualizer`` base class to have a ``class_colors_`` learned attribute instead of a ``colors`` property; additional polishing of multi-class colors in ``PrecisionRecallCurve``, ``ROCAUC``, and ``ClassPredictionError``.
+   - Update ``KElbowVisualizer`` fit method and quick method to allow passing ``sample_weight`` parameter through the visualizer.
+   - Enhancements to classification documentation to better discuss precision and recall and to diagnose with ``PrecisionRecallCurve`` and ``ClassificationReport`` visualizers.
+   - Improvements to ``CooksDistance`` visualizer documentation.
+   - Corrected ``KElbowVisualizer`` label and legend formatting.
+   - Typo fixes to ``ROCAUC`` documentation, labels, and legend. Typo fix to ``Manifold`` documentation.
+   - Use of ``tight_layout`` accessing the Visualizer figure property to finalize images and resolve discrepancies in plot directive images in documentation.
+   - Add ``get_param_names`` helper function to identify keyword-only parameters that belong to a specific method.
+   - Splits package namespace for ``yellowbrick.regressor.residuals`` to move ``PredictionError`` to its own module, ``yellowbrick.regressor.prediction_error``.
+   - Update tests to use ``SVC`` instead of ``LinearSVC`` and correct ``KMeans`` scores based on updates to scikit-learn v0.23.
+   - Continued maintenance and management of baseline images following dependency updates; removal of mpl.cbook dependency.
+   - Explicitly include license file in source distribution via ``MANIFEST.in``.
+   - Fixes to some deprecation warnings from ``sklearn.metrics``.
+   - Testing requirements depends on Pandas v1.0.4 or later.
+   - Reintegrates pytest-spec and verbose test logging, updates pytest dependency to v0.5.0 or later.
+   - Added Pandas v0.20 or later to documentation dependencies.
+
 Version 1.1
 -----------
 
