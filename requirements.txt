@@ -18,7 +18,6 @@ cycler>=0.10.0
 ## Optional Testing Dependencies (pip install -r tests/requirements.txt)
 #nltk>=3.2
 #pandas>=0.20
-#umap-learn>=0.3
 
 ## Documentation (pip install -r docs/requirements.txt)
 #Sphinx>=1.8.3
