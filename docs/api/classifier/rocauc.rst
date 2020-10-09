@@ -52,8 +52,7 @@ Workflow             Model evaluation
 Multi-class ROCAUC Curves
 -------------------------
 
-Yellowbrick's ``ROCAUC`` Visualizer does allow for plotting multiclass classification curves.
-ROC curves are typically used in binary classification, and in fact the Scikit-Learn ``roc_curve`` metric is only able to perform metrics for binary classifiers. Yellowbrick addresses this by binarizing the output (per-class) or to use one-vs-rest (micro score) or one-vs-all (macro score) strategies of classification.
+Yellowbrick's ``ROCAUC`` Visualizer does allow for plotting multiclass classification curves. ROC curves are typically used in binary classification, and in fact the Scikit-Learn ``roc_curve`` metric is only able to perform metrics for binary classifiers. Yellowbrick addresses this by binarizing the output (per-class) or to use one-vs-rest (micro score) or one-vs-all (macro score) strategies of classification.
 
 .. plot::
     :context: close-figs

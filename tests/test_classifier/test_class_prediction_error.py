@@ -26,7 +26,7 @@ from yellowbrick.exceptions import ModelError
 from yellowbrick.datasets import load_occupancy
 from yellowbrick.classifier.class_prediction_error import *
 
-from sklearn.svm import LinearSVC
+from sklearn.svm import LinearSVC, SVC
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.datasets import make_multilabel_classification
 from sklearn.model_selection import train_test_split as tts
@@ -60,7 +60,7 @@ class TestClassPredictionError(VisualTestCase):
 
         classes = ["unoccupied", "occupied"]
 
-        model = LinearSVC(random_state=42)
+        model = SVC(random_state=42)
         model.fit(X, y)
         visualizer = ClassPredictionError(model, classes=classes)
         visualizer.score(X, y)
@@ -79,7 +79,7 @@ class TestClassPredictionError(VisualTestCase):
         X, y = load_occupancy(return_dataset=True).to_pandas()
         classes = ["unoccupied", "occupied"]
 
-        model = LinearSVC(random_state=42)
+        model = SVC(random_state=42)
         model.fit(X, y)
         visualizer = ClassPredictionError(model, classes=classes)
         visualizer.score(X, y)
@@ -98,7 +98,7 @@ class TestClassPredictionError(VisualTestCase):
         fig = plt.figure()
         ax = fig.add_subplot()
 
-        clf = LinearSVC(random_state=42)
+        clf = SVC(random_state=42)
         viz = class_prediction_error(clf, X, y, ax=ax, show=False)
 
         # Not sure why the tolerance must be so high for this
@@ -112,32 +112,44 @@ class TestClassPredictionError(VisualTestCase):
         Test the ClassPredictionError quickmethod
         """
         X, y = load_occupancy(return_dataset=True).to_numpy()
-        X_train, X_test, y_train, y_test = tts(X, y, test_size=0.2, shuffle=True,
-                                               random_state=42)
+        X_train, X_test, y_train, y_test = tts(
+            X, y, test_size=0.2, shuffle=True, random_state=42
+        )
 
         fig = plt.figure()
         ax = fig.add_subplot()
 
         clf = LinearSVC(random_state=42)
-        with pytest.raises(YellowbrickValueError,
-                           match="must specify both X_test and y_test or neither"):
-            class_prediction_error(clf, X_train=X_train, y_train=y_train,
-                                         X_test=X_test, ax=ax, show=False)
+        with pytest.raises(
+            YellowbrickValueError,
+            match="must specify both X_test and y_test or neither",
+        ):
+            class_prediction_error(
+                clf, X_train=X_train, y_train=y_train, X_test=X_test, ax=ax, show=False
+            )
 
     def test_class_prediction_error_quickmethod_X_test_and_y_test(self):
         """
         Test the ClassPredictionError quickmethod
         """
         X, y = load_occupancy(return_dataset=True).to_numpy()
-        X_train, X_test, y_train, y_test = tts(X, y, test_size=0.2, shuffle=True,
-                                               random_state=42)
+        X_train, X_test, y_train, y_test = tts(
+            X, y, test_size=0.2, shuffle=True, random_state=42
+        )
 
         fig = plt.figure()
         ax = fig.add_subplot()
 
-        clf = LinearSVC(random_state=42)
-        viz = class_prediction_error(clf, X_train=X_train, y_train=y_train,
-                                     X_test=X_test, y_test=y_test, ax=ax, show=False)
+        clf = SVC(random_state=42)
+        viz = class_prediction_error(
+            clf,
+            X_train=X_train,
+            y_train=y_train,
+            X_test=X_test,
+            y_test=y_test,
+            ax=ax,
+            show=False,
+        )
 
         # Not sure why the tolerance must be so high for this
         # Failing on travis with RMS 9.544

@@ -1,20 +1,23 @@
 # Library Dependencies
-matplotlib>=2.0.2,!=3.0.0,!=3.1.1
+matplotlib>=3.3
 scipy>=1.0.0
 scikit-learn>=0.20
 numpy>=1.13.0
 cycler>=0.10.0
 
 # Testing Requirements
-pytest>=4.2.0, !=4.6.0
+pytest>=5.0.0
 pytest-cov>=2.6.1
 pytest-flakes>=4.0.0
-#pytest-spec>=1.1.0
+pytest-spec>=2.0.0
 coverage>=4.5.2
 
 # Optional Testing Dependencies
 nltk>=3.2
 # spacy>=2.0.18
-pandas>=0.20,<1
+pandas>=1.0.4
 umap-learn==0.3.9 # reminder to bump periodically!
 
+# Third-Party Estimator Tests
+# xgboost==1.2.0
+# catboost==0.24.1

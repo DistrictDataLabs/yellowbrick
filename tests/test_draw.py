@@ -83,7 +83,7 @@ class TestDraw(VisualTestCase):
         )
 
         # Assert image similarity
-        self.assert_images_similar(ax=ax)
+        self.assert_images_similar(ax=ax, tol=0.5)
 
     def test_vertical_bar_stack(self):
         """

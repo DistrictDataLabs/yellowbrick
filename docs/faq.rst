@@ -130,3 +130,11 @@ How can I access the sample datasets used in the examples?
 ----------------------------------------------------------
 
 Visit the :doc:`api/datasets/index` page.
+
+
+Can I use Yellowbrick with libraries other than scikit-learn?
+-------------------------------------------------------------
+
+Potentially! Yellowbrick visualizers rely on the internal model implementing the scikit-learn API (e.g. having a ``fit()`` and ``predict()`` method), and often expect to be able to retrieve learned attributes from the model (e.g. ``coef_``). Some third-party estimators fully implement the scikit-learn API, but not all do.
+
+When using third-party libraries with Yellowbrick, we encourage you to ``wrap`` the model using the ``yellowbrick.contrib.wrapper`` module. Visit the :doc:`api/contrib/wrapper` page for all the details!

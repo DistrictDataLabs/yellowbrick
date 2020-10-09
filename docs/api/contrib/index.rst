@@ -1,14 +1,19 @@
 .. -*- mode: rst -*-
 
-Yellowbrick Contrib
-===================
+Contrib and Third-Party Libraries
+=================================
 
-The ``yellowbrick.contrib`` package contains a variety of extra tools and experimental visualizers that are outside of core support or are still in development. Here is a listing of the contrib modules currently available:
+Yellowbrick's primary dependencies are scikit-learn and matplotlib, however the data science landscape in Python is large and there are many opportunties to use Yellowbrick with other machine learning and data analysis frameworks. The ``yellowbrick.contrib`` package contains several methods and mechanisms to support non-scikit-learn machine learning as well as extra tools and experimental visualizers that are outside of core support or are still in development.
+
+.. note:: If you're interested in using a non-scikit-learn estimator with Yellowbrick, please see the :doc:`wrapper` documentation. If the wrapper doesn't work out of the box, we welcome contributions to this module to include other libraries!
+
+The following contrib packages are currently available:
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 1
 
-   boundaries
+   wrapper
    statsmodels
+   boundaries
    scatter
    missing/index

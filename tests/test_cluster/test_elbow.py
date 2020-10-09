@@ -23,7 +23,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 from scipy.sparse import csc_matrix, csr_matrix
-from numpy.testing.utils import assert_array_almost_equal
+from numpy.testing import assert_array_almost_equal
 
 from sklearn.datasets import make_blobs
 from sklearn.cluster import KMeans, MiniBatchKMeans
@@ -306,7 +306,10 @@ class TestKElbowVisualizer(VisualTestCase):
         self.assert_images_similar(visualizer)
         assert_array_almost_equal(visualizer.k_scores_, expected)
 
-    @pytest.mark.xfail(IS_WINDOWS_OR_CONDA, reason="computation of k_scores_ varies by 2.867 max absolute difference")
+    @pytest.mark.xfail(
+        IS_WINDOWS_OR_CONDA,
+        reason="computation of k_scores_ varies by 2.867 max absolute difference",
+    )
     def test_locate_elbow(self):
         """
         Test the addition of locate_elbow to an image
@@ -325,15 +328,7 @@ class TestKElbowVisualizer(VisualTestCase):
         visualizer.fit(X)
         assert len(visualizer.k_scores_) == 5
         assert visualizer.elbow_value_ == 3
-        expected = np.array(
-            [
-                4286.5,
-                12463.4,
-                8763.8,
-                6939.3,
-                5858.8,
-            ]
-        )
+        expected = np.array([4286.5, 12463.4, 8763.3, 6938.2, 5858.4])
 
         visualizer.finalize()
         self.assert_images_similar(visualizer, tol=0.5, windows_tol=2.2)
@@ -400,6 +395,32 @@ class TestKElbowVisualizer(VisualTestCase):
 
         self.assert_images_similar(visualizer)
 
+    def test_sample_weights(self):
+        """
+        Test that passing in sample weights correctly influences the clusterer's fit
+        """
+        seed = 1234
+
+        # original data has 5 clusters
+        X, y = make_blobs(
+            n_samples=[5, 30, 30, 30, 30],
+            n_features=5,
+            random_state=seed,
+            shuffle=False,
+        )
+
+        visualizer = KElbowVisualizer(
+            KMeans(random_state=seed), k=(2, 12), timings=False
+        )
+        visualizer.fit(X)
+        assert visualizer.elbow_value_ == 5
+
+        # weights should push elbow down to 4
+        weights = np.concatenate([np.ones(5) * 0.0001, np.ones(120)])
+
+        visualizer.fit(X, sample_weight=weights)
+        assert visualizer.elbow_value_ == 4
+
     @pytest.mark.xfail(reason="images not close due to timing lines")
     def test_quick_method(self):
         """
@@ -414,3 +435,15 @@ class TestKElbowVisualizer(VisualTestCase):
         assert isinstance(oz, KElbowVisualizer)
 
         self.assert_images_similar(oz)
+
+    def test_quick_method_params(self):
+        """
+        Test the quick method correctly consumes the user-provided parameters
+        """
+        X, y = make_blobs(centers=3)
+        custom_title = "My custom title"
+        model = KMeans(3, random_state=13)
+        oz = kelbow_visualizer(
+            model, X, sample_weight=np.ones(X.shape[0]), title=custom_title
+        )
+        assert oz.title == custom_title

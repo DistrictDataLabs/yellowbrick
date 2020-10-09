@@ -356,7 +356,7 @@ class TestDecisionBoundariesVisualizer(VisualTestCase):
         """
         Test integration of visualizer with numpy arrays
         """
-        model = neighbors.KNeighborsClassifier(3)
+        model = neighbors.KNeighborsClassifier(n_neighbors=3)
 
         visualizer = DecisionBoundariesVisualizer(model, features=[1, 2])
         visualizer.fit_draw_show(X, y)
@@ -373,7 +373,7 @@ class TestDecisionBoundariesVisualizer(VisualTestCase):
         data = datasets.load_iris()
         feature_names = [name.replace(" ", "_") for name in data.feature_names]
         df = pd.DataFrame(data.data, columns=feature_names)
-        X = df[["sepal_length_(cm)", "sepal_width_(cm)"]].as_matrix()
+        X = df[["sepal_length_(cm)", "sepal_width_(cm)"]].values
         y = data.target
 
         visualizer = DecisionBoundariesVisualizer(model)
@@ -390,7 +390,7 @@ class TestDecisionBoundariesVisualizer(VisualTestCase):
         data = datasets.load_iris()
         feature_names = [name.replace(" ", "_") for name in data.feature_names]
         df = pd.DataFrame(data.data, columns=feature_names)
-        X = df[["sepal_length_(cm)", "sepal_width_(cm)"]].as_matrix()
+        X = df[["sepal_length_(cm)", "sepal_width_(cm)"]].values
         y = data.target
 
         decisionviz(model, X, y)

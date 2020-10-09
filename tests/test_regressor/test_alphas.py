@@ -22,12 +22,14 @@ import pytest
 import numpy as np
 
 from tests.base import VisualTestCase
-from numpy.testing.utils import assert_array_equal
+from numpy.testing import assert_array_equal
 
 from yellowbrick.datasets import load_energy
 from yellowbrick.exceptions import YellowbrickTypeError
 from yellowbrick.exceptions import YellowbrickValueError
 from yellowbrick.regressor.alphas import AlphaSelection, alphas
+from yellowbrick.regressor.alphas import ManualAlphaSelection, manual_alphas
+
 
 from sklearn.svm import SVR, SVC
 from sklearn.cluster import KMeans
@@ -167,3 +169,53 @@ class TestAlphaSelection(VisualTestCase):
         )
         assert isinstance(visualizer, AlphaSelection)
         self.assert_images_similar(visualizer)
+
+
+class TestManualAlphaSelection(VisualTestCase):
+    """
+    Test the ManualAlphaSelection visualizer
+    """
+    def test_similar_image_manual(self):
+        """
+        Integration test with image similarity comparison
+        """
+
+        visualizer = ManualAlphaSelection(Lasso(random_state=0), cv=5)
+
+        X, y = make_regression(random_state=0)
+        visualizer.fit(X, y)
+        visualizer.finalize()
+
+        # Image comparison fails on Appveyor with RMS 0.024
+        self.assert_images_similar(visualizer, tol=0.1)
+
+    @pytest.mark.parametrize("model", [RidgeCV, LassoCV, LassoLarsCV, ElasticNetCV])
+    def test_manual_with_cv(self, model):
+        """
+        Ensure only non-CV regressors are allowed
+        """
+        with pytest.raises(YellowbrickTypeError):
+            ManualAlphaSelection(model())
+
+    @pytest.mark.parametrize("model", [SVR, Ridge, Lasso, LassoLars, ElasticNet])
+    def test_manual_no_cv(self, model):
+        """
+        Ensure non-CV regressors are allowed
+        """
+        try:
+            ManualAlphaSelection(model())
+        except YellowbrickTypeError:
+            pytest.fail("could not instantiate Regressor on alpha selection")
+
+    def test_quick_method_manual(self):
+        """
+        Test the manual alphas quick method producing a valid visualization
+        """
+        X, y = load_energy(return_dataset=True).to_numpy()
+
+        visualizer = manual_alphas(
+            ElasticNet(random_state=0), X, y, cv=3, is_fitted=False, show=False
+        )
+        assert isinstance(visualizer, ManualAlphaSelection)
+        # Python 3.6 Travis images not similar (RMS 0.024)
+        self.assert_images_similar(visualizer, tol=0.5)

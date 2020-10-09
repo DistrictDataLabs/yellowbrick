@@ -323,7 +323,7 @@ class DecisionBoundariesVisualizer(ClassificationScoreVisualizer):
 
         # Handle the feature names if they're None.
         elif self.features_ is not None and is_dataframe(X):
-            X_two_cols = X[self.features_].as_matrix()
+            X_two_cols = X[self.features_].values
 
         # handle numpy named/ structured array
         elif self.features_ is not None and is_structured_array(X):
@@ -428,7 +428,7 @@ class DecisionBoundariesVisualizer(ClassificationScoreVisualizer):
         X = self._select_feature_columns(X)
 
         color_cycle = iter(
-            resolve_colors(colors=self.colors, n_colors=len(self.classes_))
+            resolve_colors(colors=self.class_colors_, n_colors=len(self.classes_))
         )
         colors = OrderedDict([(c, next(color_cycle)) for c in self.classes_.keys()])
 
