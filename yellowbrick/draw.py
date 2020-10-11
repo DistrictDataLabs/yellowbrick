@@ -21,7 +21,7 @@ from .base import Visualizer
 from .exceptions import YellowbrickValueError
 from .style.colors import resolve_colors
 
-from matplotlib import patches
+from matplotlib import axes, patches, lines
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -30,15 +30,17 @@ import numpy as np
 ## Legend Drawing Utilities
 ##########################################################################
 
-
-def manual_legend(g, labels, colors, **legend_kwargs):
+def manual_legend(g, labels, colors=None, styles=None, **legend_kwargs):
     """
-    Adds a manual legend for a scatter plot to the visualizer where the labels
-    and associated colors are drawn with circle patches instead of determining
-    them from the labels of the artist objects on the axes. This helper is
-    used either when there are a lot of duplicate labels, no labeled artists,
-    or when the color of the legend doesn't exactly match the color in the
-    figure (e.g. because of the use of transparency).
+    Adds a manual legend for a scatter plot to the visualizer. The legend
+    entries are drawn according to the ``styles`` parameter if specified, and
+    with circle patches (colored according to ``colors``) if not specified.
+    Calling this function overrides the default behavior of drawing the legend 
+    from the labels of the artist objects on the axes. 
+
+    This helper is used either when there are a lot of duplicate labels, 
+    no labeled artists, or when the color of the legend doesn't exactly 
+    match the color in the figure (e.g. because of the use of transparency).
 
     Parameters
     ----------
@@ -51,10 +53,21 @@ def manual_legend(g, labels, colors, **legend_kwargs):
         The text labels to associate with the legend. Note that the labels
         will be added to the legend in the order specified.
 
-    colors : list of colors
-        A list of any valid matplotlib color reference. The number of colors
-        specified must be equal to the number of labels.
-
+    colors : list of colors, default: None
+        A list of any valid matplotlib color references. If ``styles``
+        is provided, colors must be either ``None`` or a list of equal length to
+        ``labels``; in the latter case, this parameter takes predence over any 
+        colors specified in ``styles``. To skip specifying a color for a
+        particular entry, use an empty string, None, or 'None'.
+        
+    styles : list of str, default: None
+        A list of matplotlib-style format strings, each corresponding to a label 
+        and describing its graphical appearance in the legend, e.g., 'ro' for a 
+        red circle. The number of styles specified must be equal to the number 
+        of labels. Either one or both of ``colors`` and ``styles`` must be
+        specified. Consistent with matplotlib, blank style entries default to 
+        solid, unmarked, black lines.
+        
     legend_kwargs : dict
         Any additional keyword arguments to pass to the legend.
 
@@ -64,35 +77,77 @@ def manual_legend(g, labels, colors, **legend_kwargs):
         The artist created by the ax.legend() call, returned for further
         manipulation if required by the caller.
 
-    Notes
-    -----
-    Right now this method simply draws the patches as rectangles and cannot
-    take into account the line or scatter plot properties (e.g. line style or
-    marker style). It is possible to add Line2D patches to the artist that do
-    add manual styles like this, which we can explore in the future.
-
     .. seealso:: https://matplotlib.org/gallery/text_labels_and_annotations/custom_legends.html
+
+    .. seealso:: https://matplotlib.org/3.3.0/api/_as_gen/matplotlib.pyplot.plot.html
     """
+
     # Get access to the matplotlib Axes
     if isinstance(g, Visualizer):
         g = g.ax
     elif g is None:
         g = plt.gca()
 
-    # Ensure that labels and colors are the same length to prevent odd behavior.
-    if len(colors) != len(labels):
-        raise YellowbrickValueError(
-            "please specify the same number of colors as labels!"
-        )
+    if styles:
+        # Documented the `styles` parameter as being a list when really
+        # it makes sense to accept it as a list or a tuple
+        if type(styles) not in (list, tuple):
+            raise YellowbrickValueError(
+                "Please specify the styles parameter as a list of strings!"
+            )
 
-    # Create the legend handles with the associated colors and labels
-    handles = [
-        patches.Patch(color=color, label=label) for color, label in zip(colors, labels)
-    ]
+        if len(styles) != len(labels):
+            raise YellowbrickValueError(
+                "Please specify the styles parameter as a list of length "
+                "equal to the number of labels!"
+            )            
+
+        if colors is not None and len(colors) != len(labels):
+            raise YellowbrickValueError(
+                "Please specify the colors parameter either as colors=None or "
+                "a list of length equal to the number of labels. You can use "
+                "an empty string or None as a placeholder for colors that "
+                "are already specified in the corresponding styles entry."
+            )
+    else:
+        if colors is None or len(colors) != len(labels):
+            raise YellowbrickValueError(
+                "Please specify the colors parameter as a list of length equal "
+                "to the number of labels!"
+            )
+
+    # Set legend's artist handles to:
+    #   linestyles/markers/colors specified by `styles` if passed in, or
+    #   patches according to `colors` if it is not
+    if styles:
+        if colors is None:
+            colors = [None] * len(styles)
+        else:
+            colors = [None if color in ("", " ", None, 'None') else color 
+                for color in colors]
+
+        handles = list()
+        for style, color, label in zip(styles, colors, labels):
+            linestyle, marker, style_color = \
+                axes._base._process_plot_format(style)
+            
+            # colors parameter should take precedence over styles,
+            #   consistent with matplotlib
+            color = color or style_color or 'black'
+            # _process_plot_format() above will have already set linestyle to 
+            #   '-' and marker to 'None' if they weren't specified
+
+            line_2d = lines.Line2D([0], [0], linestyle=linestyle, marker=marker, 
+                color=color, label=label)
+            handles.append(line_2d)
+    else: 
+        handles = [
+            patches.Patch(color=color, label=label) for 
+                color, label in zip(colors, labels)
+            ]
 
     # Return the Legend artist
     return g.legend(handles=handles, **legend_kwargs)
-
 
 def bar_stack(
     data,
@@ -192,3 +247,4 @@ def bar_stack(
         legend_kws = legend_kws or {}
         manual_legend(ax, labels=labels, colors=colors, **legend_kws)
     return ax
+    
