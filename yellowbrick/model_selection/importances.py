@@ -375,7 +375,9 @@ class FeatureImportances(ModelVisualizer):
 
     def _reduce_topn(self, arr):
         """
-        Return only the top or bottom N items within a sliceable array/list
+        Return only the top or bottom N items within a sliceable array/list.
+
+        Assumes that arr is in ascending order.
         """
         if self.topn > 0:
             arr = arr[-self.topn:]
