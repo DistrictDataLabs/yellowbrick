@@ -107,10 +107,54 @@ Taking the mean of the importances may be undesirable for several reasons. For e
     X, y = data.data, data.target
 
     model = LogisticRegression(multi_class="auto", solver="liblinear")
-    viz = FeatureImportances(model, stack=True, relative=False)
+    viz = FeatureImportances(model, stack=True, relative=False, topn=3)
     viz.fit(X, y)
     viz.show()
 
+Top and Bottom Feature Importances
+----------------------------------
+
+It may be more illuminating to the feature engineering process to identify the most or least informative features. To view only the N most informative features in a graph, use ``topn`` with a postive integer. To view the N least important, use a negative integer.
+
+.. plot::
+    :context: close-figs
+    :alt: Coefficient importances for LASSO regression
+
+    from sklearn.linear_model import Lasso
+    from yellowbrick.datasets import load_concrete
+    from yellowbrick.model_selection import FeatureImportances
+
+    # Load the regression dataset
+    dataset = load_concrete(return_dataset=True)
+    X, y = dataset.to_data()
+
+    # Title case the feature for better display and create the visualizer
+    labels = list(map(lambda s: s.title(), dataset.meta['features']))
+    viz = FeatureImportances(Lasso(), labels=labels, relative=False, topn=3)
+
+    # Fit and show the feature importances
+    viz.fit(X, y)
+    viz.show()
+
+When repeating the previous concrete dataset graph using ``topn=3``, we see that the three most informative features are splast, cement, and water. Although water has a negative coefficent, it is nonetheless informative to reveal the negative correlation associated with the feature.
+
+The ``topn`` parameter can also be used with the ``stacked=True``. In the context of stacked feature importance graphs, the information of a feature is the width of the entire bar, or the sum of the absolute value of all coefficients contained therein.
+
+.. plot::
+    :context: close-figs
+    :alt: Stacked per-class importances with Logistic Regression
+
+    from yellowbrick.model_selection import FeatureImportances
+    from sklearn.linear_model import LogisticRegression
+    from sklearn.datasets import load_iris
+
+    data = load_iris()
+    X, y = data.data, data.target
+
+    model = LogisticRegression(multi_class="auto", solver="liblinear")
+    viz = FeatureImportances(model, stack=True, relative=False, topn=-3)
+    viz.fit(X, y)
+    viz.show()
 
 Discussion
 ----------
