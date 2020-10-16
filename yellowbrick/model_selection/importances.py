@@ -303,7 +303,7 @@ class FeatureImportances(ModelVisualizer):
         # Set the title
         self.set_title(
             "Feature Importances of {} Features using {}".format(
-                len(self.features_), self.name
+                self._get_topn_title(), self.name
             )
         )
 
@@ -384,6 +384,19 @@ class FeatureImportances(ModelVisualizer):
         elif self.topn < 0:
             arr = arr[:-self.topn]
         return arr
+
+    def _get_topn_title(self):
+        """
+        Return an appropriate title for the plot: Top N, Bottom N, or N
+        """
+        if self.topn:
+            if self.topn > 0:
+                return "Top {}".format(len(self.features_))
+            else:
+                return "Bottom {}".format(len(self.features_))
+        else:
+            return str(len(self.features_))
+
 
 ##########################################################################
 ## Quick Method
