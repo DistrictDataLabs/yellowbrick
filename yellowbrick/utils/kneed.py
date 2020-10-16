@@ -49,7 +49,7 @@ from yellowbrick.exceptions import YellowbrickWarning
 
 class KneeLocator(object):
     """
-    Finds the "elbow" or "knee" which is a value corresponding to the point of maximum curvature 
+    Finds the "elbow" or "knee" which is a value corresponding to the point of maximum curvature
     in an elbow curve, using knee point detection algorithm. This point is accessible via the
     `knee` attribute.
 
@@ -60,22 +60,22 @@ class KneeLocator(object):
 
     y : list
        A list of silhouette score corresponding to each value of k.
-    
+
     S : float, default: 1.0
-       Sensitivity parameter that allows us to adjust how aggressive we want KneeLocator to 
+       Sensitivity parameter that allows us to adjust how aggressive we want KneeLocator to
        be when detecting "knees" or "elbows".
 
     curve_nature : string, default: 'concave'
-       A string that determines the nature of the elbow curve in which "knee" or "elbow" is 
+       A string that determines the nature of the elbow curve in which "knee" or "elbow" is
        to be found.
 
     curve_direction : string, default: 'increasing'
-       A string that determines tha increasing or decreasing nature of the elbow curve in 
+       A string that determines tha increasing or decreasing nature of the elbow curve in
        which "knee" or "elbow" is to be found.
-    
+
     online : bool, default: False
         kneed will correct old knee points if True, will return first knee if False
-        
+
     Notes
     -----
     The KneeLocator is implemented using the "knee point detection algorithm" which can be read at
@@ -83,7 +83,13 @@ class KneeLocator(object):
     """
 
     def __init__(
-        self, x, y, S=1.0, curve_nature="concave", curve_direction="increasing", online=False,
+        self,
+        x,
+        y,
+        S=1.0,
+        curve_nature="concave",
+        curve_direction="increasing",
+        online=False,
     ):
 
         # Raw Input
@@ -175,7 +181,9 @@ class KneeLocator(object):
 
         return y
 
-    def find_knee(self,):
+    def find_knee(
+        self,
+    ):
         """This function finds and sets the knee value and the normalized knee value. """
         if not self.maxima_indices.size:
             warning_message = (
@@ -185,7 +193,7 @@ class KneeLocator(object):
             )
             warnings.warn(warning_message, YellowbrickWarning)
             return None, None
-     
+
         # placeholder for which threshold region i is located in.
         maxima_threshold_index = 0
         minima_threshold_index = 0
@@ -242,9 +250,9 @@ class KneeLocator(object):
 
         return knee, norm_knee
 
-    
-
-    def plot_knee_normalized(self,):
+    def plot_knee_normalized(
+        self,
+    ):
         """
         Plots the normalized curve, the distance curve (x_distance, y_normalized) and the
         knee, if it exists.
@@ -257,14 +265,18 @@ class KneeLocator(object):
         plt.xticks(
             np.arange(self.x_normalized.min(), self.x_normalized.max() + 0.1, 0.1)
         )
-        plt.yticks(np.arange(self.y_difference.min(), self.y_normalized.max() + 0.1, 0.1))
+        plt.yticks(
+            np.arange(self.y_difference.min(), self.y_normalized.max() + 0.1, 0.1)
+        )
 
         plt.vlines(self.norm_knee, plt.ylim()[0], plt.ylim()[1])
 
-    def plot_knee(self,):
+    def plot_knee(
+        self,
+    ):
         """
         Plot the curve and the knee, if it exists
-        
+
         """
         import matplotlib.pyplot as plt
 
