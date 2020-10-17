@@ -89,6 +89,14 @@ class YellowbrickKeyError(YellowbrickError, KeyError):
     pass
 
 
+class YellowbrickAttributeError(YellowbrickError, AttributeError):
+    """
+    A required attribute is missing on the estimator.
+    """
+
+    pass
+
+
 ##########################################################################
 ## Assertions
 ##########################################################################
