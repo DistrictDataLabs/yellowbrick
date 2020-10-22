@@ -107,14 +107,14 @@ Taking the mean of the importances may be undesirable for several reasons. For e
     X, y = data.data, data.target
 
     model = LogisticRegression(multi_class="auto", solver="liblinear")
-    viz = FeatureImportances(model, stack=True, relative=False, topn=3)
+    viz = FeatureImportances(model, stack=True, relative=False)
     viz.fit(X, y)
     viz.show()
 
 Top and Bottom Feature Importances
 ----------------------------------
 
-It may be more illuminating to the feature engineering process to identify the most or least informative features. To view only the N most informative features in a graph, use ``topn`` with a postive integer. To view the N least important, use a negative integer.
+It may be more illuminating to the feature engineering process to identify the most or least informative features. To view only the N most informative features, specify the ``topn`` argument to the visualizer. Similar to slicing a ranked list by their importance, if ``topn`` is a postive integer, then the most highly ranked features are used. If ``topn`` is a negative integer, then the lowest ranked features are displayed instead.
 
 .. plot::
     :context: close-figs
@@ -136,9 +136,9 @@ It may be more illuminating to the feature engineering process to identify the m
     viz.fit(X, y)
     viz.show()
 
-When repeating the previous concrete dataset graph using ``topn=3``, we see that the three most informative features are splast, cement, and water. Although water has a negative coefficent, it is nonetheless informative to reveal the negative correlation associated with the feature.
+Using ``topn=3``, we can identify the three most informative features in the concrete dataset as ``splast``, ``cement``, and ``water``. This approach to visualization may assist with *factor analysis* - the study of how variables contribute to an overall model. Note that although ``water`` has a negative coefficient, it is the magnitude (absolute value) of the feature that matters since we are closely inspecting the negative correlation of ``water`` with the strength of concrete. Alternatively, ``topn=-3`` would reveal the three least informative features in the model. This approach is useful to model tuning similar to :doc:`rfecv`, but instead of automatically removing features, it would allow you to identify the lowest-ranked features as they change in different model instantiations. In either case, if you have many features, using ``topn`` can significantly increase the visual and analytical capacity of your analysis.
 
-The ``topn`` parameter can also be used with the ``stacked=True``. In the context of stacked feature importance graphs, the information of a feature is the width of the entire bar, or the sum of the absolute value of all coefficients contained therein.
+The ``topn`` parameter can also be used when ``stacked=True``. In the context of stacked feature importance graphs, the information of a feature is the width of the entire bar, or the sum of the absolute value of all coefficients contained therein.
 
 .. plot::
     :context: close-figs
