@@ -82,7 +82,7 @@ class TestGridSearchColorPlot(VisualTestCase):
         
         gs_viz = GridSearchColorPlot(self.gridsearchcv, 'C', 'kernel')
         gs_viz.fit(self.binary.X, self.binary.y)
-        self.assert_images_similar(gs_viz)
+        self.assert_images_similar(gs_viz, tol=0.95)
 
     def test_quick_method(self):
         """
@@ -90,14 +90,14 @@ class TestGridSearchColorPlot(VisualTestCase):
         """
 
         gs = self.gridsearchcv
-
+        
         # If no X data is passed to quick method, model is assumed to be fit
         # already 
         gs.fit(self.binary.X, self.binary.y)
 
         gs_viz = gridsearch_color_plot(gs, 'gamma', 'C')
         assert isinstance(gs_viz, GridSearchColorPlot)
-        self.assert_images_similar(gs_viz)
+        self.assert_images_similar(gs_viz, tol=0.95)
 
     # ##########################################################################
     # ## Integration Tests
@@ -115,7 +115,7 @@ class TestGridSearchColorPlot(VisualTestCase):
         gs_viz = GridSearchColorPlot(self.gridsearchcv, 'C', 'kernel')
         gs_viz.fit(X, y)
 
-        self.assert_images_similar(gs_viz)
+        self.assert_images_similar(gs_viz, tol=0.95)
 
     def test_numpy_integration(self):
         """
@@ -128,4 +128,4 @@ class TestGridSearchColorPlot(VisualTestCase):
         gs_viz = GridSearchColorPlot(self.gridsearchcv, 'C', 'kernel')
         gs_viz.fit(X, y)
 
-        self.assert_images_similar(gs_viz)
+        self.assert_images_similar(gs_viz, tol=0.95)
