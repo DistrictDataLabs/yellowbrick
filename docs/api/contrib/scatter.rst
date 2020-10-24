@@ -11,7 +11,7 @@ A scatter visualizer simply plots two features against each other and colors the
     :context: close-figs
     :alt: ScatterVisualizer on occupancy dataset
 
-    from yellowbrick.contrib import ScatterVisualizer
+    from yellowbrick.contrib.scatter import ScatterVisualizer
     from yellowbrick.datasets import load_occupancy
 
     # Load the classification dataset
