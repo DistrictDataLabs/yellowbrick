@@ -93,8 +93,8 @@ class KneeLocator(object):
     ):
 
         # Raw Input
-        self.x = x
-        self.y = y
+        self.x = np.array(x)
+        self.y = np.array(y)
         self.curve_nature = curve_nature
         self.curve_direction = curve_direction
         self.N = len(self.x)
