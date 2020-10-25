@@ -141,7 +141,7 @@ def test_x_equals_y():
     x = range(10)
     y = [1] * len(x)
     with pytest.warns(RuntimeWarning):
-        kl = KneeLocator(x, y)
+        KneeLocator(x, y)
 
 
 @pytest.mark.parametrize("online, expected", [(True, 482), (False, 22)])
@@ -189,3 +189,20 @@ def test_plot_knee():
     kl.plot_knee()
     num_figures_after = plt.gcf().number
     assert num_figures_before < num_figures_after
+
+
+def test_y():
+    """Test the y value"""
+    with np.errstate(divide="ignore"):
+        x = np.linspace(0.0, 1, 10)
+        y = np.true_divide(-1, x + 0.1) + 5
+    kl = KneeLocator(x, y, S=1.0, curve_nature="concave")
+    assert kl.knee_y == pytest.approx(1.897, 0.03)
+    assert kl.all_knees_y[0] == pytest.approx(1.897, 0.03)
+    assert kl.norm_knee_y == pytest.approx(0.758, 0.03)
+    assert kl.all_norm_knees_y[0] == pytest.approx(0.758, 0.03)
+
+    assert kl.elbow_y == pytest.approx(1.897, 0.03)
+    assert kl.all_elbows_y[0] == pytest.approx(1.897, 0.03)
+    assert kl.norm_elbow_y == pytest.approx(0.758, 0.03)
+    assert kl.all_norm_elbows_y[0] == pytest.approx(0.758, 0.03)

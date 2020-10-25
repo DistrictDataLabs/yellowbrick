@@ -101,6 +101,8 @@ class KneeLocator(object):
         self.S = S
         self.all_knees = set()
         self.all_norm_knees = set()
+        self.all_knees_y = []
+        self.all_norm_knees_y = []
         self.online = online
 
         # Step 1: fit a smooth line
@@ -139,10 +141,11 @@ class KneeLocator(object):
         self.knee, self.norm_knee = self.find_knee()
 
         # Step 7: If we have a knee, extract data about it
+        self.knee_y = self.norm_knee_y = None
         if self.knee:
             self.knee_y = self.y[self.x == self.knee][0]
+            self.norm_knee_y = self.y_normalized[self.x_normalized == self.norm_knee][0]
 
-        self.find_knee()
         if (self.all_knees or self.all_norm_knees) == set():
             warning_message = (
                 "No 'knee' or 'elbow point' detected "
@@ -152,8 +155,8 @@ class KneeLocator(object):
             warnings.warn(warning_message, YellowbrickWarning)
             self.knee = None
             self.norm_knee = None
-        else:
-            self.knee, self.norm_knee = min(self.all_knees), min(self.all_norm_knees)
+            self.knee_y = None
+            self.norm_knee_y = None
 
     @staticmethod
     def __normalize(a):
@@ -235,6 +238,13 @@ class KneeLocator(object):
                         knee = self.x[threshold_index]
                         norm_knee = self.x_normalized[threshold_index]
 
+                # add the y value at the knee
+                y_at_knee = self.y[self.x == knee][0]
+                y_norm_at_knee = self.y_normalized[self.x_normalized == norm_knee][0]
+                if knee not in self.all_knees:
+                    self.all_knees_y.append(y_at_knee)
+                    self.all_norm_knees_y.append(y_norm_at_knee)
+
                 # now add the knee
                 self.all_knees.add(knee)
                 self.all_norm_knees.add(norm_knee)
@@ -293,9 +303,25 @@ class KneeLocator(object):
         return self.norm_knee
 
     @property
+    def elbow_y(self):
+        return self.knee_y
+
+    @property
+    def norm_elbow_y(self):
+        return self.norm_knee_y
+
+    @property
     def all_elbows(self):
         return self.all_knees
 
     @property
     def all_norm_elbows(self):
         return self.all_norm_knees
+
+    @property
+    def all_elbows_y(self):
+        return self.all_knees_y
+
+    @property
+    def all_norm_elbows_y(self):
+        return self.all_norm_knees_y
