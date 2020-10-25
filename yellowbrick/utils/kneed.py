@@ -254,7 +254,6 @@ class KneeLocator(object):
                     return knee, norm_knee
 
         if self.all_knees == set():
-            warnings.warn("No knee/elbow found")
             return None, None
 
         return knee, norm_knee
