@@ -163,8 +163,10 @@ def test_properties():
         x, y_concave_inc, curve_nature="concave", curve_direction="increasing"
     )
     assert kn.knee == kn.elbow
+    assert kn.norm_knee == kn.norm_elbow
     # pytest compares all elements in each list.
     assert kn.all_knees == kn.all_elbows
+    assert kn.all_norm_knees == kn.all_norm_elbows
 
 
 def test_plot_knee_normalized():
