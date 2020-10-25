@@ -142,7 +142,6 @@ class KneeLocator(object):
         if self.knee:
             self.knee_y = self.y[self.x == self.knee][0]
 
-        # Step 6: find knee
         self.find_knee()
         if (self.all_knees or self.all_norm_knees) == set():
             warning_message = (
