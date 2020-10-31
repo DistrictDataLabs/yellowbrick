@@ -40,6 +40,8 @@ Kevin Arvai and hosted at https://github.com/arvkevi/kneed. This port is maintai
 with permission by the Yellowbrick contributors.
 """
 
+import pytest
+import matplotlib.pyplot as plt
 import numpy as np
 from yellowbrick.utils.kneed import KneeLocator
 
@@ -132,3 +134,77 @@ def test_convex_decreasing_truncated():
         curve_direction="decreasing",
     )
     assert kn.knee == 0.2
+
+
+def test_x_equals_y():
+    """Test that a runtime warning is raised when no maxima are found"""
+    x = range(10)
+    y = [1] * len(x)
+    with pytest.warns(RuntimeWarning):
+        KneeLocator(x, y)
+
+
+@pytest.mark.parametrize("online, expected", [(True, 482), (False, 22)])
+def test_gamma_online_offline(online, expected):
+    """Tests online and offline knee detection.
+    Notable that a large number of samples are highly sensitive to S parameter
+    """
+    np.random.seed(23)
+    n = 1000
+    x = range(1, n + 1)
+    y = sorted(np.random.gamma(0.5, 1.0, n), reverse=True)
+    kl = KneeLocator(x, y, curve_nature="convex", curve_direction="decreasing", online=online)
+    assert kl.knee == expected
+
+
+def test_properties():
+    """Tests that elbow and knee can be used interchangeably."""
+    kn = KneeLocator(
+        x, y_concave_inc, curve_nature="concave", curve_direction="increasing"
+    )
+    assert kn.knee == kn.elbow
+    assert kn.norm_knee == kn.norm_elbow
+    # pytest compares all elements in each list.
+    assert kn.all_knees == kn.all_elbows
+    assert kn.all_norm_knees == kn.all_norm_elbows
+
+
+def test_plot_knee_normalized():
+    """Test that plotting is functional"""
+    with np.errstate(divide="ignore"):
+        x = np.linspace(0.0, 1, 10)
+        y = np.true_divide(-1, x + 0.1) + 5
+    kl = KneeLocator(x, y, S=1.0, curve_nature="concave")
+    num_figures_before = plt.gcf().number
+    kl.plot_knee_normalized()
+    num_figures_after = plt.gcf().number
+    assert num_figures_before < num_figures_after
+
+
+def test_plot_knee():
+    """Test that plotting is functional"""
+    with np.errstate(divide="ignore"):
+        x = np.linspace(0.0, 1, 10)
+        y = np.true_divide(-1, x + 0.1) + 5
+    kl = KneeLocator(x, y, S=1.0, curve_nature="concave")
+    num_figures_before = plt.gcf().number
+    kl.plot_knee()
+    num_figures_after = plt.gcf().number
+    assert num_figures_before < num_figures_after
+
+
+def test_y():
+    """Test the y value"""
+    with np.errstate(divide="ignore"):
+        x = np.linspace(0.0, 1, 10)
+        y = np.true_divide(-1, x + 0.1) + 5
+    kl = KneeLocator(x, y, S=1.0, curve_nature="concave")
+    assert kl.knee_y == pytest.approx(1.897, 0.03)
+    assert kl.all_knees_y[0] == pytest.approx(1.897, 0.03)
+    assert kl.norm_knee_y == pytest.approx(0.758, 0.03)
+    assert kl.all_norm_knees_y[0] == pytest.approx(0.758, 0.03)
+
+    assert kl.elbow_y == pytest.approx(1.897, 0.03)
+    assert kl.all_elbows_y[0] == pytest.approx(1.897, 0.03)
+    assert kl.norm_elbow_y == pytest.approx(0.758, 0.03)
+    assert kl.all_norm_elbows_y[0] == pytest.approx(0.758, 0.03)
