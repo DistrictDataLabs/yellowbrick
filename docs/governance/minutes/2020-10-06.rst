@@ -32,8 +32,8 @@ A broad overview of the topics for discussion in the order they were presented:
 
 6. Additional focus for the Fall
 
-Treasurer Update:
-=================
+Treasurer Update
+-----------------
 
 There are no major issues to report.
 As a reminder, in January, we approved our budget for the year, which totaled $271.48.
@@ -41,7 +41,7 @@ Since we have 9 advisors for this year, the dues totalled $30.17 per advisor.
 All dues have been paid and all members have been reimbursed for expenses incurred on behalf of YB.
 
 2020 Annual Budget
-------------------
+~~~~~~~~~~~~~~~~~~
 
 .. list-table::
    :widths: 20 20 20 20 20
@@ -49,10 +49,10 @@ All dues have been paid and all members have been reimbursed for expenses incurr
 
 
    * - **Description**
-     - ** Frequency**
+     - **Frequency**
      - **Total**
      - **Paid By**
-     - **R eimbursed**
+     - **Reimbursed**
 
    * - Name.comdomainregistration(scikit-yb.org)
      - annually
@@ -82,15 +82,11 @@ All dues have been paid and all members have been reimbursed for expenses incurr
 Question: What, if any, budget changes do we anticipate in 2021? No Budget changes anticipated in 2021.
 
 Summer 2020 Semester Retrospective
-==================================
-
-What went well?
-~~~~~~~~~~~~~~~~~~~
-
-What were some of the key achievements and successes this past semester?
+----------------------------------
+Here were some of the key achievements and successes this past semester?
 
 Yellowbrick Statistics May - October:
--------------------------------------
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Issues closed: 20
 
@@ -105,7 +101,8 @@ Rebecca - 14 Big Props!, Ben - 1, @Tktran - 2, @AlderMartinez - 1, @Melonhead901
 A Summary of Approved PR Topics - Complete changelog Since v1.1 can be found here.
 (https://github.com/DistrictDataLabs/yellowbrick/pull/1110)
 
-   Major events:
+Major events:
+~~~~~~~~~~~~~
 
 1. Removed Appveyor from CI Matrix
 
@@ -113,7 +110,8 @@ A Summary of Approved PR Topics - Complete changelog Since v1.1 can be found her
 
 ..
 
-   Minor events:
+Minor events:
+~~~~~~~~~~~~~
 
 1. Third-Party Estimator Wrappers/Checks
 
@@ -127,7 +125,8 @@ A Summary of Approved PR Topics - Complete changelog Since v1.1 can be found her
 
 ..
 
-   Bugs:
+Bugs:
+~~~~~
 
 1. Matplotlib 3.3/3.2.2 Test/Image Failure
 
@@ -154,7 +153,7 @@ Who deserves special recognition for their contributions to Yellowbrick this pas
 -  Rebecca for being a PR Master Blaster
 
 Votes/Resolutions
-=================
+-----------------
 
 Ben proposed that we immediately release v1.2.
 The release would contain non-trivial changes.
@@ -164,7 +163,7 @@ We also resolved that we would lock all dependency versions in place then proact
 Member Topics Below).
 
 Member Topics
-=============
+-------------
 
 We discussed:
 
@@ -194,8 +193,7 @@ We discussed:
       iv.
       Rebecca noted that PIP is going to be changing soon and we need to put it as a Topic for the next Meeting
 
-      v.   Ben proposed that we fix test dependency with == and maintain knowledge of upgrades.
-         He notes that it is a risky approach because we have to stay on top of changes in dependencies.
+      v.   Ben proposed that we fix test dependency with == and maintain knowledge of upgrades.  He notes that it is a risky approach because we have to stay on top of changes in dependencies.
 
    b. Decided ACTION
 
@@ -225,8 +223,8 @@ We discussed:
 
    b. Rebecca will be giving a talk that discusses some Yellowbrick at PyData Global Talk
 
-Actions to be taken:
-====================
+Actions Items
+-------------
 
 1. Release version 1.2
 
