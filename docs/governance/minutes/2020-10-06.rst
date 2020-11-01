@@ -1,0 +1,231 @@
+.. -*- mode: rst -*-
+
+October 6, 2020
+===============
+
+Yellowbrick Advisory Board Meeting Held on October 6, 2020 from 2030-2200 EST via Video Conference Call.
+Kristen McIntyre presided as Chair, Larry Gray serving as Secretary and Edwin Schmierer as Treasurer.
+Minutes taken by Larry Gray.
+
+Attendees: Rebecca Bilbro, Benjamin Bengfort, Kristen McIntyre, Larry Gray, Prema Roman, Edwin Schmierer, Tony Ojeda and Adam Morris.
+
+Agenda
+------
+
+A broad overview of the topics for discussion in the order they were presented:
+
+1. Welcome (by Kristen McIntyre)
+
+2. Treasurer Update
+
+3. Summer 2020 Semester Retrospective
+
+4. Yellowbrick v1.2 Milestone planning
+
+5. Member Topics
+
+   a. Departure from AppVeyor Usage
+
+   b. Managing Dependency upgrades
+
+   c. New Handling of Third-Party Contribs
+
+6. Additional focus for the Fall
+
+Treasurer Update
+-----------------
+
+There are no major issues to report.
+As a reminder, in January, we approved our budget for the year, which totaled $271.48.
+Since we have 9 advisors for this year, the dues totalled $30.17 per advisor.
+All dues have been paid and all members have been reimbursed for expenses incurred on behalf of YB.
+
+2020 Annual Budget
+~~~~~~~~~~~~~~~~~~
+
+.. list-table::
+   :widths: 20 20 20 20 20
+   :header-rows: 0
+
+
+   * - **Description**
+     - **Frequency**
+     - **Total**
+     - **Paid By**
+     - **Reimbursed**
+
+   * - Name.comdomainregistration(scikit-yb.org)
+     - annually
+     - $17.98
+     - Ben
+     - Yes
+
+   * - Read theDocs GoldMembership
+     - $10/ month
+     - $120.00
+     - Ben
+     - Yes
+
+   * - Stickers
+     - annually
+     - $133.50
+     - Rebecca
+     - Yes
+
+   * -
+     -
+     - **$271.48**
+     -
+     -
+
+
+Question: What, if any, budget changes do we anticipate in 2021? No Budget changes anticipated in 2021.
+
+Summer 2020 Semester Retrospective
+----------------------------------
+Here were some of the key achievements and successes this past semester?
+
+Yellowbrick Statistics May - October:
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Issues closed: 20
+
+Issues from this time period that remain open: 6
+
+PRs from this time period that remain open: 3
+
+Approved PRs (Contributors): 19
+
+Rebecca - 14 Big Props!, Ben - 1, @Tktran - 2, @AlderMartinez - 1, @Melonhead901 - 1
+
+A Summary of Approved PR Topics - Complete changelog Since v1.1 can be found here.
+(https://github.com/DistrictDataLabs/yellowbrick/pull/1110)
+
+Major events:
+~~~~~~~~~~~~~
+
+1. Removed Appveyor from CI Matrix
+
+2. Split Prediction Error Plot from Residuals Plot
+
+..
+
+Minor events:
+~~~~~~~~~~~~~
+
+1. Third-Party Estimator Wrappers/Checks
+
+2. Improved Cook’s Distance and Manifold Documentation
+
+3. Improved RankD Tests and Upgrade
+
+4. Reintegrated spec and verbose as pytest addopts
+
+5. Small fixes to Manual Alpha Selection and ROCAUC
+
+..
+
+Bugs:
+~~~~~
+
+1. Matplotlib 3.3/3.2.2 Test/Image Failure
+
+2. Quick-Start Plot Directive Fix
+
+3. Fixed Errors/Warnings due to upgrading dependencies
+
+Challenges/Issues
+~~~~~~~~~~~~~~~~~
+
+What are some of the challenges and issues faced by the maintainer and contributor team this past semester (technical or otherwise)?
+
+-  Covid-19: No one expected the global pandemic…
+
+Shout-outs
+~~~~~~~~~~
+
+Who deserves special recognition for their contributions to Yellowbrick this past semester?
+
+-  Adam for always doing such a great job with our Twitter account
+
+-  Evergreen shoutout: to Ben for doing “Ben-type” things
+
+-  Rebecca for being a PR Master Blaster
+
+Votes/Resolutions
+-----------------
+
+Ben proposed that we immediately release v1.2.
+The release would contain non-trivial changes.
+Votes were cast on whether we should issue a release and all in attendance voted that it be done immediately.
+
+We also resolved that we would lock all dependency versions in place then proactively upgrade Yellowbrick in accordance to dependency changes (see
+Member Topics Below).
+
+Member Topics
+-------------
+
+We discussed:
+
+1. Managing Dependency Upgrades (Discussion Leader: Ben)
+
+   a. Overarching Question: How do we manage this technical debt?
+
+      i.   Different approaches proposed:
+
+           1. The most active approach would be to deprecate old quickly and refactor our code to meet new upgrades.
+              This would involve rewriting tests and Visualizers
+
+           2. A less active approach would be to only handle depreciation warnings
+
+           3. The weakest form of a passive approach would be to limit dependencies
+
+           4. The strongest form of a passive approach would be to freeze the repo
+
+      ii.
+      Rebecca noted that determining which dependency changes cause the errors is the hardest problem we face and it takes hours of work to find them.
+
+           1. She requests that we don’t add any new dependencies and that she will deny and PR that introduces them
+
+      iii.
+      Prema suggested that we convene on a case-by-case basis and discuss whether we should take an active/passive approach
+
+      iv.
+      Rebecca noted that PIP is going to be changing soon and we need to put it as a Topic for the next Meeting
+
+      v.   Ben proposed that we fix test dependency with == and maintain knowledge of upgrades.  He notes that it is a risky approach because we have to stay on top of changes in dependencies.
+
+   b. Decided ACTION
+
+      i. We will freeze dependency before 1.2 release and be proactive about upgrading dependencies
+
+2. Departure from Appveyor usage.
+   Due to trouble tracking down Errors.
+   Rebecca deceived to abandon usage.
+
+3. Rebecca recommended a reading by Nadia Eghbal called Working in Public
+
+4. New handling of Third-Party Contribs (Discussion Leader Ben)
+
+   a. The work was pursued because we are highly dependent on properties and attributes of Scikit-learn API and the way we handle inputs prevents third-
+      party integration beyond scikit-learn.
+      In response, we provided a new framework to handle third-party Estimators and move them to the contrib.
+      We now provide a nice response when non-sklearn estimators don’t work.
+
+5. Focus for the Fall
+
+   a. Ben suggested a blog on Skorch and Yellowbrick.
+
+      i.  It should represent the compatibility of Skorch and Yellowbrick
+
+      ii.
+      Rebecca recommends using her mini-lab on LSTM as a template
+
+   b. Rebecca will be giving a talk that discusses some Yellowbrick at PyData Global Talk
+
+Actions Items
+-------------
+
+1. Release version 1.2
+
+2. Freeze dependency before 1.2 release

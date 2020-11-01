@@ -49,7 +49,7 @@ from yellowbrick.exceptions import YellowbrickWarning
 
 class KneeLocator(object):
     """
-    Finds the "elbow" or "knee" which is a value corresponding to the point of maximum curvature 
+    Finds the "elbow" or "knee" which is a value corresponding to the point of maximum curvature
     in an elbow curve, using knee point detection algorithm. This point is accessible via the
     `knee` attribute.
 
@@ -60,19 +60,22 @@ class KneeLocator(object):
 
     y : list
        A list of silhouette score corresponding to each value of k.
-    
+
     S : float, default: 1.0
-       Sensitivity parameter that allows us to adjust how aggressive we want KneeLocator to 
+       Sensitivity parameter that allows us to adjust how aggressive we want KneeLocator to
        be when detecting "knees" or "elbows".
 
     curve_nature : string, default: 'concave'
-       A string that determines the nature of the elbow curve in which "knee" or "elbow" is 
+       A string that determines the nature of the elbow curve in which "knee" or "elbow" is
        to be found.
 
     curve_direction : string, default: 'increasing'
-       A string that determines tha increasing or decreasing nature of the elbow curve in 
+       A string that determines tha increasing or decreasing nature of the elbow curve in
        which "knee" or "elbow" is to be found.
-    
+
+    online : bool, default: False
+        kneed will correct old knee points if True, will return first knee if False
+
     Notes
     -----
     The KneeLocator is implemented using the "knee point detection algorithm" which can be read at
@@ -80,22 +83,30 @@ class KneeLocator(object):
     """
 
     def __init__(
-        self, x, y, S=1.0, curve_nature="concave", curve_direction="increasing"
+        self,
+        x,
+        y,
+        S=1.0,
+        curve_nature="concave",
+        curve_direction="increasing",
+        online=False,
     ):
 
         # Raw Input
-        self.x = x
-        self.y = y
+        self.x = np.array(x)
+        self.y = np.array(y)
         self.curve_nature = curve_nature
         self.curve_direction = curve_direction
         self.N = len(self.x)
         self.S = S
         self.all_knees = set()
         self.all_norm_knees = set()
+        self.all_knees_y = []
+        self.all_norm_knees_y = []
+        self.online = online
 
         # Step 1: fit a smooth line
         uspline = interpolate.interp1d(self.x, self.y)
-        self.x = np.array(x)
         self.Ds_y = uspline(self.x)
 
         # Step 2: normalize values
@@ -103,34 +114,38 @@ class KneeLocator(object):
         self.y_normalized = self.__normalize(self.Ds_y)
 
         # Step 3: Calculate the Difference curve
-        self.x_normalized, self.y_normalized = self.transform_xy(
-            self.x_normalized,
-            self.y_normalized,
-            self.curve_direction,
-            self.curve_nature,
+        self.y_normalized = self.transform_y(
+            self.y_normalized, self.curve_direction, self.curve_nature
         )
         # normalized difference curve
-        self.y_distance = self.y_normalized - self.x_normalized
-        self.x_distance = self.x_normalized.copy()
+        self.y_difference = self.y_normalized - self.x_normalized
+        self.x_difference = self.x_normalized.copy()
 
         # Step 4: Identify local maxima/minima
         # local maxima
-        self.maxima_inidices = argrelextrema(self.y_distance, np.greater)[0]
-        self.x_distance_maxima = self.x_distance[self.maxima_inidices]
-        self.y_distance_maxima = self.y_distance[self.maxima_inidices]
+        self.maxima_indices = argrelextrema(self.y_difference, np.greater_equal)[0]
+        self.x_difference_maxima = self.x_difference[self.maxima_indices]
+        self.y_difference_maxima = self.y_difference[self.maxima_indices]
 
         # local minima
-        self.minima_indices = argrelextrema(self.y_distance, np.less)[0]
-        self.x_distance_minima = self.x_distance[self.minima_indices]
-        self.y_distance_minima = self.y_distance[self.minima_indices]
+        self.minima_indices = argrelextrema(self.y_difference, np.less_equal)[0]
+        self.x_difference_minima = self.x_difference[self.minima_indices]
+        self.y_difference_minima = self.y_difference[self.minima_indices]
 
         # Step 5: Calculate thresholds
-        self.Tmx = self.y_distance_maxima - (
+        self.Tmx = self.y_difference_maxima - (
             self.S * np.abs(np.diff(self.x_normalized).mean())
         )
 
         # Step 6: find knee
-        self.find_knee()
+        self.knee, self.norm_knee = self.find_knee()
+
+        # Step 7: If we have a knee, extract data about it
+        self.knee_y = self.norm_knee_y = None
+        if self.knee:
+            self.knee_y = self.y[self.x == self.knee][0]
+            self.norm_knee_y = self.y_normalized[self.x_normalized == self.norm_knee][0]
+
         if (self.all_knees or self.all_norm_knees) == set():
             warning_message = (
                 "No 'knee' or 'elbow point' detected "
@@ -140,8 +155,8 @@ class KneeLocator(object):
             warnings.warn(warning_message, YellowbrickWarning)
             self.knee = None
             self.norm_knee = None
-        else:
-            self.knee, self.norm_knee = min(self.all_knees), min(self.all_norm_knees)
+            self.knee_y = None
+            self.norm_knee_y = None
 
     @staticmethod
     def __normalize(a):
@@ -155,25 +170,24 @@ class KneeLocator(object):
         return (a - min(a)) / (max(a) - min(a))
 
     @staticmethod
-    def transform_xy(x, y, direction, curve):
-        """transform x and y to concave, increasing based on curve_direction and curve_nature"""
+    def transform_y(y, direction, curve):
+        """transform y to concave, increasing based on given direction and curve"""
         # convert elbows to knees
-        if curve == "convex":
-            x = x.max() - x
-            y = y.max() - y
-        # flip decreasing functions to increasing
         if direction == "decreasing":
-            y = np.flip(y)
+            if curve == "concave":
+                y = np.flip(y)
+            elif curve == "convex":
+                y = y.max() - y
+        elif direction == "increasing" and curve == "convex":
+            y = np.flip(y.max() - y)
 
-        if curve == "convex":
-            x = np.flip(x)
-            y = np.flip(y)
+        return y
 
-        return x, y
-
-    def find_knee(self,):
+    def find_knee(
+        self,
+    ):
         """This function finds and sets the knee value and the normalized knee value. """
-        if not self.maxima_inidices.size:
+        if not self.maxima_indices.size:
             warning_message = (
                 'No "knee" or "elbow point" detected '
                 "This could be due to bad clustering, no "
@@ -182,58 +196,71 @@ class KneeLocator(object):
             warnings.warn(warning_message, YellowbrickWarning)
             return None, None
 
-        # artificially place a local max at the last item in the x_distance array
-        self.maxima_inidices = np.append(self.maxima_inidices, len(self.x_distance) - 1)
-        self.minima_indices = np.append(self.minima_indices, len(self.x_distance) - 1)
-
         # placeholder for which threshold region i is located in.
         maxima_threshold_index = 0
         minima_threshold_index = 0
-        # traverse the distance curve
-        for idx, i in enumerate(self.x_distance):
-            # reached the end of the curve
-            if i == 1.0:
-                break
-            # values in distance curve are at or after a local maximum
-            if idx >= self.maxima_inidices[maxima_threshold_index]:
-                threshold = self.Tmx[maxima_threshold_index]
-                threshold_index = idx
-                maxima_threshold_index += 1
-            # values in distance curve are at or after a local minimum
-            if idx >= self.minima_indices[minima_threshold_index]:
-                threshold = 0.0
-                minima_threshold_index += 1
-            # Do not evaluate values in the distance curve before the first local maximum.
-            if idx < self.maxima_inidices[0]:
+        # traverse the difference curve
+        for i, x in enumerate(self.x_difference):
+            # skip points on the curve before the the first local maxima
+            if i < self.maxima_indices[0]:
                 continue
 
-            # evaluate the threshold
-            if self.y_distance[idx] < threshold:
+            j = i + 1
+
+            # reached the end of the curve
+            if x == 1.0:
+                break
+
+            # if we're at a local max, increment the maxima threshold index and continue
+            if (self.maxima_indices == i).any():
+                threshold = self.Tmx[maxima_threshold_index]
+                threshold_index = i
+                maxima_threshold_index += 1
+            # values in difference curve are at or after a local minimum
+            if (self.minima_indices == i).any():
+                threshold = 0.0
+                minima_threshold_index += 1
+
+            if self.y_difference[j] < threshold:
                 if self.curve_nature == "convex":
                     if self.curve_direction == "decreasing":
                         knee = self.x[threshold_index]
-                        self.all_knees.add(knee)
                         norm_knee = self.x_normalized[threshold_index]
-                        self.all_norm_knees.add(norm_knee)
                     else:
                         knee = self.x[-(threshold_index + 1)]
-                        self.all_knees.add(knee)
-                        norm_knee = self.x_normalized[-(threshold_index + 1)]
-                        self.all_norm_knees.add(norm_knee)
+                        norm_knee = self.x_normalized[threshold_index]
 
                 elif self.curve_nature == "concave":
                     if self.curve_direction == "decreasing":
                         knee = self.x[-(threshold_index + 1)]
-                        self.all_knees.add(knee)
-                        norm_knee = self.x_normalized[-(threshold_index + 1)]
-                        self.all_norm_knees.add(norm_knee)
+                        norm_knee = self.x_normalized[threshold_index]
                     else:
                         knee = self.x[threshold_index]
-                        self.all_knees.add(knee)
                         norm_knee = self.x_normalized[threshold_index]
-                        self.all_norm_knees.add(norm_knee)
 
-    def plot_knee_normalized(self,):
+                # add the y value at the knee
+                y_at_knee = self.y[self.x == knee][0]
+                y_norm_at_knee = self.y_normalized[self.x_normalized == norm_knee][0]
+                if knee not in self.all_knees:
+                    self.all_knees_y.append(y_at_knee)
+                    self.all_norm_knees_y.append(y_norm_at_knee)
+
+                # now add the knee
+                self.all_knees.add(knee)
+                self.all_norm_knees.add(norm_knee)
+
+                # if detecting in offline mode, return the first knee found
+                if self.online is False:
+                    return knee, norm_knee
+
+        if self.all_knees == set():
+            return None, None
+
+        return knee, norm_knee
+
+    def plot_knee_normalized(
+        self,
+    ):
         """
         Plots the normalized curve, the distance curve (x_distance, y_normalized) and the
         knee, if it exists.
@@ -242,18 +269,22 @@ class KneeLocator(object):
 
         plt.figure(figsize=(8, 8))
         plt.plot(self.x_normalized, self.y_normalized)
-        plt.plot(self.x_distance, self.y_distance, "r")
+        plt.plot(self.x_difference, self.y_difference, "r")
         plt.xticks(
             np.arange(self.x_normalized.min(), self.x_normalized.max() + 0.1, 0.1)
         )
-        plt.yticks(np.arange(self.y_distance.min(), self.y_normalized.max() + 0.1, 0.1))
+        plt.yticks(
+            np.arange(self.y_difference.min(), self.y_normalized.max() + 0.1, 0.1)
+        )
 
         plt.vlines(self.norm_knee, plt.ylim()[0], plt.ylim()[1])
 
-    def plot_knee(self,):
+    def plot_knee(
+        self,
+    ):
         """
         Plot the curve and the knee, if it exists
-        
+
         """
         import matplotlib.pyplot as plt
 
@@ -271,9 +302,25 @@ class KneeLocator(object):
         return self.norm_knee
 
     @property
+    def elbow_y(self):
+        return self.knee_y
+
+    @property
+    def norm_elbow_y(self):
+        return self.norm_knee_y
+
+    @property
     def all_elbows(self):
         return self.all_knees
 
     @property
     def all_norm_elbows(self):
         return self.all_norm_knees
+
+    @property
+    def all_elbows_y(self):
+        return self.all_knees_y
+
+    @property
+    def all_norm_elbows_y(self):
+        return self.all_norm_knees_y

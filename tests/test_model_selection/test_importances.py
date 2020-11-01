@@ -434,6 +434,72 @@ class TestFeatureImportancesVisualizer(VisualTestCase):
             oz.fit(X, y)
             mockfit.assert_called_once_with(X, y)
 
+    def test_topn_stacked(self):
+        """
+        Test stack plot with only the three most important features by sum of
+        each feature's importance across all classes
+        """
+        X, y = load_iris(True)
+
+        viz = FeatureImportances(
+            LogisticRegression(solver="liblinear", random_state=222),
+            stack=True, topn=3
+        )
+        viz.fit(X, y)
+        viz.finalize()
+
+        npt.assert_equal(viz.feature_importances_.shape, (3, 3))
+        # Appveyor and Linux conda non-text-based differences
+        self.assert_images_similar(viz, tol=17.5)
+
+    def test_topn_negative_stacked(self):
+        """
+        Test stack plot with only the three least important features by sum of
+        each feature's importance across all classes
+        """
+        X, y = load_iris(True)
+
+        viz = FeatureImportances(
+            LogisticRegression(solver="liblinear", random_state=222),
+            stack=True, topn=-3
+        )
+        viz.fit(X, y)
+        viz.finalize()
+
+        npt.assert_equal(viz.feature_importances_.shape, (3, 3))
+        # Appveyor and Linux conda non-text-based differences
+        self.assert_images_similar(viz, tol=17.5)
+
+    def test_topn(self):
+        """
+        Test plot with only top three important features by absolute value
+        """
+        X, y = load_iris(True)
+
+        viz = FeatureImportances(
+            GradientBoostingClassifier(random_state=42), topn=3
+        )
+        viz.fit(X, y)
+        viz.finalize()
+
+        # Appveyor and Linux conda non-text-based differences
+        self.assert_images_similar(viz, tol=17.5)
+
+    def test_topn_negative(self):
+        """
+        Test plot with only the three least important features by absolute value
+        """
+        X, y = load_iris(True)
+
+        viz = FeatureImportances(
+            GradientBoostingClassifier(random_state=42), topn=-3
+        )
+        viz.fit(X, y)
+        viz.finalize()
+
+        # Appveyor and Linux conda non-text-based differences
+        self.assert_images_similar(viz, tol=17.5)
+
 
 ##########################################################################
 ## Mock Estimator
