@@ -218,3 +218,5 @@ Board of Advisors Minutes
     minutes/2019-05-15.rst
     minutes/2019-09-09.rst
     minutes/2020-01-07.rst
+    minutes/2020-05-13.rst
+    minutes/2020-10-06.rst
