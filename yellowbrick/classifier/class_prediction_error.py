@@ -21,11 +21,16 @@ Shows the balance of classes and their associated predictions.
 import numpy as np
 
 from sklearn.utils.multiclass import unique_labels
-from sklearn.metrics._classification import _check_targets
 
 from yellowbrick.draw import bar_stack
 from yellowbrick.classifier.base import ClassificationScoreVisualizer
 from yellowbrick.exceptions import ModelError, YellowbrickValueError, NotFitted
+
+try:
+    # See #1124: this allows compatibility for scikit-learn >= 0.20
+    from sklearn.metrics._classification import _check_targets
+except ImportError:
+    from sklearn.metrics.classification import _check_targets
 
 
 ##########################################################################
