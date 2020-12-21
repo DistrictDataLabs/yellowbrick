@@ -45,9 +45,9 @@ class TestDispersionPlot(VisualTestCase):
         _, ax = plt.subplots()
 
         text = [doc.split() for doc in corpus.data]
-        target_words = ["Game", "player", "score", "oil", "Man"]
+        search_terms = ["Game", "player", "score", "oil", "Man"]
 
-        viz = dispersion(target_words=target_words, corpus=text, ax=ax, show=False)
+        viz = dispersion(search_terms=search_terms, corpus=text, ax=ax, show=False)
         viz.ax.grid(False)
 
         self.assert_images_similar(viz, tol=25)
@@ -57,9 +57,9 @@ class TestDispersionPlot(VisualTestCase):
         Assert no errors occur during DispersionPlot integration
         """
         text = [doc.split() for doc in corpus.data]
-        target_words = ["Game", "player", "score", "oil", "Man"]
+        search_terms = ["Game", "player", "score", "oil", "Man"]
 
-        visualizer = DispersionPlot(target_words)
+        visualizer = DispersionPlot(search_terms)
         visualizer.fit(text)
         visualizer.ax.grid(False)
 
@@ -71,9 +71,9 @@ class TestDispersionPlot(VisualTestCase):
         with ignore_case parameter turned on
         """
         text = [doc.split() for doc in corpus.data]
-        target_words = ["Game", "player", "score", "oil", "Man"]
+        search_terms = ["Game", "player", "score", "oil", "Man"]
 
-        visualizer = DispersionPlot(target_words, ignore_case=True)
+        visualizer = DispersionPlot(search_terms, ignore_case=True)
         visualizer.fit(text)
         visualizer.ax.grid(False)
 
@@ -85,9 +85,9 @@ class TestDispersionPlot(VisualTestCase):
         when the corpus' text type is a generator
         """
         text = [doc.split() for doc in corpus.data]
-        target_words = ["Game", "player", "score", "oil", "Man"]
+        search_terms = ["Game", "player", "score", "oil", "Man"]
 
-        visualizer = DispersionPlot(target_words, ignore_case=True)
+        visualizer = DispersionPlot(search_terms, ignore_case=True)
         visualizer.fit(text)
         visualizer.ax.grid(False)
 
@@ -99,9 +99,9 @@ class TestDispersionPlot(VisualTestCase):
         with annotate_docs parameter turned on
         """
         text = [doc.split() for doc in corpus.data]
-        target_words = ["girl", "she", "boy", "he", "man"]
+        search_terms = ["girl", "she", "boy", "he", "man"]
 
-        visualizer = DispersionPlot(target_words, annotate_docs=True)
+        visualizer = DispersionPlot(search_terms, annotate_docs=True)
         visualizer.fit(text)
         visualizer.ax.grid(False)
 
@@ -114,9 +114,9 @@ class TestDispersionPlot(VisualTestCase):
         """
         target = corpus.target
         text = [doc.split() for doc in corpus.data]
-        target_words = ["girl", "she", "boy", "he", "man"]
+        search_terms = ["girl", "she", "boy", "he", "man"]
 
-        visualizer = DispersionPlot(target_words)
+        visualizer = DispersionPlot(search_terms)
         visualizer.fit(text, target)
         visualizer.ax.grid(False)
 
@@ -128,9 +128,9 @@ class TestDispersionPlot(VisualTestCase):
         """
         target = corpus.target
         text = [doc.split() for doc in corpus.data]
-        target_words = ["girl", "she", "boy", "he", "man"]
+        search_terms = ["girl", "she", "boy", "he", "man"]
 
-        visualizer = DispersionPlot(target_words, annotate_docs=True, labels=["a", "b"])
+        visualizer = DispersionPlot(search_terms, annotate_docs=True, labels=["a", "b"])
 
         msg = (
             r"number of supplied labels \(\d\) "
