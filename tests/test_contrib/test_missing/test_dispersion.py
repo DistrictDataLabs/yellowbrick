@@ -46,7 +46,7 @@ class TestMissingValuesDispersion(VisualTestCase):
     """
     MissingValuesDispersion visualizer
     """
-
+    @pytest.mark.skipif(pd is None, reason="pandas is required")
     def test_missingvaluesdispersion_with_pandas(self):
         """
         Integration test of visualizer with pandas
@@ -72,6 +72,7 @@ class TestMissingValuesDispersion(VisualTestCase):
 
         self.assert_images_similar(viz, tol=self.tol)
 
+    @pytest.mark.skipif(pd is None, reason="pandas is required")
     def test_missingvaluesdispersion_with_pandas_with_y_targets(self):
         """
         Integration test of visualizer with pandas with y targets
