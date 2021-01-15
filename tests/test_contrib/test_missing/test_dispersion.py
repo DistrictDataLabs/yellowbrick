@@ -46,6 +46,7 @@ class TestMissingValuesDispersion(VisualTestCase):
     """
     MissingValuesDispersion visualizer
     """
+
     @pytest.mark.skipif(pd is None, reason="pandas is required")
     def test_missingvaluesdispersion_with_pandas(self):
         """
