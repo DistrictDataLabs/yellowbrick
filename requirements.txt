@@ -1,7 +1,7 @@
 ## Dependencies
 matplotlib>=2.0.2,!=3.0.0
-scipy>=1.0.0,<1.6
-scikit-learn>=0.20,<0.24
+scipy>=1.6
+scikit-learn>=0.24
 numpy>=1.13.0
 cycler>=0.10.0
 
