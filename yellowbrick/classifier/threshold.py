@@ -27,8 +27,10 @@ from collections import defaultdict
 from sklearn.base import clone
 from sklearn.model_selection import ShuffleSplit
 from sklearn.metrics import precision_recall_curve
-from sklearn.utils import indexable, safe_indexing
+# pbi start : 02/02/2021 : scikit learn 0.24
+from sklearn.utils import indexable, _safe_indexing
 from sklearn.utils.multiclass import type_of_target
+# pbi end : 02/02/2021 : scikit learn 0.24
 
 from yellowbrick.base import ModelVisualizer
 from yellowbrick.style.colors import resolve_colors
@@ -210,15 +212,27 @@ class DiscriminationThreshold(ModelVisualizer):
         )
 
         # Set params
-        self.set_params(
-            n_trials=n_trials,
-            cv=cv,
-            fbeta=fbeta,
-            argmax=argmax,
-            exclude=exclude,
-            quantiles=quantiles,
-            random_state=random_state,
-        )
+        # pbi start : 02/02/2021 : scikit learn 0.24
+
+# =============================================================================
+#         self.set_params(
+#             n_trials=n_trials,
+#             cv=cv,
+#             fbeta=fbeta,
+#             argmax=argmax,
+#             exclude=exclude,
+#             quantiles=quantiles,
+#             random_state=random_state,
+#         )
+# =============================================================================
+        self.n_trials=n_trials
+        self.cv=cv
+        self.fbeta=fbeta
+        self.argmax=argmax
+        self.exclude=exclude
+        self.quantiles=quantiles
+        self.random_state=random_state
+        # pbi end : 02/02/2021 : scikit learn 0.24
 
     def fit(self, X, y, **kwargs):
         """
@@ -326,10 +340,10 @@ class DiscriminationThreshold(ModelVisualizer):
         for train_index, test_index in splitter.split(X, y):
             # Safe indexing handles multiple types of inputs including
             # DataFrames and structured arrays - required for generic splits.
-            X_train = safe_indexing(X, train_index)
-            y_train = safe_indexing(y, train_index)
-            X_test = safe_indexing(X, test_index)
-            y_test = safe_indexing(y, test_index)
+            X_train = _safe_indexing(X, train_index)
+            y_train = _safe_indexing(y, train_index)
+            X_test = _safe_indexing(X, test_index)
+            y_test = _safe_indexing(y, test_index)
 
             model = clone(self.estimator)
             model.fit(X_train, y_train)

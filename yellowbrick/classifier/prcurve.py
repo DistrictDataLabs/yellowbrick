@@ -239,18 +239,30 @@ class PrecisionRecallCurve(ClassificationScoreVisualizer):
         )
 
         # Set visual params
-        self.set_params(
-            fill_area=fill_area,
-            ap_score=ap_score,
-            colors=colors,
-            cmap=cmap,
-            micro=micro,
-            iso_f1_curves=iso_f1_curves,
-            iso_f1_values=set(iso_f1_values),
-            per_class=per_class,
-            fill_opacity=fill_opacity,
-            line_opacity=line_opacity,
-        )
+        # pbi start : 02/02/2021 : scikit learn 0.24
+        #self.set_params(
+        #    fill_area=fill_area,
+        #    ap_score=ap_score,
+        #    colors=colors,
+        #    cmap=cmap,
+        #    micro=micro,
+        #    iso_f1_curves=iso_f1_curves,
+        #    iso_f1_values=set(iso_f1_values),
+        #    per_class=per_class,
+        #    fill_opacity=fill_opacity,
+        #    line_opacity=line_opacity,
+        #)
+        self.fill_area=fill_area
+        self.ap_score=ap_score
+        self.colors=colors
+        self.cmap=cmap
+        self.micro=micro
+        self.iso_f1_curves=iso_f1_curves
+        self.iso_f1_values=set(iso_f1_values)
+        self.per_class=per_class
+        self.fill_opacity=fill_opacity
+        self.line_opacity=line_opacity
+        # pbi end : 02/02/2021 : scikit learn 0.24
 
         if self.micro and self.per_class:
             warnings.warn(
