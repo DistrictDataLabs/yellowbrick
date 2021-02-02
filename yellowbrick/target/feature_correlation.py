@@ -136,14 +136,22 @@ class FeatureCorrelation(TargetVisualizer):
             )
 
         # Parameters
-        self.set_params(
-            sort=sort,
-            color=color,
-            method=method,
-            labels=labels,
-            feature_index=feature_index,
-            feature_names=feature_names,
-        )
+        # pbi start : 02/02/2021 : scikit learn 0.24
+        #self.set_params(
+        #    sort=sort,
+        #    color=color,
+        #    method=method,
+        #    labels=labels,
+        #    feature_index=feature_index,
+        #    feature_names=feature_names,
+        #)
+        self.sort=sort
+        self.color=color
+        self.method=method
+        self.labels=labels
+        self.feature_index=feature_index
+        self.feature_names=feature_names
+        # pbi end : 02/02/2021 : scikit learn 0.24
 
     def fit(self, X, y, **kwargs):
         """
