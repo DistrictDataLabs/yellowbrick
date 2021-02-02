@@ -110,9 +110,14 @@ class CooksDistance(Visualizer):
         super(CooksDistance, self).__init__(ax=ax, **kwargs)
 
         # Set "hyperparameters"
-        self.set_params(
-            draw_threshold=draw_threshold, linefmt=linefmt, markerfmt=markerfmt
-        )
+        # pbi start : 02/02/2021 : scikit learn 0.24
+        #self.set_params(
+        #    draw_threshold=draw_threshold, linefmt=linefmt, markerfmt=markerfmt
+        #)
+        self.draw_threshold=draw_threshold
+        self.linefmt=linefmt 
+        self.markerfmt=markerfmt
+        # pbi end : 02/02/2021 : scikit learn 0.24
 
         # An internal LinearRegression used to compute the residuals and MSE
         # This implementation doesn't support any regressor, it is OLS-specific
