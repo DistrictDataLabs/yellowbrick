@@ -178,16 +178,27 @@ class ValidationCurve(ModelVisualizer):
             )
 
         # Set the visual and validation curve parameters on the estimator
-        self.set_params(
-            param_name=param_name,
-            param_range=param_range,
-            logx=logx,
-            groups=groups,
-            cv=cv,
-            scoring=scoring,
-            n_jobs=n_jobs,
-            pre_dispatch=pre_dispatch,
-        )
+        # pbi start : 02/02/2021 : scikit learn 0.24
+        #self.set_params(
+        #    param_name=param_name,
+        #    param_range=param_range,
+        #    logx=logx,
+        #    groups=groups,
+        #    cv=cv,
+        #    scoring=scoring,
+        #    n_jobs=n_jobs,
+        #    pre_dispatch=pre_dispatch,
+        #)
+        self.model=model
+        self.param_name=param_name
+        self.param_range=param_range
+        self.logx=logx
+        self.groups=groups
+        self.cv=cv
+        self.scoring=scoring
+        self.n_jobs=n_jobs
+        self.pre_dispatch=pre_dispatch
+        # pbi end : 02/02/2021 : scikit learn 0.24
 
     def fit(self, X, y=None):
         """

@@ -197,17 +197,30 @@ class LearningCurve(ModelVisualizer):
             )
 
         # Set the metric parameters to be used later
-        self.set_params(
-            groups=groups,
-            train_sizes=train_sizes,
-            cv=cv,
-            scoring=scoring,
-            exploit_incremental_learning=exploit_incremental_learning,
-            n_jobs=n_jobs,
-            pre_dispatch=pre_dispatch,
-            shuffle=shuffle,
-            random_state=random_state,
-        )
+        # pbi start : 02/02/2021 : scikit learn 0.24
+        #self.set_params(
+        #    groups=groups,
+        #    train_sizes=train_sizes,
+        #    cv=cv,
+        #    scoring=scoring,
+        #    exploit_incremental_learning=exploit_incremental_learning,
+        #    n_jobs=n_jobs,
+        #    pre_dispatch=pre_dispatch,
+        #    shuffle=shuffle,
+        #    random_state=random_state,
+        #)
+        self.model=model
+        self.groups=groups
+        self.train_sizes=train_sizes
+        self.cv=cv
+        self.scoring=scoring
+        self.exploit_incremental_learning=exploit_incremental_learning
+        self.n_jobs=n_jobs
+        self.pre_dispatch=pre_dispatch
+        self.shuffle=shuffle
+        self.random_state=random_state
+        # pbi end : 02/02/2021 : scikit learn 0.24
+
 
     def fit(self, X, y=None):
         """
