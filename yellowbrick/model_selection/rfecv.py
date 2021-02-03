@@ -145,14 +145,13 @@ class RFECV(ModelVisualizer):
         super(RFECV, self).__init__(model, ax=ax, **kwargs)
 
         # Set parameters
-        # pbi start : 02/02/2021 : scikit learn 0.24
-        #self.set_params(step=step, groups=groups, cv=cv, scoring=scoring)
+
         self.model=model
         self.step=step 
         self.groups=groups 
         self.cv=cv 
         self.scoring=scoring
-        # pbi end : 02/02/2021 : scikit learn 0.24
+
         
     def fit(self, X, y=None):
         """

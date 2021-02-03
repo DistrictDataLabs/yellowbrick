@@ -136,16 +136,6 @@ class FeatureImportances(ModelVisualizer):
         )
 
         # Data Parameters
-        # pbi start : 02/02/2021 : scikit learn 0.24
-        #self.set_params(
-        #    labels=labels,
-        #    relative=relative,
-        #    absolute=absolute,
-        #    xlabel=xlabel,
-        #    stack=stack,
-        #    colors=colors,
-        #    colormap=colormap,
-        #)
         self.labels=labels
         self.relative=relative
         self.absolute=absolute
@@ -153,7 +143,6 @@ class FeatureImportances(ModelVisualizer):
         self.stack=stack
         self.colors=colors
         self.colormap=colormap
-        # pbi end : 02/02/2021 : scikit learn 0.24
 
     def fit(self, X, y=None, **kwargs):
         """
