@@ -27,10 +27,8 @@ from collections import defaultdict
 from sklearn.base import clone
 from sklearn.model_selection import ShuffleSplit
 from sklearn.metrics import precision_recall_curve
-# pbi start : 02/02/2021 : scikit learn 0.24
 from sklearn.utils import indexable, _safe_indexing
 from sklearn.utils.multiclass import type_of_target
-# pbi end : 02/02/2021 : scikit learn 0.24
 
 from yellowbrick.base import ModelVisualizer
 from yellowbrick.style.colors import resolve_colors
@@ -212,19 +210,7 @@ class DiscriminationThreshold(ModelVisualizer):
         )
 
         # Set params
-        # pbi start : 02/02/2021 : scikit learn 0.24
 
-# =============================================================================
-#         self.set_params(
-#             n_trials=n_trials,
-#             cv=cv,
-#             fbeta=fbeta,
-#             argmax=argmax,
-#             exclude=exclude,
-#             quantiles=quantiles,
-#             random_state=random_state,
-#         )
-# =============================================================================
         self.n_trials=n_trials
         self.cv=cv
         self.fbeta=fbeta
@@ -232,7 +218,6 @@ class DiscriminationThreshold(ModelVisualizer):
         self.exclude=exclude
         self.quantiles=quantiles
         self.random_state=random_state
-        # pbi end : 02/02/2021 : scikit learn 0.24
 
     def fit(self, X, y, **kwargs):
         """

@@ -128,12 +128,10 @@ class ClassificationScoreVisualizer(ScoreVisualizer):
         super(ClassificationScoreVisualizer, self).__init__(
             model, ax=ax, fig=fig, is_fitted=is_fitted, **kwargs
         )
-        # pbi start : 02/02/2021 : scikit learn 0.24
-        #self.set_params(classes=classes, encoder=encoder, force_model=force_model)
+
         self.classes=classes
         self.encoder=encoder 
         self.force_model=force_model
-        # pbi end : 02/02/2021 : scikit learn 0.24
 
     @property
     def class_colors_(self):

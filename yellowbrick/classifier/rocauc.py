@@ -208,12 +208,7 @@ class ROCAUC(ClassificationScoreVisualizer):
         # Set the visual parameters for ROCAUC
         # NOTE: the binary flag breaks our API since it's really just a meta parameter
         # for micro, macro, and per_class. We knew this going in, but did it anyway.
-        # pbi start : 02/02/2021 : scikit learn 0.24
 
-        #if binary:
-        #    self.set_params(micro=False, macro=False, per_class=False)
-        #else:
-        #    self.set_params(micro=micro, macro=macro, per_class=per_class)
         if binary:
            self.micro=False 
            self.macro=False 
@@ -221,8 +216,7 @@ class ROCAUC(ClassificationScoreVisualizer):
         else:
            self.micro=micro 
            self.macro=macro 
-           self.per_class=per_class    
-        # pbi end : 02/02/2021 : scikit learn 0.24
+           self.per_class=per_class
 
     def fit(self, X, y=None):
         """
