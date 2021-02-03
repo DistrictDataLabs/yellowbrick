@@ -63,7 +63,7 @@ class TestSilhouetteVisualizer(VisualTestCase):
 
             self.assert_images_similar(visualizer, remove_legend=True)
         except Exception as e:
-            self.fail("error during silhouette: {}".format(e))
+            pytest.fail("error during silhouette: {}".format(e))
 
     @pytest.mark.xfail(sys.platform == "win32", reason="images not close on windows")
     def test_integrated_mini_batch_kmeans_silhouette(self):
@@ -87,7 +87,7 @@ class TestSilhouetteVisualizer(VisualTestCase):
 
             self.assert_images_similar(visualizer, remove_legend=True)
         except Exception as e:
-            self.fail("error during silhouette: {}".format(e))
+            pytest.fail("error during silhouette: {}".format(e))
 
     @pytest.mark.skip(reason="no negative silhouette example available yet")
     def test_negative_silhouette_score(self):
@@ -118,7 +118,7 @@ class TestSilhouetteVisualizer(VisualTestCase):
 
             self.assert_images_similar(visualizer, remove_legend=True)
         except Exception as e:
-            self.fail("error during silhouette: {}".format(e))
+            pytest.fail("error during silhouette: {}".format(e))
 
     @pytest.mark.xfail(sys.platform == "win32", reason="images not close on windows")
     def test_colors_silhouette(self):
@@ -145,7 +145,7 @@ class TestSilhouetteVisualizer(VisualTestCase):
 
             self.assert_images_similar(visualizer, remove_legend=True)
         except Exception as e:
-            self.fail("error during silhouette: {}".format(e))
+            pytest.fail("error during silhouette: {}".format(e))
 
     def test_colormap_as_colors_silhouette(self):
         """
@@ -172,7 +172,7 @@ class TestSilhouetteVisualizer(VisualTestCase):
             )  # Fails on AppVeyor with RMS 3.143
             self.assert_images_similar(visualizer, remove_legend=True, tol=tol)
         except Exception as e:
-            self.fail("error during silhouette: {}".format(e))
+            pytest.fail("error during silhouette: {}".format(e))
 
     def test_quick_method(self):
         """
