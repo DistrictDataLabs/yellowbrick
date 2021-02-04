@@ -77,7 +77,7 @@ class DiscriminationThreshold(ModelVisualizer):
 
     Parameters
     ----------
-    model : estimator
+    estimator : estimator
         A scikit-learn estimator that should be a classifier. If the model is
         not a classifier, an exception is raised. If the internal model is not
         fitted, it is fit when the visualizer is fitted, unless otherwise specified
@@ -181,7 +181,7 @@ class DiscriminationThreshold(ModelVisualizer):
 
     def __init__(
         self,
-        model,
+        estimator,
         ax=None,
         n_trials=50,
         cv=0.1,
@@ -197,7 +197,7 @@ class DiscriminationThreshold(ModelVisualizer):
 
         # Perform some quick type checking to help users avoid error.
         if not force_model and (
-            not is_classifier(model) or not is_probabilistic(model)
+            not is_classifier(estimator) or not is_probabilistic(estimator)
         ):
             raise YellowbrickTypeError(
                 "{} requires a probabilistic binary classifier".format(
@@ -212,7 +212,7 @@ class DiscriminationThreshold(ModelVisualizer):
 
         # Initialize the ModelVisualizer
         super(DiscriminationThreshold, self).__init__(
-            model, ax=ax, is_fitted=is_fitted, **kwargs
+            estimator, ax=ax, is_fitted=is_fitted, **kwargs
         )
 
         # Set params
@@ -500,7 +500,7 @@ class DiscriminationThreshold(ModelVisualizer):
 ##########################################################################
 
 def discrimination_threshold(
-    model,
+    estimator,
     X,
     y,
     ax=None,
@@ -530,7 +530,7 @@ def discrimination_threshold(
 
     Parameters
     ----------
-    model : estimator
+    estimator : estimator
         A scikit-learn estimator that should be a classifier. If the model is
         not a classifier, an exception is raised. If the internal model is not
         fitted, it is fit when the visualizer is fitted, unless otherwise specified
@@ -648,7 +648,7 @@ def discrimination_threshold(
     """
     # Instantiate the visualizer
     visualizer = DiscriminationThreshold(
-        model,
+        estimator,
         ax=ax,
         n_trials=n_trials,
         cv=cv,

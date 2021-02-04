@@ -56,7 +56,7 @@ class LearningCurve(ModelVisualizer):
 
     Parameters
     ----------
-    model : a scikit-learn estimator
+    estimator : a scikit-learn estimator
         An object that implements ``fit`` and ``predict``, can be a
         classifier, regressor, or clusterer so long as there is also a valid
         associated scoring metric.
@@ -170,7 +170,7 @@ class LearningCurve(ModelVisualizer):
 
     def __init__(
         self,
-        model,
+        estimator,
         ax=None,
         groups=None,
         train_sizes=DEFAULT_TRAIN_SIZES,
@@ -185,7 +185,7 @@ class LearningCurve(ModelVisualizer):
     ):
 
         # Initialize the model visualizer
-        super(LearningCurve, self).__init__(model, ax=ax, **kwargs)
+        super(LearningCurve, self).__init__(estimator, ax=ax, **kwargs)
 
         # Validate the train sizes
         train_sizes = np.asarray(train_sizes)
@@ -311,7 +311,7 @@ class LearningCurve(ModelVisualizer):
 
 
 def learning_curve(
-    model,
+    estimator,
     X,
     y,
     ax=None,
@@ -337,7 +337,7 @@ def learning_curve(
 
     Parameters
     ----------
-    model : a scikit-learn estimator
+    estimator : a scikit-learn estimator
         An object that implements ``fit`` and ``predict``, can be a
         classifier, regressor, or clusterer so long as there is also a valid
         associated scoring metric.
@@ -425,7 +425,7 @@ def learning_curve(
     """
     # Initialize the visualizer
     oz = LearningCurve(
-        model,
+        estimator,
         ax=ax,
         groups=groups,
         train_sizes=train_sizes,

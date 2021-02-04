@@ -217,7 +217,14 @@ class CooksDistance(Visualizer):
 
 
 def cooks_distance(
-    X, y, ax=None, draw_threshold=True, linefmt="C0-", markerfmt=",", show=True, **kwargs
+    X,
+    y,
+    ax=None,
+    draw_threshold=True,
+    linefmt="C0-",
+    markerfmt=",",
+    show=True,
+    **kwargs
 ):
     """
     Cook's Distance is a measure of how influential an instance is to the computation of

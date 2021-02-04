@@ -14,10 +14,13 @@ This version primarily repairs the dependency issues we faced with scipy 1.6, sc
 
 Major Changes:
    - Implement new ``set_params`` and ``get_params`` on ModelVisualizers to ensure wrapped estimator is being correctly accessed via the new Estimator methods.
+   - Fix the test dependencies to prevent variability in CI (must periodically review dependencies to ensure we're testing what our users are experiencing).
+   - Change ``model`` param to ``estimator`` param to ensure that Visualizer arguments match their property names so that inspect works with get and set params and other scikit-learn utility functions.
 
 Minor Changes:
    - Import scikit-learn private API ``_safe_indexing`` without error.
    - Remove any calls to ``set_params`` in Visualizer ``__init__`` methods.
+   - Modify test fixtures and baseline images to accomodate new sklearn implementation
 
 
 .. _v1.3: https://github.com/DistrictDataLabs/yellowbrick/releases/tag/v1.3

@@ -293,7 +293,7 @@ class ModelVisualizer(Visualizer, Wrapper):
 
     Parameters
     ----------
-    model : a Scikit-Learn estimator
+    estimator : a Scikit-Learn estimator
         A Scikit-Learn estimator to wrap functionality for, usually regressor,
         classifier, or clusterer predictive model. If the estimator is not fitted,
         it is fit when the visualizer is fitted, unless otherwise specified by
@@ -322,14 +322,46 @@ class ModelVisualizer(Visualizer, Wrapper):
     Model visualizers can wrap either fitted or unfitted models.
     """
 
-    def __init__(self, model, ax=None, fig=None, is_fitted="auto", **kwargs):
-        self.estimator = model
+    def __init__(self, estimator, ax=None, fig=None, is_fitted="auto", **kwargs):
+        self.estimator = estimator
         self.is_fitted = is_fitted
         self.name = get_model_name(self.estimator)
 
         # Initialize base classes independently
         Wrapper.__init__(self, self.estimator)
         Visualizer.__init__(self, ax=ax, fig=fig, **kwargs)
+
+    def get_params(self, deep=True):
+        """
+        The latest version of scikit-learn is able to determine that ``self.estimator``
+        is nested and fetches its params using ``estimator__param``. This functionality
+        is pretty cool but it's a pretty big overhaul to change our "wrapped" estimator
+        API to a "nested" estimator API, therefore we override ``get_params`` to flatten
+        out the estimator params.
+        """
+        params = super(ModelVisualizer, self).get_params(deep=deep)
+        for param in list(params.keys()):
+            if param.startswith("estimator__"):
+                params[param[len("estimator__"):]] = params.pop(param)
+        print(params.keys(), "\n\n")
+        return params
+
+    def set_params(self, **params):
+        """
+        The latest version of scikit-learn is able to determine that ``self.estimator``
+        is nested and sets its params using ``estimator__param``. In order to maintain
+        the Yellowbrick "wrapped" API, this method finds any params belonging to the
+        underlying estimator and sets them directly.
+        """
+        estimator_keys = list(self.estimator.get_params(deep=False).keys())
+        estimator_params = {
+            key: params.pop(key)
+            for key in estimator_keys
+            if key in params
+        }
+
+        self.estimator.set_params(**estimator_params)
+        return super(ModelVisualizer, self).set_params(**params)
 
     def fit(self, X, y=None, **kwargs):
         """

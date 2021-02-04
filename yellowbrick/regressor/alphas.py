@@ -65,7 +65,7 @@ class AlphaSelection(RegressionScoreVisualizer):
     Parameters
     ----------
 
-    model : a Scikit-Learn regressor
+    estimator : a Scikit-Learn regressor
         Should be an instance of a regressor, and specifically one whose name
         ends with "CV" otherwise a will raise a YellowbrickTypeError exception
         on instantiation. To use non-CV regressors see: ``ManualAlphaSelection``.
@@ -115,10 +115,10 @@ class AlphaSelection(RegressionScoreVisualizer):
     For RidgeCV, make sure ``store_cv_values=True``.
     """
 
-    def __init__(self, model, ax=None, is_fitted="auto", **kwargs):
+    def __init__(self, estimator, ax=None, is_fitted="auto", **kwargs):
 
         # Check to make sure this is a "RegressorCV"
-        name = model.__class__.__name__
+        name = estimator.__class__.__name__
         if not name.endswith("CV"):
             raise YellowbrickTypeError(
                 (
@@ -128,11 +128,11 @@ class AlphaSelection(RegressionScoreVisualizer):
             )
 
         # Set the store_cv_values parameter on RidgeCV
-        if "store_cv_values" in model.get_params().keys():
-            model.set_params(store_cv_values=True)
+        if "store_cv_values" in estimator.get_params().keys():
+            estimator.set_params(store_cv_values=True)
 
         # Call super to initialize the class
-        super(AlphaSelection, self).__init__(model, ax=ax, **kwargs)
+        super(AlphaSelection, self).__init__(estimator, ax=ax, **kwargs)
 
     def fit(self, X, y, **kwargs):
         """
@@ -240,7 +240,7 @@ class ManualAlphaSelection(AlphaSelection):
     Parameters
     ----------
 
-    model : an unfitted Scikit-Learn regressor
+    estimator : an unfitted Scikit-Learn regressor
         Should be an instance of an unfitted regressor, and specifically one
         whose name doesn't end with "CV". The regressor must support a call to
         ``set_params(alpha=alpha)`` and be fit multiple times. If the
@@ -299,10 +299,12 @@ class ManualAlphaSelection(AlphaSelection):
     "RegressorCV" estimators.
     """
 
-    def __init__(self, model, ax=None, alphas=None, cv=None, scoring=None, **kwargs):
+    def __init__(
+        self, estimator, ax=None, alphas=None, cv=None, scoring=None, **kwargs
+    ):
 
         # Check to make sure this is not a "RegressorCV"
-        name = model.__class__.__name__
+        name = estimator.__class__.__name__
         if name.endswith("CV"):
             raise YellowbrickTypeError(
                 (
@@ -311,7 +313,7 @@ class ManualAlphaSelection(AlphaSelection):
             )
 
         # Call super to initialize the class
-        super(AlphaSelection, self).__init__(model, ax=ax, **kwargs)
+        super(AlphaSelection, self).__init__(estimator, ax=ax, **kwargs)
 
         # Set manual alpha selection parameters
         if alphas is not None:
@@ -368,7 +370,7 @@ class ManualAlphaSelection(AlphaSelection):
 ##########################################################################
 
 
-def alphas(model, X, y=None, ax=None, is_fitted="auto", show=True, **kwargs):
+def alphas(estimator, X, y=None, ax=None, is_fitted="auto", show=True, **kwargs):
     """Quick Method:
     The Alpha Selection Visualizer demonstrates how different values of alpha
     influence model selection during the regularization of linear models.
@@ -379,7 +381,7 @@ def alphas(model, X, y=None, ax=None, is_fitted="auto", show=True, **kwargs):
     Parameters
     ----------
 
-    model : a Scikit-Learn regressor
+    estimator : a Scikit-Learn regressor
         Should be an instance of a regressor, and specifically one whose name
         ends with "CV" otherwise a will raise a YellowbrickTypeError exception
         on instantiation. To use non-CV regressors see: ``ManualAlphaSelection``.
@@ -417,7 +419,7 @@ def alphas(model, X, y=None, ax=None, is_fitted="auto", show=True, **kwargs):
         Returns the alpha selection visualizer
     """
     # Instantiate the visualizer
-    visualizer = AlphaSelection(model, ax, is_fitted=is_fitted, **kwargs)
+    visualizer = AlphaSelection(estimator, ax, is_fitted=is_fitted, **kwargs)
 
     visualizer.fit(X, y)
     visualizer.score(X, y)
@@ -432,7 +434,7 @@ def alphas(model, X, y=None, ax=None, is_fitted="auto", show=True, **kwargs):
 
 
 def manual_alphas(
-    model,
+    estimator,
     X,
     y=None,
     ax=None,
@@ -452,7 +454,7 @@ def manual_alphas(
     Parameters
     ----------
 
-    model : an unfitted Scikit-Learn regressor
+    estimator : an unfitted Scikit-Learn regressor
         Should be an instance of an unfitted regressor, and specifically one
         whose name doesn't end with "CV". The regressor must support a call to
         ``set_params(alpha=alpha)`` and be fit multiple times. If the
@@ -498,7 +500,7 @@ def manual_alphas(
     """
     # Instantiate the visualizer
     visualizer = ManualAlphaSelection(
-        model, ax, alphas=alphas, scoring=scoring, cv=cv, **kwargs
+        estimator, ax, alphas=alphas, scoring=scoring, cv=cv, **kwargs
     )
 
     visualizer.fit(X, y)

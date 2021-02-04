@@ -49,7 +49,7 @@ class ClassificationScoreVisualizer(ScoreVisualizer):
 
     Parameters
     ----------
-    model : estimator
+    estimator : estimator
         A scikit-learn estimator that should be a classifier. If the model is
         not a classifier, an exception is raised. If the internal model is not
         fitted, it is fit when the visualizer is fitted, unless otherwise specified
@@ -108,7 +108,7 @@ class ClassificationScoreVisualizer(ScoreVisualizer):
 
     def __init__(
         self,
-        model,
+        estimator,
         ax=None,
         fig=None,
         classes=None,
@@ -118,7 +118,7 @@ class ClassificationScoreVisualizer(ScoreVisualizer):
         **kwargs
     ):
         # A bit of type checking
-        if not force_model and not isclassifier(model):
+        if not force_model and not isclassifier(estimator):
             raise YellowbrickTypeError(
                 "This estimator is not a classifier; "
                 "try a regression or clustering score visualizer instead!"
@@ -126,7 +126,7 @@ class ClassificationScoreVisualizer(ScoreVisualizer):
 
         # Initialize the super method.
         super(ClassificationScoreVisualizer, self).__init__(
-            model, ax=ax, fig=fig, is_fitted=is_fitted, **kwargs
+            estimator, ax=ax, fig=fig, is_fitted=is_fitted, **kwargs
         )
 
         self.classes = classes

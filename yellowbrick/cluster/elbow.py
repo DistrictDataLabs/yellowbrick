@@ -149,7 +149,7 @@ class KElbowVisualizer(ClusteringScoreVisualizer):
     Parameters
     ----------
 
-    model : a scikit-learn clusterer
+    estimator : a scikit-learn clusterer
         Should be an instance of an unfitted clusterer, specifically ``KMeans`` or
         ``MiniBatchKMeans``. If it is not a clusterer, an exception is raised.
 
@@ -236,7 +236,7 @@ class KElbowVisualizer(ClusteringScoreVisualizer):
 
     def __init__(
         self,
-        model,
+        estimator,
         ax=None,
         k=10,
         metric="distortion",
@@ -244,7 +244,7 @@ class KElbowVisualizer(ClusteringScoreVisualizer):
         locate_elbow=True,
         **kwargs
     ):
-        super(KElbowVisualizer, self).__init__(model, ax=ax, **kwargs)
+        super(KElbowVisualizer, self).__init__(estimator, ax=ax, **kwargs)
 
         # Get the scoring method
         if metric not in KELBOW_SCOREMAP:

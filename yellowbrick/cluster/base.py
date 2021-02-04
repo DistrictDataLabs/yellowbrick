@@ -40,11 +40,13 @@ class ClusteringScoreVisualizer(ScoreVisualizer):
     ``YellowbrickTypeError`` exception is raised.
     """
 
-    def __init__(self, model, ax=None, fig=None, force_model=False, **kwargs):
-        if not force_model and not isclusterer(model):
+    def __init__(self, estimator, ax=None, fig=None, force_model=False, **kwargs):
+        if not force_model and not isclusterer(estimator):
             raise YellowbrickTypeError(
                 "The supplied model is not a clustering estimator; try a "
                 "classifier or regression score visualizer instead!"
             )
         self.force_model = force_model
-        super(ClusteringScoreVisualizer, self).__init__(model, ax=ax, fig=fig, **kwargs)
+        super(ClusteringScoreVisualizer, self).__init__(
+            estimator, ax=ax, fig=fig, **kwargs
+        )

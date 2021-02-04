@@ -514,12 +514,12 @@ def rank1d(
 
     color: string
         Specify color for barchart
-    
+
     show: bool, default: True
         If True, calls ``show()``, which in turn calls ``plt.show()`` however you cannot
         call ``plt.savefig`` from this signature, nor ``clear_figure``. If False, simply
         calls ``finalize()``
-    
+
      kwargs : dict
         Keyword arguments that are passed to the base class and may influence
         the visualization as defined in other Visualizers.
@@ -552,6 +552,7 @@ def rank1d(
 
     # Return the visualizer object
     return visualizer
+
 
 def rank2d(
     X,

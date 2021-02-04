@@ -53,7 +53,7 @@ class RFECV(ModelVisualizer):
 
     Parameters
     ----------
-    model : a scikit-learn estimator
+    estimator : a scikit-learn estimator
         An object that implements ``fit`` and provides information about the
         relative importance of features with either a ``coef_`` or
         ``feature_importances_`` attribute.
@@ -138,17 +138,17 @@ class RFECV(ModelVisualizer):
     """
 
     def __init__(
-        self, model, ax=None, step=1, groups=None, cv=None, scoring=None, **kwargs
+        self, estimator, ax=None, step=1, groups=None, cv=None, scoring=None, **kwargs
     ):
 
         # Initialize the model visualizer
-        super(RFECV, self).__init__(model, ax=ax, **kwargs)
+        super(RFECV, self).__init__(estimator, ax=ax, **kwargs)
 
         # Set parameters
-        self.step=step
-        self.groups=groups
-        self.cv=cv
-        self.scoring=scoring
+        self.step = step
+        self.groups = groups
+        self.cv = cv
+        self.scoring = scoring
 
     def fit(self, X, y=None):
         """
@@ -265,7 +265,18 @@ class RFECV(ModelVisualizer):
 ##########################################################################
 
 
-def rfecv(model, X, y, ax=None, step=1, groups=None, cv=None, scoring=None, show=True, **kwargs):
+def rfecv(
+    estimator,
+    X,
+    y,
+    ax=None,
+    step=1,
+    groups=None,
+    cv=None,
+    scoring=None,
+    show=True,
+    **kwargs
+):
     """
     Performs recursive feature elimination with cross-validation to determine
     an optimal number of features for a model. Visualizes the feature subsets
@@ -276,7 +287,7 @@ def rfecv(model, X, y, ax=None, step=1, groups=None, cv=None, scoring=None, show
 
     Parameters
     ----------
-    model : a scikit-learn estimator
+    estimator : a scikit-learn estimator
         An object that implements ``fit`` and provides information about the
         relative importance of features with either a ``coef_`` or
         ``feature_importances_`` attribute.
@@ -338,7 +349,9 @@ def rfecv(model, X, y, ax=None, step=1, groups=None, cv=None, scoring=None, show
         Returns the fitted, finalized visualizer.
     """
     # Initialize the visualizer
-    oz = RFECV(model, ax=ax, step=step, groups=groups, cv=cv, scoring=scoring, show=show)
+    oz = RFECV(
+        estimator, ax=ax, step=step, groups=groups, cv=cv, scoring=scoring, show=show
+    )
 
     # Fit and show the visualizer
     oz.fit(X, y)
