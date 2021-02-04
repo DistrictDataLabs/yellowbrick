@@ -192,8 +192,8 @@ class TestModelTypeChecking(object):
         "viz,params",
         [
             (Visualizer, {}),
-            (ScoreVisualizer, {"model": LinearRegression()}),
-            (ModelVisualizer, {"model": LogisticRegression()}),
+            (ScoreVisualizer, {"estimator": LinearRegression()}),
+            (ModelVisualizer, {"estimator": LogisticRegression()}),
         ],
         ids=["Visualizer", "ScoreVisualizer", "ModelVisualizer"],
     )
@@ -266,8 +266,8 @@ class TestModelTypeChecking(object):
     @pytest.mark.parametrize(
         "viz,params",
         [
-            (ScoreVisualizer, {"model": LinearRegression()}),
-            (ModelVisualizer, {"model": Ridge()}),
+            (ScoreVisualizer, {"estimator": LinearRegression()}),
+            (ModelVisualizer, {"estimator": Ridge()}),
         ],
         ids=["ScoreVisualizer", "ModelVisualizer"],
     )
@@ -340,8 +340,8 @@ class TestModelTypeChecking(object):
     @pytest.mark.parametrize(
         "viz,params",
         [
-            (ScoreVisualizer, {"model": MultinomialNB()}),
-            (ModelVisualizer, {"model": MLPClassifier()}),
+            (ScoreVisualizer, {"estimator": MultinomialNB()}),
+            (ModelVisualizer, {"estimator": MLPClassifier()}),
         ],
         ids=["ScoreVisualizer", "ModelVisualizer"],
     )
@@ -401,7 +401,9 @@ class TestModelTypeChecking(object):
         assert is_clusterer(model)
 
     @pytest.mark.parametrize(
-        "viz,params", [(ModelVisualizer, {"model": KMeans()})], ids=["ModelVisualizer"]
+        "viz,params", [
+            (ModelVisualizer, {"estimator": KMeans()})
+        ], ids=["ModelVisualizer"]
     )
     def test_is_clusterer_visualizer(self, viz, params):
         """
