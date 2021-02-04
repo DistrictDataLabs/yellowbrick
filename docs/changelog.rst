@@ -3,6 +3,16 @@
 Changelog
 =========
 
+Hotfix 1.2.1
+------------
+
+* Tag: v1.2.1_
+* Deployed Friday, January 15, 2020
+* Contributors: Rebecca Bilbro, Benjamin Bengfort, Paul Johnson, Matt Harrison
+
+On December 22, 2020, scikit-learn released version 0.24 which deprecated the external use of scikit-learn's internal utilities such as ``safe_indexing``. Unfortunately, Yellowbrick depends on a few of these utilities and must refactor our internal code base to port this functionality or work around it. To ensure that Yellowbrick continues to work when installed via ``pip``, we have temporarily changed our scikit-learn dependency to be less than 0.24. We will update our dependencies on the v1.3 release when we have made the associated fixes.
+
+
 Version 1.2
 -----------
 
