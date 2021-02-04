@@ -19,22 +19,26 @@ DiscriminationThreshold visualizer for probabilistic classifiers.
 ##########################################################################
 
 import bisect
-import numpy as np
-
-from scipy.stats import mstats
 from collections import defaultdict
 
+import numpy as np
+from scipy.stats import mstats
 from sklearn.base import clone
-from sklearn.model_selection import ShuffleSplit
 from sklearn.metrics import precision_recall_curve
-from sklearn.utils import indexable, safe_indexing
+from sklearn.model_selection import ShuffleSplit
+from sklearn.utils import indexable
+
+try:
+    # See #1137: this allows compatibility for scikit-learn >= 0.24
+    from sklearn.utils import safe_indexing
+except ImportError:
+    from sklearn.utils import _safe_indexing
+
 from sklearn.utils.multiclass import type_of_target
-
 from yellowbrick.base import ModelVisualizer
-from yellowbrick.style.colors import resolve_colors
-from yellowbrick.utils import is_classifier, is_probabilistic, is_monotonic
 from yellowbrick.exceptions import YellowbrickTypeError, YellowbrickValueError
-
+from yellowbrick.style.colors import resolve_colors
+from yellowbrick.utils import is_classifier, is_monotonic, is_probabilistic
 
 # Quantiles for lower bound, curve, and upper bound
 QUANTILES_MEDIAN_80 = np.array([0.1, 0.5, 0.9])
