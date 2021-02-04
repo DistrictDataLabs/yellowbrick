@@ -209,9 +209,13 @@ class ROCAUC(ClassificationScoreVisualizer):
         # NOTE: the binary flag breaks our API since it's really just a meta parameter
         # for micro, macro, and per_class. We knew this going in, but did it anyway.
         if binary:
-            self.set_params(micro=False, macro=False, per_class=False)
+            self.micro = False
+            self.macro = False
+            self.per_class = False
         else:
-            self.set_params(micro=micro, macro=macro, per_class=per_class)
+            self.micro = micro
+            self.macro = macro
+            self.per_class = per_class
 
     def fit(self, X, y=None):
         """

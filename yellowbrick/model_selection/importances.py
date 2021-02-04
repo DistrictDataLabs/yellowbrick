@@ -141,16 +141,14 @@ class FeatureImportances(ModelVisualizer):
         )
 
         # Data Parameters
-        self.set_params(
-            labels=labels,
-            relative=relative,
-            absolute=absolute,
-            xlabel=xlabel,
-            stack=stack,
-            colors=colors,
-            colormap=colormap,
-            topn=topn
-        )
+        self.labels = labels
+        self.relative = relative
+        self.absolute = absolute
+        self.xlabel = xlabel
+        self.stack = stack
+        self.colors = colors
+        self.colormap = colormap
+        self.topn = topn
 
     def fit(self, X, y=None, **kwargs):
         """

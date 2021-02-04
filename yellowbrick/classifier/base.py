@@ -129,7 +129,9 @@ class ClassificationScoreVisualizer(ScoreVisualizer):
             model, ax=ax, fig=fig, is_fitted=is_fitted, **kwargs
         )
 
-        self.set_params(classes=classes, encoder=encoder, force_model=force_model)
+        self.classes = classes
+        self.encoder = encoder
+        self.force_model = force_model
 
     @property
     def class_colors_(self):

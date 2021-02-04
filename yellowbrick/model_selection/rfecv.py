@@ -145,7 +145,10 @@ class RFECV(ModelVisualizer):
         super(RFECV, self).__init__(model, ax=ax, **kwargs)
 
         # Set parameters
-        self.set_params(step=step, groups=groups, cv=cv, scoring=scoring)
+        self.step=step
+        self.groups=groups
+        self.cv=cv
+        self.scoring=scoring
 
     def fit(self, X, y=None):
         """

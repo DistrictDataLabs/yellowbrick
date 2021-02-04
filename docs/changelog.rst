@@ -3,6 +3,26 @@
 Changelog
 =========
 
+Version 1.3
+------------
+
+* Tag: v1.3_
+* Deployed Soon
+* Current Contributors: Benjamin Bengfort, Rebecca Bilbro, Paul Johnson, @phbillet, Prema Roman
+
+This version primarily repairs the dependency issues we faced with scipy 1.6, scikit-learn 0.24 and Python 3.6 (or earlier). As part of the rapidly changing Python library landscape, we've been forced to react quickly to dependency changes, even where those libraries have been responsibily issuing future and deprecation warnings in our code base.
+
+Major Changes:
+   - Implement new ``set_params`` and ``get_params`` on ModelVisualizers to ensure wrapped estimator is being correctly accessed via the new Estimator methods.
+
+Minor Changes:
+   - Import scikit-learn private API ``_safe_indexing`` without error.
+   - Remove any calls to ``set_params`` in Visualizer ``__init__`` methods.
+
+
+.. _v1.3: https://github.com/DistrictDataLabs/yellowbrick/releases/tag/v1.3
+
+
 Hotfix 1.2.1
 ------------
 
@@ -11,6 +31,8 @@ Hotfix 1.2.1
 * Contributors: Rebecca Bilbro, Benjamin Bengfort, Paul Johnson, Matt Harrison
 
 On December 22, 2020, scikit-learn released version 0.24 which deprecated the external use of scikit-learn's internal utilities such as ``safe_indexing``. Unfortunately, Yellowbrick depends on a few of these utilities and must refactor our internal code base to port this functionality or work around it. To ensure that Yellowbrick continues to work when installed via ``pip``, we have temporarily changed our scikit-learn dependency to be less than 0.24. We will update our dependencies on the v1.3 release when we have made the associated fixes.
+
+.. _v1.2.1: https://github.com/DistrictDataLabs/yellowbrick/releases/tag/v1.2.1
 
 
 Version 1.2
