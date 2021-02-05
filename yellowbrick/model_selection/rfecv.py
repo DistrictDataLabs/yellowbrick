@@ -22,15 +22,27 @@ import numpy as np
 from yellowbrick.base import ModelVisualizer
 from yellowbrick.exceptions import YellowbrickValueError
 
+# TODO: does this require a minimum sklearn version?
 from sklearn.utils import check_X_y
-from sklearn.feature_selection import RFE
-from sklearn.model_selection import cross_val_score
+from sklearn.metrics import check_scoring
+from sklearn.model_selection import check_cv
+from sklearn.base import is_classifier, clone
+from sklearn.feature_selection._rfe import RFECV as skRFECV
+from sklearn.feature_selection._rfe import RFE, _rfe_single_fit
+
+try:
+    # TODO: do we need to make joblib an optional dependency?
+    from joblib import Parallel, delayed, effective_n_jobs
+except ImportError:
+    Parallel, delayed = None, None
+
+    def effective_n_jobs(*args, **kwargs):
+        return 1
 
 
 ##########################################################################
 ## Recursive Feature Elimination
 ##########################################################################
-
 
 class RFECV(ModelVisualizer):
     """
@@ -69,6 +81,11 @@ class RFECV(ModelVisualizer):
         then step corresponds to the percentage (rounded down) of features to
         remove at each iteration.
 
+    min_features_to_select : int (default=1)
+        The minimum number of features to be selected. This number of features will
+        always be scored, even if the difference between the original feature count and
+        min_features_to_select isn’t divisible by step.
+
     groups : array-like, with shape (n_samples,), optional
         Group labels for the samples used while splitting the dataset into
         train/test set.
@@ -91,6 +108,13 @@ class RFECV(ModelVisualizer):
         ``scorer(estimator, X, y)``. See scikit-learn model evaluation
         documentation for names of possible metrics.
 
+    verbose : int, default: 0
+        Controls verbosity of output.
+
+    n_jobs : int or None, optional (default=None)
+        Number of cores to run in parallel while fitting across folds. None means 1
+        unless in a joblib.parallel_backend context. -1 means using all processors.
+
     kwargs : dict
         Keyword arguments that are passed to the base class and may influence
         the visualization as defined in other Visualizers.
@@ -110,6 +134,10 @@ class RFECV(ModelVisualizer):
     cv_scores_ : array of shape [n_subsets_of_features, n_splits]
         The cross-validation scores for each subset of features and splits in
         the cross-validation strategy.
+
+    grid_scores_ : array of shape [n_subsets_of_features]
+        The cross-validation scores such that grid_scores_[i] corresponds to the CV
+        score of the i-th subset of features.
 
     rfe_estimator_ : sklearn.feature_selection.RFE
         A fitted RFE estimator wrapping the original estimator. All estimator
@@ -138,14 +166,15 @@ class RFECV(ModelVisualizer):
     """
 
     def __init__(
-        self, model, ax=None, step=1, groups=None, cv=None, scoring=None, **kwargs
+        self, model, ax=None, step=1, groups=None, cv=None, scoring=None, min_features_to_select=1, **kwargs
     ):
 
         # Initialize the model visualizer
         super(RFECV, self).__init__(model, ax=ax, **kwargs)
 
         # Set parameters
-        self.set_params(step=step, groups=groups, cv=cv, scoring=scoring)
+        # TODO: update these parameters
+        self.set_params(step=step, groups=groups, cv=cv, scoring=scoring, min_features_to_select=min_features_to_select)
 
     def fit(self, X, y=None):
         """
@@ -166,51 +195,22 @@ class RFECV(ModelVisualizer):
         self : instance
             Returns the instance of the RFECV visualizer.
         """
-        X, y = check_X_y(X, y, "csr")
+        # Create and fit the RFECV model
+        self.rfe_estimator_ = _RFECV(self.estimator)
+        self.rfe_estimator_.set_params(**self.get_rfecv_params())
+        self.rfe_estimator_.fit(X, y, groups=self.groups)
+
+        # HACK: this is wrong and needs to be fixed
         n_features = X.shape[1]
+        step = int(self.step)
+        self.n_feature_subsets_ = np.arange(1, np.ceil((n_features - self.min_features_to_select) / step) + 1)
 
-        # This check is kind of unnecessary since RFE will do it, but it's
-        # nice to get it out of the way ASAP and raise a meaningful error.
-        if 0.0 < self.step < 1.0:
-            step = int(max(1, self.step * n_features))
-        else:
-            step = int(self.step)
-
-        if step <= 0:
-            raise YellowbrickValueError("step must be >0")
-
-        # Create the RFE model
-        rfe = RFE(self.estimator, step=step)
-        self.n_feature_subsets_ = np.arange(1, n_features + step, step)
-
-        # Create the cross validation params
-        # TODO: handle random state
-        cv_params = {key: self.get_params()[key] for key in ("groups", "cv", "scoring")}
-
-        # Perform cross-validation for each feature subset
-        scores = []
-        for n_features_to_select in self.n_feature_subsets_:
-            rfe.set_params(n_features_to_select=n_features_to_select)
-            scores.append(cross_val_score(rfe, X, y, **cv_params))
-
-        # Convert scores to array
-        self.cv_scores_ = np.array(scores)
-
-        # Find the best RFE model
-        bestidx = self.cv_scores_.mean(axis=1).argmax()
-        self.n_features_ = self.n_feature_subsets_[bestidx]
-
-        # Fit the final RFE model for the number of features
-        self.rfe_estimator_ = rfe
-        self.rfe_estimator_.set_params(n_features_to_select=self.n_features_)
-        self.rfe_estimator_.fit(X, y)
-
-        # Rewrap the visualizer to use the rfe estimator
-        self._wrapped = self.rfe_estimator_
+        # Modify the internal estimator to be the final fitted estimator
+        self._wrapped = self.rfe_estimator_.estimator_
 
         # Hoist the RFE params to the visualizer
-        self.support_ = self.rfe_estimator_.support_
-        self.ranking_ = self.rfe_estimator_.ranking_
+        for attr in ("cv_scores_", "n_features_", "support_", "ranking_", "grid_scores_"):
+            setattr(self, attr, getattr(self.rfe_estimator_, attr))
 
         self.draw()
         return self
@@ -256,13 +256,29 @@ class RFECV(ModelVisualizer):
         self.ax.set_xlabel("Number of Features Selected")
         self.ax.set_ylabel("Score")
 
+    def get_rfecv_params(self):
+        params = self.get_params()
+        for param in ("model", "ax", "kwargs", "groups"):
+            if param in params:
+                del params[param]
+        return params
+
 
 ##########################################################################
 ## Quick Methods
 ##########################################################################
 
-
-def rfecv(model, X, y, ax=None, step=1, groups=None, cv=None, scoring=None, show=True, **kwargs):
+# TODO: update the quick method params
+def rfecv(
+    model, X, y,
+    ax=None,
+    step=1,
+    groups=None,
+    cv=None,
+    scoring=None,
+    show=True,
+    **kwargs
+):
     """
     Performs recursive feature elimination with cross-validation to determine
     an optimal number of features for a model. Visualizes the feature subsets
@@ -335,7 +351,9 @@ def rfecv(model, X, y, ax=None, step=1, groups=None, cv=None, scoring=None, show
         Returns the fitted, finalized visualizer.
     """
     # Initialize the visualizer
-    oz = RFECV(model, ax=ax, step=step, groups=groups, cv=cv, scoring=scoring, show=show)
+    oz = RFECV(
+        model, ax=ax, step=step, groups=groups, cv=cv, scoring=scoring, show=show
+    )
 
     # Fit and show the visualizer
     oz.fit(X, y)
@@ -347,3 +365,104 @@ def rfecv(model, X, y, ax=None, step=1, groups=None, cv=None, scoring=None, show
 
     # Return the visualizer object
     return oz
+
+
+##########################################################################
+## _RFECV
+##########################################################################
+
+class _RFECV(skRFECV):
+    """
+    A minor reimplementation of the :class:`~sklearn.feature_selection.RFECV` to store
+    the cv scores so that we can compute the mean and standard deviation of the RFECV
+    for visualization purposes.
+    """
+
+    def fit(self, X, y, groups=None):
+        """
+        Fit the RFE model and automatically tune the number of selected features.
+
+        Parameters
+        ----------
+        X : {array-like, sparse matrix} of shape (n_samples, n_features)
+            Training vector, where `n_samples` is the number of samples and
+            `n_features` is the total number of features.
+        y : array-like of shape (n_samples,)
+            Target values (integers for classification, real numbers for
+            regression).
+        groups : array-like of shape (n_samples,) or None
+            Group labels for the samples used while splitting the dataset into
+            train/test set. Only used in conjunction with a "Group" :term:`cv`
+            instance (e.g., :class:`~sklearn.model_selection.GroupKFold`).
+        """
+        X, y = check_X_y(X, y, "csr", ensure_min_features=2,
+                         force_all_finite=False)
+
+        # Initialization
+        cv = check_cv(self.cv, y, is_classifier(self.estimator))
+        scorer = check_scoring(self.estimator, scoring=self.scoring)
+        n_features = X.shape[1]
+
+        if 0.0 < self.step < 1.0:
+            step = int(max(1, self.step * n_features))
+        else:
+            step = int(self.step)
+        if step <= 0:
+            raise YellowbrickValueError("step must be >0")
+
+        # Build an RFE object, which will evaluate and score each possible
+        # feature count, down to self.min_features_to_select
+        rfe = RFE(estimator=self.estimator,
+                  n_features_to_select=self.min_features_to_select,
+                  step=self.step, verbose=self.verbose)
+
+        # Determine the number of subsets of features by fitting across
+        # the train folds and choosing the "features_to_select" parameter
+        # that gives the least averaged error across all folds.
+
+        # Note that joblib raises a non-picklable error for bound methods
+        # even if n_jobs is set to 1 with the default multiprocessing
+        # backend.
+        # This branching is done so that to
+        # make sure that user code that sets n_jobs to 1
+        # and provides bound methods as scorers is not broken with the
+        # addition of n_jobs parameter in version 0.18.
+
+        if effective_n_jobs(self.n_jobs) == 1:
+            parallel, func = list, _rfe_single_fit
+        else:
+            parallel = Parallel(n_jobs=self.n_jobs)
+            func = delayed(_rfe_single_fit)
+
+        scores = parallel(
+            func(rfe, self.estimator, X, y, train, test, scorer)
+            for train, test in cv.split(X, y, groups))
+
+        # THIS IS THE NEW ADDITION
+        self.cv_scores_ = np.asarray(scores)
+
+        scores = np.sum(scores, axis=0)
+        scores_rev = scores[::-1]
+        argmax_idx = len(scores) - np.argmax(scores_rev) - 1
+        n_features_to_select = max(
+            n_features - (argmax_idx * step),
+            self.min_features_to_select)
+
+        # Re-execute an elimination with best_k over the whole set
+        rfe = RFE(estimator=self.estimator,
+                  n_features_to_select=n_features_to_select, step=self.step,
+                  verbose=self.verbose)
+
+        rfe.fit(X, y)
+
+        # Set final attributes
+        self.support_ = rfe.support_
+        self.n_features_ = rfe.n_features_
+        self.ranking_ = rfe.ranking_
+        self.estimator_ = clone(self.estimator)
+        self.estimator_.fit(self.transform(X), y)
+
+        # Fixing a normalization error, n is equal to get_n_splits(X, y) - 1
+        # here, the scores are normalized by get_n_splits(X, y)
+        self.grid_scores_ = scores[::-1] / cv.get_n_splits(X, y, groups)
+        return self
