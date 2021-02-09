@@ -66,8 +66,8 @@ from sklearn.svm import LinearSVC
 from yellowbrick.classifier import ROCAUC
 
 model = LinearSVC()
-model.fit(X,y)
 visualizer = ROCAUC(model)
+visualizer.fit(X,y)
 visualizer.score(X,y)
 visualizer.show()
 ```
