@@ -48,7 +48,7 @@ class ClassificationReport(ClassificationScoreVisualizer):
 
     Parameters
     ----------
-    model : estimator
+    estimator : estimator
         A scikit-learn estimator that should be a classifier. If the model is
         not a classifier, an exception is raised. If the internal model is not
         fitted, it is fit when the visualizer is fitted, unless otherwise specified
@@ -124,7 +124,7 @@ class ClassificationReport(ClassificationScoreVisualizer):
 
     def __init__(
         self,
-        model,
+        estimator,
         ax=None,
         classes=None,
         cmap="YlOrRd",
@@ -135,7 +135,7 @@ class ClassificationReport(ClassificationScoreVisualizer):
         **kwargs
     ):
         super(ClassificationReport, self).__init__(
-            model,
+            estimator,
             ax=ax,
             classes=classes,
             encoder=encoder,
@@ -287,7 +287,7 @@ class ClassificationReport(ClassificationScoreVisualizer):
 
 
 def classification_report(
-    model,
+    estimator,
     X_train,
     y_train,
     X_test=None,
@@ -309,7 +309,7 @@ def classification_report(
 
     Parameters
     ----------
-    model : estimator
+    estimator : estimator
         A scikit-learn estimator that should be a classifier. If the model is
         not a classifier, an exception is raised. If the internal model is not
         fitted, it is fit when the visualizer is fitted, unless otherwise specified
@@ -384,7 +384,7 @@ def classification_report(
     """
     # Instantiate the visualizer
     visualizer = ClassificationReport(
-        model=model,
+        estimator=estimator,
         ax=ax,
         classes=classes,
         cmap=cmap,

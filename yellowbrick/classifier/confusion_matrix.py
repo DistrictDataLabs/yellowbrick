@@ -51,7 +51,7 @@ class ConfusionMatrix(ClassificationScoreVisualizer):
 
     Parameters
     ----------
-    model : estimator
+    estimator : estimator
         A scikit-learn estimator that should be a classifier. If the model is
         not a classifier, an exception is raised. If the internal model is not
         fitted, it is fit when the visualizer is fitted, unless otherwise specified
@@ -135,7 +135,7 @@ class ConfusionMatrix(ClassificationScoreVisualizer):
 
     def __init__(
         self,
-        model,
+        estimator,
         ax=None,
         sample_weight=None,
         percent=False,
@@ -148,7 +148,7 @@ class ConfusionMatrix(ClassificationScoreVisualizer):
         **kwargs
     ):
         super(ConfusionMatrix, self).__init__(
-            model,
+            estimator,
             ax=ax,
             classes=classes,
             encoder=encoder,
@@ -339,7 +339,7 @@ class ConfusionMatrix(ClassificationScoreVisualizer):
 
 
 def confusion_matrix(
-    model,
+    estimator,
     X_train,
     y_train,
     X_test=None,
@@ -371,7 +371,7 @@ def confusion_matrix(
 
     Parameters
     ----------
-    model : estimator
+    estimator : estimator
         A scikit-learn estimator that should be a classifier. If the model is
         not a classifier, an exception is raised. If the internal model is not
         fitted, it is fit when the visualizer is fitted, unless otherwise specified
@@ -456,7 +456,7 @@ def confusion_matrix(
     """
     # Instantiate the visualizer
     visualizer = ConfusionMatrix(
-        model=model,
+        estimator=estimator,
         ax=ax,
         sample_weight=sample_weight,
         percent=percent,

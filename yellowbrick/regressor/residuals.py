@@ -55,7 +55,7 @@ class ResidualsPlot(RegressionScoreVisualizer):
 
     Parameters
     ----------
-    model : a Scikit-Learn regressor
+    estimator : a Scikit-Learn regressor
         Should be an instance of a regressor, otherwise will raise a
         YellowbrickTypeError exception on instantiation.
         If the estimator is not fitted, it is fit when the visualizer is fitted,
@@ -142,7 +142,7 @@ class ResidualsPlot(RegressionScoreVisualizer):
 
     def __init__(
         self,
-        model,
+        estimator,
         ax=None,
         hist=True,
         qqplot=False,
@@ -158,7 +158,7 @@ class ResidualsPlot(RegressionScoreVisualizer):
         self.is_fitted = is_fitted
 
         # Initialize the visualizer base
-        super(ResidualsPlot, self).__init__(model, ax=ax, **kwargs)
+        super(ResidualsPlot, self).__init__(estimator, ax=ax, **kwargs)
 
         # TODO: allow more scatter plot arguments for train and test points
         # See #475 (RE: ScatterPlotMixin)
@@ -404,7 +404,7 @@ class ResidualsPlot(RegressionScoreVisualizer):
 
 
 def residuals_plot(
-    model,
+    estimator,
     X_train,
     y_train,
     X_test=None,
@@ -432,7 +432,7 @@ def residuals_plot(
 
     Parameters
     ----------
-    model : a Scikit-Learn regressor
+    estimator : a Scikit-Learn regressor
         Should be an instance of a regressor, otherwise will raise a
         YellowbrickTypeError exception on instantiation.
         If the estimator is not fitted, it is fit when the visualizer is fitted,
@@ -518,7 +518,7 @@ def residuals_plot(
 
     # Instantiate the visualizer
     viz = ResidualsPlot(
-        model=model,
+        estimator=estimator,
         ax=ax,
         hist=hist,
         qqplot=qqplot,
