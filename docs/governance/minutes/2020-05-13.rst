@@ -1,0 +1,231 @@
+.. -*- mode: rst -*-
+
+May 13, 2020
+============
+
+Yellowbrick Advisory Board Meeting Held on May 13, 2020 from 2030-2200 EST via Video Conference Call.
+Kristen McIntyre presided as Chair, Larry Gray serving as Secretary and Edwin Schmierer as Treasurer.
+Minutes taken by Larry Gray.
+
+Attendees: Rebecca Bilbro, Benjamin Bengfort, Kristen McIntyre, Larry Gray, Prema Roman, Edwin Schmierer and Adam Morris.
+
+Agenda
+----------
+
+A broad overview of the topics for discussion in the order they were presented:
+
+1. Welcome (by Kristen McIntyre)
+
+2. Annual Budget Update
+
+3. Community Code of Conduct
+
+4. Spring 2020 Semester Retrospective
+
+5. Yellowbrick v1.2 Milestone planning
+
+6. Summer 2020 contributors and roles
+
+Annual Budget Updated
+-------------------------
+
+In January, we approved our budget for the year, which totaled $271.48.
+Since we have 9 advisors for this year, the dues totalled $30.17 per advisor.
+Thank you to everyone for paying your dues on time!
+
+-  In our January meeting, it was noted that if someone had something they’d like to add to the budget, we could put it to a vote the next semester.
+
+-  We will likely have a little extra since a large portion of the stickers cost was intended for PyCon stickers.
+
+*2020 Annual Budget*
+
+============================================ ============= ===========
+**Description**                              **Frequency** **Total**
+============================================ ============= ===========
+Name.com domain registration (scikit-yb.org) annually      $17.98
+Read the Docs Gold Membership                $10 monthly   $120.00
+Stickers                                     annually      $133.50
+\                                                          **$271.48**
+============================================ ============= ===========
+
+Community Code of Conduct
+-----------------------------
+
+Topic Background
+~~~~~~~~~~~~~~~~~~~~
+
+-  GitHub includes a `Community Profile` for each public repository, which shows how the project compares to GitHub’s recommended community standards.  This is done via a checklist to see if a project includes recommended community health files, such as README, CODE_OF_CONDUCT, LICENSE, or CONTRIBUTING.
+
+-  Yellowbrick does have a page in our docs; however, GitHub only checks specifically for code of conduct files it recognizes in a supported location (.github/), so not just the existence of a CODE_OF_CONDUCT.md file.  We should add ours so that our Community Profile is complete.  We should should discuss how someone report a violation of our policy?
+
+Discussion/Resolution
+~~~~~~~~~~~~~~~~~~~~~~~~~
+
+-  We currently use the PSF code of conduct.
+-  We discussed the need to set up an emergency contact procedure.  Benjamin will set up a generic email at scikit-yb.org that can be forwarded. Rebecca Bilbro, Larry Gray, and Kristen McIntyre all agreed to accept these emails.
+
+-  The group has decided to convene later on and decide how to go about handling complaints then publish the agreed upon procedure.  Benjamin Bengfort suggested that we create a designated role for handling complaints and Prema countered that it should be 2 individuals for this role.
+
+-  The invention of a new role for handling complaints was not voted upon.
+
+Spring 2020 Semester Retrospective
+--------------------------------------
+
+In traditional agile development, sprints are concluded with a retrospective to discuss what went well, what didn’t go well, what were unexpected
+challenges, and how we can adapt to those challenges in the future.
+
+The primary focus of the Sprint 2020 Semester was on visualizers.
+
+Accomplishments
+~~~~~~~~~~~~~~~~~~~
+ 
+What were some of the key achievements and successes this past semester? Which Visualizers have been added and what has changed?
+
+-  Hackathon on February 6th to finish remaining quick methods before v1.1 release.  Over the five days, we merged in 23 PRs to finally tackle it!
+
+-  At the soldout “Python 2 End of Life Celebration” conference in early February, four Yellowbrick board members (Larry, Prema, Adam, Kristen) were invited to speak at the day’s final panel, “Python for the People: Open Source Development.”
+
+-  A full house for Rebecca Bilbro’s excellent “Visual Diagnostics for Machine Learning with Python” presentation at the February 25th DC Python Meetup event.
+
+-  Prema and Kristen presented at Statistical Seminars DC’s April 30th meetup, “Machine Learning with Visualization” that was attended by over 30 people.
+
+-  Advisory Board hosted a virtual Happy Hour on April 15th
+
+-  Since our last meeting, we had 3 new contributors have their first PRs merged in, compared to 5 in the Fall when we were actively recruiting new contributors.
+
+   -  One of our new contributors, VladSkripniuk, had three PRs merged!
+
+      -  Added Q-Q Plot to the Residuals Plot.  Larry did a great job helping a new contributor bring this one over the goalline!
+
+      -  Updated the ROCAUC Visualizer to be more robust.
+
+      -  Allows users to specify colors for PrecisionRecallCurve.
+
+   -  Another new contributor this semester, Express50, not only found a bug but also opened PR to fix it, by adding the sample_weight parameter to the KElbowPlotVisualizer.
+
+   -  Our third new contributor to have their PR merged in, ekwska, had their first PR merged in back in January. It introduces a new feature that allows the user to optionally parse their raw text documents directly using the PosTagVisualiser
+
+Challenges/Issues
+~~~~~~~~~~~~~~~~~~~~~
+
+What are some of the challenges and issues faced by the maintainer and contributor team this past semester (technical or otherwise)?
+
+-  Larry’s gave advice for dealing with these Challenges/Issues
+
+   -  Don't underestimate the time required to produce a high quality PR.
+
+   -  It is ok to disagree with a contributor as long as it is done in a respectful and kind-hearted manner.
+
+   -  Bugs happen when you least expect it but you have to roll with the punches, lean on other maintainers, and see it as an opportunity to better understand the internals of YB.
+
+   -  Don't forget that you are not alone and asking for help is ok.
+
+   -  Do move quickly to finish the PRs, stay engaged with the contributor but don't beat yourself up when life gets in the way.
+
+-  The quick methods for certain visualizers presented unexpected issues, such as the Pandas 1.0 release and the ResidualsPlot needed additional tests to take into account edge cases.
+
+-  Evergreen issue: Matplotlib updates & Travis Errors
+
+-  CI Pipeline : After the hackathon there was a surge in the number of PRs to merge and the process was slow because of the CI.  Rebecca had to manually direct PR traffic.  We wondered at the time if we could increase the number of concurrent jobs then the issue would be more tolerable.  Larry investigated our current setup. We currently operate on the opensource/free versions of Travis/appveyor.  We found out that Travis can run 5 concurrent jobs and It isn’t obvious how much additional concurrent jobs will cost.  However, we know that the private repos Appveyor can only run 1 concurrent job and it cost $99 per month to increase to 2 concurrent jobs
+
+Shoutouts
+~~~~~~~~~~~~~
+
+Who deserves special recognition for their contributions to Yellowbrick this past semester?
+
+-  Rebecca for jumping into the deep end and saving Larry’s PR
+
+-  Adam for continuing to do such an excellent job monitoring the Yellowbrick Twitter account!
+
+-  Rebecca for hosting our Hackathon at ICX Media and arranging for food for everyone when we lost our previously scheduled space at the last minute.
+
+-  Larry for all of his hard work helping one of our newest contributors on their first PR, who has already had two more PRs merged in since then!
+
+-  Kristen is very grateful to Prema for taking the lead on the Statistical Society DC meetup last month!
+
+-  Evergreen shoutout: to Ben for doing “Ben-type” things
+
+-  Adam to Kristen, “Thanks for your positivity!”
+
+Minutes
+-------
+
+In Kristen’s first meeting as chair she opened the meeting by acknowledging the challenges we all have faced because of COVID-19 Pandemic and its effect on Yellowbrick development.  She delivered a message about solidarity and perseverance.  She outlined that we would talk about the successes and challenges of the Spring Semester, discuss our code of conduct then wrap things up with v1.2 status updates and milestone planning.
+
+Semester and Roadmap
+--------------------
+
+Yellowbrick v1.2 Status Updates
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+The issues that are part of this milestone can be found here: https://github.com/DistrictDataLabs/yellowbrick/milestone/15
+
+-  The primary goal of the Spring semester was to focus on completing the issues included in the v1.2 milestone, which included the creation of seven new Visualizers that we would like to have added to Yellowbrick.
+
+.. list-table::
+   :widths: 25 25 25 25
+   :header-rows: 0
+
+
+   * - **NewVisualizer**
+     - **Issue #**
+     - **Assigned To:**
+     - **Reviewed By:**
+
+   * - AnimatedFeatures
+     - `507 <https: //github.com/D istrictDataLab s/yellowbrick/ issues/507>`__
+     - Nathan
+     - Prema
+
+   * - DetectionError Tradeoff(DET)
+     - `453 <https: //github.com/D istrictDataLab s/yellowbrick/ issues/453>`__
+     - Ben and Adam
+     - Naresh
+
+   * - Effect Plot
+     - `604 <https: //github.com/D istrictDataLab s/yellowbrick/ issues/604>`__
+     - Naresh
+     - Rebecca
+
+   * - MostInformativeFeatures
+     - `657 <https: //github.com/D istrictDataLab s/yellowbrick/ issues/657>`__
+     - Larry
+     - Ben
+
+   * - ProbabilityCalibrationCurve
+     - `365 <https: //github.com/D istrictDataLab s/yellowbrick/ issues/365>`__
+     - Kristen
+     - Naresh
+
+   * - Topic Saliency
+     - `570 <https: //github.com/D istrictDataLab s/yellowbrick/ issues/570>`__
+     - Prema
+     - Nathan
+
+   * - Tree-DepthPlot
+     - `305 <https: //github.com/D istrictDataLab s/yellowbrick/ issues/305>`__
+     - Rebecca
+     - Kristen
+
+
+-  Another focus of the Spring semester had been to update the Yellowbrick cheatsheet and prepare for the PyCon sprints; however, this didn’t occur due to the conference unfortunately having to be canceled this year.
+
+Milestone Planning: Yellowbrick v1.2
+----------------------------------------
+
+The following questions were asked of the technical board: What (if any) additional work should we commit to before doing the 1.2 version release?
+Which issues should be moved to v1.3 or to the backlog? What would we like the focus of development to be for the Summer semester? Should we Implement
+Black code formatting as pre-commit? Should the summer’s focus be finishing our assigned Visualizers? Should we accept new contributors for the Summer
+semester, or delay until the Fall?
+
+Decisions for Semester
+--------------------------
+
+-  Focus on Visualizers for Semester
+
+-  Do not take on any new contributors this Semester
+
+Action Items
+-----------------
+
+-  Create a generic email for emergency contact (Benjamin Bengfort)

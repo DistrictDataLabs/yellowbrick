@@ -25,14 +25,20 @@ from scipy.stats import mstats
 from collections import defaultdict
 
 from sklearn.base import clone
+from sklearn.utils import indexable
 from sklearn.model_selection import ShuffleSplit
 from sklearn.metrics import precision_recall_curve
-from sklearn.utils import indexable, safe_indexing
 from sklearn.utils.multiclass import type_of_target
+
+try:
+    # See #1137: this allows compatibility for scikit-learn >= 0.24
+    from sklearn.utils import safe_indexing as _safe_indexing
+except ImportError:
+    from sklearn.utils import _safe_indexing
 
 from yellowbrick.base import ModelVisualizer
 from yellowbrick.style.colors import resolve_colors
-from yellowbrick.utils import is_classifier, is_probabilistic, is_monotonic
+from yellowbrick.utils import is_classifier, is_monotonic, is_probabilistic
 from yellowbrick.exceptions import YellowbrickTypeError, YellowbrickValueError
 
 
@@ -71,7 +77,7 @@ class DiscriminationThreshold(ModelVisualizer):
 
     Parameters
     ----------
-    model : estimator
+    estimator : estimator
         A scikit-learn estimator that should be a classifier. If the model is
         not a classifier, an exception is raised. If the internal model is not
         fitted, it is fit when the visualizer is fitted, unless otherwise specified
@@ -175,7 +181,7 @@ class DiscriminationThreshold(ModelVisualizer):
 
     def __init__(
         self,
-        model,
+        estimator,
         ax=None,
         n_trials=50,
         cv=0.1,
@@ -191,7 +197,7 @@ class DiscriminationThreshold(ModelVisualizer):
 
         # Perform some quick type checking to help users avoid error.
         if not force_model and (
-            not is_classifier(model) or not is_probabilistic(model)
+            not is_classifier(estimator) or not is_probabilistic(estimator)
         ):
             raise YellowbrickTypeError(
                 "{} requires a probabilistic binary classifier".format(
@@ -206,19 +212,17 @@ class DiscriminationThreshold(ModelVisualizer):
 
         # Initialize the ModelVisualizer
         super(DiscriminationThreshold, self).__init__(
-            model, ax=ax, is_fitted=is_fitted, **kwargs
+            estimator, ax=ax, is_fitted=is_fitted, **kwargs
         )
 
         # Set params
-        self.set_params(
-            n_trials=n_trials,
-            cv=cv,
-            fbeta=fbeta,
-            argmax=argmax,
-            exclude=exclude,
-            quantiles=quantiles,
-            random_state=random_state,
-        )
+        self.n_trials = n_trials
+        self.cv = cv
+        self.fbeta = fbeta
+        self.argmax = argmax
+        self.exclude = exclude
+        self.quantiles = quantiles
+        self.random_state = random_state
 
     def fit(self, X, y, **kwargs):
         """
@@ -326,10 +330,10 @@ class DiscriminationThreshold(ModelVisualizer):
         for train_index, test_index in splitter.split(X, y):
             # Safe indexing handles multiple types of inputs including
             # DataFrames and structured arrays - required for generic splits.
-            X_train = safe_indexing(X, train_index)
-            y_train = safe_indexing(y, train_index)
-            X_test = safe_indexing(X, test_index)
-            y_test = safe_indexing(y, test_index)
+            X_train = _safe_indexing(X, train_index)
+            y_train = _safe_indexing(y, train_index)
+            X_test = _safe_indexing(X, test_index)
+            y_test = _safe_indexing(y, test_index)
 
             model = clone(self.estimator)
             model.fit(X_train, y_train)
@@ -496,7 +500,7 @@ class DiscriminationThreshold(ModelVisualizer):
 ##########################################################################
 
 def discrimination_threshold(
-    model,
+    estimator,
     X,
     y,
     ax=None,
@@ -526,7 +530,7 @@ def discrimination_threshold(
 
     Parameters
     ----------
-    model : estimator
+    estimator : estimator
         A scikit-learn estimator that should be a classifier. If the model is
         not a classifier, an exception is raised. If the internal model is not
         fitted, it is fit when the visualizer is fitted, unless otherwise specified
@@ -644,7 +648,7 @@ def discrimination_threshold(
     """
     # Instantiate the visualizer
     visualizer = DiscriminationThreshold(
-        model,
+        estimator,
         ax=ax,
         n_trials=n_trials,
         cv=cv,

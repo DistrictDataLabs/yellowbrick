@@ -66,7 +66,7 @@ class PrecisionRecallCurve(ClassificationScoreVisualizer):
 
     Parameters
     ----------
-    model : estimator
+    estimator : estimator
         A scikit-learn estimator that should be a classifier. If the model is
         not a classifier, an exception is raised. If the internal model is not
         fitted, it is fit when the visualizer is fitted, unless otherwise specified
@@ -210,7 +210,7 @@ class PrecisionRecallCurve(ClassificationScoreVisualizer):
 
     def __init__(
         self,
-        model,
+        estimator,
         ax=None,
         classes=None,
         colors=None,
@@ -229,7 +229,7 @@ class PrecisionRecallCurve(ClassificationScoreVisualizer):
         **kwargs
     ):
         super(PrecisionRecallCurve, self).__init__(
-            model,
+            estimator,
             ax=ax,
             classes=classes,
             encoder=encoder,
@@ -239,18 +239,16 @@ class PrecisionRecallCurve(ClassificationScoreVisualizer):
         )
 
         # Set visual params
-        self.set_params(
-            fill_area=fill_area,
-            ap_score=ap_score,
-            colors=colors,
-            cmap=cmap,
-            micro=micro,
-            iso_f1_curves=iso_f1_curves,
-            iso_f1_values=set(iso_f1_values),
-            per_class=per_class,
-            fill_opacity=fill_opacity,
-            line_opacity=line_opacity,
-        )
+        self.fill_area = fill_area
+        self.ap_score = ap_score
+        self.colors = colors
+        self.cmap = cmap
+        self.micro = micro
+        self.iso_f1_curves = iso_f1_curves
+        self.iso_f1_values = set(iso_f1_values)
+        self.per_class = per_class
+        self.fill_opacity = fill_opacity
+        self.line_opacity = line_opacity
 
         if self.micro and self.per_class:
             warnings.warn(
@@ -485,7 +483,7 @@ PRCurve = PrecisionRecallCurve
 
 
 def precision_recall_curve(
-    model,
+    estimator,
     X_train,
     y_train,
     X_test=None,
@@ -524,7 +522,7 @@ def precision_recall_curve(
 
     Parameters
     ----------
-    model : estimator
+    estimator : estimator
         A scikit-learn estimator that should be a classifier. If the model is
         not a classifier, an exception is raised. If the internal model is not
         fitted, it is fit when the visualizer is fitted, unless otherwise specified
@@ -638,7 +636,7 @@ def precision_recall_curve(
     """
     # Instantiate the visualizer
     viz = PRCurve(
-        model,
+        estimator,
         ax=ax,
         classes=classes,
         colors=colors,

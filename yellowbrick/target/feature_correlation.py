@@ -136,14 +136,12 @@ class FeatureCorrelation(TargetVisualizer):
             )
 
         # Parameters
-        self.set_params(
-            sort=sort,
-            color=color,
-            method=method,
-            labels=labels,
-            feature_index=feature_index,
-            feature_names=feature_names,
-        )
+        self.sort = sort
+        self.color = color
+        self.method = method
+        self.labels = labels
+        self.feature_index = feature_index
+        self.feature_names = feature_names
 
     def fit(self, X, y, **kwargs):
         """

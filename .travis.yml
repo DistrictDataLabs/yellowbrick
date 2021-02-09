@@ -2,17 +2,17 @@ dist: xenial
 language: python
 matrix:
   include:
-    - name: "Python 3.6 on Xenial Linux"
-      python: '3.6'
-
     - name: "Python 3.7 on Xenial Linux"
       python: '3.7'
 
-    - name: "Miniconda 3.6 on Xenial Linux"
-      env: ANACONDA="3.6"
+    - name: "Python 3.8 on Xenial Linux"
+      python: '3.8'
 
     - name: "Miniconda 3.7 on Xenial Linux"
       env: ANACONDA="3.7"
+
+    - name: "Miniconda 3.8 on Xenial Linux"
+      env: ANACONDA="3.8"
 
 before_install:
 - sudo apt-get update;
@@ -23,8 +23,8 @@ before_install:
 
 install:
 - if [[ -z ${ANACONDA} ]]; then
-      pip install -r requirements.txt;
       pip install -r tests/requirements.txt;
+      pip install -r requirements.txt;
       pip install coveralls;
     else
       wget https://repo.anaconda.com/miniconda/Miniconda3-latest-$MINICONDA_OS-x86_64.sh -O miniconda.sh;

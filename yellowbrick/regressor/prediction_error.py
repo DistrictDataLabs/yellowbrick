@@ -43,7 +43,7 @@ class PredictionError(RegressionScoreVisualizer):
     Parameters
     ----------
 
-    model : a Scikit-Learn regressor
+    estimator : a Scikit-Learn regressor
         Should be an instance of a regressor, otherwise will raise a
         YellowbrickTypeError exception on instantiation.
         If the estimator is not fitted, it is fit when the visualizer is fitted,
@@ -112,7 +112,7 @@ class PredictionError(RegressionScoreVisualizer):
 
     def __init__(
         self,
-        model,
+        estimator,
         ax=None,
         shared_limits=True,
         bestfit=True,
@@ -125,7 +125,7 @@ class PredictionError(RegressionScoreVisualizer):
         self.is_fitted = is_fitted
 
         # Initialize the visualizer
-        super(PredictionError, self).__init__(model, ax=ax, **kwargs)
+        super(PredictionError, self).__init__(estimator, ax=ax, **kwargs)
 
         # Visual arguments
         self.colors = {
@@ -273,7 +273,7 @@ class PredictionError(RegressionScoreVisualizer):
 
 
 def prediction_error(
-    model,
+    estimator,
     X_train,
     y_train,
     X_test=None,
@@ -297,7 +297,7 @@ def prediction_error(
 
     Parameters
     ----------
-    model : the Scikit-Learn estimator (should be a regressor)
+    estimator : the Scikit-Learn estimator (should be a regressor)
         Should be an instance of a regressor, otherwise will raise a
         YellowbrickTypeError exception on instantiation.
         If the estimator is not fitted, it is fit when the visualizer is fitted,
@@ -368,7 +368,7 @@ def prediction_error(
     """
     # Instantiate the visualizer
     visualizer = PredictionError(
-        model,
+        estimator,
         ax,
         shared_limits=shared_limits,
         bestfit=bestfit,

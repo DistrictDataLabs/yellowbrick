@@ -156,7 +156,7 @@ class TestValidationCurve(VisualTestCase):
         assert isinstance(X, pd.DataFrame)
         assert isinstance(y, pd.Series)
 
-        cv = StratifiedKFold(n_splits=2, random_state=11)
+        cv = StratifiedKFold(n_splits=2, shuffle=True, random_state=11)
         pr = np.linspace(0.1, 3.0, 6)
         oz = ValidationCurve(BernoulliNB(), cv=cv, param_range=pr, param_name="alpha")
         oz.fit(X, y)
@@ -174,7 +174,7 @@ class TestValidationCurve(VisualTestCase):
 
         X = OneHotEncoder().fit_transform(X).toarray()
 
-        cv = StratifiedKFold(n_splits=2, random_state=11)
+        cv = StratifiedKFold(n_splits=2, shuffle=True, random_state=11)
         pr = np.linspace(0.1, 3.0, 6)
         oz = ValidationCurve(BernoulliNB(), cv=cv, param_range=pr, param_name="alpha")
         oz.fit(X, y)

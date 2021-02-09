@@ -21,11 +21,16 @@ Shows the balance of classes and their associated predictions.
 import numpy as np
 
 from sklearn.utils.multiclass import unique_labels
-from sklearn.metrics._classification import _check_targets
 
 from yellowbrick.draw import bar_stack
 from yellowbrick.classifier.base import ClassificationScoreVisualizer
 from yellowbrick.exceptions import ModelError, YellowbrickValueError, NotFitted
+
+try:
+    # See #1124: this allows compatibility for scikit-learn >= 0.20
+    from sklearn.metrics._classification import _check_targets
+except ImportError:
+    from sklearn.metrics.classification import _check_targets
 
 
 ##########################################################################
@@ -42,7 +47,7 @@ class ClassPredictionError(ClassificationScoreVisualizer):
 
     Parameters
     ----------
-    model : estimator
+    estimator : estimator
         A scikit-learn estimator that should be a classifier. If the model is
         not a classifier, an exception is raised. If the internal model is not
         fitted, it is fit when the visualizer is fitted, unless otherwise specified
@@ -101,7 +106,7 @@ class ClassPredictionError(ClassificationScoreVisualizer):
 
     def __init__(
         self,
-        model,
+        estimator,
         ax=None,
         classes=None,
         encoder=None,
@@ -110,7 +115,7 @@ class ClassPredictionError(ClassificationScoreVisualizer):
         **kwargs
     ):
         super(ClassPredictionError, self).__init__(
-            model,
+            estimator,
             ax=ax,
             classes=classes,
             encoder=encoder,
@@ -237,7 +242,7 @@ class ClassPredictionError(ClassificationScoreVisualizer):
 
 
 def class_prediction_error(
-    model,
+    estimator,
     X_train,
     y_train,
     X_test=None,
@@ -259,7 +264,7 @@ def class_prediction_error(
 
     Parameters
     ----------
-    model : estimator
+    estimator : estimator
         A scikit-learn estimator that should be a classifier. If the model is
         not a classifier, an exception is raised. If the internal model is not
         fitted, it is fit when the visualizer is fitted, unless otherwise specified
@@ -326,7 +331,7 @@ def class_prediction_error(
     """
     # Instantiate the visualizer
     viz = ClassPredictionError(
-        model=model,
+        estimator=estimator,
         ax=ax,
         classes=classes,
         encoder=encoder,

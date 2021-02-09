@@ -31,7 +31,7 @@ from yellowbrick.utils import has_ndarray_int_columns
 
 
 def decisionviz(
-    model,
+    estimator,
     X,
     y,
     ax=None,
@@ -57,7 +57,7 @@ def decisionviz(
 
     Parameters
     ----------
-    model : estimator
+    estimator : estimator
         A scikit-learn estimator that should be a classifier. If the model is
         not a classifier, an exception is raised. If the internal model is not
         fitted, it is fit when the visualizer is fitted, unless otherwise specified
@@ -139,7 +139,7 @@ def decisionviz(
     """
     # Instantiate the visualizer
     visualizer = DecisionBoundariesVisualizer(
-        model,
+        estimator,
         ax=ax,
         x=x_name,
         y=y_name,
@@ -176,7 +176,7 @@ class DecisionBoundariesVisualizer(ClassificationScoreVisualizer):
 
     Parameters
     ----------
-    model : estimator
+    estimator : estimator
         A scikit-learn estimator that should be a classifier. If the model is
         not a classifier, an exception is raised. If the internal model is not
         fitted, it is fit when the visualizer is fitted, unless otherwise specified
@@ -249,7 +249,7 @@ class DecisionBoundariesVisualizer(ClassificationScoreVisualizer):
 
     def __init__(
         self,
-        model,
+        estimator,
         ax=None,
         x=None,
         y=None,
@@ -266,7 +266,7 @@ class DecisionBoundariesVisualizer(ClassificationScoreVisualizer):
         **kwargs
     ):
         super(DecisionBoundariesVisualizer, self).__init__(
-            model,
+            estimator,
             ax=ax,
             classes=classes,
             encoder=encoder,
@@ -277,7 +277,7 @@ class DecisionBoundariesVisualizer(ClassificationScoreVisualizer):
         self.x = x
         self.y = y
         self.features_ = features
-        self.estimator = model
+        self.estimator = estimator
         self.show_scatter = show_scatter
         self.step_size = step_size
         self.markers = itertools.cycle(

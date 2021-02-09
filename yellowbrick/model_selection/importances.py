@@ -27,7 +27,8 @@ from yellowbrick.draw import bar_stack
 from yellowbrick.base import ModelVisualizer
 from yellowbrick.style.colors import resolve_colors
 from yellowbrick.utils import is_dataframe, is_classifier
-from yellowbrick.exceptions import YellowbrickTypeError, NotFitted, YellowbrickWarning
+from yellowbrick.exceptions import YellowbrickTypeError, NotFitted
+from yellowbrick.exceptions import YellowbrickWarning, YellowbrickValueError
 
 ##########################################################################
 ## Feature Visualizer
@@ -48,7 +49,7 @@ class FeatureImportances(ModelVisualizer):
 
     Parameters
     ----------
-    model : Estimator
+    estimator : Estimator
         A Scikit-Learn estimator that learns feature importances. Must support
         either ``coef_`` or ``feature_importances_`` parameters. If the estimator
         is not fitted, it is fit when the visualizer is fitted, unless otherwise
@@ -92,6 +93,10 @@ class FeatureImportances(ModelVisualizer):
         modified. If 'auto' (default), a helper method will check if the estimator
         is fitted before fitting it again.
 
+    topn : int, default=None
+        Display only the top N results with a positive integer, or the bottom N
+        results with a negative integer. If None or 0, all results are shown.
+
     kwargs : dict
         Keyword arguments that are passed to the base class and may influence
         the visualization as defined in other Visualizers.
@@ -118,7 +123,7 @@ class FeatureImportances(ModelVisualizer):
 
     def __init__(
         self,
-        model,
+        estimator,
         ax=None,
         labels=None,
         relative=True,
@@ -128,23 +133,23 @@ class FeatureImportances(ModelVisualizer):
         colors=None,
         colormap=None,
         is_fitted="auto",
+        topn=None,
         **kwargs
     ):
         # Initialize the visualizer bases
         super(FeatureImportances, self).__init__(
-            model, ax=ax, is_fitted=is_fitted, **kwargs
+            estimator, ax=ax, is_fitted=is_fitted, **kwargs
         )
 
         # Data Parameters
-        self.set_params(
-            labels=labels,
-            relative=relative,
-            absolute=absolute,
-            xlabel=xlabel,
-            stack=stack,
-            colors=colors,
-            colormap=colormap,
-        )
+        self.labels = labels
+        self.relative = relative
+        self.absolute = absolute
+        self.xlabel = xlabel
+        self.stack = stack
+        self.colors = colors
+        self.colormap = colormap
+        self.topn = topn
 
     def fit(self, X, y=None, **kwargs):
         """
@@ -218,12 +223,33 @@ class FeatureImportances(ModelVisualizer):
         else:
             self.features_ = np.array(self.labels)
 
+        if self.topn and self.topn > self.features_.shape[0]:
+            raise YellowbrickValueError(
+                "topn '{}' cannot be greater than the number of "
+                "features '{}'".format(self.topn, self.features_.shape[0])
+            )
+
         # Sort the features and their importances
         if self.stack:
-            sort_idx = np.argsort(np.mean(self.feature_importances_, 0))
+            if self.topn:
+                abs_sort_idx = np.argsort(
+                    np.sum(np.absolute(self.feature_importances_), 0)
+                )
+                sort_idx = self._reduce_topn(abs_sort_idx)
+            else:
+                sort_idx = np.argsort(np.mean(self.feature_importances_, 0))
+
             self.features_ = self.features_[sort_idx]
             self.feature_importances_ = self.feature_importances_[:, sort_idx]
         else:
+            if self.topn:
+                abs_sort_idx = np.argsort(np.absolute(self.feature_importances_))
+                abs_sort_idx = self._reduce_topn(abs_sort_idx)
+
+                self.features_ = self.features_[abs_sort_idx]
+                self.feature_importances_ = self.feature_importances_[abs_sort_idx]
+
+            # Sort features by value (sorting a second time if topn)
             sort_idx = np.argsort(self.feature_importances_)
             self.features_ = self.features_[sort_idx]
             self.feature_importances_ = self.feature_importances_[sort_idx]
@@ -276,7 +302,7 @@ class FeatureImportances(ModelVisualizer):
         # Set the title
         self.set_title(
             "Feature Importances of {} Features using {}".format(
-                len(self.features_), self.name
+                self._get_topn_title(), self.name
             )
         )
 
@@ -346,6 +372,30 @@ class FeatureImportances(ModelVisualizer):
         """
         return hasattr(self, "feature_importances_") and hasattr(self, "features_")
 
+    def _reduce_topn(self, arr):
+        """
+        Return only the top or bottom N items within a sliceable array/list.
+
+        Assumes that arr is in ascending order.
+        """
+        if self.topn > 0:
+            arr = arr[-self.topn:]
+        elif self.topn < 0:
+            arr = arr[:-self.topn]
+        return arr
+
+    def _get_topn_title(self):
+        """
+        Return an appropriate title for the plot: Top N, Bottom N, or N
+        """
+        if self.topn:
+            if self.topn > 0:
+                return "Top {}".format(len(self.features_))
+            else:
+                return "Bottom {}".format(len(self.features_))
+        else:
+            return str(len(self.features_))
+
 
 ##########################################################################
 ## Quick Method
@@ -353,7 +403,7 @@ class FeatureImportances(ModelVisualizer):
 
 
 def feature_importances(
-    model,
+    estimator,
     X,
     y=None,
     ax=None,
@@ -365,6 +415,7 @@ def feature_importances(
     colors=None,
     colormap=None,
     is_fitted="auto",
+    topn=None,
     show=True,
     **kwargs
 ):
@@ -376,7 +427,7 @@ def feature_importances(
 
     Parameters
     ----------
-    model : Estimator
+    estimator : Estimator
         A Scikit-Learn estimator that learns feature importances. Must support
         either ``coef_`` or ``feature_importances_`` parameters. If the estimator
         is not fitted, it is fit when the visualizer is fitted, unless otherwise
@@ -431,6 +482,10 @@ def feature_importances(
         call ``plt.savefig`` from this signature, nor ``clear_figure``. If False, simply
         calls ``finalize()``
 
+    topn : int, default=None
+        Display only the top N results with a positive integer, or the bottom N
+        results with a negative integer. If None or 0, all results are shown.
+
     kwargs : dict
         Keyword arguments that are passed to the base class and may influence
         the visualization as defined in other Visualizers.
@@ -442,7 +497,7 @@ def feature_importances(
     """
     # Instantiate the visualizer
     visualizer = FeatureImportances(
-        model,
+        estimator,
         ax=ax,
         labels=labels,
         relative=relative,
@@ -452,6 +507,7 @@ def feature_importances(
         colors=colors,
         colormap=colormap,
         is_fitted=is_fitted,
+        topn=topn,
         **kwargs
     )
 

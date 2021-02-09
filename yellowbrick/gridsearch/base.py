@@ -136,17 +136,17 @@ def param_projection(cv_results, x_param, y_param, metric="mean_test_score"):
 
 
 class GridSearchVisualizer(ModelVisualizer):
-    def __init__(self, model, ax=None, **kwargs):
+    def __init__(self, estimator, ax=None, **kwargs):
         """
         Check to see if model is an instance of GridSearchCV.
         Should return an error if it isn't.
         """
         # A bit of type checking
-        if not is_gridsearch(model):
+        if not is_gridsearch(estimator):
             raise YellowbrickTypeError("This estimator is not a GridSearchCV instance")
 
         # Initialize the super method.
-        super(GridSearchVisualizer, self).__init__(model, ax=ax, **kwargs)
+        super(GridSearchVisualizer, self).__init__(estimator, ax=ax, **kwargs)
 
     def param_projection(self, x_param, y_param, metric):
         """
