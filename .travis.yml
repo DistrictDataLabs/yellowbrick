@@ -23,8 +23,8 @@ before_install:
 
 install:
 - if [[ -z ${ANACONDA} ]]; then
-      pip install -r requirements.txt;
       pip install -r tests/requirements.txt;
+      pip install -r requirements.txt;
       pip install coveralls;
     else
       wget https://repo.anaconda.com/miniconda/Miniconda3-latest-$MINICONDA_OS-x86_64.sh -O miniconda.sh;

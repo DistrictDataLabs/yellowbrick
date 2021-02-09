@@ -333,11 +333,11 @@ class ModelVisualizer(Visualizer, Wrapper):
 
     def get_params(self, deep=True):
         """
-        The latest version of scikit-learn is able to determine that ``self.estimator``
-        is nested and fetches its params using ``estimator__param``. This functionality
-        is pretty cool but it's a pretty big overhaul to change our "wrapped" estimator
-        API to a "nested" estimator API, therefore we override ``get_params`` to flatten
-        out the estimator params.
+        After v0.24 - scikit-learn is able to determine that ``self.estimator`` is
+        nested and fetches its params using ``estimator__param``. This functionality is
+        pretty cool but it's a pretty big overhaul to change our "wrapped" estimator API
+        to a "nested" estimator API, therefore we override ``get_params`` to flatten out
+        the estimator params.
         """
         params = super(ModelVisualizer, self).get_params(deep=deep)
         for param in list(params.keys()):
