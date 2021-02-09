@@ -7,14 +7,14 @@ Version 1.3
 ------------
 
 * Tag: v1.3_
-* Deployed Soon
-* Current Contributors: Benjamin Bengfort, Rebecca Bilbro, Paul Johnson, @phbillet, Prema Roman
+* Deployed Tuesday, February 9, 2021
+* Current Contributors: Benjamin Bengfort, Rebecca Bilbro, Paul Johnson, Philippe Billet, Prema Roman, Patrick Deziel
 
-This version primarily repairs the dependency issues we faced with scipy 1.6, scikit-learn 0.24 and Python 3.6 (or earlier). As part of the rapidly changing Python library landscape, we've been forced to react quickly to dependency changes, even where those libraries have been responsibly issuing future and deprecation warnings in our code base.
+This version primarily repairs the dependency issues we faced with scipy 1.6, scikit-learn 0.24 and Python 3.6 (or earlier). As part of the rapidly changing Python library landscape, we've been forced to react quickly to dependency changes, even where those libraries have been responsibly issuing future and deprecation warnings.
 
 Major Changes:
    - Implement new ``set_params`` and ``get_params`` on ModelVisualizers to ensure wrapped estimator is being correctly accessed via the new Estimator methods.
-   - Fix the test dependencies to prevent variability in CI (must periodically review dependencies to ensure we're testing what our users are experiencing).
+   - Freeze the test dependencies to prevent variability in CI (must periodically review dependencies to ensure we're testing what our users are experiencing).
    - Change ``model`` param to ``estimator`` param to ensure that Visualizer arguments match their property names so that inspect works with get and set params and other scikit-learn utility functions.
 
 Minor Changes:
@@ -24,6 +24,7 @@ Minor Changes:
    - Set the numpy dependency to be less than 1.20 because this is causing Pickle issues with joblib and umap
    - Add ``shuffle=True`` argument to any CV class that uses a random seed.
    - Set our CI matrix to Python and Miniconda 3.7 and 3.8
+   - Correction in README regarding ModelVisualizer API.
 
 
 .. _v1.3: https://github.com/DistrictDataLabs/yellowbrick/releases/tag/v1.3
