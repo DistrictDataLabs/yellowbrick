@@ -271,11 +271,11 @@ class ROCAUC(ClassificationScoreVisualizer):
                     "set per_class=True or micro=False and macro=False.",
                 )
 
-            # For binary, if predictions are returned in shape (n,), micro curves
-            # cannot be drawn
-            if self.micro and len(y_pred.shape) == 1:
+            # For binary, if predictions are returned in shape (n,), micro and macro
+            # curves are not defined
+            if (self.micro or self.macro) and len(y_pred.shape) == 1:
                 raise ModelError(
-                    "no curves will be drawn; set binary=True or micro=False.",
+                    "no curves will be drawn; set binary=True.",
                 )
         if self.target_type_ == MULTICLASS:
             # If it's multiclass classification, at least one of micro, macro, or
