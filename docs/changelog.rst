@@ -3,12 +3,99 @@
 Changelog
 =========
 
+Version 1.3.post1
+-----------------
+
+* Tag: v1.3.post1_
+* Deployed Saturday, February 13, 2021
+* Current Contributors: Rebecca Bilbro, Benjamin Bengfort, (EJ) Vivek Pandey
+
+Fixes hanging print impacting ModelVisualizers.
+
+
+.. _v1.3.post1: https://github.com/DistrictDataLabs/yellowbrick/releases/tag/v1.3.post1
+
+
+Version 1.3
+------------
+
+* Tag: v1.3_
+* Deployed Tuesday, February 9, 2021
+* Current Contributors: Benjamin Bengfort, Rebecca Bilbro, Paul Johnson, Philippe Billet, Prema Roman, Patrick Deziel
+
+This version primarily repairs the dependency issues we faced with scipy 1.6, scikit-learn 0.24 and Python 3.6 (or earlier). As part of the rapidly changing Python library landscape, we've been forced to react quickly to dependency changes, even where those libraries have been responsibly issuing future and deprecation warnings.
+
+Major Changes:
+   - Implement new ``set_params`` and ``get_params`` on ModelVisualizers to ensure wrapped estimator is being correctly accessed via the new Estimator methods.
+   - Freeze the test dependencies to prevent variability in CI (must periodically review dependencies to ensure we're testing what our users are experiencing).
+   - Change ``model`` param to ``estimator`` param to ensure that Visualizer arguments match their property names so that inspect works with get and set params and other scikit-learn utility functions.
+
+Minor Changes:
+   - Import scikit-learn private API ``_safe_indexing`` without error.
+   - Remove any calls to ``set_params`` in Visualizer ``__init__`` methods.
+   - Modify test fixtures and baseline images to accommodate new sklearn implementation
+   - Set the numpy dependency to be less than 1.20 because this is causing Pickle issues with joblib and umap
+   - Add ``shuffle=True`` argument to any CV class that uses a random seed.
+   - Set our CI matrix to Python and Miniconda 3.7 and 3.8
+   - Correction in README regarding ModelVisualizer API.
+
+
+.. _v1.3: https://github.com/DistrictDataLabs/yellowbrick/releases/tag/v1.3
+
+
+Hotfix 1.2.1
+------------
+
+* Tag: v1.2.1_
+* Deployed Friday, January 15, 2020
+* Contributors: Rebecca Bilbro, Benjamin Bengfort, Paul Johnson, Matt Harrison
+
+On December 22, 2020, scikit-learn released version 0.24 which deprecated the external use of scikit-learn's internal utilities such as ``safe_indexing``. Unfortunately, Yellowbrick depends on a few of these utilities and must refactor our internal code base to port this functionality or work around it. To ensure that Yellowbrick continues to work when installed via ``pip``, we have temporarily changed our scikit-learn dependency to be less than 0.24. We will update our dependencies on the v1.3 release when we have made the associated fixes.
+
+.. _v1.2.1: https://github.com/DistrictDataLabs/yellowbrick/releases/tag/v1.2.1
+
+
+Version 1.2
+-----------
+
+* Tag: v1.2_
+* Deployed Friday, October 9, 2020
+* Current Contributors: Rebecca Bilbro, Larry Gray, Vladislav Skripniuk, David Landsman, Prema Roman, @aldermartinez, Tan Tran, Benjamin Bengfort, Kellen Donohue, Kristen McIntyre, Tony Ojeda, Edwin Schmierer, Adam Morris, Nathan Danielsen
+
+Major Changes:
+   - Added Q-Q plot as side-by-side option to the ``ResidualsPlot`` visualizer.
+   - More robust handling of binary classification in ``ROCAUC`` visualization, standardizing the way that classifiers with ``predict_proba`` and ``decision_function`` methods are handling. A ``binary`` hyperparameter was added to the visualizer to ensure correct interpretation of binary ROCAUC plots.
+   - Fixes to ``ManualAlphaSelection`` to move it from prototype to prime time including documentation, tests, and quick method. This method allows users to perform alpha selection visualization on non-CV estimators.
+   - Removal of AppVeyor from the CI matrix after too many out-of-core (non-Yellowbrick) failures with setup and installation on the VisualStudio images. Yellowbrick CI currently omits Windows and Miniconda from the test matrix and we are actively looking for new solutions.
+   - Third party estimator wrapper in contrib to provide enhanced support for non-scikit-learn estimators such as those in Keras, CatBoost, and cuML.
+
+Minor Changes:
+   - Allow users to specify colors for the ``PrecisionRecallCurve``.
+   - Update ``ClassificationScoreVisualizer`` base class to have a ``class_colors_`` learned attribute instead of a ``colors`` property; additional polishing of multi-class colors in ``PrecisionRecallCurve``, ``ROCAUC``, and ``ClassPredictionError``.
+   - Update ``KElbowVisualizer`` fit method and quick method to allow passing ``sample_weight`` parameter through the visualizer.
+   - Enhancements to classification documentation to better discuss precision and recall and to diagnose with ``PrecisionRecallCurve`` and ``ClassificationReport`` visualizers.
+   - Improvements to ``CooksDistance`` visualizer documentation.
+   - Corrected ``KElbowVisualizer`` label and legend formatting.
+   - Typo fixes to ``ROCAUC`` documentation, labels, and legend. Typo fix to ``Manifold`` documentation.
+   - Use of ``tight_layout`` accessing the Visualizer figure property to finalize images and resolve discrepancies in plot directive images in documentation.
+   - Add ``get_param_names`` helper function to identify keyword-only parameters that belong to a specific method.
+   - Splits package namespace for ``yellowbrick.regressor.residuals`` to move ``PredictionError`` to its own module, ``yellowbrick.regressor.prediction_error``.
+   - Update tests to use ``SVC`` instead of ``LinearSVC`` and correct ``KMeans`` scores based on updates to scikit-learn v0.23.
+   - Continued maintenance and management of baseline images following dependency updates; removal of mpl.cbook dependency.
+   - Explicitly include license file in source distribution via ``MANIFEST.in``.
+   - Fixes to some deprecation warnings from ``sklearn.metrics``.
+   - Testing requirements depends on Pandas v1.0.4 or later.
+   - Reintegrates pytest-spec and verbose test logging, updates pytest dependency to v0.5.0 or later.
+   - Added Pandas v0.20 or later to documentation dependencies.
+
+.. _v1.2: https://github.com/DistrictDataLabs/yellowbrick/releases/tag/v1.2
+
 Version 1.1
 -----------
 
 * Tag: v1.1_
 * Deployed Wednesday, February 12, 2020
-* Contributors: Benjamin Bengfort, Rebecca Bilbro, Kristen McIntyre, Larry Gray, Prema Roman, Adam Morris, Shivendra Sharma, Michael Chestnut, Michael Garod, Naresh Bachwani, Piyush Gautam, Daniel Navarrete, Molly Morrison, Emma Kwiecinska, Sarthak Jain, Tony Ojeda, Edwin Schmier,  Nathan Danielsen
+* Contributors: Benjamin Bengfort, Rebecca Bilbro, Kristen McIntyre, Larry Gray, Prema Roman, Adam Morris, Shivendra Sharma, Michael Chestnut, Michael Garod, Naresh Bachwani, Piyush Gautam, Daniel Navarrete, Molly Morrison, Emma Kwiecinska, Sarthak Jain, Tony Ojeda, Edwin Schmierer,  Nathan Danielsen
 
 Major Changes:
    - Quick methods (aka Oneliners), which return a fully fitted finalized visualizer object in only a single line, are now implemented for all Yellowbrick Visualizers. Test coverage has been added for all quick methods. The documentation has been updated to document and demonstrate the usage of the quick methods.
@@ -47,7 +134,7 @@ Version 1.0
 
 * Tag: v1.0_
 * Deployed Wednesday, August 28, 2019
-* Contributors: Benjamin Bengfort, Rebecca Bilbro, Nathan Danielsen, Kristen McIntyre, Larry Gray, Prema Roman, Adam Morris, Tony Ojeda, Edwin Schmier, Carl Dawson, Daniel Navarrete, Francois Dion, Halee Mason, Jeff Hale, Jiayi Zhang, Jimmy Shah, John Healy, Justin Ormont, Kevin Arvai, Michael Garod, Mike Curry, Nabanita Dash, Naresh Bachwani, Nicholas A. Brown, Piyush Gautam, Pradeep Singh, Rohit Ganapathy, Ry Whittington, Sangarshanan, Sourav Singh, Thomas J Fan, Zijie (ZJ) Poh, Zonghan, Xie
+* Contributors: Benjamin Bengfort, Rebecca Bilbro, Nathan Danielsen, Kristen McIntyre, Larry Gray, Prema Roman, Adam Morris, Tony Ojeda, Edwin Schmierer, Carl Dawson, Daniel Navarrete, Francois Dion, Halee Mason, Jeff Hale, Jiayi Zhang, Jimmy Shah, John Healy, Justin Ormont, Kevin Arvai, Michael Garod, Mike Curry, Nabanita Dash, Naresh Bachwani, Nicholas A. Brown, Piyush Gautam, Pradeep Singh, Rohit Ganapathy, Ry Whittington, Sangarshanan, Sourav Singh, Thomas J Fan, Zijie (ZJ) Poh, Zonghan, Xie
 
 .. warning:: **Python 2 Deprecation**: Please note that this release deprecates Yellowbrick's support for Python 2.7. After careful consideration and following the lead of our primary dependencies (NumPy, scikit-learn, and Matplolib), we have chosen to move forward with the community and support Python 3.4 and later.
 

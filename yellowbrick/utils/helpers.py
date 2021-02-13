@@ -19,6 +19,7 @@ Helper functions and generic utilities for use in Yellowbrick code.
 ##########################################################################
 
 import re
+import inspect
 import sklearn
 import numpy as np
 
@@ -27,11 +28,12 @@ from sklearn.utils.validation import check_is_fitted
 
 from yellowbrick.utils.types import is_estimator
 from yellowbrick.exceptions import YellowbrickTypeError
+from yellowbrick.contrib.wrapper import ContribEstimator
+
 
 ##########################################################################
 ## Model and Feature Information
 ##########################################################################
-
 
 def is_fitted(estimator):
     """
@@ -136,11 +138,12 @@ def get_model_name(model):
             "Cannot detect the model name for non estimator: '{}'".format(type(model))
         )
 
+    if isinstance(model, Pipeline):
+        return get_model_name(model.steps[-1][-1])
+    elif isinstance(model, ContribEstimator):
+        return model.estimator.__class__.__name__
     else:
-        if isinstance(model, Pipeline):
-            return get_model_name(model.steps[-1][-1])
-        else:
-            return model.__class__.__name__
+        return model.__class__.__name__
 
 
 def has_ndarray_int_columns(features, X):
@@ -183,6 +186,35 @@ def is_monotonic(a, increasing=True):
     if increasing:
         return np.all(a[1:] >= a[:-1], axis=0)
     return np.all(a[1:] <= a[:-1], axis=0)
+
+
+def get_param_names(method):
+    """
+    Returns a list of keyword-only parameter names that may be
+    passed into method.
+
+    Parameters
+    ----------
+    method : function
+        The method for which to return keyword-only parameters.
+
+    Returns
+    -------
+    parameters : list
+        A list of keyword-only parameter names for method.
+    """
+    try:
+        signature = inspect.signature(method)
+    except (ValueError, TypeError) as e:
+        raise e
+
+    parameters = [
+        p
+        for p in signature.parameters.values()
+        if p.name != "self" and p.kind != p.VAR_KEYWORD
+    ]
+
+    return sorted([p.name for p in parameters])
 
 
 ##########################################################################

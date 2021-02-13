@@ -152,7 +152,7 @@ class TestLearningCurve(VisualTestCase):
         assert isinstance(X, pd.DataFrame)
         assert isinstance(y, pd.Series)
 
-        cv = StratifiedKFold(n_splits=4, random_state=32)
+        cv = StratifiedKFold(n_splits=4, shuffle=True, random_state=32)
         oz = LearningCurve(GaussianNB(), cv=cv, random_state=23)
         oz.fit(X, y)
         oz.finalize()
@@ -168,7 +168,7 @@ class TestLearningCurve(VisualTestCase):
 
         X = OneHotEncoder().fit_transform(X).toarray()
 
-        cv = StratifiedKFold(n_splits=4, random_state=32)
+        cv = StratifiedKFold(n_splits=4, shuffle=True, random_state=32)
         oz = LearningCurve(GaussianNB(), cv=cv, random_state=23)
         oz.fit(X, y)
         oz.finalize()

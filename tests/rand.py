@@ -56,7 +56,9 @@ class RandomVisualizer(Visualizer):
         if isinstance(random_state, (int, float)) or random_state is None:
             random_state = np.random.RandomState(random_state)
 
-        self.set_params(n_samples=n_samples, n_blobs=n_blobs, random_state=random_state)
+        self.n_samples = n_samples
+        self.n_blobs = n_blobs
+        self.random_state = random_state
 
     def generate(self):
         """

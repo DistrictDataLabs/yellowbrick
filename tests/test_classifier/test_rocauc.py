@@ -26,8 +26,8 @@ from unittest.mock import patch
 from tests.base import VisualTestCase
 
 from yellowbrick.classifier.rocauc import *
+from yellowbrick.exceptions import ModelError
 from yellowbrick.datasets import load_occupancy
-from yellowbrick.exceptions import ModelError, YellowbrickValueError
 
 from sklearn.svm import LinearSVC
 from sklearn.naive_bayes import GaussianNB
@@ -41,10 +41,10 @@ try:
 except ImportError:
     pd = None
 
+
 ##########################################################################
 ## Fixtures
 ##########################################################################
-
 
 class FakeClassifier(BaseEstimator, ClassifierMixin):
     """
@@ -124,6 +124,29 @@ class TestROCAUC(VisualTestCase):
         visualizer.finalize()
         self.assert_images_similar(visualizer, tol=0.1, windows_tol=10)
 
+    def test_binary_probability_decision_single_curve(self):
+        """
+        Test ROCAUC binary classifier with both decision & predict_proba with per_class=False
+        """
+        # Create and fit the visualizer
+        visualizer = ROCAUC(AdaBoostClassifier(), micro=False, macro=False, per_class=False)
+        visualizer.fit(self.binary.X.train, self.binary.y.train)
+
+        # Score the visualizer
+        s = visualizer.score(self.binary.X.test, self.binary.y.test)
+
+        # Test that score method successfully returns a value between 0 and 1
+        assert 0 <= s <= 1
+
+        # Check the scores
+        assert len(visualizer.fpr.keys()) == 1
+        assert len(visualizer.tpr.keys()) == 1
+        assert len(visualizer.roc_auc.keys()) == 1
+
+        # Compare the images
+        visualizer.finalize()
+        self.assert_images_similar(visualizer, tol=0.1, windows_tol=10)
+
     def test_binary_decision(self):
         """
         Test ROCAUC with a binary classifier with a decision_function
@@ -150,12 +173,38 @@ class TestROCAUC(VisualTestCase):
         visualizer.finalize()
         self.assert_images_similar(visualizer, tol=10)
 
+    def test_binary_decision_per_class(self):
+        """
+        Test ROCAUC with a binary classifier with a decision_function
+        """
+        # Create and fit the visualizer
+        visualizer = ROCAUC(
+            LinearSVC(random_state=42), micro=False, macro=False, per_class=True
+        )
+        visualizer.fit(self.binary.X.train, self.binary.y.train)
+
+        # Score the visualizer
+        s = visualizer.score(self.binary.X.test, self.binary.y.test)
+
+        # Test that score method successfully returns a value between 0 and 1
+        assert 0 <= s <= 1
+
+        # Check the scores
+        assert len(visualizer.fpr.keys()) == 2
+        assert len(visualizer.tpr.keys()) == 2
+        assert len(visualizer.roc_auc.keys()) == 2
+
+        # Compare the images
+        # NOTE: increased tolerance for both AppVeyor and Travis CI tests
+        visualizer.finalize()
+        self.assert_images_similar(visualizer, tol=10)
+
     def test_binary_micro_error(self):
         """
         Test ROCAUC to see if _binary_decision with micro = True raises an error
         """
         # Create visualizer with a linear model to force a binary decision
-        visualizer = ROCAUC(LinearSVC(random_state=42), micro=True)
+        visualizer = ROCAUC(LinearSVC(random_state=42), micro=True, per_class=False)
         visualizer.fit(self.binary.X.train, self.binary.y.train)
 
         # Ensure score raises error (micro curves aren't defined for binary decisions)
@@ -167,22 +216,10 @@ class TestROCAUC(VisualTestCase):
         Test ROCAUC to see if _binary_decision with macro = True raises an error
         """
         # Create visualizer with a linear model to force a binary decision
-        visualizer = ROCAUC(LinearSVC(random_state=42), macro=True)
+        visualizer = ROCAUC(LinearSVC(random_state=42), macro=True, per_class=False)
         visualizer.fit(self.binary.X.train, self.binary.y.train)
 
         # Ensure score raises error (macro curves aren't defined for binary decisions)
-        with pytest.raises(ModelError):
-            visualizer.score(self.binary.X.test, self.binary.y.test)
-
-    def test_binary_per_class_error(self):
-        """
-        Test ROCAUC to see if _binary_decision with per_class = True raises an error
-        """
-        # Create visualizer with a linear model to force a binary decision
-        visualizer = ROCAUC(LinearSVC(random_state=42), per_class=True)
-        visualizer.fit(self.binary.X.train, self.binary.y.train)
-
-        # Ensure score raises error (per_class curves not defined for binary decisions)
         with pytest.raises(ModelError):
             visualizer.score(self.binary.X.test, self.binary.y.test)
 
@@ -206,6 +243,42 @@ class TestROCAUC(VisualTestCase):
         # Compare the images
         visualizer.finalize()
         self.assert_images_similar(visualizer, tol=0.1, windows_tol=10)
+
+    def test_rocauc_no_classes(self):
+        """
+        Test ROCAUC without per-class curves
+        """
+        # Create and fit the visualizer
+        visualizer = ROCAUC(GaussianNB(), per_class=False)
+        visualizer.fit(self.multiclass.X.train, self.multiclass.y.train)
+
+        # Score the visualizer (should be the micro average)
+        s = visualizer.score(self.multiclass.X.test, self.multiclass.y.test)
+        assert s == pytest.approx(0.77303, abs=1e-4)
+
+        # Assert that there still are per-class scores
+        for c in (0, 1):
+            assert c in visualizer.fpr
+            assert c in visualizer.tpr
+            assert c in visualizer.roc_auc
+
+        # Compare the images
+        visualizer.finalize()
+        self.assert_images_similar(visualizer, tol=0.1, windows_tol=10)
+
+    def test_rocauc_no_curves(self):
+        """
+        Test ROCAUC with no curves specified at all
+        """
+        # Create and fit the visualizer
+        visualizer = ROCAUC(
+            GaussianNB(), per_class=False, macro=False, micro=False
+        )
+        visualizer.fit(self.multiclass.X.train, self.multiclass.y.train)
+
+        # Attempt to score the visualizer
+        with pytest.raises(YellowbrickValueError, match="no curves will be drawn"):
+            visualizer.score(self.multiclass.X.test, self.multiclass.y.test)
 
     def test_rocauc_quickmethod(self):
         """
@@ -304,42 +377,6 @@ class TestROCAUC(VisualTestCase):
         # Compare the images
         visualizer.finalize()
         self.assert_images_similar(visualizer, tol=0.1, windows_tol=10)
-
-    def test_rocauc_no_classes(self):
-        """
-        Test ROCAUC without per-class curves
-        """
-        # Create and fit the visualizer
-        visualizer = ROCAUC(LogisticRegression(), per_class=False)
-        visualizer.fit(self.binary.X.train, self.binary.y.train)
-
-        # Score the visualizer (should be the micro average)
-        s = visualizer.score(self.binary.X.test, self.binary.y.test)
-        assert s == pytest.approx(0.8661, abs=1e-4)
-
-        # Assert that there still are per-class scores
-        for c in (0, 1):
-            assert c in visualizer.fpr
-            assert c in visualizer.tpr
-            assert c in visualizer.roc_auc
-
-        # Compare the images
-        visualizer.finalize()
-        self.assert_images_similar(visualizer, tol=0.1, windows_tol=10)
-
-    def test_rocauc_no_curves(self):
-        """
-        Test ROCAUC with no curves specified at all
-        """
-        # Create and fit the visualizer
-        visualizer = ROCAUC(
-            LogisticRegression(), per_class=False, macro=False, micro=False
-        )
-        visualizer.fit(self.binary.X.train, self.binary.y.train)
-
-        # Attempt to score the visualizer
-        with pytest.raises(YellowbrickValueError, match="no curves will be drawn"):
-            visualizer.score(self.binary.X.test, self.binary.y.test)
 
     def test_rocauc_label_encoded(self):
         """
@@ -489,3 +526,17 @@ class TestROCAUC(VisualTestCase):
             oz = ROCAUC(model, classes=classes, is_fitted=False)
             oz.fit(X, y)
             mockfit.assert_called_once_with(X, y)
+
+    def test_binary_meta_param(self):
+        """
+        Test the binary meta param with ROCAUC
+        """
+        oz = ROCAUC(GaussianNB(), binary=False)
+        assert oz.micro is True
+        assert oz.macro is True
+        assert oz.per_class is True
+
+        oz = ROCAUC(GaussianNB(), binary=True)
+        assert oz.micro is False
+        assert oz.macro is False
+        assert oz.per_class is False

@@ -153,7 +153,7 @@ class TestRFECV(VisualTestCase):
         assert isinstance(X_t, pd.DataFrame)
         assert isinstance(y_t, pd.Series)
 
-        cv = StratifiedKFold(n_splits=4, random_state=32)
+        cv = StratifiedKFold(n_splits=4, shuffle=True, random_state=32)
         oz = RFECV(RandomForestClassifier(random_state=83), cv=cv)
         oz.fit(X_t, y_t)
         oz.finalize()
@@ -175,7 +175,7 @@ class TestRFECV(VisualTestCase):
         assert isinstance(X_t, np.ndarray)
         assert isinstance(y_t, np.ndarray)
 
-        cv = StratifiedKFold(n_splits=4, random_state=32)
+        cv = StratifiedKFold(n_splits=4, shuffle=True, random_state=32)
         oz = RFECV(RandomForestClassifier(random_state=83), cv=cv)
         oz.fit(X_t, y_t)
         oz.finalize()

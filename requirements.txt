@@ -2,29 +2,26 @@
 matplotlib>=2.0.2,!=3.0.0
 scipy>=1.0.0
 scikit-learn>=0.20
-numpy>=1.13.0
+numpy>=1.16.0,<1.20
 cycler>=0.10.0
 
 ## Optional Dependencies (uncomment to use)
-#umap-learn>=0.3
+# nltk>=3.2
+# pandas>=1.0.4
+# umap-learn>=0.5
 
 ## Testing Requirements (pip install -r tests/requirements.txt)
-#pytest>=4.2.0
-#pytest-cov>=2.6.1
-#pytest-flakes>=4.0.0
-#pytest-spec>=1.1.0
-#coverage>=4.5.2
-
-## Optional Testing Dependencies (pip install -r tests/requirements.txt)
-#nltk>=3.2
-#pandas>=0.20
-#umap-learn>=0.3
+# pytest>=6.1
+# pytest-cov>=2.10
+# pytest-flakes>=4.0.0
+# pytest-spec>=3.0
+# coverage>=5.3
 
 ## Documentation (pip install -r docs/requirements.txt)
-#Sphinx>=1.8.3
-#sphinx-rtd-theme>=0.4.2
-#numpydoc>=0.8.0
+# Sphinx>=3.4
+# sphinx-rtd-theme>=0.5.1
+# numpydoc>=1.1
 
 ## Build Requirements (uncomment for deployment)
-#wheel>=0.30.0
-#twine>=1.10.0
+# wheel>=0.35
+# twine>=3.3

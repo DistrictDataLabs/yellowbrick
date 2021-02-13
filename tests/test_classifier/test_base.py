@@ -106,10 +106,10 @@ class TestClassificationScoreVisualizer(object):
         oz = ClassificationScoreVisualizer(GaussianNB())
 
         with pytest.raises(NotFitted, match="cannot determine colors before fit"):
-            oz.colors
+            oz.class_colors_
 
         oz.fit(self.multiclass.X.train, self.multiclass.y.train)
-        assert len(oz.colors) == len(oz.classes_)
+        assert len(oz.class_colors_) == len(oz.classes_)
 
     def test_decode_labels_warning(self):
         """

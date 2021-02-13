@@ -179,9 +179,77 @@ class TestBaseClasses(VisualTestCase):
 
 
 ##########################################################################
-## ScoreVisualizer Cases
+## ModelVisualizer Cases
 ##########################################################################
 
+class MockModelVisualizer(ModelVisualizer):
+
+    def __init__(
+        self,
+        estimator,
+        ax=None,
+        fig=None,
+        is_fitted="auto",
+        param1='foo',
+        param2='bar',
+        **kwargs
+    ):
+        super().__init__(estimator, ax=ax, fig=fig, is_fitted=is_fitted, **kwargs)
+        self.param1 = param1
+        self.param2 = param2
+
+
+class TestModelVisualizer(VisualTestCase):
+    """
+    Tests for the ModelVisualizer and wrapped estimator.
+    """
+
+    def test_get_params(self):
+        """
+        Test get_params from visualizer and wrapped estimator
+        """
+        model = LinearSVC()
+        oz = MockModelVisualizer(model)
+        params = oz.get_params()
+
+        for key, val in model.get_params().items():
+            assert key in params
+            assert params[key] == val
+
+        for key in ('ax', 'fig', 'is_fitted', 'param1', 'param2'):
+            assert key in params
+
+    def test_set_params(self):
+        """
+        Test set_params from visualizer to wrapped estimator
+        """
+        model = LinearSVC()
+        oz = MockModelVisualizer(model)
+
+        orig = oz.get_params()
+        changes = {
+            "param1": 'water',
+            "is_fitted": False,
+            "estimator__C": 8.8,
+            "intercept_scaling": 4.2,
+            "dual": False,
+        }
+
+        oz.set_params(**changes)
+        params = oz.get_params()
+
+        for key, val in params.items():
+            if key in changes:
+                assert val == changes[key]
+            elif key == "C":
+                assert val == changes["estimator__C"]
+            else:
+                assert val == orig[key]
+
+
+##########################################################################
+## ScoreVisualizer Cases
+##########################################################################
 
 class MockVisualizer(ScoreVisualizer):
     """

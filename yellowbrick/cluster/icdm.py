@@ -71,7 +71,7 @@ class InterclusterDistance(ClusteringScoreVisualizer):
 
     Parameters
     ----------
-    model : a Scikit-Learn clusterer
+    estimator : a Scikit-Learn clusterer
         Should be an instance of a centroidal clustering algorithm (or a
         hierarchical algorithm with a specified number of clusters). Also
         accepts some other models like LDA for text clustering.
@@ -163,7 +163,7 @@ class InterclusterDistance(ClusteringScoreVisualizer):
 
     def __init__(
         self,
-        model,
+        estimator,
         ax=None,
         min_size=400,
         max_size=25000,
@@ -177,7 +177,7 @@ class InterclusterDistance(ClusteringScoreVisualizer):
         **kwargs
     ):
         # Initialize the visualizer bases
-        super(InterclusterDistance, self).__init__(model, ax=ax, **kwargs)
+        super(InterclusterDistance, self).__init__(estimator, ax=ax, **kwargs)
 
         # Ensure that a valid embedding and scoring is passed in
         validate_embedding(embedding)
@@ -467,7 +467,7 @@ def validate_scoring(param):
 
 
 def intercluster_distance(
-    model,
+    estimator,
     X,
     y=None,
     ax=None,
@@ -495,7 +495,7 @@ def intercluster_distance(
 
     Parameters
     ----------
-    model : a Scikit-Learn clusterer
+    estimator : a Scikit-Learn clusterer
         Should be an instance of a centroidal clustering algorithm (or a
         hierarchical algorithm with a specified number of clusters). Also
         accepts some other models like LDA for text clustering.
@@ -575,7 +575,7 @@ def intercluster_distance(
         The intercluster distance visualizer, fitted and finalized.
     """
     oz = InterclusterDistance(
-        model,
+        estimator,
         ax=ax,
         min_size=min_size,
         max_size=max_size,

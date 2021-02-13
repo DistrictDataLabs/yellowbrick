@@ -111,6 +111,50 @@ Taking the mean of the importances may be undesirable for several reasons. For e
     viz.fit(X, y)
     viz.show()
 
+Top and Bottom Feature Importances
+----------------------------------
+
+It may be more illuminating to the feature engineering process to identify the most or least informative features. To view only the N most informative features, specify the ``topn`` argument to the visualizer. Similar to slicing a ranked list by their importance, if ``topn`` is a postive integer, then the most highly ranked features are used. If ``topn`` is a negative integer, then the lowest ranked features are displayed instead.
+
+.. plot::
+    :context: close-figs
+    :alt: Coefficient importances for LASSO regression
+
+    from sklearn.linear_model import Lasso
+    from yellowbrick.datasets import load_concrete
+    from yellowbrick.model_selection import FeatureImportances
+
+    # Load the regression dataset
+    dataset = load_concrete(return_dataset=True)
+    X, y = dataset.to_data()
+
+    # Title case the feature for better display and create the visualizer
+    labels = list(map(lambda s: s.title(), dataset.meta['features']))
+    viz = FeatureImportances(Lasso(), labels=labels, relative=False, topn=3)
+
+    # Fit and show the feature importances
+    viz.fit(X, y)
+    viz.show()
+
+Using ``topn=3``, we can identify the three most informative features in the concrete dataset as ``splast``, ``cement``, and ``water``. This approach to visualization may assist with *factor analysis* - the study of how variables contribute to an overall model. Note that although ``water`` has a negative coefficient, it is the magnitude (absolute value) of the feature that matters since we are closely inspecting the negative correlation of ``water`` with the strength of concrete. Alternatively, ``topn=-3`` would reveal the three least informative features in the model. This approach is useful to model tuning similar to :doc:`rfecv`, but instead of automatically removing features, it would allow you to identify the lowest-ranked features as they change in different model instantiations. In either case, if you have many features, using ``topn`` can significantly increase the visual and analytical capacity of your analysis.
+
+The ``topn`` parameter can also be used when ``stacked=True``. In the context of stacked feature importance graphs, the information of a feature is the width of the entire bar, or the sum of the absolute value of all coefficients contained therein.
+
+.. plot::
+    :context: close-figs
+    :alt: Stacked per-class importances with Logistic Regression
+
+    from yellowbrick.model_selection import FeatureImportances
+    from sklearn.linear_model import LogisticRegression
+    from sklearn.datasets import load_iris
+
+    data = load_iris()
+    X, y = data.data, data.target
+
+    model = LogisticRegression(multi_class="auto", solver="liblinear")
+    viz = FeatureImportances(model, stack=True, relative=False, topn=-3)
+    viz.fit(X, y)
+    viz.show()
 
 Discussion
 ----------

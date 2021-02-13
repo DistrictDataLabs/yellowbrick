@@ -417,7 +417,7 @@ class JointPlot(FeatureVisualizer):
             plt.sca(self.ax)
 
         # Call tight layout to maximize readability
-        plt.tight_layout()
+        self.fig.tight_layout()
 
     def _index_into(self, idx, data):
         """

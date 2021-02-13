@@ -48,7 +48,7 @@ class ClassificationReport(ClassificationScoreVisualizer):
 
     Parameters
     ----------
-    model : estimator
+    estimator : estimator
         A scikit-learn estimator that should be a classifier. If the model is
         not a classifier, an exception is raised. If the internal model is not
         fitted, it is fit when the visualizer is fitted, unless otherwise specified
@@ -124,7 +124,7 @@ class ClassificationReport(ClassificationScoreVisualizer):
 
     def __init__(
         self,
-        model,
+        estimator,
         ax=None,
         classes=None,
         cmap="YlOrRd",
@@ -135,7 +135,7 @@ class ClassificationReport(ClassificationScoreVisualizer):
         **kwargs
     ):
         super(ClassificationReport, self).__init__(
-            model,
+            estimator,
             ax=ax,
             classes=classes,
             encoder=encoder,
@@ -283,11 +283,11 @@ class ClassificationReport(ClassificationScoreVisualizer):
         self.ax.set_xticklabels(self._displayed_scores, rotation=45)
         self.ax.set_yticklabels(self.classes_)
 
-        plt.tight_layout()  # TODO: Could use self.fig now
+        self.fig.tight_layout()
 
 
 def classification_report(
-    model,
+    estimator,
     X_train,
     y_train,
     X_test=None,
@@ -309,29 +309,29 @@ def classification_report(
 
     Parameters
     ----------
-    model : estimator
+    estimator : estimator
         A scikit-learn estimator that should be a classifier. If the model is
         not a classifier, an exception is raised. If the internal model is not
         fitted, it is fit when the visualizer is fitted, unless otherwise specified
         by ``is_fitted``.
-    
+
     X_train : ndarray or DataFrame of shape n x m
         A feature array of n instances with m features the model is trained on.
         Used to fit the visualizer and also to score the visualizer if test splits are
         not directly specified.
-    
+
     y_train : ndarray or Series of length n
         An array or series of target or class values. Used to fit the visualizer and
         also to score the visualizer if test splits are not specified.
-    
+
     X_test : ndarray or DataFrame of shape n x m, default: None
         An optional feature array of n instances with m features that the model
         is scored on if specified, using X_train as the training data.
-    
+
     y_test : ndarray or Series of length n, default: None
         An optional array or series of target or class values that serve as actual
         labels for X_test for scoring purposes.
-    
+
     ax : matplotlib Axes, default: None
         The axes to plot the figure on. If not specified the current axes will be
         used (or generated if required).
@@ -384,7 +384,7 @@ def classification_report(
     """
     # Instantiate the visualizer
     visualizer = ClassificationReport(
-        model=model,
+        estimator=estimator,
         ax=ax,
         classes=classes,
         cmap=cmap,
@@ -407,7 +407,7 @@ def classification_report(
         )
     else:
         visualizer.score(X_train, y_train)
-    
+
     # Draw the final visualization
     if show:
         visualizer.show()

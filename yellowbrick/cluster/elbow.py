@@ -28,7 +28,7 @@ from sklearn.metrics import silhouette_score
 from sklearn.preprocessing import LabelEncoder
 from sklearn.metrics.pairwise import pairwise_distances
 
-from yellowbrick.utils import KneeLocator
+from yellowbrick.utils import KneeLocator, get_param_names
 from yellowbrick.style.palettes import LINE_COLOR
 from yellowbrick.cluster.base import ClusteringScoreVisualizer
 from yellowbrick.exceptions import YellowbrickValueError, YellowbrickWarning
@@ -149,7 +149,7 @@ class KElbowVisualizer(ClusteringScoreVisualizer):
     Parameters
     ----------
 
-    model : a scikit-learn clusterer
+    estimator : a scikit-learn clusterer
         Should be an instance of an unfitted clusterer, specifically ``KMeans`` or
         ``MiniBatchKMeans``. If it is not a clusterer, an exception is raised.
 
@@ -236,7 +236,7 @@ class KElbowVisualizer(ClusteringScoreVisualizer):
 
     def __init__(
         self,
-        model,
+        estimator,
         ax=None,
         k=10,
         metric="distortion",
@@ -244,7 +244,7 @@ class KElbowVisualizer(ClusteringScoreVisualizer):
         locate_elbow=True,
         **kwargs
     ):
-        super(KElbowVisualizer, self).__init__(model, ax=ax, **kwargs)
+        super(KElbowVisualizer, self).__init__(estimator, ax=ax, **kwargs)
 
         # Get the scoring method
         if metric not in KELBOW_SCOREMAP:
@@ -309,7 +309,7 @@ class KElbowVisualizer(ClusteringScoreVisualizer):
 
             # Set the k value and fit the model
             self.estimator.set_params(n_clusters=k)
-            self.estimator.fit(X)
+            self.estimator.fit(X, **kwargs)
 
             # Append the time and score to our plottable metrics
             self.k_timers_.append(time.time() - start)
@@ -358,7 +358,7 @@ class KElbowVisualizer(ClusteringScoreVisualizer):
         # Plot the silhouette score against k
         self.ax.plot(self.k_values_, self.k_scores_, marker="D")
         if self.locate_elbow is True and self.elbow_value_ is not None:
-            elbow_label = "$elbow at k={}, score={:0.3f}$".format(
+            elbow_label = "elbow at $k={}$, $score={:0.3f}$".format(
                 self.elbow_value_, self.elbow_score_
             )
             self.ax.axvline(
@@ -398,7 +398,7 @@ class KElbowVisualizer(ClusteringScoreVisualizer):
 
         # set the legend if locate_elbow=True
         if self.locate_elbow is True and self.elbow_value_ is not None:
-            self.ax.legend(loc="best", fontsize="medium")
+            self.ax.legend(loc="best", fontsize="medium", frameon=True)
 
         # Set the second y axis labels
         if self.timings:
@@ -414,6 +414,7 @@ KElbow = KElbowVisualizer
 ##########################################################################
 ## Quick Method
 ##########################################################################
+
 
 def kelbow_visualizer(
     model,
@@ -487,6 +488,13 @@ def kelbow_visualizer(
     viz : KElbowVisualizer
         The kelbow visualizer, fitted and finalized.
     """
+    klass = type(model)
+
+    # figure out which kwargs correspond to fit method
+    fit_params = get_param_names(klass.fit)
+
+    fit_kwargs = {key: kwargs.pop(key) for key in fit_params if key in kwargs}
+
     oz = KElbow(
         model,
         ax=ax,
@@ -496,7 +504,7 @@ def kelbow_visualizer(
         locate_elbow=locate_elbow,
         **kwargs
     )
-    oz.fit(X, y)
+    oz.fit(X, y, **fit_kwargs)
 
     if show:
         oz.show()

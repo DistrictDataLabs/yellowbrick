@@ -58,7 +58,7 @@ class SilhouetteVisualizer(ClusteringScoreVisualizer):
 
     Parameters
     ----------
-    model : a Scikit-Learn clusterer
+    estimator : a Scikit-Learn clusterer
         Should be an instance of a centroidal clustering algorithm (``KMeans``
         or ``MiniBatchKMeans``). If the estimator is not fitted, it is fit when
         the visualizer is fitted, unless otherwise specified by ``is_fitted``.
@@ -75,7 +75,7 @@ class SilhouetteVisualizer(ClusteringScoreVisualizer):
     is_fitted : bool or str, default='auto'
         Specify if the wrapped estimator is already fitted. If False, the
         estimator will be fit when the visualizer is fit, otherwise, the
-        estimator will not be modified. If 'auto' (default), a helper method 
+        estimator will not be modified. If 'auto' (default), a helper method
         will check if the estimator is fitted before fitting it again.
 
     kwargs : dict
@@ -112,10 +112,10 @@ class SilhouetteVisualizer(ClusteringScoreVisualizer):
     >>> model.show()
     """
 
-    def __init__(self, model, ax=None, colors=None, is_fitted="auto", **kwargs):
+    def __init__(self, estimator, ax=None, colors=None, is_fitted="auto", **kwargs):
 
         # Initialize the visualizer bases
-        super(SilhouetteVisualizer, self).__init__(model, ax=ax, **kwargs)
+        super(SilhouetteVisualizer, self).__init__(estimator, ax=ax, **kwargs)
 
         # Visual Properties
         # Use colors if it is given, otherwise attempt to use colormap which
@@ -265,7 +265,7 @@ class SilhouetteVisualizer(ClusteringScoreVisualizer):
 
 
 def silhouette_visualizer(
-    model, X, y=None, ax=None, colors=None, is_fitted="auto", show=True, **kwargs
+    estimator, X, y=None, ax=None, colors=None, is_fitted="auto", show=True, **kwargs
 ):
     """Quick Method:
     The Silhouette Visualizer displays the silhouette coefficient for each
@@ -280,7 +280,7 @@ def silhouette_visualizer(
 
     Parameters
     ----------
-    model : a Scikit-Learn clusterer
+    estimator : a Scikit-Learn clusterer
         Should be an instance of a centroidal clustering algorithm (``KMeans``
         or ``MiniBatchKMeans``). If the estimator is not fitted, it is fit when
         the visualizer is fitted, unless otherwise specified by ``is_fitted``.
@@ -322,7 +322,7 @@ def silhouette_visualizer(
     """
 
     oz = SilhouetteVisualizer(
-        model, ax=ax, colors=colors, is_fitted=is_fitted, **kwargs
+        estimator, ax=ax, colors=colors, is_fitted=is_fitted, **kwargs
     )
     oz.fit(X, y)
 
