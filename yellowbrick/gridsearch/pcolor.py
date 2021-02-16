@@ -27,7 +27,7 @@ __all__ = ["GridSearchColorPlot", "gridsearch_color_plot"]
 ##########################################################################
 
 
-def gridsearch_color_plot(model, x_param, y_param, X=None, y=None, ax=None, **kwargs):
+def gridsearch_color_plot(estimator, x_param, y_param, X=None, y=None, ax=None, **kwargs):
     """Quick method:
     Create a color plot showing the best grid search scores across two
     parameters.
@@ -40,7 +40,7 @@ def gridsearch_color_plot(model, x_param, y_param, X=None, y=None, ax=None, **kw
 
     Parameters
     ----------
-    model : Scikit-Learn grid search object
+    estimator : Scikit-Learn grid search object
         Should be an instance of GridSearchCV. If not, an exception is raised.
         The model may be fit or unfit.
 
@@ -72,7 +72,7 @@ def gridsearch_color_plot(model, x_param, y_param, X=None, y=None, ax=None, **kw
         Returns the axes that the classification report was drawn on.
     """
     # Instantiate the visualizer
-    visualizer = GridSearchColorPlot(model, x_param, y_param, ax=ax, **kwargs)
+    visualizer = GridSearchColorPlot(estimator, x_param, y_param, ax=ax, **kwargs)
 
     # Fit if necessary
     if X is not None:
@@ -91,7 +91,7 @@ class GridSearchColorPlot(GridSearchVisualizer):
 
     Parameters
     ----------
-    model : Scikit-Learn grid search object
+    estimator : Scikit-Learn grid search object
         Should be an instance of GridSearchCV. If not, an exception is raised.
 
     x_param : string
@@ -130,7 +130,7 @@ class GridSearchColorPlot(GridSearchVisualizer):
 
     def __init__(
         self,
-        model,
+        estimator,
         x_param,
         y_param,
         metric="mean_test_score",
@@ -138,7 +138,7 @@ class GridSearchColorPlot(GridSearchVisualizer):
         ax=None,
         **kwargs
     ):
-        super(GridSearchColorPlot, self).__init__(model, ax=ax, **kwargs)
+        super(GridSearchColorPlot, self).__init__(estimator, ax=ax, **kwargs)
         self.x_param = x_param
         self.y_param = y_param
         self.metric = metric

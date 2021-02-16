@@ -93,7 +93,7 @@ class TestCrossValidation(VisualTestCase):
         """
         X, y = self.classification
 
-        cv = StratifiedKFold(5, random_state=288)
+        cv = StratifiedKFold(5, shuffle=True, random_state=288)
         oz_external_cv = CVScores(LogisticRegressionCV(), cv=cv)
         oz_internal_cv = CVScores(LogisticRegressionCV(cv=cv))
         oz_external_cv.fit(X, y)
@@ -156,7 +156,7 @@ class TestCrossValidation(VisualTestCase):
         assert isinstance(X, pd.DataFrame)
         assert isinstance(y, pd.Series)
 
-        cv = StratifiedKFold(n_splits=2, random_state=11)
+        cv = StratifiedKFold(n_splits=2, shuffle=True, random_state=11)
         oz = CVScores(BernoulliNB(), cv=cv)
 
         oz.fit(X, y)
@@ -173,7 +173,7 @@ class TestCrossValidation(VisualTestCase):
 
         X = OneHotEncoder().fit_transform(X).toarray()
 
-        cv = StratifiedKFold(n_splits=2, random_state=11)
+        cv = StratifiedKFold(n_splits=2, shuffle=True, random_state=11)
         oz = CVScores(BernoulliNB(), cv=cv)
 
         oz.fit(X, y)

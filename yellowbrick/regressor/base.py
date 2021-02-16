@@ -45,7 +45,7 @@ class RegressionScoreVisualizer(ScoreVisualizer):
 
     Parameters
     ----------
-    model : estimator
+    estimator : estimator
         A scikit-learn estimator that should be a regressor. If the model is
         not a regressor, an exception is raised.
 
@@ -74,15 +74,17 @@ class RegressionScoreVisualizer(ScoreVisualizer):
         ensure you check the underlying model for more details about the metric.
     """
 
-    def __init__(self, model, ax=None, fig=None, force_model=False, **kwargs):
-        if not force_model and not isregressor(model):
+    def __init__(self, estimator, ax=None, fig=None, force_model=False, **kwargs):
+        if not force_model and not isregressor(estimator):
             raise YellowbrickTypeError(
                 "This estimator is not a regressor; try a classifier or "
                 "clustering score visualizer instead!"
             )
 
         self.force_model = force_model
-        super(RegressionScoreVisualizer, self).__init__(model, ax=ax, fig=fig, **kwargs)
+        super(RegressionScoreVisualizer, self).__init__(
+            estimator, ax=ax, fig=fig, **kwargs
+        )
 
     def score(self, X, y, **kwargs):
         """

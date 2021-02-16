@@ -47,6 +47,7 @@ class TestMissingBarVisualizer(VisualTestCase):
     FeatureImportances visualizer
     """
 
+    @pytest.mark.skipif(pd is None, reason="pandas is required")
     def test_missingvaluesbar_pandas(self):
         """
         Integration test of visualizer with pandas

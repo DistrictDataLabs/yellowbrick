@@ -27,7 +27,8 @@ from yellowbrick.draw import bar_stack
 from yellowbrick.base import ModelVisualizer
 from yellowbrick.style.colors import resolve_colors
 from yellowbrick.utils import is_dataframe, is_classifier
-from yellowbrick.exceptions import YellowbrickTypeError, NotFitted, YellowbrickWarning, YellowbrickValueError
+from yellowbrick.exceptions import YellowbrickTypeError, NotFitted
+from yellowbrick.exceptions import YellowbrickWarning, YellowbrickValueError
 
 ##########################################################################
 ## Feature Visualizer
@@ -48,7 +49,7 @@ class FeatureImportances(ModelVisualizer):
 
     Parameters
     ----------
-    model : Estimator
+    estimator : Estimator
         A Scikit-Learn estimator that learns feature importances. Must support
         either ``coef_`` or ``feature_importances_`` parameters. If the estimator
         is not fitted, it is fit when the visualizer is fitted, unless otherwise
@@ -122,7 +123,7 @@ class FeatureImportances(ModelVisualizer):
 
     def __init__(
         self,
-        model,
+        estimator,
         ax=None,
         labels=None,
         relative=True,
@@ -137,20 +138,18 @@ class FeatureImportances(ModelVisualizer):
     ):
         # Initialize the visualizer bases
         super(FeatureImportances, self).__init__(
-            model, ax=ax, is_fitted=is_fitted, **kwargs
+            estimator, ax=ax, is_fitted=is_fitted, **kwargs
         )
 
         # Data Parameters
-        self.set_params(
-            labels=labels,
-            relative=relative,
-            absolute=absolute,
-            xlabel=xlabel,
-            stack=stack,
-            colors=colors,
-            colormap=colormap,
-            topn=topn
-        )
+        self.labels = labels
+        self.relative = relative
+        self.absolute = absolute
+        self.xlabel = xlabel
+        self.stack = stack
+        self.colors = colors
+        self.colormap = colormap
+        self.topn = topn
 
     def fit(self, X, y=None, **kwargs):
         """
@@ -404,7 +403,7 @@ class FeatureImportances(ModelVisualizer):
 
 
 def feature_importances(
-    model,
+    estimator,
     X,
     y=None,
     ax=None,
@@ -428,7 +427,7 @@ def feature_importances(
 
     Parameters
     ----------
-    model : Estimator
+    estimator : Estimator
         A Scikit-Learn estimator that learns feature importances. Must support
         either ``coef_`` or ``feature_importances_`` parameters. If the estimator
         is not fitted, it is fit when the visualizer is fitted, unless otherwise
@@ -498,7 +497,7 @@ def feature_importances(
     """
     # Instantiate the visualizer
     visualizer = FeatureImportances(
-        model,
+        estimator,
         ax=ax,
         labels=labels,
         relative=relative,

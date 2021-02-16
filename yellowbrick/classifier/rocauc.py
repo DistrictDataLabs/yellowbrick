@@ -65,7 +65,7 @@ class ROCAUC(ClassificationScoreVisualizer):
 
     Parameters
     ----------
-    model : estimator
+    estimator : estimator
         A scikit-learn estimator that should be a classifier. If the model is
         not a classifier, an exception is raised. If the internal model is not
         fitted, it is fit when the visualizer is fitted, unless otherwise specified
@@ -183,7 +183,7 @@ class ROCAUC(ClassificationScoreVisualizer):
 
     def __init__(
         self,
-        model,
+        estimator,
         ax=None,
         micro=True,
         macro=True,
@@ -196,7 +196,7 @@ class ROCAUC(ClassificationScoreVisualizer):
         **kwargs
     ):
         super(ROCAUC, self).__init__(
-            model,
+            estimator,
             ax=ax,
             classes=classes,
             encoder=encoder,
@@ -209,9 +209,13 @@ class ROCAUC(ClassificationScoreVisualizer):
         # NOTE: the binary flag breaks our API since it's really just a meta parameter
         # for micro, macro, and per_class. We knew this going in, but did it anyway.
         if binary:
-            self.set_params(micro=False, macro=False, per_class=False)
+            self.micro = False
+            self.macro = False
+            self.per_class = False
         else:
-            self.set_params(micro=micro, macro=macro, per_class=per_class)
+            self.micro = micro
+            self.macro = macro
+            self.per_class = per_class
 
     def fit(self, X, y=None):
         """
@@ -355,7 +359,7 @@ class ROCAUC(ClassificationScoreVisualizer):
         -------
         ax : the axis with the plotted figure
         """
-        colors = self.class_colors_[0 : len(self.classes_)]
+        colors = self.class_colors_[0: len(self.classes_)]
         n_classes = len(colors)
 
         # If it's a binary decision, plot the single ROC curve
@@ -513,7 +517,7 @@ class ROCAUC(ClassificationScoreVisualizer):
 
 
 def roc_auc(
-    model,
+    estimator,
     X_train,
     y_train,
     X_test=None,
@@ -550,7 +554,7 @@ def roc_auc(
 
     Parameters
     ----------
-    model : estimator
+    estimator : estimator
         A scikit-learn estimator that should be a classifier. If the model is
         not a classifier, an exception is raised. If the internal model is not
         fitted, it is fit when the visualizer is fitted, unless otherwise specified
@@ -678,7 +682,7 @@ def roc_auc(
     """
     # Instantiate the visualizer
     visualizer = ROCAUC(
-        model=model,
+        estimator=estimator,
         ax=ax,
         micro=micro,
         macro=macro,

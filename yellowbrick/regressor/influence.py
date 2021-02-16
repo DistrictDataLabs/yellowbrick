@@ -110,9 +110,9 @@ class CooksDistance(Visualizer):
         super(CooksDistance, self).__init__(ax=ax, **kwargs)
 
         # Set "hyperparameters"
-        self.set_params(
-            draw_threshold=draw_threshold, linefmt=linefmt, markerfmt=markerfmt
-        )
+        self.draw_threshold = draw_threshold
+        self.linefmt = linefmt
+        self.markerfmt = markerfmt
 
         # An internal LinearRegression used to compute the residuals and MSE
         # This implementation doesn't support any regressor, it is OLS-specific
@@ -217,7 +217,14 @@ class CooksDistance(Visualizer):
 
 
 def cooks_distance(
-    X, y, ax=None, draw_threshold=True, linefmt="C0-", markerfmt=",", show=True, **kwargs
+    X,
+    y,
+    ax=None,
+    draw_threshold=True,
+    linefmt="C0-",
+    markerfmt=",",
+    show=True,
+    **kwargs
 ):
     """
     Cook's Distance is a measure of how influential an instance is to the computation of

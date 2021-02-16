@@ -39,7 +39,7 @@ class CVScores(ModelVisualizer):
     Parameters
     ----------
 
-    model : a scikit-learn estimator
+    estimator : a scikit-learn estimator
         An object that implements ``fit`` and ``predict``, can be a
         classifier, regressor, or clusterer so long as there is also a valid
         associated scoring metric.
@@ -91,7 +91,7 @@ class CVScores(ModelVisualizer):
     >>> clf = svm.SVC(kernel='linear', C=1)
     >>> X = iris.data
     >>> y = iris.target
-    >>> visualizer = CVScores(model=clf, cv=5, scoring='f1_macro')
+    >>> visualizer = CVScores(estimator=clf, cv=5, scoring='f1_macro')
     >>> visualizer.fit(X,y)
     >>> visualizer.show()
 
@@ -107,8 +107,8 @@ class CVScores(ModelVisualizer):
 
     """
 
-    def __init__(self, model, ax=None, cv=None, scoring=None, color=None, **kwargs):
-        super(CVScores, self).__init__(model, ax=ax, **kwargs)
+    def __init__(self, estimator, ax=None, cv=None, scoring=None, color=None, **kwargs):
+        super(CVScores, self).__init__(estimator, ax=ax, **kwargs)
 
         self.cv = cv
         self.color = color
@@ -193,7 +193,7 @@ class CVScores(ModelVisualizer):
 
 
 def cv_scores(
-    model, X, y, ax=None, cv=None, scoring=None, color=None, show=True, **kwargs
+    estimator, X, y, ax=None, cv=None, scoring=None, color=None, show=True, **kwargs
 ):
     """
     Displays cross validation scores as a bar chart and the
@@ -205,7 +205,7 @@ def cv_scores(
     Parameters
     ----------
 
-    model : a scikit-learn estimator
+    estimator : a scikit-learn estimator
         An object that implements ``fit`` and ``predict``, can be a
         classifier, regressor, or clusterer so long as there is also a valid
         associated scoring metric.
@@ -246,9 +246,9 @@ def cv_scores(
         Specify color for barchart
 
     show: bool, default: True
-         If True, calls ``show()``, which in turn calls ``plt.show()`` however you cannot
-         call ``plt.savefig`` from this signature, nor ``clear_figure``. If False, simply
-         calls ``finalize()``
+        If True, calls ``show()``, which in turn calls ``plt.show()`` however you cannot
+        call ``plt.savefig`` from this signature, nor ``clear_figure``. If False, simply
+        calls ``finalize()``
 
     kwargs : dict
         Keyword arguments that are passed to the base class and may influence
@@ -262,7 +262,9 @@ def cv_scores(
     """
 
     # Initialize the visualizer
-    visualizer = CVScores(model, ax=ax, cv=cv, scoring=scoring, color=None, **kwargs)
+    visualizer = CVScores(
+        estimator, ax=ax, cv=cv, scoring=scoring, color=None, **kwargs
+    )
 
     # Fit and show the visualizer
     visualizer.fit(X, y)
