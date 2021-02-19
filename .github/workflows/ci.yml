@@ -21,7 +21,7 @@ jobs:
           auto-activate-base: true
           python-version: ${{ matrix.python-version }}
           channels: conda-forge
-          environment-file: tests/requirements.txt
+          environment-file: ../tests/requirements.txt
       - name: Conda info
         shell: bash -l {0}
         run: conda info
