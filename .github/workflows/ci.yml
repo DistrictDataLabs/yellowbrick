@@ -8,11 +8,11 @@ on: [pull_request]
 jobs:
   test:
 
-    runs-on: ubuntu-latest
+    # runs-on: ubuntu-latest
     strategy:
       matrix:
         python-version: [3.7, 3.8]
-        # os: [ubuntu-latest, windows-latest, macos-latest]
+        os: [ubuntu-latest, windows-latest, macos-latest]
 
     steps:
     - uses: actions/checkout@v2
