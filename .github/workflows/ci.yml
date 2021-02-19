@@ -32,19 +32,17 @@ jobs:
       run: |
         python -m nltk.downloader popular
         make test
-    - name: Coveralls Parallel
-      uses: coverallsapp/github-action@master
+    - name: Coveralls
+      uses: AndreMiras/coveralls-python-action@develop
       with:
-        github-token: ${{ secrets.github_token }}
-        flag-name: run-${{ matrix.os }}-${{ matrix.python-version }}
         parallel: true
+        flag-name: Unit Test
 
-  finish:
+  coveralls_finish:
     needs: test
     runs-on: ubuntu-latest
     steps:
     - name: Coveralls Finished
-      uses: coverallsapp/github-action@master
+      uses: AndreMiras/coveralls-python-action@develop
       with:
-        github-token: ${{ secrets.github_token }}
         parallel-finished: true
