@@ -163,9 +163,7 @@ config = {
     "zip_safe": False,
     "entry_points": {"console_scripts": []},
     "install_requires": list(get_requires()),
-    "python_requires": ">=3.4, <4",
-    "setup_requires": ["pytest-runner"],
-    "tests_require": ["pytest"],
+    "python_requires": ">=3.4, <4"
 }
 
 
