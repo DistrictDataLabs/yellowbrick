@@ -270,6 +270,14 @@ class ROCAUC(ClassificationScoreVisualizer):
                     "no curves will be drawn; ",
                     "set per_class=True or micro=False and macro=False.",
                 )
+
+            # For binary, if predictions are returned in shape (n,), micro and macro
+            # curves are not defined
+            if (self.micro or self.macro) and len(y_pred.shape) == 1:
+                raise ModelError(
+                    "no curves will be drawn; set binary=True.",
+                )
+
         if self.target_type_ == MULTICLASS:
             # If it's multiclass classification, at least one of micro, macro, or
             # per_class must be True
@@ -359,7 +367,7 @@ class ROCAUC(ClassificationScoreVisualizer):
         -------
         ax : the axis with the plotted figure
         """
-        colors = self.class_colors_[0: len(self.classes_)]
+        colors = self.class_colors_[0 : len(self.classes_)]
         n_classes = len(colors)
 
         # If it's a binary decision, plot the single ROC curve
