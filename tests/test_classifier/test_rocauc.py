@@ -432,6 +432,18 @@ class TestROCAUC(VisualTestCase):
         # Check to see if the first 10 y_scores match the expected
         npt.assert_array_almost_equal(y_scores[:10], first_ten_expected, decimal=1)
 
+    def test_binary_false_decision_function_error(self):
+        """
+        Test that ROCAUC with a binary decision_function classifier raises an error when the binary param is False
+        """
+        # Create and fit the visualizer
+        visualizer = ROCAUC(LinearSVC(random_state=42), binary=False)
+        visualizer.fit(self.binary.X.train, self.binary.y.train)
+
+        # Ensure score raises error (only binary curve defined for binary decisions with decision_function clf)
+        with pytest.raises(ModelError):
+            visualizer.score(self.binary.X.test, self.binary.y.test)
+
     def test_multi_decision_function_rocauc(self):
         """
         Test ROCAUC with multiclass classifiers that have a decision function
