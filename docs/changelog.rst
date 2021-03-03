@@ -3,6 +3,19 @@
 Changelog
 =========
 
+Version 1.3.post1
+-----------------
+
+* Tag: v1.3.post1_
+* Deployed Saturday, February 13, 2021
+* Current Contributors: Rebecca Bilbro, Benjamin Bengfort, (EJ) Vivek Pandey
+
+Fixes hanging print impacting ModelVisualizers.
+
+
+.. _v1.3.post1: https://github.com/DistrictDataLabs/yellowbrick/releases/tag/v1.3.post1
+
+
 Version 1.3
 ------------
 

@@ -343,7 +343,6 @@ class ModelVisualizer(Visualizer, Wrapper):
         for param in list(params.keys()):
             if param.startswith("estimator__"):
                 params[param[len("estimator__"):]] = params.pop(param)
-        print(params.keys(), "\n\n")
         return params
 
     def set_params(self, **params):
