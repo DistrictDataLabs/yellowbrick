@@ -83,19 +83,3 @@ jobs:
         env_vars: OS,PYTHON
         name: codecov-umbrella
         fail_ci_if_error: false
-
-
-  #   - name: Coveralls
-  #     uses: AndreMiras/coveralls-python-action@develop
-  #     with:
-  #       parallel: true
-  #       flag-name: Unit Test
-
-  # coveralls_finish:
-  #   needs: test_pypi
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #   - name: Coveralls Finished
-  #     uses: AndreMiras/coveralls-python-action@develop
-  #     with:
-  #       parallel-finished: true
