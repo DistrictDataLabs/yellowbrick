@@ -3,7 +3,7 @@
 
 name: Yellowbrick CI Workflow
 
-on: [pull_request_target]
+on: [pull_request]
 
 jobs:
   test_conda:
@@ -84,15 +84,15 @@ jobs:
         fail_ci_if_error: false
 
 
-  slackNotification:
-    name: Slack Notification
-    needs: [test_pypi, test_conda]
-    runs-on: ubuntu-latest
-    steps:
-    - uses: actions/checkout@v2
-    - name: Slack Notification
-      uses: rtCamp/action-slack-notify@v2
-      env:
-        SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
-        SLACK_CHANNEL: yb-ci
-        SLACK_USERNAME: "Github Actions"
+#  slackNotification:
+#    name: Slack Notification
+#    needs: [test_pypi, test_conda]
+#    runs-on: ubuntu-latest
+#    steps:
+#    - uses: actions/checkout@v2
+#    - name: Slack Notification
+#      uses: rtCamp/action-slack-notify@v2
+#      env:
+#        SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
+#        SLACK_CHANNEL: yb-ci
+#        SLACK_USERNAME: "Github Actions"
