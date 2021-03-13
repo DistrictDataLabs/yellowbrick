@@ -2,8 +2,7 @@ name: Slack Notification
 
 on:
   workflow_run:
-    workflows:
-      - Yellowbrick CI Workflow
+    workflows: ["Yellowbrick CI Workflow"]
     types:
       - completed
 
