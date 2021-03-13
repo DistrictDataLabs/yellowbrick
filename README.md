@@ -1,7 +1,6 @@
 # Yellowbrick
 
 [![Build Status](https://github.com/DistrictDataLabs/yellowbrick/actions/workflows/ci.yml/badge.svg?branch=develop)](https://github.com/DistrictDataLabs/yellowbrick/actions/workflows/ci.yml)
-[![Build Status](https://ci.appveyor.com/api/projects/status/11abg00ollbdf4oy?svg=true)](https://ci.appveyor.com/project/districtdatalabs/yellowbrick)
 [![Coverage Status](https://codecov.io/gh/DistrictDataLabs/yellowbrick/branch/master/graph/badge.svg?token=BnaSECZz2r)](https://codecov.io/gh/DistrictDataLabs/yellowbrick)
 [![Total Alerts](https://img.shields.io/lgtm/alerts/g/DistrictDataLabs/yellowbrick.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/DistrictDataLabs/yellowbrick/alerts/)
 [![Language Grade: Python](https://img.shields.io/lgtm/grade/python/g/DistrictDataLabs/yellowbrick.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/DistrictDataLabs/yellowbrick/context:python)
