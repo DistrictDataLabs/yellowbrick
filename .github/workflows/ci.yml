@@ -3,7 +3,7 @@
 
 name: Yellowbrick CI Workflow
 
-on: [pull_request]
+on: [pull_request_target]
 
 jobs:
   test_conda:
