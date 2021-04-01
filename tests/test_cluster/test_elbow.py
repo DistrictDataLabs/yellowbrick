@@ -426,3 +426,28 @@ class TestKElbowVisualizer(VisualTestCase):
             model, X, sample_weight=np.ones(X.shape[0]), title=custom_title
         )
         assert oz.title == custom_title
+
+    @pytest.mark.xfail(sys.platform == "win32", reason="images not close on windows")
+    def test_set_colors_manually(self):
+        """
+        Test the silhouette metric of the k-elbow visualizer
+        """
+        oz = KElbowVisualizer(
+            KMeans(random_state=0), k=5,
+        )
+
+        oz.metric_color = "r"
+        oz.timing_color = "y"
+        oz.vline_color = "c"
+        
+        # Create artificial "fit" data for testing purposes
+        oz.k_values_ = [1, 2, 3, 4, 5, 6, 7, 8]
+        oz.k_timers_ = [6.2, 8.3, 10.1, 15.8, 21.2, 27.9, 38.2, 44.9]
+        oz.k_scores_ = [.8, .7, .55, .48, .40, .38, .35, .30]
+        oz.elbow_value_ = 5
+        oz.elbow_score_ = 0.40
+        
+        # Execute drawing
+        oz.draw()
+        oz.finalize()
+        self.assert_images_similar(oz)
