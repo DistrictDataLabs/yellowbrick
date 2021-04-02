@@ -1,9 +1,17 @@
 # This workflow will install Python dependencies, run tests and lint with a variety of Python versions
 # For more information see: https://help.github.com/actions/language-and-framework-guides/using-python-with-github-actions
 
-name: Yellowbrick CI Workflow
+name: Yellowbrick CI
 
-on: [pull_request]
+on: 
+  # Trigger on push to the primary branches only
+  push:
+    branches:
+      - develop
+      - main
+      - master
+  # Trigger on pull request always (note the trailing colon)
+  pull_request:
 
 jobs:
   test_conda:
