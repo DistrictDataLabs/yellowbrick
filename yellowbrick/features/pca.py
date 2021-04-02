@@ -209,7 +209,7 @@ class PCA(ProjectionVisualizer):
     @random_state.setter
     def random_state(self, val):
         self._random_state = val
-        self.pca_transformer.set_params(pca_random_state=val)
+        self.pca_transformer.set_params(pca__random_state=val)
 
     @property
     def uax(self):
