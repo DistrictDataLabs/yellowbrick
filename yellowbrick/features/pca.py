@@ -200,6 +200,16 @@ class PCA(ProjectionVisualizer):
             raise YellowbrickValueError(
                 "heatmap and colorbar are not compatible with 3d projections"
             )
+        self._random_state = random_state
+
+    @property
+    def random_state(self):
+        return self._random_state
+
+    @random_state.setter
+    def random_state(self, val):
+        self._random_state = val
+        self.pca_transformer.set_params(pca_random_state=val)
 
     @property
     def uax(self):
