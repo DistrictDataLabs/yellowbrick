@@ -450,4 +450,4 @@ class TestKElbowVisualizer(VisualTestCase):
         # Execute drawing
         oz.draw()
         oz.finalize()
-        self.assert_images_similar(oz)
+        self.assert_images_similar(oz, tol=3.2)
