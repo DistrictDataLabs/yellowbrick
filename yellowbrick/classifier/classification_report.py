@@ -91,6 +91,9 @@ class ClassificationReport(ClassificationScoreVisualizer):
         will prevent an exception when the visualizer is initialized but may result
         in unexpected or unintended behavior.
 
+    color_bar : bool, default: True
+        Specify if the color bar should be present
+
     kwargs : dict
         Keyword arguments passed to the visualizer base classes.
 
@@ -132,6 +135,7 @@ class ClassificationReport(ClassificationScoreVisualizer):
         encoder=None,
         is_fitted="auto",
         force_model=False,
+        color_bar=True,
         **kwargs
     ):
         super(ClassificationReport, self).__init__(
@@ -144,6 +148,7 @@ class ClassificationReport(ClassificationScoreVisualizer):
             **kwargs
         )
 
+        self.color_bar = color_bar
         self.support = support
         self.cmap = color_sequence(cmap)
         self.cmap.set_over(color=CMAP_OVERCOLOR)
@@ -255,7 +260,10 @@ class ClassificationReport(ClassificationScoreVisualizer):
         )
 
         # Add the color bar
-        plt.colorbar(g, ax=self.ax)  # TODO: Could use self.fig now
+        if self.color_bar:
+            plt.colorbar(g, ax=self.ax)  # TODO: Could use self.fig now
+        else:
+            pass
 
         # Return the axes being drawn on
         return self.ax

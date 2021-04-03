@@ -312,3 +312,21 @@ class TestClassificationReport(VisualTestCase):
             oz = ClassificationReport(model, classes=classes, is_fitted=False)
             oz.fit(X, y)
             mockfit.assert_called_once_with(X, y)
+
+    def test_remove_color_bar(self):
+        """
+        Correctly removes the colorbar for binary classification with LinearSVC
+        """
+        _, ax = plt.subplots()
+
+        viz = ClassificationReport(LinearSVC(random_state=42), ax=ax, color_bar=False)
+        viz.fit(self.binary.X.train, self.binary.y.train)
+        viz.score(self.binary.X.test, self.binary.y.test)
+
+        self.assert_images_similar(viz, tol=40)
+
+        assert viz.scores_ == {
+            "precision": {0: approx(0.7446808), 1: approx(0.8490566)},
+            "recall": {0: approx(0.8139534), 1: approx(0.7894736)},
+            "f1": {0: approx(0.7777777), 1: approx(0.8181818)},
+        }
