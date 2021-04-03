@@ -7,7 +7,7 @@
 matplotlib==3.4.0
 scipy==1.6.0
 scikit-learn==0.24.1
-numpy==1.19.5
+numpy==1.20.2
 cycler==0.10.0
 
 # Testing Requirements
