@@ -91,7 +91,7 @@ class ClassificationReport(ClassificationScoreVisualizer):
         will prevent an exception when the visualizer is initialized but may result
         in unexpected or unintended behavior.
 
-    color_bar : bool, default: True
+    colorbar : bool, default: True
         Specify if the color bar should be present
 
     kwargs : dict
@@ -135,7 +135,7 @@ class ClassificationReport(ClassificationScoreVisualizer):
         encoder=None,
         is_fitted="auto",
         force_model=False,
-        color_bar=True,
+        colorbar=True,
         **kwargs
     ):
         super(ClassificationReport, self).__init__(
@@ -148,7 +148,7 @@ class ClassificationReport(ClassificationScoreVisualizer):
             **kwargs
         )
 
-        self.color_bar = color_bar
+        self.colorbar = colorbar
         self.support = support
         self.cmap = color_sequence(cmap)
         self.cmap.set_over(color=CMAP_OVERCOLOR)
@@ -260,7 +260,7 @@ class ClassificationReport(ClassificationScoreVisualizer):
         )
 
         # Add the color bar
-        if self.color_bar:
+        if self.colorbar:
             plt.colorbar(g, ax=self.ax)  # TODO: Could use self.fig now
         else:
             pass
@@ -308,6 +308,7 @@ def classification_report(
     is_fitted="auto",
     force_model=False,
     show=True,
+    colorbar=True,
     **kwargs
 ):
     """Classification Report
@@ -381,6 +382,9 @@ def classification_report(
         If True, calls ``show()``, which in turn calls ``plt.show()`` however you cannot
         call ``plt.savefig`` from this signature, nor ``clear_figure``. If False, simply
         calls ``finalize()``
+    
+    colorbar : bool, default: True
+        Specify if the color bar should be present
 
     kwargs : dict
         Keyword arguments passed to the visualizer base classes.
@@ -400,6 +404,7 @@ def classification_report(
         encoder=encoder,
         is_fitted=is_fitted,
         force_model=force_model,
+        colorbar=colorbar,
         **kwargs
     )
 
