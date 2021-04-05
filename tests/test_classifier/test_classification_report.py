@@ -324,9 +324,3 @@ class TestClassificationReport(VisualTestCase):
         viz.score(self.binary.X.test, self.binary.y.test)
 
         self.assert_images_similar(viz, tol=40)
-
-        assert viz.scores_ == {
-            "precision": {0: approx(0.7446808), 1: approx(0.8490566)},
-            "recall": {0: approx(0.8139534), 1: approx(0.7894736)},
-            "f1": {0: approx(0.7777777), 1: approx(0.8181818)},
-        }
