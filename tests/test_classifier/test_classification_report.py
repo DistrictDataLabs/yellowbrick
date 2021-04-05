@@ -319,7 +319,7 @@ class TestClassificationReport(VisualTestCase):
         """
         _, ax = plt.subplots()
 
-        viz = ClassificationReport(LinearSVC(random_state=42), ax=ax, color_bar=False)
+        viz = ClassificationReport(LinearSVC(random_state=42), ax=ax, colorbar=False)
         viz.fit(self.binary.X.train, self.binary.y.train)
         viz.score(self.binary.X.test, self.binary.y.test)
 
