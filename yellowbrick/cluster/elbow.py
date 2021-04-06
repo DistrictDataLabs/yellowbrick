@@ -43,6 +43,16 @@ except ImportError:
 __all__ = ["KElbowVisualizer", "KElbow", "distortion_score", "kelbow_visualizer"]
 
 
+# Custom colors; note that LINE_COLOR is imported above
+TIMING_COLOR = 'C1'  # Color of timing axis, tick, label, and line
+METRIC_COLOR = 'C0'  # Color of metric axis, tick, label, and line
+
+# Keys for the color dictionary
+CTIMING = "timing"
+CMETRIC = "metric"
+CVLINE  = "vline"
+
+
 ##########################################################################
 ## Metrics
 ##########################################################################
@@ -259,6 +269,13 @@ class KElbowVisualizer(ClusteringScoreVisualizer):
         self.timings = timings
         self.locate_elbow = locate_elbow
 
+        # Set the values of the colors
+        self.colors = {
+            CTIMING: TIMING_COLOR,
+            CMETRIC: METRIC_COLOR,
+            CVLINE: LINE_COLOR,
+        }
+
         # Convert K into a tuple argument if an integer
         if isinstance(k, int):
             self.k_values_ = list(range(2, k + 1))
@@ -282,6 +299,7 @@ class KElbowVisualizer(ClusteringScoreVisualizer):
 
         # Holds the values of the silhoutte scores
         self.k_scores_ = None
+
         # Set Default Elbow Value
         self.elbow_value_ = None
 
@@ -356,13 +374,13 @@ class KElbowVisualizer(ClusteringScoreVisualizer):
         Draw the elbow curve for the specified scores and values of K.
         """
         # Plot the silhouette score against k
-        self.ax.plot(self.k_values_, self.k_scores_, marker="D")
+        self.ax.plot(self.k_values_, self.k_scores_, marker="D", c=self.metric_color)
         if self.locate_elbow is True and self.elbow_value_ is not None:
             elbow_label = "elbow at $k={}$, $score={:0.3f}$".format(
                 self.elbow_value_, self.elbow_score_
             )
             self.ax.axvline(
-                self.elbow_value_, c=LINE_COLOR, linestyle="--", label=elbow_label
+                self.elbow_value_, c=self.vline_color, linestyle="--", label=elbow_label
             )
 
         # If we're going to plot the timings, create a twinx axis
@@ -372,7 +390,7 @@ class KElbowVisualizer(ClusteringScoreVisualizer):
                 self.k_values_,
                 self.k_timers_,
                 label="fit time",
-                c="g",
+                c=self.timing_color,
                 marker="o",
                 linestyle="--",
                 alpha=0.75,
@@ -403,9 +421,33 @@ class KElbowVisualizer(ClusteringScoreVisualizer):
         # Set the second y axis labels
         if self.timings:
             self.axes[1].grid(False)
-            self.axes[1].set_ylabel("fit time (seconds)", color="g")
-            self.axes[1].tick_params("y", colors="g")
+            self.axes[1].set_ylabel("fit time (seconds)", color=self.timing_color)
+            self.axes[1].tick_params("y", colors=self.timing_color)
 
+
+    @property
+    def metric_color(self):
+        return self.colors[CMETRIC]
+
+    @metric_color.setter
+    def metric_color(self, val):
+        self.colors[CMETRIC] = val
+    
+    @property
+    def timing_color(self):
+        return self.colors[CTIMING]
+    
+    @timing_color.setter
+    def timing_color(self, val):
+        self.colors[CTIMING] = val
+    
+    @property
+    def vline_color(self):
+        return self.colors[CVLINE]
+
+    @vline_color.setter
+    def vline_color(self, val):
+        self.colors[CVLINE] = val
 
 # alias
 KElbow = KElbowVisualizer

@@ -123,7 +123,7 @@ class FeatureCorrelation(TargetVisualizer):
         color=None,
         **kwargs
     ):
-        super(FeatureCorrelation, self).__init__(ax=None, **kwargs)
+        super(FeatureCorrelation, self).__init__(ax, **kwargs)
 
         self.correlation_labels = CORRELATION_LABELS
         self.correlation_methods = CORRELATION_METHODS

@@ -208,7 +208,10 @@ class ROCAUC(ClassificationScoreVisualizer):
         # Set the visual parameters for ROCAUC
         # NOTE: the binary flag breaks our API since it's really just a meta parameter
         # for micro, macro, and per_class. We knew this going in, but did it anyway.
-        if binary:
+        
+        self.binary = binary
+        
+        if self.binary:
             self.micro = False
             self.macro = False
             self.per_class = False
