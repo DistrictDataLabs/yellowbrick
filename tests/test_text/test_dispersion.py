@@ -77,7 +77,7 @@ class TestDispersionPlot(VisualTestCase):
         visualizer.fit(text)
         visualizer.ax.grid(False)
 
-        self.assert_images_similar(visualizer, tol=25)
+        self.assert_images_similar(visualizer, tol=25.5)
 
     def test_dispersion_plot_generator_input(self):
         """
@@ -91,7 +91,7 @@ class TestDispersionPlot(VisualTestCase):
         visualizer.fit(text)
         visualizer.ax.grid(False)
 
-        self.assert_images_similar(visualizer, tol=25)
+        self.assert_images_similar(visualizer, tol=25.5)
 
     def test_dispersion_plot_annotate_docs(self):
         """
