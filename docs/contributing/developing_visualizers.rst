@@ -201,7 +201,7 @@ This is useful particularly if you're stuck trying to get an image comparison to
 Test Fixtures
 ~~~~~~~~~~~~~
 
-Often, you will need a controlled dataset to test your visualizer as specifically as possible. To do this, we recommend that you make use of `pytest fixtures <https://docs.pytest.org/en/latest/fixture.html>`_ and `scikit-learn's generated datasets <https://scikit-learn.org/stable/datasets/index.html#generated-datasets>`_. Together these tools ensure that you have complete control over your test fixtures and can test different user scenarios as precisely as possible. For example, consider the case where we want to test both a binary and a multiclass dataset for a classification score visualizer.
+Often, you will need a controlled dataset to test your visualizer as specifically as possible. To do this, we recommend that you make use of `pytest fixtures <https://docs.pytest.org/en/latest/explanation/fixtures.html>`_ and `scikit-learn's generated datasets <https://scikit-learn.org/stable/datasets/index.html#generated-datasets>`_. Together these tools ensure that you have complete control over your test fixtures and can test different user scenarios as precisely as possible. For example, consider the case where we want to test both a binary and a multiclass dataset for a classification score visualizer.
 
 .. code:: python
 
