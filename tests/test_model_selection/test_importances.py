@@ -240,6 +240,22 @@ class TestFeatureImportancesVisualizer(VisualTestCase):
         # Appveyor and Linux conda non-text-based differences
         self.assert_images_similar(viz, tol=17.5)
 
+    def test_stack_param_incorrectly_used_throws_error(self):
+        """
+        Test incorrectly using stack param on a dataset with two classes which
+        does not return a coef_ array in the shape of (n_classes, n_features)
+        """
+        X, y = load_occupancy()
+
+        viz = FeatureImportances(
+            LogisticRegression(solver="liblinear", random_state=222), stack=True
+        )
+
+        expected_error = "The model used does not return coef_ array"
+
+        with pytest.raises(YellowbrickValueError, match=expected_error):
+            viz.fit(X, y)
+
     @pytest.mark.skipif(pd is None, reason="pandas is required for this test")
     def test_fit_dataframe(self):
         """
