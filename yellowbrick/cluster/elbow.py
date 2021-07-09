@@ -87,7 +87,8 @@ def distortion_score(X, labels, metric="euclidean"):
     """
     # Encode labels to get unique centers and groups
     le = LabelEncoder()
-    labels = le.fit_transform(labels)
+    le.fit(labels)
+    # labels = le.fit_transform(labels)
     unique_labels = le.classes_
 
     # Sum of the distortions
