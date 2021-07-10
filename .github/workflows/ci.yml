@@ -89,6 +89,7 @@ jobs:
           conda config --set always_yes yes --set changeps1 no
           conda update -n base conda --yes
           conda env create -f tests/requirements.txt -n yellowbrick python=${{ matrix.python-version }}
+          conda activate yellowbrick
           python -m nltk.downloader popular
 
       - name: Run Unit Tests
