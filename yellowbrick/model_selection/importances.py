@@ -231,6 +231,14 @@ class FeatureImportances(ModelVisualizer):
 
         # Sort the features and their importances
         if self.stack:
+            if len(self.classes_) != self.feature_importances_.shape[0]:
+                raise YellowbrickValueError(
+                    (
+                        "The model used does not return coef_ array in the shape of (n_classes, n_features)."
+                        "  Unable to generate stacked feature importances.  "
+                        "Consider setting the stack parameter to False or using a different model"
+                    )
+                )
             if self.topn:
                 abs_sort_idx = np.argsort(
                     np.sum(np.absolute(self.feature_importances_), 0)
