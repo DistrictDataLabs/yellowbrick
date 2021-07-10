@@ -138,6 +138,7 @@ class TestKElbowVisualizer(VisualTestCase):
     """
 
     @pytest.mark.xfail(reason="images not close due to timing lines")
+    @pytest.mark.filterwarnings("ignore:No 'knee'")
     def test_integrated_kmeans_elbow(self):
         """
         Test no exceptions for kmeans k-elbow visualizer on blobs dataset
@@ -161,6 +162,7 @@ class TestKElbowVisualizer(VisualTestCase):
             pytest.fail("error during k-elbow: {}".format(e))
 
     @pytest.mark.xfail(reason="images not close due to timing lines")
+    @pytest.mark.filterwarnings("ignore:No 'knee'")
     def test_integrated_mini_batch_kmeans_elbow(self):
         """
         Test no exceptions for mini-batch kmeans k-elbow visualizer
@@ -432,7 +434,7 @@ class TestKElbowVisualizer(VisualTestCase):
         custom_title = "My custom title"
         model = KMeans(3, random_state=13)
         oz = kelbow_visualizer(
-            model, X, sample_weight=np.ones(X.shape[0]), title=custom_title
+            model, X, sample_weight=np.ones(X.shape[0]), title=custom_title, show=False
         )
         assert oz.title == custom_title
 

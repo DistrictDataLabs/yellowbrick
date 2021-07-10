@@ -109,7 +109,7 @@ class MissingValuesBar(MissingDataVisualizer):
             nan_matrix[mask] = np.nan
 
         else:
-            nan_matrix = self.X.astype(np.float)
+            nan_matrix = self.X.astype(np.float64)
 
         if self.y is None:
             nan_col_counts = [np.count_nonzero(np.isnan(col)) for col in nan_matrix.T]

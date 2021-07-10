@@ -436,7 +436,7 @@ class Rank2D(RankDBase):
         self.ax.set_aspect("equal")
 
         # Generate a mask for the upper triangle
-        mask = np.zeros_like(self.ranks_, dtype=np.bool)
+        mask = np.zeros_like(self.ranks_, dtype=bool)
         mask[np.triu_indices_from(mask)] = True
 
         # Draw the heatmap

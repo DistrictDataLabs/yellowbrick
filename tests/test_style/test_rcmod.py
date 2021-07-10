@@ -147,6 +147,7 @@ class TestAxesStyle(RCParamTester):
         self.assert_rc_params(mpl.rcParamsDefault)
         yb_rcmod.set_aesthetic()
 
+    @pytest.mark.filterwarnings("ignore")
     def test_reset_orig(self):
         """
         Test the ability to reset to the original (respecting custom styles)
