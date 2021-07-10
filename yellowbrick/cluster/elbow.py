@@ -88,7 +88,6 @@ def distortion_score(X, labels, metric="euclidean"):
     # Encode labels to get unique centers and groups
     le = LabelEncoder()
     le.fit(labels)
-    # labels = le.fit_transform(labels)
     unique_labels = le.classes_
 
     # Sum of the distortions
@@ -433,15 +432,15 @@ class KElbowVisualizer(ClusteringScoreVisualizer):
     @metric_color.setter
     def metric_color(self, val):
         self.colors[CMETRIC] = val
-    
+
     @property
     def timing_color(self):
         return self.colors[CTIMING]
-    
+
     @timing_color.setter
     def timing_color(self, val):
         self.colors[CTIMING] = val
-    
+
     @property
     def vline_color(self):
         return self.colors[CVLINE]

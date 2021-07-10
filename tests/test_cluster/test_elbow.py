@@ -116,6 +116,15 @@ class TestKElbowHelper(object):
         score = distortion_score(df, s)
         assert score == pytest.approx(69.10006514142941)
 
+    def test_distortion_score_empty_clusters(self):
+        """
+        Ensure no ValueError is thrown when there are empty clusters #1185
+        """
+        X = np.array([[1,2],[3,4],[5,6]])
+        valuea = distortion_score(X, np.array([1,3,3]))
+        valueb = distortion_score(X, np.array([0,1,1]))
+        assert valuea == valueb
+
 
 ##########################################################################
 ## KElbowVisualizer Test Cases
@@ -439,14 +448,14 @@ class TestKElbowVisualizer(VisualTestCase):
         oz.metric_color = "r"
         oz.timing_color = "y"
         oz.vline_color = "c"
-        
+
         # Create artificial "fit" data for testing purposes
         oz.k_values_ = [1, 2, 3, 4, 5, 6, 7, 8]
         oz.k_timers_ = [6.2, 8.3, 10.1, 15.8, 21.2, 27.9, 38.2, 44.9]
         oz.k_scores_ = [.8, .7, .55, .48, .40, .38, .35, .30]
         oz.elbow_value_ = 5
         oz.elbow_score_ = 0.40
-        
+
         # Execute drawing
         oz.draw()
         oz.finalize()
