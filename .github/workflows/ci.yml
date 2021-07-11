@@ -104,3 +104,27 @@ jobs:
           env_vars: OS,PYTHON
           name: codecov-umbrella
           fail_ci_if_error: false
+
+  # Test building docs using Sphinx since this also runs a lot of Yellowbrick code
+  test_docs:
+    runs-on: ubuntu-latest
+    name: Build Docs
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v2
+
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.9
+
+      - name: Install Dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+          pip install -r docs/requirements.txt
+
+      - name: Run Sphinx
+        uses: ammaraskar/sphinx-action@master
+        with:
+          docs-folder: "docs/"
