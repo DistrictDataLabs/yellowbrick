@@ -199,6 +199,7 @@ class TestResidualsPlot(VisualTestCase):
             line_color="#cccccc",
             test_color="r",
             train_color="y",
+            show=False,
         )
 
         assert isinstance(oz, ResidualsPlot)
@@ -213,7 +214,7 @@ class TestResidualsPlot(VisualTestCase):
         Test the quick method with only train data (simplest args)
         """
         oz = residuals_plot(
-            Ridge(random_state=19), self.data.X.train, self.data.y.train
+            Ridge(random_state=19), self.data.X.train, self.data.y.train, show=False
         )
 
         assert isinstance(oz, ResidualsPlot)
@@ -226,7 +227,9 @@ class TestResidualsPlot(VisualTestCase):
         msg = "both X_test and y_test are required if one is specified"
         with pytest.raises(YellowbrickValueError, match=msg):
             residuals_plot(
-                Lasso(), self.data.X.train, self.data.y.train, self.data.X.test
+                Lasso(),
+                self.data.X.train, self.data.y.train,
+                self.data.X.test, show=False
             )
 
     @pytest.mark.xfail(

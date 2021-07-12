@@ -1,0 +1,20 @@
+# Set the default behavior, in case contributors don't have core.autocrlf set.
+* text=auto
+
+# Explicitly declare text files
+*.py text
+*.rst text
+*.md text
+*.json text
+*.ipynb text
+*.cfg text
+
+# Baseline images are binary and should not be modified
+*.png binary
+*.jpg binary
+*.pdf binary
+
+# Compressed files are binary and should not be modified
+*.gz binary
+*.npz binary
+*.zip binary

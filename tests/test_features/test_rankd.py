@@ -225,6 +225,7 @@ class TestRank1D(VisualTestCase):
         oz.finalize()
         self.assert_images_similar(oz)
 
+    @pytest.mark.filterwarnings("ignore:p-value may not be accurate")
     def test_rank1d_quick_method(self):
         """
         Test Rank1d quick method
@@ -593,7 +594,7 @@ class TestRank2D(VisualTestCase):
         Test Rank2D quick method
         """
         X, y = load_occupancy()
-        oz = rank2d(X, y, algorithm="spearman", colormap="RdYlGn_r")
+        oz = rank2d(X, y, algorithm="spearman", colormap="RdYlGn_r", show=False)
 
         assert isinstance(oz, Rank2D)
         self.assert_images_similar(oz, tol=0.1)

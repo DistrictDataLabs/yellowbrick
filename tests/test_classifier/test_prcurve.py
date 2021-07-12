@@ -435,7 +435,10 @@ class TestPrecisionRecallCurve(VisualTestCase):
         )
 
         viz = precision_recall_curve(
-            RandomForestClassifier(random_state=72), X_train, y_train, X_test, y_test
+            RandomForestClassifier(random_state=72),
+            X_train, y_train,
+            X_test, y_test,
+            show=False
         )
         self.assert_images_similar(viz)
 
@@ -453,11 +456,13 @@ class TestPrecisionRecallCurve(VisualTestCase):
 
         with pytest.raises(YellowbrickValueError, match=emsg):
             precision_recall_curve(
-                RandomForestClassifier(), X_train, y_train, y_test=y_test
+                RandomForestClassifier(), X_train, y_train, y_test=y_test, show=False
             )
 
         with pytest.raises(YellowbrickValueError, match=emsg):
-            precision_recall_curve(RandomForestClassifier(), X_train, y_train, X_test)
+            precision_recall_curve(
+                RandomForestClassifier(), X_train, y_train, X_test, show=False
+            )
 
     def test_per_class_and_micro(self):
         """
@@ -469,5 +474,5 @@ class TestPrecisionRecallCurve(VisualTestCase):
         )
         with pytest.warns(YellowbrickWarning, match=msg):
             PrecisionRecallCurve(
-                RidgeClassifier(random_state=13), micro=True, per_class=True
+                RidgeClassifier(random_state=13), micro=True, per_class=True, show=False
             )
