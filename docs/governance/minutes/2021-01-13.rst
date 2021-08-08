@@ -50,17 +50,17 @@ update to kneed algorithm, added FAQ on wrapper, third party estimator wrapper, 
 
 Shout-outs
 -------------------------
--Ben for his constant contributions to the project
+- Ben for his constant contributions to the project
 
--Rebecca for her rapid response to issues all Semester long.
+- Rebecca for her rapid response to issues all Semester long.
 
--Adam for meeting the 1000 mark for Social Media Followers (@scikit-yb)
+- Adam for meeting the 1000 mark for Social Media Followers (@scikit-yb)
 
--Strong user interactions with the library: 2300 downloads per day and 60,000 per month!
+- Strong user interactions with the library: 2300 downloads per day and 60,000 per month!
 
--Robust package evidenced by low number of issues being opened over the Semester.
+- Robust package evidenced by low number of issues being opened over the Semester.
 
--Kristen, Larry, Edwin for "surviving the 2nd worst year"
+- Kristen, Larry, Edwin for "surviving the 2nd worst year"
 
 2021 Advisory Board
 -------------------------
@@ -70,23 +70,23 @@ Before the reveal, Kristen McIntyre, Larry Gray and Edwin Schmierer provided an 
 Nominations for Chair:
 Rebecca and Ben nominate Prema
 Tony nominated Ben
-***Result: Prema was selected with all Yay Votes ***
+**Result: Prema was selected with all Yay Votes**
 
 Nominations for Secretary:
 Rebecca and Ben nominated Prema
 Kristen nominated Adam
-***Result: Adam was selected unanimously ***
+**Result: Adam was selected unanimously**
 
 Nomnations for Treasurer:
 Rebecca, Ben and Larry nominated Adam
 Prema nominated herself
 Tony nominated Edwin
-***Result: Kristen was selected unanimously***
+**Result: Kristen was selected unanimously**
 
 2021 Annual Budget Update
 -------------------------
 
-In January, we approved our budget for the year, which totaled $271.48.
+In January, we approved our budget for the year, which totaled **$271.48** .
 Since we have 9 advisors for this year, the dues totaled $30.17 per advisor although we are waiting to see if new members join the board which could lower the per person due amount.
 Thank you to everyone for paying your dues on time!
 
@@ -104,13 +104,13 @@ Thank you to everyone for paying your dues on time!
 
 -Proposal 2 lines of budget: Board gifts 8 of us - Create budget $320 External Funding, External Gifts paid for by Part Board Dues/External Funding
 
--1. We voted to split these 2 lines items into separate voted - Unanimously Support
+1. We voted to split these 2 lines items into separate voted - Unanimously Support
 
--2. Vote only external funding for Board gifts - Unanimously supported
+2. Vote only external funding for Board gifts - Unanimously supported
 
--3. Vote to remove Sticker budget and put back into budget for external gifts - Unanimously supported
+3. Vote to remove Sticker budget and put back into budget for external gifts - Unanimously supported
 
--4. Vote to remove Nathan from Board Roster
+4. Vote to remove Nathan from Board Roster
 
 *2021 Annual Budget*
 -------------------------
@@ -124,11 +124,11 @@ Yellowbrick Conbtributor gifts               annually      $133.50     Kristen
 \                                                          **$271.48**
 ============================================ ============= =========== ================
 
--Advisors pay their share (dues) to Kristen via Venmo.  Kristen sent her Venmo handle and QR Code via the group's slack channel.  Dues are payable by March 1, 2021.
+- Advisors pay their share (dues) to Kristen via Venmo.  Kristen sent her Venmo handle and QR Code via the group's slack channel.  Dues are payable by March 1, 2021.
 
--Since we are reaching out to potential new board members, we will delay the collection due date since we do not the final total number of board members and everyone's retrospective dues.
+- Since we are reaching out to potential new board members, we will delay the collection due date since we do not the final total number of board members and everyone's retrospective dues.
 
--Budget for appreciation gifts to to contributors.  We will have 2 buckets of money, one for gifts for contributors and one that is board-funded to get a gift for board members.
+- Budget for appreciation gifts to to contributors.  We will have 2 buckets of money, one for gifts for contributors and one that is board-funded to get a gift for board members.
 
 ============================================ ============= ===========
 **Description**                              **Donation** **POC**
@@ -146,8 +146,8 @@ The issues that are part of this milestone can be found here: 'https://github.co
 
 Milestone planning:
 
--We need to ensure 0.24 Scikit-Learn Compatibility (Scipy 1.6 issues) * to help deal with this * pip sklearn dependency 0.23 (current)
--We need to research PEP517 and how to implement “pip install -e .” See how python is now dealing with python packaging.
+- We need to ensure 0.24 Scikit-Learn Compatibility (Scipy 1.6 issues) * to help deal with this * pip sklearn dependency 0.23 (current)
+- We need to research PEP517 and how to implement “pip install -e .” See how python is now dealing with python packaging.
 
 Ideas for next Administrative Projects:
 1.)  Release a User Survey on Twitter
@@ -164,7 +164,7 @@ Kristen brought up the idea of explore incorporating pip dependency resolver
   c.)Changes to sklearn.utils for Sklearn Private/Public addressed in API PR#1138('https://github.com/DistrictDataLabs/yellowbrick/pull/1138')
   d.)We decided to pass on participating in Google Summer of Code (GSOC)
   e.)There was discussion of adding new board members such as Michael Garod, Molly and Matt Harrison.
-  f.)Semester focus on *Marketing & Outstanding Issues & PyDistrict**
+  f.)Semester focus on *Marketing & Outstanding Issues & PyDistrict*
     1.)Try to get users to tell us how they’re using YB such as COVID research and viz
     2.)User Survey
   g.)Board unanimously support to add new members.  Adam and Prema to reach out to Molly, Matt and Michael to ask them to join the board.
