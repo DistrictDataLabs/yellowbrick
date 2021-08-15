@@ -33,7 +33,7 @@ A broad overview of the topics for discussion in the order they were presented:
 Fall 2021 Semester Retrospective
 --------------------------------
 
-Rebecca gave a talk "Thrifty Machine Learning" and was highlighted by PyLadies Berlin (and they highlighted Yellowbrick!)
+-Rebecca gave a talk "Thrifty Machine Learning" and was highlighted by PyLadies Berlin (and they highlighted Yellowbrick!)
 on the 19th day of their 2020 Advent Calendar Tweet Series: 'https://twitter.com/PyLadiesBer/status/1340321653839040513?s=20'
 
 The entire team showed resiliency in the face of COVID-19 and being unable to meet in person by moving the project forward.
