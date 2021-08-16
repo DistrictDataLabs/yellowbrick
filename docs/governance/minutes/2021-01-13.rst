@@ -33,20 +33,19 @@ A broad overview of the topics for discussion in the order they were presented:
 Fall 2021 Semester Retrospective
 --------------------------------
 
--Rebecca gave a talk "Thrifty Machine Learning" and was highlighted by PyLadies Berlin (and they highlighted Yellowbrick!)
+- Rebecca gave a talk "Thrifty Machine Learning" and was highlighted by PyLadies Berlin (and they highlighted Yellowbrick!)
 on the 19th day of their 2020 Advent Calendar Tweet Series: 'https://twitter.com/PyLadiesBer/status/1340321653839040513?s=20'
 
-The entire team showed resiliency in the face of COVID-19 and being unable to meet in person by moving the project forward.
+- The entire team showed resiliency in the face of COVID-19 and being unable to meet in person by moving the project forward.
 
-We closed 19 issues and had 13 open issues.  We had 3 open PRs.
+- We closed 19 issues and had 13 open issues.  We had 3 open PRs.
 
-Approved PRs (Contributors):
-Rebecca and Ben approved 3, Larry approved 1, Michael Garod and @arkvei approved 1 each.
+- Approved PRs (Contributors):
+    - Rebecca and Ben approved 3, Larry approved 1, Michael Garod and @arkvei approved 1 each.
 
-Summary of Fall PR Topics- Complete changelog since v1.2 can be found here: 'https://github.com/DistrictDataLabs/yellowbrick/pull/1110'
+- Summary of Fall PR Topics- Complete changelog since v1.2 can be found here: 'https://github.com/DistrictDataLabs/yellowbrick/pull/1110'
 
-Main PR Topic Areas included Yellowbrick1.2 release, Dependence Management issue (PR #1111: 'https://github.com/DistrictDataLabs/yellowbrick/pull/1111'), update to Dispersion plot color and title,
-update to kneed algorithm, added FAQ on wrapper, third party estimator wrapper, adjustment to top_n param for feature importances.  We also addressed a public/private API bug in PR 1124 ('https://github.com/DistrictDataLabs/yellowbrick/pull/1124')
+Main PR Topic Areas included Yellowbrick1.2 release, Dependence Management issue (PR #1111: 'https://github.com/DistrictDataLabs/yellowbrick/pull/1111'), update to Dispersion plot color and title, update to kneed algorithm, added FAQ on wrapper, third party estimator wrapper, adjustment to top_n param for feature importances.  We also addressed a public/private API bug in PR 1124 ('https://github.com/DistrictDataLabs/yellowbrick/pull/1124')
 
 Shout-outs
 -------------------------
@@ -115,14 +114,17 @@ Thank you to everyone for paying your dues on time!
 *2021 Annual Budget*
 -------------------------
 
-============================================ ============= =========== ===============
-**Description**                              **Frequency** **Total**   **Paid for By**
-============================================ ============= =========== ===============
-Name.com domain registration (scikit-yb.org) annually      $17.98      Ben
-Read the Docs Gold Membership                $10 monthly   $120.00     Ben
-Yellowbrick Conbtributor gifts               annually      $133.50     Kristen
-\                                                          **$271.48**
-============================================ ============= =========== ================
+
+
+
+============================================  =============  =============     =============
+**Description**                               **Frequency**  **Total**      **Paid for By** \
+============================================  =============  =============  =============
+Name.com domain registration (scikit-yb.org)   annually      $17.98           Ben
+Read the Docs Gold Membership                  $10 monthly   $120.00          Ben
+Yellowbrick Conbtributor gifts                 annually      $133.50          Kristen
+\                                                            **$271.48**
+============================================  =============  ===========     ================
 
 - Advisors pay their share (dues) to Kristen via Venmo.  Kristen sent her Venmo handle and QR Code via the group's slack channel.  Dues are payable by March 1, 2021.
 
