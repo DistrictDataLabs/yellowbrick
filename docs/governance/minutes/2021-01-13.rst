@@ -34,7 +34,7 @@ Fall 2021 Semester Retrospective
 --------------------------------
 
 - Rebecca gave a talk "Thrifty Machine Learning" and was highlighted by PyLadies Berlin (and they highlighted Yellowbrick!)
-on the 19th day of their 2020 Advent Calendar Tweet Series: 'https://twitter.com/PyLadiesBer/status/1340321653839040513?s=20'
+on the 19th day of their 2020 [Advent Calendar Tweet Series](https://twitter.com/PyLadiesBer/status/1340321653839040513?s=20)
 
 - The entire team showed resiliency in the face of COVID-19 and being unable to meet in person by moving the project forward.
 
@@ -43,11 +43,11 @@ on the 19th day of their 2020 Advent Calendar Tweet Series: 'https://twitter.com
 - Approved PRs (Contributors):
     - Rebecca and Ben approved 3, Larry approved 1, Michael Garod and @arkvei approved 1 each.
 
-- Summary of Fall PR Topics- Complete changelog since v1.2 can be found here: 'https://github.com/DistrictDataLabs/yellowbrick/pull/1110'
+- Summary of Fall PR Topics- Complete changelog since v1.2 can be found [here:](https://github.com/DistrictDataLabs/yellowbrick/pull/1110)
 
-Main PR Topic Areas included Yellowbrick1.2 release, Dependence Management issue (PR #1111: 'https://github.com/DistrictDataLabs/yellowbrick/pull/1111'), update to Dispersion plot color and title, update to kneed algorithm, added FAQ on wrapper, third party estimator wrapper, adjustment to top_n param for feature importances.  We also addressed a public/private API bug in PR 1124 ('https://github.com/DistrictDataLabs/yellowbrick/pull/1124')
+Main PR Topic Areas included: Yellowbrick1.2 release, Dependence Management issue [PR 1111](https://github.com/DistrictDataLabs/yellowbrick/pull/1111), update to Dispersion plot color and title, update to kneed algorithm, added FAQ on wrapper, third party estimator wrapper, adjustment to top_n param for feature importances.  We also addressed a public/private API bug in [PR 1124](https://github.com/DistrictDataLabs/yellowbrick/pull/1124)
 
-Shout-outs
+Board Shout-outs
 -------------------------
 - Ben for his constant contributions to the project
 
@@ -101,30 +101,27 @@ Thank you to everyone for paying your dues on time!
 
 -  *Ben suggested that we add an additional item to the budget*Add cost for gifts to Reviews and Contributors* - such as coffee and a YB branded T-Shirt. This is to show the YB spirit of Gratitude.  A budget of $750.  We have two potential sponsors (detailed below)
 
--Proposal 2 lines of budget: Board gifts 8 of us - Create budget $320 External Funding, External Gifts paid for by Part Board Dues/External Funding
+- Proposal 2 lines of budget: Board gifts 8 of us - Create budget $320 External Funding, External Gifts paid for partly by board dues/external funding:
 
-1. We voted to split these 2 lines items into separate voted - Unanimously Support
+ 1. We voted to split these 2 lines items into separate voted - Unanimously Support
 
-2. Vote only external funding for Board gifts - Unanimously supported
+ 2. Vote only external funding for Board gifts - Unanimously supported
 
-3. Vote to remove Sticker budget and put back into budget for external gifts - Unanimously supported
+ 3. Vote to remove Sticker budget and put back into budget for external gifts - Unanimously supported
 
-4. Vote to remove Nathan from Board Roster
+ 4. Vote to remove Nathan from Board Roster
 
 *2021 Annual Budget*
 -------------------------
 
-
-
-
-============================================  =============  =============     =============
+============================================  =============  =============  =============
 **Description**                               **Frequency**  **Total**      **Paid for By** \
 ============================================  =============  =============  =============
 Name.com domain registration (scikit-yb.org)   annually      $17.98           Ben
 Read the Docs Gold Membership                  $10 monthly   $120.00          Ben
 Yellowbrick Conbtributor gifts                 annually      $133.50          Kristen
 \                                                            **$271.48**
-============================================  =============  ===========     ================
+============================================  =============  =============  =============
 
 - Advisors pay their share (dues) to Kristen via Venmo.  Kristen sent her Venmo handle and QR Code via the group's slack channel.  Dues are payable by March 1, 2021.
 
@@ -132,19 +129,19 @@ Yellowbrick Conbtributor gifts                 annually      $133.50          Kr
 
 - Budget for appreciation gifts to to contributors.  We will have 2 buckets of money, one for gifts for contributors and one that is board-funded to get a gift for board members.
 
-============================================ ============= ===========
-**Description**                              **Donation** **POC**
-============================================ ============= ===========
-Kansas Labs                                  $375          Ben
-District Data Labs                           $375          Tony
-\                                            **$750**
-============================================ ============= ===========
+============================================  =============  ===========
+  **Description**                              **Donation**    **POC**
+============================================  =============  ===========
+Kansas Labs                                    $375            Ben
+District Data Labs                             $375            Tony
+\                                              **$750**
+============================================  =============  ===========
 
 Yellowbrick v1.3 Status Updates/Milestone Planning
 ---------------------------------------------------
 
 Status Update:
-The issues that are part of this milestone can be found here: 'https://github.com/DistrictDataLabs/yellowbrick/milestone/16'
+The issues that are part of this milestone can be found [here:] (https://github.com/DistrictDataLabs/yellowbrick/milestone/16)
 
 Milestone planning:
 
@@ -152,21 +149,23 @@ Milestone planning:
 - We need to research PEP517 and how to implement “pip install -e .” See how python is now dealing with python packaging.
 
 Ideas for next Administrative Projects:
-1.)  Release a User Survey on Twitter
-2.)  Content Marketing through Twitter
-3.)  Prema to review backlog
+  
+  1.)  Release a User Survey on Twitter
+  
+  2.)  Content Marketing through Twitter
+  
+  3.)  Prema to review backlog
 
 Member Topics
 --------------------
-Kristen brought up the idea of explore incorporating pip dependency resolver
-  a.)In its January release (21.0), pip will use the new dependency resolver by
-  default. The documentation gives a good overview of the new changes and
-  guidance on how to respond to the new ResolutionImpossible error message.
-  b.)Kristen recommended replacing the iris dataset with other datasets in ours documentation.
-  c.)Changes to sklearn.utils for Sklearn Private/Public addressed in API PR#1138('https://github.com/DistrictDataLabs/yellowbrick/pull/1138')
-  d.)We decided to pass on participating in Google Summer of Code (GSOC)
-  e.)There was discussion of adding new board members such as Michael Garod, Molly and Matt Harrison.
-  f.)Semester focus on *Marketing & Outstanding Issues & PyDistrict*
-    1.)Try to get users to tell us how they’re using YB such as COVID research and viz
-    2.)User Survey
-  g.)Board unanimously support to add new members.  Adam and Prema to reach out to Molly, Matt and Michael to ask them to join the board.
+
+- Kristen suggested exploring incorporating pip dependency resolver:In its January release (21.0), pip will use the new dependency resolver by default. The   
+  documentation gives a good overview of the new changes and guidance on how to respond to the new ResolutionImpossible error message.
+- Kristen recommended replacing the iris dataset with other datasets in ours documentation.
+- Changes to sklearn.utils for Sklearn Private/Public addressed in API [PR 1138] (https://github.com/DistrictDataLabs/yellowbrick/pull/1138)
+- We decided to pass on participating in Google Summer of Code (GSOC)
+- There was discussion of adding new board members such as Michael Garod, Molly and Matt Harrison.
+- Semester focus on *Marketing & Outstanding Issues & PyDistrict*
+- Try to get users to tell us how they’re using YB such as COVID research and viz
+- User Survey
+- Board unanimously support to add new members.  Adam and Prema to reach out to Molly, Matt and Michael to ask them to join the board.
