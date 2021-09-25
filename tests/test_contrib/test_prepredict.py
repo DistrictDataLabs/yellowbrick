@@ -121,7 +121,7 @@ class TestPrePrePredictEstimator(VisualTestCase):
         viz.score(None, y.test)
         viz.finalize()
 
-        self.assert_images_similar(viz)
+        self.assert_images_similar(viz, windows_tol=24)
 
     def test_prepredict_regressor(self):
         """
