@@ -228,7 +228,7 @@ class TestFeatureImportancesVisualizer(VisualTestCase):
         """
         Test stack plot with multidimensional coefficients
         """
-        X, y = load_iris(True)
+        X, y = load_iris(return_X_y=True)
 
         viz = FeatureImportances(
             LogisticRegression(solver="liblinear", random_state=222), stack=True
@@ -455,7 +455,7 @@ class TestFeatureImportancesVisualizer(VisualTestCase):
         Test stack plot with only the three most important features by sum of
         each feature's importance across all classes
         """
-        X, y = load_iris(True)
+        X, y = load_iris(return_X_y=True)
 
         viz = FeatureImportances(
             LogisticRegression(solver="liblinear", random_state=222),
@@ -473,7 +473,7 @@ class TestFeatureImportancesVisualizer(VisualTestCase):
         Test stack plot with only the three least important features by sum of
         each feature's importance across all classes
         """
-        X, y = load_iris(True)
+        X, y = load_iris(return_X_y=True)
 
         viz = FeatureImportances(
             LogisticRegression(solver="liblinear", random_state=222),
@@ -490,7 +490,7 @@ class TestFeatureImportancesVisualizer(VisualTestCase):
         """
         Test plot with only top three important features by absolute value
         """
-        X, y = load_iris(True)
+        X, y = load_iris(return_X_y=True)
 
         viz = FeatureImportances(
             GradientBoostingClassifier(random_state=42), topn=3
@@ -505,7 +505,7 @@ class TestFeatureImportancesVisualizer(VisualTestCase):
         """
         Test plot with only the three least important features by absolute value
         """
-        X, y = load_iris(True)
+        X, y = load_iris(return_X_y=True)
 
         viz = FeatureImportances(
             GradientBoostingClassifier(random_state=42), topn=-3

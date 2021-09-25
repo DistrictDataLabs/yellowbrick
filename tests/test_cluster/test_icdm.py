@@ -285,15 +285,12 @@ class TestInterclusterDistance(VisualTestCase):
         """
         No error is raised when matplotlib version is incorrect and legend=False
         """
-        with pytst.raises(ImportError):
+        with pytest.raises(ImportError):
             from mpl_toolkits.axes_grid1 import inset_locator
 
             assert not inset_locator
 
-        try:
-            InterclusterDistance(KMeans(), legend=False)
-        except YellowbrickValueError as e:
-            self.fail(e)
+        InterclusterDistance(KMeans(), legend=False)
 
     @pytest.mark.xfail(
         reason="""third test fails with AssertionError: Expected fit

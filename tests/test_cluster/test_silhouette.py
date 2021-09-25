@@ -53,17 +53,14 @@ class TestSilhouetteVisualizer(VisualTestCase):
             n_samples=1000, n_features=12, centers=8, shuffle=False, random_state=0
         )
 
-        try:
-            fig = plt.figure()
-            ax = fig.add_subplot()
+        fig = plt.figure()
+        ax = fig.add_subplot()
 
-            visualizer = SilhouetteVisualizer(KMeans(random_state=0), ax=ax)
-            visualizer.fit(X)
-            visualizer.finalize()
+        visualizer = SilhouetteVisualizer(KMeans(random_state=0), ax=ax)
+        visualizer.fit(X)
+        visualizer.finalize()
 
-            self.assert_images_similar(visualizer, remove_legend=True)
-        except Exception as e:
-            self.fail("error during silhouette: {}".format(e))
+        self.assert_images_similar(visualizer, remove_legend=True)
 
     @pytest.mark.xfail(sys.platform == "win32", reason="images not close on windows")
     def test_integrated_mini_batch_kmeans_silhouette(self):
@@ -77,17 +74,15 @@ class TestSilhouetteVisualizer(VisualTestCase):
             n_samples=1000, n_features=12, centers=8, shuffle=False, random_state=0
         )
 
-        try:
-            fig = plt.figure()
-            ax = fig.add_subplot()
+        fig = plt.figure()
+        ax = fig.add_subplot()
 
-            visualizer = SilhouetteVisualizer(MiniBatchKMeans(random_state=0), ax=ax)
-            visualizer.fit(X)
-            visualizer.finalize()
+        visualizer = SilhouetteVisualizer(MiniBatchKMeans(random_state=0), ax=ax)
+        visualizer.fit(X)
+        visualizer.finalize()
 
-            self.assert_images_similar(visualizer, remove_legend=True)
-        except Exception as e:
-            self.fail("error during silhouette: {}".format(e))
+        self.assert_images_similar(visualizer, remove_legend=True)
+
 
     @pytest.mark.skip(reason="no negative silhouette example available yet")
     def test_negative_silhouette_score(self):
@@ -106,19 +101,16 @@ class TestSilhouetteVisualizer(VisualTestCase):
             n_samples=1000, n_features=12, centers=8, shuffle=False, random_state=0
         )
 
-        try:
-            fig = plt.figure()
-            ax = fig.add_subplot()
+        fig = plt.figure()
+        ax = fig.add_subplot()
 
-            visualizer = SilhouetteVisualizer(
-                MiniBatchKMeans(random_state=0), ax=ax, colormap="gnuplot"
-            )
-            visualizer.fit(X)
-            visualizer.finalize()
+        visualizer = SilhouetteVisualizer(
+            MiniBatchKMeans(random_state=0), ax=ax, colormap="gnuplot"
+        )
+        visualizer.fit(X)
+        visualizer.finalize()
 
-            self.assert_images_similar(visualizer, remove_legend=True)
-        except Exception as e:
-            self.fail("error during silhouette: {}".format(e))
+        self.assert_images_similar(visualizer, remove_legend=True)
 
     @pytest.mark.xfail(sys.platform == "win32", reason="images not close on windows")
     def test_colors_silhouette(self):
@@ -131,21 +123,18 @@ class TestSilhouetteVisualizer(VisualTestCase):
             n_samples=1000, n_features=12, centers=8, shuffle=False, random_state=0
         )
 
-        try:
-            fig = plt.figure()
-            ax = fig.add_subplot()
+        fig = plt.figure()
+        ax = fig.add_subplot()
 
-            visualizer = SilhouetteVisualizer(
-                MiniBatchKMeans(random_state=0),
-                ax=ax,
-                colors=["red", "green", "blue", "indigo", "cyan", "lavender"],
-            )
-            visualizer.fit(X)
-            visualizer.finalize()
+        visualizer = SilhouetteVisualizer(
+            MiniBatchKMeans(random_state=0),
+            ax=ax,
+            colors=["red", "green", "blue", "indigo", "cyan", "lavender"],
+        )
+        visualizer.fit(X)
+        visualizer.finalize()
 
-            self.assert_images_similar(visualizer, remove_legend=True)
-        except Exception as e:
-            self.fail("error during silhouette: {}".format(e))
+        self.assert_images_similar(visualizer, remove_legend=True)
 
     def test_colormap_as_colors_silhouette(self):
         """
@@ -157,22 +146,19 @@ class TestSilhouetteVisualizer(VisualTestCase):
             n_samples=1000, n_features=12, centers=8, shuffle=False, random_state=0
         )
 
-        try:
-            fig = plt.figure()
-            ax = fig.add_subplot()
+        fig = plt.figure()
+        ax = fig.add_subplot()
 
-            visualizer = SilhouetteVisualizer(
-                MiniBatchKMeans(random_state=0), ax=ax, colors="cool"
-            )
-            visualizer.fit(X)
-            visualizer.finalize()
+        visualizer = SilhouetteVisualizer(
+            MiniBatchKMeans(random_state=0), ax=ax, colors="cool"
+        )
+        visualizer.fit(X)
+        visualizer.finalize()
 
-            tol = (
-                3.2 if sys.platform == "win32" else 0.01
-            )  # Fails on AppVeyor with RMS 3.143
-            self.assert_images_similar(visualizer, remove_legend=True, tol=tol)
-        except Exception as e:
-            self.fail("error during silhouette: {}".format(e))
+        tol = (
+            3.2 if sys.platform == "win32" else 0.01
+        )  # Fails on AppVeyor with RMS 3.143
+        self.assert_images_similar(visualizer, remove_legend=True, tol=tol)
 
     def test_quick_method(self):
         """

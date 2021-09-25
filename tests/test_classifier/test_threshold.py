@@ -71,7 +71,7 @@ class TestDiscriminationThreshold(VisualTestCase):
 
         _, ax = plt.subplots()
 
-        model = BernoulliNB(3)
+        model = BernoulliNB()
         visualizer = DiscriminationThreshold(model, ax=ax, random_state=23)
 
         visualizer.fit(X, y)
@@ -161,7 +161,7 @@ class TestDiscriminationThreshold(VisualTestCase):
 
         _, ax = plt.subplots()
 
-        discrimination_threshold(BernoulliNB(3), X, y, ax=ax, random_state=5, show=False)
+        discrimination_threshold(BernoulliNB(), X, y, ax=ax, random_state=5, show=False)
         self.assert_images_similar(ax=ax, tol=10)
 
     @patch.object(DiscriminationThreshold, "draw", autospec=True)
@@ -232,7 +232,7 @@ class TestDiscriminationThreshold(VisualTestCase):
         """
         Test initialization default parameters
         """
-        model = BernoulliNB(3)
+        model = BernoulliNB()
         viz = DiscriminationThreshold(model)
         assert viz.estimator is model
         assert viz.color is None
