@@ -17,8 +17,8 @@ Test the prepredict estimator.
 import pytest
 
 from io import BytesIO
-from tests.base import VisualTestCase
 from tests.fixtures import Dataset, Split
+from tests.base import IS_WINDOWS_OR_CONDA, VisualTestCase
 
 from sklearn.naive_bayes import GaussianNB
 from sklearn.cluster import MiniBatchKMeans
@@ -101,6 +101,10 @@ class TestPrePrePredictEstimator(VisualTestCase):
     Pre-predict contrib tests.
     """
 
+    @pytest.mark.xfail(
+        IS_WINDOWS_OR_CONDA,
+        reason="image comparison failure on Conda 3.8 and 3.9 with RMS 19.307",
+    )
     def test_prepredict_classifier(self):
         """
         Test the prepredict estimator with classification report
@@ -121,7 +125,7 @@ class TestPrePrePredictEstimator(VisualTestCase):
         viz.score(None, y.test)
         viz.finalize()
 
-        self.assert_images_similar(viz, windows_tol=24)
+        self.assert_images_similar(viz)
 
     def test_prepredict_regressor(self):
         """
