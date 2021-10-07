@@ -139,11 +139,13 @@ Visual tests are notoriously difficult to create --- how do you test a visualiza
             try:
                 visualizer = MyVisualizer()
                 assert visualizer.fit(X, y) is visualizer, "fit should return self"
-                visualizer.show()
+                visualizer.finalize()
             except Exception as e:
                 pytest.fail("my visualizer didn't work: {}".format(e))
 
 This simple test case is an excellent start to a larger test package and we recommend starting with this test as you develop your visualizer. Once you've completed the development and prototyping you can start to include :ref:`test fixtures <fixtures>` and test various normal use cases and edge cases with unit tests, then build :ref:`image similarity tests <assert_images_similar>` to more thoroughly define the integration tests.
+
+.. note:: In tests you should not call ``visualizer.show()`` because this will call ``plt.show()`` and trigger a matplotlib warning that the visualization cannot be displayed using the test backend ``Agg``. Calling ``visualizer.finalize()`` instead should produce the full image and make the tests faster and more readable.
 
 
 Running the Test Suite
@@ -157,9 +159,15 @@ The required dependencies for the test suite include testing utilities and libra
 
 Tests can be run as follows from the project root::
 
-    $ make test
+    $ pytest
 
-The Makefile uses the pytest runner and testing suite as well as the coverage library.
+The ``pytest`` function is configured via ``setup.cfg`` with the correct arguments and runner, and therefore must be run from the project root. You can also use ``make test`` but this simply runs the ``pytest`` command.
+
+The tests do take a while to run, so during normal development it is recommended that you only run the tests for the test file you're writing::
+
+    $ pytest tests/test_package/test_module.py
+
+This will greatly simplify development and allow you to focus on the changes that you're making!
 
 .. _assert_images_similar:
 
@@ -181,7 +189,7 @@ For example, create your test function located in ``tests/test_regressor/test_my
         def test_my_visualizer_output(self):
             visualizer = MyVisualizer()
             visualizer.fit(X)
-            visualizer.show()
+            visualizer.finalize()
             self.assert_images_similar(visualizer)
 
 The first time this test is run, there will be no baseline image to compare against, so the test will fail. Copy the output images (in this case ``tests/actual_images/test_regressor/test_myvisualizer/test_my_visualizer_output.png``) to the correct subdirectory of baseline_images tree in the source directory (in this case ``tests/baseline_images/test_regressor/test_myvisualizer/test_my_visualizer_output.png``). Put this new file under source code revision control (with git add). When rerunning the tests, they should now pass.
@@ -195,6 +203,20 @@ This will move all related test images from ``actual_images`` to ``baseline_imag
     $ python -m tests.images -C tests/test_regressor/test_myvisualizer.py
 
 This is useful particularly if you're stuck trying to get an image comparison to work. For more information on the images helper script, use ``python -m tests.images --help``.
+
+Finally, to reiterate a note from above; make sure that you do not call your visualizer's ``show()`` method, instead using ``finalize()`` directly. If you call ``show()``, it will in turn call ``plt.show()`` which will issue a warning due to the fact that the tests use the ``Agg`` backend. When testing quick methods you should pass the ``show=False`` argument to the quick method as follows:
+
+.. code:: python
+
+    from tests.base import VisualTestCase
+
+    class MyVisualizerTests(VisualTestCase):
+
+        def test_my_visualizer_quickmethod(self):
+            visualizer = my_visualizer_quickmethod(X, show=False)
+            self.assert_images_similar(visualizer)
+
+Generally speaking, testing quick methods is identical to testing Visualizers except for the method of interaction because the quick method will return the visualizer or the axes object.
 
 .. _fixtures:
 

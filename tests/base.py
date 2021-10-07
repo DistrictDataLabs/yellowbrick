@@ -164,10 +164,13 @@ class ImageComparison(object):
 
     visualizer : Yellowbrick Visualizer instance, optional
         An instantiated Yellowbrick visualizer that wraps a matplotlib Axes
-        and has been drawn on via the Yellowbrick API.
+        and has been drawn on via the Yellowbrick API. If a visualizer is specified,
+        generally speaking it should have a call to ``finalize()`` performed, but not a
+        call to ``show()``.
 
     ax : matplotlib Axes, optional
-        A direct reference to a matplotlib Axes that has been drawn on.
+        A direct reference to a matplotlib Axes that has been drawn on. If using the
+        Axes object, you should not call ``plt.show()``.
 
     tol : float, default: 0.01
         The tolerance as a color value difference, where 255 is the maximal

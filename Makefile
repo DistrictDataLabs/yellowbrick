@@ -26,7 +26,7 @@ clean:
 
 # Targets for testing
 test:
-	python setup.py test
+	pytest
 
 # Publish to gh-pages
 publish:
@@ -48,3 +48,4 @@ install:
 deploy:
 	python setup.py register
 	twine upload dist/*
+

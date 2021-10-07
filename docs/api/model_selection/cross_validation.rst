@@ -41,7 +41,7 @@ In the following example, we show how to visualize cross-validated scores for a 
     X, y = load_occupancy()
 
     # Create a cross-validation strategy
-    cv = StratifiedKFold(n_splits=12, random_state=42)
+    cv = StratifiedKFold(n_splits=12, shuffle=True, random_state=42)
 
     # Instantiate the classification model and visualizer
     model = MultinomialNB()
@@ -72,7 +72,7 @@ In this next example we show how to visualize cross-validated scores for a regre
     X, y = load_energy()
 
     # Instantiate the regression model and visualizer
-    cv = KFold(n_splits=12, random_state=42)
+    cv = KFold(n_splits=12, shuffle=True, random_state=42)
 
     model = Ridge()
     visualizer = CVScores(model, cv=cv, scoring='r2')
@@ -102,7 +102,7 @@ Quick Method
     X, y = load_energy()
 
     # Instantiate the regression model and visualizer
-    cv = KFold(n_splits=12, random_state=42)
+    cv = KFold(n_splits=12, shuffle=True, random_state=42)
 
     model = Ridge()
     visualizer = cv_scores(model, X, y, cv=cv, scoring='r2')

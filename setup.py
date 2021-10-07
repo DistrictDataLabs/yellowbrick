@@ -64,6 +64,7 @@ CLASSIFIERS  = (
     "Programming Language :: Python :: 3.6",
     "Programming Language :: Python :: 3.7",
     "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
     "Topic :: Software Development",
     "Topic :: Software Development :: Libraries :: Python Modules",
     "Topic :: Scientific/Engineering :: Visualization",
@@ -163,9 +164,7 @@ config = {
     "zip_safe": False,
     "entry_points": {"console_scripts": []},
     "install_requires": list(get_requires()),
-    "python_requires": ">=3.4, <4",
-    "setup_requires": ["pytest-runner"],
-    "tests_require": ["pytest"],
+    "python_requires": ">=3.4, <4"
 }
 
 
