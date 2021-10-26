@@ -105,10 +105,10 @@ class DiscriminationThreshold(ModelVisualizer):
     fbeta : float, 1.0 by default
         The strength of recall versus precision in the F-score.
 
-    argmax : str, default: 'fscore'
+    argmax : str or None, default: 'fscore'
         Annotate the threshold maximized by the supplied metric (see exclude
-        for the possible metrics to use). If None, will not annotate the
-        graph.
+        for the possible metrics to use). If None or passed to exclude,
+        will not annotate the graph.
 
     exclude : str or list, optional
         Specify metrics to omit from the graph, can include:
@@ -118,7 +118,7 @@ class DiscriminationThreshold(ModelVisualizer):
         - ``"queue_rate"``
         - ``"fscore"``
 
-        All metrics not excluded will be displayed in the graph, nor will they
+        Excluded metrics will not be displayed in the graph, nor will they
         be available in ``thresholds_``; however, they will be computed on fit.
 
     quantiles : sequence, default: np.array([0.1, 0.5, 0.9])
@@ -209,6 +209,7 @@ class DiscriminationThreshold(ModelVisualizer):
         self._check_quantiles(quantiles)
         self._check_cv(cv)
         self._check_exclude(exclude)
+        self._check_argmax(argmax, exclude)
 
         # Initialize the ModelVisualizer
         super(DiscriminationThreshold, self).__init__(
@@ -378,6 +379,9 @@ class DiscriminationThreshold(ModelVisualizer):
         # Set the colors from the supplied values or reasonable defaults
         color_values = resolve_colors(n_colors=4, colors=self.color)
 
+        # Get the metric used to annotate the graph with its maximizing value
+        argmax = self._check_argmax(self.argmax, self.exclude)
+
         for idx, metric in enumerate(METRICS):
             # Skip any excluded labels
             if metric not in self.cv_scores_:
@@ -409,7 +413,7 @@ class DiscriminationThreshold(ModelVisualizer):
             )
 
             # Annotate the graph with the maximizing value
-            if self.argmax.lower() == metric:
+            if argmax and argmax == metric:
                 argmax = self.cv_scores_[metric].argmax()
                 threshold = self.thresholds_[argmax]
                 self.ax.axvline(
@@ -494,6 +498,26 @@ class DiscriminationThreshold(ModelVisualizer):
 
         return exclude
 
+    def _check_argmax(self, val, exclude=None):
+        """
+        Validate the argmax metric. Returns the metric used to annotate the graph.
+        """
+        if val is None:
+            return None
+
+        argmax = val.lower()
+
+        if argmax not in METRICS:
+            raise YellowbrickValueError(
+                "'{}' is not a valid metric to use".format(repr(val))
+            )
+
+        exclude = self._check_exclude(exclude)
+        if argmax in exclude:
+            argmax = None
+
+        return argmax
+
 
 ##########################################################################
 # Quick Methods
@@ -565,10 +589,10 @@ def discrimination_threshold(
     fbeta : float, 1.0 by default
         The strength of recall versus precision in the F-score.
 
-    argmax : str, default: 'fscore'
+    argmax : str or None, default: 'fscore'
         Annotate the threshold maximized by the supplied metric (see exclude
-        for the possible metrics to use). If None, will not annotate the
-        graph.
+        for the possible metrics to use). If None or passed to exclude,
+        will not annotate the graph.
 
     exclude : str or list, optional
         Specify metrics to omit from the graph, can include:
@@ -578,7 +602,7 @@ def discrimination_threshold(
         - ``"queue_rate"``
         - ``"fscore"``
 
-        All metrics not excluded will be displayed in the graph, nor will they
+        Excluded metrics will not be displayed in the graph, nor will they
         be available in ``thresholds_``; however, they will be computed on fit.
 
     quantiles : sequence, default: np.array([0.1, 0.5, 0.9])
