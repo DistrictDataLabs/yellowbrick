@@ -147,9 +147,37 @@ class DroppingCurve(ModelVisualizer):
     def __init__(
         self,
         estimator,
+        feature_sizes=DEFAULT_FEATURE_SIZES,
+        groups=None,
         ax=None,
+        logx=False,
+        cv=None,
+        scoring=None,
+        n_jobs=1,
+        pre_dispatch='all',
+        random_state=None,
         **kwargs
     ):
 
         # Initialize the model visualizer
         super(DroppingCurve, self).__init__(estimator, ax=ax, **kwargs)
+
+        # Validate the feature sizes
+        feature_sizes = np.asarray(feature_sizes)
+        if feature_sizes.ndim != 1:
+            raise YellowbrickValueError(
+                "must specify 1-D array of feature sizes, '{}' is not valid".format(
+                    repr(feature_sizes)
+                )
+            )
+
+        # Set the metric parameters to be used later
+        self.feature_sizes = feature_sizes
+        self.groups = groups
+        self.logx = self.logx
+        self.cv = cv
+        self.scoring = scoring
+        self.n_jobs = n_jobs
+        self.pre_dispatch = pre_dispatch
+        self.rng = np.random.default_rng(random_state)
+
