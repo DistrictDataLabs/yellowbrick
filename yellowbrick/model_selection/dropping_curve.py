@@ -121,14 +121,14 @@ class DroppingCurve(ModelVisualizer):
     train_scores_std_ : array, shape (n_ticks,)
         Standard deviation of training data scores for each training split
 
-    test_scores_ : array, shape (n_ticks, n_cv_folds)
-        Scores on test set.
+    valid_scores_ : array, shape (n_ticks, n_cv_folds)
+        Scores on validation set.
 
-    test_scores_mean_ : array, shape (n_ticks,)
-        Mean test data scores for each test split
+    valid_scores_mean_ : array, shape (n_ticks,)
+        Mean scores for each validation split
 
-    test_scores_std_ : array, shape (n_ticks,)
-        Standard deviation of test data scores for each test split
+    valid_scores_std_ : array, shape (n_ticks,)
+        Standard deviation of  scores for each validation split
 
     Examples
     --------
