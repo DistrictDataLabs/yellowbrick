@@ -181,3 +181,35 @@ class DroppingCurve(ModelVisualizer):
         self.pre_dispatch = pre_dispatch
         self.rng = np.random.default_rng(random_state)
 
+    def fit(self, X, y=None):
+        """
+        Fits the feature dropping curve with the wrapped model to the specified data.
+        Draws training and cross-validation score curves and saves the scores to the
+        estimator.
+
+        Parameters
+        ----------
+        X : array-like, shape (n_samples, n_features)
+            Input vector, where n_samples is the number of samples and
+            n_features is the number of features.
+
+        y : array-like, shape (n_samples) or (n_samples, n_features), optional
+            Target relative to X for classification or regression;
+            None for unsupervised learning.
+        """
+
+        # TODO: compute the validation curve and store scores
+        # curve = sk_learning_curve(self.estimator, X, y, **sklc_kwargs)
+        self.train_scores_, self.valid_scores_ = curve
+
+        # compute the mean and standard deviation of the training data
+        self.train_scores_mean_ = np.mean(self.train_scores_, axis=1)
+        self.train_scores_std_ = np.std(self.train_scores_, axis=1)
+
+        # compute the mean and standard deviation of the validation data
+        self.valid_scores_mean_ = np.mean(self.valid_scores_, axis=1)
+        self.valid_scores_std_ = np.std(self.valid_scores_, axis=1)
+
+        # draw the curves on the current axes
+        self.draw()
+        return self
