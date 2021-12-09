@@ -243,3 +243,16 @@ class DroppingCurve(ModelVisualizer):
 
         return self.ax
 
+    def finalize(self, **kwargs):
+        """
+        Add the title, legend, and other visual final touches to the plot.
+        """
+        # Set the title of the figure
+        self.set_title("Random-feature dropping curve for {}".format(self.name))
+
+        # Add the legend
+        self.ax.legend(frameon=True, loc="best")
+
+        # Set the axis labels
+        self.ax.set_xlabel("number of features")
+        self.ax.set_ylabel("score")
