@@ -20,6 +20,8 @@ from yellowbrick.style import resolve_colors
 from yellowbrick.exceptions import YellowbrickValueError
 
 from sklearn.model_selection import validation_curve as sk_validation_curve
+from sklearn.pipeline import Pipeline
+from sklearn.feature_selection import SelectKBest
 
 
 # Default ticks for the model selection curve, relative number of features
@@ -197,10 +199,23 @@ class DroppingCurve(ModelVisualizer):
             Target relative to X for classification or regression;
             None for unsupervised learning.
         """
-
-        # TODO: compute the validation curve and store scores
-        # curve = sk_learning_curve(self.estimator, X, y, **sklc_kwargs)
-        self.train_scores_, self.valid_scores_ = curve
+        # The easiest way to prepend a random-dropout layer is to use
+        # SelectKBest with a random scoring function.
+        feature_dropping_pipeline = Pipeline(
+            steps=[
+                # Randomly score to randomly select features
+                ("select_k", SelectKBest(score_func=self.random_score_)),
+                ("estimator", self.estimator),
+            ]
+        )
+        curve = sk_validation_curve(
+            feature_dropping_pipeline,
+            X,
+            y,
+            param_name="select_k__k",
+            **sklc_kwargs
+        )
+        self.feature_sizes_, self.train_scores_, self.valid_scores_ = curve
 
         # compute the mean and standard deviation of the training data
         self.train_scores_mean_ = np.mean(self.train_scores_, axis=1)
@@ -256,6 +271,21 @@ class DroppingCurve(ModelVisualizer):
         # Set the axis labels
         self.ax.set_xlabel("number of features")
         self.ax.set_ylabel("score")
+
+    def random_score_(self, X, y=None):
+        """
+        Using the class random generator, returns a random 1-D array of scores for
+        each input feature.
+
+        Parameters
+        ----------
+        X : array-like, shape (n_samples, n_features)
+            Input vector, where n_samples is the number of samples and
+            n_features is the number of features.
+
+        y : unused
+        """
+        return self.rng.standard_normal(size=X.shape[-1])
 
 
 ##########################################################################
