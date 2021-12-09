@@ -213,3 +213,33 @@ class DroppingCurve(ModelVisualizer):
         # draw the curves on the current axes
         self.draw()
         return self
+
+    def draw(self, **kwargs):
+        """
+        Renders the training and validation learning curves.
+        """
+        # Specify the curves to draw and their labels
+        labels = ("Training Score", "Cross Validation Score")
+        curves = (
+            (self.train_scores_mean_, self.train_scores_std_),
+            (self.valid_scores_mean_, self.valid_scores_std_),
+        )
+
+        # Get the colors for the train and test curves
+        colors = resolve_colors(n_colors=2)
+
+        # Plot the fill betweens first so they are behind the curves.
+        for idx, (mean, std) in enumerate(curves):
+            # Plot one standard deviation above and below the mean
+            self.ax.fill_between(
+                self.feature_sizes_, mean - std, mean + std, alpha=0.25, color=colors[idx]
+            )
+
+        # Plot the mean curves so they are in front of the variance fill
+        for idx, (mean, _) in enumerate(curves):
+            self.ax.plot(
+                self.feature_sizes_, mean, "o-", color=colors[idx], label=labels[idx]
+            )
+
+        return self.ax
+
