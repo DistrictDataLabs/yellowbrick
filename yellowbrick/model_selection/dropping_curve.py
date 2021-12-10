@@ -20,7 +20,7 @@ from yellowbrick.style import resolve_colors
 from yellowbrick.exceptions import YellowbrickValueError
 
 from sklearn.model_selection import validation_curve as sk_validation_curve
-from sklearn.pipeline import Pipeline
+from sklearn.pipeline import make_pipeline
 from sklearn.feature_selection import SelectKBest
 
 
@@ -199,23 +199,42 @@ class DroppingCurve(ModelVisualizer):
             Target relative to X for classification or regression;
             None for unsupervised learning.
         """
+        # Get feature_sizes in whole numbers
+        n_features = X.shape[-1]
+        if np.issubdtype(self.feature_sizes.dtype, np.integer):
+            assert (self.feature_sizes >= 0).all(), 'Expected feature sizes in [0, n_features]'
+            assert (self.feature_sizes <= n_features).all(), 'Expected feature sizes in [0, n_features]'
+            self.feature_sizes_ = self.feature_sizes
+        else:
+            assert (self.feature_sizes >= 0.0).all(), 'Expected feature ratio in [0, 1]'
+            assert (self.feature_sizes <= 1.0).all(), 'Expected feature ratio in [0, 1]'
+            self.feature_sizes_ = np.ceil(n_features * self.feature_sizes).astype(int)
+
         # The easiest way to prepend a random-dropout layer is to use
         # SelectKBest with a random scoring function.
-        feature_dropping_pipeline = Pipeline(
-            steps=[
-                # Randomly score to randomly select features
-                ("select_k", SelectKBest(score_func=self.random_score_)),
-                ("estimator", self.estimator),
-            ]
+        feature_dropping_pipeline = make_pipeline(
+            SelectKBest(score_func=self.random_score_), self.estimator,
         )
-        curve = sk_validation_curve(
+
+        # arguments to pass to sk_validation_curve
+        skvc_kwargs = {
+            key: self.get_params()[key]
+            for key in (
+                "groups",
+                "cv",
+                "scoring",
+                "n_jobs",
+                "pre_dispatch",
+            )
+        }
+        self.train_scores_, self.valid_scores_ = sk_validation_curve(
             feature_dropping_pipeline,
             X,
             y,
-            param_name="select_k__k",
-            **sklc_kwargs
+            param_name="selectkbest__k",
+            param_range=self.feature_sizes_,
+            **skvc_kwargs
         )
-        self.feature_sizes_, self.train_scores_, self.valid_scores_ = curve
 
         # compute the mean and standard deviation of the training data
         self.train_scores_mean_ = np.mean(self.train_scores_, axis=1)
