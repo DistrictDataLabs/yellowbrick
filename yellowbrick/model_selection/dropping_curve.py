@@ -43,7 +43,6 @@ class DroppingCurve(ModelVisualizer):
     the number of (randomly selected) features needed to achieve a score.
     The curve is often shaped like log(1+x). For example, see:
     https://www.frontiersin.org/articles/10.3389/fnsys.2014.00102/full
-
     Parameters
     ----------
     estimator : a scikit-learn estimator
@@ -176,11 +175,12 @@ class DroppingCurve(ModelVisualizer):
         # Set the metric parameters to be used later
         self.feature_sizes = feature_sizes
         self.groups = groups
-        self.logx = self.logx
+        self.logx = logx
         self.cv = cv
         self.scoring = scoring
         self.n_jobs = n_jobs
         self.pre_dispatch = pre_dispatch
+        self.random_state = random_state
         self.rng = np.random.default_rng(random_state)
 
     def fit(self, X, y=None):
@@ -274,6 +274,9 @@ class DroppingCurve(ModelVisualizer):
             self.ax.plot(
                 self.feature_sizes_, mean, "o-", color=colors[idx], label=labels[idx]
             )
+
+        if self.logx:
+            self.ax.set_xscale("log")
 
         return self.ax
 
