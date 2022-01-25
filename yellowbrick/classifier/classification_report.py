@@ -136,6 +136,7 @@ class ClassificationReport(ClassificationScoreVisualizer):
         is_fitted="auto",
         force_model=False,
         colorbar=True,
+        fontsize=None,
         **kwargs
     ):
         super(ClassificationReport, self).__init__(
@@ -154,6 +155,7 @@ class ClassificationReport(ClassificationScoreVisualizer):
         self.cmap.set_over(color=CMAP_OVERCOLOR)
         self.cmap.set_under(color=CMAP_UNDERCOLOR)
         self._displayed_scores = [key for key in SCORES_KEYS]
+        self.fontsize=fontsize
 
         if support not in {None, True, False, "percent", "count"}:
             raise YellowbrickValueError(
@@ -187,6 +189,13 @@ class ClassificationReport(ClassificationScoreVisualizer):
 
         y_pred = self.predict(X)
         scores = precision_recall_fscore_support(y, y_pred)
+
+        # Decode the target with the label encoder and get human readable labels
+        y = self._decode_labels(y)
+        y_pred = self._decode_labels(y_pred)
+        labels = self._labels()
+        if labels is None:
+            labels = self.classes_
 
         # Calculate the percentage for the support metric
         # and store the percent in place of raw support counts
@@ -227,6 +236,26 @@ class ClassificationReport(ClassificationScoreVisualizer):
         )
         self.ax.set_ylim(bottom=0, top=cr_display.shape[0])
         self.ax.set_xlim(left=0, right=cr_display.shape[1])
+
+        # Get the human readable labels
+        labels = self._labels()
+        if labels is None:
+            labels = self.classes_
+
+        # Fetch the grid labels from the classes in correct order; set ticks.
+        xticklabels = SCORES_KEYS
+        yticklabels = labels[::-1]
+        
+        yticks = np.arange(len(labels)) + 0.5
+        xticks = np.arange(len(SCORES_KEYS)) + 0.5
+
+        self.ax.set(yticks=yticks, xticks=xticks)
+
+        self.ax.set_xticklabels(
+            xticklabels, rotation=45, fontsize=self.fontsize
+            )
+        self.ax.set_yticklabels(yticklabels, fontsize=self.fontsize)
+
 
         # Set data labels in the grid, enumerating over class, metric pairs
         # NOTE: X and Y are one element longer than the classification report
