@@ -346,3 +346,25 @@ class TestDiscriminationThreshold(VisualTestCase):
 
         with pytest.raises(YellowbrickValueError, match="not a valid metric"):
             DiscriminationThreshold(NuSVC(), exclude=["queue_rate", "foo"])
+
+    def test_bad_argmax(self):
+        """
+        Assert an exception is raised on bad argmax param
+        """
+        with pytest.raises(YellowbrickValueError, match="not a valid metric"):
+            DiscriminationThreshold(NuSVC(), argmax="foo")
+
+    @pytest.mark.parametrize(
+        "viz_kwargs",
+        [
+            {"argmax": None},
+            {"exclude": "fscore"},
+            {"argmax": "queue_rate", "exclude": "queue_rate"},
+        ],
+    )
+    def test_none_argmax(self, viz_kwargs):
+        """
+        Assert argmax param works fine
+        """
+        viz = DiscriminationThreshold(NuSVC(), **viz_kwargs)
+        assert viz._check_argmax(viz.argmax, viz.exclude) is None

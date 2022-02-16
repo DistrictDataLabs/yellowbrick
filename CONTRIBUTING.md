@@ -114,7 +114,7 @@ The Yellowbrick repository is set up in a typical production/release/development
 You should work directly in your fork and create a pull request from your fork's develop branch into ours. We also recommend setting up an `upstream` remote so that you can easily pull the latest development changes from the main Yellowbrick repository (see [configuring a remote for a fork](https://help.github.com/articles/configuring-a-remote-for-a-fork/)). You can do that as follows:
 
 ```
-$ git remote add upstream https://github.com/DistrictDataLabs/yellowbrick.git`
+$ git remote add upstream https://github.com/DistrictDataLabs/yellowbrick.git
 $ git remote -v
 origin    https://github.com/YOUR_USERNAME/YOUR_FORK.git (fetch)
 origin    https://github.com/YOUR_USERNAME/YOUR_FORK.git (push)
