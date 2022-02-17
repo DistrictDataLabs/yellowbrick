@@ -81,7 +81,7 @@ class TestSilhouetteVisualizer(VisualTestCase):
         visualizer.fit(X)
         visualizer.finalize()
 
-        self.assert_images_similar(visualizer, remove_legend=True)
+        self.assert_images_similar(visualizer, tol=0.25, remove_legend=True)
 
 
     @pytest.mark.skip(reason="no negative silhouette example available yet")
@@ -110,7 +110,7 @@ class TestSilhouetteVisualizer(VisualTestCase):
         visualizer.fit(X)
         visualizer.finalize()
 
-        self.assert_images_similar(visualizer, remove_legend=True)
+        self.assert_images_similar(visualizer, tol=0.25, remove_legend=True)
 
     @pytest.mark.xfail(sys.platform == "win32", reason="images not close on windows")
     def test_colors_silhouette(self):
@@ -134,7 +134,7 @@ class TestSilhouetteVisualizer(VisualTestCase):
         visualizer.fit(X)
         visualizer.finalize()
 
-        self.assert_images_similar(visualizer, remove_legend=True)
+        self.assert_images_similar(visualizer, tol=0.25, remove_legend=True)
 
     def test_colormap_as_colors_silhouette(self):
         """
@@ -156,7 +156,7 @@ class TestSilhouetteVisualizer(VisualTestCase):
         visualizer.finalize()
 
         tol = (
-            3.2 if sys.platform == "win32" else 0.01
+            3.2 if sys.platform == "win32" else 0.25
         )  # Fails on AppVeyor with RMS 3.143
         self.assert_images_similar(visualizer, remove_legend=True, tol=tol)
 
@@ -172,7 +172,7 @@ class TestSilhouetteVisualizer(VisualTestCase):
         oz = silhouette_visualizer(model, X, show=False)
         assert isinstance(oz, SilhouetteVisualizer)
 
-        self.assert_images_similar(oz)
+        self.assert_images_similar(oz, tol=0.25)
 
     @pytest.mark.xfail(
         reason="""third test fails with AssertionError: Expected fit

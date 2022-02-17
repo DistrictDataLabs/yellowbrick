@@ -187,7 +187,7 @@ class TestTSNE(VisualTestCase):
         tsne = TSNEVisualizer(random_state=87)
         tsne.fit(X, y)
 
-        self.assert_images_similar(tsne, tol=0.1)
+        self.assert_images_similar(tsne, tol=0.25)
 
     def test_make_classification_tsne_class_labels(self):
         """
@@ -208,7 +208,7 @@ class TestTSNE(VisualTestCase):
         tsne = TSNEVisualizer(random_state=87, labels=["a", "b", "c"])
         tsne.fit(X, y)
 
-        self.assert_images_similar(tsne, tol=0.1)
+        self.assert_images_similar(tsne, tol=0.25)
 
     def test_tsne_mismtached_labels(self):
         """
@@ -252,7 +252,7 @@ class TestTSNE(VisualTestCase):
         tsne = TSNEVisualizer(random_state=64)
         tsne.fit(X)
 
-        self.assert_images_similar(tsne, tol=0.1)
+        self.assert_images_similar(tsne, tol=0.25)
 
     @pytest.mark.skipif(pandas is None, reason="test requires pandas")
     def test_visualizer_with_pandas(self):
@@ -274,7 +274,7 @@ class TestTSNE(VisualTestCase):
         tsne = TSNEVisualizer(random_state=64)
         tsne.fit(X, y)
 
-        self.assert_images_similar(tsne, tol=0.1)
+        self.assert_images_similar(tsne, tol=0.25)
 
     def test_alpha_param(self):
         """

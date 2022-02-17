@@ -253,7 +253,7 @@ class TestManifold(VisualTestCase):
         oz.finalize()
         assert not hasattr(oz, "classes_")
         assert hasattr(oz, "range_")
-        self.assert_images_similar(oz, tol=1.5)
+        self.assert_images_similar(oz, tol=3.0)
 
     def test_manifold_regression_3d(self):
         """
@@ -362,4 +362,4 @@ class TestManifold(VisualTestCase):
         assert isinstance(visualizer, Manifold)
 
         # ImageComparisonFailure: images not close (RMS 1.124) on Miniconda
-        self.assert_images_similar(visualizer, tol=1.5)
+        self.assert_images_similar(visualizer, tol=3.0)
