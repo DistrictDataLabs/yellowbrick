@@ -499,7 +499,7 @@ class TestFeatureImportancesVisualizer(VisualTestCase):
         viz.finalize()
 
         # Appveyor and Linux conda non-text-based differences
-        self.assert_images_similar(viz, tol=17.5)
+        self.assert_images_similar(viz, tol=20.5)
 
     def test_topn_negative(self):
         """
@@ -514,7 +514,7 @@ class TestFeatureImportancesVisualizer(VisualTestCase):
         viz.finalize()
 
         # Appveyor and Linux conda non-text-based differences
-        self.assert_images_similar(viz, tol=17.5)
+        self.assert_images_similar(viz, tol=20.5)
 
 
 ##########################################################################
