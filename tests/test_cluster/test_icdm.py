@@ -261,7 +261,7 @@ class TestInterclusterDistance(VisualTestCase):
         )
         assert isinstance(oz, InterclusterDistance)
 
-        self.assert_images_similar(oz, tol=10.0)
+        self.assert_images_similar(oz, tol=30.0)
 
     @pytest.mark.skipif(
         MPL_VERS_MAJ >= 2, reason="test requires mpl earlier than 2.0.2"
