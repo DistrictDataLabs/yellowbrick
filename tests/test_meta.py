@@ -117,7 +117,7 @@ class TestMetaImageComparison(VisualTestCase):
 
     def test_missing_baseline_image(self):
         """
-        Test that a missing basline image raises an exception
+        Test that a missing baseline image raises an exception
         """
         viz = RandomVisualizer(random_state=14).fit()
         viz.finalize()
