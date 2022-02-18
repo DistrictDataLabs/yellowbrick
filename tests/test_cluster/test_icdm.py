@@ -142,7 +142,7 @@ class TestInterclusterDistance(VisualTestCase):
 
         # Image similarity
         oz.finalize()
-        self.assert_images_similar(oz)
+        self.assert_images_similar(oz, tol=0.5)
 
     @pytest.mark.filterwarnings("ignore:the matrix subclass is not the recommended way")
     @pytest.mark.xfail(
