@@ -154,7 +154,7 @@ class TestMetaImageComparison(VisualTestCase):
         """
         # Baseline image random_state=224
         # NOTE: if regenerating baseline images, skip this one or change random state!
-        viz = RandomVisualizer(random_state=225).fit()
+        viz = RandomVisualizer(random_state=224).fit()
         viz.finalize()
 
         with pytest.raises(ImageComparisonFailure, match="images not close"):
