@@ -73,7 +73,7 @@ class RandomVisualizer(Visualizer):
             Center/blob each point belongs to (used for color)
         """
         return make_blobs(
-            self.n_samples, 2, self.n_blobs, random_state=self.random_state
+            n_samples=self.n_samples, n_features=2, centers=self.n_blobs, random_state=self.random_state
         )
 
     def fit(self, *args, **kwargs):

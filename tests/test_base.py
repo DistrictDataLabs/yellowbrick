@@ -318,7 +318,7 @@ class TestVisualizerGrid(VisualTestCase):
         # show is required here (do not replace with finalize)!
         assert grid.show() is not None
 
-        self.assert_images_similar(grid)
+        self.assert_images_similar(grid, tol=1.0)
 
     @pytest.mark.xfail(
         IS_WINDOWS_OR_CONDA,
@@ -340,7 +340,7 @@ class TestVisualizerGrid(VisualTestCase):
         # show is required here (do not replace with finalize)!
         assert grid.show() is not None
 
-        self.assert_images_similar(grid)
+        self.assert_images_similar(grid, tol=1.0)
 
     @pytest.mark.xfail(
         IS_WINDOWS_OR_CONDA,
@@ -362,7 +362,7 @@ class TestVisualizerGrid(VisualTestCase):
         # show is required here (do not replace with finalize)!
         assert grid.show() is not None
 
-        self.assert_images_similar(grid)
+        self.assert_images_similar(grid, tol=1.0)
 
     def test_cant_define_both_rows_cols(self):
         """
