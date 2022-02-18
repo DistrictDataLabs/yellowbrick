@@ -182,7 +182,22 @@ class PredictionError(RegressionScoreVisualizer):
         ax : matplotlib Axes
             The axis with the plotted figure
         """
-        label = "$R^2 = {:0.3f}$".format(self.score_)
+
+        # Some estimators particularly cross validation ones
+        # tend to provide choice to use different metrics for scoring,
+        # which we try to cater here
+        # If not available it falls back to the default score of R2.
+        try:
+            score_label = self.estimator.scoring
+            score_label = ' '.join(score_label.split('_')).capitalize()
+        except AttributeError:
+            score_label = "R2"
+
+        if score_label == "R2":
+            score_label = "$R^2$"
+
+        label = "{} $ = {:0.3f}$".format(score_label, self.score_)
+
         self.ax.scatter(
             y, y_pred, c=self.colors["point"], alpha=self.alpha, label=label
         )
