@@ -216,12 +216,13 @@ class PredictionError(RegressionScoreVisualizer):
                 label="best fit",
             )
 
-        # Set the axes limits based on the range of X and Y data
+        # Set the axes limits based on the overall max/min values of
+        # concatenated X and Y data
         # NOTE: shared_limits will be accounted for in finalize()
-        # TODO: do better than add one for really small residuals
-        self.ax.set_xlim(y.min() - 1, y.max() + 1)
-        self.ax.set_ylim(y_pred.min() - 1, y_pred.max() + 1)
-
+        if self.shared_limits is True:
+            self.ax.set_xlim(min(min(y), min(y_pred)), max(max(y), max(y_pred)))
+            self.ax.set_ylim(self.ax.get_xlim())
+            
         return self.ax
 
     def finalize(self, **kwargs):
