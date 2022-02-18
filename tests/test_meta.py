@@ -159,7 +159,7 @@ class TestMetaImageComparison(VisualTestCase):
 
         with pytest.raises(ImageComparisonFailure, match="images not close"):
             # If failing, perhaps baseline images were regenerated? See note above.
-            self.assert_images_similar(viz)
+            self.assert_images_similar(viz, tol=0.5)
 
         # Assert there is a diff
         assert_path_exists(
