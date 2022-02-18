@@ -270,7 +270,7 @@ class TestInterclusterDistance(VisualTestCase):
         """
         ValueError is raised when matplotlib version is incorrect and legend=True
         """
-        with pytst.raises(ImportError):
+        with pytest.raises(ImportError):
             from mpl_toolkits.axes_grid1 import inset_locator
 
             assert not inset_locator
