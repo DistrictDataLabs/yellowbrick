@@ -147,7 +147,7 @@ class TestPrePrePredictEstimator(VisualTestCase):
         viz.score(X.test, y.test)
         viz.finalize()
 
-        self.assert_images_similar(viz, tol=1.0)
+        self.assert_images_similar(viz, tol=2.0)
 
     def test_prepredict_clusterer(self):
         """
