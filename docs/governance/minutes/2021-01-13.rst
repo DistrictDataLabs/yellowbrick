@@ -33,32 +33,22 @@ A broad overview of the topics for discussion in the order they were presented:
 Fall 2021 Semester Retrospective
 --------------------------------
 
-- Rebecca gave a talk "Thrifty Machine Learning" and was highlighted by PyLadies Berlin (and they highlighted Yellowbrick!)
-on the 19th day of their 2020 [Advent Calendar Tweet Series](https://twitter.com/PyLadiesBer/status/1340321653839040513?s=20)
-
+- Rebecca gave a talk "Thrifty Machine Learning" and was highlighted by PyLadies Berlin (and they highlighted Yellowbrick!) on the 19th day of their 2020 [Advent Calendar Tweet Series](https://twitter.com/PyLadiesBer/status/1340321653839040513?s=20)
 - The entire team showed resiliency in the face of COVID-19 and being unable to meet in person by moving the project forward.
-
 - We closed 19 issues and had 13 open issues.  We had 3 open PRs.
-
-- Approved PRs (Contributors):
-    - Rebecca and Ben approved 3, Larry approved 1, Michael Garod and @arkvei approved 1 each.
-
+- Approved PRs (Contributors): Rebecca and Ben approved 3, Larry approved 1, Michael Garod and @arkvei approved 1 each.
 - Summary of Fall PR Topics- Complete changelog since v1.2 can be found [here:](https://github.com/DistrictDataLabs/yellowbrick/pull/1110)
 
 Main PR Topic Areas included: Yellowbrick1.2 release, Dependence Management issue [PR 1111](https://github.com/DistrictDataLabs/yellowbrick/pull/1111), update to Dispersion plot color and title, update to kneed algorithm, added FAQ on wrapper, third party estimator wrapper, adjustment to top_n param for feature importances.  We also addressed a public/private API bug in [PR 1124](https://github.com/DistrictDataLabs/yellowbrick/pull/1124)
 
 Board Shout-outs
 -------------------------
+
 - Ben for his constant contributions to the project
-
 - Rebecca for her rapid response to issues all Semester long.
-
 - Adam for meeting the 1000 mark for Social Media Followers (@scikit-yb)
-
 - Strong user interactions with the library: 2300 downloads per day and 60,000 per month!
-
 - Robust package evidenced by low number of issues being opened over the Semester.
-
 - Kristen, Larry, Edwin for "surviving the 2nd worst year"
 
 2021 Advisory Board
@@ -90,26 +80,18 @@ Since we have 9 advisors for this year, the dues totaled $30.17 per advisor alth
 Thank you to everyone for paying your dues on time!
 
 -  In our January meeting, it was noted that if someone had something they’d like to add to the budget, we could put it to a vote the next semester.
-
 -  We will likely have a little extra since a large portion of the stickers cost was intended for PyCon stickers.
-
 -  The Treasurer, Edwin, provided an update that we needed to approve the budget.
-
 -  The group discussed and decided removing stickers from the 2021 budget due to COVID-19 and the lack of in person events (previously cost $133.50 and paid for by Rebecca.  Thank you Rebecca!)
-
 -  The board decided to reallocate this sticker money towards buying small thank you gifts for developers who make significant contributions to Yellowbrick.
-
--  *Ben suggested that we add an additional item to the budget*Add cost for gifts to Reviews and Contributors* - such as coffee and a YB branded T-Shirt. This is to show the YB spirit of Gratitude.  A budget of $750.  We have two potential sponsors (detailed below)
+-  *Ben suggested that we add an additional item to the budget* Add cost for gifts to Reviews and Contributors* - such as coffee and a YB branded T-Shirt. This is to show the YB spirit of Gratitude.  A budget of $750.  We have two potential sponsors (detailed below)
 
 - Proposal 2 lines of budget: Board gifts 8 of us - Create budget $320 External Funding, External Gifts paid for partly by board dues/external funding:
 
- 1. We voted to split these 2 lines items into separate voted - Unanimously Support
-
- 2. Vote only external funding for Board gifts - Unanimously supported
-
- 3. Vote to remove Sticker budget and put back into budget for external gifts - Unanimously supported
-
- 4. Vote to remove Nathan from Board Roster
+  1. We voted to split these 2 lines items into separate voted - Unanimously Support
+  2. Vote only external funding for Board gifts - Unanimously supported
+  3. Vote to remove Sticker budget and put back into budget for external gifts - Unanimously supported
+  4. Vote to remove Nathan from Board Roster
 
 *2021 Annual Budget*
 -------------------------
@@ -149,17 +131,17 @@ Milestone planning:
 - We need to research PEP517 and how to implement “pip install -e .” See how python is now dealing with python packaging.
 
 Ideas for next Administrative Projects:
-  
+
   1.)  Release a User Survey on Twitter
-  
+
   2.)  Content Marketing through Twitter
-  
+
   3.)  Prema to review backlog
 
 Member Topics
 --------------------
 
-- Kristen suggested exploring incorporating pip dependency resolver:In its January release (21.0), pip will use the new dependency resolver by default. The   
+- Kristen suggested exploring incorporating pip dependency resolver:In its January release (21.0), pip will use the new dependency resolver by default. The
   documentation gives a good overview of the new changes and guidance on how to respond to the new ResolutionImpossible error message.
 - Kristen recommended replacing the iris dataset with other datasets in ours documentation.
 - Changes to sklearn.utils for Sklearn Private/Public addressed in API [PR 1138] (https://github.com/DistrictDataLabs/yellowbrick/pull/1138)
