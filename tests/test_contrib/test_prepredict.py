@@ -29,7 +29,10 @@ from sklearn.datasets import make_classification, make_regression, make_blobs
 from yellowbrick.contrib.prepredict import *
 from yellowbrick.regressor import PredictionError
 from yellowbrick.classifier import ClassificationReport
+import numpy as np
 
+# Set random state
+np.random.seed()
 
 ##########################################################################
 ## Fixtures
