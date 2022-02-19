@@ -239,11 +239,11 @@ class ClassificationReport(ClassificationScoreVisualizer):
             labels = self.classes_
 
         # Fetch the grid labels from the classes in correct order; set ticks.
-        xticklabels = SCORES_KEYS
+        xticklabels = self._displayed_scores
         yticklabels = labels[::-1]
         
         yticks = np.arange(len(labels)) + 0.5
-        xticks = np.arange(len(SCORES_KEYS)) + 0.5
+        xticks = np.arange(len(self._displayed_scores)) + 0.5
 
         self.ax.set(yticks=yticks, xticks=xticks)
 
