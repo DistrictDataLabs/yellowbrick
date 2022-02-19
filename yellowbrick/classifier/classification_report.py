@@ -94,6 +94,9 @@ class ClassificationReport(ClassificationScoreVisualizer):
     colorbar : bool, default: True
         Specify if the color bar should be present
 
+    fontsize : int or None, default: None
+        Specify the font size of the x and y labels
+
     kwargs : dict
         Keyword arguments passed to the visualizer base classes.
 
@@ -189,13 +192,6 @@ class ClassificationReport(ClassificationScoreVisualizer):
 
         y_pred = self.predict(X)
         scores = precision_recall_fscore_support(y, y_pred)
-
-        # Decode the target with the label encoder and get human readable labels
-        y = self._decode_labels(y)
-        y_pred = self._decode_labels(y_pred)
-        labels = self._labels()
-        if labels is None:
-            labels = self.classes_
 
         # Calculate the percentage for the support metric
         # and store the percent in place of raw support counts
@@ -338,6 +334,7 @@ def classification_report(
     force_model=False,
     show=True,
     colorbar=True,
+    fontsize=None,
     **kwargs
 ):
     """Classification Report
@@ -415,6 +412,9 @@ def classification_report(
     colorbar : bool, default: True
         Specify if the color bar should be present
 
+    fontsize : int or None, default: None
+        Specify the font size of the x and y labels
+
     kwargs : dict
         Keyword arguments passed to the visualizer base classes.
 
@@ -434,6 +434,7 @@ def classification_report(
         is_fitted=is_fitted,
         force_model=force_model,
         colorbar=colorbar,
+        fontsize=fontsize,
         **kwargs
     )
 
