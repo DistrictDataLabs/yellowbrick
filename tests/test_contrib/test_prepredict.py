@@ -139,7 +139,7 @@ class TestPrePrePredictEstimator(VisualTestCase):
         estimator = PrePredict(y_pred, REGRESSOR)
         assert estimator.fit(X.train, y.train) is estimator
         assert estimator.predict(X.train) is y_pred
-        assert estimator.score(X.test, y.test) == pytest.approx(0.9999983124154966, rel=1e-3)
+        assert estimator.score(X.test, y.test) == pytest.approx(0.9999983124154966, rel=1e-2)
 
         # Test that a visualizer works with the pre-predictions.
         viz = PredictionError(estimator)
