@@ -13,6 +13,7 @@ The following contrib packages are currently available:
    :maxdepth: 1
 
    wrapper
+   prepredict
    statsmodels
    boundaries
    scatter
