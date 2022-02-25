@@ -121,11 +121,13 @@ class PredictionError(RegressionScoreVisualizer):
         is_fitted="auto",
         **kwargs
     ):
-        # Whether or not to check if the model is already fitted
-        self.is_fitted = is_fitted
 
         # Initialize the visualizer
-        super(PredictionError, self).__init__(estimator, ax=ax, **kwargs)
+        super(PredictionError, self).__init__(
+            estimator,
+            is_fitted=is_fitted,
+            ax=ax,
+            **kwargs)
 
         # Visual arguments
         self.colors = {
