@@ -18,6 +18,7 @@ Ensure that the regressor residuals visualizations work.
 ## Imports
 ##########################################################################
 
+from random import random
 import sys
 import pytest
 import matplotlib as mpl
@@ -314,6 +315,16 @@ class TestResidualsPlot(VisualTestCase):
         assert "alpha" in scatter_kwargs
         assert scatter_kwargs["alpha"] == 0.75
 
+    def test_is_fitted_param(self):
+        """
+        Test that the user can supply an is_fitted param and it's state is maintained
+        """
+        # Instantiate a prediction error plot, provide custom is_fitted
+        visualizer = ResidualsPlot(Ridge(random_state=8893), is_fitted=False)
+
+        # Test param gets set correctly
+        assert visualizer.is_fitted == False
+    
     @pytest.mark.xfail(
         reason="""third test fails with AssertionError: Expected fit
         to be called once. Called 0 times."""

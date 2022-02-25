@@ -215,6 +215,18 @@ class TestPredictionError(VisualTestCase):
         assert "alpha" in scatter_kwargs
         assert scatter_kwargs["alpha"] == 0.7
 
+    def test_is_fitted_param(self):
+        """
+        Test that the user can supply an is_fitted param and it's state is maintained
+        """
+        # Instantiate a sklearn regressor
+        model = Lasso(random_state=23, alpha=10)
+        # Instantiate a prediction error plot, provide custom alpha
+        visualizer = PredictionError(model, bestfit=False, identity=False, is_fitted=False)
+
+        # Test param gets set correctly
+        assert visualizer.is_fitted == False
+    
     @pytest.mark.xfail(
         reason="""third test fails with AssertionError: Expected fit
         to be called once. Called 0 times."""
