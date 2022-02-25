@@ -18,7 +18,6 @@ Ensure that the regressor residuals visualizations work.
 ## Imports
 ##########################################################################
 
-from random import random
 import sys
 import pytest
 import matplotlib as mpl
