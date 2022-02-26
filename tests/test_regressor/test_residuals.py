@@ -173,10 +173,7 @@ class TestResidualsPlot(VisualTestCase):
 
             assert not make_axes_locatable
 
-        try:
-            ResidualsPlot(LinearRegression(), hist=False)
-        except YellowbrickValueError as e:
-            self.fail(e)
+        ResidualsPlot(LinearRegression(), hist=False)
 
     @pytest.mark.xfail(
         IS_WINDOWS_OR_CONDA,

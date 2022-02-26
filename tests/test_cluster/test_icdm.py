@@ -290,10 +290,9 @@ class TestInterclusterDistance(VisualTestCase):
 
             assert not inset_locator
 
-        try:
-            InterclusterDistance(KMeans(), legend=False)
-        except YellowbrickValueError as e:
-            self.fail(e)
+        
+        InterclusterDistance(KMeans(), legend=False)
+    
 
     @pytest.mark.xfail(
         reason="""third test fails with AssertionError: Expected fit
