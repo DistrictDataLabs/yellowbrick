@@ -43,6 +43,7 @@ class DroppingCurve(ModelVisualizer):
     the number of (randomly selected) features needed to achieve a score.
     The curve is often shaped like log(1+x). For example, see:
     https://www.frontiersin.org/articles/10.3389/fnsys.2014.00102/full
+    
     Parameters
     ----------
     estimator : a scikit-learn estimator
@@ -108,7 +109,7 @@ class DroppingCurve(ModelVisualizer):
 
     Attributes
     ----------
-    feature_sizes_ : array, shape = (n_unique_ticks,), dtype int
+    feature_sizes_ : array,     shape = (n_unique_ticks,), dtype int
         Numbers of features that have been used to generate the
         dropping curve. Note that the number of ticks might be less
         than n_ticks because duplicate entries will be removed.
@@ -154,7 +155,7 @@ class DroppingCurve(ModelVisualizer):
         logx=False,
         cv=None,
         scoring=None,
-        n_jobs=1,
+        n_jobs=None,
         pre_dispatch='all',
         random_state=None,
         **kwargs
@@ -325,7 +326,7 @@ def dropping_curve(
     logx=False,
     cv=None,
     scoring=None,
-    n_jobs=1,
+    n_jobs=None,
     pre_dispatch='all',
     random_state=None,
     show=True,
