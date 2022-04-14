@@ -221,3 +221,4 @@ Board of Advisors Minutes
     minutes/2020-05-13.rst
     minutes/2020-10-06.rst
     minutes/2021-01-13.rst
+    minutes/2021-08-30.rst
