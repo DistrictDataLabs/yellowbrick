@@ -1,16 +1,16 @@
-# tests.test_model_selection.test_validation_curve
-# Tests for the ValidationCurve visualizer
+# tests.test_model_selection.test_dropping_curve
+# Tests for the DroppingCurve visualizer
 #
-# Author:  Benjamin Bengfort
-# Created: Sat Mar 31 06:25:05 2018 -0400
+# Author:  Larry Gray
+# Created: Fri Apr 15 06:25:05 2022 -0400
 #
 # Copyright (C) 2018 The scikit-yb developers
 # For license information, see LICENSE.txt
 #
-# ID: test_validation_curve.py [c5355ee] benjamin@bengfort.com $
+# ID: test_dropping_curve.py [c5355ee] lwgray@gmail.com $
 
 """
-Tests for the ValidationCurve visualizer
+Tests for the DroppingCurve visualizer
 """
 
 ##########################################################################
@@ -25,15 +25,15 @@ from unittest.mock import patch
 from tests.base import VisualTestCase
 
 from sklearn.svm import SVC
-from sklearn.naive_bayes import BernoulliNB
+from sklearn.naive_bayes import BernoulliNB, MultinomialNB
 from sklearn.tree import DecisionTreeRegressor
 from sklearn.preprocessing import OneHotEncoder
-from sklearn.neighbors import KNeighborsClassifier
+#from sklearn.neighbors import KNeighborsClassifier
 from sklearn.model_selection import ShuffleSplit, StratifiedKFold
 
 from yellowbrick.datasets import load_mushroom
 from yellowbrick.exceptions import YellowbrickValueError
-from yellowbrick.model_selection.validation_curve import *
+from yellowbrick.model_selection import DroppingCurve, dropping_curve
 
 
 try:
@@ -48,12 +48,12 @@ except ImportError:
 
 
 @pytest.mark.usefixtures("classification", "regression", "clusters")
-class TestValidationCurve(VisualTestCase):
+class TestDroppingCurve(VisualTestCase):
     """
-    Test the ValidationCurve visualizer
+    Test the DroppingCurve visualizer
     """
 
-    @patch.object(ValidationCurve, "draw")
+    @patch.object(DroppingCurve, "draw")
     def test_fit(self, mock_draw):
         """
         Assert that fit returns self and creates expected properties
@@ -63,13 +63,14 @@ class TestValidationCurve(VisualTestCase):
             "train_scores_",
             "train_scores_mean_",
             "train_scores_std_",
-            "test_scores_",
-            "test_scores_mean_",
-            "test_scores_std_",
+            "valid_scores_",
+            "valid_scores_mean_",
+            "valid_scores_std_",
         )
 
-        oz = ValidationCurve(
-            SVC(), param_name="gamma", param_range=np.logspace(-6, -1, 5)
+        oz = DroppingCurve(
+            MultinomialNB(),
+            feature_sizes=np.linspace(0.05, 1, 20)
         )
 
         for param in params:
@@ -84,19 +85,17 @@ class TestValidationCurve(VisualTestCase):
     @pytest.mark.xfail(sys.platform == "win32", reason="images not close on windows")
     def test_classifier(self):
         """
-        Test image closeness on a classification dataset with kNN
+        Test image closeness on a classification dataset with MultinomialNB
         """
         X, y = self.classification
 
         cv = ShuffleSplit(3, random_state=288)
-        param_range = np.arange(3, 10)
 
-        oz = ValidationCurve(
-            KNeighborsClassifier(),
-            param_name="n_neighbors",
-            param_range=param_range,
+        oz = DroppingCurve(
+            MultinomialNB(),
             cv=cv,
-            scoring="f1_weighted",
+            feature_sizes=np.linspace(0.05, 1, 20),
+            random_state=42
         )
 
         oz.fit(X, y)
@@ -113,12 +112,13 @@ class TestValidationCurve(VisualTestCase):
         cv = ShuffleSplit(3, random_state=938)
         param_range = np.arange(3, 10)
 
-        oz = ValidationCurve(
+        oz = DroppingCurve(
             DecisionTreeRegressor(random_state=23),
             param_name="max_depth",
             param_range=param_range,
             cv=cv,
             scoring="r2",
+            random_state=42
         )
 
         oz.fit(X, y)
@@ -133,11 +133,11 @@ class TestValidationCurve(VisualTestCase):
         """
         X, y = self.classification
 
-        pr = np.logspace(-6, -1, 3)
+        fs = np.linspace(0.05, 1, 20)
         cv = ShuffleSplit(n_splits=5, test_size=0.2, random_state=321)
-        viz = validation_curve(
-            SVC(), X, y, logx=True, param_name="gamma",
-            param_range=pr, cv=cv, show=False
+        viz = dropping_curve(
+            MultinomialNB(), X, y, cv=cv, feature_size=fs, random_state=42,
+            show=False
         )
 
         self.assert_images_similar(viz)
@@ -157,8 +157,7 @@ class TestValidationCurve(VisualTestCase):
         assert isinstance(y, pd.Series)
 
         cv = StratifiedKFold(n_splits=2, shuffle=True, random_state=11)
-        pr = np.linspace(0.1, 3.0, 6)
-        oz = ValidationCurve(BernoulliNB(), cv=cv, param_range=pr, param_name="alpha")
+        oz = DroppingCurve(MultinomialNB(), cv=cv, random_state=42)
         oz.fit(X, y)
         oz.finalize()
 
@@ -176,30 +175,15 @@ class TestValidationCurve(VisualTestCase):
 
         cv = StratifiedKFold(n_splits=2, shuffle=True, random_state=11)
         pr = np.linspace(0.1, 3.0, 6)
-        oz = ValidationCurve(BernoulliNB(), cv=cv, param_range=pr, param_name="alpha")
+        oz = DroppingCurve(BernoulliNB(), cv=cv, param_range=pr, param_name="alpha")
         oz.fit(X, y)
         oz.finalize()
 
-        self.assert_images_similar(oz)
-
-    @patch.object(ValidationCurve, "draw")
-    def test_reshape_scores(self, mock_draw):
-        """
-        Test supplying an alternate CV methodology and train_sizes
-        """
-        X, y = self.classification
-
-        pr = np.logspace(-6, -1, 3)
-        cv = ShuffleSplit(n_splits=5, test_size=0.2, random_state=14)
-        oz = ValidationCurve(SVC(), param_name="gamma", param_range=pr, cv=cv)
-        oz.fit(X, y)
-
-        assert oz.train_scores_.shape == (3, 5)
-        assert oz.test_scores_.shape == (3, 5)
+        self.assert_images_similar(oz, tol=30.0)
 
     def test_bad_train_sizes(self):
         """
-        Test learning curve with bad input for training size.
+        Test learning curve with bad input for feature size.
         """
         with pytest.raises(YellowbrickValueError):
-            ValidationCurve(SVC(), param_name="gamma", param_range=100)
+            DroppingCurve(SVC(), param_name="gamma", feature_sizes=100)
