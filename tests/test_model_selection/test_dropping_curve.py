@@ -28,7 +28,7 @@ from sklearn.svm import SVC
 from sklearn.naive_bayes import BernoulliNB, MultinomialNB
 from sklearn.tree import DecisionTreeRegressor
 from sklearn.preprocessing import OneHotEncoder
-#from sklearn.neighbors import KNeighborsClassifier
+from sklearn.neighbors import KNeighborsClassifier
 from sklearn.model_selection import ShuffleSplit, StratifiedKFold
 
 from yellowbrick.datasets import load_mushroom
@@ -92,7 +92,7 @@ class TestDroppingCurve(VisualTestCase):
         cv = ShuffleSplit(3, random_state=288)
 
         oz = DroppingCurve(
-            MultinomialNB(),
+            KNeighborsClassifier(),
             cv=cv,
             feature_sizes=np.linspace(0.05, 1, 20),
             random_state=42
@@ -133,11 +133,11 @@ class TestDroppingCurve(VisualTestCase):
         """
         X, y = self.classification
 
-        fs = np.linspace(0.05, 1, 20)
+        pr = np.logspace(-6, -1, 3)
         cv = ShuffleSplit(n_splits=5, test_size=0.2, random_state=321)
         viz = dropping_curve(
-            MultinomialNB(), X, y, cv=cv, feature_size=fs, random_state=42,
-            show=False
+            SVC(), X, y, logx=True, param_name="gamma",
+            param_range=pr, cv=cv, show=False, random_state=42
         )
 
         self.assert_images_similar(viz)
@@ -175,11 +175,13 @@ class TestDroppingCurve(VisualTestCase):
 
         cv = StratifiedKFold(n_splits=2, shuffle=True, random_state=11)
         pr = np.linspace(0.1, 3.0, 6)
-        oz = DroppingCurve(BernoulliNB(), cv=cv, param_range=pr, param_name="alpha")
+        oz = DroppingCurve(BernoulliNB(), cv=cv,
+                           param_range=pr, param_name="alpha",
+                           random_state=42)
         oz.fit(X, y)
         oz.finalize()
 
-        self.assert_images_similar(oz, tol=30.0)
+        self.assert_images_similar(oz)
 
     def test_bad_train_sizes(self):
         """
