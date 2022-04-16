@@ -174,11 +174,11 @@ class DroppingCurve(ModelVisualizer):
         # Get feature_sizes in whole numbers
         n_features = X.shape[-1]
         if np.issubdtype(self.feature_sizes.dtype, np.integer):
-            if (self.feature_sizes >= 0).all() or (self.feature_sizes <= n_features).all():
+            if (self.feature_sizes <= 0).all() or (self.feature_sizes >= n_features).all():
                 raise YellowbrickValueError('Expected feature sizes in [0, n_features]')
             self.feature_sizes_ = self.feature_sizes
         else:
-            if (self.feature_sizes >= 0.0).all() or (self.feature_sizes <= 1.0).all():
+            if (self.feature_sizes <= 0.0).all() or (self.feature_sizes >= 1.0).all():
                 raise YellowbrickValueError('Expected feature ratio in [0,1]')
             self.feature_sizes_ = np.ceil(n_features * self.feature_sizes).astype(int)
 
