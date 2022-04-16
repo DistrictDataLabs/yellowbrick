@@ -47,7 +47,7 @@ except ImportError:
 ##########################################################################
 
 
-@pytest.mark.usefixtures("classification", "regression", "clusters")
+@pytest.mark.usefixtures("classification", "regression")
 class TestDroppingCurve(VisualTestCase):
     """
     Test the DroppingCurve visualizer

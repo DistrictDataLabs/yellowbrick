@@ -123,9 +123,9 @@ class DroppingCurve(ModelVisualizer):
     def __init__(
         self,
         estimator,
+        ax=None,
         feature_sizes=DEFAULT_FEATURE_SIZES,
         groups=None,
-        ax=None,
         logx=False,
         cv=None,
         scoring=None,
@@ -174,12 +174,12 @@ class DroppingCurve(ModelVisualizer):
         # Get feature_sizes in whole numbers
         n_features = X.shape[-1]
         if np.issubdtype(self.feature_sizes.dtype, np.integer):
-            assert (self.feature_sizes >= 0).all(), 'Expected feature sizes in [0, n_features]'
-            assert (self.feature_sizes <= n_features).all(), 'Expected feature sizes in [0, n_features]'
+            if (self.feature_sizes >= 0).all() or (self.feature_sizes <= n_features).all():
+                raise YellowbrickValueError('Expected feature sizes in [0, n_features]')
             self.feature_sizes_ = self.feature_sizes
         else:
-            assert (self.feature_sizes >= 0.0).all(), 'Expected feature ratio in [0, 1]'
-            assert (self.feature_sizes <= 1.0).all(), 'Expected feature ratio in [0, 1]'
+            if (self.feature_sizes >= 0.0).all() or (self.feature_sizes <= 1.0).all():
+                raise YellowbrickValueError('Expected feature ratio in [0,1]')
             self.feature_sizes_ = np.ceil(n_features * self.feature_sizes).astype(int)
 
         # The easiest way to prepend a random-dropout layer is to use
