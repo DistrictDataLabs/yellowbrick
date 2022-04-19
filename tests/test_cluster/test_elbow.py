@@ -296,6 +296,29 @@ class TestKElbowVisualizer(VisualTestCase):
         self.assert_images_similar(visualizer)
         assert_array_almost_equal(visualizer.k_scores_, expected)
 
+    @pytest.mark.xfail(sys.platform == "win32", reason="images not close on windows")
+    def test_distance_metric(self):
+        """
+        Test the manhattan distance metric of the distortion metric of the k-elbow visualizer
+        """
+        visualizer = KElbowVisualizer(
+            KMeans(random_state=0),
+            k=5,
+            metric="distortion",
+            distance_metric='manhattan',
+            timings=False,
+            locate_elbow=False,
+        )
+        visualizer.fit(self.clusters.X)
+        assert len(visualizer.k_scores_) == 4
+        assert visualizer.elbow_value_ is None
+
+        expected = np.array([189.060129, 154.096223, 124.271208, 107.087566])
+
+        visualizer.finalize()
+        self.assert_images_similar(visualizer)
+        assert_array_almost_equal(visualizer.k_scores_, expected)
+
     @pytest.mark.xfail(
         IS_WINDOWS_OR_CONDA,
         reason="computation of k_scores_ varies by 2.867 max absolute difference",
@@ -346,6 +369,13 @@ class TestKElbowVisualizer(VisualTestCase):
         """
         with pytest.raises(YellowbrickValueError):
             KElbowVisualizer(KMeans(), k=5, metric="foo")
+
+    def test_bad_distance_metric(self):
+        """
+        Assert KElbow raises an exception when a bad distance metric is supplied
+        """
+        with pytest.raises(YellowbrickValueError):
+            KElbowVisualizer(KMeans(), k=5, distance_metric="foo")
 
     @pytest.mark.xfail(
         IS_WINDOWS_OR_CONDA,

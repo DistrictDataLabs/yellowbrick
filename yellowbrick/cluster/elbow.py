@@ -130,6 +130,9 @@ KELBOW_SCOREMAP = {
     "calinski_harabasz": chs,
 }
 
+DISTANCE_METRICS = ['cityblock', 'cosine', 'euclidean', 'haversine',
+                    'l1', 'l2', 'manhattan', 'nan_euclidean', 'precomputed']
+
 
 class KElbowVisualizer(ClusteringScoreVisualizer):
     """
@@ -181,6 +184,12 @@ class KElbowVisualizer(ClusteringScoreVisualizer):
         - **distortion**: mean sum of squared distances to centers
         - **silhouette**: mean ratio of intra-cluster and nearest-cluster distance
         - **calinski_harabasz**: ratio of within to between cluster dispersion
+
+    distance_metric : str or callable, default='euclidean'
+        The metric to use when calculating distance between instances in a 
+        feature array. If metric is a string, it must be one of the options allowed
+        by sklearn's metrics.pairwise.pairwise_distances. If X is the distance array itself,
+        use metric="precomputed".
 
     timings : bool, default: True
         Display the fitting time per k to evaluate the amount of time required
@@ -250,6 +259,7 @@ class KElbowVisualizer(ClusteringScoreVisualizer):
         ax=None,
         k=10,
         metric="distortion",
+        distance_metric='euclidean',
         timings=True,
         locate_elbow=True,
         **kwargs
@@ -263,11 +273,18 @@ class KElbowVisualizer(ClusteringScoreVisualizer):
                 "use one of distortion, silhouette, or calinski_harabasz"
             )
 
+        if distance_metric not in DISTANCE_METRICS:
+            raise YellowbrickValueError(
+                "'{} is not a defined distance metric "
+                "use one of the sklearn metric.pairwise.pairwise_distances"
+            )
+
         # Store the arguments
         self.scoring_metric = KELBOW_SCOREMAP[metric]
         self.metric = metric
         self.timings = timings
         self.locate_elbow = locate_elbow
+        self.distance_metric = distance_metric
 
         # Set the values of the colors
         self.colors = {
@@ -331,7 +348,11 @@ class KElbowVisualizer(ClusteringScoreVisualizer):
 
             # Append the time and score to our plottable metrics
             self.k_timers_.append(time.time() - start)
-            self.k_scores_.append(self.scoring_metric(X, self.estimator.labels_))
+            if self.metric != 'calinski_harabasz':
+                self.k_scores_.append(self.scoring_metric(X, self.estimator.labels_,
+                                      metric=self.distance_metric))
+            else:
+                self.k_scores_.append(self.scoring_metric(X, self.estimator.labels_))
 
         if self.locate_elbow:
             locator_kwargs = {
@@ -465,6 +486,7 @@ def kelbow_visualizer(
     ax=None,
     k=10,
     metric="distortion",
+    distance_metric='euclidean',
     timings=True,
     locate_elbow=True,
     show=True,
@@ -504,6 +526,12 @@ def kelbow_visualizer(
                           distance
         - **calinski_harabasz**: ratio of within to between cluster dispersion
 
+    distance_metric : str or callable, default='euclidean'
+        The metric to use when calculating distance between instances in a 
+        feature array. If metric is a string, it must be one of the options allowed
+        by sklearn's metrics.pairwise.pairwise_distances. If X is the distance array itself,
+        use metric="precomputed".
+
     timings : bool, default: True
         Display the fitting time per k to evaluate the amount of time required
         to train the clustering model.
@@ -542,6 +570,7 @@ def kelbow_visualizer(
         ax=ax,
         k=k,
         metric=metric,
+        distance_metric='euclidean',
         timings=timings,
         locate_elbow=locate_elbow,
         **kwargs
