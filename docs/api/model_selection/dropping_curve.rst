@@ -16,11 +16,11 @@ For example, how many air quality sensors are needed across a city to accurately
 
 Feature dropping curves helpfully complement :doc:`rfecv` (RFECV).
 In the air quality sensor example, RFECV finds which sensors to keep in the specific city.
-Feature dropping curves visualize how many sensors a similar-sized city might need to track pollution levels.
+Feature dropping curves estimate how many sensors a similar-sized city might need to track pollution levels.
 
 Feature dropping curves are common in the field of neural decoding, where they are called `neuron dropping curves <https://dx.doi.org/10.3389%2Ffnsys.2014.00102>`_.
 Neural decoding research often quantifies how performance scales with neuron (or electrode) count.
-Because electrodes do not correspond directly between participants, we use random electrode subsets to simulate what performance to expect in another participant.
+Because neurons do not correspond directly between participants, we use random neuron subsets to simulate what performance to expect when recording from other participants.
 
 To show how this works in practice, consider an image classification example using `handwritten digits <https://archive.ics.uci.edu/ml/datasets/Optical+Recognition+of+Handwritten+Digits>`_.
 
