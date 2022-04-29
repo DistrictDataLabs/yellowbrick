@@ -51,6 +51,25 @@ The shaded area represents the variability of cross-validation, one standard dev
 The visualization can be interpreted as the performance if we knew some image pixels were corrupted.
 As an alternative interpretation, the dropping curve roughly estimates the accuracy if the image resolution was downsampled.
 
+Quick Method
+------------
+The same functionality can be achieved with the associated quick method ``dropping_curve``. This method will build the ``DroppingCurve`` with the associated arguments, fit it, then (optionally) immediately show the visualization.
+
+.. plot::
+    :context: close-figs
+    :alt: Dropping Curve Quick Method on the digits dataset
+
+    from sklearn.svm import SVC
+    from sklearn.datasets import load_digits
+
+    from yellowbrick.model_selection import dropping_curve
+
+    # Load dataset
+    X, y = load_digits(return_X_y=True)
+
+    dropping_curve(SVC(), X, y)
+
+
 API Reference
 -------------
 
