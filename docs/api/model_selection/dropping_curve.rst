@@ -18,7 +18,7 @@ Feature dropping curves helpfully complement :doc:`rfecv` (RFECV).
 In the air quality sensor example, RFECV finds which sensors to keep in the specific city.
 Feature dropping curves estimate how many sensors a similar-sized city might need to track pollution levels.
 
-Feature dropping curves are common in the field of neural decoding, where they are called `neuron dropping curves <https://dx.doi.org/10.3389%2Ffnsys.2014.00102>`_.
+Feature dropping curves are common in the field of neural decoding, where they are called `neuron dropping curves <https://dx.doi.org/10.3389%2Ffnsys.2014.00102>`_ (`example <https://www.ncbi.nlm.nih.gov/pmc/articles/PMC8293867/figure/F3/>`_, panels C and H).
 Neural decoding research often quantifies how performance scales with neuron (or electrode) count.
 Because neurons do not correspond directly between participants, we use random neuron subsets to simulate what performance to expect when recording from other participants.
 
