@@ -22,6 +22,34 @@ Feature dropping curves are common in the field of neural decoding, where they a
 Neural decoding research often quantifies how performance scales with neuron (or electrode) count.
 Because electrodes do not correspond directly between participants, we use random electrode subsets to simulate what performance to expect in another participant.
 
+To show how this works in practice, consider an image classification example using `handwritten digits <https://archive.ics.uci.edu/ml/datasets/Optical+Recognition+of+Handwritten+Digits>`_.
+
+.. plot::
+    :context: close-figs
+    :alt: Dropping Curve on the digits dataset
+
+    from sklearn.svm import SVC
+    from sklearn.datasets import load_digits
+
+    from yellowbrick.model_selection import DroppingCurve
+
+    # Load dataset
+    X, y = load_digits(return_X_y=True)
+
+    # Initialize visualizer with estimator
+    visualizer = DroppingCurve(SVC())
+
+    # Fit the data to the visualizer
+    visualizer.fit(X, y)
+    # Finalize and render the figure
+    visualizer.show()
+
+This figure shows an input feature dropping curve.
+Since the features are informative, the accuracy increases with more larger feature subsets.
+The shaded area represents the variability of cross-validation, one standard deviation above and below the mean accuracy score drawn by the curve.
+
+The visualization can be interpreted as the performance if we knew some image pixels were corrupted.
+As an alternative interpretation, the dropping curve roughly estimates the accuracy if the image resolution was downsampled.
 
 API Reference
 -------------
