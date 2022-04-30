@@ -173,10 +173,7 @@ class TestResidualsPlot(VisualTestCase):
 
             assert not make_axes_locatable
 
-        try:
-            ResidualsPlot(LinearRegression(), hist=False)
-        except YellowbrickValueError as e:
-            self.fail(e)
+        ResidualsPlot(LinearRegression(), hist=False)
 
     @pytest.mark.xfail(
         IS_WINDOWS_OR_CONDA,
@@ -314,6 +311,16 @@ class TestResidualsPlot(VisualTestCase):
         assert "alpha" in scatter_kwargs
         assert scatter_kwargs["alpha"] == 0.75
 
+    def test_is_fitted_param(self):
+        """
+        Test that the user can supply an is_fitted param and it's state is maintained
+        """
+        # Instantiate a prediction error plot, provide custom is_fitted
+        visualizer = ResidualsPlot(Ridge(random_state=8893), is_fitted=False)
+
+        # Test param gets set correctly
+        assert visualizer.is_fitted == False
+    
     @pytest.mark.xfail(
         reason="""third test fails with AssertionError: Expected fit
         to be called once. Called 0 times."""

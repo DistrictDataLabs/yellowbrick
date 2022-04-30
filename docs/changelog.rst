@@ -3,6 +3,57 @@
 Changelog
 =========
 
+Version 1.4
+-----------
+
+* Tag: v1.4_
+* Deployed Saturday, February 19, 2022
+* Current Contributors: Benjamin Bengfort, Larry Gray, Rebecca Bilbro, @pkaf, Antonio Carlos Falcão Petri, Aarni Koskela, Prema Roman, Nathan Danielsen, Eleni Markou, Patrick Deziel, Adam Morris, Hung-Tien Huang, @charlesincharge
+
+Major
+   - Upgrade dependencies to support sklearn v1.0, Numpy 1.20+, Scipy 1.6, nltk 3.6.7, and Matplotlib 3.4.1
+   - Implement new ``set_params`` and ``get_params`` on ModelVisualizers to ensure wrapped estimator is being correctly accessed via the new ``Estimator`` methods.
+   - Fix the test dependencies to prevent variability in CI (must periodically review dependencies to ensure we're testing what our users are experiencing).
+   - Change ``model`` param to ``estimator`` param to ensure that Visualizer arguments match their property names so that inspect works with get and set params and other scikit-learn utility functions.
+
+Minor
+   - Improved argmax handling in ``DiscriminationThreshold`` Visualizer
+   - Improved error handling in ``FeatureImportances`` Visualizer
+   - Gave option to remove colorer from ``ClassificationReport`` Visualizer
+   - Allowed for more flexible ``KElbow`` colors that use default palette by default
+   - Import scikit-learn private API _safe_indexing without error.
+   - Remove any calls to ``set_params`` in Visualizer ``__init__`` methods.
+   - Modify test fixtures and baseline images to accommodate new sklearn implementation
+   - Temporarily set the numpy dependency to be less than 1.20 because this is causing Pickle issues with joblib and umap
+   - Add ``shuffle=True`` argument to any CV class that uses a random seed.
+   - Set our CI matrix to Python and Miniconda 3.7 and 3.8
+
+Bugs
+   - Fixed score label display in ``PredictionError`` Visualizer
+   - Fixed axes limit in ``PredictionError`` Visualizer
+   - Fixed ``KElbowVisualizer`` to handle null cluster encounters
+   - Fixed broken url to pytest fixtures
+   - Fixed ``random_state`` to be in sync with ``PCA`` transformer
+   - Fixed the inability to place ``FeatureCorrelations`` into subplots
+   - Fixed hanging printing impacting model visualizers
+   - Fixed error handling when decision function models encounter binary data
+   - Fixed missing code in README.md
+
+Infrastructure/Housekeeping/documentation
+   - Updated status badges for build result and code coverage
+   - Removed deprecated pytest-runner from testing
+   - Replaced Travis with Github Actions
+   - Changed our master branch to the main branch
+   - Created a release issue template
+   - Updated our CI to test Python 3.8 and 3.9
+   - Managed test warnings
+   - Adds .gitattributes to fix handle white space changes
+   - Updated to use ``add_css_file`` for documentation because of deprecation of ``add_stylesheet``
+   - Added a Sphinx build to GitHub Actions for ensuring that the docs build correctly
+   - Switched to a YB-specific data lake for datasets storage
+
+.. _v1.4: https://github.com/DistrictDataLabs/yellowbrick/releases/tag/v1.4
+
 Version 1.3.post1
 -----------------
 
