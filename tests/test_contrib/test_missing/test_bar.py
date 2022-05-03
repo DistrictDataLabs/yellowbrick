@@ -173,7 +173,7 @@ class TestMissingBarVisualizer(VisualTestCase):
         X = np.append(X, fruits, axis=1)
         X = np.append(X, booleans, axis=1)
 
-        features = [str(n) for n in range(11)]
+        features = [str(n) for n in range(12)]
         viz = MissingValuesBar(features=features)
         viz.fit(X, y)
         viz.finalize()
@@ -209,7 +209,7 @@ class TestMissingBarVisualizer(VisualTestCase):
 
         X_ = pd.DataFrame(X)
 
-        features = [str(n) for n in range(11)]
+        features = [str(n) for n in range(12)]
         viz = MissingValuesBar(features=features)
         viz.fit(X_, y)
         viz.finalize()
