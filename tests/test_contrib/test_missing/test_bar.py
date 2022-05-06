@@ -73,6 +73,31 @@ class TestMissingBarVisualizer(VisualTestCase):
         
         self.assert_images_similar(viz, tol=self.tol)
 
+    @pytest.mark.skipif(pd is None, reason="pandas is required")
+    def test_missingvaluesbar_pandas_no_features_passed(self):
+        """
+        Integration test of visualizer with pandas
+        """
+        X, y = make_classification(
+            n_samples=400,
+            n_features=20,
+            n_informative=8,
+            n_redundant=8,
+            n_classes=2,
+            n_clusters_per_class=4,
+            random_state=854,
+        )
+
+        # add nan values to a range of values in the matrix
+        X[X > 1.5] = np.nan
+        X_ = pd.DataFrame(X)
+
+        viz = MissingValuesBar()
+        viz.fit(X_)
+        viz.finalize()
+
+        self.assert_images_similar(viz, tol=self.tol)
+
     def test_missingvaluesbar_numpy(self):
         """
         Integration test of visualizer with numpy without target y passed in
@@ -92,6 +117,29 @@ class TestMissingBarVisualizer(VisualTestCase):
 
         features = [str(n) for n in range(20)]
         viz = MissingValuesBar(features=features)
+        viz.fit(X)
+        viz.finalize()
+
+        self.assert_images_similar(viz, tol=self.tol)
+
+    def test_missingvaluesbar_numpy_no_features_passed(self):
+        """
+        Integration test of visualizer with numpy without target y passed in
+        """
+        X, y = make_classification(
+            n_samples=400,
+            n_features=20,
+            n_informative=8,
+            n_redundant=8,
+            n_classes=2,
+            n_clusters_per_class=4,
+            random_state=856,
+        )
+
+        # add nan values to a range of values in the matrix
+        X[X > 1.5] = np.nan
+
+        viz = MissingValuesBar()
         viz.fit(X)
         viz.finalize()
 
