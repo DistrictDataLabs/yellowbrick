@@ -19,6 +19,7 @@ import warnings
 import matplotlib.pyplot as plt
 
 from sklearn.base import BaseEstimator
+import sklearn
 
 from yellowbrick.utils import get_model_name
 from yellowbrick.utils.wrapper import Wrapper
@@ -330,6 +331,24 @@ class ModelVisualizer(Visualizer, Wrapper):
         # Initialize base classes independently
         Wrapper.__init__(self, self.estimator)
         Visualizer.__init__(self, ax=ax, fig=fig, **kwargs)
+
+    
+    def is_pipeline(self, value):
+        return isinstance(value, sklearn.pipeline.Pipeline)
+    
+    @property
+    def estimator(self):
+        return self._estimator
+
+    @estimator.setter
+    def estimator(self, value):
+        if self.is_pipeline(value):
+            if hasattr(value[-1], 'transform') and callable(getattr(value[-1], 'transform')):
+                raise YellowbrickTypeError("Pipeline must contain model as final estimator")
+            else:
+                self._estimator = value[-1]
+        else:
+            self._estimator = value
 
     def get_params(self, deep=True):
         """
