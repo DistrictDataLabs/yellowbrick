@@ -191,7 +191,7 @@ class ClassificationReport(ClassificationScoreVisualizer):
         super(ClassificationReport, self).score(X, y)
 
         y_pred = self.predict(X)
-        scores = precision_recall_fscore_support(y, y_pred)
+        scores = precision_recall_fscore_support(y, y_pred, labels=self.classes_)
 
         # Calculate the percentage for the support metric
         # and store the percent in place of raw support counts
