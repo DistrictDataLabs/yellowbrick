@@ -22,6 +22,7 @@ import numpy as np
 from sklearn.feature_extraction.text import CountVectorizer
 
 from yellowbrick.style import find_text_color
+from yellowbrick.exceptions import ModelError
 from yellowbrick.text.base import TextVisualizer
 from yellowbrick.style.palettes import color_sequence
 from yellowbrick.exceptions import YellowbrickValueError
@@ -29,9 +30,6 @@ from yellowbrick.exceptions import YellowbrickValueError
 ##########################################################################
 ## Word Correlation Plot Visualizer
 ##########################################################################
-
-CMAP_UNDERCOLOR = "w"
-CMAP_OVERCOLOR = "#2a7d4f"
 
 class WordCorrelationPlot(TextVisualizer):
     """
@@ -53,6 +51,8 @@ class WordCorrelationPlot(TextVisualizer):
     def __init__(
         self,
         words,
+        ignore_case=False,
+        ngram_range=(1, 1),
         ax=None,
         cmap="RdYlBu",
         colorbar=True,
@@ -65,12 +65,28 @@ class WordCorrelationPlot(TextVisualizer):
         self.fontsize = fontsize
         self.colorbar = colorbar
         self.cmap = color_sequence(cmap)
-        self.cmap.set_under(color=CMAP_UNDERCOLOR)
-        self.cmap.set_over(color=CMAP_OVERCOLOR)
 
-        # Estimator parameters
+        # Fitting parameters
+        self.ignore_case = ignore_case
+        self.ngram_range = ngram_range
+        self.words = self._construct_terms(words, ignore_case)
 
-        self.words = words
+    def _construct_terms(self, words, ignore_case):
+        """
+        Constructs the list of terms to be plotted based on the provided words.
+        """
+        # Remove surrounding whitespace
+        terms = [word.strip() for word in words if len(word.strip()) > 0]
+
+        if len(terms) == 0:
+            raise YellowbrickValueError("Must provide at least one word to plot.")
+
+        # Convert to lowercase if ignore_case is set
+        if ignore_case:
+            terms = [word.lower() for word in terms]
+
+        # Sort and remove duplicates
+        return sorted(set(terms))
 
     def _compute_coefficient(self, m, n):
         """
@@ -86,42 +102,49 @@ class WordCorrelationPlot(TextVisualizer):
         neither = self.docs_ - both - only_m - only_n
         return ((both * neither) - (only_m * only_n)) / np.sqrt(m_total * n_total * (self.docs_ - m_total) * (self.docs_ - n_total))
 
-    def _construct_terms(self):
-        """
-        Constructs the list of terms for the plot.
-        """
-        self.terms_ = []
-        for word in self.words:
-            word = word.lower()
-            if word not in self.vocab_:
-                raise YellowbrickValueError(("The word '{}' does not exist in the corpus").format(word))
-            self.terms_.append(word)
-
     def _construct_term_index(self):
         """
         Constructs a dictionary mapping terms to indices in the sparse doc-term matrix.
         """
-        self._construct_terms()
         self.term_index_ = {}
-        for i, feature in enumerate(self.vocab_):
-            if feature not in self.term_index_ and feature in self.terms_:
-                self.term_index_[feature] = i
-                if len(self.term_index_) == len(self.terms_):
+        for i, term in enumerate(self.vocab_):
+            if term in self.words:
+                if term in self.term_index_:
+                    raise ModelError("Duplicate term in vocabulary: {}".format(term))
+                self.term_index_[term] = i
+                if len(self.term_index_) == len(self.words):
                     break
 
+        # Verify that all target words exist in the corpus
+        for word in self.words:
+            if self.doc_term_matrix_.getcol(self.term_index_[word]).sum() == 0:
+                raise YellowbrickValueError("Word '{}' does not exist in the corpus.".format(word))
+
     def fit(self, X, y=None):
-        # Construct term list
-        vecs = CountVectorizer(binary=True)
+        # Instantiate the CountVectorizer
+        try:
+            vecs = CountVectorizer(
+                vocabulary=self.words,
+                lowercase=self.ignore_case,
+                ngram_range=self.ngram_range,
+                binary=True
+            )
+        except TypeError as e:
+            raise YellowbrickValueError("Invalid parameter(s) passed to sklearn CountVectorizer: ", e)
+
+        # Get the binary document counts for the target words
         self.doc_term_matrix_ = vecs.fit_transform(X)
+
+        # Construct an index of terms to indices in the doc-term matrix
         self.docs_ = self.doc_term_matrix_.shape[0]
         self.vocab_ = vecs.get_feature_names_out()
         self._construct_term_index()
 
         # Compute the phi-coefficient for each pair of words
-        self.plot_dim_ = len(self.terms_)
+        self.plot_dim_ = len(self.words)
         self.correlation_matrix_ = np.zeros((self.plot_dim_, self.plot_dim_))
-        for i, m in enumerate(self.terms_):
-            for j, n in enumerate(self.terms_):
+        for i, m in enumerate(self.words):
+            for j, n in enumerate(self.words):
                 self.correlation_matrix_[i, j] = self._compute_coefficient(m, n)
 
         self.draw(X)
@@ -133,7 +156,7 @@ class WordCorrelationPlot(TextVisualizer):
         """
         # Use correlation matrix data for the heatmap
         wc_display = self.correlation_matrix_
-        labels = self.terms_
+        labels = self.words
         n_classes = len(labels)
 
         # Set up the dimensions of the pcolormesh
@@ -141,13 +164,17 @@ class WordCorrelationPlot(TextVisualizer):
         self.ax.set_ylim(bottom=0, top=wc_display.shape[0])
         self.ax.set_xlim(left=0, right=wc_display.shape[1])
 
-        # Set the words as the tick labels on the plot
+        # Set the words as the tick labels on the plot. The Y-axis is sorted from top
+        # to bottom, the X-axis is sorted from left to right
         xticklabels = labels
-        yticklabels = labels
+        yticklabels = labels[::-1]
         ticks = np.arange(n_classes) + 0.5
         self.ax.set(xticks=ticks, yticks=ticks)
         self.ax.set_xticklabels(xticklabels, rotation="vertical", fontsize=self.fontsize)
         self.ax.set_yticklabels(yticklabels, fontsize=self.fontsize)
+
+        # Flip the Y-axis values so that they match the sorted labels
+        wc_display = wc_display[::, ::-1]
 
         # Draw the labels in each heatmap cell
         for x in X[:-1]:
@@ -176,3 +203,52 @@ class WordCorrelationPlot(TextVisualizer):
     def finalize(self):
         self.set_title("Word Correlation Plot")
         self.fig.tight_layout()
+
+##########################################################################
+## Quick Method
+##########################################################################
+
+def word_correlation(
+    words,
+    corpus,
+    ignore_case=True,
+    ngram_range=(1, 1),
+    ax=None,
+    cmap="RdYlBu",
+    show=True,
+    colorbar=True,
+    fontsize=None,
+    **kwargs
+):
+    """Word Correlation
+
+    Displays the binary correlation between the given words across the documents in a
+    corpus.
+    For a list of words with length n, this produces an n x n heatmap of correlation
+    values in the range [-1, 1].
+
+    Parameters
+    """
+    # Instantiate the visualizer
+    visualizer = WordCorrelationPlot(
+        words=words,
+        lowercase=ignore_case,
+        ngram_range=ngram_range,
+        ax=ax,
+        cmap=cmap,
+        colorbar=colorbar,
+        fontsize=fontsize,
+        **kwargs
+    )
+
+    # Fit and transform the visualizer (calls draw)
+    visualizer.fit(corpus)
+
+    # Draw the final visualization
+    if show:
+        visualizer.show()
+    else:
+        visualizer.finalize()
+
+    # Return the visualizer
+    return visualizer
