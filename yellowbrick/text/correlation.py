@@ -122,15 +122,12 @@ class WordCorrelationPlot(TextVisualizer):
 
     def fit(self, X, y=None):
         # Instantiate the CountVectorizer
-        try:
-            vecs = CountVectorizer(
-                vocabulary=self.words,
-                lowercase=self.ignore_case,
-                ngram_range=self.ngram_range,
-                binary=True
-            )
-        except TypeError as e:
-            raise YellowbrickValueError("Invalid parameter(s) passed to sklearn CountVectorizer: ", e)
+        vecs = CountVectorizer(
+            vocabulary=self.words,
+            lowercase=self.ignore_case,
+            ngram_range=self.ngram_range,
+            binary=True
+        )
 
         # Get the binary document counts for the target words
         self.doc_term_matrix_ = vecs.fit_transform(X)
