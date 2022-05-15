@@ -40,6 +40,8 @@ from sklearn.linear_model import LogisticRegression
 from sklearn.linear_model import PassiveAggressiveRegressor
 from sklearn.model_selection import train_test_split as tts
 from sklearn.datasets import load_digits, make_classification
+from sklearn.preprocessing import MinMaxScaler
+from sklearn.pipeline import Pipeline
 
 try:
     import pandas as pd
@@ -406,3 +408,88 @@ class TestConfusionMatrix(VisualTestCase):
             oz = ConfusionMatrix(model, classes=classes, is_fitted=False)
             oz.fit(X, y)
             mockfit.assert_called_once_with(X, y)
+
+    
+    def test_within_pipeline(self):
+        """
+        Test that visualizer can be accessed within a sklearn pipeline
+        """
+        X, y = load_occupancy(return_dataset=True).to_pandas()
+        classes = ["unoccupied", "occupied"]
+
+        X_train, X_test, y_train, y_test = tts(
+                    X, y, test_size=0.2, shuffle=True, random_state=42
+                )
+
+        model = Pipeline([
+            ('minmax', MinMaxScaler()), 
+            ('matrix', ConfusionMatrix(SVC(random_state=42), classes=classes))
+        ])
+
+        model.fit(X_train, y_train)
+        model.score(X_test, y_test)
+        model['matrix'].finalize()
+        self.assert_images_similar(model['matrix'], tol=10)
+
+    def test_within_pipeline_quickmethod(self):
+        """
+        Test that visualizer quickmethod can be accessed within a
+        sklearn pipeline
+        """
+        X, y = load_occupancy(return_dataset=True).to_pandas()
+
+        X_train, X_test, y_train, y_test = tts(
+                    X, y, test_size=0.2, shuffle=True, random_state=42
+                )
+
+        model = Pipeline([
+            ('minmax', MinMaxScaler()), 
+            ('matrix', ConfusionMatrix(SVC(random_state=42),
+                                            X_train, y_train, X_test, y_test,
+                                            classes=["vacant", "occupied"], show=False))
+        ])
+        self.assert_images_similar(model['matrix'], tol=10)
+
+    def test_pipeline_as_model_input(self):
+        """
+        Test that visualizer can handle sklearn pipeline as model input
+        """
+        X, y = load_occupancy(return_dataset=True).to_pandas()
+        classes = ["unoccupied", "occupied"]
+
+        X_train, X_test, y_train, y_test = tts(
+                    X, y, test_size=0.2, shuffle=True, random_state=42
+                )
+
+        model = Pipeline([
+            ('minmax', MinMaxScaler()), 
+            ('svc', SVC(random_state=42))
+        ])
+
+        oz = ConfusionMatrix(model, classes=classes)
+        oz.fit(X_train, y_train)
+        oz.score(X_test, y_test)
+        oz.finalize()
+        self.assert_images_similar(oz, tol=10)
+
+    def test_pipeline_as_model_input_quickmethod(self):
+        """
+        Test that visualizer can handle sklearn pipeline as model input
+        within a quickmethod
+        """
+        X, y = load_occupancy(return_dataset=True).to_pandas()
+
+        X_train, X_test, y_train, y_test = tts(
+                    X, y, test_size=0.2, shuffle=True, random_state=42
+                )
+
+        model = Pipeline([
+            ('minmax', MinMaxScaler()), 
+            ('svc', SVC(random_state=42))
+        ])
+
+        oz = confusion_matrix(model,
+                                   X_train, y_train, X_test, y_test,
+                                   classes=["vacant", "occupied"],
+                                   show=False)
+        self.assert_images_similar(oz, tol=10)

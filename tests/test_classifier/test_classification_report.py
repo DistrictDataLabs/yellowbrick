@@ -346,7 +346,7 @@ class TestClassificationReport(VisualTestCase):
         model.fit(X_train, y_train)
         model.score(X_test, y_test)
         model['clsrpt'].finalize()
-        self.assert_images_similar(model['clsrpt'], tol=40)
+        self.assert_images_similar(model['clsrpt'], tol=15)
 
     def test_within_pipeline_quickmethod(self):
         """
@@ -365,7 +365,7 @@ class TestClassificationReport(VisualTestCase):
                                             X_train, y_train, X_test, y_test,
                                             classes=["vacant", "occupied"], show=False))
         ])
-        self.assert_images_similar(model['clsrpt'], tol=40)
+        self.assert_images_similar(model['clsrpt'], tol=15)
 
     def test_pipeline_as_model_input(self):
         """
@@ -387,7 +387,7 @@ class TestClassificationReport(VisualTestCase):
         oz.fit(X_train, y_train)
         oz.score(X_test, y_test)
         oz.finalize()
-        self.assert_images_similar(oz, tol=12.5, windows_tol=40)
+        self.assert_images_similar(oz, tol=15)
 
     def test_pipeline_as_model_input_quickmethod(self):
         """
@@ -409,4 +409,4 @@ class TestClassificationReport(VisualTestCase):
                                    X_train, y_train, X_test, y_test,
                                    classes=["vacant", "occupied"],
                                    show=False)
-        self.assert_images_similar(oz, tol=40)
+        self.assert_images_similar(oz, tol=15)
