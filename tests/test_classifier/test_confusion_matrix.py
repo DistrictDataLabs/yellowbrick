@@ -446,7 +446,7 @@ class TestConfusionMatrix(VisualTestCase):
             ('minmax', MinMaxScaler()), 
             ('matrix', ConfusionMatrix(SVC(random_state=42),
                                             X_train, y_train, X_test, y_test,
-                                            classes=["vacant", "occupied"], show=False))
+                                            show=False))
         ])
         self.assert_images_similar(model['matrix'], tol=10)
 
