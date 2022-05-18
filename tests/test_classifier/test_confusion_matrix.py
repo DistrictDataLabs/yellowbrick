@@ -429,7 +429,7 @@ class TestConfusionMatrix(VisualTestCase):
         model.fit(X_train, y_train)
         model.score(X_test, y_test)
         model['matrix'].finalize()
-        self.assert_images_similar(model['matrix'], tol=10)
+        self.assert_images_similar(model['matrix'], tol=12)
 
     def test_within_pipeline_quickmethod(self):
         """
@@ -449,7 +449,7 @@ class TestConfusionMatrix(VisualTestCase):
                                             classes=["vacant", "occupied"],
                                             show=False))
             ])
-        self.assert_images_similar(model['matrix'], tol=10)
+        self.assert_images_similar(model['matrix'], tol=12)
 
     def test_pipeline_as_model_input(self):
         """
@@ -471,7 +471,7 @@ class TestConfusionMatrix(VisualTestCase):
         oz.fit(X_train, y_train)
         oz.score(X_test, y_test)
         oz.finalize()
-        self.assert_images_similar(oz, tol=10)
+        self.assert_images_similar(oz, tol=12)
 
     def test_pipeline_as_model_input_quickmethod(self):
         """
@@ -493,4 +493,4 @@ class TestConfusionMatrix(VisualTestCase):
                                    X_train, y_train, X_test, y_test,
                                    classes=["vacant", "occupied"],
                                    show=False)
-        self.assert_images_similar(oz, tol=10)
+        self.assert_images_similar(oz, tol=12)
