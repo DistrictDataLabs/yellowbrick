@@ -243,7 +243,7 @@ class DroppingCurve(ModelVisualizer):
         # compute the mean and standard deviation of the training data
         self.train_scores_mean_ = np.mean(self.train_scores_, axis=1)
         self.train_scores_std_ = np.std(self.train_scores_, axis=1)
-        
+
         # compute the mean and standard deviation of the validation data
         self.valid_scores_mean_ = np.mean(self.valid_scores_, axis=1)
         self.valid_scores_std_ = np.std(self.valid_scores_, axis=1)
