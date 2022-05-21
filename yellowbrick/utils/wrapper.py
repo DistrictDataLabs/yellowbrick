@@ -17,8 +17,8 @@ Utility package that provides a wrapper for new style classes.
 ## Wrapper Class
 ##########################################################################
 
-from typing import Type
 from yellowbrick.exceptions import YellowbrickAttributeError, YellowbrickTypeError
+
 
 class Wrapper(object):
     """
