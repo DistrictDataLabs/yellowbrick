@@ -189,3 +189,11 @@ class TestDroppingCurve(VisualTestCase):
         """
         with pytest.raises(YellowbrickValueError):
             DroppingCurve(SVC(), param_name="gamma", feature_sizes=100)
+
+    def test_get_params(self):
+        """
+        Ensure dropping curve get params works correctly
+        """
+        oz = DroppingCurve(MultinomialNB())
+        params = oz.get_params()
+        assert len(params) > 0
