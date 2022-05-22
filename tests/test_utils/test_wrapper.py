@@ -17,10 +17,13 @@ Testing for the wrapping utility.
 ## Imports
 ##########################################################################
 
+import pytest
+
 from unittest import mock
 
 from yellowbrick.base import Visualizer
 from yellowbrick.utils.wrapper import *
+from yellowbrick.exceptions import YellowbrickAttributeError, YellowbrickTypeError
 from sklearn.naive_bayes import MultinomialNB
 from sklearn.naive_bayes import GaussianNB
 
@@ -133,3 +136,21 @@ class TestWrapper(object):
         obj.predict()
         old.predict.assert_called_once()
         new.predict.assert_called_once()
+
+    def test_wrapper_recursion(self):
+        """
+        Ensure wrapper recursion isn't possible
+        """
+        obj = Wrapper("")
+        obj._wrapped = obj
+        with pytest.raises(YellowbrickTypeError):
+            obj.foo
+
+    def test_attribute_error(self):
+        """
+        Attribute errors should return a YellowbrickAttributeError
+        """
+        obj = WrappedEstimator()
+        pat = r"neither visualizer 'WrappedEstimator' nor wrapped estimator 'MagicMock' have attribute 'notaproperty'"
+        with pytest.raises(YellowbrickAttributeError, match=pat):
+            obj.notaproperty

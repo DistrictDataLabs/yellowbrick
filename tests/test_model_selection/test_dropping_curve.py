@@ -255,3 +255,12 @@ class TestDroppingCurve(VisualTestCase):
 
         oz = dropping_curve(model, X, y, show=False, random_state=42)
         self.assert_images_similar(oz, tol=12)
+
+    def test_get_params(self):
+        """
+        Ensure dropping curve get params works correctly
+        """
+        oz = DroppingCurve(MultinomialNB())
+        params = oz.get_params()
+        assert len(params) > 0
+
