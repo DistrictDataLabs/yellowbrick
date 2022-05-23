@@ -324,3 +324,25 @@ class TestClassificationReport(VisualTestCase):
         viz.score(self.binary.X.test, self.binary.y.test)
 
         self.assert_images_similar(viz, tol=40)
+
+    def test_with_missing_labels(self):
+        """
+        Test that visualizer properly handles missing labels when scoring
+        """
+        _, ax = plt.subplots()
+
+        X_train = np.array([[1], [2], [3]])
+        y_train = np.array([0, 1, 2])
+
+        X_test = np.array([[1], [2]])
+        y_test = np.array([0, 1])
+
+        viz = ClassificationReport(LogisticRegression(), ax=ax)
+        viz.fit(X_train, y_train)
+        viz.score(X_test, y_test)
+
+        assert viz.scores_ == {
+            "precision": {0: approx(1.0), 1: approx(1.0), 2: approx(0.0)},
+            "recall": {0: approx(1.0), 1: approx(1.0), 2: approx(0.0)},
+            "f1": {0: approx(1.0), 1: approx(1.0), 2: approx(0.0)},
+        }
