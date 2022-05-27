@@ -100,16 +100,15 @@ class MissingValuesBar(MissingDataVisualizer):
         self.colors = color_palette(kwargs.pop("colors", None), n_colors)
 
     def get_nan_col_counts(self, **kwargs):
-        # where matrix contains strings, handle them
-        if np.issubdtype(self.X.dtype, np.string_) or np.issubdtype(
-            self.X.dtype, np.unicode_
+        if np.issubdtype(self.X.dtype, np.floating) or np.issubdtype(
+                self.X.dtype, np.integer
         ):
-            mask = np.where(self.X == "")
+            nan_matrix = self.X.astype(np.float64)
+        else:
+            # where matrix contains strings, handle them
+            mask = np.where((self.X == "") | (self.X == 'nan'))
             nan_matrix = np.zeros(self.X.shape)
             nan_matrix[mask] = np.nan
-
-        else:
-            nan_matrix = self.X.astype(np.float64)
 
         if self.y is None:
             nan_col_counts = [np.count_nonzero(np.isnan(col)) for col in nan_matrix.T]
@@ -126,7 +125,6 @@ class MissingValuesBar(MissingDataVisualizer):
                     [np.count_nonzero(np.isnan(col)) for col in target_matrix.T]
                 )
                 nan_counts.append((target_value, nan_col_counts))
-
             return nan_counts
 
     def draw(self, X, y, **kwargs):
