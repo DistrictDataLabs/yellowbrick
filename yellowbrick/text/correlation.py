@@ -162,7 +162,7 @@ class WordCorrelationPlot(TextVisualizer):
         self.ax.set_xlim(left=0, right=wc_display.shape[1])
 
         # Set the words as the tick labels on the plot. The Y-axis is sorted from top
-        # to bottom, the X-axis is sorted from left to right
+        # to bottom, the X-axis is sorted from left to right.
         xticklabels = labels
         yticklabels = labels[::-1]
         ticks = np.arange(n_classes) + 0.5
@@ -171,7 +171,7 @@ class WordCorrelationPlot(TextVisualizer):
         self.ax.set_yticklabels(yticklabels, fontsize=self.fontsize)
 
         # Flip the Y-axis values so that they match the sorted labels
-        wc_display = wc_display[::, ::-1]
+        wc_display = np.flipud(wc_display)
 
         # Draw the labels in each heatmap cell
         for x in X[:-1]:
@@ -185,7 +185,8 @@ class WordCorrelationPlot(TextVisualizer):
                 text_color = find_text_color(base_color)
 
                 # Draw the text at the center of the cell
-                cx, cy = x + 0.5, y + 0.5
+                # Note: x and y coordinates are swapped to match the pcolormesh
+                cx, cy = y + 0.5, x + 0.5
                 self.ax.text(cx, cy, svalue, va="center", ha="center", color=text_color, fontsize=self.fontsize)
 
         # Draw the heatmap
