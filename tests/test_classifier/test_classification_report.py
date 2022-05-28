@@ -30,12 +30,14 @@ from pytest import approx
 from unittest.mock import patch
 from tests.base import VisualTestCase
 
-from sklearn.svm import LinearSVC
+from sklearn.svm import LinearSVC, SVC
 from sklearn.naive_bayes import GaussianNB
 from sklearn.tree import DecisionTreeClassifier
 from sklearn.datasets import make_classification
 from sklearn.model_selection import train_test_split as tts
 from sklearn.linear_model import LassoCV, LogisticRegression
+from sklearn.pipeline import Pipeline
+from sklearn.preprocessing import MinMaxScaler
 
 try:
     import pandas as pd
@@ -324,3 +326,87 @@ class TestClassificationReport(VisualTestCase):
         viz.score(self.binary.X.test, self.binary.y.test)
 
         self.assert_images_similar(viz, tol=40)
+
+    def test_within_pipeline(self):
+        """
+        Test that visualizer can be accessed within a sklearn pipeline
+        """
+        X, y = load_occupancy(return_dataset=True).to_pandas()
+        classes = ["unoccupied", "occupied"]
+
+        X_train, X_test, y_train, y_test = tts(
+                    X, y, test_size=0.2, shuffle=True, random_state=42
+                )
+
+        model = Pipeline([
+            ('minmax', MinMaxScaler()), 
+            ('clsrpt', ClassificationReport(SVC(random_state=42), classes=classes))
+        ])
+
+        model.fit(X_train, y_train)
+        model.score(X_test, y_test)
+        model['clsrpt'].finalize()
+        self.assert_images_similar(model['clsrpt'], tol=15)
+
+    def test_within_pipeline_quickmethod(self):
+        """
+        Test that visualizer quickmethod can be accessed within a
+        sklearn pipeline
+        """
+        X, y = load_occupancy(return_dataset=True).to_pandas()
+
+        X_train, X_test, y_train, y_test = tts(
+                    X, y, test_size=0.2, shuffle=True, random_state=42
+                )
+
+        model = Pipeline([
+            ('minmax', MinMaxScaler()), 
+            ('clsrpt', classification_report(SVC(random_state=42),
+                                            X_train, y_train, X_test, y_test,
+                                            classes=["vacant", "occupied"], show=False))
+        ])
+        self.assert_images_similar(model['clsrpt'], tol=15)
+
+    def test_pipeline_as_model_input(self):
+        """
+        Test that visualizer can handle sklearn pipeline as model input
+        """
+        X, y = load_occupancy(return_dataset=True).to_pandas()
+        classes = ["unoccupied", "occupied"]
+
+        X_train, X_test, y_train, y_test = tts(
+                    X, y, test_size=0.2, shuffle=True, random_state=42
+                )
+
+        model = Pipeline([
+            ('minmax', MinMaxScaler()), 
+            ('svc', SVC(random_state=42))
+        ])
+
+        oz = ClassificationReport(model, classes=classes)
+        oz.fit(X_train, y_train)
+        oz.score(X_test, y_test)
+        oz.finalize()
+        self.assert_images_similar(oz, tol=15)
+
+    def test_pipeline_as_model_input_quickmethod(self):
+        """
+        Test that visualizer can handle sklearn pipeline as model input
+        within a quickmethod
+        """
+        X, y = load_occupancy(return_dataset=True).to_pandas()
+
+        X_train, X_test, y_train, y_test = tts(
+                    X, y, test_size=0.2, shuffle=True, random_state=42
+                )
+
+        model = Pipeline([
+            ('minmax', MinMaxScaler()), 
+            ('svc', SVC(random_state=42))
+        ])
+
+        oz = classification_report(model,
+                                   X_train, y_train, X_test, y_test,
+                                   classes=["vacant", "occupied"],
+                                   show=False)
+        self.assert_images_similar(oz, tol=15)
