@@ -29,12 +29,14 @@ from yellowbrick.classifier.rocauc import *
 from yellowbrick.exceptions import ModelError
 from yellowbrick.datasets import load_occupancy
 
-from sklearn.svm import LinearSVC
+from sklearn.svm import LinearSVC, SVC
 from sklearn.naive_bayes import GaussianNB
 from sklearn.linear_model import LogisticRegression
 from sklearn.base import BaseEstimator, ClassifierMixin
 from sklearn.model_selection import train_test_split as tts
 from sklearn.ensemble import RandomForestClassifier, AdaBoostClassifier
+from sklearn.preprocessing import MinMaxScaler
+from sklearn.pipeline import Pipeline
 
 try:
     import pandas as pd
@@ -554,3 +556,87 @@ class TestROCAUC(VisualTestCase):
         assert oz.micro is False
         assert oz.macro is False
         assert oz.per_class is False
+
+    def test_within_pipeline(self):
+        """
+        Test that visualizer can be accessed within a sklearn pipeline
+        """
+        X, y = load_occupancy(return_dataset=True).to_pandas()
+        classes = ["unoccupied", "occupied"]
+
+        X_train, X_test, y_train, y_test = tts(
+                    X, y, test_size=0.2, shuffle=True, random_state=42
+                )
+
+        model = Pipeline([
+            ('minmax', MinMaxScaler()), 
+            ('matrix', ROCAUC(SVC(random_state=42), classes=classes, binary=True))
+        ])
+
+        model.fit(X_train, y_train)
+        model.score(X_test, y_test)
+        model['matrix'].finalize()
+        self.assert_images_similar(model['matrix'], tol=12)
+
+    def test_within_pipeline_quickmethod(self):
+        """
+        Test that visualizer quickmethod can be accessed within a
+        sklearn pipeline
+        """
+        X, y = load_occupancy(return_dataset=True).to_pandas()
+
+        X_train, X_test, y_train, y_test = tts(
+                    X, y, test_size=0.2, shuffle=True, random_state=42
+                )
+
+        model = Pipeline([
+            ('minmax', MinMaxScaler()), 
+            ('matrix', roc_auc(SVC(random_state=42),
+                                            X_train, y_train, X_test, y_test,
+                                            classes=["vacant", "occupied"],
+                                            show=False, binary=True))
+            ])
+        self.assert_images_similar(model['matrix'], tol=12)
+
+    def test_pipeline_as_model_input(self):
+        """
+        Test that visualizer can handle sklearn pipeline as model input
+        """
+        X, y = load_occupancy(return_dataset=True).to_pandas()
+        classes = ["unoccupied", "occupied"]
+
+        X_train, X_test, y_train, y_test = tts(
+                    X, y, test_size=0.2, shuffle=True, random_state=42
+                )
+
+        model = Pipeline([
+            ('minmax', MinMaxScaler()), 
+            ('svc', SVC(random_state=42))
+        ])
+
+        oz = ROCAUC(model, classes=classes, binary=True)
+        oz.fit(X_train, y_train)
+        oz.score(X_test, y_test)
+        oz.finalize()
+        self.assert_images_similar(oz, tol=12)
+
+    def test_pipeline_as_model_input_quickmethod(self):
+        """
+        Test that visualizer can handle sklearn pipeline as model input
+        within a quickmethod
+        """
+        X, y = load_occupancy(return_dataset=True).to_pandas()
+
+        X_train, X_test, y_train, y_test = tts(
+                    X, y, test_size=0.2, shuffle=True, random_state=42
+                )
+
+        model = Pipeline([
+            ('minmax', MinMaxScaler()), 
+            ('svc', SVC(random_state=42))
+        ])
+
+        oz = roc_auc(model, X_train, y_train, X_test, y_test, 
+                     classes=["vacant", "occupied"],
+                     show=False, binary=True)
+        self.assert_images_similar(oz, tol=12)
