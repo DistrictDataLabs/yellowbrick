@@ -439,12 +439,14 @@ class PCA(ProjectionVisualizer):
         keyword arguments.
         """
         super(PCA, self).finalize()
-
+        # get explained variance percentage
+        explained_var_perc = self.pca_transformer.named_steps['pca'].explained_variance_ratio_
+        # plot labels.
         self.ax.set_title("Principal Component Plot")
-        self.ax.set_xlabel("$PC_1$")
-        self.ax.set_ylabel("$PC_2$")
+        self.ax.set_xlabel("$PC_1$ ({:0.2f}%)".format(explained_var_perc[0] * 100.))
+        self.ax.set_ylabel("$PC_2$ ({:0.2f}%)".format(explained_var_perc[1] * 100.))
         if self.projection == 3:
-            self.ax.set_zlabel("$PC_3$")
+            self.ax.set_zlabel("$PC_3$ ({:0.2f}%)".format(explained_var_perc[2] * 100.))
         if self.heatmap == True:
             self.lax.set_xticks(np.arange(-0.5, len(self.features_)))
             self.lax.set_xticklabels([])
