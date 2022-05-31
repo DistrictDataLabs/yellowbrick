@@ -18,7 +18,6 @@ Implements a visual validation curve for a hyperparameter.
 ##########################################################################
 
 import numpy as np
-import itertools
 
 from yellowbrick.base import ModelVisualizer
 from yellowbrick.style import resolve_colors
@@ -387,6 +386,10 @@ def validation_curve(
         If True, calls ``show()``, which in turn calls ``plt.show()`` however
         you cannot call ``plt.savefig`` from this signature, nor
         ``clear_figure``. If False, simply calls ``finalize()``
+
+    markers : string, default: '-d'
+        Matplotlib style markers for points on the plot points
+        Options: '-,', '-+', '-o', '-*', '-v', '-h', '-d'
 
     kwargs : dict
         Keyword arguments that are passed to the base class and may influence
