@@ -18,6 +18,7 @@ Implements a visual validation curve for a hyperparameter.
 ##########################################################################
 
 import numpy as np
+import itertools
 
 from yellowbrick.base import ModelVisualizer
 from yellowbrick.style import resolve_colors
@@ -103,6 +104,10 @@ class ValidationCurve(ModelVisualizer):
         all). The option can reduce the allocated memory. The string can
         be an expression like '2*n_jobs'.
 
+    markers : string, default: '-d'
+        Matplotlib style markers for points on the plot points
+        Options: '-,', '-+', '-o', '-*', '-v', '-h', '-d'
+
     kwargs : dict
         Keyword arguments that are passed to the base class and may influence
         the visualization as defined in other Visualizers.
@@ -162,6 +167,7 @@ class ValidationCurve(ModelVisualizer):
         scoring=None,
         n_jobs=1,
         pre_dispatch="all",
+        markers='-d',
         **kwargs
     ):
 
@@ -186,6 +192,7 @@ class ValidationCurve(ModelVisualizer):
         self.scoring = scoring
         self.n_jobs = n_jobs
         self.pre_dispatch = pre_dispatch
+        self.markers = markers
 
     def fit(self, X, y=None):
         """
@@ -263,7 +270,7 @@ class ValidationCurve(ModelVisualizer):
         # Plot the mean curves so they are in front of the variance fill
         for idx, (mean, _) in enumerate(curves):
             self.ax.plot(
-                self.param_range, mean, "d-", color=colors[idx], label=labels[idx]
+                self.param_range, mean, self.markers, color=colors[idx], label=labels[idx]
             )
 
         if self.logx:
@@ -305,6 +312,7 @@ def validation_curve(
     n_jobs=1,
     pre_dispatch="all",
     show=True,
+    markers='-d',
     **kwargs
 ):
     """
@@ -404,6 +412,7 @@ def validation_curve(
         scoring=scoring,
         n_jobs=n_jobs,
         pre_dispatch=pre_dispatch,
+        markers=markers,
     )
 
     # Fit the visualizer
