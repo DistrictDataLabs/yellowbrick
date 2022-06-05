@@ -2,12 +2,12 @@
 # Tests for the dispersion plot visualization
 #
 # Author:   Patrick Deziel
-# Created:  ----
+# Created:  Tue May 3 16:18:21 2022 -0500
 #
 # Copyright (C) 2022 The scikit-yb developers
 # For license information, see LICENSE.txt
 #
-# ID: test_correlation.py [25f1b9a] 
+# ID: test_correlation.py [0a7d2fe] deziel.patrick@gmail.com $
 
 """
 Tests for the word correlation plot text visualization
@@ -86,11 +86,11 @@ class TestWordCorrelationPlot(VisualTestCase):
 
     def test_word_correlation_ngrams(self):
         """
-        Assert no errors are raised when the ngrams parameter is provided.
+        Assert no errors are raised when multiple-word terms are provided.
         """
         words = ["Tatsumi Kimishima", "Nintendo", "game", "man", "play"]
 
-        viz = WordCorrelationPlot(words, ngram_range=(1, 2))
+        viz = WordCorrelationPlot(words)
         viz.fit(corpus.data)
 
         self.assert_images_similar(viz, tol=25)
