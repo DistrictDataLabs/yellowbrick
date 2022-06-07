@@ -30,6 +30,8 @@ from sklearn.svm import LinearSVC, SVC
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.datasets import make_multilabel_classification
 from sklearn.model_selection import train_test_split as tts
+from sklearn.pipeline import Pipeline
+from sklearn.preprocessing import MinMaxScaler
 
 from unittest.mock import patch
 from tests.base import VisualTestCase
@@ -238,3 +240,87 @@ class TestClassPredictionError(VisualTestCase):
             oz = ClassPredictionError(model, classes=classes, is_fitted=False)
             oz.fit(X, y)
             mockfit.assert_called_once_with(X, y)
+    
+    def test_within_pipeline(self):
+        """
+        Test that visualizer can be accessed within a sklearn pipeline
+        """
+        X, y = load_occupancy(return_dataset=True).to_pandas()
+        classes = ["unoccupied", "occupied"]
+
+        X_train, X_test, y_train, y_test = tts(
+                    X, y, test_size=0.2, shuffle=True, random_state=42
+                )
+
+        model = Pipeline([
+            ('minmax', MinMaxScaler()), 
+            ('cpe', ClassPredictionError(SVC(random_state=42), classes=classes))
+        ])
+
+        model.fit(X_train, y_train)
+        model.score(X_test, y_test)
+        model['cpe'].finalize()
+        self.assert_images_similar(model['cpe'], tol=12.5, windows_tol=13.3)
+
+    def test_within_pipeline_quickmethod(self):
+        """
+        Test that visualizer quickmethod can be accessed within a
+        sklearn pipeline
+        """
+        X, y = load_occupancy(return_dataset=True).to_pandas()
+
+        X_train, X_test, y_train, y_test = tts(
+                    X, y, test_size=0.2, shuffle=True, random_state=42
+                )
+
+        model = Pipeline([
+            ('minmax', MinMaxScaler()), 
+            ('cpe', class_prediction_error(SVC(random_state=42),
+                                            X_train, y_train, X_test, y_test,
+                                            classes=["vacant", "occupied"], show=False))
+        ])
+        self.assert_images_similar(model['cpe'], tol=12.5, windows_tol=13.3)
+
+    def test_pipeline_as_model_input(self):
+        """
+        Test that visualizer can handle sklearn pipeline as model input
+        """
+        X, y = load_occupancy(return_dataset=True).to_pandas()
+        classes = ["unoccupied", "occupied"]
+
+        X_train, X_test, y_train, y_test = tts(
+                    X, y, test_size=0.2, shuffle=True, random_state=42
+                )
+
+        model = Pipeline([
+            ('minmax', MinMaxScaler()), 
+            ('svc', SVC(random_state=42))
+        ])
+
+        oz = ClassPredictionError(model, classes=classes)
+        oz.fit(X_train, y_train)
+        oz.score(X_test, y_test)
+        oz.finalize()
+        self.assert_images_similar(oz, tol=12.5, windows_tol=13.3)
+
+    def test_pipeline_as_model_input_quickmethod(self):
+        """
+        Test that visualizer can handle sklearn pipeline as model input
+        within a quickmethod
+        """
+        X, y = load_occupancy(return_dataset=True).to_pandas()
+
+        X_train, X_test, y_train, y_test = tts(
+                    X, y, test_size=0.2, shuffle=True, random_state=42
+                )
+
+        model = Pipeline([
+            ('minmax', MinMaxScaler()), 
+            ('svc', SVC(random_state=42))
+        ])
+
+        oz = class_prediction_error(model,
+                                   X_train, y_train, X_test, y_test,
+                                   classes=["vacant", "occupied"],
+                                   show=False)
+        self.assert_images_similar(oz, tol=12.5, windows_tol=13.3)

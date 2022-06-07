@@ -27,9 +27,10 @@ from tests.base import VisualTestCase
 from sklearn.svm import SVC
 from sklearn.naive_bayes import BernoulliNB, MultinomialNB
 from sklearn.tree import DecisionTreeRegressor
-from sklearn.preprocessing import OneHotEncoder
+from sklearn.preprocessing import OneHotEncoder, MinMaxScaler
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.model_selection import ShuffleSplit, StratifiedKFold
+from sklearn.pipeline import Pipeline
 
 from yellowbrick.datasets import load_mushroom
 from yellowbrick.exceptions import YellowbrickValueError
@@ -189,3 +190,77 @@ class TestDroppingCurve(VisualTestCase):
         """
         with pytest.raises(YellowbrickValueError):
             DroppingCurve(SVC(), param_name="gamma", feature_sizes=100)
+
+    def test_within_pipeline(self):
+        """
+        Test that visualizer can be accessed within a sklearn pipeline
+        """
+        X, y = load_mushroom(return_dataset=True).to_numpy()
+        X = OneHotEncoder().fit_transform(X).toarray()
+
+        model = Pipeline([
+            ('minmax', MinMaxScaler()), 
+            ('matrix', DroppingCurve(BernoulliNB(), random_state=42))
+        ])
+
+        model.fit(X, y)
+        model['matrix'].finalize()
+        self.assert_images_similar(model['matrix'], tol=12)
+
+    def test_within_pipeline_quickmethod(self):
+        """
+        Test that visualizer quickmethod can be accessed within a
+        sklearn pipeline
+        """
+        X, y = load_mushroom(return_dataset=True).to_numpy()
+        X = OneHotEncoder().fit_transform(X).toarray()
+        
+
+        model = Pipeline([
+            ('minmax', MinMaxScaler()), 
+            ('matrix', dropping_curve(BernoulliNB(), X, y, show=False,
+                                      random_state=42))
+            ])
+        self.assert_images_similar(model['matrix'], tol=12)
+
+    def test_pipeline_as_model_input(self):
+        """
+        Test that visualizer can handle sklearn pipeline as model input
+        """
+        X, y = load_mushroom(return_dataset=True).to_numpy()
+        X = OneHotEncoder().fit_transform(X).toarray()
+
+        model = Pipeline([
+            ('minmax', MinMaxScaler()), 
+            ('nb', BernoulliNB())
+        ])
+
+        oz = DroppingCurve(model, random_state=42)
+        oz.fit(X, y)
+        oz.finalize()
+        self.assert_images_similar(oz, tol=12)
+
+    def test_pipeline_as_model_input_quickmethod(self):
+        """
+        Test that visualizer can handle sklearn pipeline as model input
+        within a quickmethod
+        """
+        X, y = load_mushroom(return_dataset=True).to_numpy()
+        X = OneHotEncoder().fit_transform(X).toarray()
+
+        model = Pipeline([
+            ('minmax', MinMaxScaler()), 
+            ('nb', BernoulliNB())
+        ])
+
+        oz = dropping_curve(model, X, y, show=False, random_state=42)
+        self.assert_images_similar(oz, tol=12)
+
+    def test_get_params(self):
+        """
+        Ensure dropping curve get params works correctly
+        """
+        oz = DroppingCurve(MultinomialNB())
+        params = oz.get_params()
+        assert len(params) > 0
+
