@@ -33,6 +33,7 @@ from yellowbrick.text import (
     FreqDistVisualizer,
     TSNEVisualizer,
     DispersionPlot,
+    WordCorrelationPlot,
     PosTagVisualizer,
 )
 
@@ -404,6 +405,15 @@ def dispersion():
     savefig(oz, "dispersion")
 
 
+def word_correlation():
+    corpus = load_hobbies()
+    words = ["Tatsumi Kimishima", "Nintendo", "game", "play", "man", "woman"]
+
+    oz = WordCorrelationPlot(words, ax=newfig())
+    oz.fit(corpus.data)
+    savefig(oz, "word_correlation")
+
+
 def postag():
     tagged_stanzas = [
         [
@@ -622,6 +632,7 @@ if __name__ == "__main__":
         "freqdist": freqdist,
         "tsne": tsne,
         "dispersion": dispersion,
+        "word_correlation": word_correlation,
         "postag": postag,
         "decision": decision,
         "binning": binning,
