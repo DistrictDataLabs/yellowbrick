@@ -24,7 +24,7 @@ import yellowbrick as yb
 import matplotlib.pyplot as plt
 
 from yellowbrick.classifier.threshold import *
-from yellowbrick.datasets import load_occupancy
+from yellowbrick.datasets import load_occupancy, load_spam
 from yellowbrick.utils import is_probabilistic, is_classifier
 
 from unittest.mock import patch
@@ -33,6 +33,8 @@ from numpy.testing import assert_array_equal
 
 from sklearn.base import ClassifierMixin
 from sklearn.svm import LinearSVC, NuSVC
+from sklearn.impute import SimpleImputer
+from sklearn.pipeline import Pipeline
 from sklearn.datasets import make_classification
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.naive_bayes import BernoulliNB, GaussianNB
@@ -368,3 +370,34 @@ class TestDiscriminationThreshold(VisualTestCase):
         """
         viz = DiscriminationThreshold(NuSVC(), **viz_kwargs)
         assert viz._check_argmax(viz.argmax, viz.exclude) is None
+
+    def test_within_pipeline(self):
+        """
+        Test that visualizer can be accessed within a sklearn pipeline
+        """
+        X, y = load_spam()
+
+        model = Pipeline([
+            ('imputer', SimpleImputer(missing_values=np.nan, strategy='mean')),
+            ('dt', DiscriminationThreshold(LogisticRegression(multi_class="auto", solver="liblinear"), random_state=42))
+        ])
+
+        model.fit(X, y)
+        model['dt'].finalize()
+        self.assert_images_similar(model['dt'], tol=2.0)
+
+    def test_pipeline_as_model_input(self):
+        """
+        Test that visualizer can handle sklearn pipeline as model input
+        """
+        X, y = load_spam()
+
+        model = Pipeline([
+            ('imputer', SimpleImputer(missing_values=np.nan, strategy='mean')),
+            ('lr', LogisticRegression(multi_class="auto", solver="liblinear"))
+        ])
+
+        oz = DiscriminationThreshold(model, random_state=42)
+        oz.fit(X, y)
+        oz.finalize()
+        self.assert_images_similar(oz, tol=2.0)
