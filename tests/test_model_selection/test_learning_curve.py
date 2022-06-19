@@ -26,15 +26,16 @@ from tests.base import VisualTestCase
 
 from sklearn.svm import LinearSVC
 from sklearn.linear_model import Ridge
-from sklearn.naive_bayes import GaussianNB
+from sklearn.naive_bayes import GaussianNB, MultinomialNB
 from sklearn.cluster import MiniBatchKMeans
-from sklearn.preprocessing import OneHotEncoder
+from sklearn.preprocessing import OneHotEncoder, LabelEncoder
+from sklearn.impute import SimpleImputer
 from sklearn.model_selection import ShuffleSplit
 from sklearn.model_selection import StratifiedKFold
 from sklearn.ensemble import RandomForestClassifier
+from sklearn.pipeline import Pipeline
 
-from yellowbrick.datasets import load_mushroom
-from yellowbrick.exceptions import YellowbrickValueError
+from yellowbrick.datasets import load_mushroom, load_game
 from yellowbrick.model_selection.learning_curve import *
 
 try:
@@ -195,3 +196,51 @@ class TestLearningCurve(VisualTestCase):
         """
         with pytest.raises(YellowbrickValueError):
             LearningCurve(LinearSVC(), train_sizes=10000)
+
+    def test_within_pipeline(self):
+        """
+        Test that visualizer can be accessed within a sklearn pipeline
+        """
+        X, y = load_game()
+
+        # Encode the categorical data
+        X = OneHotEncoder().fit_transform(X)
+        y = LabelEncoder().fit_transform(y)
+
+        # Create the learning curve visualizer
+        cv = StratifiedKFold(n_splits=12)
+        sizes = np.linspace(0.3, 1.0, 10)
+
+        model = Pipeline([
+            ('imputer', SimpleImputer(missing_values=np.nan, strategy='mean')),
+            ('lc',
+             LearningCurve(MultinomialNB(), cv=cv, scoring='f1_weighted', train_sizes=sizes, n_jobs=4, random_state=42))
+        ])
+
+        model.fit(X, y)
+        model['lc'].finalize()
+        self.assert_images_similar(model['lc'], tol=2.0)
+
+    def test_pipeline_as_model_input(self):
+        """
+        Test that visualizer can handle sklearn pipeline as model input
+        """
+        X, y = load_game()
+
+        # Encode the categorical data
+        X = OneHotEncoder().fit_transform(X)
+        y = LabelEncoder().fit_transform(y)
+
+        # Create the learning curve visualizer
+        cv = StratifiedKFold(n_splits=12)
+        sizes = np.linspace(0.3, 1.0, 10)
+
+        model = Pipeline([
+            ('imputer', SimpleImputer(missing_values=np.nan, strategy='mean')),
+            ('nb', MultinomialNB())
+        ])
+
+        oz = LearningCurve(model, cv=cv, scoring='f1_weighted', train_sizes=sizes, n_jobs=4, random_state=42)
+        oz.fit(X, y)
+        oz.finalize()
+        self.assert_images_similar(oz, tol=2.0)
