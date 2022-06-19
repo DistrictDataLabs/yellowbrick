@@ -32,6 +32,8 @@ from sklearn.ensemble import RandomForestClassifier
 from sklearn.ensemble import GradientBoostingClassifier
 from sklearn.base import BaseEstimator, ClassifierMixin
 from sklearn.linear_model import LogisticRegression, Lasso
+from sklearn.impute import SimpleImputer
+from sklearn.pipeline import Pipeline
 
 from unittest import mock
 from tests.base import VisualTestCase
@@ -515,6 +517,24 @@ class TestFeatureImportancesVisualizer(VisualTestCase):
 
         # Appveyor and Linux conda non-text-based differences
         self.assert_images_similar(viz, tol=17.5)
+
+    def test_within_pipeline(self):
+        """
+        Test that visualizer can be accessed within a sklearn pipeline
+        """
+        dataset = load_concrete(return_dataset=True)
+        X, y = dataset.to_data()
+        features = dataset.meta["features"]
+        features = list(map(lambda s: s.title(), features))
+
+        model = Pipeline([
+            ('imputer', SimpleImputer(missing_values=np.nan, strategy='mean')),
+            ('fi', FeatureImportances(Lasso(random_state=42), labels=features, relative=False))
+        ])
+
+        model.fit(X, y)
+        model['fi'].finalize()
+        self.assert_images_similar(model['fi'], tol=2.0)
 
 
 ##########################################################################
