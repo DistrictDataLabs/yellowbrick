@@ -227,6 +227,12 @@ Text Modeling Visualizers
     :alt: Dispersion of Words in a Corpus
     :target: api/text/dispersion.html#dispersion-plot
 
+.. image:: images/gallery/word_correlation.png
+    :width: 200px
+    :height: 100px
+    :alt: Correlation between Words in a Corpus
+    :target: api/text/correlation.html#correlation
+
 .. image:: images/gallery/postag.png
     :width: 200px
     :height: 100px
