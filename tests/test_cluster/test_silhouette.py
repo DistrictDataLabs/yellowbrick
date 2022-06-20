@@ -20,12 +20,9 @@ Tests for the SilhouetteVisualizer
 import sys
 import pytest
 import matplotlib.pyplot as plt
-import numpy as np
 
 from sklearn.datasets import make_blobs
 from sklearn.cluster import KMeans, MiniBatchKMeans
-from sklearn.pipeline import Pipeline
-from sklearn.impute import SimpleImputer
 
 from unittest import mock
 from tests.base import VisualTestCase
@@ -206,22 +203,3 @@ class TestSilhouetteVisualizer(VisualTestCase):
             oz = SilhouetteVisualizer(model, is_fitted=False)
             oz.fit(X, y)
             mockfit.assert_called_once_with(X, y)
-
-    def test_within_pipeline(self):
-        """
-        Test that visualizer can be accessed within a sklearn pipeline
-        """
-        X, y = load_nfl()
-
-        # Specify the features to use for clustering
-        features = ['Rec', 'Yds', 'TD', 'Fmb', 'Ctch_Rate']
-        X = X.query('Tgt >= 20')[features]
-
-        model = Pipeline([
-            ('imputer', SimpleImputer(missing_values=np.nan, strategy='mean')),
-            ('sil', SilhouetteVisualizer(KMeans(5, random_state=42), random_state=42))
-        ])
-
-        model.fit(X)
-        model['sil'].finalize()
-        self.assert_images_similar(model['sil'], tol=2.0)

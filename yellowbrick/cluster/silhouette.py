@@ -72,9 +72,6 @@ class SilhouetteVisualizer(ClusteringScoreVisualizer):
         fewer colors than cluster groups, colors will repeat. May also be a
         Yellowbrick or matplotlib colormap string.
 
-    random_state : int or RandomState, default: None
-        Fixes the random state for stochastic embedding algorithms.
-
     is_fitted : bool or str, default='auto'
         Specify if the wrapped estimator is already fitted. If False, the
         estimator will be fit when the visualizer is fit, otherwise, the
@@ -115,7 +112,7 @@ class SilhouetteVisualizer(ClusteringScoreVisualizer):
     >>> model.show()
     """
 
-    def __init__(self, estimator, ax=None, colors=None, random_state=None, is_fitted="auto", **kwargs):
+    def __init__(self, estimator, ax=None, colors=None, is_fitted="auto", **kwargs):
 
         # Initialize the visualizer bases
         super(SilhouetteVisualizer, self).__init__(estimator, ax=ax, **kwargs)
