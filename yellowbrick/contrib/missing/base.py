@@ -66,6 +66,9 @@ class MissingDataVisualizer(DataVisualizer):
                 self.features_ = X.columns
         else:
             self.X = X
+            if self.features_ is None:
+                n_columns = X.shape[1]
+                self.features_ = np.arange(0, n_columns)
 
         self.y = y
 
