@@ -29,7 +29,7 @@ A one-dimensional ranking of features utilizes a ranking algorithm that takes in
     # Load the credit dataset
     X, y = load_credit()
 
-    # Instantiate the 1D visualizer with the Sharpiro ranking algorithm
+    # Instantiate the 1D visualizer with the Shapiro ranking algorithm
     visualizer = Rank1D(algorithm='shapiro')
 
     visualizer.fit(X, y)           # Fit the data to the visualizer
