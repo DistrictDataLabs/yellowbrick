@@ -190,8 +190,11 @@ class ClassificationReport(ClassificationScoreVisualizer):
         # Call super to check if fitted and to compute self.score_
         super(ClassificationReport, self).score(X, y)
 
+        # Labels must be a data type that works with np.isnan
+        labels = range(len(self.classes_))
+
         y_pred = self.predict(X)
-        scores = precision_recall_fscore_support(y, y_pred)
+        scores = precision_recall_fscore_support(y, y_pred, labels=labels)
 
         # Calculate the percentage for the support metric
         # and store the percent in place of raw support counts

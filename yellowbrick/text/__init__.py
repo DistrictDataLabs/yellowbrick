@@ -22,3 +22,4 @@ from .umap_vis import UMAPVisualizer, umap
 from .freqdist import FreqDistVisualizer, freqdist
 from .postag import PosTagVisualizer
 from .dispersion import DispersionPlot, dispersion
+from .correlation import WordCorrelationPlot, word_correlation
