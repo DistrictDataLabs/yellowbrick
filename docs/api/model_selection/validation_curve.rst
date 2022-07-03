@@ -40,6 +40,8 @@ In our first example, we'll explore using the ``ValidationCurve`` visualizer wit
     viz.fit(X, y)
     viz.show()
 
+To further customize this plot, the visualizer also supports a ``markers`` parameter that changes the marker style.
+
 After loading and wrangling the data, we initialize the ``ValidationCurve`` with a ``DecisionTreeRegressor``. Decision trees become more overfit the deeper they are because at each level of the tree the partitions are dealing with a smaller subset of data. One way to deal with this overfitting process is to limit the depth of the tree. The validation curve explores the relationship of the ``"max_depth"`` parameter to the R2 score with 10 shuffle split cross-validation. The ``param_range`` argument specifies the values of ``max_depth``, here from 1 to 10 inclusive.
 
 We can see in the resulting visualization that a depth limit of less than 5 levels severely underfits the model on this data set because the training score and testing score climb together in this parameter range, and because of the high variability of cross validation on the test scores. After a depth of 7, the training and test scores diverge, this is because deeper trees are beginning to overfit the training data, providing no generalizability to the model. However, because the cross validation score does not necessarily decrease, the model is not suffering from high error due to variance.
