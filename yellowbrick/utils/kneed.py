@@ -59,7 +59,8 @@ class KneeLocator(object):
        A list of k values representing the no. of clusters in KMeans Clustering algorithm.
 
     y : list
-       A list of silhouette score corresponding to each value of k.
+       A list of k scores corresponding to each value of k. The type of k scores are determined 
+       by the metric parameter from the KElbowVisualizer class.
 
     S : float, default: 1.0
        Sensitivity parameter that allows us to adjust how aggressive we want KneeLocator to
