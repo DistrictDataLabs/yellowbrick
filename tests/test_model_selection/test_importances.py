@@ -536,6 +536,23 @@ class TestFeatureImportancesVisualizer(VisualTestCase):
         model['fi'].finalize()
         self.assert_images_similar(model['fi'], tol=2.0)
 
+    def test_within_pipeline_quickmethod(self):
+        """
+        Test that visualizer quickmethod can be accessed within a
+        sklearn pipeline
+        """
+        dataset = load_concrete(return_dataset=True)
+        X, y = dataset.to_data()
+        features = dataset.meta["features"]
+        features = list(map(lambda s: s.title(), features))
+
+        model = Pipeline([
+            ('imputer', SimpleImputer(missing_values=np.nan, strategy='mean')),
+            ('fi', feature_importances(Lasso(random_state=42), X, y, labels=features, relative=False, show=False))
+        ])
+        self.assert_images_similar(model['fi'], tol=2.0)
+
+
 
 ##########################################################################
 ## Mock Estimator
