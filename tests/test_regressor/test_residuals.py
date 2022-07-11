@@ -367,6 +367,24 @@ class TestResidualsPlot(VisualTestCase):
         model['rp'].finalize()
         self.assert_images_similar(model['rp'], tol=2.0)
 
+    def test_within_pipeline_quickmethod(self):
+        """
+        Test that visualizer quickmethod can be accessed within a
+        sklearn pipeline
+        """
+        X, y = load_energy(return_dataset=True).to_numpy()
+        X_train, X_test, y_train, y_test = tts(X, y, test_size=0.2, random_state=42)
+
+        model = Pipeline([
+            ('minmax', MinMaxScaler()),
+            ('rp', residuals_plot(Ridge(random_state=8893), X_train, y_train, X_test, y_test))
+        ])
+
+        model.fit(X_train, y_train)
+        model.score(X_test, y_test)
+        model['rp'].finalize()
+        self.assert_images_similar(model['rp'], tol=2.0)
+
     def test_pipeline_as_model_input(self):
         """
         Test that visualizer can handle sklearn pipeline as model input
@@ -385,6 +403,21 @@ class TestResidualsPlot(VisualTestCase):
         oz.finalize()
         self.assert_images_similar(oz, tol=2.0)
 
+    def test_pipeline_as_model_input_quickmethod(self):
+        """
+        Test that visualizer can handle sklearn pipeline as model input
+        within a quickmethod
+        """
+        X, y = load_energy(return_dataset=True).to_numpy()
+        X_train, X_test, y_train, y_test = tts(X, y, test_size=0.2, random_state=42)
+
+        model = Pipeline([
+            ('minmax', MinMaxScaler()),
+            ('ridge', Ridge(random_state=8893))
+        ])
+
+        oz = residuals_plot(model, X_train, y_train, X_test, y_test, show=False)
+        self.assert_images_similar(oz, tol=2.0)
 
 
 
