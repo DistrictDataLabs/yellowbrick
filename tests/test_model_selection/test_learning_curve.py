@@ -221,6 +221,29 @@ class TestLearningCurve(VisualTestCase):
         model['lc'].finalize()
         self.assert_images_similar(model['lc'], tol=2.0)
 
+    def test_within_pipeline_quickmethod(self):
+        """
+        Test that visualizer quickmethod can be accessed within a
+        sklearn pipeline
+        """
+        X, y = load_game()
+
+        # Encode the categorical data
+        X = OneHotEncoder().fit_transform(X)
+        y = LabelEncoder().fit_transform(y)
+
+        # Create the learning curve visualizer
+        cv = StratifiedKFold(n_splits=12)
+        sizes = np.linspace(0.3, 1.0, 10)
+
+        model = Pipeline([
+            ('imputer', SimpleImputer(missing_values=np.nan, strategy='mean')),
+            ('lc', learning_curve(MultinomialNB(), X, y, cv=cv, scoring='f1_weighted', train_sizes=sizes, n_jobs=4,
+                                  random_state=42))
+        ])
+        model['lc'].finalize()
+        self.assert_images_similar(model['lc'], tol=2.0)
+
     def test_pipeline_as_model_input(self):
         """
         Test that visualizer can handle sklearn pipeline as model input
@@ -243,4 +266,27 @@ class TestLearningCurve(VisualTestCase):
         oz = LearningCurve(model, cv=cv, scoring='f1_weighted', train_sizes=sizes, n_jobs=4, random_state=42)
         oz.fit(X, y)
         oz.finalize()
+        self.assert_images_similar(oz, tol=2.0)
+
+    def test_pipeline_as_model_input_quickmethod(self):
+        """
+        Test that visualizer can handle sklearn pipeline as model input
+        within a quickmethod
+        """
+        X, y = load_game()
+
+        # Encode the categorical data
+        X = OneHotEncoder().fit_transform(X)
+        y = LabelEncoder().fit_transform(y)
+
+        # Create the learning curve visualizer
+        cv = StratifiedKFold(n_splits=12)
+        sizes = np.linspace(0.3, 1.0, 10)
+
+        model = Pipeline([
+            ('imputer', SimpleImputer(missing_values=np.nan, strategy='mean')),
+            ('nb', MultinomialNB())
+        ])
+
+        oz = learning_curve(model, X, y, cv=cv, scoring='f1_weighted', train_sizes=sizes, n_jobs=4, random_state=42)
         self.assert_images_similar(oz, tol=2.0)
