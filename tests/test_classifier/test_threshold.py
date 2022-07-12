@@ -386,6 +386,22 @@ class TestDiscriminationThreshold(VisualTestCase):
         model['dt'].finalize()
         self.assert_images_similar(model['dt'], tol=2.0)
 
+    def test_within_pipeline_quickmethod(self):
+        """
+        Test that visualizer quickmethod can be accessed within a
+        sklearn pipeline
+        """
+        X, y = load_spam()
+
+        model = Pipeline([
+            ('imputer', SimpleImputer(missing_values=np.nan, strategy='mean')),
+            ('dt',
+             discrimination_threshold(LogisticRegression(multi_class="auto", solver="liblinear"), X,
+                                      y, random_state=42))
+        ])
+        model['dt'].finalize()
+        self.assert_images_similar(model['dt'], tol=2.0)
+
     def test_pipeline_as_model_input(self):
         """
         Test that visualizer can handle sklearn pipeline as model input
@@ -400,4 +416,19 @@ class TestDiscriminationThreshold(VisualTestCase):
         oz = DiscriminationThreshold(model, random_state=42)
         oz.fit(X, y)
         oz.finalize()
+        self.assert_images_similar(oz, tol=2.0)
+
+    def test_pipeline_as_model_input_quickmethod(self):
+        """
+        Test that visualizer can handle sklearn pipeline as model input
+        within a quickmethod
+        """
+        X, y = load_spam()
+
+        model = Pipeline([
+            ('imputer', SimpleImputer(missing_values=np.nan, strategy='mean')),
+            ('lr', LogisticRegression(multi_class="auto", solver="liblinear"))
+        ])
+
+        oz = discrimination_threshold(model, X, y, random_state=42)
         self.assert_images_similar(oz, tol=2.0)
