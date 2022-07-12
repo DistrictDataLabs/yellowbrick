@@ -172,6 +172,24 @@ class TestAlphaSelection(VisualTestCase):
         assert isinstance(visualizer, AlphaSelection)
         self.assert_images_similar(visualizer)
 
+    def test_within_pipeline(self):
+        """
+        Test that visualizer can be accessed within a sklearn pipeline
+        """
+        X, y = load_concrete()
+
+        # Create a list of alphas to cross-validate against
+        alphas = np.logspace(-10, 1, 400)
+
+        model = Pipeline([
+            ('imputer', SimpleImputer(missing_values=np.nan, strategy='mean')),
+            ('alpha', AlphaSelection(LassoCV(random_state=42, alphas=alphas)))
+        ])
+
+        model.fit(X, y)
+        model['alpha'].finalize()
+        self.assert_images_similar(model['alpha'], tol=2.0)
+
 
 class TestManualAlphaSelection(VisualTestCase):
     """
@@ -222,18 +240,19 @@ class TestManualAlphaSelection(VisualTestCase):
         # Python 3.6 Travis images not similar (RMS 0.024)
         self.assert_images_similar(visualizer, tol=0.5)
 
-    def test_within_pipeline(self):
+    def test_manual_within_pipeline(self):
         """
         Test that visualizer can be accessed within a sklearn pipeline
         """
         X, y = load_concrete()
 
         # Create a list of alphas to cross-validate against
-        alphas = np.logspace(-10, 1, 400)
+        alpha_values = np.logspace(1, 4, 50)
 
         model = Pipeline([
             ('imputer', SimpleImputer(missing_values=np.nan, strategy='mean')),
-            ('alpha', AlphaSelection(LassoCV(random_state=42, alphas=alphas)))
+            ('alpha', ManualAlphaSelection(Ridge(random_state=42), alphas=alpha_values, cv=12,
+                                           scoring="neg_mean_squared_error"))
         ])
 
         model.fit(X, y)
