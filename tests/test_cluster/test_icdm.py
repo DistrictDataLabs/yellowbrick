@@ -338,3 +338,17 @@ class TestInterclusterDistance(VisualTestCase):
         model.fit(X)
         model['icdm'].finalize()
         self.assert_images_similar(model['icdm'], tol=2.0)
+
+    def test_within_pipeline_quickmethod(self):
+        """
+        Test that visualizer can be accessed within a sklearn pipeline
+        """
+        X, y = load_nfl()
+
+        model = Pipeline([
+            ('imputer', SimpleImputer(missing_values=np.nan, strategy='mean')),
+            ('icdm', intercluster_distance(KMeans(5, random_state=42), X, random_state=42))
+        ])
+
+        model['icdm'].finalize()
+        self.assert_images_similar(model['icdm'], tol=2.0)
