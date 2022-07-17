@@ -20,6 +20,7 @@ Ensure that the regressor prediction error visualization works.
 
 import pytest
 import matplotlib.pyplot as plt
+import numpy as np
 
 from unittest import mock
 from tests.fixtures import Dataset, Split
@@ -34,7 +35,7 @@ from sklearn.neural_network import MLPRegressor
 from sklearn.linear_model import LinearRegression
 from sklearn.model_selection import train_test_split as tts
 from sklearn.pipeline import Pipeline
-from sklearn.preprocessing import MinMaxScaler
+from sklearn.impute import SimpleImputer
 
 try:
     import pandas as pd
@@ -281,7 +282,24 @@ class TestPredictionError(VisualTestCase):
         X_train, X_test, y_train, y_test = tts(X, y, test_size=0.2, random_state=42)
 
         model = Pipeline([
-            ('minmax', MinMaxScaler()),
+            ('imputer', SimpleImputer(missing_values=np.nan, strategy='mean')),
+            ('pe', PredictionError(Lasso()))
+        ])
+
+        model.fit(X_train, y_train)
+        model.score(X_test, y_test)
+        model['pe'].finalize()
+        self.assert_images_similar(model['pe'], tol=2.0)
+
+    def test_within_pipeline_quickmethod(self):
+        """
+        Test that visualizer can be accessed within a sklearn pipeline
+        """
+        X, y = load_concrete()
+        X_train, X_test, y_train, y_test = tts(X, y, test_size=0.2, random_state=42)
+
+        model = Pipeline([
+            ('imputer', SimpleImputer(missing_values=np.nan, strategy='mean')),
             ('pe', PredictionError(Lasso()))
         ])
 
@@ -298,12 +316,28 @@ class TestPredictionError(VisualTestCase):
         X_train, X_test, y_train, y_test = tts(X, y, test_size=0.2, random_state=42)
 
         model = Pipeline([
-            ('minmax', MinMaxScaler()),
+            ('imputer', SimpleImputer(missing_values=np.nan, strategy='mean')),
             ('lasso', Lasso())
         ])
 
         oz = PredictionError(model)
         oz.fit(X_train, y_train)
         oz.score(X_test, y_test)
+        oz.finalize()
+        self.assert_images_similar(oz, tol=2.0)
+
+    def test_pipeline_as_model_input_quickmethod(self):
+        """
+        Test that visualizer can handle sklearn pipeline as model input
+        """
+        X, y = load_concrete()
+        X_train, X_test, y_train, y_test = tts(X, y, test_size=0.2, random_state=42)
+
+        model = Pipeline([
+            ('imputer', SimpleImputer(missing_values=np.nan, strategy='mean')),
+            ('lasso', Lasso())
+        ])
+
+        oz = prediction_error(model, X_train, y_train, X_test, y_test)
         oz.finalize()
         self.assert_images_similar(oz, tol=2.0)
