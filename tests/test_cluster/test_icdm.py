@@ -288,7 +288,7 @@ class TestInterclusterDistance(VisualTestCase):
         """
         No error is raised when matplotlib version is incorrect and legend=False
         """
-        with pytst.raises(ImportError):
+        with pytest.raises(ImportError):
             from mpl_toolkits.axes_grid1 import inset_locator
 
             assert not inset_locator
@@ -324,6 +324,10 @@ class TestInterclusterDistance(VisualTestCase):
             oz.fit(X, y)
             mockfit.assert_called_once_with(X, y)
 
+    @pytest.mark.xfail(
+        IS_WINDOWS_OR_CONDA,
+        reason="font rendering different in OS and/or Python; see #892",
+    )
     def test_within_pipeline(self):
         """
         Test that visualizer can be accessed within a sklearn pipeline
@@ -339,6 +343,10 @@ class TestInterclusterDistance(VisualTestCase):
         model['icdm'].finalize()
         self.assert_images_similar(model['icdm'], tol=2.0)
 
+    @pytest.mark.xfail(
+        IS_WINDOWS_OR_CONDA,
+        reason="font rendering different in OS and/or Python; see #892",
+    )
     def test_within_pipeline_quickmethod(self):
         """
         Test that visualizer can be accessed within a sklearn pipeline
