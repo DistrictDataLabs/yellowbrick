@@ -384,7 +384,7 @@ class TestDiscriminationThreshold(VisualTestCase):
 
         model.fit(X, y)
         model['dt'].finalize()
-        self.assert_images_similar(model['dt'], tol=10)
+        self.assert_images_similar(model['dt'], tol=11)
 
     def test_within_pipeline_quickmethod(self):
         """
@@ -400,7 +400,7 @@ class TestDiscriminationThreshold(VisualTestCase):
                                       y, random_state=42))
         ])
         model['dt'].finalize()
-        self.assert_images_similar(model['dt'], tol=10)
+        self.assert_images_similar(model['dt'], tol=11)
 
     def test_pipeline_as_model_input(self):
         """
@@ -416,7 +416,7 @@ class TestDiscriminationThreshold(VisualTestCase):
         oz = DiscriminationThreshold(model, random_state=42)
         oz.fit(X, y)
         oz.finalize()
-        self.assert_images_similar(oz, tol=10)
+        self.assert_images_similar(oz, tol=11)
 
     def test_pipeline_as_model_input_quickmethod(self):
         """
@@ -431,4 +431,4 @@ class TestDiscriminationThreshold(VisualTestCase):
         ])
 
         oz = discrimination_threshold(model, X, y, random_state=42)
-        self.assert_images_similar(oz, tol=10)
+        self.assert_images_similar(oz, tol=11)
