@@ -534,7 +534,7 @@ class TestFeatureImportancesVisualizer(VisualTestCase):
 
         model.fit(X, y)
         model['fi'].finalize()
-        self.assert_images_similar(model['fi'], tol=2.0)
+        self.assert_images_similar(model['fi'], tol=17.5)
 
     def test_within_pipeline_quickmethod(self):
         """
@@ -550,7 +550,7 @@ class TestFeatureImportancesVisualizer(VisualTestCase):
             ('imputer', SimpleImputer(missing_values=np.nan, strategy='mean')),
             ('fi', feature_importances(Lasso(random_state=42), X, y, labels=features, relative=False, show=False))
         ])
-        self.assert_images_similar(model['fi'], tol=2.0)
+        self.assert_images_similar(model['fi'], tol=17.5)
 
 
 

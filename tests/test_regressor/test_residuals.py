@@ -365,7 +365,7 @@ class TestResidualsPlot(VisualTestCase):
         model.fit(X_train, y_train)
         model.score(X_test, y_test)
         model['rp'].finalize()
-        self.assert_images_similar(model['rp'], tol=2.0)
+        self.assert_images_similar(model['rp'], tol=3.0)
 
     def test_within_pipeline_quickmethod(self):
         """
@@ -383,7 +383,7 @@ class TestResidualsPlot(VisualTestCase):
         model.fit(X_train, y_train)
         model.score(X_test, y_test)
         model['rp'].finalize()
-        self.assert_images_similar(model['rp'], tol=2.0)
+        self.assert_images_similar(model['rp'], tol=3.0)
 
     def test_pipeline_as_model_input(self):
         """
@@ -401,7 +401,7 @@ class TestResidualsPlot(VisualTestCase):
         oz.fit(X_train, y_train)
         oz.score(X_test, y_test)
         oz.finalize()
-        self.assert_images_similar(oz, tol=2.0)
+        self.assert_images_similar(oz, tol=3.0)
 
     def test_pipeline_as_model_input_quickmethod(self):
         """
@@ -417,7 +417,7 @@ class TestResidualsPlot(VisualTestCase):
         ])
 
         oz = residuals_plot(model, X_train, y_train, X_test, y_test, show=False)
-        self.assert_images_similar(oz, tol=2.0)
+        self.assert_images_similar(oz, tol=3.0)
 
 
 
