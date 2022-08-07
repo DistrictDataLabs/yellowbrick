@@ -170,7 +170,7 @@ class TestAlphaSelection(VisualTestCase):
             LassoCV(random_state=0), X, y, is_fitted=False, show=False
         )
         assert isinstance(visualizer, AlphaSelection)
-        self.assert_images_similar(visualizer)
+        self.assert_images_similar(visualizer, tol=0.1)
 
     def test_within_pipeline(self):
         """
