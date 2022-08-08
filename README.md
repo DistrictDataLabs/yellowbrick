@@ -94,6 +94,12 @@ As you can see, there are lots of ways to get involved and we would be very happ
 
 For more information, checkout the `CONTRIBUTING.md` file in the root of the repository or the detailed documentation at [Contributing to Yellowbrick](https://www.scikit-yb.org/en/latest/contributing/index.html)
 
+## Our Valuable Contributors
+
+<p align="center"><a href="https://github.com/DistrictDataLabs/yellowbrick">
+  <img src="https://contributors-img.web.app/image?repo=DistrictDataLabs/yellowbrick" />
+</a></p>
+
 ## Yellowbrick Datasets
 
 Yellowbrick gives easy access to several datasets that are used for the examples in the documentation and testing. These datasets are hosted in our CDN and must be downloaded for use. Typically, when a user calls one of the data loader functions, e.g. `load_bikeshare()` the data is automatically downloaded if it's not already on the user's computer. However, for development and testing, or if you know you will be working without internet access, it might be easier to simply download all the data at once.
