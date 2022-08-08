@@ -36,6 +36,8 @@ from sklearn.linear_model import Ridge, Lasso
 from sklearn.neural_network import MLPRegressor
 from sklearn.linear_model import LinearRegression
 from sklearn.model_selection import train_test_split as tts
+from sklearn.pipeline import Pipeline
+from sklearn.preprocessing import MinMaxScaler
 
 
 try:
@@ -347,3 +349,76 @@ class TestResidualsPlot(VisualTestCase):
             oz = ResidualsPlot(model, is_fitted=False)
             oz.fit(X, y)
             mockfit.assert_called_once_with(X, y)
+
+    def test_within_pipeline(self):
+        """
+        Test that visualizer can be accessed within a sklearn pipeline
+        """
+        X, y = load_energy(return_dataset=True).to_numpy()
+        X_train, X_test, y_train, y_test = tts(X, y, test_size=0.2, random_state=42)
+
+        model = Pipeline([
+            ('minmax', MinMaxScaler()),
+            ('rp', ResidualsPlot(Ridge(random_state=8893)))
+        ])
+
+        model.fit(X_train, y_train)
+        model.score(X_test, y_test)
+        model['rp'].finalize()
+        self.assert_images_similar(model['rp'], tol=3.0)
+
+    def test_within_pipeline_quickmethod(self):
+        """
+        Test that visualizer quickmethod can be accessed within a
+        sklearn pipeline
+        """
+        X, y = load_energy(return_dataset=True).to_numpy()
+        X_train, X_test, y_train, y_test = tts(X, y, test_size=0.2, random_state=42)
+
+        model = Pipeline([
+            ('minmax', MinMaxScaler()),
+            ('rp', residuals_plot(Ridge(random_state=8893), X_train, y_train, X_test, y_test))
+        ])
+
+        model.fit(X_train, y_train)
+        model.score(X_test, y_test)
+        model['rp'].finalize()
+        self.assert_images_similar(model['rp'], tol=3.0)
+
+    def test_pipeline_as_model_input(self):
+        """
+        Test that visualizer can handle sklearn pipeline as model input
+        """
+        X, y = load_energy(return_dataset=True).to_numpy()
+        X_train, X_test, y_train, y_test = tts(X, y, test_size=0.2, random_state=42)
+
+        model = Pipeline([
+            ('minmax', MinMaxScaler()),
+            ('ridge', Ridge(random_state=8893))
+        ])
+
+        oz = ResidualsPlot(model)
+        oz.fit(X_train, y_train)
+        oz.score(X_test, y_test)
+        oz.finalize()
+        self.assert_images_similar(oz, tol=3.0)
+
+    def test_pipeline_as_model_input_quickmethod(self):
+        """
+        Test that visualizer can handle sklearn pipeline as model input
+        within a quickmethod
+        """
+        X, y = load_energy(return_dataset=True).to_numpy()
+        X_train, X_test, y_train, y_test = tts(X, y, test_size=0.2, random_state=42)
+
+        model = Pipeline([
+            ('minmax', MinMaxScaler()),
+            ('ridge', Ridge(random_state=8893))
+        ])
+
+        oz = residuals_plot(model, X_train, y_train, X_test, y_test, show=False)
+        self.assert_images_similar(oz, tol=3.0)
+
+
+
+    
