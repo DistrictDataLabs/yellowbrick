@@ -289,6 +289,7 @@ class InterclusterDistance(ClusteringScoreVisualizer):
         # Get the centers
         # TODO: is this how sklearn stores all centers in the model?
         C = self.cluster_centers_
+        print(f"cluster_centers_: {C.shape}")
 
         # Embed the centers in 2D space and get the cluster scores
         self.embedded_centers_ = self.transformer.fit_transform(C)
