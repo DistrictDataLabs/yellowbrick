@@ -24,7 +24,7 @@ import numpy as np
 from tests.base import VisualTestCase
 from numpy.testing import assert_array_equal
 
-from yellowbrick.datasets import load_energy
+from yellowbrick.datasets import load_energy, load_concrete
 from yellowbrick.exceptions import YellowbrickTypeError
 from yellowbrick.exceptions import YellowbrickValueError
 from yellowbrick.regressor.alphas import AlphaSelection, alphas
@@ -34,6 +34,8 @@ from yellowbrick.regressor.alphas import ManualAlphaSelection, manual_alphas
 from sklearn.svm import SVR, SVC
 from sklearn.cluster import KMeans
 from sklearn.decomposition import PCA
+from sklearn.impute import SimpleImputer
+from sklearn.pipeline import Pipeline
 from sklearn.datasets import make_regression
 from sklearn.linear_model import Ridge, RidgeCV
 from sklearn.linear_model import Lasso, LassoCV
@@ -170,6 +172,24 @@ class TestAlphaSelection(VisualTestCase):
         assert isinstance(visualizer, AlphaSelection)
         self.assert_images_similar(visualizer, tol=0.1)
 
+    def test_within_pipeline(self):
+        """
+        Test that visualizer can be accessed within a sklearn pipeline
+        """
+        X, y = load_concrete()
+
+        # Create a list of alphas to cross-validate against
+        alphas = np.logspace(-10, 1, 400)
+
+        model = Pipeline([
+            ('imputer', SimpleImputer(missing_values=np.nan, strategy='mean')),
+            ('alpha', AlphaSelection(LassoCV(random_state=42, alphas=alphas)))
+        ])
+
+        model.fit(X, y)
+        model['alpha'].finalize()
+        self.assert_images_similar(model['alpha'], tol=2.0)
+
 
 class TestManualAlphaSelection(VisualTestCase):
     """
@@ -219,3 +239,22 @@ class TestManualAlphaSelection(VisualTestCase):
         assert isinstance(visualizer, ManualAlphaSelection)
         # Python 3.6 Travis images not similar (RMS 0.024)
         self.assert_images_similar(visualizer, tol=0.5)
+
+    def test_manual_within_pipeline(self):
+        """
+        Test that visualizer can be accessed within a sklearn pipeline
+        """
+        X, y = load_concrete()
+
+        # Create a list of alphas to cross-validate against
+        alpha_values = np.logspace(1, 4, 50)
+
+        model = Pipeline([
+            ('imputer', SimpleImputer(missing_values=np.nan, strategy='mean')),
+            ('alpha', ManualAlphaSelection(Ridge(random_state=42), alphas=alpha_values, cv=12,
+                                           scoring="neg_mean_squared_error"))
+        ])
+
+        model.fit(X, y)
+        model['alpha'].finalize()
+        self.assert_images_similar(model['alpha'], tol=2.0)
