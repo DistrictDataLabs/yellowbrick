@@ -94,7 +94,18 @@ Once forked, use the following steps to get your development environment set up 
     $ pip install -r docs/requirements.txt
     ```
 
-4. Switch to the develop branch.
+4. (Optional) Set up pre-commit hooks.
+
+    When opening a PR in the Yellowbrick repository, a series of checks will be run on your contribution, some of which lint and look at the formatting of your code. These may indicate some changes that need to be made before your contribution can be reviewed. You can set up pre-commit hooks to run these checks locally upon running `git commit` to ensure your contribution will pass formatting and linting checks. To set this up, you will need to uncomment the pre-commit line in `requirements.txt` and then run the following commands:
+
+    ```
+    $ pip install -r requirements.txt
+    $ pre-commit install
+    ```
+
+    The next time you run `git commit` in the Yellowbrick repository, the checks will automatically run.
+
+5. Switch to the develop branch.
 
     The Yellowbrick repository has a `develop` branch that is the primary working branch for contributions. It is probably already the branch you're on, but you can make sure and switch to it as follows::
 
