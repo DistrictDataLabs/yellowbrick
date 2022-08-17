@@ -70,4 +70,4 @@ Here's a handy checklist to go through before submitting a PR, note that you can
 
 <!-- If you've added to the docs -->
 
-- [ ] _Have you built the docs using `make html`?_
+- [ ] _Have you built the docs using `make html` (must be run from `docs/`)?_
