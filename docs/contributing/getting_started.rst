@@ -19,7 +19,7 @@ We believe that *contribution is collaboration* and therefore emphasize *communi
 
 Once you have a good sense of how you are going to implement the new feature (or fix the bug!), you can reach out for feedback from the maintainers by creating a `pull request <https://github.com/DistrictDataLabs/yellowbrick/pulls>`_. Ideally, any pull request should be capable of resolution within 6 weeks of being opened. This timeline helps to keep our pull request queue small and allows Yellowbrick to maintain a robust release schedule to give our users the best experience possible. However, the most important thing is to keep the dialogue going! And if you're unsure whether you can complete your idea within 6 weeks, you should still go ahead and open a PR and we will be happy to help you scope it down as needed.
 
-If we have comments or questions when we evaluate your pull request and receive no response, we will also close the PR after this period of time. Please know that this does not mean we don't value your contribution, just that things go stale. If in the future you want to pick it back up, feel free to address our original feedback and to reference the original PR in a new pull request. 
+If we have comments or questions when we evaluate your pull request and receive no response, we will also close the PR after this period of time. Please know that this does not mean we don't value your contribution, just that things go stale. If in the future you want to pick it back up, feel free to address our original feedback and to reference the original PR in a new pull request.
 
 .. note:: Please note that if we feel your solution has not been thought out in earnest, or if the PR is not aligned with our `current milestone <https://github.com/districtdatalabs/yellowbrick/milestones>`_ goals, we may reach out to ask that you close the PR so that we can prioritize reviewing the most critical feature requests and bug fixes.
 
@@ -54,7 +54,7 @@ Once forked, use the following steps to get your development environment set up 
         $ pip install -e .
 
     This will add Yellowbrick to your PYTHONPATH so that you don't need to reinstall it each time you make a change during development.
-    
+
     Note that there may be other dependencies required for development and testing; you can simply install them with ``pip``. For example to install
     the additional dependencies for building the documentation or to run the
     test suite, use the ``requirements.txt`` files in those directories::
@@ -62,14 +62,23 @@ Once forked, use the following steps to get your development environment set up 
         $ pip install -r tests/requirements.txt
         $ pip install -r docs/requirements.txt
 
-4. Switch to the develop branch.
+4. (Optional) Set up pre-commit hooks.
+
+    When opening a PR in the Yellowbrick repository, a series of checks will be run on your contribution, some of which lint and look at the formatting of your code. These may indicate some changes that need to be made before your contribution can be reviewed. You can set up pre-commit hooks to run these checks locally upon running ``git commit`` to ensure your contribution will pass formatting and linting checks. To set this up, you will need to uncomment the pre-commit line in ``requirements.txt`` and then run the following commands::
+
+        $ pip install -r requirements.txt
+        $ pre-commit install
+
+    The next time you run ``git commit`` in the Yellowbrick repository, the checks will automatically run.
+
+5. Switch to the develop branch.
 
     The Yellowbrick repository has a ``develop`` branch that is the primary working branch for contributions. It is probably already the branch you're on, but you can make sure and switch to it as follows::
 
         $ git fetch
         $ git checkout develop
 
-At this point you're ready to get started writing code. 
+At this point you're ready to get started writing code.
 
 Branching Convention
 --------------------
@@ -89,7 +98,7 @@ We also recommend setting up an ``upstream`` remote so that you can easily pull 
     upstream  https://github.com/DistrictDataLabs/yellowbrick.git (fetch)
     upstream  https://github.com/DistrictDataLabs/yellowbrick.git (push)
 
-When you're ready, request a code review for your pull request. 
+When you're ready, request a code review for your pull request.
 
 Pull Requests
 -------------
