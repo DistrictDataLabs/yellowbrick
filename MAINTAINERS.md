@@ -13,17 +13,18 @@ For everyone who has [contributed](https://github.com/DistrictDataLabs/yellowbri
 This is a list of the primary project maintainers. Feel free to @ message them in issues and converse with them directly.
 
 - [bbengfort](https://github.com/bbengfort)
-- [ndanielsen](https://github.com/ndanielsen)
+- [rebeccabilbro](https://github.com/rebeccabilbro)
 - [lwgray](https://github.com/lwgray)
-- [NealHumphrey](https://github.com/NealHumphrey)
-- [jkeung](https://github.com/jkeung)
 - [pdamodaran](https://github.com/pdamodaran)
 
 ## Core Contributors
 
 This is a list of the core-contributors of the project. Core contributors set the road map and vision of the project. Keep an eye out for them in issues and check out their work to use as inspiration! Most likely they would also be happy to chat and answer questions.
 
-- [rebeccabilbro](https://github.com/rebeccabilbro)
+- [pdeziel](https://github.com/pdeziel)
+- [ndanielsen](https://github.com/ndanielsen)
+- [NealHumphrey](https://github.com/NealHumphrey)
+- [jkeung](https://github.com/jkeung)
 - [mattandahalfew](https://github.com/mattandahalfew)
 - [tuulihill](https://github.com/tuulihill)
 - [balavenkatesan](https://github.com/balavenkatesan)
