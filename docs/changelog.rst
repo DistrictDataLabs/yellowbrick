@@ -3,6 +3,40 @@
 Changelog
 =========
 
+Version 1.5
+-----------
+
+* Tag: v1.5_
+* Deployed Sunday, August 21, 2022
+* Current Contributors: Stefanie Molin, Prema Roman, Sangam Swadik, David Gilbertson, Larry Gray, Benjamin Bengfort, @admo1, @charlesincharge, Uri Nussbaum, Patrick Deziel, Rebecca Bilbro
+
+Major
+   - Added ``WordCorrelationPlot`` Visualizer
+   - Built tests for using sklearn pipeline with visualizers
+   - Allowed Marker Style to be specified in Validation Curve Visualizer
+   - Fixed ``get_params`` for estimator wrapper to prevent ``AttributeError``
+   - Updated missing values visualizer to handle multiple data types and work on both numpy arrays and pandas data frames.
+   - Added pairwise distance metrics to scoring metrics in KElbowVisualizer
+Minor
+   - Pegged Numba to v0.55.2
+   - Updated Umap to v0.5.3
+   - Fixed Missing labels in classification report visualizer
+   - Updated Numpy to v1.22.0
+Documentation
+   - The Spanish language Yellowbrick docs are now live: https://www.scikit-yb.org/es/latest/
+   - Added Dropping curve documentation
+   - Added new example Notebook for Regression Visualizers
+   - Fixed Typo in PR section of getting started docs
+   - Fixed Typo in rank docs
+   - Updated docstring in kneed.py utility file
+   - Clarified how to run ‘make html’ in PR template
+Infrastructure
+   - Added ability to run linting Actions on PRs
+   - Implemented black code formatting as pre-commit hook
+
+.. _v1.5: https://github.com/DistrictDataLabs/yellowbrick/releases/tag/v1.5
+
+
 Version 1.4
 -----------
 
