@@ -28,13 +28,15 @@ from yellowbrick.datasets import load_occupancy
 from tests.base import IS_WINDOWS_OR_CONDA, VisualTestCase
 from .test_rocauc import FakeClassifier
 
-from sklearn.svm import LinearSVC
+from sklearn.svm import LinearSVC, SVC
 from sklearn.naive_bayes import GaussianNB
 from sklearn.datasets import make_regression
 from sklearn.tree import DecisionTreeClassifier
 from sklearn.linear_model import RidgeClassifier
 from sklearn.model_selection import train_test_split as tts
 from sklearn.ensemble import RandomForestClassifier, AdaBoostClassifier
+from sklearn.pipeline import Pipeline
+from sklearn.preprocessing import MinMaxScaler
 
 try:
     import pandas as pd
@@ -476,3 +478,109 @@ class TestPrecisionRecallCurve(VisualTestCase):
             PrecisionRecallCurve(
                 RidgeClassifier(random_state=13), micro=True, per_class=True, show=False
             )
+
+    def test_within_pipeline(self):
+        """
+        Test that visualizer can be accessed within a sklearn pipeline
+        """
+        X, y = load_occupancy(return_dataset=True).to_pandas()
+        classes = ["unoccupied", "occupied"]
+
+        X_train, X_test, y_train, y_test = tts(
+                    X, y, test_size=0.2, shuffle=True, random_state=42
+                )
+
+        model = Pipeline([
+            ('minmax', MinMaxScaler()), 
+            ('prc', PrecisionRecallCurve(SVC(random_state=42),
+                                            per_class=True,
+                                            micro=False,
+                                            fill_area=False,
+                                            iso_f1_curves=True,
+                                            ap_score=False,
+                                            classes=classes))
+        ])
+
+        model.fit(X_train, y_train)
+        model.score(X_test, y_test)
+        model['prc'].finalize()
+        self.assert_images_similar(model['prc'], tol=5.5)
+
+    def test_within_pipeline_quickmethod(self):
+        """
+        Test that visualizer quickmethod can be accessed within a
+        sklearn pipeline
+        """
+        X, y = load_occupancy(return_dataset=True).to_pandas()
+
+        X_train, X_test, y_train, y_test = tts(
+                    X, y, test_size=0.2, shuffle=True, random_state=42
+                )
+
+        model = Pipeline([
+            ('minmax', MinMaxScaler()), 
+            ('prc', precision_recall_curve(SVC(random_state=42),
+                                            X_train, y_train, X_test, y_test,
+                                            per_class=True,
+                                            micro=False,
+                                            fill_area=False,
+                                            iso_f1_curves=True,
+                                            ap_score=False,
+                                            classes=["unoccupied", "occupied"],
+                                            show=False))
+            ])
+        self.assert_images_similar(model['prc'], tol=5.5)
+
+    def test_pipeline_as_model_input(self):
+        """
+        Test that visualizer can handle sklearn pipeline as model input
+        """
+        X, y = load_occupancy(return_dataset=True).to_pandas()
+        classes = ["unoccupied", "occupied"]
+
+        X_train, X_test, y_train, y_test = tts(
+                    X, y, test_size=0.2, shuffle=True, random_state=42
+                )
+
+        model = Pipeline([
+            ('minmax', MinMaxScaler()), 
+            ('svc', SVC(random_state=42))
+        ])
+
+        oz = PrecisionRecallCurve(model,
+                                  per_class=True,
+                                  micro=False,
+                                  fill_area=False,
+                                  iso_f1_curves=True,
+                                  ap_score=False,
+                                  classes=classes)
+        oz.fit(X_train, y_train)
+        oz.score(X_test, y_test)
+        oz.finalize()
+        self.assert_images_similar(oz, tol=5.5)
+
+    def test_pipeline_as_model_input_quickmethod(self):
+        """
+        Test that visualizer can handle sklearn pipeline as model input
+        within a quickmethod
+        """
+        X, y = load_occupancy(return_dataset=True).to_pandas()
+
+        X_train, X_test, y_train, y_test = tts(
+                    X, y, test_size=0.2, shuffle=True, random_state=42
+                )
+
+        model = Pipeline([
+            ('minmax', MinMaxScaler()), 
+            ('svc', SVC(random_state=42))
+        ])
+
+        oz = precision_recall_curve(model, X_train, y_train, X_test, y_test, 
+                     per_class=True,
+                     micro=False,
+                     fill_area=False,
+                     iso_f1_curves=True,
+                     ap_score=False,
+                     classes=["unoccupied", "occupied"],
+                     show=False)
+        self.assert_images_similar(oz, tol=5.5)

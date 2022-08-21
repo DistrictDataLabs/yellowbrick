@@ -25,3 +25,6 @@ cycler>=0.10.0
 ## Build Requirements (uncomment for deployment)
 # wheel>=0.35
 # twine>=3.3
+
+## Pre-Commit Requirements (uncomment to use pre-commit hooks)
+# pre-commit>=2.20.0

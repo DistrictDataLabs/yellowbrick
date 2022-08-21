@@ -17,6 +17,7 @@ Visualizers that wrap the model selection libraries of Scikit-Learn
 from .learning_curve import LearningCurve, learning_curve
 from .validation_curve import ValidationCurve, validation_curve
 from .cross_validation import CVScores, cv_scores
+from .dropping_curve import DroppingCurve, dropping_curve
 
 # RFECV and Feature Importances moved here as of YB v1.0
 from .importances import FeatureImportances, feature_importances

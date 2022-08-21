@@ -20,12 +20,13 @@ Ensure that the regressor prediction error visualization works.
 
 import pytest
 import matplotlib.pyplot as plt
+import numpy as np
 
 from unittest import mock
 from tests.fixtures import Dataset, Split
 from tests.base import IS_WINDOWS_OR_CONDA, VisualTestCase
 
-from yellowbrick.datasets import load_energy
+from yellowbrick.datasets import load_energy, load_concrete
 from yellowbrick.regressor.prediction_error import PredictionError, prediction_error
 
 from sklearn.datasets import make_regression
@@ -33,6 +34,8 @@ from sklearn.linear_model import Ridge, Lasso
 from sklearn.neural_network import MLPRegressor
 from sklearn.linear_model import LinearRegression
 from sklearn.model_selection import train_test_split as tts
+from sklearn.pipeline import Pipeline
+from sklearn.impute import SimpleImputer
 
 try:
     import pandas as pd
@@ -215,6 +218,18 @@ class TestPredictionError(VisualTestCase):
         assert "alpha" in scatter_kwargs
         assert scatter_kwargs["alpha"] == 0.7
 
+    def test_is_fitted_param(self):
+        """
+        Test that the user can supply an is_fitted param and it's state is maintained
+        """
+        # Instantiate a sklearn regressor
+        model = Lasso(random_state=23, alpha=10)
+        # Instantiate a prediction error plot, provide custom alpha
+        visualizer = PredictionError(model, bestfit=False, identity=False, is_fitted=False)
+
+        # Test param gets set correctly
+        assert visualizer.is_fitted == False
+    
     @pytest.mark.xfail(
         reason="""third test fails with AssertionError: Expected fit
         to be called once. Called 0 times."""
@@ -258,3 +273,71 @@ class TestPredictionError(VisualTestCase):
         )
         assert isinstance(oz, PredictionError)
         self.assert_images_similar(oz)
+
+    def test_within_pipeline(self):
+        """
+        Test that visualizer can be accessed within a sklearn pipeline
+        """
+        X, y = load_concrete()
+        X_train, X_test, y_train, y_test = tts(X, y, test_size=0.2, random_state=42)
+
+        model = Pipeline([
+            ('imputer', SimpleImputer(missing_values=np.nan, strategy='mean')),
+            ('pe', PredictionError(Lasso()))
+        ])
+
+        model.fit(X_train, y_train)
+        model.score(X_test, y_test)
+        model['pe'].finalize()
+        self.assert_images_similar(model['pe'], tol=2.0)
+
+    def test_within_pipeline_quickmethod(self):
+        """
+        Test that visualizer can be accessed within a sklearn pipeline
+        """
+        X, y = load_concrete()
+        X_train, X_test, y_train, y_test = tts(X, y, test_size=0.2, random_state=42)
+
+        model = Pipeline([
+            ('imputer', SimpleImputer(missing_values=np.nan, strategy='mean')),
+            ('pe', PredictionError(Lasso()))
+        ])
+
+        model.fit(X_train, y_train)
+        model.score(X_test, y_test)
+        model['pe'].finalize()
+        self.assert_images_similar(model['pe'], tol=2.0)
+
+    def test_pipeline_as_model_input(self):
+        """
+        Test that visualizer can handle sklearn pipeline as model input
+        """
+        X, y = load_concrete()
+        X_train, X_test, y_train, y_test = tts(X, y, test_size=0.2, random_state=42)
+
+        model = Pipeline([
+            ('imputer', SimpleImputer(missing_values=np.nan, strategy='mean')),
+            ('lasso', Lasso())
+        ])
+
+        oz = PredictionError(model)
+        oz.fit(X_train, y_train)
+        oz.score(X_test, y_test)
+        oz.finalize()
+        self.assert_images_similar(oz, tol=2.0)
+
+    def test_pipeline_as_model_input_quickmethod(self):
+        """
+        Test that visualizer can handle sklearn pipeline as model input
+        """
+        X, y = load_concrete()
+        X_train, X_test, y_train, y_test = tts(X, y, test_size=0.2, random_state=42)
+
+        model = Pipeline([
+            ('imputer', SimpleImputer(missing_values=np.nan, strategy='mean')),
+            ('lasso', Lasso())
+        ])
+
+        oz = prediction_error(model, X_train, y_train, X_test, y_test)
+        oz.finalize()
+        self.assert_images_similar(oz, tol=2.0)

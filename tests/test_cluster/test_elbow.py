@@ -205,12 +205,16 @@ class TestKElbowVisualizer(VisualTestCase):
         """
         Assert that invalid values of K raise exceptions
         """
+        # Generate a blobs data set
+        X, y = make_blobs(
+            n_samples=1000, n_features=12, centers=6, shuffle=True, random_state=42
+        )
 
         with pytest.raises(YellowbrickValueError):
-            KElbowVisualizer(KMeans(), k=(1, 2, 3, "foo", 5))
+            KElbowVisualizer(KMeans(), k=(1, 2, 3, "foo", 5)).fit(X)
 
         with pytest.raises(YellowbrickValueError):
-            KElbowVisualizer(KMeans(), k="foo")
+            KElbowVisualizer(KMeans(), k="foo").fit(X)
 
     def test_valid_k(self):
         """
@@ -220,16 +224,21 @@ class TestKElbowVisualizer(VisualTestCase):
         # if k is a tuple of 2 ints, k_values = range(k[0], k[1])
         # if k is an iterable, k_values_ = list(k)
 
-        visualizer = KElbowVisualizer(KMeans(), k=8)
+        # Generate a blobs data set
+        X, y = make_blobs(
+            n_samples=1000, n_features=12, centers=6, shuffle=True, random_state=42
+        )
+
+        visualizer = KElbowVisualizer(KMeans(), k=8).fit(X)
         assert visualizer.k_values_ == list(np.arange(2, 8 + 1))
 
-        visualizer = KElbowVisualizer(KMeans(), k=(4, 12))
+        visualizer = KElbowVisualizer(KMeans(), k=(4, 12)).fit(X)
         assert visualizer.k_values_ == list(np.arange(4, 12))
 
-        visualizer = KElbowVisualizer(KMeans(), k=np.arange(10, 100, 10))
+        visualizer = KElbowVisualizer(KMeans(), k=np.arange(10, 100, 10)).fit(X)
         assert visualizer.k_values_ == list(np.arange(10, 100, 10))
 
-        visualizer = KElbowVisualizer(KMeans(), k=[10, 20, 30, 40, 50, 60, 70, 80, 90])
+        visualizer = KElbowVisualizer(KMeans(), k=[10, 20, 30, 40, 50, 60, 70, 80, 90]).fit(X)
         assert visualizer.k_values_ == list(np.arange(10, 100, 10))
 
     @pytest.mark.xfail(sys.platform == "win32", reason="images not close on windows")
@@ -296,6 +305,29 @@ class TestKElbowVisualizer(VisualTestCase):
         self.assert_images_similar(visualizer)
         assert_array_almost_equal(visualizer.k_scores_, expected)
 
+    @pytest.mark.xfail(sys.platform == "win32", reason="images not close on windows")
+    def test_distance_metric(self):
+        """
+        Test the manhattan distance metric of the distortion metric of the k-elbow visualizer
+        """
+        visualizer = KElbowVisualizer(
+            KMeans(random_state=0),
+            k=5,
+            metric="distortion",
+            distance_metric='manhattan',
+            timings=False,
+            locate_elbow=False,
+        )
+        visualizer.fit(self.clusters.X)
+        assert len(visualizer.k_scores_) == 4
+        assert visualizer.elbow_value_ is None
+
+        expected = np.array([189.060129, 154.096223, 124.271208, 107.087566])
+
+        visualizer.finalize()
+        self.assert_images_similar(visualizer)
+        assert_array_almost_equal(visualizer.k_scores_, expected)
+
     @pytest.mark.xfail(
         IS_WINDOWS_OR_CONDA,
         reason="computation of k_scores_ varies by 2.867 max absolute difference",
@@ -346,6 +378,13 @@ class TestKElbowVisualizer(VisualTestCase):
         """
         with pytest.raises(YellowbrickValueError):
             KElbowVisualizer(KMeans(), k=5, metric="foo")
+
+    def test_bad_distance_metric(self):
+        """
+        Assert KElbow raises an exception when a bad distance metric is supplied
+        """
+        with pytest.raises(YellowbrickValueError):
+            KElbowVisualizer(KMeans(), k=5, distance_metric="foo")
 
     @pytest.mark.xfail(
         IS_WINDOWS_OR_CONDA,
@@ -462,3 +501,13 @@ class TestKElbowVisualizer(VisualTestCase):
         oz.draw()
         oz.finalize()
         self.assert_images_similar(oz, tol=3.2)
+
+    def test_get_params(self):
+        """
+        Ensure the get params works for sklearn-compatibility
+        """
+        oz = KElbowVisualizer(
+            KMeans(random_state=0), k=5,
+        )
+        params = oz.get_params()
+        assert len(params) > 0

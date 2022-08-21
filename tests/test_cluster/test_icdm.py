@@ -19,6 +19,7 @@ Tests for the intercluster distance map visualizer.
 
 import pytest
 import matplotlib as mpl
+import numpy as np
 
 from yellowbrick.cluster.icdm import *
 from yellowbrick.datasets import load_nfl
@@ -32,6 +33,8 @@ from sklearn.datasets import make_blobs
 from sklearn.cluster import Birch, AgglomerativeClustering
 from sklearn.decomposition import LatentDirichletAllocation as LDA
 from sklearn.cluster import KMeans, AffinityPropagation, MiniBatchKMeans
+from sklearn.pipeline import Pipeline
+from sklearn.impute import SimpleImputer
 
 try:
     import pandas as pd
@@ -285,15 +288,14 @@ class TestInterclusterDistance(VisualTestCase):
         """
         No error is raised when matplotlib version is incorrect and legend=False
         """
-        with pytst.raises(ImportError):
+        with pytest.raises(ImportError):
             from mpl_toolkits.axes_grid1 import inset_locator
 
             assert not inset_locator
 
-        try:
-            InterclusterDistance(KMeans(), legend=False)
-        except YellowbrickValueError as e:
-            self.fail(e)
+        
+        InterclusterDistance(KMeans(), legend=False)
+    
 
     @pytest.mark.xfail(
         reason="""third test fails with AssertionError: Expected fit
@@ -321,3 +323,40 @@ class TestInterclusterDistance(VisualTestCase):
             oz = ICDM(model, is_fitted=False)
             oz.fit(X, y)
             mockfit.assert_called_once_with(X, y)
+
+    @pytest.mark.xfail(
+        IS_WINDOWS_OR_CONDA,
+        reason="font rendering different in OS and/or Python; see #892",
+    )
+    def test_within_pipeline(self):
+        """
+        Test that visualizer can be accessed within a sklearn pipeline
+        """
+        X, y = load_nfl()
+
+        model = Pipeline([
+            ('imputer', SimpleImputer(missing_values=np.nan, strategy='mean')),
+            ('icdm', InterclusterDistance(KMeans(5, random_state=42), random_state=42))
+        ])
+
+        model.fit(X)
+        model['icdm'].finalize()
+        self.assert_images_similar(model['icdm'], tol=2.0)
+
+    @pytest.mark.xfail(
+        IS_WINDOWS_OR_CONDA,
+        reason="font rendering different in OS and/or Python; see #892",
+    )
+    def test_within_pipeline_quickmethod(self):
+        """
+        Test that visualizer can be accessed within a sklearn pipeline
+        """
+        X, y = load_nfl()
+
+        model = Pipeline([
+            ('imputer', SimpleImputer(missing_values=np.nan, strategy='mean')),
+            ('icdm', intercluster_distance(KMeans(5, random_state=42), X, random_state=42))
+        ])
+
+        model['icdm'].finalize()
+        self.assert_images_similar(model['icdm'], tol=2.0)

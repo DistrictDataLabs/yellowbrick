@@ -5,9 +5,9 @@
 
 # Library Dependencies
 matplotlib==3.4.2
-scipy==1.7.0
+scipy==1.8.0
 scikit-learn==1.0.0
-numpy==1.21.0
+numpy==1.22.0
 cycler==0.10.0
 
 # Testing Requirements
@@ -21,7 +21,8 @@ coverage==5.5
 nltk==3.6.7
 # spacy>=2.0.18
 pandas==1.3.0
-umap-learn==0.5.1
+umap-learn==0.5.3
+numba==0.55.2
 
 # Third-Party Estimator Tests
 # xgboost==1.2.0
