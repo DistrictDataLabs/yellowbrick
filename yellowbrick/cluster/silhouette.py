@@ -115,7 +115,9 @@ class SilhouetteVisualizer(ClusteringScoreVisualizer):
     def __init__(self, estimator, ax=None, colors=None, is_fitted="auto", **kwargs):
 
         # Initialize the visualizer bases
-        super(SilhouetteVisualizer, self).__init__(estimator, ax=ax, **kwargs)
+        super(SilhouetteVisualizer, self).__init__(
+            estimator, ax=ax, is_fitted=is_fitted, **kwargs
+        )
 
         # Visual Properties
         # Use colors if it is given, otherwise attempt to use colormap which
