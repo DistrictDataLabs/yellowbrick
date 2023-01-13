@@ -71,7 +71,7 @@ class KneeLocator(object):
        to be found.
 
     curve_direction : string, default: 'increasing'
-       A string that determines tha increasing or decreasing nature of the elbow curve in
+       A string that determines the increasing or decreasing nature of the elbow curve in
        which "knee" or "elbow" is to be found.
 
     online : bool, default: False
