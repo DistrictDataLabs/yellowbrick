@@ -135,9 +135,11 @@ class SilhouetteVisualizer(ClusteringScoreVisualizer):
         # NOTE: Probably this would be better in score, but the standard score
         # is a little different and I'm not sure how it's used.
 
-        if not check_fitted(self.estimator, is_fitted_by=self.is_fitted):
-            # Fit the wrapped estimator
-            self.estimator.fit(X, y, **kwargs)
+        # if estimator is fitted AND has attribute
+        if check_fitted(self.estimator, is_fitted_by=self.is_fitted) and hasattr(self.estimator, "predict"):
+            labels = self.estimator.predict(X)
+        else:  # if estimator is NOT fitted, OR estimator does NOT implement predict()
+            labels = self.estimator.fit_predict(X, y, **kwargs)
 
         # Get the properties of the dataset
         self.n_samples_ = X.shape[0]
