@@ -145,10 +145,16 @@ class SilhouetteVisualizer(ClusteringScoreVisualizer):
         self.n_samples_ = X.shape[0]
         self.n_clusters_ = self.estimator.n_clusters
 
+        if hasattr(self.estimator, "metric"):
+            metric = self.estimator.metric
+        elif hasattr(self.estimator, "affinity"):
+            metric = self.estimator.affinity
+        else:
+            metric = "euclidean"
+
         # Compute the scores of the cluster
-        labels = self.estimator.predict(X)
-        self.silhouette_score_ = silhouette_score(X, labels)
-        self.silhouette_samples_ = silhouette_samples(X, labels)
+        self.silhouette_score_ = silhouette_score(X, labels, metric=metric)
+        self.silhouette_samples_ = silhouette_samples(X, labels, metric=metric)
 
         # Draw the silhouette figure
         self.draw(labels)
