@@ -143,7 +143,11 @@ class SilhouetteVisualizer(ClusteringScoreVisualizer):
 
         # Get the properties of the dataset
         self.n_samples_ = X.shape[0]
-        self.n_clusters_ = self.estimator.n_clusters
+
+        if hasattr(self.estimator, "n_clusters"):
+            self.n_clusters_ = self.estimator.n_clusters
+        else:
+            self.n_clusters_ = len(set(labels)) - (1 if -1 in labels else 0)
 
         if hasattr(self.estimator, "metric"):
             metric = self.estimator.metric
