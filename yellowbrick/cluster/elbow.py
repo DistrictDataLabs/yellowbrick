@@ -185,8 +185,8 @@ class KElbowVisualizer(ClusteringScoreVisualizer):
     distance_metric : str or callable, default='euclidean'
         The metric to use when calculating distance between instances in a
         feature array. If metric is a string, it must be one of the options allowed
-        by sklearn's metrics.pairwise.pairwise_distances. If X is the distance array itself,
-        use metric="precomputed".
+        by sklearn's metrics.pairwise.pairwise_distances. If X is the distance array
+        itself, use metric="precomputed".
 
     timings : bool, default: True
         Display the fitting time per k to evaluate the amount of time required
@@ -278,7 +278,7 @@ class KElbowVisualizer(ClusteringScoreVisualizer):
                 raise YellowbrickValueError(
                     "'{} is not a defined distance metric "
                     "use one of the sklearn metric.pairwise.pairwise_distances"
-                )
+                ) from e
 
         # Store the arguments
         self.k = k
@@ -525,8 +525,8 @@ def kelbow_visualizer(
     distance_metric : str or callable, default='euclidean'
         The metric to use when calculating distance between instances in a
         feature array. If metric is a string, it must be one of the options allowed
-        by sklearn's metrics.pairwise.pairwise_distances. If X is the distance array itself,
-        use metric="precomputed".
+        by sklearn's metrics.pairwise.pairwise_distances. If X is the distance array
+        itself, use metric="precomputed".
 
     timings : bool, default: True
         Display the fitting time per k to evaluate the amount of time required
