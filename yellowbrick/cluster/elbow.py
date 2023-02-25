@@ -44,13 +44,13 @@ __all__ = ["KElbowVisualizer", "KElbow", "distortion_score", "kelbow_visualizer"
 
 
 # Custom colors; note that LINE_COLOR is imported above
-TIMING_COLOR = 'C1'  # Color of timing axis, tick, label, and line
-METRIC_COLOR = 'C0'  # Color of metric axis, tick, label, and line
+TIMING_COLOR = "C1"  # Color of timing axis, tick, label, and line
+METRIC_COLOR = "C0"  # Color of metric axis, tick, label, and line
 
 # Keys for the color dictionary
 CTIMING = "timing"
 CMETRIC = "metric"
-CVLINE  = "vline"
+CVLINE = "vline"
 
 
 ##########################################################################
@@ -112,7 +112,7 @@ def distortion_score(X, labels, metric="euclidean"):
 
         # Compute the square distances from the instances to the center
         distances = pairwise_distances(instances, center, metric=metric)
-        distances = distances ** 2
+        distances = distances**2
 
         # Add the sum of square distance to the distortion
         distortion += distances.sum()
@@ -256,7 +256,7 @@ class KElbowVisualizer(ClusteringScoreVisualizer):
         ax=None,
         k=10,
         metric="distortion",
-        distance_metric='euclidean',
+        distance_metric="euclidean",
         timings=True,
         locate_elbow=True,
         **kwargs
@@ -303,7 +303,7 @@ class KElbowVisualizer(ClusteringScoreVisualizer):
         ``self.elbow_value`` and ``self.elbow_score`` respectively.
         This method finishes up by calling draw to create the plot.
         """
-         # Convert K into a tuple argument if an integer
+        # Convert K into a tuple argument if an integer
         if isinstance(self.k, int):
             self.k_values_ = list(range(2, self.k + 1))
         elif (
@@ -341,9 +341,12 @@ class KElbowVisualizer(ClusteringScoreVisualizer):
 
             # Append the time and score to our plottable metrics
             self.k_timers_.append(time.time() - start)
-            if self.metric != 'calinski_harabasz':
-                self.k_scores_.append(self.scoring_metric(X, self.estimator.labels_,
-                                      metric=self.distance_metric))
+            if self.metric != "calinski_harabasz":
+                self.k_scores_.append(
+                    self.scoring_metric(
+                        X, self.estimator.labels_, metric=self.distance_metric
+                    )
+                )
             else:
                 self.k_scores_.append(self.scoring_metric(X, self.estimator.labels_))
 
@@ -438,7 +441,6 @@ class KElbowVisualizer(ClusteringScoreVisualizer):
             self.axes[1].set_ylabel("fit time (seconds)", color=self.timing_color)
             self.axes[1].tick_params("y", colors=self.timing_color)
 
-
     @property
     def metric_color(self):
         return self.colors[CMETRIC]
@@ -463,6 +465,7 @@ class KElbowVisualizer(ClusteringScoreVisualizer):
     def vline_color(self, val):
         self.colors[CVLINE] = val
 
+
 # alias
 KElbow = KElbowVisualizer
 
@@ -479,7 +482,7 @@ def kelbow_visualizer(
     ax=None,
     k=10,
     metric="distortion",
-    distance_metric='euclidean',
+    distance_metric="euclidean",
     timings=True,
     locate_elbow=True,
     show=True,
@@ -563,7 +566,7 @@ def kelbow_visualizer(
         ax=ax,
         k=k,
         metric=metric,
-        distance_metric='euclidean',
+        distance_metric="euclidean",
         timings=timings,
         locate_elbow=locate_elbow,
         **kwargs
