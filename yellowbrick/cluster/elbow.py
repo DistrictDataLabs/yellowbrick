@@ -24,9 +24,9 @@ import numpy as np
 import scipy.sparse as sp
 from collections.abc import Iterable
 
-from sklearn.metrics import silhouette_score
 from sklearn.preprocessing import LabelEncoder
 from sklearn.metrics.pairwise import pairwise_distances
+from sklearn.metrics import silhouette_score, DistanceMetric
 
 from yellowbrick.utils import KneeLocator, get_param_names
 from yellowbrick.style.palettes import LINE_COLOR
@@ -129,9 +129,6 @@ KELBOW_SCOREMAP = {
     "silhouette": silhouette_score,
     "calinski_harabasz": chs,
 }
-
-DISTANCE_METRICS = ['cityblock', 'cosine', 'euclidean', 'haversine',
-                    'l1', 'l2', 'manhattan', 'nan_euclidean', 'precomputed']
 
 
 class KElbowVisualizer(ClusteringScoreVisualizer):
@@ -273,11 +270,15 @@ class KElbowVisualizer(ClusteringScoreVisualizer):
                 "use one of distortion, silhouette, or calinski_harabasz"
             )
 
-        if distance_metric not in DISTANCE_METRICS:
-            raise YellowbrickValueError(
-                "'{} is not a defined distance metric "
-                "use one of the sklearn metric.pairwise.pairwise_distances"
-            )
+        # Check to ensure the distance metric is valid
+        if not callable(distance_metric):
+            try:
+                DistanceMetric.get_metric(distance_metric)
+            except ValueError as e:
+                raise YellowbrickValueError(
+                    "'{} is not a defined distance metric "
+                    "use one of the sklearn metric.pairwise.pairwise_distances"
+                )
 
         # Store the arguments
         self.k = k
