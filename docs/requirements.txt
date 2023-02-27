@@ -1,7 +1,7 @@
 # Library Dependencies
 matplotlib>=3.3
 scipy>=1.6.0
-scikit-learn>=1.0.0
+scikit-learn>=1.0.2
 numpy>=1.16.0
 cycler>=0.10.0
 umap-learn>=0.5.1
