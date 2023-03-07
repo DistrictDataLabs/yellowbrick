@@ -1218,7 +1218,7 @@ def datasaurus():
         y = arr[1]
 
         # Draw the points in the scatter plot
-        ax.scatter(x, y, c=color)
+        ax.scatter(x, y, color=color)
 
         # Set the X and Y limits
         ax.set_xlim(0, 100)
