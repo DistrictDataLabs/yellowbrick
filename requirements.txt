@@ -27,4 +27,4 @@ cycler>=0.10.0
 # twine>=3.3
 
 ## Pre-Commit Requirements (uncomment to use pre-commit hooks)
-pre-commit>=2.20.0
+# pre-commit>=2.20.0
