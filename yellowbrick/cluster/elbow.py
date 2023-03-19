@@ -24,9 +24,9 @@ import numpy as np
 import scipy.sparse as sp
 from collections.abc import Iterable
 
-from sklearn.metrics import silhouette_score
 from sklearn.preprocessing import LabelEncoder
 from sklearn.metrics.pairwise import pairwise_distances
+from sklearn.metrics import silhouette_score, DistanceMetric
 
 from yellowbrick.utils import KneeLocator, get_param_names
 from yellowbrick.style.palettes import LINE_COLOR
@@ -44,13 +44,13 @@ __all__ = ["KElbowVisualizer", "KElbow", "distortion_score", "kelbow_visualizer"
 
 
 # Custom colors; note that LINE_COLOR is imported above
-TIMING_COLOR = 'C1'  # Color of timing axis, tick, label, and line
-METRIC_COLOR = 'C0'  # Color of metric axis, tick, label, and line
+TIMING_COLOR = "C1"  # Color of timing axis, tick, label, and line
+METRIC_COLOR = "C0"  # Color of metric axis, tick, label, and line
 
 # Keys for the color dictionary
 CTIMING = "timing"
 CMETRIC = "metric"
-CVLINE  = "vline"
+CVLINE = "vline"
 
 
 ##########################################################################
@@ -112,7 +112,7 @@ def distortion_score(X, labels, metric="euclidean"):
 
         # Compute the square distances from the instances to the center
         distances = pairwise_distances(instances, center, metric=metric)
-        distances = distances ** 2
+        distances = distances**2
 
         # Add the sum of square distance to the distortion
         distortion += distances.sum()
@@ -129,9 +129,6 @@ KELBOW_SCOREMAP = {
     "silhouette": silhouette_score,
     "calinski_harabasz": chs,
 }
-
-DISTANCE_METRICS = ['cityblock', 'cosine', 'euclidean', 'haversine',
-                    'l1', 'l2', 'manhattan', 'nan_euclidean', 'precomputed']
 
 
 class KElbowVisualizer(ClusteringScoreVisualizer):
@@ -188,8 +185,8 @@ class KElbowVisualizer(ClusteringScoreVisualizer):
     distance_metric : str or callable, default='euclidean'
         The metric to use when calculating distance between instances in a
         feature array. If metric is a string, it must be one of the options allowed
-        by sklearn's metrics.pairwise.pairwise_distances. If X is the distance array itself,
-        use metric="precomputed".
+        by sklearn's metrics.pairwise.pairwise_distances. If X is the distance array
+        itself, use metric="precomputed".
 
     timings : bool, default: True
         Display the fitting time per k to evaluate the amount of time required
@@ -259,7 +256,7 @@ class KElbowVisualizer(ClusteringScoreVisualizer):
         ax=None,
         k=10,
         metric="distortion",
-        distance_metric='euclidean',
+        distance_metric="euclidean",
         timings=True,
         locate_elbow=True,
         **kwargs
@@ -273,11 +270,15 @@ class KElbowVisualizer(ClusteringScoreVisualizer):
                 "use one of distortion, silhouette, or calinski_harabasz"
             )
 
-        if distance_metric not in DISTANCE_METRICS:
-            raise YellowbrickValueError(
-                "'{} is not a defined distance metric "
-                "use one of the sklearn metric.pairwise.pairwise_distances"
-            )
+        # Check to ensure the distance metric is valid
+        if not callable(distance_metric):
+            try:
+                DistanceMetric.get_metric(distance_metric)
+            except ValueError as e:
+                raise YellowbrickValueError(
+                    "'{} is not a defined distance metric "
+                    "use one of the sklearn metric.pairwise.pairwise_distances"
+                ) from e
 
         # Store the arguments
         self.k = k
@@ -302,7 +303,7 @@ class KElbowVisualizer(ClusteringScoreVisualizer):
         ``self.elbow_value`` and ``self.elbow_score`` respectively.
         This method finishes up by calling draw to create the plot.
         """
-         # Convert K into a tuple argument if an integer
+        # Convert K into a tuple argument if an integer
         if isinstance(self.k, int):
             self.k_values_ = list(range(2, self.k + 1))
         elif (
@@ -340,9 +341,12 @@ class KElbowVisualizer(ClusteringScoreVisualizer):
 
             # Append the time and score to our plottable metrics
             self.k_timers_.append(time.time() - start)
-            if self.metric != 'calinski_harabasz':
-                self.k_scores_.append(self.scoring_metric(X, self.estimator.labels_,
-                                      metric=self.distance_metric))
+            if self.metric != "calinski_harabasz":
+                self.k_scores_.append(
+                    self.scoring_metric(
+                        X, self.estimator.labels_, metric=self.distance_metric
+                    )
+                )
             else:
                 self.k_scores_.append(self.scoring_metric(X, self.estimator.labels_))
 
@@ -437,7 +441,6 @@ class KElbowVisualizer(ClusteringScoreVisualizer):
             self.axes[1].set_ylabel("fit time (seconds)", color=self.timing_color)
             self.axes[1].tick_params("y", colors=self.timing_color)
 
-
     @property
     def metric_color(self):
         return self.colors[CMETRIC]
@@ -462,6 +465,7 @@ class KElbowVisualizer(ClusteringScoreVisualizer):
     def vline_color(self, val):
         self.colors[CVLINE] = val
 
+
 # alias
 KElbow = KElbowVisualizer
 
@@ -478,7 +482,7 @@ def kelbow_visualizer(
     ax=None,
     k=10,
     metric="distortion",
-    distance_metric='euclidean',
+    distance_metric="euclidean",
     timings=True,
     locate_elbow=True,
     show=True,
@@ -521,8 +525,8 @@ def kelbow_visualizer(
     distance_metric : str or callable, default='euclidean'
         The metric to use when calculating distance between instances in a
         feature array. If metric is a string, it must be one of the options allowed
-        by sklearn's metrics.pairwise.pairwise_distances. If X is the distance array itself,
-        use metric="precomputed".
+        by sklearn's metrics.pairwise.pairwise_distances. If X is the distance array
+        itself, use metric="precomputed".
 
     timings : bool, default: True
         Display the fitting time per k to evaluate the amount of time required
@@ -562,7 +566,7 @@ def kelbow_visualizer(
         ax=ax,
         k=k,
         metric=metric,
-        distance_metric='euclidean',
+        distance_metric="euclidean",
         timings=timings,
         locate_elbow=locate_elbow,
         **kwargs
