@@ -17,7 +17,7 @@ Base class for cluster visualizers.
 ## Imports
 ##########################################################################
 
-from yellowbrick.utils import isclusterer
+from yellowbrick.utils import isclusterer, isdensity
 from yellowbrick.base import ScoreVisualizer
 from yellowbrick.exceptions import YellowbrickTypeError
 
@@ -41,7 +41,7 @@ class ClusteringScoreVisualizer(ScoreVisualizer):
     """
 
     def __init__(self, estimator, ax=None, fig=None, force_model=False, **kwargs):
-        if not force_model and not isclusterer(estimator):
+        if not force_model and not isclusterer(estimator) and not isdensity(estimator):
             raise YellowbrickTypeError(
                 "The supplied model is not a clustering estimator; try a "
                 "classifier or regression score visualizer instead!"

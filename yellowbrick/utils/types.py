@@ -116,6 +116,25 @@ def is_clusterer(estimator):
 isclusterer = is_clusterer
 
 
+def is_density(estimator):
+    """
+    Returns True if the given estimator is a Density Estimator.
+
+    Parameters
+    ----------
+    estimator : class or instance
+        The object to test if it is a Scikit-Learn clusterer, especially a
+        Scikit-Learn estimator or Yellowbrick visualizer
+    """
+
+    # Test the _estimator_type property
+    return getattr(estimator, "_estimator_type", None) == "DensityEstimator"
+
+
+# Alias for closer name to isinstance and issubclass
+isdensity = is_density
+
+
 def is_gridsearch(estimator):
     """
     Returns True if the given estimator is a clusterer.
