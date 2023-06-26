@@ -1,150 +1,158 @@
-# Contributing to Yellowbrick
+# Contribuer à Yellowbrick
 
-**NOTE: This document is a "getting started" summary for contributing to the Yellowbrick project.** To read the full contributor's guide, please visit the [contributing page](http://www.scikit-yb.org/en/latest/contributing/index.html) in the documentation. Please make sure to read this page carefully to ensure the review process is as smooth as possible and to ensure the greatest likelihood of having your contribution be merged.
 
-For more on the development path, goals, and motivations behind Yellowbrick, check out our developer presentation: [Visualizing Model Selection with Scikit-Yellowbrick: An Introduction to Developing Visualizers](http://www.slideshare.net/BenjaminBengfort/visualizing-model-selection-with-scikityellowbrick-an-introduction-to-developing-visualizers).
+**Pour lire le guide complet du contributeur, veuillez visiter la [page de contribution] (http://www.scikit-yb.org/en/latest/contributing/index.html) dans la documentation. Veillez à lire attentivement cette page afin de vous assurer que le processus de révision se déroule de la manière la plus fluide possible et que votre contribution ait le plus de chances d'être fusionnée.
 
-## How to Contribute
 
-Yellowbrick is an open source project that is supported by a community who will gratefully and humbly accept any contributions you might make to the project. Large or small, any contribution makes a big difference; and if you've never contributed to an open source project before, we hope you will start with Yellowbrick!
+Pour en savoir plus sur le développement, les objectifs et les motivations de Yellowbrick, consultez notre présentation aux développeurs : [Visualisation de la sélection de modèles avec Scikit-Yellowbrick : An Introduction to Developing Visualizers] (http://www.slideshare.net/BenjaminBengfort/visualizing-model-selection-with-scikityellowbrick-an-introduction-to-developing-visualizers).
 
-Principally, Yellowbrick development is about the addition and creation of *visualizers* &mdash; objects that learn from data and create a visual representation of the data or model. Visualizers integrate with scikit-learn estimators, transformers, and pipelines for specific purposes and as a result, can be simple to build and deploy. The most common contribution is therefore a new visualizer for a specific model or model family. We'll discuss in detail how to build visualizers later.
 
-Beyond creating visualizers, there are many ways to contribute:
+## Comment contribuer
 
-- Submit a bug report or feature request on [GitHub Issues](https://github.com/DistrictDataLabs/yellowbrick/issues).
-- Contribute a Jupyter notebook to our examples[ gallery](https://github.com/DistrictDataLabs/yellowbrick/tree/develop/examples).
-- Assist us with [user testing](http://www.scikit-yb.org/en/latest/evaluation.html).
-- Add to the documentation or help with our website, [scikit-yb.org](http://www.scikit-yb.org).
-- Write [unit or integration tests](https://www.scikit-yb.org/en/latest/contributing/developing_visualizers.html#integration-tests) for our project.
-- Answer questions on our issues, mailing list, Stack Overflow, and elsewhere.
-- Translate our documentation into another language.
-- Write a blog post, tweet, or share our project with others.
-- [Teach](https://www.scikit-yb.org/en/latest/teaching.html) someone how to use Yellowbrick.
 
-As you can see, there are lots of ways to get involved and we would be very happy for you to join us! The only thing we ask is that you abide by the principles of openness, respect, and consideration of others as described in the [Python Software Foundation Code of Conduct](https://www.python.org/psf/codeofconduct/).
+Yellowbrick est un projet open source soutenu par une communauté qui acceptera avec gratitude et humilité toutes les contributions que vous pourriez apporter au projet. Grande ou petite, toute contribution fait une grande différence ; et si vous n'avez jamais contribué à un projet open source auparavant, nous espérons que vous commencerez avec Yellowbrick !
 
-## Getting Started on GitHub
 
-Yellowbrick is hosted on GitHub at https://github.com/DistrictDataLabs/yellowbrick.
+Principalement, le développement de Yellowbrick concerne l'ajout et la création de *visualiseurs* &mdash ; des objets qui apprennent des données et créent une représentation visuelle des données ou du modèle. Les visualiseurs s'intègrent aux estimateurs, transformateurs et pipelines de scikit-learn pour des objectifs spécifiques et, par conséquent, peuvent être simples à construire et à déployer. La contribution la plus courante est donc un nouveau visualiseur pour un modèle ou une famille de modèles spécifique. Nous verrons plus tard en détail comment construire des visualiseurs.
 
-The typical workflow for a contributor to the codebase is as follows:
 
-1. **Discover** a bug or a feature by using Yellowbrick.
-2. **Discuss** with the core contributes by [adding an issue](https://github.com/DistrictDataLabs/yellowbrick/issues).
-3. **Fork** the repository into your own GitHub account.
-4. Create a **Pull Request** first thing to [connect with us](https://github.com/DistrictDataLabs/yellowbrick/pulls) about your task.
-5. **Code** the feature, write the documentation, add your contribution.
-6. **Review** the code with core contributors who will guide you to a high quality submission.
-7. **Merge** your contribution into the Yellowbrick codebase.
+Au-delà de la création de visualiseurs, il existe de nombreuses façons de contribuer :
 
-We believe that *contribution is collaboration* and therefore emphasize *communication* throughout the open source process. We rely heavily on GitHub's social coding tools to allow us to do this. For instance, we use GitHub's [milestone](https://help.github.com/en/articles/about-milestones) feature to focus our development efforts for each Yellowbrick semester, so be sure to check out the issues associated with our [current milestone](https://github.com/districtdatalabs/yellowbrick/milestones)!
 
-Once you have a good sense of how you are going to implement the new feature (or fix the bug!), you can reach out for feedback from the maintainers by creating a [pull request](https://github.com/DistrictDataLabs/yellowbrick/pulls). Please note that if we feel your solution has not been thought out in earnest, or if the PR is not aligned with our [current milestone](https://github.com/districtdatalabs/yellowbrick/milestones) goals, we may reach out to ask that you close the PR so that we can prioritize reviewing the most critical feature requests and bug fixes.
+- Soumettre un rapport de bogue ou une demande de fonctionnalité sur [GitHub Issues] (https://github.com/DistrictDataLabs/yellowbrick/issues).
+- Ajoutez un carnet Jupyter à notre [galerie d'exemples] (https://github.com/DistrictDataLabs/yellowbrick/tree/develop/examples).
+- Aidez-nous avec les [tests utilisateurs] (http://www.scikit-yb.org/en/latest/evaluation.html).
+- Ajoutez à la documentation ou aidez-nous avec notre site web, [scikit-yb.org](http://www.scikit-yb.org).
+- Écrire des [tests unitaires ou d'intégration](https://www.scikit-yb.org/en/latest/contributing/developing_visualizers.html#integration-tests) pour notre projet.
+- Répondre aux questions sur nos problèmes, notre liste de diffusion, Stack Overflow, et ailleurs.
+- Traduire notre documentation dans une autre langue.
+- Écrire un billet de blog, tweeter ou partager notre projet avec d'autres.
+- Enseigner](https://www.scikit-yb.org/en/latest/teaching.html) à quelqu'un comment utiliser Yellowbrick.
 
-Ideally, any pull request should be capable of resolution within 6 weeks of being opened. This timeline helps to keep our pull request queue small and allows Yellowbrick to maintain a robust release schedule to give our users the best experience possible. However, the most important thing is to keep the dialogue going! And if you're unsure whether you can complete your idea within 6 weeks, you should still go ahead and open a PR and we will be happy to help you scope it down as needed.
 
-If we have comments or questions when we evaluate your pull request and receive no response, we will also close the PR after this period of time. Please know that this does not mean we don't value your contribution, just that things go stale. If in the future you want to pick it back up, feel free to address our original feedback and to reference the original PR in a new pull request.
+Comme vous pouvez le voir, il y a de nombreuses façons de s'impliquer et nous serions très heureux que vous nous rejoigniez ! La seule chose que nous vous demandons est de respecter les principes d'ouverture, de respect et de considération des autres tels que décrits dans le [Code de conduite de la Python Software Foundation](https://www.python.org/psf/codeofconduct/).
 
-### Forking the Repository
 
-The first step is to fork the repository into your own account. This will create a copy of the codebase that you can edit and write to. Do so by clicking the **"fork"** button in the upper right corner of the Yellowbrick GitHub page.
+## Démarrer sur GitHub
+Yellowbrick est hébergé sur GitHub à https://github.com/DistrictDataLabs/yellowbrick.
 
-Once forked, use the following steps to get your development environment set up on your computer:
+Le flux de travail typique d'un contributeur à la base de code est le suivant :
 
-1. Clone the repository.
+1. **Découvrez** un bug ou une fonctionnalité en utilisant Yellowbrick.
+2. **Discuter** avec les contributeurs principaux en [ajoutant un problème](https://github.com/DistrictDataLabs/yellowbrick/issues).
+3. **Fork** le dépôt dans votre propre compte GitHub.
+4. Créez une **Demande d'extraction** en premier lieu pour [nous contacter](https://github.com/DistrictDataLabs/yellowbrick/pulls) sur votre tâche.
+5. **Codez** la fonction, rédigez la documentation, ajoutez votre contribution.
+6. **Examinez** le code avec les principaux contributeurs qui vous guideront vers une soumission de haute qualité.
+7. **Fusionnez** votre contribution dans la base de codes Yellowbrick.
 
-    After clicking the fork button, you should be redirected to the GitHub page of the repository in your user account. You can then clone a copy of the code to your local machine.
+Nous pensons que *la contribution est la collaboration* et mettons donc l'accent sur *la communication* tout au long du processus open source. Nous nous appuyons fortement sur les outils de codage social de GitHub pour nous permettre de le faire. Par exemple, nous utilisons la fonctionnalité [jalestone](https://help.github.com/en/articles/about-milestones) de GitHub pour concentrer nos efforts de développement pour chaque semestre Yellowbrick, alors assurez-vous de consulter les problèmes associés à notre [jalon actuel](https://github.com/districtdatalabs/yellowbrick/milestones) !
+
+Une fois que vous avez une bonne idée de la façon dont vous allez mettre en œuvre la nouvelle fonctionnalité (ou corriger le bogue !), vous pouvez contacter les responsables de la maintenance en créant une [demande d'extraction](https://github.com/DistrictDataLabs/yellowbrick/pulls). Veuillez noter que si nous pensons que votre solution n'a pas été sérieusement pensée, ou si la RP n'est pas alignée avec nos objectifs [étape actuelle](https://github.com/districtdatalabs/yellowbrick/milestones), nous pouvons vous demander de fermer la RP afin que nous puissions examiner en priorité les demandes de fonctionnalités les plus critiques et les corrections de bogues.
+
+Idéalement, toute demande d'extraction devrait pouvoir être résolue dans les 6 semaines suivant son ouverture. Cette chronologie aide à garder notre file d'attente de demandes d'extraction petite et permet à Yellowbrick de maintenir un calendrier de sortie robuste pour offrir à nos utilisateurs la meilleure expérience possible. Cependant, le plus important est de maintenir le dialogue ! Et si vous n'êtes pas sûr de pouvoir terminer votre idée dans les 6 semaines, vous devriez quand même ouvrir une RP et nous serons heureux de vous aider à la délimiter au besoin.
+
+Si nous avons des commentaires ou des questions lorsque nous évaluons votre demande d'extraction et que nous ne recevons aucune réponse, nous fermerons également la communication après cette période. Sachez que cela ne signifie pas que nous n'accordons pas de valeur à votre contribution, mais simplement que les choses se gâtent. Si, à l'avenir, vous souhaitez le récupérer, n'hésitez pas à répondre à nos commentaires d'origine et à référencer le RP d'origine dans une nouvelle demande d'extraction.
+
+### Création du référentiel
+
+La première étape consiste à créer le référentiel dans votre propre compte. Cela créera une copie de la base de code que vous pourrez modifier et écrire. Pour ce faire, cliquez sur le bouton **« fork »** dans le coin supérieur droit de la page Yellowbrick GitHub.
+
+Une fois forké, suivez les étapes suivantes pour mettre en place votre environnement de développement sur votre ordinateur :
+
+1. Clonez le dépôt.
+
+    Après avoir cliqué sur le bouton fork, vous devriez être redirigé vers la page GitHub du dépôt de votre compte utilisateur. Vous pouvez alors cloner une copie du code sur votre machine locale.
 
     ```
-    $ git clone https://github.com/[YOURUSERNAME]/yellowbrick
+    $ git clone https://github.com/[VOTRE NOM D'UTILISATEUR]/yellowbrick
     $ cd yellowbrick
     ```
 
-    Optionally, you can also [add the upstream remote](https://help.github.com/articles/configuring-a-remote-for-a-fork/) to synchronize with changes made by other contributors:
+    En option, vous pouvez également [ajouter le remote amont] (https://help.github.com/articles/configuring-a-remote-for-a-fork/) pour vous synchroniser avec les changements effectués par d'autres contributeurs :
 
     ```
     $ git remote add upstream https://github.com/DistrictDataLabs/yellowbrick
     ```
 
-    See "Branching Conventions" below for more on this topic.
+    Voir "Conventions de branchement" ci-dessous pour plus d'informations à ce sujet.
 
-2. Create a virtual environment.
+2. Créez un environnement virtuel.
 
-    Yellowbrick developers typically use [virtualenv](https://virtualenv.pypa.io/en/stable/) (and [virtualenvwrapper](https://virtualenvwrapper.readthedocs.io/en/latest/), [pyenv](https://github.com/pyenv/pyenv-virtualenv) or [conda envs](https://conda.io/docs/using/envs.html) in order to manage their Python version and dependencies. Using the virtual environment tool of your choice, create one for Yellowbrick. Here's how with virtualenv:
+    Les développeurs Yellowbrick utilisent généralement [virtualenv](https://virtualenv.pypa.io/en/stable/) (et [virtualenvwrapper](https://virtualenvwrapper.readthedocs.io/en/latest/), [pyenv](https://github.com/pyenv/pyenv-virtualenv) ou [conda envs](https://conda.io/docs/using/envs.html) afin de gérer leur version de Python et leurs dépendances. En utilisant l'outil d'environnement virtuel de votre choix, créez-en un pour Yellowbrick. Voici comment faire avec virtualenv :
 
     ```
     $ virtualenv venv
     ```
 
-3. Install dependencies.
+3. Installer les dépendances.
 
-    Yellowbrick's dependencies are in the `requirements.txt` document at the root of the repository. Open this file and uncomment the dependencies that are for development only. Then install the dependencies with `pip`:
+    Les dépendances de Yellowbrick sont dans le document `requirements.txt` à la racine du dépôt. Ouvrez ce fichier et décommentez les dépendances qui ne sont destinées qu'au développement. Ensuite, installez les dépendances avec `pip` :
 
     ```
     $ pip install -r requirements.txt
     ```
 
-    Note that there may be other dependencies required for development and testing, you can simply install them with `pip`. For example to install
-    the additional dependencies for building the documentation or to run the
-    test suite, use the `requirements.txt` files in those directories:
+    Notez qu'il peut y avoir d'autres dépendances requises pour le développement et les tests, vous pouvez simplement les installer avec `pip`. Par exemple, pour installer
+    les dépendances supplémentaires pour construire la documentation ou pour exécuter la suite de
+    test, utilisez les fichiers `requirements.txt` dans ces répertoires :
 
     ```
     $ pip install -r tests/requirements.txt
     $ pip install -r docs/requirements.txt
     ```
 
-4. (Optional) Set up pre-commit hooks.
+4) (Optionnel) Mettre en place des hooks de pré-commission.
 
-    When opening a PR in the Yellowbrick repository, a series of checks will be run on your contribution, some of which lint and look at the formatting of your code. These may indicate some changes that need to be made before your contribution can be reviewed. You can set up pre-commit hooks to run these checks locally upon running `git commit` to ensure your contribution will pass formatting and linting checks. To set this up, you will need to uncomment the pre-commit line in `requirements.txt` and then run the following commands:
+    Lorsque vous ouvrez un PR dans le dépôt Yellowbrick, une série de vérifications sera exécutée sur votre contribution, certaines d'entre elles étant des vérifications de formatage de votre code. Ces vérifications peuvent indiquer des changements qui doivent être faits avant que votre contribution ne soit examinée. Vous pouvez mettre en place des hooks de pré-commission pour lancer ces vérifications localement lors de l'exécution de `git commit` afin de s'assurer que votre contribution passera les vérifications de formatage et de linting. Pour mettre cela en place, vous devrez décommenter la ligne pre-commit dans `requirements.txt` et ensuite lancer les commandes suivantes :
 
     ```
     $ pip install -r requirements.txt
     $ pre-commit install
     ```
 
-    The next time you run `git commit` in the Yellowbrick repository, the checks will automatically run.
+    La prochaine fois que vous lancerez `git commit` dans le dépôt Yellowbrick, les vérifications seront automatiquement exécutées.
 
-5. Switch to the develop branch.
+5. Passer à la branche develop.
 
-    The Yellowbrick repository has a `develop` branch that is the primary working branch for contributions. It is probably already the branch you're on, but you can make sure and switch to it as follows::
+    Le dépôt Yellowbrick a une branche `develop` qui est la branche de travail principale pour les contributions. C'est probablement déjà la branche sur laquelle vous êtes, mais vous pouvez vous en assurer et y basculer comme suit : :
 
     ```
     $ git fetch
     $ git checkout develop
     ```
 
-At this point you're ready to get started writing code!
+A ce stade, vous êtes prêt à commencer à écrire du code !
 
-### Branching Conventions
+### Conventions de branchement
 
-The Yellowbrick repository is set up in a typical production/release/development cycle as described in "[A Successful Git Branching Model](http://nvie.com/posts/a-successful-git-branching-model/)." The primary working branch is the `develop` branch. This should be the branch that you are working on and from, since this has all the latest code. The `master` branch contains the latest stable version and release, _which is pushed to PyPI_. No one but maintainers will push to master.
+Le dépôt Yellowbrick est configuré selon un cycle typique de production/diffusion/développement tel que décrit dans "[A Successful Git Branching Model](http://nvie.com/posts/a-successful-git-branching-model/)." La branche de travail principale est la branche `develop`. C'est la branche sur laquelle et à partir de laquelle vous travaillez, puisqu'elle contient tout le code le plus récent. La branche `master` contient la dernière version stable, _qui est poussée sur PyPI_. Personne d'autre que les mainteneurs ne poussera sur la branche master.
 
-**NOTE:** All pull requests should be into the `yellowbrick/develop` branch from your forked repository.
+**NOTE:** Toutes les demandes de téléchargement doivent être faites dans la branche `yellowbrick/develop` de votre dépôt forké.
 
-You should work directly in your fork and create a pull request from your fork's develop branch into ours. We also recommend setting up an `upstream` remote so that you can easily pull the latest development changes from the main Yellowbrick repository (see [configuring a remote for a fork](https://help.github.com/articles/configuring-a-remote-for-a-fork/)). You can do that as follows:
+Vous devriez travailler directement dans votre fork et créer une pull request depuis la branche develop de votre fork vers la nôtre. Nous recommandons également la mise en place d'un remote `upstream` afin que vous puissiez facilement récupérer les derniers changements de développement depuis le dépôt principal de Yellowbrick (voir [configurer un remote pour un fork](https://help.github.com/articles/configuring-a-remote-for-a-fork/)). Vous pouvez le faire comme suit :
 
 ```
 $ git remote add upstream https://github.com/DistrictDataLabs/yellowbrick.git
 $ git remote -v
-origin    https://github.com/YOUR_USERNAME/YOUR_FORK.git (fetch)
-origin    https://github.com/YOUR_USERNAME/YOUR_FORK.git (push)
-upstream  https://github.com/DistrictDataLabs/yellowbrick.git (fetch)
-upstream  https://github.com/DistrictDataLabs/yellowbrick.git (push)
+origin https://github.com/YOUR_USERNAME/YOUR_FORK.git (fetch)
+origine https://github.com/YOUR_USERNAME/YOUR_FORK.git (push)
+upstream https://github.com/DistrictDataLabs/yellowbrick.git (fetch)
+upstream https://github.com/DistrictDataLabs/yellowbrick.git (push)
 ```
 
-When you're ready, request a code review for your pull request. Then, when reviewed and approved, you can merge your fork into our main branch. Make sure to use the "Squash and Merge" option in order to create a Git history that is understandable.
+Lorsque vous êtes prêt, demandez une revue de code pour votre pull request. Ensuite, une fois la revue et l'approbation obtenues, vous pouvez fusionner votre fork dans notre branche principale. Assurez-vous d'utiliser l'option "Squash and Merge" afin de créer un historique Git compréhensible.
 
-**NOTE to maintainers**: When merging a pull request, use the "squash and merge" option and make sure to edit the both the subject and the body of the commit message so that when we're putting the changelog together, we know what happened in the PR. I recommend reading [Chris Beams' _How to Write a Git Commit Message_](https://chris.beams.io/posts/git-commit/) so we're all on the same page!
+**NOTE aux mainteneurs** : Lorsque vous fusionnez une pull request, utilisez l'option "squash and merge" et assurez-vous d'éditer à la fois le sujet et le corps du message de commit afin que nous sachions ce qui s'est passé dans la PR lorsque nous compilons le changelog. Je recommande la lecture de [Chris Beams' _How to Write a Git Commit Message_] (https://chris.beams.io/posts/git-commit/) pour que nous soyons tous sur la même longueur d'onde !
 
-Core contributors and those who are planning on contributing multiple PRs might want to consider using feature branches to reduce the number of merges (and merge conflicts). Create a feature branch as follows:
+Les contributeurs principaux et ceux qui prévoient de contribuer à plusieurs PRs peuvent envisager d'utiliser des branches de fonctionnalités pour réduire le nombre de fusions (et de conflits de fusions). Créez une branche de fonctionnalité comme suit :
 
 ```
 $ git checkout -b feature-myfeature develop
 $ git push --set-upstream origin feature-myfeature
 ```
 
-Once you are done working (and everything is tested) you can submit a PR from your feature branch. Synchronize with `upstream` once the PR has been merged and delete the feature branch:
+Une fois que vous avez fini de travailler (et que tout est testé), vous pouvez soumettre un PR depuis votre branche de fonctionnalité. Synchronisez avec `upstream` une fois que la PR a été fusionnée et supprimez la branche de fonctionnalité :
 
 ```
 $ git checkout develop
@@ -154,146 +162,146 @@ $ git branch -d feature-myfeature
 $ git push origin --delete feature-myfeature
 ```
 
-Head back to Github and checkout another issue!
+Retournez sur Github et consultez un autre problème !
 
-## Developing Visualizers
+## Développer des visualiseurs
 
-In this section, we'll discuss the basics of developing visualizers. This of course is a big topic, but hopefully these simple tips and tricks will help make sense.
+Dans cette section, nous allons discuter des bases du développement de visualiseurs. Il s'agit bien sûr d'un vaste sujet, mais nous espérons que ces conseils et astuces simples vous aideront à y voir plus clair.
 
-One thing that is necessary is a good understanding of scikit-learn and Matplotlib. Because our API is intended to integrate with scikit-learn, a good start is to review ["APIs of scikit-learn objects"](http://scikit-learn.org/stable/developers/contributing.html#apis-of-scikit-learn-objects) and ["rolling your own estimator"](http://scikit-learn.org/stable/developers/contributing.html#rolling-your-own-estimator). In terms of matplotlib, check out [Nicolas P. Rougier's Matplotlib tutorial](https://www.labri.fr/perso/nrougier/teaching/matplotlib/).
+Il est nécessaire de bien comprendre scikit-learn et Matplotlib. Étant donné que notre API est destinée à s'intégrer à scikit-learn, un bon début consiste à examiner ["APIs of scikit-learn objects"] (http://scikit-learn.org/stable/developers/contributing.html#apis-of-scikit-learn-objects) et ["rolling your own estimator"] (http://scikit-learn.org/stable/developers/contributing.html#rolling-your-own-estimator). En ce qui concerne matplotlib, consultez [le tutoriel Matplotlib de Nicolas P. Rougier] (https://www.labri.fr/perso/nrougier/teaching/matplotlib/).
 
-### Visualizer API
+### API de visualisation
 
-There are two basic types of Visualizers:
+Il existe deux types de visualiseurs :
 
-- **Feature Visualizers** are high dimensional data visualizations that are essentially transformers.
-- **Score Visualizers** wrap a scikit-learn regressor, classifier, or clusterer and visualize the behavior or performance of the model on test data.
+- **Les Visualiseurs de caractéristiques** sont des visualisations de données à haute dimension qui sont essentiellement des transformateurs.
+- Les **visualiseurs de score** intègrent un régresseur, un classificateur ou un clusterer scikit-learn et visualisent le comportement ou les performances du modèle sur des données de test.
 
-These two basic types of visualizers map well to the two basic estimator objects in scikit-learn:
+Ces deux types de visualisateurs de base correspondent bien aux deux objets estimateurs de base de scikit-learn :
 
-- **Transformers** take input data and return a new data set.
-- **Models** are fit to training data and can make predictions.
+- Les **transformateurs** prennent des données en entrée et renvoient un nouvel ensemble de données.
+- Les **modèles** sont ajustés aux données d'apprentissage et peuvent faire des prédictions.
 
-The scikit-learn API is object oriented, and estimators are initialized with parameters by instantiating their class. Hyperparameters can also be set using the `set_attrs()` method and retrieved with the corresponding `get_attrs()` method. All scikit-learn estimators have a `fit(X, y=None)` method that accepts a two dimensional data array, `X`, and optionally a vector `y` of target values. The `fit()` method trains the estimator, making it ready to transform data or make predictions. Transformers have an associated `transform(X)` method that returns a new dataset, `Xprime` and models have a `predict(X)` method that returns a vector of predictions, `yhat`. Models may also have a `score(X, y)` method that evaluate the performance of the model.
+L'API de scikit-learn est orientée objet, et les estimateurs sont initialisés avec des paramètres en instanciant leur classe. Les hyperparamètres peuvent également être définis en utilisant la méthode `set_attrs()` et récupérés avec la méthode correspondante `get_attrs()`. Tous les estimateurs scikit-learn ont une méthode `fit(X, y=None)` qui accepte un tableau de données à deux dimensions, `X`, et optionnellement un vecteur `y` de valeurs cibles. La méthode `fit()` entraîne l'estimateur, le rendant prêt à transformer les données ou à faire des prédictions. Les transformateurs ont une méthode associée `transform(X)` qui retourne un nouvel ensemble de données, `Xprime` et les modèles ont une méthode `predict(X)` qui retourne un vecteur de prédictions, `yhat`. Les modèles peuvent aussi avoir une méthode `score(X, y)` qui évalue la performance du modèle.
 
-Visualizers interact with scikit-learn objects by intersecting with them at the methods defined above. Specifically, visualizers perform actions related to `fit()`, `transform()`, `predict()`, and `score()` then call a `draw()` method which initializes the underlying figure associated with the visualizer. The user calls the visualizer's `show()` method, which in turn calls a `finalize()` method on the visualizer to draw legends, titles, etc. and then `show()` renders the figure. The Visualizer API is therefore:
+Les visualiseurs interagissent avec les objets scikit-learn en les croisant avec les méthodes définies ci-dessus. Plus précisément, les visualiseurs effectuent des actions liées à `fit()`, `transform()`, `predict()`, et `score()` puis appellent une méthode `draw()` qui initialise la figure sous-jacente associée au visualiseur. L'utilisateur appelle la méthode `show()` du visualiseur, qui à son tour appelle une méthode `finalize()` sur le visualiseur pour dessiner les légendes, les titres, etc. et ensuite `show()` rend la figure. L'API du visualiseur est donc :
 
-- `draw()`: add visual elements to the underlying axes object
-- `finalize()`: prepare the figure for rendering, adding final touches such as legends, titles, axis labels, etc.
-- `show()`: render the figure for the user.
+- `draw()` : ajouter des éléments visuels à l'objet axes sous-jacent
+- `finalize()` : prépare la figure pour le rendu, en ajoutant les touches finales telles que les légendes, les titres, les étiquettes des axes, etc.
+- `show()` : rend la figure pour l'utilisateur.
 
-Creating a visualizer means defining a class that extends `Visualizer` or one of its subclasses, then implementing several of the methods described above. A barebones implementation is as follows::
+Pour créer un visualiseur, il faut définir une classe qui étend `Visualizer` ou l'une de ses sous-classes, puis implémenter plusieurs des méthodes décrites ci-dessus. L'implémentation la plus simple est la suivante: :
 
-```python
+``python
 import matplotlib.pyplot as plot
 
 from yellowbrick.base import Visualizer
 
-class MyVisualizer(Visualizer):
+class MyVisualizer(Visualizer) :
 
-    def __init__(self, ax=None, **kwargs):
+    def __init__(self, ax=None, **kwargs) :
         super(MyVisualizer, self).__init__(ax, **kwargs)
 
-    def fit(self, X, y=None):
+    def fit(self, X, y=None) :
         super(MyVisualizer, self).fit(X, y)
         self.draw(X)
         return self
 
-    def draw(self, X):
+    def draw(self, X) :
         self.ax.plot(X)
         return self.ax
 
-    def finalize(self):
-        self.set_title("My Visualizer")
+    def finalize(self) :
+        self.set_title("Mon Visualiseur")
 ```
 
-This simple visualizer simply draws a line graph for some input dataset X, intersecting with the scikit-learn API at the `fit()` method. A user would use this visualizer in the typical style::
+Ce visualiseur simple dessine simplement un graphique linéaire pour un jeu de données d'entrée X, se croisant avec l'API scikit-learn au niveau de la méthode `fit()`. Un utilisateur utiliserait ce visualiseur dans le style typique: :
 
-```python
+``python
 visualizer = MyVisualizer()
 visualizer.fit(X)
 visualizer.show()
 ```
 
-Score visualizers work on the same principle but accept an additional required `model` argument. Score visualizers wrap the model (which can be either instantiated or uninstantiated) and then pass through all attributes and methods through to the underlying model, drawing where necessary.
+Les visualisateurs de score fonctionnent sur le même principe mais acceptent un argument supplémentaire, le `modèle`. Les visualiseurs de score enveloppent le modèle (qui peut être instancié ou non) et transmettent tous les attributs et méthodes au modèle sous-jacent, en dessinant si nécessaire.
 
-### Testing
+### Test
 
-The test package mirrors the `yellowbrick` package in structure and also contains several helper methods and base functionality. To add a test to your visualizer, find the corresponding file to add the test case, or create a new test file in the same place you added your code.
+Le package de test reflète le package `yellowbrick` dans sa structure et contient également plusieurs méthodes d'aide et des fonctionnalités de base. Pour ajouter un test à votre visualiseur, trouvez le fichier correspondant pour ajouter le cas de test, ou créez un nouveau fichier de test au même endroit que vous avez ajouté votre code.
 
-Visual tests are notoriously difficult to create --- how do you test a visualization or figure? Moreover, testing scikit-learn models with real data can consume a lot of memory. Therefore the primary test you should create is simply to test your visualizer from end to end and make sure that no exceptions occur. To assist with this, we have a helper, `VisualTestCase`. Create your unit test as follows::
+Les tests visuels sont notoirement difficiles à créer - comment tester une visualisation ou une figure ? De plus, tester des modèles scikit-learn avec des données réelles peut consommer beaucoup de mémoire. Par conséquent, le premier test que vous devriez créer est simplement de tester votre visualiseur de bout en bout et de s'assurer qu'aucune exception ne se produit. Pour vous aider, nous avons une aide, `VisualTestCase`. Créez votre test unitaire comme suit: :
 
-```python
+``python
 import pytest
 
 from yellowbrick.datasets import load_occupancy
 
 from tests.base import VisualTestCase
 
-class MyVisualizerTests(VisualTestCase):
+class MyVisualizerTests(VisualTestCase) :
 
-    def test_my_visualizer(self):
+    def test_my_visualizer(self) :
         """
-        Test MyVisualizer on a real dataset
+        Test de MyVisualizer sur un jeu de données réel
         """
-        # Load the data
+        # Chargement des données
         X,y = load_occupancy()
 
-        try:
+        try :
             visualizer = MyVisualizer()
             visualizer.fit(X)
             visualizer.show()
-        except Exception as e:
-            pytest.fail("my visualizer didn't work")
+        except Exception as e :
+            pytest.fail("mon visualiseur n'a pas fonctionné")
 ```
 
-The entire test suite can be run as follows::
+La suite de tests complète peut être exécutée comme suit : :
 
 ```
 $ pytest
 ```
 
-You can also run your own test file as follows::
+Vous pouvez également exécuter votre propre fichier de test comme suit: :
 
 ```
-$ pytest tests/test_your_visualizer.py
+$ pytest tests/test_votre_visualiseur.py
 ```
 
-The Makefile uses the pytest runner and testing suite as well as the coverage library, so make sure you have those dependencies installed!
+Le Makefile utilise le programme d'exécution et la suite de tests pytest ainsi que la bibliothèque de couverture, donc assurez-vous que ces dépendances sont installées !
 
-**Note**: Advanced developers can use our _image comparison tests_ to assert that an image generated matches a baseline image. Read more about this in our [testing documentation](https://www.scikit-yb.org/en/latest/contributing/developing_visualizers.html#image-comparison-tests).
+**Note** : Les développeurs avancés peuvent utiliser nos _tests de comparaison d'images_ pour affirmer qu'une image générée correspond à une image de référence. Pour en savoir plus, consultez notre [documentation sur les tests] (https://www.scikit-yb.org/en/latest/contributing/developing_visualizers.html#image-comparison-tests).
 
 ### Documentation
 
-The initial documentation for your visualizer will be a well structured docstring. Yellowbrick uses Sphinx to build documentation, therefore docstrings should be written in reStructuredText in numpydoc format (similar to scikit-learn). The primary location of your docstring should be right under the class definition, here is an example::
+La documentation initiale de votre visualiseur sera une docstring bien structurée. Yellowbrick utilise Sphinx pour construire la documentation, donc les docstrings doivent être écrits en reStructuredText dans le format numpydoc (similaire à scikit-learn). L'emplacement principal de votre docstring devrait être juste en dessous de la définition de la classe, voici un exemple: :
 
-```python
-class MyVisualizer(Visualizer):
+``python
+class MyVisualizer(Visualizer) :
     """
-    This initial section should describe the visualizer and what
-    it's about, including how to use it. Take as many paragraphs
-    as needed to get as much detail as possible.
+    Cette section initiale doit décrire le visualiseur et ce dont il s'agit, y compris comment l'utiliser.
+    de quoi il s'agit, y compris comment l'utiliser. Prenez autant de paragraphes
+    autant de paragraphes que nécessaire pour obtenir autant de détails que possible.
 
-    In the next section describe the parameters to __init__.
+    Dans la section suivante, décrivez les paramètres de __init__.
 
-    Parameters
+    Paramètres
     ----------
 
-    model : a scikit-learn regressor
-        Should be an instance of a regressor, and specifically one whose name
-        ends with "CV" otherwise a will raise a YellowbrickTypeError exception
-        on instantiation. To use non-CV regressors see:
+    model : un régresseur scikit-learn
+        Doit être une instance d'un régresseur, et plus particulièrement un régresseur dont le nom se termine par "CV".
+        dont le nom se termine par "CV", sinon a lèvera une exception YellowbrickTypeError
+        lors de l'instanciation. Pour utiliser des régresseurs non CV, voir :
         ``ManualAlphaSelection``.
 
-    ax : matplotlib Axes, default: None
-        The axes to plot the figure on. If None is passed in the current axes
-        will be used (or generated if required).
+    ax : matplotlib Axes, default : None
+        Les axes sur lesquels la figure doit être tracée. Si None est fourni, les axes actuels seront utilisés (ou générés si nécessaire).
+        seront utilisés (ou générés si nécessaire).
 
     kwargs : dict
-        Keyword arguments that are passed to the base class and may influence
-        the visualization as defined in other Visualizers.
+        Arguments de type mot-clé qui sont transmis à la classe de base et qui peuvent influencer la visualisation telle que définie dans d'autres Visualiseurs.
+        la visualisation telle qu'elle est définie dans d'autres Visualiseurs.
 
-    Examples
+    Exemples
     --------
 
     >>> model = MyVisualizer()
@@ -303,8 +311,8 @@ class MyVisualizer(Visualizer):
     Notes
     -----
 
-    In the notes section specify any gotchas or other info.
+    Dans la section des notes, indiquez les éventuels problèmes ou autres informations.
     """
 ```
 
-This is a very good start to producing a high quality visualizer, but unless it is part of the documentation on our website, it will not be visible. For details on including documentation in the `docs` directory see the [Contributing Documentation](https://www.scikit-yb.org/en/latest/contributing/index.html) section in the larger contributing guide.
+C'est un très bon début pour produire un visualiseur de haute qualité, mais à moins qu'il ne fasse partie de la documentation sur notre site web, il ne sera pas visible. Pour plus de détails sur l'inclusion de la documentation dans le répertoire `docs`, voir la section [Contributing Documentation](https://www.scikit-yb.org/en/latest/contributing/index.html) dans le grand guide de contribution.

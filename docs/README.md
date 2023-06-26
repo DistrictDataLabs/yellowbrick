@@ -1,57 +1,56 @@
-# Yellowbrick Documentation
+# Documentation Yellowbrick
 
-*Welcome to the Yellowbrick docs!*
+*Bienvenue dans la documentation Yellowbrick !
 
-If you're looking for information about how to use Yellowbrick, for our contributor's guide, for examples and teaching resources, for answers to frequently asked questions, and more, please visit the latest version of our documentation at [www.scikit-yb.org](https://www.scikit-yb.org/).
+Si vous cherchez des informations sur l'utilisation de Yellowbrick, notre guide du contributeur, des exemples et des ressources pédagogiques, des réponses aux questions fréquemment posées, et plus encore, veuillez visiter la dernière version de notre documentation à [www.scikit-yb.org](https://www.scikit-yb.org/).
 
-## Building the Docs
+## Construire les documents
 
-To build the documents locally, first install the documentation-specific requirements with `pip` using the `requirements.txt` file in the `docs` directory:
+Pour construire les documents localement, installez d'abord les exigences spécifiques à la documentation avec `pip` en utilisant le fichier `requirements.txt` dans le répertoire `docs` :
 
-```bash
+``bash
 $ pip install -r docs/requirements.txt
 ```
 
-You will then be able to build the documentation from inside the `docs` directory by running `make html`; the documentation will be built and rendered in the `_build/html` directory. You can view it by opening `_build/html/index.html` then navigating to your documentation in the browser.
+Vous pourrez alors construire la documentation depuis le répertoire `docs` en lançant `make html` ; la documentation sera construite et rendue dans le répertoire `_build/html`. Vous pouvez la visualiser en ouvrant `_build/html/index.html` puis en naviguant vers votre documentation dans le navigateur.
 
 ## reStructuredText
 
-Yellowbrick uses [Sphinx](http://www.sphinx-doc.org/en/master/index.html) to build our documentation. The advantages of using Sphinx are many; we can more directly link to the documentation and source code of other projects like Matplotlib and scikit-learn using [intersphinx](http://www.sphinx-doc.org/en/master/usage/extensions/intersphinx.html). In addition, docstrings used to describe Yellowbrick visualizers can be automatically included when the documentation is built via [autodoc](http://www.sphinx-doc.org/en/master/usage/extensions/autodoc.html#sphinx.ext.autodoc).
+Yellowbrick utilise [Sphinx](http://www.sphinx-doc.org/en/master/index.html) pour construire sa documentation. Les avantages de l'utilisation de Sphinx sont nombreux ; nous pouvons établir un lien plus direct avec la documentation et le code source d'autres projets tels que Matplotlib et scikit-learn en utilisant [intersphinx](http://www.sphinx-doc.org/en/master/usage/extensions/intersphinx.html). En outre, les chaînes de documentation utilisées pour décrire les visualisateurs Yellowbrick peuvent être automatiquement incluses lorsque la documentation est construite via [autodoc](http://www.sphinx-doc.org/en/master/usage/extensions/autodoc.html#sphinx.ext.autodoc).
 
-To take advantage of these features, our documentation must be written in reStructuredText (or "rst"). reStructuredText is similar to markdown, but not identical, and does take some getting used to. For instance, styling for things like codeblocks, external hyperlinks, internal cross references, notes, and fixed-width text are all unique in rst.
+Pour profiter de ces fonctionnalités, notre documentation doit être écrite en reStructuredText (ou "rst"). reStructuredText est similaire à markdown, mais pas identique, et il faut un peu de temps pour s'y habituer. Par exemple, le style pour des éléments tels que les codes, les hyperliens externes, les références croisées internes, les notes et le texte à largeur fixe sont tous uniques dans rst.
 
-If you would like to contribute to our documentation and do not have prior experience with rst, we recommend you make use of these resources:
+Si vous souhaitez contribuer à notre documentation et que vous n'avez pas d'expérience préalable avec rst, nous vous recommandons d'utiliser ces ressources :
 
-- [A reStructuredText Primer](http://docutils.sourceforge.net/docs/user/rst/quickstart.html)
-- [rst notes and cheatsheet](https://cheat.readthedocs.io/en/latest/rst.html)
-- [Using the plot directive](https://matplotlib.org/devel/plot_directive.html)
+- [A reStructuredText Primer] (http://docutils.sourceforge.net/docs/user/rst/quickstart.html)
+- [Notes sur rst et feuille de contrôle](https://cheat.readthedocs.io/en/latest/rst.html)
+- [Utilisation de la directive plot](https://matplotlib.org/devel/plot_directive.html)
 
-## Adding New Visualizers to the Docs
+## Ajouter de nouveaux visualiseurs à la documentation
 
-If you are adding a new visualizer to the docs, there are quite a few examples in the documentation on which you can base your files of similar types.
+Si vous ajoutez un nouveau visualiseur à la documentation, celle-ci contient de nombreux exemples sur lesquels vous pouvez baser vos fichiers de type similaire.
 
-The primary format for the API section is as follows:
+Le format principal de la section API est le suivant :
 
 ```
-.. -*- mode: rst -*-
+.. -*- mode : rst -*-
 
-My Visualizer
+Mon visualiseur
 =============
 
-A brief introduction to my visualizer and how it is useful in the machine learning process.
+Une brève introduction à mon visualiseur et à son utilité dans le processus d'apprentissage automatique.
 
-.. plot::
-    :context: close-figs
-    :include-source: False
-    :alt: Example using MyVisualizer
+.. plot: :
+    :context : close-figs
+    :include-source : False
+    :alt : Exemple utilisant MyVisualizer
 
     visualizer = MyVisualizer(LinearRegression())
 
     visualizer.fit(X, y)
     g = visualizer.show()
 
-Discussion about my visualizer and some interpretation of the above plot.
-
+Discussion sur mon visualiseur et interprétation du graphique ci-dessus.
 
 API Reference
 -------------
@@ -62,25 +61,25 @@ API Reference
     :show-inheritance:
 ```
 
-This is a pretty good structure for a documentation page; a brief introduction followed by a code example with a visualization included using [the plot directive](https://matplotlib.org/devel/plot_directive.html). This will render the `MyVisualizer` image in the document along with links for the complete source code, the png, and the pdf versions of the image. It will also have the "alt-text" (for screen-readers) and will not display the source because of the `:include-source:` option. If `:include-source:` is omitted, the source will also be included.
+Il s'agit d'une structure assez bonne pour une page de documentation ; une brève introduction suivie d'un exemple de code avec une visualisation incluse en utilisant [la directive plot](https://matplotlib.org/devel/plot_directive.html). Cela rendra l'image «MyVisualizer» dans le document avec les liens pour le code source complet, le png, et les versions pdf de l'image. Il aura également le « texte de remplacement » (pour les lecteurs d'écran) et n'affichera pas la source en raison de l'option `:include-source:`. Si `:include-source:` est omis, la source sera également incluse.
 
-The primary section is wrapped up with a discussion about how to interpret the visualizer and use it in practice. Finally the `API Reference` section will use `automodule` to include the documentation from your docstring.
+La section principale se termine par une discussion sur l'interprétation du visualiseur et son utilisation dans la pratique. Enfin, la section `API Reference` utilisera `automodule` pour inclure la documentation de votre docstring.
 
-There are several other places where you can list your visualizer, but to ensure it is included in the documentation it *must be listed in the TOC of the local index*. Find the `index.rst` file in your subdirectory and add your rst file (without the `.rst` extension) to the `..toctree::` directive. This will ensure your documentation is included when it is built.
+Il existe plusieurs autres endroits où vous pouvez lister votre visualiseur, mais pour vous assurer qu'il est inclus dans la documentation, il *doit être listé dans la table des matières de l'index local*. Recherchez le fichier `index.rst` dans votre sous-répertoire et ajoutez votre fichier rst (sans l'extension `.rst`) à la directive `.toctree::`. Cela garantira que votre documentation est incluse lors de sa création.
 
-## Generating the Gallery
+## Génération de la Galerie
 
-In v1.0, we have adopted Matplotlib's [plot directive](https://matplotlib.org/devel/plot_directive.html) which means that the majority of the images generated for the documentation are generated automatically. One exception is the gallery; the images for the gallery must still be generated manually.
+Dans la version 1.0, nous avons adopté la [directive de traçage](https://matplotlib.org/devel/plot_directive.html) de Matplotlib, ce qui signifie que la majorité des images générées pour la documentation sont générées automatiquement. Une exception est la galerie ; les images de la galerie doivent toujours être générées manuellement.
 
-If you have contributed a new visualizer as described in the above section, please also add it to the gallery, both to `docs/gallery.py` and to `docs/gallery.rst`. (Make sure you have already installed Yellowbrick in editable mode, from the top level directory: `pip install -e` .)
+Si vous avez contribué à un nouveau visualiseur comme décrit dans la section ci-dessus, veuillez également l'ajouter à la galerie, à la fois à `docs/gallery.py` et à `docs/gallery.rst`. (Vérifiez que vous avez déjà installé Yellowbrick en mode modifiable, à partir du répertoire de niveau supérieur : `pip install -e` .)
 
-If you want to regenerate a single image (e.g. the elbow curve plot), you can do so as follows:
+Si vous souhaitez régénérer une seule image (par exemple le tracé de la courbe du coude), vous pouvez procéder comme suit :
 
 ```bash
 $ python docs/gallery.py elbow
 ```
 
-If you want to regenerate them all (note: this takes a long time!)
+Si vous voulez tous les régénérer (remarque : cela prend beaucoup de temps !)
 
 ```bash
 $ python docs/gallery.py all

@@ -1,69 +1,70 @@
 # Yellowbrick
 
-[![Visualizers](https://github.com/DistrictDataLabs/yellowbrick/raw/develop/docs/images/readme/banner.png)](https://www.scikit-yb.org/)
+[ ![Visualiseurs](https://github.com/DistrictDataLabs/yellowbrick/raw/develop/docs/images/readme/banner.png)](https://www.scikit-yb.org/)
 
-Yellowbrick is a suite of visual analysis and diagnostic tools designed to facilitate machine learning with scikit-learn. The library implements a new core API object, the `Visualizer` that is an scikit-learn estimator &mdash; an object that learns from data. Similar to transformers or models, visualizers learn from data by creating a visual representation of the model selection workflow.
+Yellowbrick est une suite d'outils d'analyse visuelle et de diagnostic conçus pour faciliter l'apprentissage automatique avec scikit-learn. La bibliothèque implémente un nouvel objet de l'API de base, le `Visualizer` qui est un estimateur scikit-learn &mdash ; un objet qui apprend à partir des données. Comme les transformateurs ou les modèles, les visualiseurs apprennent à partir des données en créant une représentation visuelle du flux de travail de sélection du modèle.
 
-Visualizer allow users to steer the model selection process, building intuition around feature engineering, algorithm selection and hyperparameter tuning. For instance, they can help diagnose common problems surrounding model complexity and bias, heteroscedasticity, underfit and overtraining, or class balance issues. By applying visualizers to the model selection workflow, Yellowbrick allows you to steer predictive models toward more successful results, faster.
+Les visualisateurs permettent aux utilisateurs de diriger le processus de sélection de modèles, en développant l'intuition autour de l'ingénierie des caractéristiques, de la sélection des algorithmes et du réglage des hyperparamètres. Par exemple, ils peuvent aider à diagnostiquer les problèmes courants liés à la complexité et au biais des modèles, à l'hétéroscédasticité, à l'inadaptation et au surentraînement, ou aux problèmes d'équilibre entre les classes. En appliquant des visualiseurs au flux de travail de sélection des modèles, Yellowbrick vous permet d'orienter les modèles prédictifs vers des résultats plus fructueux, plus rapidement.
 
-The full documentation can be found at [scikit-yb.org](https://scikit-yb.org/) and includes a [Quick Start Guide](https://www.scikit-yb.org/en/latest/quickstart.html) for new users.
+La documentation complète est disponible sur [scikit-yb.org](https://scikit-yb.org/) et comprend un [Guide de démarrage rapide](https://www.scikit-yb.org/en/latest/quickstart.html) pour les nouveaux utilisateurs.
 
-## Visualizers
+## Visualiseurs
 
-Visualizers are estimators &mdash; objects that learn from data &mdash; whose primary objective is to create visualizations that allow insight into the model selection process. In scikit-learn terms, they can be similar to transformers when visualizing the data space or wrap a model estimator similar to how the `ModelCV` (e.g. [`RidgeCV`](https://scikit-learn.org/stable/modules/generated/sklearn.linear_model.RidgeCV.html), [`LassoCV`](https://scikit-learn.org/stable/modules/generated/sklearn.linear_model.LassoCV.html)) methods work. The primary goal of Yellowbrick is to create a sensical API similar to scikit-learn. Some of our most popular visualizers include:
+Les visualisateurs sont des estimateurs &mdash ; des objets qui apprennent à partir des données &mdash ; dont l'objectif principal est de créer des visualisations qui permettent de comprendre le processus de sélection du modèle. En termes de scikit-learn, ils peuvent être similaires aux transformateurs lors de la visualisation de l'espace de données ou envelopper un estimateur de modèle similaire à la façon dont les méthodes `ModelCV` (par exemple [`RidgeCV`](https://scikit-learn.org/stable/modules/generated/sklearn.linear_model.RidgeCV.html), [`LassoCV`](https://scikit-learn.org/stable/modules/generated/sklearn.linear_model.LassoCV.html)) fonctionnent. L'objectif principal de Yellowbrick est de créer une API sensorielle similaire à scikit-learn. Voici quelques-uns de nos visualiseurs les plus populaires :
 
-### Classification Visualization
+### Visualisation de la classification
 
-- **Classification Report**: a visual classification report that displays a model's precision, recall, and F1 per-class scores as a heatmap
-- **Confusion Matrix**: a heatmap view of the confusion matrix of pairs of classes in multi-class classification
-- **Discrimination Threshold**: a visualization of the precision, recall, F1-score, and queue rate with respect to the discrimination threshold of a binary classifier
-- **Precision-Recall Curve**: plot the precision vs recall scores for different probability thresholds
-- **ROCAUC**: graph the receiver operator characteristic (ROC) and area under the curve (AUC)
+- Rapport de classification** : un rapport de classification visuel qui affiche la précision, le rappel et les scores F1 par classe d'un modèle sous la forme d'une carte thermique.
+- Matrice de confusion** : une carte thermique de la matrice de confusion des paires de classes dans la classification multi-classes.
+- Seuil de discrimination** : visualisation de la précision, du rappel, du score F1 et du taux de file d'attente par rapport au seuil de discrimination d'un classificateur binaire.
+- Courbe de précision-rappel** : représentation graphique des scores de précision et de rappel pour différents seuils de probabilité.
+- ROCAUC** : graphique de la caractéristique de l'opérateur récepteur (ROC) et de l'aire sous la courbe (AUC).
 
-### Clustering Visualization
+### Visualisation du regroupement
 
-- **Intercluster Distance Maps**: visualize the relative distance and size of clusters
-- **KElbow Visualizer**: visualize cluster according to the specified scoring function, looking for the "elbow" in the curve.
-- **Silhouette Visualizer**: select `k` by visualizing the silhouette coefficient scores of each cluster in a single model
+- Cartes de distance inter-clusters** : visualisation de la distance relative et de la taille des clusters.
+- Visualisateur de coude** : visualise les grappes selon la fonction de notation spécifiée, en recherchant le "coude" dans la courbe.
+- Visualisateur de silhouette** : sélectionne `k` en visualisant les scores du coefficient de silhouette de chaque groupe dans un modèle unique.
 
-### Feature Visualization
 
-- **Manifold Visualization**: high-dimensional visualization with manifold learning
-- **Parallel Coordinates**: horizontal visualization of instances
-- **PCA Projection**: projection of instances based on principal components
-- **RadViz Visualizer**: separation of instances around a circular plot
-- **Rank Features**: single or pairwise ranking of features to detect relationships
+### Visualisation des caractéristiques
 
-### Model Selection Visualization
+- Visualisation des manifolds** : visualisation en haute dimension avec apprentissage des manifolds
+- Coordonnées parallèles** : visualisation horizontale des instances
+- Projection ACP** : projection des instances basée sur les composantes principales
+- Visualiseur RadViz** : séparation des instances autour d'un graphe circulaire
+- Rank Features** : classement simple ou par paire des caractéristiques pour détecter les relations.
 
-- **Cross Validation Scores**: display the cross-validated scores as a bar chart with the average score plotted as a horizontal line
-- **Feature Importances**: rank features based on their in-model performance
-- **Learning Curve**: show if a model might benefit from more data or less complexity
-- **Recursive Feature Elimination**: find the best subset of features based on importance
-- **Validation Curve**: tune a model with respect to a single hyperparameter
+### Visualisation de la sélection de modèles
 
-### Regression Visualization
+- Scores de validation croisée** : affichage des scores de validation croisée sous forme de diagramme à barres avec le score moyen représenté par une ligne horizontale.
+- Importance des caractéristiques** : classez les caractéristiques en fonction de leur performance dans le modèle.
+- Courbe d'apprentissage** : montre si un modèle pourrait bénéficier de plus de données ou de moins de complexité.
+- Élimination récursive des caractéristiques** : trouver le meilleur sous-ensemble de caractéristiques en fonction de leur importance.
+- Courbe de validation** : ajuster un modèle en fonction d'un seul hyperparamètre.
 
-- **Alpha Selection**: show how the choice of alpha influences regularization
-- **Cook's Distance**: show the influence of instances on linear regression
-- **Prediction Error Plots**: find model breakdowns along the domain of the target
-- **Residuals Plot**: show the difference in residuals of training and test data
+### Visualisation de la régression
 
-### Target Visualization
+- Sélection de l'alpha** : montrer comment le choix de l'alpha influence la régularisation.
+- Distance de Cook** : montre l'influence des instances sur la régression linéaire
+- Plots d'erreur de prédiction** : trouver des ruptures de modèle le long du domaine de la cible.
+- Graphique des résidus** : montre la différence entre les résidus des données d'entraînement et des données de test.
 
-- **Balanced Binning Reference**: generate a histogram with vertical lines showing the recommended value point to the bin data into evenly distributed bins
-- **Class Balance**: show the relationship of the support for each class in both the training and test data by displaying how frequently each class occurs as a bar graph the frequency of the classes' representation in the dataset
-- **Feature Correlation**: visualize the correlation between the dependent variables and the target
+### Visualisation de la cible
 
-### Text Visualization
+- Référence de regroupement équilibré** : génère un histogramme avec des lignes verticales montrant le point de valeur recommandé pour regrouper les données dans des catégories uniformément réparties.
+- Équilibre des classes** : montrez la relation entre le support de chaque classe dans les données d'apprentissage et de test en affichant la fréquence d'apparition de chaque classe sous la forme d'un diagramme à barres la fréquence de représentation des classes dans l'ensemble de données.
+- Corrélation des caractéristiques** : visualisez la corrélation entre les variables dépendantes et la cible.
 
-- **Dispersion Plot**: visualize how key terms are dispersed throughout a corpus
-- **PosTag Visualizer**: plot the counts of different parts-of-speech throughout a tagged corpus
-- **Token Frequency Distribution**: visualize the frequency distribution of terms in the corpus
-- **t-SNE Corpus Visualization**: uses stochastic neighbor embedding to project documents
-- **UMAP Corpus Visualization**: plot similar documents closer together to discover clusters
+### Visualisation du texte
 
-... and more! Yellowbrick is adding new visualizers all the time so be sure to check out our [examples gallery]https://github.com/DistrictDataLabs/yellowbrick/tree/develop/examples) &mdash; or even the [develop](https://github.com/districtdatalabs/yellowbrick/tree/develop) branch &mdash; and feel free to contribute your ideas for new Visualizers!
+- Graphique de dispersion** : visualisez la façon dont les termes clés sont dispersés dans un corpus.
+- Visualiseur PosTag** : représente le nombre de différentes parties du discours dans un corpus étiqueté.
+- Distribution de la fréquence des termes** : visualisez la distribution de la fréquence des termes dans le corpus.
+- Visualisation du corpus **t-SNE** : utilise l'intégration stochastique des voisins pour projeter des documents
+- Visualisation du corpus UMAP** : rapproche les documents similaires pour découvrir les grappes.
+
+... et plus encore ! Yellowbrick ajoute de nouveaux visualiseurs en permanence, alors n'hésitez pas à consulter notre [galerie d'exemples]https://github.com/DistrictDataLabs/yellowbrick/tree/develop/examples) &mdash ; ou même la branche [develop](https://github.com/districtdatalabs/yellowbrick/tree/develop) &mdash ; et n'hésitez pas à nous faire part de vos idées pour de nouveaux visualiseurs !
 
 ## Affiliations
-[![District Data Labs](https://github.com/DistrictDataLabs/yellowbrick/raw/develop/docs/images/readme/affiliates_ddl.png)](https://www.districtdatalabs.com/) [![NumFOCUS Affiliated Project](https://github.com/DistrictDataLabs/yellowbrick/raw/develop/docs/images/readme/affiliates_numfocus.png)](https://numfocus.org/)
+[ ![District Data Labs](https://github.com/DistrictDataLabs/yellowbrick/raw/develop/docs/images/readme/affiliates_ddl.png)](https://www.districtdatalabs.com/) [ ![Projet affilié à NumFOCUS](https://github.com/DistrictDataLabs/yellowbrick/raw/develop/docs/images/readme/affiliates_numfocus.png)](https://numfocus.org/)

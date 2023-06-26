@@ -1,40 +1,41 @@
 .. -*- mode: rst -*-
 
-Model Selection Tutorial
+Tutoriel sur la sélection des modèles
 ========================
 
-In this tutorial, we are going to look at scores for a variety of `Scikit-Learn <http://scikit-learn.org>`__ models and compare them using visual diagnostic tools from `Yellowbrick <http://www.scikit-yb.org>`__ in order to select the best model for our data.
+Dans ce tutoriel, nous allons examiner les scores d'une variété de modèles `Scikit-Learn <http://scikit-learn.org>`__ et les comparer en utilisant les outils de diagnostic visuel de `Yellowbrick <http://www.scikit-yb.org>`__ afin de sélectionner le meilleur modèle pour nos données.
 
-The Model Selection Triple
+La triple sélection de modèle
 --------------------------
-Discussions of machine learning are frequently characterized by a singular focus on model selection. Be it logistic regression, random forests, Bayesian methods, or artificial neural networks, machine learning practitioners are often quick to express their preference. The reason for this is mostly historical. Though modern third-party machine learning libraries have made the deployment of multiple models appear nearly trivial, traditionally the application and tuning of even one of these algorithms required many years of study. As a result, machine learning practitioners tended to have strong preferences for particular (and likely more familiar) models over others.
+Les discussions sur l'apprentissage automatique sont souvent caractérisées par une focalisation singulière sur la sélection de modèles. Qu'il s'agisse de régression logistique, de forêts aléatoires, de méthodes bayésiennes ou de réseaux neuronaux artificiels, les praticiens de l'apprentissage automatique sont souvent prompts à exprimer leur préférence. La raison en est essentiellement historique. Bien que les bibliothèques d'apprentissage automatique tierces modernes aient rendu le déploiement de plusieurs modèles presque trivial, l'application et le réglage d'un seul de ces algorithmes nécessitaient traditionnellement de nombreuses années d'étude. Par conséquent, les praticiens de l'apprentissage automatique avaient tendance à privilégier certains modèles (probablement plus familiers) par rapport à d'autres.
 
-However, model selection is a bit more nuanced than simply picking the "right" or "wrong" algorithm. In practice, the workflow includes:
+Cependant, la sélection d'un modèle est un peu plus nuancée que le simple choix du "bon" ou du "mauvais" algorithme. Dans la pratique, le flux de travail comprend
 
-  1. selecting and/or engineering the smallest and most predictive feature set
-  2. choosing a set of algorithms from a model family, and
-  3. tuning the algorithm hyperparameters to optimize performance.
+  1. la sélection et/ou l'élaboration de l'ensemble de caractéristiques le plus petit et le plus prédictif
+  2. le choix d'un ensemble d'algorithmes à partir d'une famille de modèles, et
+  3. le réglage des hyperparamètres de l'algorithme pour optimiser les performances.
 
-The **model selection triple** was first described in a 2015 SIGMOD_ paper by Kumar et al. In their paper, which concerns the development of next-generation database systems built to anticipate predictive modeling, the authors cogently express that such systems are badly needed due to the highly experimental nature of machine learning in practice. "Model selection," they explain, "is iterative and exploratory because the space of [model selection triples] is usually infinite, and it is generally impossible for analysts to know a priori which [combination] will yield satisfactory accuracy and/or insights."
+La **triple sélection de modèle** a été décrite pour la première fois dans un article SIGMOD_ de 2015 par Kumar et al. Dans leur article, qui concerne le développement de systèmes de base de données de nouvelle génération conçus pour anticiper la modélisation prédictive, les auteurs expliquent de manière convaincante que de tels systèmes sont absolument nécessaires en raison de la nature hautement expérimentale de l'apprentissage automatique dans la pratique. "La sélection des modèles, expliquent-ils, est itérative et exploratoire car l'espace des [triplets de sélection de modèles] est généralement infini, et il est généralement impossible pour les analystes de savoir a priori quelle [combinaison] produira une précision et/ou des informations satisfaisantes.
 
-Recently, much of this workflow has been automated through grid search methods, standardized APIs, and GUI-based applications. In practice, however, human intuition and guidance can more effectively hone in on quality models than exhaustive search. By visualizing the model selection process, data scientists can steer towards final, explainable models and avoid pitfalls and traps.
+Récemment, une grande partie de ce flux de travail a été automatisée grâce à des méthodes de recherche en grille, des API normalisées et des applications basées sur des interfaces graphiques. Dans la pratique, cependant, l'intuition et les conseils de l'homme peuvent permettre d'identifier des modèles de qualité plus efficacement qu'une recherche exhaustive. En visualisant le processus de sélection des modèles, les scientifiques des données peuvent s'orienter vers des modèles définitifs et explicables et éviter les pièges et les écueils.
 
-The Yellowbrick library is a diagnostic visualization platform for machine learning that allows data scientists to steer the model selection process. Yellowbrick extends the Scikit-Learn API with a new core object: the Visualizer. Visualizers allow visual models to be fit and transformed as part of the Scikit-Learn Pipeline process, providing visual diagnostics throughout the transformation of high dimensional data.
+La bibliothèque Yellowbrick est une plateforme de visualisation diagnostique pour l'apprentissage automatique qui permet aux scientifiques des données d'orienter le processus de sélection des modèles. Yellowbrick étend l'API Scikit-Learn avec un nouvel objet central : le visualiseur. Les visualiseurs permettent d'ajuster et de transformer des modèles visuels dans le cadre du processus Scikit-Learn Pipeline, en fournissant des diagnostics visuels tout au long de la transformation de données à haute dimension.
 
-.. _SIGMOD: http://cseweb.ucsd.edu/~arunkk/vision/SIGMODRecord15.pdf
+.. _SIGMOD : http://cseweb.ucsd.edu/~arunkk/vision/SIGMODRecord15.pdf
 
-About the Data
+À propos des données
 --------------
 
-This tutorial uses the mushrooms data from the Yellowbrick :doc:`api/datasets/index` module. Our objective is to predict if a mushroom is poisonous or edible based on its characteristics.
 
-.. NOTE:: The YB version of the mushrooms data differs from the mushroom dataset from the `UCI Machine Learning Repository <http://archive.ics.uci.edu/ml/>`__. The Yellowbrick version has been deliberately modified to make modeling a bit more of a challenge.
+Ce tutoriel utilise les données sur les champignons du module Yellowbrick :doc:`api/datasets/index`. Notre objectif est de prédire si un champignon est toxique ou comestible en fonction de ses caractéristiques.
 
-The data include descriptions of hypothetical samples corresponding to 23 species of gilled mushrooms in the Agaricus and Lepiota Family. Each species was identified as definitely edible, definitely poisonous, or of unknown edibility and not recommended (this latter class was combined with the poisonous one).
+.. NOTE: : La version YB des données sur les champignons diffère de l'ensemble de données sur les champignons du `UCI Machine Learning Repository <http://archive.ics.uci.edu/ml/>`__. La version Yellowbrick a été délibérément modifiée pour rendre la modélisation un peu plus difficile.
 
-Our data contains information for 3 nominally valued attributes and a target value from 8124 instances of mushrooms (4208 edible, 3916 poisonous).
+Les données comprennent des descriptions d'échantillons hypothétiques correspondant à 23 espèces de champignons à branchies de la famille Agaricus et Lepiota. Chaque espèce a été identifiée comme certainement comestible, certainement toxique, ou de comestibilité inconnue et déconseillée (cette dernière catégorie a été combinée avec celle des champignons toxiques).
 
-Let's load the data:
+Nos données contiennent des informations pour 3 attributs à valeur nominale et une valeur cible pour 8124 cas de champignons (4208 comestibles, 3916 toxiques).
+
+Chargeons les données :
 
 .. code:: python
 
@@ -53,14 +54,13 @@ Let's load the data:
     4      convex    scaly    yellow
 
 
-Feature Extraction
+Extraction de caractéristiques
 ------------------
 
-Our data, including the target, is categorical. We will need to change these values to numeric ones for machine learning. In order to extract this from the dataset, we'll have to use scikit-learn transformers to transform our input dataset into something that can be fit to a model. Luckily, scikit-learn does provide transformers for converting categorical labels into numeric integers:
-`sklearn.preprocessing.LabelEncoder <http://scikit-learn.org/stable/modules/generated/sklearn.preprocessing.LabelEncoder.html>`__ and `sklearn.preprocessing.OneHotEncoder <http://scikit-learn.org/stable/modules/generated/sklearn.preprocessing.OneHotEncoder.html>`__.
+Nos données, y compris la cible, sont catégoriques. Nous devrons transformer ces valeurs en valeurs numériques pour l'apprentissage automatique. Afin d'extraire cela du jeu de données, nous devrons utiliser les transformateurs de scikit-learn pour transformer notre jeu de données d'entrée en quelque chose qui peut être adapté à un modèle. Heureusement, scikit-learn fournit des transformateurs pour convertir les étiquettes catégorielles en nombres entiers :
+`sklearn.preprocessing.LabelEncoder <http://scikit-learn.org/stable/modules/generated/sklearn.preprocessing.LabelEncoder.html>`__ et `sklearn.preprocessing.OneHotEncoder <http://scikit-learn.org/stable/modules/generated/sklearn.preprocessing.OneHotEncoder.html>`__.
 
-We'll use a combination of scikit-learn's ``Pipeline`` object (`here's <http://zacstewart.com/2014/08/05/pipelines-of-featureunions-of-pipelines.html>`__ a great post on using pipelines by `Zac Stewart <https://twitter.com/zacstewart>`__), ``OneHotEncoder``, and ``LabelEncoder``:
-
+Nous allons utiliser une combinaison de l'objet ``Pipeline`` de scikit-learn (voici <http://zacstewart.com/2014/08/05/pipelines-of-featureunions-of-pipelines.html>`__ un excellent article sur l'utilisation des pipelines par `Zac Stewart <https://twitter.com/zacstewart>`__), ```OneHotEncoder``, et ``LabelEncoder`` :
 .. code:: python
 
     from sklearn.pipeline import Pipeline
@@ -75,25 +75,25 @@ We'll use a combination of scikit-learn's ``Pipeline`` object (`here's <http://z
      ('estimator', estimator)
     ])
 
-Modeling and Evaluation
+Modélisation et évaluation
 -----------------------
 
-Common metrics for evaluating classifiers
+Métriques communes pour l'évaluation des classificateurs
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-**Precision** is the number of correct positive results divided by the
-number of all positive results (e.g. *How many of the mushrooms we
-predicted would be edible actually were?*).
+**La précision** est le nombre de résultats positifs corrects divisé par le nombre de tous les résultats positifs (par ex.
+par le nombre de tous les résultats positifs (par exemple, *Combien de champignons que nous avons prédits comme étant comestibles l'ont été ?
+champignons dont nous avons prédit qu'ils seraient comestibles l'ont été?*).
 
-**Recall** is the number of correct positive results divided by the
-number of positive results that should have been returned (e.g. *How
-many of the mushrooms that were poisonous did we accurately predict were
-poisonous?*).
+**Le rappel** est le nombre de résultats positifs corrects divisé par le nombre de résultats positifs qui auraient dû l'être.
+par le nombre de résultats positifs qui auraient dû être renvoyés (par ex.
+combien de champignons vénéneux avons-nous prédit avec précision qu'ils étaient vénéneux ?
+vénéneux?*).
 
-The **F1 score** is a measure of a test's accuracy. It considers both
-the precision and the recall of the test to compute the score. The F1
-score can be interpreted as a weighted average of the precision and
-recall, where an F1 score reaches its best value at 1 and worst at 0.
+Le **score F1** est une mesure de la précision d'un test. Il prend en compte à la fois
+Il prend en compte la précision et le rappel du test pour calculer le score. Le score F1
+peut être interprété comme une moyenne pondérée de la précision et du rappel.
+où le score F1 atteint sa meilleure valeur à 1 et sa pire valeur à 0.
 
 ::
 
@@ -103,11 +103,11 @@ recall, where an F1 score reaches its best value at 1 and worst at 0.
 
     F1 score = 2 * ((precision * recall) / (precision + recall))
 
-Now we're ready to make some predictions!
+Nous sommes maintenant prêts à faire des prédictions !
 
-Let's build a way to evaluate multiple estimators -- first using
-traditional numeric scores (which we'll later compare to some visual
-diagnostics from the Yellowbrick library).
+Construisons un moyen d'évaluer plusieurs estimateurs -- d'abord en utilisant des
+traditionnels (que nous comparerons plus tard à des diagnostics visuels de la bibliothèque
+visuels de la bibliothèque Yellowbrick).
 
 .. code:: python
 
@@ -166,19 +166,19 @@ diagnostics from the Yellowbrick library).
     RandomForestClassifier: 0.687643484132343
 
 
-Preliminary Model Evaluation
+Évaluation préliminaire du modèle
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Based on the results from the F1 scores above, which model is performing the best?
+Sur la base des résultats des scores F1 ci-dessus, quel est le modèle le plus performant ?
 
-Visual Model Evaluation
+Évaluation visuelle du modèle
 -----------------------
 
-Now let's refactor our model evaluation function to use Yellowbrick's ``ClassificationReport`` class, a model visualizer that displays the precision, recall, and F1 scores. This visual model analysis tool integrates numerical scores as well as color-coded heatmaps in order to support easy interpretation and detection, particularly the nuances of Type I and Type II error, which are very relevant (lifesaving, even) to our use case!
+Refactorisons maintenant notre fonction d'évaluation de modèle pour utiliser la classe ``ClassificationReport`` de Yellowbrick, un visualiseur de modèle qui affiche les scores de précision, de rappel et F1. Cet outil visuel d'analyse de modèle intègre des scores numériques ainsi que des cartes thermiques codées en couleur afin de faciliter l'interprétation et la détection, en particulier les nuances de l'erreur de Type I et de Type II, qui sont très pertinentes (voire salvatrices) pour notre cas d'utilisation !
 
-**Type I error** (or a **"false positive"**) is detecting an effect that is not present (e.g. determining a mushroom is poisonous when it is in fact edible).
+**L'erreur de type I** (ou **"faux positif "**) consiste à détecter un effet qui n'existe pas (par exemple, déterminer qu'un champignon est vénéneux alors qu'il est en fait comestible).
 
-**Type II error** (or a **"false negative"**) is failing to detect an effect that is present (e.g. believing a mushroom is edible when it is in fact poisonous).
+**L'erreur de type II** (ou **"faux négatif "**) consiste à ne pas détecter un effet présent (par exemple, croire qu'un champignon est comestible alors qu'il est en fait toxique).
 
 .. code:: python
 
@@ -231,10 +231,10 @@ Now let's refactor our model evaluation function to use Yellowbrick's ``Classifi
 .. image:: images/tutorial/modelselect_random_forest_classifier.png
 
 
-Reflection
+Réflexion
 ----------
 
-1. Which model seems best now? Why?
-2. Which is most likely to save your life?
-3. How is the visual model evaluation experience different from numeric
-   model evaluation?
+1. Quel modèle vous semble le plus approprié aujourd'hui ? Pourquoi ?
+2. Lequel est le plus susceptible de vous sauver la vie ?
+3. En quoi l'évaluation visuelle d'un modèle diffère-t-elle de l'évaluation numérique d'un modèle ?
+   numérique ?
