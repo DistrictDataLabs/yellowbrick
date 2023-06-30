@@ -207,8 +207,7 @@ class TestSilhouetteVisualizer(VisualTestCase):
             mockfit.assert_called_once_with(X, y)
 
 
-     @pytest.mark.parametrize(
-        "model",
+    @pytest.mark.parametrize("model",
         [SpectralClustering, AgglomerativeClustering],
     )
     def test_clusterer_without_predict(self, model):
@@ -217,7 +216,7 @@ class TestSilhouetteVisualizer(VisualTestCase):
         a predict() method utilize fit_predict()
         """
         X = np.array([[1, 2], [1, 4], [1, 0],
-...               [4, 2], [4, 4], [4, 0]])
+        [4, 2], [4, 4], [4, 0]])
         try:
             visualizer = SilhouetteVisualizer(model(n_clusters=2))
             visualizer.fit(X)
