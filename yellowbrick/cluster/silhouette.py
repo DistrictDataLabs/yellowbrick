@@ -151,7 +151,7 @@ class SilhouetteVisualizer(ClusteringScoreVisualizer):
 
         if hasattr(self.estimator, "metric"):
             metric = self.estimator.metric
-        elif hasattr(self.estimator, "affinity"):
+        elif hasattr(self.estimator, "affinity") and self.estimator.__class__.__name__ != 'SpectralClustering':
             metric = self.estimator.affinity
         else:
             metric = "euclidean"

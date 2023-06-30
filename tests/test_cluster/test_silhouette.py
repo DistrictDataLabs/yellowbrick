@@ -20,9 +20,11 @@ Tests for the SilhouetteVisualizer
 import sys
 import pytest
 import matplotlib.pyplot as plt
+import numpy as np
 
 from sklearn.datasets import make_blobs
 from sklearn.cluster import KMeans, MiniBatchKMeans
+from sklearn.cluster import SpectralClustering, AgglomerativeClustering
 
 from unittest import mock
 from tests.base import VisualTestCase
@@ -203,3 +205,22 @@ class TestSilhouetteVisualizer(VisualTestCase):
             oz = SilhouetteVisualizer(model, is_fitted=False)
             oz.fit(X, y)
             mockfit.assert_called_once_with(X, y)
+
+
+     @pytest.mark.parametrize(
+        "model",
+        [SpectralClustering, AgglomerativeClustering],
+    )
+    def test_clusterer_without_predict(self, model):
+        """
+        Assert that clustering estimators that don't implement 
+        a predict() method utilize fit_predict()
+        """
+        X = np.array([[1, 2], [1, 4], [1, 0],
+...               [4, 2], [4, 4], [4, 0]])
+        try:
+            visualizer = SilhouetteVisualizer(model(n_clusters=2))
+            visualizer.fit(X)
+            visualizer.finalize()
+        except AttributeError:
+            self.fail("could not use fit or fit_predict methods")
