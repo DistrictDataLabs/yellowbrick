@@ -29,7 +29,6 @@ from sklearn.cluster import SpectralClustering, AgglomerativeClustering
 from unittest import mock
 from tests.base import VisualTestCase
 
-from yellowbrick.datasets import load_nfl
 from yellowbrick.cluster.silhouette import SilhouetteVisualizer, silhouette_visualizer
 
 
@@ -54,7 +53,6 @@ class TestSilhouetteVisualizer(VisualTestCase):
         X, y = make_blobs(
             n_samples=1000, n_features=12, centers=8, shuffle=False, random_state=0
         )
-
 
         fig = plt.figure()
         ax = fig.add_subplot()
@@ -102,7 +100,6 @@ class TestSilhouetteVisualizer(VisualTestCase):
         X, y = make_blobs(
             n_samples=1000, n_features=12, centers=8, shuffle=False, random_state=0
         )
-
 
         fig = plt.figure()
         ax = fig.add_subplot()
@@ -202,8 +199,8 @@ class TestSilhouetteVisualizer(VisualTestCase):
             oz.fit(X)
             mockfit.assert_called_once_with(X, None)
 
-
-    @pytest.mark.parametrize("model",
+    @pytest.mark.parametrize(
+        "model",
         [SpectralClustering, AgglomerativeClustering],
     )
     def test_clusterer_without_predict(self, model):
@@ -211,8 +208,7 @@ class TestSilhouetteVisualizer(VisualTestCase):
         Assert that clustering estimators that don't implement
         a predict() method utilize fit_predict()
         """
-        X = np.array([[1, 2], [1, 4], [1, 0],
-        [4, 2], [4, 4], [4, 0]])
+        X = np.array([[1, 2], [1, 4], [1, 0], [4, 2], [4, 4], [4, 0]])
         try:
             visualizer = SilhouetteVisualizer(model(n_clusters=2))
             visualizer.fit(X)

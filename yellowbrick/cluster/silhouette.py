@@ -27,11 +27,29 @@ try:
     from sklearn.metrics.pairwise import _VALID_METRICS
 except ImportError:
     _VALID_METRICS = [
-        'cityblock', 'cosine', 'euclidean', 'l1', 'l2', 'manhattan',
-        'braycurtis', 'canberra', 'chebyshev', 'correlation', 'dice', 'hamming',
-        'jaccard', 'kulsinski', 'mahalanobis', 'minkowski', 'rogerstanimoto',
-        'russellrao', 'seuclidean', 'sokalmichener', 'sokalsneath', 'sqeuclidean',
-        'yule',
+        "cityblock",
+        "cosine",
+        "euclidean",
+        "l1",
+        "l2",
+        "manhattan",
+        "braycurtis",
+        "canberra",
+        "chebyshev",
+        "correlation",
+        "dice",
+        "hamming",
+        "jaccard",
+        "kulsinski",
+        "mahalanobis",
+        "minkowski",
+        "rogerstanimoto",
+        "russellrao",
+        "seuclidean",
+        "sokalmichener",
+        "sokalsneath",
+        "sqeuclidean",
+        "yule",
     ]
 
 from yellowbrick.utils import check_fitted
@@ -124,7 +142,6 @@ class SilhouetteVisualizer(ClusteringScoreVisualizer):
     """
 
     def __init__(self, estimator, ax=None, colors=None, is_fitted="auto", **kwargs):
-
         # Initialize the visualizer bases
         super(SilhouetteVisualizer, self).__init__(
             estimator, ax=ax, is_fitted=is_fitted, **kwargs
@@ -164,7 +181,6 @@ class SilhouetteVisualizer(ClusteringScoreVisualizer):
                 labels = self.estimator.predict(X)
             else:
                 labels = self.estimator.fit_predict(X, y, **kwargs)
-
 
         # Get the properties of the dataset
         self.n_samples_ = X.shape[0]
@@ -221,7 +237,6 @@ class SilhouetteVisualizer(ClusteringScoreVisualizer):
         # For each cluster, plot the silhouette scores
         self.y_tick_pos_ = []
         for idx in range(self.n_clusters_):
-
             # Collect silhouette scores for samples in the current cluster .
             values = self.silhouette_samples_[labels == idx]
             values.sort()
