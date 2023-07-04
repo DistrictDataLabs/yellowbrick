@@ -23,6 +23,17 @@ import matplotlib.ticker as ticker
 
 from sklearn.metrics import silhouette_score, silhouette_samples
 
+try:
+    from sklearn.metrics.pairwise import _VALID_METRICS
+except ImportError:
+    _VALID_METRICS = [
+        'cityblock', 'cosine', 'euclidean', 'l1', 'l2', 'manhattan',
+        'braycurtis', 'canberra', 'chebyshev', 'correlation', 'dice', 'hamming',
+        'jaccard', 'kulsinski', 'mahalanobis', 'minkowski', 'rogerstanimoto',
+        'russellrao', 'seuclidean', 'sokalmichener', 'sokalsneath', 'sqeuclidean',
+        'yule',
+    ]
+
 from yellowbrick.utils import check_fitted
 from yellowbrick.style import resolve_colors
 from yellowbrick.cluster.base import ClusteringScoreVisualizer
@@ -130,33 +141,44 @@ class SilhouetteVisualizer(ClusteringScoreVisualizer):
     def fit(self, X, y=None, **kwargs):
         """
         Fits the model and generates the silhouette visualization.
-        """
-        # TODO: decide to use this method or the score method to draw.
-        # NOTE: Probably this would be better in score, but the standard score
-        # is a little different and I'm not sure how it's used.
 
-        # if estimator is fitted AND has attribute
-        if check_fitted(self.estimator, is_fitted_by=self.is_fitted) and hasattr(self.estimator, "predict"):
-            labels = self.estimator.predict(X)
-        else:  # if estimator is NOT fitted, OR estimator does NOT implement predict()
-            labels = self.estimator.fit_predict(X, y, **kwargs)
+        Unlike other visualizers that use the score() method to draw the results, this
+        visualizer errs on visualizing on fit since this is when the clusters are
+        computed. This means that a predict call is required in fit (or a fit_predict)
+        in order to produce the visualization.
+        """
+
+        # If the estimator is not fitted, fit it; then call predict to get the labels
+        # for computing the silhoutte score on. If the estimator is already fitted, then
+        # attempt to predict the labels, but if the estimator is stateless, fit and
+        # predict on the data specified. At the end of this block, no matter the fitted
+        # state of the estimator and the method, we should have cluster labels for X.
+        if not check_fitted(self.estimator, is_fitted_by=self.is_fitted):
+            if hasattr(self.estimator, "fit_predict"):
+                labels = self.estimator.fit_predict(X, y, **kwargs)
+            else:
+                self.estimator.fit(X, y, **kwargs)
+                labels = self.estimator.predict(X)
+        else:
+            if hasattr(self.estimator, "predict"):
+                labels = self.estimator.predict(X)
+            else:
+                labels = self.estimator.fit_predict(X, y, **kwargs)
+
 
         # Get the properties of the dataset
         self.n_samples_ = X.shape[0]
 
+        # Compute the number of available clusters from the estimator
         if hasattr(self.estimator, "n_clusters"):
             self.n_clusters_ = self.estimator.n_clusters
         else:
             unique_labels = set(labels)
             n_noise_clusters = 1 if -1 in unique_labels else 0
-            self.n_clusters_ = len(unique_labels) - n_noise_clusters 
+            self.n_clusters_ = len(unique_labels) - n_noise_clusters
 
-        if hasattr(self.estimator, "metric"):
-            metric = self.estimator.metric
-        elif hasattr(self.estimator, "affinity") and self.estimator.__class__.__name__ != 'SpectralClustering':
-            metric = self.estimator.affinity
-        else:
-            metric = "euclidean"
+        # Identify the distance metric to use for silhouette scoring
+        metric = self._identify_silhouette_metric()
 
         # Compute the scores of the cluster
         self.silhouette_score_ = silhouette_score(X, labels, metric=metric)
@@ -273,6 +295,26 @@ class SilhouetteVisualizer(ClusteringScoreVisualizer):
 
         # Show legend (Average Silhouette Score axis)
         self.ax.legend(loc="best")
+
+    def _identify_silhouette_metric(self):
+        """
+        The Silhouette metric must be one of the distance options allowed by
+        metrics.pairwise.pairwise_distances or a callable. This method attempts to
+        discover a valid distance metric from the underlying estimator or returns
+        "euclidean" by default.
+        """
+        if hasattr(self.estimator, "metric"):
+            if callable(self.estimator.metric):
+                return self.estimator.metric
+
+            if self.estimator.metric in _VALID_METRICS:
+                return self.estimator.metric
+
+        if hasattr(self.estimator, "affinity"):
+            if self.estimator.affinity in _VALID_METRICS:
+                return self.estimator.affinity
+
+        return "euclidean"
 
 
 ##########################################################################
