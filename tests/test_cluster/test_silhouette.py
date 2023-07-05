@@ -20,14 +20,15 @@ Tests for the SilhouetteVisualizer
 import sys
 import pytest
 import matplotlib.pyplot as plt
+import numpy as np
 
 from sklearn.datasets import make_blobs
 from sklearn.cluster import KMeans, MiniBatchKMeans
+from sklearn.cluster import SpectralClustering, AgglomerativeClustering
 
 from unittest import mock
 from tests.base import VisualTestCase
 
-from yellowbrick.datasets import load_nfl
 from yellowbrick.cluster.silhouette import SilhouetteVisualizer, silhouette_visualizer
 
 
@@ -53,7 +54,6 @@ class TestSilhouetteVisualizer(VisualTestCase):
             n_samples=1000, n_features=12, centers=8, shuffle=False, random_state=0
         )
 
-       
         fig = plt.figure()
         ax = fig.add_subplot()
 
@@ -62,7 +62,6 @@ class TestSilhouetteVisualizer(VisualTestCase):
         visualizer.finalize()
 
         self.assert_images_similar(visualizer, remove_legend=True)
-        
 
     @pytest.mark.xfail(sys.platform == "win32", reason="images not close on windows")
     def test_integrated_mini_batch_kmeans_silhouette(self):
@@ -84,7 +83,6 @@ class TestSilhouetteVisualizer(VisualTestCase):
         visualizer.finalize()
 
         self.assert_images_similar(visualizer, remove_legend=True)
-        
 
     @pytest.mark.skip(reason="no negative silhouette example available yet")
     def test_negative_silhouette_score(self):
@@ -103,7 +101,6 @@ class TestSilhouetteVisualizer(VisualTestCase):
             n_samples=1000, n_features=12, centers=8, shuffle=False, random_state=0
         )
 
-        
         fig = plt.figure()
         ax = fig.add_subplot()
 
@@ -138,7 +135,7 @@ class TestSilhouetteVisualizer(VisualTestCase):
         visualizer.finalize()
 
         self.assert_images_similar(visualizer, remove_legend=True)
-    
+
     def test_colormap_as_colors_silhouette(self):
         """
         Test no exceptions for modifying the colors in a silhouette visualizer
@@ -162,7 +159,7 @@ class TestSilhouetteVisualizer(VisualTestCase):
             3.2 if sys.platform == "win32" else 0.01
         )  # Fails on AppVeyor with RMS 3.143
         self.assert_images_similar(visualizer, remove_legend=True, tol=tol)
-    
+
     def test_quick_method(self):
         """
         Test the quick method producing a valid visualization
@@ -177,29 +174,44 @@ class TestSilhouetteVisualizer(VisualTestCase):
 
         self.assert_images_similar(oz)
 
-    @pytest.mark.xfail(
-        reason="""third test fails with AssertionError: Expected fit
-        to be called once. Called 0 times."""
-    )
     def test_with_fitted(self):
         """
         Test that visualizer properly handles an already-fitted model
         """
-        X, y = load_nfl(return_dataset=True).to_numpy()
-
-        model = MiniBatchKMeans().fit(X, y)
+        X, y = make_blobs(
+            n_samples=100, n_features=5, centers=3, shuffle=False, random_state=112
+        )
+        model = MiniBatchKMeans().fit(X)
+        labels = model.predict(X)
 
         with mock.patch.object(model, "fit") as mockfit:
             oz = SilhouetteVisualizer(model)
-            oz.fit(X, y)
+            oz.fit(X)
             mockfit.assert_not_called()
 
         with mock.patch.object(model, "fit") as mockfit:
             oz = SilhouetteVisualizer(model, is_fitted=True)
-            oz.fit(X, y)
+            oz.fit(X)
             mockfit.assert_not_called()
 
-        with mock.patch.object(model, "fit") as mockfit:
+        with mock.patch.object(model, "fit_predict", return_value=labels) as mockfit:
             oz = SilhouetteVisualizer(model, is_fitted=False)
-            oz.fit(X, y)
-            mockfit.assert_called_once_with(X, y)
+            oz.fit(X)
+            mockfit.assert_called_once_with(X, None)
+
+    @pytest.mark.parametrize(
+        "model",
+        [SpectralClustering, AgglomerativeClustering],
+    )
+    def test_clusterer_without_predict(self, model):
+        """
+        Assert that clustering estimators that don't implement
+        a predict() method utilize fit_predict()
+        """
+        X = np.array([[1, 2], [1, 4], [1, 0], [4, 2], [4, 4], [4, 0]])
+        try:
+            visualizer = SilhouetteVisualizer(model(n_clusters=2))
+            visualizer.fit(X)
+            visualizer.finalize()
+        except AttributeError:
+            self.fail("could not use fit or fit_predict methods")
