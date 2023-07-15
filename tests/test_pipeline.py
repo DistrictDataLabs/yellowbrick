@@ -92,7 +92,7 @@ class TestVisualPipeline(object):
                     ("bad", Thing()),
                     ("model", MockEstimator()),
                 ]
-            )
+            )._validate_steps()
 
         # validate a bad intermediate transformer on the VisualPipeline
         with pytest.raises(TypeError):
@@ -102,15 +102,17 @@ class TestVisualPipeline(object):
                     ("bad", Thing()),
                     ("model", MockEstimator()),
                 ]
-            )
+            )._validate_steps()
 
         # validate a bad final estimator on the Pipeline
         with pytest.raises(TypeError):
-            Pipeline([("real", MockTransformer()), ("bad", Thing())])
+            Pipeline([("real", MockTransformer()), ("bad", Thing())])._validate_steps()
 
         # validate a bad final estimator on the VisualPipeline
         with pytest.raises(TypeError):
-            VisualPipeline([("real", MockTransformer()), ("bad", Thing())])
+            VisualPipeline(
+                [("real", MockTransformer()), ("bad", Thing())]
+            )._validate_steps()
 
         # validate visual transformers on a Pipeline
         try:
