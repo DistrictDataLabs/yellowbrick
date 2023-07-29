@@ -189,7 +189,7 @@ class SilhouetteVisualizer(ClusteringScoreVisualizer):
         if hasattr(self.estimator, "n_clusters"):
             self.n_clusters_ = self.estimator.n_clusters
         elif hasattr(self.estimator, "n_components"):
-	        self.n_clusters_ = self.estimator.n_components
+	    self.n_clusters_ = self.estimator.n_components
         else:
             unique_labels = set(labels)
             n_noise_clusters = 1 if -1 in unique_labels else 0
