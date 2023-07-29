@@ -100,7 +100,9 @@ class TestSilhouetteVisualizer(VisualTestCase):
         fig = plt.figure()
         ax = fig.add_subplot()
 
-        visualizer = SilhouetteVisualizer(GaussianMixture(n_components=5, random_state=0), ax=ax)
+        visualizer = SilhouetteVisualizer(
+            GaussianMixture(n_components=5, random_state=0), ax=ax
+        )
         visualizer.fit(X)
         visualizer.finalize()
 
