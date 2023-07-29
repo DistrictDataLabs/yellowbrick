@@ -25,6 +25,7 @@ import numpy as np
 from sklearn.datasets import make_blobs
 from sklearn.cluster import KMeans, MiniBatchKMeans
 from sklearn.cluster import SpectralClustering, AgglomerativeClustering
+from sklearn.mixture import GaussianMixture
 
 from unittest import mock
 from tests.base import VisualTestCase
@@ -79,6 +80,29 @@ class TestSilhouetteVisualizer(VisualTestCase):
         ax = fig.add_subplot()
 
         visualizer = SilhouetteVisualizer(MiniBatchKMeans(random_state=0), ax=ax)
+        visualizer.fit(X)
+        visualizer.finalize()
+
+        self.assert_images_similar(visualizer, remove_legend=True)
+
+    @pytest.mark.xfail(sys.platform == "win32", reason="images not close on windows")
+    def test_integrated_gaussian_mixture_silhouette(self):
+        """
+        Test Density Estimator works with silhouette visualizer
+        """
+        # NOTE see #182: cannot use occupancy dataset because of memory usage
+
+        # Generate a blobs data set
+        X, y = make_blobs(
+            n_samples=1000, n_features=12, centers=8, shuffle=False, random_state=0
+        )
+
+        fig = plt.figure()
+        ax = fig.add_subplot()
+
+        visualizer = SilhouetteVisualizer(
+            GaussianMixture(n_components=5, random_state=0), ax=ax
+        )
         visualizer.fit(X)
         visualizer.finalize()
 
