@@ -30,9 +30,9 @@ from yellowbrick.exceptions import YellowbrickValueError
 
 
 # Check to see if matplotlib is at least sorta up to date
-from distutils.version import LooseVersion
+from packaging.version import Version
 
-mpl_ge_150 = LooseVersion(mpl.__version__) >= "1.5.0"
+mpl_ge_150 = Version(mpl.__version__) >= Version("1.5.0")
 
 
 ##########################################################################
