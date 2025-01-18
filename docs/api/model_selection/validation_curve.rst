@@ -78,7 +78,7 @@ In the next visualizer, we will see an example that more dramatically visualizes
 
 .. image:: images/validation_curve_classifier_svc.png
 
-After loading data and one-hot encoding it using the Pandas ``get_dummies`` function, we create a stratified k-folds cross-validation strategy. The hyperparameter of interest is the gamma of a support vector classifier, the coefficient of the RBF kernel. Gamma controls how much influence a single example has, the larger gamma is, the tighter the support vector is around single points (overfitting the model).
+After loading data and one-hot encoding it using the scikit-learn ``OneHotEncoder`` class, we create a stratified k-folds cross-validation strategy. The hyperparameter of interest is the gamma of a support vector classifier, the coefficient of the RBF kernel. Gamma controls how much influence a single example has, the larger gamma is, the tighter the support vector is around single points (overfitting the model).
 
 In this visualization we see a definite inflection point around ``gamma=0.1``. At this point the training score climbs rapidly as the SVC memorizes the data, while the cross-validation score begins to decrease as the model cannot generalize to unseen data.
 
