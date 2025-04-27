@@ -80,7 +80,7 @@ class TestVisualPipeline(object):
         """
         Assert that visual transformers can be added to pipelines
         """
-
+        X = [[1, 1]]
         # Pipeline objects have a _validate_steps method that raises an
         # TypeError if the steps don't match transforms --> estimator.
 
@@ -92,7 +92,7 @@ class TestVisualPipeline(object):
                     ("bad", Thing()),
                     ("model", MockEstimator()),
                 ]
-            )
+            ).fit(X)
 
         # validate a bad intermediate transformer on the VisualPipeline
         with pytest.raises(TypeError):
@@ -102,15 +102,15 @@ class TestVisualPipeline(object):
                     ("bad", Thing()),
                     ("model", MockEstimator()),
                 ]
-            )
+            ).fit(X)
 
         # validate a bad final estimator on the Pipeline
         with pytest.raises(TypeError):
-            Pipeline([("real", MockTransformer()), ("bad", Thing())])
+            Pipeline([("real", MockTransformer()), ("bad", Thing())]).fit(X)
 
         # validate a bad final estimator on the VisualPipeline
         with pytest.raises(TypeError):
-            VisualPipeline([("real", MockTransformer()), ("bad", Thing())])
+            VisualPipeline([("real", MockTransformer()), ("bad", Thing())]).fit(X)
 
         # validate visual transformers on a Pipeline
         try:
@@ -120,7 +120,7 @@ class TestVisualPipeline(object):
                     ("visual", MockVisualTransformer()),
                     ("model", MockEstimator()),
                 ]
-            )
+            ).fit(X)
         except TypeError:
             self.fail("could not add a visual transformer to a Pipeline!")
 
@@ -132,7 +132,7 @@ class TestVisualPipeline(object):
                     ("visual", MockVisualTransformer()),
                     ("model", MockEstimator()),
                 ]
-            )
+            ).fit(X)
         except TypeError:
             self.fail("could not add a visual transformer to a VisualPipeline!")
 

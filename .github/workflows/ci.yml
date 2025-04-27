@@ -38,11 +38,13 @@ jobs:
       run: |
         python -m pip install --upgrade pip
         pip install -r tests/requirements.txt
-        python -m nltk.downloader popular
+        python -m nltk.downloader popular punkt punkt_tab
 
     - name: Run Unit Tests
       run: |
         make test
+        env:
+          MPLBACKEND: Agg
 
     - name: Upload Coverage
       uses: codecov/codecov-action@v1

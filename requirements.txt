@@ -1,14 +1,14 @@
 ## Dependencies
-matplotlib>=2.0.2,!=3.0.0
-scipy>=1.0.0
+matplotlib>=3.6.0
+scipy>=1.9.0
 scikit-learn>=1.0.2
-numpy>=1.16.0
-cycler>=0.10.0
+numpy>=1.21.0
+cycler>=0.11.0
 
 ## Optional Dependencies (uncomment to use)
-# nltk>=3.2
-# pandas>=1.0.4
-# umap-learn>=0.5
+# nltk>=3.6.0
+# pandas>=1.4.0
+# umap-learn>=0.5.3
 
 ## Testing Requirements (pip install -r tests/requirements.txt)
 # pytest>=6.1

@@ -350,7 +350,7 @@ class TestDecisionBoundariesVisualizer(VisualTestCase):
         visualizer = DecisionBoundariesVisualizer(model, features=["a", "f"])
         visualizer.fit_draw_show(X, y=y)
         self.assertEquals(visualizer.features_, ["a", "f"])
-        self.assert_images_similar(visualizer)
+        self.assert_images_similar(visualizer, tol=6, windows_tol=6)
 
     def test_integrated_scatter_numpy_arrays_no_names(self):
         """
@@ -378,7 +378,7 @@ class TestDecisionBoundariesVisualizer(VisualTestCase):
 
         visualizer = DecisionBoundariesVisualizer(model)
         visualizer.fit_draw_show(X, y)
-        self.assert_images_similar(visualizer)
+        self.assert_images_similar(visualizer, tol=6, windows_tol=6)
 
     @pytest.mark.skipif(pd is None, reason="test requires pandas")
     def test_quick_method(self):

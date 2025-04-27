@@ -109,7 +109,7 @@ class DispersionPlot(TextVisualizer):
         ignore_case=False,
         annotate_docs=False,
         labels=None,
-        **kwargs
+        **kwargs,
     ):
         super(DispersionPlot, self).__init__(ax=ax, **kwargs)
 
@@ -196,7 +196,8 @@ class DispersionPlot(TextVisualizer):
         Attributes
         ----------
         self.classes_ : list
-            A list of strings representing the unique classes in the target in sorted order.
+            A list of strings representing the unique classes in the target in sorted
+            order.
             If ``y`` is provided, these are extracted from ``y``, unless a list of class
             labels is provided by the user on instantiation.
 
@@ -205,8 +206,8 @@ class DispersionPlot(TextVisualizer):
             the search terms.
 
         self.word_categories_ : list
-            A list of strings indicating the corresponding document category of each search
-            term occurrence.
+            A list of strings indicating the corresponding document category of
+            each search term occurrence.
         """
 
         if y is not None:
@@ -220,17 +221,26 @@ class DispersionPlot(TextVisualizer):
             self.indexed_words_ = np.array([w.lower() for w in self.indexed_words_])
 
         # Stack is used to create a 2D array from the generator
-        try:
-            offsets_positions_categories = np.stack(self._compute_dispersion(X, y))
-        except ValueError:
+
+        points = list(self._compute_dispersion(X, y))
+        if not points:
             raise YellowbrickValueError(("No search terms were found in the corpus"))
 
-        word_positions = np.stack(
-            zip(
-                offsets_positions_categories[:, 0].astype(int),
-                offsets_positions_categories[:, 1].astype(int),
+        try:
+            offsets_positions_categories = np.stack(points)
+        except Exception as e:
+            raise YellowbrickValueError(
+                f"Could not convert dispersion points to array: {str(e)}"
+            ) from e
+
+        try:
+            word_positions = np.array(
+                [(int(x[0]), int(x[1])) for x in offsets_positions_categories]
             )
-        )
+        except Exception as e:
+            raise YellowbrickValueError(
+                f"Could not create word positions array: {str(e)}"
+            ) from e
 
         self.word_categories_ = offsets_positions_categories[:, 2]
 
@@ -342,9 +352,9 @@ def dispersion(
     ignore_case=False,
     labels=None,
     show=True,
-    **kwargs
+    **kwargs,
 ):
-    """ Displays lexical dispersion plot for words in a corpus
+    """Displays lexical dispersion plot for words in a corpus
 
     This helper function is a quick wrapper to utilize the DispersionPlot
     Visualizer for one-off analysis
@@ -408,7 +418,7 @@ def dispersion(
         ignore_case=ignore_case,
         labels=labels,
         annotate_docs=annotate_docs,
-        **kwargs
+        **kwargs,
     )
 
     visualizer.fit(corpus, y, **kwargs)
