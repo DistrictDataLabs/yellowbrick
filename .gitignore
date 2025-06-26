@@ -122,3 +122,6 @@ fabric.properties
 # Data downloaded from Yellowbrick
 data/
 yellowbrick/datasets/fixtures
+
+# Catboost
+catboost_info

@@ -29,31 +29,22 @@ from copy import copy
 from yellowbrick.exceptions import YellowbrickValueError
 
 
-# Check to see if matplotlib is at least sorta up to date
-from distutils.version import LooseVersion
-
-mpl_ge_150 = LooseVersion(mpl.__version__) >= "1.5.0"
-
-
 ##########################################################################
 ## Color Utilities
 ##########################################################################
-
 
 def get_color_cycle():
     """
     Returns the current color cycle from matplotlib.
     """
-    if mpl_ge_150:
-        cyl = mpl.rcParams["axes.prop_cycle"]
-        # matplotlib 1.5 verifies that axes.prop_cycle *is* a cycler
-        # but no garuantee that there's a `color` key.
-        # so users could have a custom rcParams w/ no color...
-        try:
-            return [x["color"] for x in cyl]
-        except KeyError:
-            pass  # just return axes.color style below
-    return mpl.rcParams["axes.color_cycle"]
+    cyl = mpl.rcParams["axes.prop_cycle"]
+    # matplotlib 1.5 verifies that axes.prop_cycle *is* a cycler
+    # but no garuantee that there's a `color` key.
+    # so users could have a custom rcParams w/ no color...
+    try:
+        return [x["color"] for x in cyl]
+    except KeyError:
+        return mpl.rcParams["axes.color_cycle"]
 
 
 def resolve_colors(n_colors=None, colormap=None, colors=None):
@@ -70,7 +61,7 @@ def resolve_colors(n_colors=None, colormap=None, colors=None):
         truncate or multiple the colors available. If None the length of the
         colors will not be modified.
 
-    colormap : str, yellowbrick.style.palettes.ColorPalette, matplotlib.cm, default: None
+    colormap : str, ColorPalette, matplotlib.cm, default: None
         The name of the matplotlib color map with which to generate colors.
 
     colors : iterable, default: None
