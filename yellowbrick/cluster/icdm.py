@@ -130,6 +130,12 @@ class InterclusterDistance(ClusteringScoreVisualizer):
         modified. If 'auto' (default), a helper method will check if the estimator
         is fitted before fitting it again.
 
+    perplexity : float, default: None
+        The perplexity parameter for t-SNE embedding. Only used when embedding='tsne'.
+        If None, uses the t-SNE default (30.0). Lower values (e.g., 3-5) may be needed
+        when the number of clusters is small to avoid "perplexity must be less than
+        n_samples" errors.
+
     kwargs : dict
         Keyword arguments passed to the base class and may influence the
         feature visualization properties.
@@ -174,6 +180,7 @@ class InterclusterDistance(ClusteringScoreVisualizer):
         legend_size=1.5,
         random_state=None,
         is_fitted="auto",
+        perplexity=None,
         **kwargs
     ):
         # Initialize the visualizer bases
@@ -187,6 +194,7 @@ class InterclusterDistance(ClusteringScoreVisualizer):
         self.scoring = scoring
         self.embedding = embedding
         self.random_state = random_state
+        self.perplexity = perplexity
 
         # Set visual properties
         self.legend = legend
@@ -251,7 +259,10 @@ class InterclusterDistance(ClusteringScoreVisualizer):
             return MDS(n_components=2, random_state=self.random_state)
 
         if ttype == "tsne":
-            return TSNE(n_components=2, random_state=self.random_state)
+            kwargs = {"n_components": 2, "random_state": self.random_state}
+            if self.perplexity is not None:
+                kwargs["perplexity"] = self.perplexity
+            return TSNE(**kwargs)
 
         raise YellowbrickValueError("unknown embedding '{}'".format(ttype))
 

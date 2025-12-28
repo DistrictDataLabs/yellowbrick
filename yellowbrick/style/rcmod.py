@@ -25,12 +25,6 @@ import functools
 import numpy as np
 import matplotlib as mpl
 
-# Check to see if we have a slightly modern version of mpl
-from distutils.version import LooseVersion
-
-mpl_ge_150 = LooseVersion(mpl.__version__) >= "1.5.0"
-
-
 from .. import _orig_rc_params
 from .palettes import color_palette, set_color_codes
 
@@ -418,7 +412,7 @@ def set_palette(palette, n_colors=None, color_codes=False):
 
     Parameters
     ----------
-    palette : yellowbrick color palette | seaborn color palette (with ``sns_`` prepended)
+    palette : yellowbrick color palette | seaborn color palette (with ``sns_`` prefix)
         Palette definition. Should be something that :func:`color_palette`
         can process.
     n_colors : int
@@ -430,12 +424,12 @@ def set_palette(palette, n_colors=None, color_codes=False):
         color codes (e.g. "b", "g", "r", etc.) to the colors from this palette.
     """
     colors = color_palette(palette, n_colors)
-    if mpl_ge_150:
+    try:
         from cycler import cycler
 
         cyl = cycler("color", colors)
         mpl.rcParams["axes.prop_cycle"] = cyl
-    else:
+    except ImportError:
         mpl.rcParams["axes.color_cycle"] = list(colors)
     mpl.rcParams["patch.facecolor"] = colors[0]
     if color_codes:

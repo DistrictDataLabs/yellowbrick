@@ -115,9 +115,10 @@ class TestFeatureVisualizer(object):
 
         X, y = self.discrete
         assert viz.fit_transform_show(X, y, outpath="a.png", clear_figure=True) == "a"
-        assert viz.fit.called_once_with(X, y)
-        assert viz.transform.called_once_with(X, y)
-        assert viz.show.called_once_with(outpath="a.png", clear_figure=True)
+        # Check that methods were called once (numpy arrays can't be compared with ==)
+        assert viz.fit.call_count == 1
+        assert viz.transform.call_count == 1
+        viz.show.assert_called_once_with(outpath="a.png", clear_figure=True)
 
 
 ##########################################################################

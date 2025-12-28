@@ -95,17 +95,30 @@ class TestAlphaSelection(VisualTestCase):
 
     def test_store_cv_values(self):
         """
-        Assert that store_cv_values is true on RidgeCV
+        Assert that store_cv_results/store_cv_values is true on RidgeCV
         """
-
+        # sklearn 1.7+ uses store_cv_results, older versions use store_cv_values
         model = AlphaSelection(RidgeCV())
-        assert model.estimator.store_cv_values
+        assert getattr(model.estimator, "store_cv_results", None) or getattr(
+            model.estimator, "store_cv_values", None
+        )
 
-        model = AlphaSelection(RidgeCV(store_cv_values=True))
-        assert model.estimator.store_cv_values
+        # Test with explicit parameter (try both old and new names)
+        try:
+            model = AlphaSelection(RidgeCV(store_cv_results=True))
+            assert model.estimator.store_cv_results
+        except TypeError:
+            # Fallback to old parameter name for sklearn < 1.7
+            model = AlphaSelection(RidgeCV(store_cv_values=True))
+            assert model.estimator.store_cv_values
 
-        model = AlphaSelection(RidgeCV(store_cv_values=False))
-        assert model.estimator.store_cv_values
+        # Test that we override False to True
+        try:
+            model = AlphaSelection(RidgeCV(store_cv_results=False))
+            assert model.estimator.store_cv_results
+        except TypeError:
+            model = AlphaSelection(RidgeCV(store_cv_values=False))
+            assert model.estimator.store_cv_values
 
     @pytest.mark.parametrize("model", [RidgeCV, LassoCV, ElasticNetCV])
     def test_get_alphas_param(self, model):
@@ -166,9 +179,7 @@ class TestAlphaSelection(VisualTestCase):
         """
         X, y = load_energy(return_dataset=True).to_numpy()
 
-        visualizer = alphas(
-            LassoCV(random_state=0), X, y, is_fitted=False, show=False
-        )
+        visualizer = alphas(LassoCV(random_state=0), X, y, is_fitted=False, show=False)
         assert isinstance(visualizer, AlphaSelection)
         self.assert_images_similar(visualizer, tol=0.1)
 
@@ -181,20 +192,23 @@ class TestAlphaSelection(VisualTestCase):
         # Create a list of alphas to cross-validate against
         alphas = np.logspace(-10, 1, 400)
 
-        model = Pipeline([
-            ('imputer', SimpleImputer(missing_values=np.nan, strategy='mean')),
-            ('alpha', AlphaSelection(LassoCV(random_state=42, alphas=alphas)))
-        ])
+        model = Pipeline(
+            [
+                ("imputer", SimpleImputer(missing_values=np.nan, strategy="mean")),
+                ("alpha", AlphaSelection(LassoCV(random_state=42, alphas=alphas))),
+            ]
+        )
 
         model.fit(X, y)
-        model['alpha'].finalize()
-        self.assert_images_similar(model['alpha'], tol=2.0)
+        model["alpha"].finalize()
+        self.assert_images_similar(model["alpha"], tol=2.0)
 
 
 class TestManualAlphaSelection(VisualTestCase):
     """
     Test the ManualAlphaSelection visualizer
     """
+
     def test_similar_image_manual(self):
         """
         Integration test with image similarity comparison
@@ -249,12 +263,21 @@ class TestManualAlphaSelection(VisualTestCase):
         # Create a list of alphas to cross-validate against
         alpha_values = np.logspace(1, 4, 50)
 
-        model = Pipeline([
-            ('imputer', SimpleImputer(missing_values=np.nan, strategy='mean')),
-            ('alpha', ManualAlphaSelection(Ridge(random_state=42), alphas=alpha_values, cv=12,
-                                           scoring="neg_mean_squared_error"))
-        ])
+        model = Pipeline(
+            [
+                ("imputer", SimpleImputer(missing_values=np.nan, strategy="mean")),
+                (
+                    "alpha",
+                    ManualAlphaSelection(
+                        Ridge(random_state=42),
+                        alphas=alpha_values,
+                        cv=12,
+                        scoring="neg_mean_squared_error",
+                    ),
+                ),
+            ]
+        )
 
         model.fit(X, y)
-        model['alpha'].finalize()
-        self.assert_images_similar(model['alpha'], tol=2.0)
+        model["alpha"].finalize()
+        self.assert_images_similar(model["alpha"], tol=2.0)

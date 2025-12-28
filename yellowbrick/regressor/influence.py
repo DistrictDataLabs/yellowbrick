@@ -155,7 +155,7 @@ class CooksDistance(Visualizer):
 
         # Compute Cook's distance
         residuals_studentized = residuals / np.sqrt(mse) / np.sqrt(1 - leverage)
-        self.distance_ = residuals_studentized ** 2 / X.shape[1]
+        self.distance_ = residuals_studentized**2 / X.shape[1]
         self.distance_ *= leverage / (1 - leverage)
 
         # Compute the p-values of Cook's Distance
@@ -180,8 +180,7 @@ class CooksDistance(Visualizer):
         """
         # Draw a stem plot with the influence for each instance
         _, _, baseline = self.ax.stem(
-            self.distance_, linefmt=self.linefmt, markerfmt=self.markerfmt,
-            use_line_collection=True
+            self.distance_, linefmt=self.linefmt, markerfmt=self.markerfmt
         )
 
         # No padding on either side of the instance index

@@ -196,17 +196,18 @@ class DispersionPlot(TextVisualizer):
         Attributes
         ----------
         self.classes_ : list
-            A list of strings representing the unique classes in the target in sorted order.
-            If ``y`` is provided, these are extracted from ``y``, unless a list of class
-            labels is provided by the user on instantiation.
+            A list of strings representing the unique classes in the target in
+            sorted order. If ``y`` is provided, these are extracted from ``y``,
+            unless a list of class labels is provided by the user on
+            instantiation.
 
         self.indexed_words_ : list
             A list of integers indicating the y position for each occurrence of each of
             the search terms.
 
         self.word_categories_ : list
-            A list of strings indicating the corresponding document category of each search
-            term occurrence.
+            A list of strings indicating the corresponding document category of
+            each search term occurrence.
         """
 
         if y is not None:
@@ -221,14 +222,18 @@ class DispersionPlot(TextVisualizer):
 
         # Stack is used to create a 2D array from the generator
         try:
-            offsets_positions_categories = np.stack(self._compute_dispersion(X, y))
+            offsets_positions_categories = np.stack(
+                list(self._compute_dispersion(X, y))
+            )
         except ValueError:
             raise YellowbrickValueError(("No search terms were found in the corpus"))
 
         word_positions = np.stack(
-            zip(
-                offsets_positions_categories[:, 0].astype(int),
-                offsets_positions_categories[:, 1].astype(int),
+            list(
+                zip(
+                    offsets_positions_categories[:, 0].astype(int),
+                    offsets_positions_categories[:, 1].astype(int),
+                )
             )
         )
 
@@ -344,7 +349,7 @@ def dispersion(
     show=True,
     **kwargs
 ):
-    """ Displays lexical dispersion plot for words in a corpus
+    """Displays lexical dispersion plot for words in a corpus
 
     This helper function is a quick wrapper to utilize the DispersionPlot
     Visualizer for one-off analysis

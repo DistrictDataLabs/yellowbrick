@@ -96,8 +96,8 @@ class MissingValuesDispersion(MissingDataVisualizer):
         """Gets the locations of nans in feature data and returns
         the coordinates in the matrix
         """
-        if np.issubdtype(self.X.dtype, np.string_) or np.issubdtype(
-            self.X.dtype, np.unicode_
+        if np.issubdtype(self.X.dtype, np.bytes_) or np.issubdtype(
+            self.X.dtype, np.str_
         ):
             mask = np.where(self.X == "")
             nan_matrix = np.zeros(self.X.shape)

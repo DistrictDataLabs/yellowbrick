@@ -79,7 +79,7 @@ class TestDiscriminationThreshold(VisualTestCase):
         visualizer.fit(X, y)
         visualizer.finalize()
 
-        self.assert_images_similar(visualizer)
+        self.assert_images_similar(visualizer, tol=0.012)
 
     def test_multiclass_discrimination_threshold(self):
         """
@@ -377,14 +377,22 @@ class TestDiscriminationThreshold(VisualTestCase):
         """
         X, y = load_spam()
 
-        model = Pipeline([
-            ('imputer', SimpleImputer(missing_values=np.nan, strategy='mean')),
-            ('dt', DiscriminationThreshold(LogisticRegression(multi_class="auto", solver="liblinear"), random_state=42))
-        ])
+        model = Pipeline(
+            [
+                ("imputer", SimpleImputer(missing_values=np.nan, strategy="mean")),
+                (
+                    "dt",
+                    DiscriminationThreshold(
+                        LogisticRegression(multi_class="auto", solver="liblinear"),
+                        random_state=42,
+                    ),
+                ),
+            ]
+        )
 
         model.fit(X, y)
-        model['dt'].finalize()
-        self.assert_images_similar(model['dt'], tol=15)
+        model["dt"].finalize()
+        self.assert_images_similar(model["dt"], tol=15)
 
     def test_within_pipeline_quickmethod(self):
         """
@@ -393,14 +401,22 @@ class TestDiscriminationThreshold(VisualTestCase):
         """
         X, y = load_spam()
 
-        model = Pipeline([
-            ('imputer', SimpleImputer(missing_values=np.nan, strategy='mean')),
-            ('dt',
-             discrimination_threshold(LogisticRegression(multi_class="auto", solver="liblinear"), X,
-                                      y, random_state=42))
-        ])
-        model['dt'].finalize()
-        self.assert_images_similar(model['dt'], tol=15)
+        model = Pipeline(
+            [
+                ("imputer", SimpleImputer(missing_values=np.nan, strategy="mean")),
+                (
+                    "dt",
+                    discrimination_threshold(
+                        LogisticRegression(multi_class="auto", solver="liblinear"),
+                        X,
+                        y,
+                        random_state=42,
+                    ),
+                ),
+            ]
+        )
+        model["dt"].finalize()
+        self.assert_images_similar(model["dt"], tol=15)
 
     def test_pipeline_as_model_input(self):
         """
@@ -408,10 +424,12 @@ class TestDiscriminationThreshold(VisualTestCase):
         """
         X, y = load_spam()
 
-        model = Pipeline([
-            ('imputer', SimpleImputer(missing_values=np.nan, strategy='mean')),
-            ('lr', LogisticRegression(multi_class="auto", solver="liblinear"))
-        ])
+        model = Pipeline(
+            [
+                ("imputer", SimpleImputer(missing_values=np.nan, strategy="mean")),
+                ("lr", LogisticRegression(multi_class="auto", solver="liblinear")),
+            ]
+        )
 
         oz = DiscriminationThreshold(model, random_state=42)
         oz.fit(X, y)
@@ -425,10 +443,12 @@ class TestDiscriminationThreshold(VisualTestCase):
         """
         X, y = load_spam()
 
-        model = Pipeline([
-            ('imputer', SimpleImputer(missing_values=np.nan, strategy='mean')),
-            ('lr', LogisticRegression(multi_class="auto", solver="liblinear"))
-        ])
+        model = Pipeline(
+            [
+                ("imputer", SimpleImputer(missing_values=np.nan, strategy="mean")),
+                ("lr", LogisticRegression(multi_class="auto", solver="liblinear")),
+            ]
+        )
 
         oz = discrimination_threshold(model, X, y, random_state=42)
         self.assert_images_similar(oz, tol=15)

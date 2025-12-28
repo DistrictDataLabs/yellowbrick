@@ -186,7 +186,10 @@ class TestClassificationScoreVisualizer(object):
 
         encoder = dict(zip(classes, range(len(classes))))
         oz = ClassificationScoreVisualizer(GaussianNB, encoder=encoder)
-        with pytest.raises(ModelError, match="cannot decode class 'c' to label"):
+        with pytest.raises(
+            ModelError,
+            match=r"cannot decode class (np\.str_\()?\s*'c'\s*(\))? to label",
+        ):
             npt.assert_array_equal(oz._decode_labels(y), decoded)
 
         encoder = LabelEncoder().fit(classes[np.random.randint(0, 4, 100)])

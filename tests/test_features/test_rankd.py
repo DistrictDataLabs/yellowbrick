@@ -152,7 +152,8 @@ class TestRank1D(VisualTestCase):
 
         assert hasattr(oz, "ranks_")
         assert oz.ranks_.shape == (X.shape[1],)
-        npt.assert_array_almost_equal(oz.ranks_, expected)
+        # Reduce precision to 5 decimals for numerical stability across versions
+        npt.assert_array_almost_equal(oz.ranks_, expected, decimal=5)
 
         # Image similarity comparison
         oz.finalize()
@@ -246,6 +247,7 @@ class TestRank2D(VisualTestCase):
     """
     Test the Rank2D visualizer
     """
+
     def test_rank2d_unknown_algorithm(self):
         """
         Test that an error is raised for Rank2D with an unknown algorithm

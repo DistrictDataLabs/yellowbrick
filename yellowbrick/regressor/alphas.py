@@ -112,7 +112,8 @@ class AlphaSelection(RegressionScoreVisualizer):
     to work for RidgeCV, LassoCV, LassoLarsCV, and ElasticNetCV. If your
     favorite regularization method doesn't work, please submit a bug report.
 
-    For RidgeCV, make sure ``store_cv_values=True``.
+    For RidgeCV, make sure ``store_cv_results=True`` (or ``store_cv_values=True``
+    for scikit-learn < 1.7).
     """
 
     def __init__(self, estimator, ax=None, is_fitted="auto", **kwargs):
@@ -127,8 +128,11 @@ class AlphaSelection(RegressionScoreVisualizer):
                 ).format(name)
             )
 
-        # Set the store_cv_values parameter on RidgeCV
-        if "store_cv_values" in estimator.get_params().keys():
+        # Set the store_cv_results/store_cv_values parameter on RidgeCV
+        # sklearn 1.7+ uses store_cv_results, older versions use store_cv_values
+        if "store_cv_results" in estimator.get_params().keys():
+            estimator.set_params(store_cv_results=True)
+        elif "store_cv_values" in estimator.get_params().keys():
             estimator.set_params(store_cv_values=True)
 
         # Call super to initialize the class
@@ -211,6 +215,10 @@ class AlphaSelection(RegressionScoreVisualizer):
         # NOTE: The order of the search is very important!
         if hasattr(self.estimator, "mse_path_"):
             return self.estimator.mse_path_.mean(1)
+
+        # sklearn 1.7+ uses cv_results_, older versions use cv_values_
+        if hasattr(self.estimator, "cv_results_"):
+            return self.estimator.cv_results_.mean(0)
 
         if hasattr(self.estimator, "cv_values_"):
             return self.estimator.cv_values_.mean(0)

@@ -19,6 +19,7 @@ Tests to ensure that the visual pipeline works as expected.
 
 import os
 import pytest
+import sklearn
 
 from unittest import mock
 from yellowbrick.base import Visualizer
@@ -83,34 +84,41 @@ class TestVisualPipeline(object):
 
         # Pipeline objects have a _validate_steps method that raises an
         # TypeError if the steps don't match transforms --> estimator.
+        # NOTE: sklearn 1.7+ removed eager validation at construction time
+
+        sklearn_version = tuple(map(int, sklearn.__version__.split(".")[:2]))
 
         # validate a bad intermediate transformer on the Pipeline
-        with pytest.raises(TypeError):
-            Pipeline(
-                [
-                    ("real", MockTransformer()),
-                    ("bad", Thing()),
-                    ("model", MockEstimator()),
-                ]
-            )
+        if sklearn_version < (1, 7):
+            with pytest.raises(TypeError):
+                Pipeline(
+                    [
+                        ("real", MockTransformer()),
+                        ("bad", Thing()),
+                        ("model", MockEstimator()),
+                    ]
+                )
 
         # validate a bad intermediate transformer on the VisualPipeline
-        with pytest.raises(TypeError):
-            VisualPipeline(
-                [
-                    ("real", MockTransformer()),
-                    ("bad", Thing()),
-                    ("model", MockEstimator()),
-                ]
-            )
+        if sklearn_version < (1, 7):
+            with pytest.raises(TypeError):
+                VisualPipeline(
+                    [
+                        ("real", MockTransformer()),
+                        ("bad", Thing()),
+                        ("model", MockEstimator()),
+                    ]
+                )
 
         # validate a bad final estimator on the Pipeline
-        with pytest.raises(TypeError):
-            Pipeline([("real", MockTransformer()), ("bad", Thing())])
+        if sklearn_version < (1, 7):
+            with pytest.raises(TypeError):
+                Pipeline([("real", MockTransformer()), ("bad", Thing())])
 
         # validate a bad final estimator on the VisualPipeline
-        with pytest.raises(TypeError):
-            VisualPipeline([("real", MockTransformer()), ("bad", Thing())])
+        if sklearn_version < (1, 7):
+            with pytest.raises(TypeError):
+                VisualPipeline([("real", MockTransformer()), ("bad", Thing())])
 
         # validate visual transformers on a Pipeline
         try:

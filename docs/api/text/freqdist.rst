@@ -30,7 +30,7 @@ We first instantiate a ``FreqDistVisualizer`` object, and then call ``fit()`` on
 
     vectorizer = CountVectorizer()
     docs       = vectorizer.fit_transform(corpus.data)
-    features   = vectorizer.get_feature_names()
+    features   = vectorizer.get_feature_names_out()
 
     visualizer = FreqDistVisualizer(features=features, orient='v')
     visualizer.fit(docs)
@@ -55,7 +55,7 @@ It is interesting to compare the results of the ``FreqDistVisualizer`` before an
 
     vectorizer = CountVectorizer(stop_words='english')
     docs       = vectorizer.fit_transform(corpus.data)
-    features   = vectorizer.get_feature_names()
+    features   = vectorizer.get_feature_names_out()
 
     visualizer = FreqDistVisualizer(features=features, orient='v')
     visualizer.fit(docs)
@@ -87,7 +87,7 @@ Here is the plot for the cooking corpus (oriented horizontally this time):
 
     vectorizer = CountVectorizer(stop_words='english')
     docs       = vectorizer.fit_transform(text for text in hobbies['cooking'])
-    features   = vectorizer.get_feature_names()
+    features   = vectorizer.get_feature_names_out()
 
     visualizer = FreqDistVisualizer(
         features=features, size=(1080, 720)
@@ -119,7 +119,7 @@ And for the gaming corpus (again oriented horizontally):
 
     vectorizer = CountVectorizer(stop_words='english')
     docs       = vectorizer.fit_transform(text for text in hobbies['gaming'])
-    features   = vectorizer.get_feature_names()
+    features   = vectorizer.get_feature_names_out()
 
     visualizer = FreqDistVisualizer(
         features=features, size=(1080, 720)
@@ -153,7 +153,7 @@ Similar functionality as above can be achieved in one line using the associated 
 
     vectorizer = CountVectorizer(stop_words='english')
     docs       = vectorizer.fit_transform(text for text in hobbies['cinema'])
-    features   = vectorizer.get_feature_names()
+    features   = vectorizer.get_feature_names_out()
 
     freqdist(features, docs, orient='v')
 

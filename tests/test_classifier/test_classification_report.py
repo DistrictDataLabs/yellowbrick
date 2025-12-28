@@ -87,7 +87,7 @@ class TestClassificationReport(VisualTestCase):
 
         self.assert_images_similar(viz, tol=11.0)
 
-        assert viz.scores_ == {
+        expected = {
             "precision": {
                 0: 0.75,
                 1: 0.47368421052631576,
@@ -113,6 +113,10 @@ class TestClassificationReport(VisualTestCase):
                 5: 0.5454545454545455,
             },
         }
+        # Use approx for floating point comparison
+        for metric in expected:
+            for cls in expected[metric]:
+                assert viz.scores_[metric][cls] == approx(expected[metric][cls])
 
     @pytest.mark.xfail(sys.platform == "win32", reason="images not close on windows")
     @pytest.mark.skipif(pd is None, reason="test requires pandas")
@@ -208,7 +212,7 @@ class TestClassificationReport(VisualTestCase):
         # Create train/test splits
         splits = tts(X, y, test_size=0.2, random_state=42)
         X_train, X_test, y_train, y_test = splits
-        
+
         _, ax = plt.subplots()
         model = DecisionTreeClassifier(random_state=19)
         visualizer = classification_report(
@@ -357,18 +361,20 @@ class TestClassificationReport(VisualTestCase):
         classes = ["unoccupied", "occupied"]
 
         X_train, X_test, y_train, y_test = tts(
-                    X, y, test_size=0.2, shuffle=True, random_state=42
-                )
+            X, y, test_size=0.2, shuffle=True, random_state=42
+        )
 
-        model = Pipeline([
-            ('minmax', MinMaxScaler()), 
-            ('clsrpt', ClassificationReport(SVC(random_state=42), classes=classes))
-        ])
+        model = Pipeline(
+            [
+                ("minmax", MinMaxScaler()),
+                ("clsrpt", ClassificationReport(SVC(random_state=42), classes=classes)),
+            ]
+        )
 
         model.fit(X_train, y_train)
         model.score(X_test, y_test)
-        model['clsrpt'].finalize()
-        self.assert_images_similar(model['clsrpt'], tol=15)
+        model["clsrpt"].finalize()
+        self.assert_images_similar(model["clsrpt"], tol=15)
 
     def test_within_pipeline_quickmethod(self):
         """
@@ -378,16 +384,27 @@ class TestClassificationReport(VisualTestCase):
         X, y = load_occupancy(return_dataset=True).to_pandas()
 
         X_train, X_test, y_train, y_test = tts(
-                    X, y, test_size=0.2, shuffle=True, random_state=42
-                )
+            X, y, test_size=0.2, shuffle=True, random_state=42
+        )
 
-        model = Pipeline([
-            ('minmax', MinMaxScaler()), 
-            ('clsrpt', classification_report(SVC(random_state=42),
-                                            X_train, y_train, X_test, y_test,
-                                            classes=["vacant", "occupied"], show=False))
-        ])
-        self.assert_images_similar(model['clsrpt'], tol=15)
+        model = Pipeline(
+            [
+                ("minmax", MinMaxScaler()),
+                (
+                    "clsrpt",
+                    classification_report(
+                        SVC(random_state=42),
+                        X_train,
+                        y_train,
+                        X_test,
+                        y_test,
+                        classes=["vacant", "occupied"],
+                        show=False,
+                    ),
+                ),
+            ]
+        )
+        self.assert_images_similar(model["clsrpt"], tol=15)
 
     def test_pipeline_as_model_input(self):
         """
@@ -397,13 +414,10 @@ class TestClassificationReport(VisualTestCase):
         classes = ["unoccupied", "occupied"]
 
         X_train, X_test, y_train, y_test = tts(
-                    X, y, test_size=0.2, shuffle=True, random_state=42
-                )
+            X, y, test_size=0.2, shuffle=True, random_state=42
+        )
 
-        model = Pipeline([
-            ('minmax', MinMaxScaler()), 
-            ('svc', SVC(random_state=42))
-        ])
+        model = Pipeline([("minmax", MinMaxScaler()), ("svc", SVC(random_state=42))])
 
         oz = ClassificationReport(model, classes=classes)
         oz.fit(X_train, y_train)
@@ -419,16 +433,18 @@ class TestClassificationReport(VisualTestCase):
         X, y = load_occupancy(return_dataset=True).to_pandas()
 
         X_train, X_test, y_train, y_test = tts(
-                    X, y, test_size=0.2, shuffle=True, random_state=42
-                )
+            X, y, test_size=0.2, shuffle=True, random_state=42
+        )
 
-        model = Pipeline([
-            ('minmax', MinMaxScaler()), 
-            ('svc', SVC(random_state=42))
-        ])
+        model = Pipeline([("minmax", MinMaxScaler()), ("svc", SVC(random_state=42))])
 
-        oz = classification_report(model,
-                                   X_train, y_train, X_test, y_test,
-                                   classes=["vacant", "occupied"],
-                                   show=False)
+        oz = classification_report(
+            model,
+            X_train,
+            y_train,
+            X_test,
+            y_test,
+            classes=["vacant", "occupied"],
+            show=False,
+        )
         self.assert_images_similar(oz, tol=15)

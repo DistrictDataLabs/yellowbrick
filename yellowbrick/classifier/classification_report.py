@@ -158,7 +158,7 @@ class ClassificationReport(ClassificationScoreVisualizer):
         self.cmap.set_over(color=CMAP_OVERCOLOR)
         self.cmap.set_under(color=CMAP_UNDERCOLOR)
         self._displayed_scores = [key for key in SCORES_KEYS]
-        self.fontsize=fontsize
+        self.fontsize = fontsize
 
         if support not in {None, True, False, "percent", "count"}:
             raise YellowbrickValueError(
@@ -205,7 +205,18 @@ class ClassificationReport(ClassificationScoreVisualizer):
 
         # Create a mapping composed of precision, recall, F1, and support
         # to their respective values
-        scores = map(lambda s: dict(zip(self.classes_, s)), scores)
+        # Convert NumPy scalars to Python native types for compatibility
+        def convert_to_native(val):
+            """Convert NumPy scalars to Python native types"""
+            return val.item() if hasattr(val, "item") else val
+
+        scores = map(
+            lambda s: {
+                convert_to_native(k): convert_to_native(v)
+                for k, v in zip(self.classes_, s)
+            },
+            scores,
+        )
         self.scores_ = dict(zip(SCORES_KEYS, scores))
 
         # Remove support scores if not required
@@ -244,17 +255,14 @@ class ClassificationReport(ClassificationScoreVisualizer):
         # Fetch the grid labels from the classes in correct order; set ticks.
         xticklabels = self._displayed_scores
         yticklabels = labels[::-1]
-        
+
         yticks = np.arange(len(labels)) + 0.5
         xticks = np.arange(len(self._displayed_scores)) + 0.5
 
         self.ax.set(yticks=yticks, xticks=xticks)
 
-        self.ax.set_xticklabels(
-            xticklabels, rotation=45, fontsize=self.fontsize
-            )
+        self.ax.set_xticklabels(xticklabels, rotation=45, fontsize=self.fontsize)
         self.ax.set_yticklabels(yticklabels, fontsize=self.fontsize)
-
 
         # Set data labels in the grid, enumerating over class, metric pairs
         # NOTE: X and Y are one element longer than the classification report
@@ -411,7 +419,7 @@ def classification_report(
         If True, calls ``show()``, which in turn calls ``plt.show()`` however you cannot
         call ``plt.savefig`` from this signature, nor ``clear_figure``. If False, simply
         calls ``finalize()``
-    
+
     colorbar : bool, default: True
         Specify if the color bar should be present
 

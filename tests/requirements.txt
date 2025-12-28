@@ -4,26 +4,26 @@
 # are probably using. We recommend monitoring Libraries.io to alert for changes.
 
 # Library Dependencies
-matplotlib==3.4.2
-scipy==1.8.0
-scikit-learn==1.0.2
-numpy==1.22.0
-cycler==0.10.0
+matplotlib==3.10.3
+scipy==1.16.0
+scikit-learn==1.7.0
+numpy==2.2.6
+cycler==0.12.1
 
 # Testing Requirements
-pytest==6.2.4
-pytest-cov==2.12.1
-pytest-flakes==4.0.3
-pytest-spec>=2.0.0
-coverage==5.5
+pytest==8.4.1
+pytest-cov==6.2.1
+pytest-flakes==4.0.5
+pytest-spec==5.0.0
+coverage==7.9.1
 
 # Optional Testing Dependencies
-nltk==3.6.7
-# spacy>=2.0.18
-pandas==1.3.0
-umap-learn==0.5.3
-numba==0.55.2
+nltk==3.9.1
+# spacy==3.8.7
+pandas==2.3.0
+umap-learn==0.5.7
+numba==0.61.2
 
 # Third-Party Estimator Tests
-# xgboost==1.2.0
-# catboost==0.24.1
+# xgboost==3.0.2
+# catboost==1.2.8

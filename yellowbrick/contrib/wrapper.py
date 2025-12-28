@@ -37,6 +37,7 @@ OUTLIER_DETECTOR = "outlier_detector"
 ## Functional API
 ##########################################################################
 
+
 def wrap(estimator, estimator_type=None):
     """
     Wrap a third-party estimator that implements portions of the scikit-learn API to
@@ -97,6 +98,7 @@ def clusterer(estimator):
 ## ContribEstimator - Third Pary Estimator Wrapper
 ##########################################################################
 
+
 class ContribEstimator(object):
     """
     Wraps a third party estimator that implements the sckit-learn API and therefore
@@ -124,11 +126,67 @@ class ContribEstimator(object):
             self._estimator_type = estimator_type
 
     def __getattr__(self, attr):
-        # proxy to the wrapped object
+        # Special handling for __sklearn_tags__ - provide defaults if missing
+        if attr == "__sklearn_tags__":
+            try:
+                return getattr(self.estimator, "__sklearn_tags__")
+            except AttributeError:
+                # Provide a default implementation based on _estimator_type
+                return self._get_default_sklearn_tags
+
+        # proxy to the wrapped object for all other attributes
         try:
             return getattr(self.estimator, attr)
         except AttributeError:
-            raise YellowbrickAttributeError((
-                "estimator is missing the '{}' attribute, which is required for this "
-                "visualizer - please see the third party estimators documentation."
-            ).format(attr))
+            raise YellowbrickAttributeError(
+                (
+                    "estimator is missing the '{}' attribute, which is "
+                    "required for this visualizer - please see the third "
+                    "party estimators documentation."
+                ).format(attr)
+            )
+
+    def _get_default_sklearn_tags(self):
+        """
+        Generate default sklearn tags for third-party estimators that don't
+        implement __sklearn_tags__. Uses the _estimator_type attribute to
+        determine the appropriate tags.
+        """
+        from sklearn.utils._tags import (
+            Tags,
+            TargetTags,
+            ClassifierTags,
+            RegressorTags,
+        )
+
+        estimator_type = getattr(self, "_estimator_type", None)
+
+        # Create appropriate tags based on estimator type
+        if estimator_type == "classifier":
+            return Tags(
+                estimator_type="classifier",
+                target_tags=TargetTags(required=True),
+                classifier_tags=ClassifierTags(),
+            )
+        elif estimator_type == "regressor":
+            return Tags(
+                estimator_type="regressor",
+                target_tags=TargetTags(required=True),
+                regressor_tags=RegressorTags(),
+            )
+        elif estimator_type == "outlier_detector":
+            return Tags(
+                estimator_type="outlier_detector",
+                target_tags=TargetTags(required=False),
+            )
+        elif estimator_type == "clusterer":
+            return Tags(
+                estimator_type="clusterer",
+                target_tags=TargetTags(required=False),
+            )
+        else:
+            # Default for unknown types
+            return Tags(
+                estimator_type=estimator_type,
+                target_tags=TargetTags(required=False),
+            )

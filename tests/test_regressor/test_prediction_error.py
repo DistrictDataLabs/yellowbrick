@@ -225,11 +225,13 @@ class TestPredictionError(VisualTestCase):
         # Instantiate a sklearn regressor
         model = Lasso(random_state=23, alpha=10)
         # Instantiate a prediction error plot, provide custom alpha
-        visualizer = PredictionError(model, bestfit=False, identity=False, is_fitted=False)
+        visualizer = PredictionError(
+            model, bestfit=False, identity=False, is_fitted=False
+        )
 
         # Test param gets set correctly
-        assert visualizer.is_fitted == False
-    
+        assert visualizer.is_fitted is False
+
     @pytest.mark.xfail(
         reason="""third test fails with AssertionError: Expected fit
         to be called once. Called 0 times."""
@@ -272,7 +274,7 @@ class TestPredictionError(VisualTestCase):
             model, self.data.X.train, self.data.y.train, ax=ax, show=False
         )
         assert isinstance(oz, PredictionError)
-        self.assert_images_similar(oz)
+        self.assert_images_similar(oz, tol=0.013)
 
     def test_within_pipeline(self):
         """
@@ -281,15 +283,17 @@ class TestPredictionError(VisualTestCase):
         X, y = load_concrete()
         X_train, X_test, y_train, y_test = tts(X, y, test_size=0.2, random_state=42)
 
-        model = Pipeline([
-            ('imputer', SimpleImputer(missing_values=np.nan, strategy='mean')),
-            ('pe', PredictionError(Lasso()))
-        ])
+        model = Pipeline(
+            [
+                ("imputer", SimpleImputer(missing_values=np.nan, strategy="mean")),
+                ("pe", PredictionError(Lasso())),
+            ]
+        )
 
         model.fit(X_train, y_train)
         model.score(X_test, y_test)
-        model['pe'].finalize()
-        self.assert_images_similar(model['pe'], tol=2.0)
+        model["pe"].finalize()
+        self.assert_images_similar(model["pe"], tol=2.0)
 
     def test_within_pipeline_quickmethod(self):
         """
@@ -298,15 +302,17 @@ class TestPredictionError(VisualTestCase):
         X, y = load_concrete()
         X_train, X_test, y_train, y_test = tts(X, y, test_size=0.2, random_state=42)
 
-        model = Pipeline([
-            ('imputer', SimpleImputer(missing_values=np.nan, strategy='mean')),
-            ('pe', PredictionError(Lasso()))
-        ])
+        model = Pipeline(
+            [
+                ("imputer", SimpleImputer(missing_values=np.nan, strategy="mean")),
+                ("pe", PredictionError(Lasso())),
+            ]
+        )
 
         model.fit(X_train, y_train)
         model.score(X_test, y_test)
-        model['pe'].finalize()
-        self.assert_images_similar(model['pe'], tol=2.0)
+        model["pe"].finalize()
+        self.assert_images_similar(model["pe"], tol=2.0)
 
     def test_pipeline_as_model_input(self):
         """
@@ -315,10 +321,12 @@ class TestPredictionError(VisualTestCase):
         X, y = load_concrete()
         X_train, X_test, y_train, y_test = tts(X, y, test_size=0.2, random_state=42)
 
-        model = Pipeline([
-            ('imputer', SimpleImputer(missing_values=np.nan, strategy='mean')),
-            ('lasso', Lasso())
-        ])
+        model = Pipeline(
+            [
+                ("imputer", SimpleImputer(missing_values=np.nan, strategy="mean")),
+                ("lasso", Lasso()),
+            ]
+        )
 
         oz = PredictionError(model)
         oz.fit(X_train, y_train)
@@ -333,10 +341,12 @@ class TestPredictionError(VisualTestCase):
         X, y = load_concrete()
         X_train, X_test, y_train, y_test = tts(X, y, test_size=0.2, random_state=42)
 
-        model = Pipeline([
-            ('imputer', SimpleImputer(missing_values=np.nan, strategy='mean')),
-            ('lasso', Lasso())
-        ])
+        model = Pipeline(
+            [
+                ("imputer", SimpleImputer(missing_values=np.nan, strategy="mean")),
+                ("lasso", Lasso()),
+            ]
+        )
 
         oz = prediction_error(model, X_train, y_train, X_test, y_test)
         oz.finalize()

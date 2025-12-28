@@ -324,7 +324,7 @@ class TestPrecisionRecallCurve(VisualTestCase):
         # Will not check for these as they appears okay in other test images.
         for child in oz.ax.get_children():
             if isinstance(child, matplotlib.text.Annotation):
-                oz.ax.texts.remove(child)
+                child.remove()
 
         # Compare the images
         tol = (
@@ -438,9 +438,11 @@ class TestPrecisionRecallCurve(VisualTestCase):
 
         viz = precision_recall_curve(
             RandomForestClassifier(random_state=72),
-            X_train, y_train,
-            X_test, y_test,
-            show=False
+            X_train,
+            y_train,
+            X_test,
+            y_test,
+            show=False,
         )
         self.assert_images_similar(viz)
 
@@ -487,24 +489,31 @@ class TestPrecisionRecallCurve(VisualTestCase):
         classes = ["unoccupied", "occupied"]
 
         X_train, X_test, y_train, y_test = tts(
-                    X, y, test_size=0.2, shuffle=True, random_state=42
-                )
+            X, y, test_size=0.2, shuffle=True, random_state=42
+        )
 
-        model = Pipeline([
-            ('minmax', MinMaxScaler()), 
-            ('prc', PrecisionRecallCurve(SVC(random_state=42),
-                                            per_class=True,
-                                            micro=False,
-                                            fill_area=False,
-                                            iso_f1_curves=True,
-                                            ap_score=False,
-                                            classes=classes))
-        ])
+        model = Pipeline(
+            [
+                ("minmax", MinMaxScaler()),
+                (
+                    "prc",
+                    PrecisionRecallCurve(
+                        SVC(random_state=42),
+                        per_class=True,
+                        micro=False,
+                        fill_area=False,
+                        iso_f1_curves=True,
+                        ap_score=False,
+                        classes=classes,
+                    ),
+                ),
+            ]
+        )
 
         model.fit(X_train, y_train)
         model.score(X_test, y_test)
-        model['prc'].finalize()
-        self.assert_images_similar(model['prc'], tol=5.5)
+        model["prc"].finalize()
+        self.assert_images_similar(model["prc"], tol=5.5)
 
     def test_within_pipeline_quickmethod(self):
         """
@@ -514,22 +523,32 @@ class TestPrecisionRecallCurve(VisualTestCase):
         X, y = load_occupancy(return_dataset=True).to_pandas()
 
         X_train, X_test, y_train, y_test = tts(
-                    X, y, test_size=0.2, shuffle=True, random_state=42
-                )
+            X, y, test_size=0.2, shuffle=True, random_state=42
+        )
 
-        model = Pipeline([
-            ('minmax', MinMaxScaler()), 
-            ('prc', precision_recall_curve(SVC(random_state=42),
-                                            X_train, y_train, X_test, y_test,
-                                            per_class=True,
-                                            micro=False,
-                                            fill_area=False,
-                                            iso_f1_curves=True,
-                                            ap_score=False,
-                                            classes=["unoccupied", "occupied"],
-                                            show=False))
-            ])
-        self.assert_images_similar(model['prc'], tol=5.5)
+        model = Pipeline(
+            [
+                ("minmax", MinMaxScaler()),
+                (
+                    "prc",
+                    precision_recall_curve(
+                        SVC(random_state=42),
+                        X_train,
+                        y_train,
+                        X_test,
+                        y_test,
+                        per_class=True,
+                        micro=False,
+                        fill_area=False,
+                        iso_f1_curves=True,
+                        ap_score=False,
+                        classes=["unoccupied", "occupied"],
+                        show=False,
+                    ),
+                ),
+            ]
+        )
+        self.assert_images_similar(model["prc"], tol=5.5)
 
     def test_pipeline_as_model_input(self):
         """
@@ -539,21 +558,20 @@ class TestPrecisionRecallCurve(VisualTestCase):
         classes = ["unoccupied", "occupied"]
 
         X_train, X_test, y_train, y_test = tts(
-                    X, y, test_size=0.2, shuffle=True, random_state=42
-                )
+            X, y, test_size=0.2, shuffle=True, random_state=42
+        )
 
-        model = Pipeline([
-            ('minmax', MinMaxScaler()), 
-            ('svc', SVC(random_state=42))
-        ])
+        model = Pipeline([("minmax", MinMaxScaler()), ("svc", SVC(random_state=42))])
 
-        oz = PrecisionRecallCurve(model,
-                                  per_class=True,
-                                  micro=False,
-                                  fill_area=False,
-                                  iso_f1_curves=True,
-                                  ap_score=False,
-                                  classes=classes)
+        oz = PrecisionRecallCurve(
+            model,
+            per_class=True,
+            micro=False,
+            fill_area=False,
+            iso_f1_curves=True,
+            ap_score=False,
+            classes=classes,
+        )
         oz.fit(X_train, y_train)
         oz.score(X_test, y_test)
         oz.finalize()
@@ -567,20 +585,23 @@ class TestPrecisionRecallCurve(VisualTestCase):
         X, y = load_occupancy(return_dataset=True).to_pandas()
 
         X_train, X_test, y_train, y_test = tts(
-                    X, y, test_size=0.2, shuffle=True, random_state=42
-                )
+            X, y, test_size=0.2, shuffle=True, random_state=42
+        )
 
-        model = Pipeline([
-            ('minmax', MinMaxScaler()), 
-            ('svc', SVC(random_state=42))
-        ])
+        model = Pipeline([("minmax", MinMaxScaler()), ("svc", SVC(random_state=42))])
 
-        oz = precision_recall_curve(model, X_train, y_train, X_test, y_test, 
-                     per_class=True,
-                     micro=False,
-                     fill_area=False,
-                     iso_f1_curves=True,
-                     ap_score=False,
-                     classes=["unoccupied", "occupied"],
-                     show=False)
+        oz = precision_recall_curve(
+            model,
+            X_train,
+            y_train,
+            X_test,
+            y_test,
+            per_class=True,
+            micro=False,
+            fill_area=False,
+            iso_f1_curves=True,
+            ap_score=False,
+            classes=["unoccupied", "occupied"],
+            show=False,
+        )
         self.assert_images_similar(oz, tol=5.5)

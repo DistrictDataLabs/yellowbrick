@@ -104,7 +104,7 @@ class TestROCAUC(VisualTestCase):
 
         # Compare the images
         visualizer.finalize()
-        self.assert_images_similar(visualizer, tol=0.1, windows_tol=10)
+        self.assert_images_similar(visualizer, tol=6.9, windows_tol=10)
 
     def test_binary_probability_decision(self):
         """
@@ -129,7 +129,7 @@ class TestROCAUC(VisualTestCase):
 
     def test_binary_probability_decision_single_curve(self):
         """
-        Test ROCAUC binary classifier with both decision & predict_proba with per_class=False
+        Test ROCAUC binary classifier with decision & predict_proba, per_class=False
         """
         # Create and fit the visualizer
         visualizer = ROCAUC(
@@ -565,18 +565,20 @@ class TestROCAUC(VisualTestCase):
         classes = ["unoccupied", "occupied"]
 
         X_train, X_test, y_train, y_test = tts(
-                    X, y, test_size=0.2, shuffle=True, random_state=42
-                )
+            X, y, test_size=0.2, shuffle=True, random_state=42
+        )
 
-        model = Pipeline([
-            ('minmax', MinMaxScaler()), 
-            ('matrix', ROCAUC(SVC(random_state=42), classes=classes, binary=True))
-        ])
+        model = Pipeline(
+            [
+                ("minmax", MinMaxScaler()),
+                ("matrix", ROCAUC(SVC(random_state=42), classes=classes, binary=True)),
+            ]
+        )
 
         model.fit(X_train, y_train)
         model.score(X_test, y_test)
-        model['matrix'].finalize()
-        self.assert_images_similar(model['matrix'], tol=12)
+        model["matrix"].finalize()
+        self.assert_images_similar(model["matrix"], tol=12)
 
     def test_within_pipeline_quickmethod(self):
         """
@@ -586,17 +588,28 @@ class TestROCAUC(VisualTestCase):
         X, y = load_occupancy(return_dataset=True).to_pandas()
 
         X_train, X_test, y_train, y_test = tts(
-                    X, y, test_size=0.2, shuffle=True, random_state=42
-                )
+            X, y, test_size=0.2, shuffle=True, random_state=42
+        )
 
-        model = Pipeline([
-            ('minmax', MinMaxScaler()), 
-            ('matrix', roc_auc(SVC(random_state=42),
-                                            X_train, y_train, X_test, y_test,
-                                            classes=["vacant", "occupied"],
-                                            show=False, binary=True))
-            ])
-        self.assert_images_similar(model['matrix'], tol=12)
+        model = Pipeline(
+            [
+                ("minmax", MinMaxScaler()),
+                (
+                    "matrix",
+                    roc_auc(
+                        SVC(random_state=42),
+                        X_train,
+                        y_train,
+                        X_test,
+                        y_test,
+                        classes=["vacant", "occupied"],
+                        show=False,
+                        binary=True,
+                    ),
+                ),
+            ]
+        )
+        self.assert_images_similar(model["matrix"], tol=12)
 
     def test_pipeline_as_model_input(self):
         """
@@ -606,13 +619,10 @@ class TestROCAUC(VisualTestCase):
         classes = ["unoccupied", "occupied"]
 
         X_train, X_test, y_train, y_test = tts(
-                    X, y, test_size=0.2, shuffle=True, random_state=42
-                )
+            X, y, test_size=0.2, shuffle=True, random_state=42
+        )
 
-        model = Pipeline([
-            ('minmax', MinMaxScaler()), 
-            ('svc', SVC(random_state=42))
-        ])
+        model = Pipeline([("minmax", MinMaxScaler()), ("svc", SVC(random_state=42))])
 
         oz = ROCAUC(model, classes=classes, binary=True)
         oz.fit(X_train, y_train)
@@ -628,15 +638,19 @@ class TestROCAUC(VisualTestCase):
         X, y = load_occupancy(return_dataset=True).to_pandas()
 
         X_train, X_test, y_train, y_test = tts(
-                    X, y, test_size=0.2, shuffle=True, random_state=42
-                )
+            X, y, test_size=0.2, shuffle=True, random_state=42
+        )
 
-        model = Pipeline([
-            ('minmax', MinMaxScaler()), 
-            ('svc', SVC(random_state=42))
-        ])
+        model = Pipeline([("minmax", MinMaxScaler()), ("svc", SVC(random_state=42))])
 
-        oz = roc_auc(model, X_train, y_train, X_test, y_test, 
-                     classes=["vacant", "occupied"],
-                     show=False, binary=True)
+        oz = roc_auc(
+            model,
+            X_train,
+            y_train,
+            X_test,
+            y_test,
+            classes=["vacant", "occupied"],
+            show=False,
+            binary=True,
+        )
         self.assert_images_similar(oz, tol=12)

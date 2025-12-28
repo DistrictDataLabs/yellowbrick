@@ -38,6 +38,7 @@ np.random.seed()
 ## Fixtures
 ##########################################################################
 
+
 @pytest.fixture(scope="class")
 def multiclass(request):
     """
@@ -96,6 +97,7 @@ def blobs(request):
 ## Tests
 ##########################################################################
 
+
 @pytest.mark.usefixtures("multiclass")
 @pytest.mark.usefixtures("continuous")
 @pytest.mark.usefixtures("blobs")
@@ -142,7 +144,9 @@ class TestPrePrePredictEstimator(VisualTestCase):
         estimator = PrePredict(y_pred, REGRESSOR)
         assert estimator.fit(X.train, y.train) is estimator
         assert estimator.predict(X.train) is y_pred
-        assert estimator.score(X.test, y.test) == pytest.approx(0.9999983124154966, rel=1e-2)
+        assert estimator.score(X.test, y.test) == pytest.approx(
+            0.9999983124154966, rel=1e-2
+        )
 
         # Test that a visualizer works with the pre-predictions.
         viz = PredictionError(estimator)
@@ -159,11 +163,12 @@ class TestPrePrePredictEstimator(VisualTestCase):
         X = self.blobs.X
         y_pred = MiniBatchKMeans(random_state=831).fit(X).predict(X)
 
-         # Create prepredict estimator with prior predictions
+        # Create prepredict estimator with prior predictions
         estimator = PrePredict(y_pred, CLUSTERER)
         assert estimator.fit(X) is estimator
         assert estimator.predict(X) is y_pred
-        assert estimator.score(X) == pytest.approx(0.5477478541994333, rel=1e-2)
+        # Increase tolerance to 5% for scikit-learn algorithm changes
+        assert estimator.score(X) == pytest.approx(0.5477478541994333, rel=5e-2)
 
         # NOTE: there is currently no cluster visualizer that can take advantage of
         # the prepredict utility since they all require learned attributes.

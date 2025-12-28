@@ -102,12 +102,15 @@ def distortion_score(X, labels, metric="euclidean"):
         # Compute the center of these instances
         center = instances.mean(axis=0)
 
-        # NOTE: csc_matrix and csr_matrix mean returns a 2D array, numpy.mean
-        # returns an array of 1 dimension less than the input. We expect
-        # instances to be a 2D array, therefore to do pairwise computation we
-        # require center to be a 2D array with a single row (the center).
-        # See #370 for more detail.
-        if not sp.issparse(instances):
+        # NOTE: csc_matrix and csr_matrix mean returns a np.matrix
+        # (deprecated in NumPy 2.0), numpy.mean returns an array of 1
+        # dimension less than the input. We expect instances to be a 2D
+        # array, therefore to do pairwise computation we require center to
+        # be a 2D array with a single row (the center). See #370 for detail.
+        if sp.issparse(instances):
+            # Convert np.matrix to array for NumPy 2.0 compatibility
+            center = np.asarray(center)
+        else:
             center = np.array([center])
 
         # Compute the square distances from the instances to the center

@@ -31,15 +31,15 @@ from setuptools import find_packages
 
 ## Basic information
 ## Basic information
-NAME         = "yellowbrick"
-DESCRIPTION  = "A suite of visual analysis and diagnostic tools for machine learning."
-AUTHOR       = "The scikit-yb developers"
-EMAIL        = "yellowbrick@googlegroups.com"
-MAINTAINER   = "The scikit-yb developers"
-LICENSE      = "Apache 2"
-REPOSITORY   = "https://github.com/DistrictDataLabs/yellowbrick"
-PACKAGE      = "yellowbrick"
-URL          = "http://scikit-yb.org/"
+NAME = "yellowbrick"
+DESCRIPTION = "A suite of visual analysis and diagnostic tools for machine learning."
+AUTHOR = "The scikit-yb developers"
+EMAIL = "yellowbrick@googlegroups.com"
+MAINTAINER = "The scikit-yb developers"
+LICENSE = "Apache 2"
+REPOSITORY = "https://github.com/DistrictDataLabs/yellowbrick"
+PACKAGE = "yellowbrick"
+URL = "http://scikit-yb.org/"
 
 ## Define the keywords
 KEYWORDS = (
@@ -52,7 +52,7 @@ KEYWORDS = (
 
 ## Define the classifiers
 ## See https://pypi.python.org/pypi?%3Aaction=list_classifiers
-CLASSIFIERS  = (
+CLASSIFIERS = (
     "Development Status :: 5 - Production/Stable",
     "Intended Audience :: Developers",
     "Intended Audience :: Science/Research",
@@ -60,11 +60,10 @@ CLASSIFIERS  = (
     "Natural Language :: English",
     "Operating System :: OS Independent",
     "Programming Language :: Python",
-    "Programming Language :: Python :: 3.5",
-    "Programming Language :: Python :: 3.6",
-    "Programming Language :: Python :: 3.7",
-    "Programming Language :: Python :: 3.8",
-    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
     "Topic :: Software Development",
     "Topic :: Software Development :: Libraries :: Python Modules",
     "Topic :: Scientific/Engineering :: Visualization",
@@ -78,14 +77,19 @@ PKG_DESCRIBE = "DESCRIPTION.md"
 
 ## Directories to ignore in find_packages
 EXCLUDES = (
-    "tests", "tests.*",
+    "tests",
+    "tests.*",
     "bin",
-    "docs", "docs.*",
+    "docs",
+    "docs.*",
     "fixtures",
     "register",
-    "notebooks", "notebooks.*",
-    "examples", "examples.*",
-    "binder", "binder.*",
+    "notebooks",
+    "notebooks.*",
+    "examples",
+    "examples.*",
+    "binder",
+    "binder.*",
     "paper",
 )
 
@@ -164,7 +168,7 @@ config = {
     "zip_safe": False,
     "entry_points": {"console_scripts": []},
     "install_requires": list(get_requires()),
-    "python_requires": ">=3.4, <4"
+    "python_requires": ">=3.10, <4",
 }
 
 
