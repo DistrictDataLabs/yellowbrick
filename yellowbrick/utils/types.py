@@ -20,7 +20,7 @@ Detection utilities for Scikit-Learn and Numpy types for flexibility
 import inspect
 import numpy as np
 
-from sklearn.base import BaseEstimator
+from sklearn.base import BaseEstimator, is_classifier, is_regressor, is_clusterer
 from yellowbrick.contrib.wrapper import ContribEstimator
 
 
@@ -49,67 +49,12 @@ def is_estimator(model):
 isestimator = is_estimator
 
 
-def is_classifier(estimator):
-    """
-    Returns True if the given estimator is (probably) a classifier.
-
-    Parameters
-    ----------
-    estimator : class or instance
-        The object to test if it is a Scikit-Learn clusterer, especially a
-        Scikit-Learn estimator or Yellowbrick visualizer
-
-    See also
-    --------
-    is_classifier
-        `sklearn.is_classifier() <https://github.com/scikit-learn/scikit-learn/blob/master/sklearn/base.py#L518>`_
-    """
-
-    # Test the _estimator_type property
-    return getattr(estimator, "_estimator_type", None) == "classifier"
-
-
 # Alias for closer name to isinstance and issubclass
 isclassifier = is_classifier
 
 
-def is_regressor(estimator):
-    """
-    Returns True if the given estimator is (probably) a regressor.
-
-    Parameters
-    ----------
-    estimator : class or instance
-        The object to test if it is a Scikit-Learn clusterer, especially a
-        Scikit-Learn estimator or Yellowbrick visualizer
-
-    See also
-    --------
-    is_regressor
-        `sklearn.is_regressor() <https://github.com/scikit-learn/scikit-learn/blob/master/sklearn/base.py#L531>`_
-    """
-
-    # Test the _estimator_type property
-    return getattr(estimator, "_estimator_type", None) == "regressor"
-
-
 # Alias for closer name to isinstance and issubclass
 isregressor = is_regressor
-
-
-def is_clusterer(estimator):
-    """
-    Returns True if the given estimator is a clusterer.
-
-    Parameters
-    ----------
-    estimator : class or instance
-        The object to test if it is a Scikit-Learn clusterer, especially a
-        Scikit-Learn estimator or Yellowbrick visualizer
-    """
-
-    # Test the _estimator_type property
-    return getattr(estimator, "_estimator_type", None) == "clusterer"
 
 
 # Alias for closer name to isinstance and issubclass
@@ -118,13 +63,12 @@ isclusterer = is_clusterer
 
 def is_gridsearch(estimator):
     """
-    Returns True if the given estimator is a clusterer.
+    Returns True if the given estimator is a grid-search estimator.
 
     Parameters
     ----------
     estimator : class or instance
-        The object to test if it is a Scikit-Learn clusterer, especially a
-        Scikit-Learn estimator or Yellowbrick visualizer
+        The object to test if it is a Scikit-Learn grid-search estimator.
     """
 
     from sklearn.model_selection import GridSearchCV, RandomizedSearchCV
