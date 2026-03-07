@@ -19,6 +19,9 @@ other estimators into Yellowbrick, while avoiding weird errors and issues.
 ## Imports
 ##########################################################################
 
+import dataclasses
+
+from sklearn.base import BaseEstimator
 from yellowbrick.exceptions import YellowbrickAttributeError
 
 
@@ -122,6 +125,13 @@ class ContribEstimator(object):
         # Do not set estimator type if not specified to allow passthrough
         if estimator_type:
             self._estimator_type = estimator_type
+
+    def __sklearn_tags__(self):
+        tags = BaseEstimator().__sklearn_tags__()
+        estimator_type = getattr(self, "_estimator_type", None)
+        if estimator_type is not None:
+            tags = dataclasses.replace(tags, estimator_type=estimator_type)
+        return tags
 
     def __getattr__(self, attr):
         # proxy to the wrapped object
