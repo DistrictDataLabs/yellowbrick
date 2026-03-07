@@ -25,12 +25,6 @@ import functools
 import numpy as np
 import matplotlib as mpl
 
-# Check to see if we have a slightly modern version of mpl
-from distutils.version import LooseVersion
-
-mpl_ge_150 = LooseVersion(mpl.__version__) >= "1.5.0"
-
-
 from .. import _orig_rc_params
 from .palettes import color_palette, set_color_codes
 
@@ -326,13 +320,6 @@ def _plotting_context(context=None, font_scale=1, rc=None):
         font_dict = {k: context_dict[k] * font_scale for k in font_keys}
         context_dict.update(font_dict)
 
-    # Implement hack workaround for matplotlib bug
-    # See https://github.com/mwaskom/seaborn/issues/344
-    # There is a bug in matplotlib 1.4.2 that makes points invisible when
-    # they don't have an edgewidth. It will supposedly be fixed in 1.4.3.
-    if mpl.__version__ == "1.4.2":
-        context_dict["lines.markeredgewidth"] = 0.01
-
     # Override these settings with the provided rc dictionary
     if rc is not None:
         rc = {k: v for k, v in rc.items() if k in _context_keys}
@@ -430,13 +417,10 @@ def set_palette(palette, n_colors=None, color_codes=False):
         color codes (e.g. "b", "g", "r", etc.) to the colors from this palette.
     """
     colors = color_palette(palette, n_colors)
-    if mpl_ge_150:
-        from cycler import cycler
+    from cycler import cycler
 
-        cyl = cycler("color", colors)
-        mpl.rcParams["axes.prop_cycle"] = cyl
-    else:
-        mpl.rcParams["axes.color_cycle"] = list(colors)
+    cyl = cycler("color", colors)
+    mpl.rcParams["axes.prop_cycle"] = cyl
     mpl.rcParams["patch.facecolor"] = colors[0]
     if color_codes:
         set_color_codes(palette)
