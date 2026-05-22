@@ -220,15 +220,18 @@ class DispersionPlot(TextVisualizer):
             self.indexed_words_ = np.array([w.lower() for w in self.indexed_words_])
 
         # Stack is used to create a 2D array from the generator
+        # NumPy 2.0 requires a sequence (list/tuple), not a generator
         try:
-            offsets_positions_categories = np.stack(self._compute_dispersion(X, y))
+            offsets_positions_categories = np.stack(list(self._compute_dispersion(X, y)))
         except ValueError:
             raise YellowbrickValueError(("No search terms were found in the corpus"))
 
         word_positions = np.stack(
-            zip(
-                offsets_positions_categories[:, 0].astype(int),
-                offsets_positions_categories[:, 1].astype(int),
+            list(
+                zip(
+                    offsets_positions_categories[:, 0].astype(int),
+                    offsets_positions_categories[:, 1].astype(int),
+                )
             )
         )
 

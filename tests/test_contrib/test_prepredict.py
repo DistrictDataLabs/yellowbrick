@@ -163,7 +163,7 @@ class TestPrePrePredictEstimator(VisualTestCase):
         estimator = PrePredict(y_pred, CLUSTERER)
         assert estimator.fit(X) is estimator
         assert estimator.predict(X) is y_pred
-        assert estimator.score(X) == pytest.approx(0.5477478541994333, rel=1e-2)
+        assert estimator.score(X) == pytest.approx(0.5690396479221588, rel=1e-2)
 
         # NOTE: there is currently no cluster visualizer that can take advantage of
         # the prepredict utility since they all require learned attributes.

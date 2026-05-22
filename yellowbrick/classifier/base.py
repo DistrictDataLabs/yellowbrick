@@ -269,11 +269,13 @@ class ClassificationScoreVisualizer(ScoreVisualizer):
             try:
                 return np.asarray([self.encoder[yi] for yi in y])
             except KeyError as e:
+                # str(e) strips surrounding quotes; repr may include type prefix in NumPy 2
+                key = e.args[0] if e.args else e
                 raise ModelError(
                     (
-                        "cannot decode class {} to label, "
+                        "cannot decode class '{}' to label, "
                         "key not specified by encoder"
-                    ).format(e)
+                    ).format(key)
                 )
 
         if self.classes is not None:

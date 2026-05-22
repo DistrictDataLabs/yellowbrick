@@ -90,8 +90,10 @@ class TestManifold(VisualTestCase):
         """
         message = "case failed for {}".format(algorithm)
 
-        with pytest.warns(None) as record:
-            assert not record.list, message
+        import warnings as _warnings
+        with _warnings.catch_warnings(record=True) as record:
+            _warnings.simplefilter("always")
+            assert not record, message
 
     def test_bad_manifold_exception(self):
         """

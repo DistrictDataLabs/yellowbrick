@@ -19,6 +19,8 @@ other estimators into Yellowbrick, while avoiding weird errors and issues.
 ## Imports
 ##########################################################################
 
+from sklearn.utils._tags import Tags, TargetTags, ClassifierTags, RegressorTags
+
 from yellowbrick.exceptions import YellowbrickAttributeError
 
 
@@ -36,6 +38,7 @@ OUTLIER_DETECTOR = "outlier_detector"
 ##########################################################################
 ## Functional API
 ##########################################################################
+
 
 def wrap(estimator, estimator_type=None):
     """
@@ -97,6 +100,7 @@ def clusterer(estimator):
 ## ContribEstimator - Third Pary Estimator Wrapper
 ##########################################################################
 
+
 class ContribEstimator(object):
     """
     Wraps a third party estimator that implements the sckit-learn API and therefore
@@ -123,12 +127,25 @@ class ContribEstimator(object):
         if estimator_type:
             self._estimator_type = estimator_type
 
+    def __sklearn_tags__(self):
+        """sklearn 1.6+ tags API: build tags from _estimator_type."""
+        etype = getattr(self, "_estimator_type", None)
+        return Tags(
+            estimator_type=etype,
+            target_tags=TargetTags(required=etype is not None),
+            classifier_tags=ClassifierTags() if etype == CLASSIFIER else None,
+            regressor_tags=RegressorTags() if etype == REGRESSOR else None,
+        )
+
     def __getattr__(self, attr):
         # proxy to the wrapped object
         try:
             return getattr(self.estimator, attr)
         except AttributeError:
-            raise YellowbrickAttributeError((
-                "estimator is missing the '{}' attribute, which is required for this "
-                "visualizer - please see the third party estimators documentation."
-            ).format(attr))
+            raise YellowbrickAttributeError(
+                (
+                    "estimator is missing the '{}' attribute, which is required "
+                    "for this visualizer - please see the third party estimators "
+                    "documentation."
+                ).format(attr)
+            )

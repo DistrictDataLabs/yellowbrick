@@ -49,9 +49,11 @@ except ImportError:
 ##########################################################################
 
 
-class FakeClassifier(BaseEstimator, ClassifierMixin):
+class FakeClassifier(ClassifierMixin, BaseEstimator):
     """
     A fake classifier for testing noops on the visualizer.
+    ClassifierMixin must precede BaseEstimator in MRO so that
+    ClassifierMixin.__sklearn_tags__ runs before BaseEstimator.__sklearn_tags__.
     """
 
     pass

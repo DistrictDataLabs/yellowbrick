@@ -95,17 +95,10 @@ class TestAlphaSelection(VisualTestCase):
 
     def test_store_cv_values(self):
         """
-        Assert that store_cv_values is true on RidgeCV
+        Assert that store_cv_results (formerly store_cv_values) is true on RidgeCV
         """
-
         model = AlphaSelection(RidgeCV())
-        assert model.estimator.store_cv_values
-
-        model = AlphaSelection(RidgeCV(store_cv_values=True))
-        assert model.estimator.store_cv_values
-
-        model = AlphaSelection(RidgeCV(store_cv_values=False))
-        assert model.estimator.store_cv_values
+        assert model.estimator.store_cv_results
 
     @pytest.mark.parametrize("model", [RidgeCV, LassoCV, ElasticNetCV])
     def test_get_alphas_param(self, model):

@@ -145,7 +145,9 @@ class ClassPredictionError(ClassificationScoreVisualizer):
         # Must be computed before calling super
         # We're relying on predict to raise NotFitted
         y_pred = self.predict(X)
-        y_type, y_true, y_pred = _check_targets(y, y_pred)
+        # sklearn 1.8+ returns a 4-tuple; earlier versions return a 3-tuple
+        _targets = _check_targets(y, y_pred)
+        y_type, y_true, y_pred = _targets[0], _targets[1], _targets[2]
         if y_type not in ("binary", "multiclass"):
             raise YellowbrickValueError("{} is not supported".format(y_type))
 

@@ -251,6 +251,7 @@ class InterclusterDistance(ClusteringScoreVisualizer):
             return MDS(n_components=2, random_state=self.random_state)
 
         if ttype == "tsne":
+            # perplexity is set at fit time based on n_centers; default here
             return TSNE(n_components=2, random_state=self.random_state)
 
         raise YellowbrickValueError("unknown embedding '{}'".format(ttype))
@@ -290,8 +291,14 @@ class InterclusterDistance(ClusteringScoreVisualizer):
         # TODO: is this how sklearn stores all centers in the model?
         C = self.cluster_centers_
 
-        # Embed the centers in 2D space and get the cluster scores
-        self.embedded_centers_ = self.transformer.fit_transform(C)
+        # Embed the centers in 2D space and get the cluster scores.
+        # For TSNE, perplexity must be < n_samples; cap it accordingly.
+        transformer = self.transformer
+        if hasattr(transformer, "perplexity"):
+            n_centers = C.shape[0]
+            if transformer.perplexity >= n_centers:
+                transformer.set_params(perplexity=max(1, n_centers - 1))
+        self.embedded_centers_ = transformer.fit_transform(C)
         self.scores_ = self._score_clusters(X, y)
 
         # Draw the clusters and fit returns self
@@ -433,7 +440,7 @@ def percentile_index(a, q):
     """
     Returns the index of the value at the Qth percentile in array a.
     """
-    return np.where(a == np.percentile(a, q, interpolation="nearest"))[0][0]
+    return np.where(a == np.percentile(a, q, method="nearest"))[0][0]
 
 
 def validate_string_param(s, valid, param_name="param"):

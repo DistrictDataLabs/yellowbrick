@@ -60,11 +60,11 @@ CLASSIFIERS  = (
     "Natural Language :: English",
     "Operating System :: OS Independent",
     "Programming Language :: Python",
-    "Programming Language :: Python :: 3.5",
-    "Programming Language :: Python :: 3.6",
-    "Programming Language :: Python :: 3.7",
-    "Programming Language :: Python :: 3.8",
     "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
     "Topic :: Software Development",
     "Topic :: Software Development :: Libraries :: Python Modules",
     "Topic :: Scientific/Engineering :: Visualization",
@@ -164,7 +164,7 @@ config = {
     "zip_safe": False,
     "entry_points": {"console_scripts": []},
     "install_requires": list(get_requires()),
-    "python_requires": ">=3.4, <4"
+    "python_requires": ">=3.9, <4"
 }
 
 

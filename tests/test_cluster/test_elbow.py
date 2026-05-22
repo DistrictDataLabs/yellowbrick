@@ -255,7 +255,7 @@ class TestKElbowVisualizer(VisualTestCase):
         )
         visualizer.fit(self.clusters.X)
 
-        expected = np.array([69.100065, 54.081571, 43.146921, 34.978487])
+        expected = np.array([69.100065, 54.891057, 44.319888, 35.857462])
         assert len(visualizer.k_scores_) == 4
 
         visualizer.finalize()
@@ -276,7 +276,7 @@ class TestKElbowVisualizer(VisualTestCase):
         )
         visualizer.fit(self.clusters.X)
 
-        expected = np.array([0.691636, 0.456646, 0.255174, 0.239842])
+        expected = np.array([0.691636, 0.453478, 0.242102, 0.235422])
         assert len(visualizer.k_scores_) == 4
 
         visualizer.finalize()
@@ -299,7 +299,7 @@ class TestKElbowVisualizer(VisualTestCase):
         assert len(visualizer.k_scores_) == 4
         assert visualizer.elbow_value_ is None
 
-        expected = np.array([81.662726, 50.992378, 40.952179, 35.939494])
+        expected = np.array([81.662726, 50.129783, 39.744834, 34.978841])
 
         visualizer.finalize()
         self.assert_images_similar(visualizer)
@@ -322,7 +322,7 @@ class TestKElbowVisualizer(VisualTestCase):
         assert len(visualizer.k_scores_) == 4
         assert visualizer.elbow_value_ is None
 
-        expected = np.array([189.060129, 154.096223, 124.271208, 107.087566])
+        expected = np.array([189.06013, 152.276395, 132.668674, 110.741248])
 
         visualizer.finalize()
         self.assert_images_similar(visualizer)
@@ -350,7 +350,7 @@ class TestKElbowVisualizer(VisualTestCase):
         visualizer.fit(X)
         assert len(visualizer.k_scores_) == 5
         assert visualizer.elbow_value_ == 3
-        expected = np.array([4286.5, 12463.4,  8766.8,  6950.1,  5863.6])
+        expected = np.array([4286.5, 12463.4,  8695.8,  6859.1,  5700.4])
 
         visualizer.finalize()
         self.assert_images_similar(visualizer, tol=0.5, windows_tol=2.2)

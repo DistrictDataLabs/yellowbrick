@@ -662,7 +662,7 @@ def discrimination_threshold(
     >>> from sklearn.linear_model import LogisticRegression
     >>> from yellowbrick.datasets import load_occupancy
     >>> X, y = load_occupancy()
-    >>> model = LogisticRegression(multi_class="auto", solver="liblinear")
+    >>> model = LogisticRegression(solver="liblinear")
     >>> discrimination_threshold(model, X, y)
 
     Returns

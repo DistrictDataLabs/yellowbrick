@@ -155,7 +155,7 @@ def has_ndarray_int_columns(features, X):
         return False
     ndarray_columns = np.arange(0, ncols)
     feature_cols = np.unique([int(d) for d in features])
-    return all(np.in1d(feature_cols, ndarray_columns))
+    return all(np.isin(feature_cols, ndarray_columns))
 
 
 # Alias for closer name to isinstance and issubclass

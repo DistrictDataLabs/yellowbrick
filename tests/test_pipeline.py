@@ -81,36 +81,8 @@ class TestVisualPipeline(object):
         Assert that visual transformers can be added to pipelines
         """
 
-        # Pipeline objects have a _validate_steps method that raises an
-        # TypeError if the steps don't match transforms --> estimator.
-
-        # validate a bad intermediate transformer on the Pipeline
-        with pytest.raises(TypeError):
-            Pipeline(
-                [
-                    ("real", MockTransformer()),
-                    ("bad", Thing()),
-                    ("model", MockEstimator()),
-                ]
-            )
-
-        # validate a bad intermediate transformer on the VisualPipeline
-        with pytest.raises(TypeError):
-            VisualPipeline(
-                [
-                    ("real", MockTransformer()),
-                    ("bad", Thing()),
-                    ("model", MockEstimator()),
-                ]
-            )
-
-        # validate a bad final estimator on the Pipeline
-        with pytest.raises(TypeError):
-            Pipeline([("real", MockTransformer()), ("bad", Thing())])
-
-        # validate a bad final estimator on the VisualPipeline
-        with pytest.raises(TypeError):
-            VisualPipeline([("real", MockTransformer()), ("bad", Thing())])
+        # sklearn 1.6+ defers step validation to fit() time, so we only test
+        # the positive case: that visual transformers are accepted by pipelines.
 
         # validate visual transformers on a Pipeline
         try:

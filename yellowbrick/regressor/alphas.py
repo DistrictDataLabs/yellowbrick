@@ -127,8 +127,10 @@ class AlphaSelection(RegressionScoreVisualizer):
                 ).format(name)
             )
 
-        # Set the store_cv_values parameter on RidgeCV
-        if "store_cv_values" in estimator.get_params().keys():
+        # Set the store_cv_results (formerly store_cv_values) parameter on RidgeCV
+        if "store_cv_results" in estimator.get_params().keys():
+            estimator.set_params(store_cv_results=True)
+        elif "store_cv_values" in estimator.get_params().keys():
             estimator.set_params(store_cv_values=True)
 
         # Call super to initialize the class
@@ -211,6 +213,9 @@ class AlphaSelection(RegressionScoreVisualizer):
         # NOTE: The order of the search is very important!
         if hasattr(self.estimator, "mse_path_"):
             return self.estimator.mse_path_.mean(1)
+
+        if hasattr(self.estimator, "cv_results_"):
+            return self.estimator.cv_results_.mean(0)
 
         if hasattr(self.estimator, "cv_values_"):
             return self.estimator.cv_values_.mean(0)

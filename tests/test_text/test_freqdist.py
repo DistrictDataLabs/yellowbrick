@@ -48,7 +48,7 @@ class TestFreqDist(VisualTestCase):
         vectorizer = CountVectorizer()
 
         docs = vectorizer.fit_transform(corpus.data)
-        features = vectorizer.get_feature_names()
+        features = vectorizer.get_feature_names_out()
 
         visualizer = FreqDistVisualizer(features)
         visualizer.fit(docs)
@@ -63,7 +63,7 @@ class TestFreqDist(VisualTestCase):
         vectorizer = CountVectorizer()
 
         docs = vectorizer.fit_transform(corpus.data)
-        features = vectorizer.get_feature_names()
+        features = vectorizer.get_feature_names_out()
 
         viz = freqdist(features, docs, show=False)
 

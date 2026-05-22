@@ -26,9 +26,9 @@ import numpy as np
 import matplotlib as mpl
 
 # Check to see if we have a slightly modern version of mpl
-from distutils.version import LooseVersion
+from packaging.version import Version
 
-mpl_ge_150 = LooseVersion(mpl.__version__) >= "1.5.0"
+mpl_ge_150 = Version(mpl.__version__) >= Version("1.5.0")
 
 
 from .. import _orig_rc_params

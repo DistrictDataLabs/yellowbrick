@@ -324,7 +324,7 @@ class TestPrecisionRecallCurve(VisualTestCase):
         # Will not check for these as they appears okay in other test images.
         for child in oz.ax.get_children():
             if isinstance(child, matplotlib.text.Annotation):
-                oz.ax.texts.remove(child)
+                child.remove()
 
         # Compare the images
         tol = (

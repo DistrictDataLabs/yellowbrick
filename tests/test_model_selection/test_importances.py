@@ -233,7 +233,7 @@ class TestFeatureImportancesVisualizer(VisualTestCase):
         X, y = load_iris(return_X_y=True)
 
         viz = FeatureImportances(
-            LogisticRegression(solver="liblinear", random_state=222), stack=True
+            LogisticRegression(solver="lbfgs", random_state=222, max_iter=1000), stack=True
         )
         viz.fit(X, y)
         viz.finalize()
@@ -250,7 +250,7 @@ class TestFeatureImportancesVisualizer(VisualTestCase):
         X, y = load_occupancy()
 
         viz = FeatureImportances(
-            LogisticRegression(solver="liblinear", random_state=222), stack=True
+            LogisticRegression(solver="lbfgs", random_state=222, max_iter=1000), stack=True
         )
 
         expected_error = "The model used does not return coef_ array"
@@ -460,7 +460,7 @@ class TestFeatureImportancesVisualizer(VisualTestCase):
         X, y = load_iris(return_X_y=True)
 
         viz = FeatureImportances(
-            LogisticRegression(solver="liblinear", random_state=222),
+            LogisticRegression(solver="lbfgs", random_state=222, max_iter=1000),
             stack=True, topn=3
         )
         viz.fit(X, y)
@@ -478,7 +478,7 @@ class TestFeatureImportancesVisualizer(VisualTestCase):
         X, y = load_iris(return_X_y=True)
 
         viz = FeatureImportances(
-            LogisticRegression(solver="liblinear", random_state=222),
+            LogisticRegression(solver="lbfgs", random_state=222, max_iter=1000),
             stack=True, topn=-3
         )
         viz.fit(X, y)
@@ -573,7 +573,7 @@ class MockEstimator(BaseEstimator):
         return self
 
 
-class MockClassifier(BaseEstimator, ClassifierMixin):
+class MockClassifier(ClassifierMixin, BaseEstimator):
     """
     Creates empty classifier.
     """

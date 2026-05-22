@@ -142,7 +142,7 @@ class TestMetaImageComparison(VisualTestCase):
         viz = RandomVisualizer(random_state=111).fit()
         viz.finalize()
 
-        assert mpl.get_backend() == "agg"
+        assert mpl.get_backend().lower() == "agg"
 
         compare = self.assert_images_similar(viz, tol=1.0)
         assert_path_exists(compare.actual_image_path)

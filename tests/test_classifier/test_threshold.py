@@ -379,7 +379,7 @@ class TestDiscriminationThreshold(VisualTestCase):
 
         model = Pipeline([
             ('imputer', SimpleImputer(missing_values=np.nan, strategy='mean')),
-            ('dt', DiscriminationThreshold(LogisticRegression(multi_class="auto", solver="liblinear"), random_state=42))
+            ('dt', DiscriminationThreshold(LogisticRegression(solver="liblinear"), random_state=42))
         ])
 
         model.fit(X, y)
@@ -396,7 +396,7 @@ class TestDiscriminationThreshold(VisualTestCase):
         model = Pipeline([
             ('imputer', SimpleImputer(missing_values=np.nan, strategy='mean')),
             ('dt',
-             discrimination_threshold(LogisticRegression(multi_class="auto", solver="liblinear"), X,
+             discrimination_threshold(LogisticRegression(solver="liblinear"), X,
                                       y, random_state=42))
         ])
         model['dt'].finalize()
@@ -410,7 +410,7 @@ class TestDiscriminationThreshold(VisualTestCase):
 
         model = Pipeline([
             ('imputer', SimpleImputer(missing_values=np.nan, strategy='mean')),
-            ('lr', LogisticRegression(multi_class="auto", solver="liblinear"))
+            ('lr', LogisticRegression(solver="liblinear"))
         ])
 
         oz = DiscriminationThreshold(model, random_state=42)
@@ -427,7 +427,7 @@ class TestDiscriminationThreshold(VisualTestCase):
 
         model = Pipeline([
             ('imputer', SimpleImputer(missing_values=np.nan, strategy='mean')),
-            ('lr', LogisticRegression(multi_class="auto", solver="liblinear"))
+            ('lr', LogisticRegression(solver="liblinear"))
         ])
 
         oz = discrimination_threshold(model, X, y, random_state=42)
