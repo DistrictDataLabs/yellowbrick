@@ -94,33 +94,49 @@ def explained_variance_visualizer(
 
 class ExplainedVariance(FeatureVisualizer):
     """
+    Plots the explained variance of the principal components after
+    fitting a PCA decomposition. Useful for identifying the number
+    of components that capture most of the variance in the data.
 
     Parameters
     ----------
     ax : matplotlib Axes, default: None
-        The aces to plot the figure on
+        The axes to plot the figure on. If None, the current axes
+        will be used or generated.
 
     scale : bool, default: True
-        Boolean that indicates if the values of X should be scaled.
+        If True, standardize the variance of each feature before
+        applying PCA by setting the StandardScaler with_std=True.
 
-    colormap : string or cmap, default: None
-        optional string or matplotlib cmap to colorize lines
-        Use either color to colorize the lines on a per class basis or
-        colormap to color them on a continuous scale.
+    center : bool, default: True
+        If True, center the data before scaling by setting the
+        StandardScaler with_mean=True.
+
+    n_components : int, float or None, default: None
+        Number of components to keep. Passed directly to
+        sklearn.decomposition.PCA. If None, all components are kept.
+
+    colormap : string or cmap, default: yellowbrick DEFAULT_SEQUENCE
+        Optional string or matplotlib cmap to colorize the line.
 
     kwargs : dict
-        Keyword arguments that are passed to the base class and may influence
+        Keyword arguments passed to the base class and may influence
         the visualization as defined in other Visualizers.
-
 
     Examples
     --------
 
+    >>> from sklearn.datasets import load_breast_cancer
+    >>> X, y = load_breast_cancer(return_X_y=True)
     >>> visualizer = ExplainedVariance()
     >>> visualizer.fit(X)
     >>> visualizer.transform(X)
     >>> visualizer.show()
 
+    Notes
+    -----
+    Internally uses a sklearn Pipeline with StandardScaler and PCA,
+    so the data is always scaled before decomposition when scale=True.
     """
 
     def __init__(
