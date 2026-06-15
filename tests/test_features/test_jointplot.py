@@ -75,7 +75,16 @@ def discrete(request):
 
     request.cls.discrete = Dataset(X, y)
 
-
+def test_color_by_target(self):
+    """
+    Test that scatter points are colored when y is passed with two columns.
+    """
+    X = np.random.rand(80, 4)
+    y = np.array([0, 1] * 40)
+    viz = JointPlot(columns=[0, 1], hist=False)
+    viz.fit(X, y=y)
+    # Two scatter calls — one per class
+    assert len(self.ax.collections) >= 2
 @pytest.fixture(scope="class")
 def continuous(request):
     """

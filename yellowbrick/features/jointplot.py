@@ -323,14 +323,20 @@ class JointPlot(FeatureVisualizer):
                     columns
                 )
             )
-
-        # TODO: color the points based on the target if it is given
+            
         x = self._index_into(columns[0], X)
-        y = self._index_into(columns[1], X)
-        self.draw(x, y, xlabel=str(columns[0]), ylabel=str(columns[1]))
+        y_col = self._index_into(columns[1], X)
+
+        # Color points by target if y is provided
+        if y is not None:
+            self.draw(x, y_col, xlabel=str(columns[0]),
+                      ylabel=str(columns[1]), target=y)
+        else:
+            self.draw(x, y_col, xlabel=str(columns[0]),
+                      ylabel=str(columns[1]))
         return self
 
-    def draw(self, x, y, xlabel=None, ylabel=None):
+    def draw(self, x, y, xlabel=None, ylabel=None, target=None):
         """
         Draw the joint plot for the data in x and y.
 
@@ -352,8 +358,19 @@ class JointPlot(FeatureVisualizer):
         joint_kws.setdefault("label", "{}={:0.3f}".format(self.correlation, self.corr_))
 
         # Draw scatter joint plot
+        # Draw scatter joint plot
         if self.kind == "scatter":
-            self.ax.scatter(x, y, **joint_kws)
+            if target is not None:
+                classes = np.unique(target)
+                colors = self.generate_colors(len(classes))
+                for cls, color in zip(classes, colors):
+                    mask = target == cls
+                    kws = joint_kws.copy()
+                    kws["color"] = color
+                    kws["label"] = str(cls)
+                    self.ax.scatter(x[mask], y[mask], **kws)
+            else:
+                self.ax.scatter(x, y, **joint_kws)
 
             # TODO: Draw best fit line (or should this be kind='reg'?)
 
