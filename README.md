@@ -118,3 +118,7 @@ We would be glad if you used Yellowbrick in your scientific publications! If you
 ## Affiliations
 
 [![District Data Labs](docs/images/readme/affiliates_ddl.png)](https://districtdatalabs.com/) [![NumFOCUS Affiliated Project](docs/images/readme/affiliates_numfocus.png)](https://numfocus.org)
+
+---
+
+*[Mukller](https://github.com/Mukller)*
