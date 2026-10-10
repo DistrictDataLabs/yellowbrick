@@ -44,3 +44,4 @@ a ``Pipeline`` or ``VisualPipeline``.
    prcurve
    class_prediction_error
    threshold
+   calibration
