@@ -32,3 +32,4 @@ from .prcurve import PrecisionRecallCurve, PRCurve, precision_recall_curve
 
 ## Import from target for backward compatibility and classifier association
 from ..target.class_balance import ClassBalance, class_balance
+from .calibration import CalibrationCurve, calibration_curve
