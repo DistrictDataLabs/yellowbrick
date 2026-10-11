@@ -73,6 +73,23 @@ visualizer.score(X,y)
 visualizer.show()
 ```
 
+### Calibration Curve
+
+A calibration curve (reliability diagram) shows whether a binary classifier's predicted probabilities match what actually happens. In this example, `CalibrationCurve` plots the mean predicted probability of each bin against the observed fraction of positives and reports the Brier score.
+
+```python
+from sklearn.linear_model import LogisticRegression
+from yellowbrick.classifier import CalibrationCurve
+
+model = LogisticRegression(max_iter=1000)
+visualizer = CalibrationCurve(model, n_bins=10, strategy="uniform")
+visualizer.fit(X_train, y_train)
+visualizer.score(X_test, y_test)
+visualizer.show()
+```
+
+`CalibrationCurve` supports binary classifiers that implement `predict_proba`. See the [Calibration Curve documentation](docs/api/classifier/calibration.rst) for details.
+
 For additional information on getting started with Yellowbrick, view the [Quick Start Guide](https://www.scikit-yb.org/en/latest/quickstart.html) in the [documentation](https://www.scikit-yb.org/en/latest/) and check out our [examples notebook](https://github.com/DistrictDataLabs/yellowbrick/blob/develop/examples/examples.ipynb).
 
 ## Contributing to Yellowbrick
