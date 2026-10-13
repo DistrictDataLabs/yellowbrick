@@ -14,6 +14,10 @@ Data scientists use this method to detect separability between classes.
 E.g. is there an opportunity to learn from the feature set or is there
 just too much noise?
 
+When using a pandas DataFrame and Series, ``X`` and ``y`` are paired by row
+position, as with NumPy arrays. Their indices do not need to be reset after
+filtering or splitting a dataset.
+
 If your data contains rows with missing values (``numpy.nan``), those missing
 values will not be plotted. In other words, you may not get the entire
 picture of your data. ``RadViz`` will raise a ``DataWarning`` to inform you of the

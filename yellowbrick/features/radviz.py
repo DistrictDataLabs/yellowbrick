@@ -169,6 +169,10 @@ class RadialVisualizer(DataVisualizer):
         if is_dataframe(X):
             X = X.values
 
+        # Target values follow the rows of X, not a Series index.
+        if y is not None:
+            y = np.asarray(y)
+
         # Clean out nans and warn that the user they aren't plotted
         nan_warnings.warn_if_nans_exist(X)
         X, y = nan_warnings.filter_missing(X, y)
@@ -355,7 +359,7 @@ def radviz(
         If True, calls ``show()``, which in turn calls ``plt.show()`` however you cannot
         call ``plt.savefig`` from this signature, nor ``clear_figure``. If False, simply
         calls ``finalize()``
-        
+
     kwargs : dict
         Keyword arguments passed to the visualizer base classes.
 

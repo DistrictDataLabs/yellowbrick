@@ -3,6 +3,12 @@
 Changelog
 =========
 
+Unreleased
+----------
+
+Bugs
+   - Fixed ``RadViz`` to preserve row order when target Series have non-continuous, reordered, or duplicate indices, including after missing rows are filtered.
+
 Version 1.5
 -----------
 
