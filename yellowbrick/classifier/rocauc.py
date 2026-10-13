@@ -101,6 +101,11 @@ class ROCAUC(ClassificationScoreVisualizer):
         hyperparameter to the visualizer, it just collects other parameters into
         a single, simpler argument.
 
+    expressive : bool, default: False
+        If True, display more descriptive axis labels to aid interpretation
+        of the ROC curve. If False, use the standard True Positive Rate and
+        False Positive Rate labels.
+
     classes : list of str, defult: None
         The class labels to use for the legend ordered by the index of the sorted
         classes discovered in the ``fit()`` method. Specifying classes in this
@@ -189,6 +194,7 @@ class ROCAUC(ClassificationScoreVisualizer):
         macro=True,
         per_class=True,
         binary=False,
+        expressive=False,
         classes=None,
         encoder=None,
         is_fitted="auto",
@@ -208,9 +214,10 @@ class ROCAUC(ClassificationScoreVisualizer):
         # Set the visual parameters for ROCAUC
         # NOTE: the binary flag breaks our API since it's really just a meta parameter
         # for micro, macro, and per_class. We knew this going in, but did it anyway.
-        
+
         self.binary = binary
-        
+        self.expressive = expressive
+
         if self.binary:
             self.micro = False
             self.macro = False
@@ -445,8 +452,12 @@ class ROCAUC(ClassificationScoreVisualizer):
         self.ax.set_ylim([0.0, 1.0])
 
         # Set x and y axis labels
-        self.ax.set_ylabel("True Positive Rate")
-        self.ax.set_xlabel("False Positive Rate")
+        if self.expressive:
+            self.ax.set_ylabel(r"True Positive Rate ($\frac{TP}{TP+FN}$)")
+            self.ax.set_xlabel(r"False Positive Rate ($\frac{FP}{FP+TN}$)")
+        else:
+            self.ax.set_ylabel("True Positive Rate")
+            self.ax.set_xlabel("False Positive Rate")
 
     def _get_y_scores(self, X):
         """
@@ -538,6 +549,7 @@ def roc_auc(
     macro=True,
     per_class=True,
     binary=False,
+    expressive=False,
     classes=None,
     encoder=None,
     is_fitted="auto",
@@ -624,6 +636,11 @@ def roc_auc(
         hyperparameter to the visualizer, it just collects other parameters into
         a single, simpler argument.
 
+    expressive : bool, default: False
+        If True, display more descriptive axis labels to aid interpretation
+        of the ROC curve. If False, use the standard True Positive Rate and
+        False Positive Rate labels.
+
     classes : list of str, defult: None
         The class labels to use for the legend ordered by the index of the sorted
         classes discovered in the ``fit()`` method. Specifying classes in this
@@ -699,6 +716,7 @@ def roc_auc(
         macro=macro,
         per_class=per_class,
         binary=binary,
+        expressive=expressive,
         classes=classes,
         encoder=encoder,
         is_fitted=is_fitted,

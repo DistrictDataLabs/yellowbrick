@@ -84,6 +84,61 @@ class TestROCAUC(VisualTestCase):
     """
     Test ROCAUC visualizer
     """
+    def test_expressive_quickmethod_axis_labels(self):
+        """
+        Test that the roc_auc quick method supports expressive axis labels.
+        """
+        X, y = load_occupancy(return_dataset=True).to_numpy()
+        model = LogisticRegression()
+
+        visualizer = roc_auc(
+            model,
+            X,
+            y,
+            expressive=True,
+            show=False,
+        )
+
+        assert visualizer.ax.get_xlabel() == (
+            r"False Positive Rate ($\frac{FP}{FP+TN}$)"
+        )
+        assert visualizer.ax.get_ylabel() == (
+            r"True Positive Rate ($\frac{TP}{TP+FN}$)"
+        )
+
+    def test_default_axis_labels(self):
+        """
+        Test that ROCAUC uses the standard axis labels by default.
+        """
+        X, y = load_occupancy(return_dataset=True).to_numpy()
+        model = LogisticRegression()
+
+        visualizer = ROCAUC(model)
+        visualizer.fit(X, y)
+        visualizer.score(X, y)
+        visualizer.finalize()
+
+        assert visualizer.ax.get_xlabel() == "False Positive Rate"
+        assert visualizer.ax.get_ylabel() == "True Positive Rate"
+
+    def test_expressive_axis_labels(self):
+        """
+        Test that expressive=True adds formulas to the ROC axis labels.
+        """
+        X, y = load_occupancy(return_dataset=True).to_numpy()
+        model = LogisticRegression()
+
+        visualizer = ROCAUC(model, expressive=True)
+        visualizer.fit(X, y)
+        visualizer.score(X, y)
+        visualizer.finalize()
+
+        assert visualizer.ax.get_xlabel() == (
+            r"False Positive Rate ($\frac{FP}{FP+TN}$)"
+        )
+        assert visualizer.ax.get_ylabel() == (
+            r"True Positive Rate ($\frac{TP}{TP+FN}$)"
+        )
 
     def test_binary_probability(self):
         """
@@ -569,7 +624,7 @@ class TestROCAUC(VisualTestCase):
                 )
 
         model = Pipeline([
-            ('minmax', MinMaxScaler()), 
+            ('minmax', MinMaxScaler()),
             ('matrix', ROCAUC(SVC(random_state=42), classes=classes, binary=True))
         ])
 
@@ -590,7 +645,7 @@ class TestROCAUC(VisualTestCase):
                 )
 
         model = Pipeline([
-            ('minmax', MinMaxScaler()), 
+            ('minmax', MinMaxScaler()),
             ('matrix', roc_auc(SVC(random_state=42),
                                             X_train, y_train, X_test, y_test,
                                             classes=["vacant", "occupied"],
@@ -610,7 +665,7 @@ class TestROCAUC(VisualTestCase):
                 )
 
         model = Pipeline([
-            ('minmax', MinMaxScaler()), 
+            ('minmax', MinMaxScaler()),
             ('svc', SVC(random_state=42))
         ])
 
@@ -632,11 +687,11 @@ class TestROCAUC(VisualTestCase):
                 )
 
         model = Pipeline([
-            ('minmax', MinMaxScaler()), 
+            ('minmax', MinMaxScaler()),
             ('svc', SVC(random_state=42))
         ])
 
-        oz = roc_auc(model, X_train, y_train, X_test, y_test, 
+        oz = roc_auc(model, X_train, y_train, X_test, y_test,
                      classes=["vacant", "occupied"],
                      show=False, binary=True)
         self.assert_images_similar(oz, tol=12)
