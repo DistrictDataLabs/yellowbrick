@@ -20,6 +20,7 @@ Test the RadViz feature analysis visualizers
 import sys
 import pytest
 import numpy.testing as npt
+import matplotlib.pyplot as plt
 
 from tests.base import IS_WINDOWS_OR_CONDA, VisualTestCase
 from ..fixtures import Dataset
@@ -120,6 +121,52 @@ class TestRadViz(VisualTestCase):
         visualizer.fit_transform(self.dataset.X, self.dataset.y)
         visualizer.finalize()
         self.assert_images_similar(visualizer, tol=0.25)
+
+    @pytest.mark.skipif(pd is None, reason="test requires pandas")
+    @pytest.mark.parametrize(
+        "index_type", ["range", "offset", "reversed", "duplicate", "string"]
+    )
+    @pytest.mark.parametrize("missing", [False, True])
+    @pytest.mark.parametrize("quick", [False, True])
+    def test_target_series_index(self, index_type, missing, quick):
+        """Plot Series targets by row position, regardless of their index."""
+        X = self.dataset.X.copy()
+        y = self.dataset.y.copy()
+        if missing:
+            X[0, 0] = np.nan
+
+        indices = {
+            "range": np.arange(len(y)),
+            "offset": np.arange(len(y)) + 10,
+            "reversed": np.arange(len(y))[::-1],
+            "duplicate": np.repeat(10, len(y)),
+            "string": ["row-{}".format(i) for i in range(len(y))],
+        }
+        frame = pd.DataFrame(X, index=indices[index_type])
+        target = pd.Series(y, index=indices[index_type])
+        original_frame, original_target = frame.copy(), target.copy()
+
+        # The same ordered values must produce the same class-colored points.
+        _, reference_ax = plt.subplots()
+        _, actual_ax = plt.subplots()
+        reference = RadViz(ax=reference_ax)
+        reference.fit(X, y)
+        if quick:
+            visualizer = radviz(frame, target, ax=actual_ax, show=False)
+        else:
+            visualizer = RadViz(ax=actual_ax)
+            visualizer.fit(frame, target)
+            visualizer.finalize()
+
+        npt.assert_array_equal(visualizer.classes_, reference.classes_)
+        assert len(visualizer.ax.collections) == len(reference.ax.collections)
+        for actual, expected in zip(
+            visualizer.ax.collections, reference.ax.collections
+        ):
+            npt.assert_array_equal(actual.get_offsets(), expected.get_offsets())
+            npt.assert_array_equal(actual.get_facecolors(), expected.get_facecolors())
+        pd.testing.assert_frame_equal(frame, original_frame)
+        pd.testing.assert_series_equal(target, original_target)
 
     @pytest.mark.xfail(
         IS_WINDOWS_OR_CONDA,
