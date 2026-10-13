@@ -88,6 +88,48 @@ Yellowbrick's ``ROCAUC`` Visualizer does allow for plotting multiclass classific
 
 By default with multi-class ROCAUC visualizations, a curve for each class is plotted, in addition to the micro- and macro-average curves for each class. This enables the user to inspect the tradeoff between sensitivity and specificity on a per-class basis. Note that for multi-class ``ROCAUC``, at least one of the ``micro``, ``macro``, or ``per_class`` parameters must be set to ``True`` (by default, all are set to ``True``).
 
+Expressive Axis Labels
+----------------------
+
+The ``expressive`` parameter can be used to display more descriptive axis
+labels that include the formulas for the true positive rate and false positive
+rate. This can help users interpret the ROC curve without changing the
+underlying ROC/AUC computation.
+
+Set ``expressive=True`` when creating the visualizer:
+
+.. plot::
+    :context: close-figs
+    :alt: ROCAUC with expressive axis labels
+
+    from sklearn.datasets import load_breast_cancer
+    from sklearn.model_selection import train_test_split
+    from sklearn.pipeline import make_pipeline
+    from sklearn.preprocessing import StandardScaler
+    from sklearn.svm import SVC
+
+    from yellowbrick.classifier import ROCAUC
+
+    # Load the binary classification dataset
+    X, y = load_breast_cancer(return_X_y=True)
+
+    # Create the training and test data
+    X_train, X_test, y_train, y_test = train_test_split(
+        X, y, test_size=0.2, random_state=42, stratify=y
+    )
+
+    # Create an SVM classifier with feature scaling
+    model = make_pipeline(
+        StandardScaler(),
+        SVC(kernel="linear", probability=True, random_state=42),
+    )
+
+    # Enable the more descriptive ROC axis labels
+    visualizer = ROCAUC(model, binary=True, expressive=True)
+    visualizer.fit(X_train, y_train)
+    visualizer.score(X_test, y_test)
+    visualizer.show()
+
 Quick Method
 ------------
 The same functionality above can be achieved with the associated quick method ``roc_auc``. This method will build the ``ROCAUC`` object with the associated arguments, fit it, then (optionally) immediately show it
